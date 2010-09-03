@@ -1,7 +1,6 @@
 # Description: Catmandu installer
 # Version: 2010-09-02
 use strict;
-use ExtUtils::MakeMaker;
 use inc::Module::Install;
 
 name      'Catmandu';
@@ -9,6 +8,7 @@ license   'perl';
 perl_version '5.10.0';
 version   '0.1';
 include   'Module::AutoInstall';
+no_index  'core';
 
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
@@ -56,9 +56,11 @@ requires 'SRU::Server' => 0;
 requires 'Storable' => '2.18';
 requires 'Template' => '2.22';
 requires 'Template::Plugin::Filter' => '1.38';
-requires 'Test::Group' => '0.14';
-requires 'Test::More' => '0.94';
-requires 'Test::WWW::Mechanize' => '1.24';
+test_requires 'Test::Class' => '0.36';
+test_requires 'Test::Exception' => '0.27';
+test_requires 'Test::Group' => '0.14';
+test_requires 'Test::More' => '0.94';
+test_requires 'Test::WWW::Mechanize' => '1.24';
 requires 'TeX::Encode' => '1.1';
 requires 'Text::ASCIITable' => '0.18';
 requires 'Text::ASCIITable::Wrap' => '0.2';
@@ -70,7 +72,7 @@ requires 'Unicode::String' => '2.09';
 requires 'URI' => '1.40';
 requires 'URI::Split' => 0;
 requires 'WWW::Curl::Easy' => '4.06';
-requires 'WWW::Mechanize' => '1.58';
+test_requires 'WWW::Mechanize' => '1.58';
 requires 'WWW::Shorten::TinyURL' => '1.90';
 requires 'XML::Simple' => '2.18';
 requires 'XML::Twig' => '3.32';
