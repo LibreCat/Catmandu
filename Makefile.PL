@@ -1,14 +1,13 @@
-# Description: Catmandu installer
-# Version: 2010-09-02
+# the Catmandu installer
 use strict;
 use ExtUtils::MakeMaker;
 use inc::Module::Install;
 
-name      'Catmandu';
-license   'perl';
+name         'Catmandu';
+license      'perl';
 perl_version '5.10.0';
-version   '0.1';
-include   'Module::AutoInstall';
+version      '0.1';
+include      'Module::AutoInstall';
 
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
