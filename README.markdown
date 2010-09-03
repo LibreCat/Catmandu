@@ -1,5 +1,9 @@
-** INSTALL 
+Catmandu
+========
 
-$ perl Makefile.PL; make; make install
+Installation
+------------
 
-This will install all local dependencies for running Catmandu
+The build script will install missing Perl packages:
+    $ perl Makefile.PL; make; make install
+
