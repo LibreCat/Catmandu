@@ -1,13 +1,13 @@
-# The Catmandu installer
+# the Catmandu installer
 use strict;
 use inc::Module::Install;
 
-name      'Catmandu';
-license   'perl';
+name         'Catmandu';
+license      'perl';
 perl_version '5.10.0';
-version   '0.1';
-include   'Module::AutoInstall';
-no_index  'core';
+version      '0.1';
+include      'Module::AutoInstall';
+no_index     'core';
 
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
