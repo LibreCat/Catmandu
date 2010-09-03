@@ -1,14 +1,18 @@
-# Description: Catmandu installer
-# Version: 2010-09-02
+# the Catmandu installer
 use strict;
 use inc::Module::Install;
 
-name      'Catmandu';
-license   'perl';
+name         'Catmandu';
+license      'perl';
 perl_version '5.10.0';
+<<<<<<< HEAD:Makefile.PL
 version   '0.1';
 include   'Module::AutoInstall';
 no_index  'core';
+=======
+version      '0.1';
+include      'Module::AutoInstall';
+>>>>>>> 78b8668219523ede7343d102898e7ee9b98e66d9:Makefile.PL
 
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
