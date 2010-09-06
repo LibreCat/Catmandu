@@ -1,0 +1,122 @@
+#!/usr/bin/env perl
+
+use 5.010;
+use strict;
+use warnings;
+
+use Cwd;
+use File::Path;
+use IO::File;
+
+sub write_file {
+    my ($path, $content) = @_;
+
+    my $fh = IO::File->new($path, "w") or die "Can't open file '$path': $!";
+    $fh->syswrite($content) or die "Can't write to file '$path': $!";
+    $fh->close;
+}
+
+sub usage {
+    say <<"EOF";
+usage: $0 COMMAND [OPTIONS]
+
+these commands are currently available:
+    generate PACKAGE
+    help
+EOF
+}
+
+sub generate {
+    my ($name) = @_;
+
+    my @nest = split /::/, $name;
+    my $base = pop @nest;
+
+    my $path_lib = join '/', Cwd::cwd, 'lib', @nest;
+    my $path_t   = join '/', Cwd::cwd, 't';
+    my $file_lib = join '/', $path_lib, $base.'.pm';
+    my $file_t   = join '/', $path_t,   join('-', @nest, $base).'.t';
+
+    File::Path::mkpath($path_lib);
+    File::Path::mkpath($path_t);
+
+    my $body = <<"EOF";
+package $name;
+
+
+
+1;
+
+__END__
+
+=head1 NAME
+
+ $name - [FILL IN THE PURPOSE]
+
+=head1 SYNOPSIS
+
+ [FILL IN EXAMPLE USAGE]
+
+=head1 DESCRIPTION
+
+ [FILL IN TEXTUAL DESCRIPTION OF THIS PACKAGE]
+
+=head1 METHODS
+
+=over 4
+
+=item method1
+
+[DOCUMENTATION]
+
+=item method2
+
+[DOCUMENTATION]
+
+=back
+
+=head1 AUTHORS
+
+see AUTHORS.txt in the root of this program
+
+=head1 LICENSE
+
+see LICENSE.txt in the root of this program
+
+=cut
+EOF
+
+    my $test = <<"EOF";
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Test::More tests => 0;
+use Test::Exception;
+
+
+EOF
+
+    write_file $file_lib, $body;
+    write_file $file_t,   $test;
+}
+
+my $command = shift;
+my @options = @ARGV;
+
+given ($command) {
+    when ('generate') {
+        generate(@options);
+        exit 0;
+    }
+    when ('help') {
+        usage;
+        exit 0;
+    }
+    default {
+        usage;
+        exit 1;
+    }
+}
+

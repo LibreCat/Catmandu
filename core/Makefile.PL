@@ -1,5 +1,7 @@
 # This Makefile.PL is required to execure all test scripts in the t/* directory
+use 5.010;
 use strict;
+use warnings;
 use inc::Module::Install;
 
 name         'Catmandu-Core';
