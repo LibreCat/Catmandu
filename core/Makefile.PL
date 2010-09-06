@@ -1,3 +1,4 @@
+# This Makefile.PL is required to execure all test scripts in the t/* directory
 use strict;
 use inc::Module::Install;
 
