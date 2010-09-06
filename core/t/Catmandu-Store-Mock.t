@@ -48,6 +48,6 @@ ok($store->each == 1, 'list');
 
 ok($store->each(sub { my $obj = shift; ok($obj->{name} eq 'test123')}) == 1, 'list');
 
-ok($store->purge($obj));
+ok($store->delete($obj));
 
 unlink $filename;

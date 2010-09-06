@@ -38,7 +38,7 @@ sub save {
   return $ref;
 }
 
-sub purge {
+sub delete {
   my ($self,$ref) = @_;
   my $id = $ref->{_id};
   my $hashref = Storable::retrieve($self->{file});
@@ -89,7 +89,7 @@ __END__
 
  my $obj = $store->load('1271-23138230-AEF12781');
 
- $store->purge($obj);
+ $store->delete($obj);
 
  foreach my $obj ($store->list) {
     printf "%s\n" , $obj->{name};
@@ -121,9 +121,9 @@ success, return undef on failure.
 
 Save a Perl object into the store. Returns the saved object on success or undef on failure.
 
-=item purge($obj);
+=item delete($obj);
 
-Purges the Perl object from the store. Returns a true value on sucess, undef on failure.
+Delete the Perl object from the store. Returns a true value on sucess, undef on failure.
 
 =item each(BLOCK);
 

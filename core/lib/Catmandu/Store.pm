@@ -14,14 +14,14 @@ sub save {
   return {};
 }
 
-sub purge {
+sub delete {
   my ($self,$ref) = @_;
   return 1;
 }
 
-sub list {
-  my ($self) = @_;
-  return [];
+sub each {
+  my ($self, $sub) = @_;
+  return 0;
 }
 
 sub disconnect {
@@ -47,11 +47,12 @@ __END__
 
  my $obj = $store->load('1271-23138230-AEF12781');
 
- $store->purge($obj);
+ $store->delete($obj);
 
- foreach my $obj ($store->list) {
+ $store->each(sub {
+    my $obj = shift;
     printf "%s\n" , $obj->{name};
- } 
+ });
 
  $store->disconnect;
 
@@ -79,13 +80,14 @@ success, return undef on failure.
 
 Save a Perl object into the store. Returns the saved object on success or undef on failure.
 
-=item purge($obj);
+=item delete($obj);
 
-Purges the Perl object from the store. Returns a true value on sucess, undef on failure.
+Delete the Perl object from the store. Returns a true value on sucess, undef on failure.
 
-=item list;
+=item each(BLOCK);
 
-Returns a list of all Perl objects in the store.
+For every Perl object in the store run the BLOCK code. The BLOCK gets the current Perl object
+as first argument. Returns the number of Perl objects found.
 
 =back
 
