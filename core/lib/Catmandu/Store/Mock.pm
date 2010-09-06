@@ -82,7 +82,7 @@ __END__
 
  use Catmandu::Store::Mock;
 
- my $store = Catmandu::Store::Mock->connect();
+ my $store = Catmandu::Store::Mock->connect(file => '/tmp/mock.db');
  my $obj = { name => 'Catmandu' , age => 1 };
  
  my $obj = $store->save($obj); # $obj = { _id => '1271-23138230-AEF12781' , name => 'Catmandu' , age => 1 };
