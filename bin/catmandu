@@ -43,7 +43,9 @@ sub generate {
     my $body = <<"EOF";
 package $name;
 
-
+sub new {
+    bless {}, shift;
+}
 
 1;
 
@@ -99,13 +101,13 @@ BEGIN { use_ok('$name'); }
 require_ok('$name');
 
 ## Write your tests
-# is(\$got,\$expected,\$test_name);
-# isnt(\$got,\$expected,\$test_name);
-# like(\$got, qr/regex/,\$test_name);
-# unlike(\$got, qr/regex/,\$test_name);
-# is_deeply(\$got_hash,\$expected_hash,\$test_name);
-# can_ok(\$module,\@methods);
-# throws_ok { [CODE] } qr/regex/ , \$test_name;
+# is(\$got, \$expected, \$test_name);
+# isnt(\$got, \$expected, \$test_name);
+# like(\$got, qr/regex/, \$test_name);
+# unlike(\$got, qr/regex/, \$test_name);
+# is_deeply(\$got_hash, \$expected_hash, \$test_name);
+# can_ok(\$module, \@methods);
+# throws_ok { [CODE] } qr/regex/, \$test_name;
 EOF
 
     write_file $file_lib, $body;
