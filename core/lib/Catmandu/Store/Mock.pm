@@ -1,27 +1,69 @@
-package Catmandu::Store;
+package Catmandu::Store::Mock;
+
+use 5.010;
+use strict;
+use warnings;
+use Storable;
+use Data::UUID;
 
 sub connect {
-  bless {}, shift;
+  my ($pkg,%opts) = @_;
+  die "usage: Catmandu::Store::Mock->connect(file => '...')" unless ($opts{file});
+  unless (-r $opts{file}) {
+    Storable::nstore({},$opts{file});
+  }
+  bless {
+     file => $opts{file}
+  } , $pkg;
 }
 
 sub load {
   my ($self,$id) = @_;
-  return {};
+
+  my $hashref = Storable::retrieve($self->{file});
+
+  return $hashref->{$id};
 }
 
 sub save {
   my ($self,$ref) = @_;
-  return {};
+  my $id = Data::UUID->new->create_str();
+  my $hashref = Storable::retrieve($self->{file});
+
+  $ref->{_id}     = $id;
+  $hashref->{$id} = $ref;
+
+  Storable::nstore($hashref, $self->{file});
+
+  return $ref;
 }
 
 sub delete {
   my ($self,$ref) = @_;
-  return 1;
+  my $id = $ref->{_id};
+  my $hashref = Storable::retrieve($self->{file});
+
+  if (exists $hashref->{$id}) {
+    delete $hashref->{$id};
+    Storable::nstore($hashref, $self->{file});
+    1;
+  }
+  else {
+    return 0;
+  }
 }
 
 sub each {
-  my ($self, $sub) = @_;
-  return 0;
+  my ($self,$block) = @_;
+  my $hashref = Storable::retrieve($self->{file});
+
+  my $count = 0;
+  while ( my ($key, $object) = each(%$hashref) ) {
+    &$block($object) if defined $block;
+    $count++;
+  }
+
+  return $count;
 }
 
 sub disconnect {
@@ -34,13 +76,13 @@ __END__
 
 =head1 NAME
 
- Catmandu::Store - An storage interface for Perl data structures
+ Catmandu::Store::Mock - An storage interface for Perl data structures
 
 =head1 SYNOPSIS
 
- use Catmandu::Store;
+ use Catmandu::Store::Mock;
 
- my $store = Catmandu::Store->connect();
+ my $store = Catmandu::Store::Mock->connect();
  my $obj = { name => 'Catmandu' , age => 1 };
  
  my $obj = $store->save($obj); # $obj = { _id => '1271-23138230-AEF12781' , name => 'Catmandu' , age => 1 };
@@ -49,16 +91,15 @@ __END__
 
  $store->delete($obj);
 
- $store->each(sub {
-    my $obj = shift;
+ foreach my $obj ($store->list) {
     printf "%s\n" , $obj->{name};
- });
+ } 
 
  $store->disconnect;
 
 =head1 DESCRIPTION
 
- Catmandu::Store is an abstract interface to be used as template for defining Perl object storage
+Catmandu::Store is an abstract interface to be used as template for defining Perl object storage
 and retrieval modules. An Catmandu::Store is a Perl module that implements all the methods of
 Catmandu::Store.
 
@@ -66,7 +107,7 @@ Catmandu::Store.
 
 =over 4
 
-=item connect(opt1=>val1, opt2=>val2, ..)
+=item connect(file => '/tmp/mock.t')
 
 Connect to a Catmandu::Store using the connection variables passed as a perl HASH. Returns
 a true value on success, undef on failure.

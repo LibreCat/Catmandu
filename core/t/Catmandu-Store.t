@@ -23,6 +23,6 @@ $obj->{name} = 'test';
 
 ok(defined $store->save($obj), 'save');
 
-ok(ref $store->list eq 'ARRAY', 'list');
+ok(defined $store->each, 'list');
 
-ok(defined $store->purge($obj));
+ok(defined $store->delete($obj));

@@ -24,6 +24,7 @@ requires 'Crypt::Blowfish' => '2.10';
 requires 'Cwd' => '3.29';
 requires 'Daemon::Generic' => '0.61';
 requires 'Data::Dumper' => '2.121_14' ;
+requires 'Data::UUID' => '1.216';
 requires 'DateTime' => '0.50';
 requires 'Date::Calc' => '5.4';
 requires 'DBI' => '1.607';
