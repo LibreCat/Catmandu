@@ -22,7 +22,7 @@ sub load {
 
   my $hashref = Storable::retrieve($self->{file});
 
-  return $hashref->{$id};
+  $hashref->{$id};
 }
 
 sub save {
@@ -35,7 +35,7 @@ sub save {
 
   Storable::nstore($hashref, $self->{file});
 
-  return $ref;
+  $ref;
 }
 
 sub delete {
@@ -49,7 +49,7 @@ sub delete {
     1;
   }
   else {
-    return 0;
+    0;
   }
 }
 
@@ -63,11 +63,11 @@ sub each {
     $count++;
   }
 
-  return $count;
+  $count;
 }
 
 sub disconnect {
-  return 1;
+  1;
 }
 
 1;
@@ -82,7 +82,7 @@ __END__
 
  use Catmandu::Store::Mock;
 
- my $store = Catmandu::Store::Mock->connect();
+ my $store = Catmandu::Store::Mock->connect(file => '/tmp/mock.db');
  my $obj = { name => 'Catmandu' , age => 1 };
  
  my $obj = $store->save($obj); # $obj = { _id => '1271-23138230-AEF12781' , name => 'Catmandu' , age => 1 };
