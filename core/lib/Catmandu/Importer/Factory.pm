@@ -15,7 +15,7 @@ sub open {
     Carp::croak("Failed to load driver '$driver_class'");
   }
 
-  my $inst = eval { $driver_class->connect($file,%args) };
+  my $inst = eval { $driver_class->open($file,%args) };
 
   unless ($inst && !$@) {
     Carp::croak("$driver_class initialisation failed : $@");

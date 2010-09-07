@@ -35,6 +35,7 @@ requires 'File::MimeInfo' => '0.15';
 requires 'File::MimeInfo::Magic' => '0.15';
 requires 'File::Path' => '2.04';
 requires 'File::Temp' => '0.22';
+requires 'File::Slurp' => '9999.13';
 requires 'FindBin' => '1.49';
 requires 'HTML::TreeBuilder' => '3.23';
 requires 'HTTP::Date' => '5.810';

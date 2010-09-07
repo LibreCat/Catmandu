@@ -30,8 +30,11 @@ unless ($file) {
 my $store    = Catmandu::Store::Factory->connect($store_driver,%store_args);
 my $importer = Catmandu::Importer::Factory->open($import_driver,$file,%import_args);
 
-while (my $obj = $importer->next() ) {
-}
+$importer->each(sub {
+  my $obj = shift;
+  use Data::Dumper;
+  print Dumper($obj);
+});
 
 $importer->close();
 

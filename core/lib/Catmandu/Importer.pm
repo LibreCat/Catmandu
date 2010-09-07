@@ -4,8 +4,9 @@ sub open {
   bless {}, shift;
 }
 
-sub next {
-  {};
+sub each {
+  my ($self,$callback) = @_;
+  0;
 }
 
 sub close {
@@ -26,9 +27,9 @@ __END__
 
  my $importer = Catmandu::Importer->open($stream);
 
- while (my $obj = $importer->next()) {
-  # process $obj ...
- }
+ $importer->each(sub {
+    my $obj = shift;
+ });
 
  $importer->close();
 
@@ -40,9 +41,9 @@ __END__
 
 Opens an import file (URL? stream?) for record parsing. Returns a Catmandu::Importer or undef on failure.
 
-=item next()
+=item each(\&callback)
 
-Returns the next Catmandu record or undef at the end of the stream.
+Loops over all Perl objects in the stream and calls 'callback' on them. Returns the number of processed objects.
 
 =item close()
 
