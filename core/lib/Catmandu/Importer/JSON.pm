@@ -8,6 +8,15 @@ use Carp;
 
 sub open {
   my ($pkg,$file,%args) = @_;
+  bless {
+    file => $file ,
+    %args
+  } , $pkg;
+}
+
+sub _jsonload {
+  my $file = shift;
+
   my $json_text = slurp($file);
   my $perl_scalar = from_json($json_text);
 
@@ -15,17 +24,17 @@ sub open {
     Carp::croak("Format error - $file doesn't return an ARRAY");
   }
 
-  bless {
-    data => $perl_scalar ,
-  } , $pkg;
+  $perl_scalar;
 }
 
 sub each {
   my $self = shift;
   my $callback = shift;
 
+  my $data = &_jsonload($self->{file});
+
   my $count = 0;
-  foreach my $obj (@{$self->{data}}) {
+  foreach my $obj (@$data) {
     &$callback($obj) if defined $callback;
     $count++;
   }
