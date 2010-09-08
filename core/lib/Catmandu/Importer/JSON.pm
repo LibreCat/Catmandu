@@ -60,9 +60,9 @@ __END__
 
  my $importer = Catmandu::Importer::JSON->open($stream);
 
- while (my $obj = $importer->next()) {
+ my $count = $importer->each(sub {
   # process $obj ...
- }
+ });
 
  $importer->close();
 
@@ -74,9 +74,9 @@ __END__
 
 Opens an import file (URL? stream?) for record parsing. Returns a Catmandu::Importer or undef on failure.
 
-=item next()
+=item each(\&callback)
 
-Returns the next Catmandu record or undef at the end of the stream.
+Loops over all Perl objects in the stream and calls 'callback' on them. Returns the number of processed objects.
 
 =item close()
 

@@ -38,9 +38,9 @@ __END__
 
  my $importer = Catmandu::Importer::Factory->open('Mods',$file);
 
- while (my $obj = $importer->next() {
+ my $count = $importer->each(sub {
    # $obj process
- }
+ });
 
  $importer->close();
 
