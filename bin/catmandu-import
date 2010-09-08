@@ -7,11 +7,13 @@ use warnings;
 use Getopt::Long;
 use Catmandu::Store::Factory;
 use Catmandu::Importer::Factory;
+use Catmandu::Validate;
 
 my $store_driver   = 'Mock';
 my %store_args     = (file => '/tmp/test.db');
 my $import_driver  = 'JSON';
 my %import_args    = ();
+my $schema         = {};
 
 GetOptions(
     "import=s"  => \$import_driver,
@@ -27,16 +29,20 @@ unless ($file) {
   exit 1;
 }
 
-my $store    = Catmandu::Store::Factory->connect($store_driver,%store_args);
-my $importer = Catmandu::Importer::Factory->open($import_driver,$file,%import_args);
+my $store     = Catmandu::Store::Factory->connect($store_driver,%store_args);
+my $importer  = Catmandu::Importer::Factory->open($import_driver,$file,%import_args);
+my $validator = Catmandu::Validate->new(schema => $schema);
 
-$importer->each(sub {
+my $count = $importer->each(sub {
   my $obj = shift;
-  use Data::Dumper;
-  print Dumper($obj);
+  my $ref = $validator->validate(obj => $obj);
+
+  $store->save($ref);  
 });
 
 $importer->close();
+
+say "imported: $count object(s)";
 
 sub usage {
     my @import_opts;
