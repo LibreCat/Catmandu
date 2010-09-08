@@ -1,0 +1,66 @@
+#!/usr/bin/env perl
+
+use 5.010;
+use strict;
+use warnings;
+
+use Getopt::Long;
+use Catmandu::Store::Factory;
+use Catmandu::Importer::Factory;
+
+my $store_driver   = 'Mock';
+my %store_args     = (file => '/tmp/test.db');
+my $import_driver  = 'JSON';
+my %import_args    = ();
+
+GetOptions(
+    "import=s"  => \$import_driver,
+    "io=s%"     => \%import_args,
+    "store=s"   => \$store_driver,
+    "so=s%"     => \%store_args);
+
+my $file    = shift;
+my @options = @ARGV;
+
+unless ($file) {
+  &usage;
+  exit 1;
+}
+
+my $store    = Catmandu::Store::Factory->connect($store_driver,%store_args);
+my $importer = Catmandu::Importer::Factory->open($import_driver,$file,%import_args);
+
+$importer->each(sub {
+  my $obj = shift;
+  use Data::Dumper;
+  print Dumper($obj);
+});
+
+$importer->close();
+
+sub usage {
+    my @import_opts;
+    my @store_opts;
+
+    while( my ($key, $value) = each(%import_args)) {
+      push(@import_opts,"    --io $key=$value");
+    }
+
+    while( my ($key, $value) = each(%store_args)) {
+      push(@store_opts,"    --so $key=$value");
+    }
+
+    my $import_opt_str = join "\n" , @import_opts;
+
+    my $store_opt_str = join "\n" , @store_opts;
+
+    say <<"EOF";
+usage: $0 [OPTIONS] file
+
+options:
+    --import=<$import_driver>
+$import_opt_str    
+    --store=<$store_driver>
+$store_opt_str    
+EOF
+}

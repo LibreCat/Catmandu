@@ -43,6 +43,9 @@ sub generate {
     my $body = <<"EOF";
 package $name;
 
+use strict;
+use warnings;
+
 sub new {
     bless {}, shift;
 }
