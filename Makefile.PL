@@ -3,13 +3,17 @@ use 5.010;
 use strict;
 use warnings;
 use inc::Module::Install;
+use YAML ();
+
+my $cfg = YAML::LoadFile('Catmandu.yml');
 
 name         'Catmandu';
 license      'perl';
 perl_version '5.10.0';
 version      '0.1';
 include      'Module::AutoInstall';
-no_index     'core';
+
+build_subdirs @{ $cfg->{stack} };
 
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
@@ -30,7 +34,6 @@ requires 'Date::Calc' => '5.4';
 requires 'DBI' => '1.607';
 requires 'Digest::MD5' => '2.36_01' ;
 requires 'Encode' => '2.23';
-requires 'File::Find' => '1.13';
 requires 'File::MimeInfo' => '0.15';
 requires 'File::MimeInfo::Magic' => '0.15';
 requires 'File::Path' => '2.04';
@@ -58,7 +61,6 @@ requires 'SOAP::Lite' => '0.710.08';
 requires 'SRU::Server' => 0;
 requires 'Storable' => '2.18';
 requires 'Template' => '2.22';
-requires 'Template::Plugin::Filter' => '1.38';
 test_requires 'Test::Class' => '0.36';
 test_requires 'Test::Exception' => '0.27';
 test_requires 'Test::Group' => '0.14';
@@ -74,7 +76,6 @@ requires 'Unicode::Normalize' => '1.02';
 requires 'Unicode::String' => '2.09';
 requires 'URI' => '1.40';
 requires 'URI::Split' => 0;
-requires 'WWW::Curl::Easy' => '4.06';
 test_requires 'WWW::Mechanize' => '1.58';
 requires 'WWW::Shorten::TinyURL' => '1.90';
 requires 'XML::Simple' => '2.18';
