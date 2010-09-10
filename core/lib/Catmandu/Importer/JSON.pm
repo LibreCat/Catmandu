@@ -18,7 +18,7 @@ sub _jsonload {
   my $file = shift;
 
   my $json_text = slurp($file);
-  my $perl_scalar = from_json($json_text);
+  my $perl_scalar = JSON->new->decode($json_text);
 
   if (ref $perl_scalar ne 'ARRAY') {
     Carp::croak("Format error - $file doesn't return an ARRAY");
