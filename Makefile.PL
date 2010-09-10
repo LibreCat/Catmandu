@@ -5,7 +5,7 @@ use warnings;
 use inc::Module::Install;
 use YAML ();
 
-my $cfg = YAML::LoadFile('Catmandu.yml');
+my $cfg = -e "Catmandu.yml" ? YAML::LoadFile('Catmandu.yml') : { stack => ['core'] };
 
 name         'Catmandu';
 license      'perl';
