@@ -15,6 +15,9 @@ include      'Module::AutoInstall';
 
 build_subdirs @{ $cfg->{stack} };
 
+requires 'Mouse' => '0.64';
+requires 'Try::Tiny' => '0.06';
+
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
 requires 'CGI::Application::Dispatch' => '2.16';

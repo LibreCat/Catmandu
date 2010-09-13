@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 14;
 use Test::Exception;
 use JSON;
 use IO::String;
@@ -32,25 +32,32 @@ package main;
 my $json;
 my $file = IO::String->new($json);
 
-my $exporter = Catmandu::Exporter::JSON->open($file);
+my $exporter = Catmandu::Exporter::JSON->new(io => $file);
 
-isa_ok $exporter, 'Catmandu::Exporter::JSON';
+isa_ok $exporter, 'Catmandu::Exporter::JSON', "isa exporter";
 
 throws_ok { $exporter->write("1") } qr/Can't export/, 'write string';
 throws_ok { $exporter->write(1) } qr/Can't export/, 'write integer';
 throws_ok { $exporter->write() } qr/Can't export/, 'write undef';
 throws_ok { $exporter->write(NoEach->new) } qr/Can't export/, 'write no each';
 
-$exporter->write($list);
+my $count;
+
+$count = $exporter->write($list);
 is_deeply $list, decode_json($json);
+is $count, 3, 'counting 3 objects';
 
 $file->truncate(0);
 
-$exporter->write($hash);
+$count = $exporter->write($hash);
 is_deeply $hash, decode_json($json);
+is $count, 1, 'counting 1 object';
 
 $file->truncate(0);
 
-$exporter->write(Each->new);
+$count = $exporter->write(Each->new);
 is_deeply $list, decode_json($json);
+is $count, 3, 'counting 3 objects';
+
+is $exporter->done, 1 , 'is done';
 

@@ -1,84 +1,63 @@
 package Catmandu::Exporter::JSON;
 
 use 5.010;
-use strict;
-use warnings;
-use Carp;
-use Scalar::Util;
+use Mouse;
 use JSON;
 
-sub open {
-    my ($pkg, $file) = @_;
-    bless {
-        file => $file,
-    }, $pkg;
-}
+has 'io' => (is => 'ro', required => 1);
 
 sub write {
     my ($self, $obj) = @_;
 
-    my $file = $self->{file};
-    my $size = 0;
+    my $io    = $self->io;
+    my $count = 0;
 
     given (ref $obj) {
         when ('ARRAY') {
-            print $file encode_json($obj);
-            $size = scalar @$obj;
+            print $io encode_json($obj);
+            $count = scalar @$obj;
         }
         when ('HASH') {
-            print $file encode_json($obj);
-            $size = 1;
+            print $io encode_json($obj);
+            $count = 1;
         }
-        when (Scalar::Util::blessed($obj) && $obj->can('each')) {
-            print $file '[';
+        when (blessed($obj) && $obj->can('each')) {
+            print $io '[';
             $obj->each(sub {
-                print $file ',' if $size;
-                print $file encode_json(shift);
-                $size += 1;
+                print $io ',' if $count;
+                print $io encode_json(shift);
+                $count++;
             });
-            print $file ']';
+            print $io ']';
         }
         default {
-            croak "Can't export";
+            confess "Can't export";
         }
     }
 
-    $size;
+    $count;
 }
 
-sub close {
+sub done {
     1;
 }
 
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
 =head1 NAME
 
- Catmandu::Exporter::JSON - [FILL IN THE PURPOSE]
+ Catmandu::Exporter::JSON - A JSON exporter for
+ bibliographic data structures.
 
 =head1 SYNOPSIS
 
- [FILL IN EXAMPLE USAGE]
+ Catmandu::Exporter::JSON->new(io => $io);
 
-=head1 DESCRIPTION
+=DESCRIPTION
 
- [FILL IN TEXTUAL DESCRIPTION OF THIS PACKAGE]
-
-=head1 METHODS
-
-=over 4
-
-=item method1
-
-[DOCUMENTATION]
-
-=item method2
-
-[DOCUMENTATION]
-
-=back
+ See L<Catmandu::Exporter>.
 
 =head1 AUTHORS
 

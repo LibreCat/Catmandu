@@ -1,53 +1,63 @@
 package Catmandu::Importer;
 
-sub open {
-  bless {}, shift;
+use Mouse;
+
+has 'driver' => (is => 'ro', required => 1, handles => [qw(each done)]);
+
+sub BUILDARGS {
+    my ($pkg, $driver_pkg, @args) = @_;
+    $driver_pkg or confess "Driver is required";
+    if ($driver_pkg !~ /::/) {
+        $driver_pkg = "$pkg::$driver_pkg";
+    }
+    eval { Mouse::Util::load_class($driver_pkg) } or
+        confess "Can't load driver $driver_pkg";
+    return {
+        driver => $driver_pkg->new(@args),
+    };
 }
 
-sub each {
-  my ($self,$callback) = @_;
-  0;
+sub DEMOLISH {
+    $_[0]->done;
 }
 
-sub close {
-   1;
-} 
-
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
 =head1 NAME
 
- Catmandu::Importer - An import interface for Bibliographic data structures
+ Catmandu::Exporter - An exporter for bibliographic data structures.
 
 =head1 SYNOPSIS
 
- use Catmandu::Importer;
-
- my $importer = Catmandu::Importer->open($stream);
+ $importer = Catmandu::Importer->new('JSON', io => $io);
 
  $importer->each(sub {
-    my $obj = shift;
+    my $obj = $_[0];
+    ...
  });
 
- $importer->close();
+ $ok = $importer->done;
 
 =head1 METHODS
 
 =over 4
 
-=item open($stream) 
+=item new($driver_pkg, @args)
 
-Opens an import file (URL? stream?) for record parsing. Returns a Catmandu::Importer or undef on failure.
+Contructs a new exporter. Passes @args to the driver instance.
+C<$driver_pkg> is assumed to live in the Catmandu::Exporter
+namespace unless full a package name is given.
 
 =item each(\&callback)
 
-Loops over all Perl objects in the stream and calls 'callback' on them. Returns the number of processed objects.
+Loops over all Perl objects in the stream and calls C<callback> on them. Returns the number of processed objects.
 
-=item close()
+=item done()
 
-Closes the import file (URL? stream?).
+Explicitly teardown the driver. This method is called at
+C<DESTROY> time. Returns 1 or 0.
 
 =back
 

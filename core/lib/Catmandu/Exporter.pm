@@ -1,53 +1,67 @@
 package Catmandu::Exporter;
 
-use strict;
-use warnings;
-use Carp;
+use Mouse;
 
-sub open {
-    my ($pkg, $format, @args) = @_;
+has 'driver' => (is => 'ro', required => 1, handles => [qw(write done)]);
 
-    $format or croak "Export format missing";
-    $pkg = "Catmandu::Exporter::$format";
-    eval "require $pkg" or croak "Failed to load exporter '$pkg'";
-    $pkg->open(@args);
+sub BUILDARGS {
+    my ($pkg, $driver_pkg, @args) = @_;
+    $driver_pkg or confess "Driver is required";
+    if ($driver_pkg !~ /::/) {
+        $driver_pkg = "$pkg::$driver_pkg";
+    }
+    eval { Mouse::Util::load_class($driver_pkg) } or
+        confess "Can't load driver $driver_pkg";
+    return {
+        driver => $driver_pkg->new(@args),
+    };
 }
 
-sub write {
-    0;
+sub DEMOLISH {
+    $_[0]->done;
 }
 
-sub close {
-    1;
-}
-
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
 =head1 NAME
 
- Catmandu::Exporter - [FILL IN THE PURPOSE]
+ Catmandu::Exporter - An exporter for bibliographic data structures.
 
 =head1 SYNOPSIS
 
- [FILL IN EXAMPLE USAGE]
+ $exporter = Catmandu::Exporter->new('JSON', io => $io);
 
-=head1 DESCRIPTION
+ $count = $exporter->write({foo => 'bar});
+ $exporter->write(['foo', 'bar']);
+ $exporter->write($obj); # export an object that understands 'each'
 
- [FILL IN TEXTUAL DESCRIPTION OF THIS PACKAGE]
+ $ok = $exporter->done;
 
 =head1 METHODS
 
 =over 4
 
-=item method1
+=item new($driver_pkg, @args)
 
-[DOCUMENTATION]
+Contructs a new exporter. Passes @args to the driver instance.
+C<$driver_pkg> is assumed to live in the Catmandu::Exporter
+namespace unless full a package name is given.
 
-=item method2
+=item driver()
 
-[DOCUMENTATION]
+Returns the underlying export driver.
+
+=item write($obj)
+
+Exports C<$obj>. C<$obj> kan be a hashref, arrayref or an object
+with an C<each> method.
+
+=item done()
+
+Explicitly teardown the driver. This method is called at
+C<DESTROY> time. Returns 1 or 0.
 
 =back
 

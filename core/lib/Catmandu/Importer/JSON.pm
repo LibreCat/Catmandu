@@ -1,88 +1,48 @@
 package Catmandu::Importer::JSON;
 
-use strict;
-use warnings;
+use Mouse;
 use File::Slurp qw(slurp);
 use JSON;
-use Carp;
 
-sub open {
-  my ($pkg,$file,%args) = @_;
-  bless {
-    file => $file ,
-    %args
-  } , $pkg;
-}
-
-sub _jsonload {
-  my $file = shift;
-
-  my $json_text = slurp($file);
-  my $perl_scalar = JSON->new->decode($json_text);
-
-  if (ref $perl_scalar ne 'ARRAY') {
-    Carp::croak("Format error - $file doesn't return an ARRAY");
-  }
-
-  $perl_scalar;
-}
+has 'io' => (is => 'ro', required => 1);
 
 sub each {
-  my $self = shift;
-  my $callback = shift;
+    my ($self, $callback) = @_;
 
-  my $data = &_jsonload($self->{file});
+    my $io = $self->io;
+    my $array_ref = decode_json(slurp($io));
+    if (ref $array_ref ne 'ARRAY') {
+        confess "Format error: $io doesn't contain a JSON array";
+    }
 
-  my $count = 0;
-  foreach my $obj (@$data) {
-    &$callback($obj) if defined $callback;
-    $count++;
-  }
-
-  $count;
-} 
-
-sub close {
-  1;
+    my $count = 0;
+    foreach my $obj (@$array_ref) {
+        $callback->($obj);
+        $count++;
+    }
+    $count;
 }
 
-1;
+sub done {
+    1;
+}
+
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
 =head1 NAME
 
- Catmandu::Importer::JSON - An import interface for Bibliographic data structures
+ Catmandu::Importer::JSON - An JSON importer for
+ bibliographic data structures.
 
 =head1 SYNOPSIS
 
- use Catmandu::Importer::JSON;
+ Catmandu::Importer::JSON->new(io => $io);
 
- my $importer = Catmandu::Importer::JSON->open($stream);
+=DESCRIPTION
 
- my $count = $importer->each(sub {
-  # process $obj ...
- });
-
- $importer->close();
-
-=head1 METHODS
-
-=over 4
-
-=item open($stream) 
-
-Opens an import file (URL? stream?) for record parsing. Returns a Catmandu::Importer or undef on failure.
-
-=item each(\&callback)
-
-Loops over all Perl objects in the stream and calls 'callback' on them. Returns the number of processed objects.
-
-=item close()
-
-Closes the import file (URL? stream?).
-
-=back
+ See L<Catmandu::Importer>.
 
 =head1 AUTHORS
 

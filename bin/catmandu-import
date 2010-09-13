@@ -30,17 +30,17 @@ unless ($file) {
 }
 
 my $store     = Catmandu::Store::Factory->connect($store_driver,%store_args);
-my $importer  = Catmandu::Importer::Factory->open($import_driver,$file,%import_args);
+my $importer  = Catmandu::Importer->new($import_driver, io => $file, %import_args);
 my $validator = Catmandu::Validate->new(schema => $schema);
 
 my $count = $importer->each(sub {
   my $obj = shift;
   my $ref = $validator->validate(obj => $obj);
 
-  $store->save($ref);  
+  $store->save($ref)
 });
 
-$importer->close();
+$importer->done();
 
 say "imported: $count object(s)";
 
