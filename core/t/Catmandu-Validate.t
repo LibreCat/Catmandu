@@ -19,8 +19,8 @@ throws_ok { $validator->validate({}) } qr /requires a schema/ , 'caught requires
 
 $validator = Catmandu::Validate->new(schema => {});
 
-lives_ok { $validator->validate({}) } , 'expecting to live';
-lives_ok { $validator->validate(obj => {}) } , 'expecting to live';
+lives_ok { my $ans = $validator->validate({}) } , 'expecting to live';
+lives_ok { my $ans = $validator->validate(obj => {}) } , 'expecting to live';
 
 lives_ok { Catmandu::Validate::validate(obj => {} , schema => {}) } , 'expecting to live';
 

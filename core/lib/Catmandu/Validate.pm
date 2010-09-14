@@ -19,7 +19,8 @@ sub _parse_args {
     Carp::croak("Catmandu::Validate requires at least two arguments");
    }
 
-   my $self;
+   my $self = '';
+
    if (blessed $args[0]) {
       $self = shift @args;
 
