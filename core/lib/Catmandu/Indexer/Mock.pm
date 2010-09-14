@@ -2,6 +2,7 @@ package Catmandu::Indexer::Mock;
 
 use 5.010;
 use Mouse;
+use Data::Dumper;
 
 sub BUILD {
   my $self;
@@ -18,9 +19,22 @@ sub delete {
 }
 
 sub index_obj {
-  my ($self, $obj) = @_;
+  my ($self, $obj, $converter) = @_;
 
   # implement here your indexation
+  my $ref;
+
+  if (blessed($converter) && $converter->can('convert')) {
+      $ref = $converter->convert($obj);
+  }
+  elsif (ref $converter eq 'CODE') {
+      $ref = &$converter($obj);
+  }
+  else {
+      $ref = $obj;
+  }
+
+  warn "indexing: " . Dumper($ref);
 
   1;
 }
