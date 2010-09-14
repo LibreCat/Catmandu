@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
- Catmandu::Exporter - An exporter for bibliographic data structures.
+ Catmandu::Importer - An importer of bibliographic data structures.
 
 =head1 SYNOPSIS
 

@@ -55,7 +55,7 @@ Returns the underlying driver.
 
 =item write($obj)
 
-Exports C<$obj>. C<$obj> kan be a hashref, arrayref or an object
+Exports C<$obj>. C<$obj> can be a hashref, arrayref or an object
 with an C<each> method.
 
 =item done()
