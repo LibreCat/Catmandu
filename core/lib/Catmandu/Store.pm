@@ -1,93 +1,85 @@
 package Catmandu::Store;
 
-sub connect {
-  bless {}, shift;
+use Mouse;
+
+has 'driver' => (is => 'ro', required => 1, handles => [qw(load save delete each done)]);
+
+sub BUILDARGS {
+    my ($pkg, $driver_pkg, @args) = @_;
+    $driver_pkg or confess "Driver is required";
+    if ($driver_pkg !~ /::/) {
+        $driver_pkg = "$pkg::$driver_pkg";
+    }
+    eval { Mouse::Util::load_class($driver_pkg) } or
+        confess "Can't load driver $driver_pkg";
+    return {
+        driver => $driver_pkg->new(@args),
+    };
 }
 
-sub load {
-  my ($self,$id) = @_;
-  return {};
+sub DEMOLISH {
+    $_[0]->done;
 }
 
-sub save {
-  my ($self,$ref) = @_;
-  return {};
-}
-
-sub delete {
-  my ($self,$ref) = @_;
-  return 1;
-}
-
-sub each {
-  my ($self, $sub) = @_;
-  return 0;
-}
-
-sub disconnect {
-  return 1;
-}
-
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
 =head1 NAME
 
- Catmandu::Store - An storage interface for Perl data structures
+ Catmandu::Store - An store for bibliographic data structures.
 
 =head1 SYNOPSIS
 
- use Catmandu::Store;
-
- my $store = Catmandu::Store->connect();
- my $obj = { name => 'Catmandu' , age => 1 };
- 
- my $obj = $store->save($obj); # $obj = { _id => '1271-23138230-AEF12781' , name => 'Catmandu' , age => 1 };
-
- my $obj = $store->load('1271-23138230-AEF12781');
+ $store = Catmandu::Store->new('Mock', file => $file);
+ $obj = { 'title' => 'Catmandu' };
+ $obj = $store->save($obj); # $obj = { '_id' => '1271-23138230-AEF12781' , 'name' => 'Catmandu' };
+ $obj = $store->load('1271-23138230-AEF12781');
 
  $store->delete($obj);
 
  $store->each(sub {
-    my $obj = shift;
-    printf "%s\n" , $obj->{name};
+    say $_[0]->{'name'};
  });
 
- $store->disconnect;
-
-=head1 DESCRIPTION
-
- Catmandu::Store is an abstract interface to be used as template for defining Perl object storage
-and retrieval modules. An Catmandu::Store is a Perl module that implements all the methods of
-Catmandu::Store.
+ $store->done;
 
 =head1 METHODS
 
 =over 4
 
-=item connect(opt1=>val1, opt2=>val2, ..)
+=item new($driver_pkg, @args);
 
-Connect to a Catmandu::Store using the connection variables passed as a perl HASH. Returns
-a true value on success, undef on failure.
+Constructs a new store client. Passes @args to the driver instance.
+C<$driver_pkg> is assumed to live in the Catmandu::Store
+namespace unless full a package name is given.
+
+=item driver()
+
+Returns the underlying driver.
 
 =item load($id)
 
-Retrieve a Perl object from the store given an identifier. Returns the object as perl HASH on
-success, return undef on failure.
+Retrieve the object with the key C<$id> form the store. Returns
+the object as a hashref when found, C<undef> otherwise.
 
 =item save($obj);
 
-Save a Perl object into the store. Returns the saved object on success or undef on failure.
+Save C<$obj> in the store. Returns the object as a hashref
+when found, C<undef> otherwise.
 
 =item delete($obj);
 
-Delete the Perl object from the store. Returns a true value on sucess, undef on failure.
+Delete C<$obj> from the store. Returns 1 or 0.
 
-=item each(BLOCK);
+=item each(\%callback);
 
-For every Perl object in the store run the BLOCK code. The BLOCK gets the current Perl object
-as first argument. Returns the number of Perl objects found.
+Loops over all objects in the store and passes them to C<callback>. Returns the number of objects found.
+
+=item done()
+
+Explicitly teardown the driver. This method is called at
+C<DESTROY> time. Returns 1 or 0.
 
 =back
 

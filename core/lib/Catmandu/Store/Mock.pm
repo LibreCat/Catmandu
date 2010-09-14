@@ -1,136 +1,90 @@
 package Catmandu::Store::Mock;
 
-use 5.010;
-use strict;
-use warnings;
-use Storable;
+use Mouse;
 use Data::UUID;
+use Storable;
 
-sub connect {
-  my ($pkg,%opts) = @_;
-  die "usage: Catmandu::Store::Mock->connect(file => '...')" unless ($opts{file});
-  unless (-r $opts{file}) {
-    Storable::nstore({},$opts{file});
-  }
-  bless {
-     file => $opts{file}
-  } , $pkg;
+has 'file' => (is => 'ro', required => 1);
+
+sub BUILD {
+    my $self = $_[0];
+    if (! -r $self->file) {
+        Storable::nstore({}, $self->file);
+    }
 }
 
 sub load {
-  my ($self,$id) = @_;
-
-  my $hashref = Storable::retrieve($self->{file});
-
-  $hashref->{$id};
+    my ($self, $id) = @_;
+    Storable::retrieve($self->file)->{$id};
 }
 
 sub save {
-  my ($self,$ref) = @_;
-  my $id = Data::UUID->new->create_str();
-  my $hashref = Storable::retrieve($self->{file});
+    my ($self, $obj) = @_;
 
-  $ref->{_id}     = $id;
-  $hashref->{$id} = $ref;
+    if (ref $obj ne 'HASH') {
+        confess "Object is must be a hashref";
+    }
 
-  Storable::nstore($hashref, $self->{file});
+    my $id = $obj->{_id} ||= Data::UUID->new->create_str;
 
-  $ref;
+    my $store = Storable::retrieve($self->file);
+    $store->{$id} = $obj;
+    Storable::nstore($store, $self->file);
+
+    $obj;
 }
 
 sub delete {
-  my ($self,$ref) = @_;
-  my $id = $ref->{_id};
-  my $hashref = Storable::retrieve($self->{file});
+    my ($self, $obj) = @_;
 
-  if (exists $hashref->{$id}) {
-    delete $hashref->{$id};
-    Storable::nstore($hashref, $self->{file});
-    1;
-  }
-  else {
+    if (ref $obj ne 'HASH') {
+        confess "Object must be a hashref";
+    }
+
+    my $id = $obj->{_id};
+    my $store = Storable::retrieve($self->file);
+
+    if (exists $store->{$id}) {
+        delete $store->{$id};
+        Storable::nstore($store, $self->file);
+        return 1;
+    }
     0;
-  }
 }
 
 sub each {
-  my ($self,$block) = @_;
-  my $hashref = Storable::retrieve($self->{file});
+    my ($self, $block) = @_;
 
-  my $count = 0;
-  while ( my ($key, $object) = each(%$hashref) ) {
-    &$block($object) if defined $block;
-    $count++;
-  }
+    my $store = Storable::retrieve($self->file);
+    my $count = 0;
 
-  $count;
+    while ( my ($key, $obj) = each(%$store) ) {
+        $block->($obj);
+        $count++;
+    }
+    $count;
 }
 
-sub disconnect {
-  1;
+sub done {
+    1;
 }
 
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 
 =head1 NAME
 
- Catmandu::Store::Mock - An storage interface for Perl data structures
+ Catmandu::Store::Mock - A mock store for bibliographic
+ data structures.
 
 =head1 SYNOPSIS
 
- use Catmandu::Store::Mock;
-
- my $store = Catmandu::Store::Mock->connect(file => '/tmp/mock.db');
- my $obj = { name => 'Catmandu' , age => 1 };
- 
- my $obj = $store->save($obj); # $obj = { _id => '1271-23138230-AEF12781' , name => 'Catmandu' , age => 1 };
-
- my $obj = $store->load('1271-23138230-AEF12781');
-
- $store->delete($obj);
-
- foreach my $obj ($store->list) {
-    printf "%s\n" , $obj->{name};
- } 
-
- $store->disconnect;
+ Catmandu::Store::Mock->new(file => $path);
 
 =head1 DESCRIPTION
 
-Catmandu::Store is an abstract interface to be used as template for defining Perl object storage
-and retrieval modules. An Catmandu::Store is a Perl module that implements all the methods of
-Catmandu::Store.
-
-=head1 METHODS
-
-=over 4
-
-=item connect(file => '/tmp/mock.t')
-
-Connect to a Catmandu::Store using the connection variables passed as a perl HASH. Returns
-a true value on success, undef on failure.
-
-=item load($id)
-
-Retrieve a Perl object from the store given an identifier. Returns the object as perl HASH on
-success, return undef on failure.
-
-=item save($obj);
-
-Save a Perl object into the store. Returns the saved object on success or undef on failure.
-
-=item delete($obj);
-
-Delete the Perl object from the store. Returns a true value on sucess, undef on failure.
-
-=item each(BLOCK);
-
-For every Perl object in the store run the BLOCK code. The BLOCK gets the current Perl object
-as first argument. Returns the number of Perl objects found.
-
-=back
+ See L<Catmandu::Store>.
 
 =head1 AUTHORS
 

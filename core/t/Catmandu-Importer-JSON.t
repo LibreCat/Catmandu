@@ -7,8 +7,8 @@ use Test::Exception;
 use JSON;
 use IO::String;
 
-BEGIN { use_ok('Catmandu::Importer::JSON'); }
-require_ok('Catmandu::Importer::JSON');
+BEGIN { use_ok 'Catmandu::Importer::JSON'; }
+require_ok 'Catmandu::Importer::JSON';
 
 my $ref = [
     { id => 1, one => { deeply => { nested => { data => { structure => "ok" }}}}},

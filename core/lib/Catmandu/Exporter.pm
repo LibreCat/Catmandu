@@ -51,7 +51,7 @@ namespace unless full a package name is given.
 
 =item driver()
 
-Returns the underlying export driver.
+Returns the underlying driver.
 
 =item write($obj)
 

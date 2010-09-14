@@ -50,9 +50,13 @@ Contructs a new exporter. Passes @args to the driver instance.
 C<$driver_pkg> is assumed to live in the Catmandu::Exporter
 namespace unless full a package name is given.
 
+=item driver()
+
+Returns the underlying driver.
+
 =item each(\&callback)
 
-Loops over all Perl objects in the stream and calls C<callback> on them. Returns the number of processed objects.
+Loops over all objects in the stream and passes them to C<callback>. Returns the number of processed objects.
 
 =item done()
 
