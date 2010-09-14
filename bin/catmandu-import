@@ -5,8 +5,8 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use Catmandu::Store::Factory;
-use Catmandu::Importer::Factory;
+use Catmandu::Store;
+use Catmandu::Importer;
 use Catmandu::Validate;
 
 my $store_driver   = 'Mock';
@@ -29,7 +29,7 @@ unless ($file) {
   exit 1;
 }
 
-my $store     = Catmandu::Store::Factory->connect($store_driver,%store_args);
+my $store     = Catmandu::Store->new($store_driver,%store_args);
 my $importer  = Catmandu::Importer->new($import_driver, io => $file, %import_args);
 my $validator = Catmandu::Validate->new(schema => $schema);
 

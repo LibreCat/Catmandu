@@ -12,7 +12,7 @@ sub each {
     my $io = $self->io;
     my $array_ref = decode_json(slurp($io));
     if (ref $array_ref ne 'ARRAY') {
-        confess "Format error: $io doesn't contain a JSON array";
+        confess "Can only import a JSON array";
     }
 
     my $count = 0;
