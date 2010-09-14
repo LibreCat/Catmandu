@@ -3,15 +3,23 @@ package Catmandu::Indexer::Converter;
 use 5.010;
 use Mouse;
 
+has 'mapping' => (is => 'ro' , isa => 'HashRef');
+
 sub convert {
   my ($self,$ref) = @_ ;
-
+  
   confess "Reference is not a Perl hash ref" unless ref($ref) eq 'HASH';
 
   my $converted = {};
 
   foreach my $key (keys %$ref) {
-    $converted->{$key} = $self->flatten($ref->{$key});
+    if ($self->mapping) {
+      my $mapped_key = $self->mapping->{$key};  
+      $converted->{$mapped_key} = $self->flatten($ref->{$key}) if $mapped_key;
+    }
+    else {
+      $converted->{$key} = $self->flatten($ref->{$key});
+    }
   }
  
   $converted;
@@ -50,6 +58,13 @@ __END__
 
  my $converter = Catmandu::Indexer::Converter->new;
 
+ or
+
+ my $converter = Catmandu::Indexer::Converter->new(mapping => {
+                       'title'    => 'ti' ,
+                       'authors'  => 'au' ,
+                 });
+
  my $obj = {
             title   => 'ABC' ,
             authors => [
@@ -61,6 +76,10 @@ __END__
  my $doc = $converter->convert($obj);
 
  $doc = { title => 'ABC' , authors => 'James Brown Miles Davis' };
+
+ or when mapping was used
+
+ $doc = { ti => 'ABC' , au => 'James Brown Miles Davis' };
  
 =head1 AUTHORS
 
