@@ -22,7 +22,7 @@ sub save {
     my ($self, $obj) = @_;
 
     if (ref $obj ne 'HASH') {
-        confess "Object is must be a hashref";
+        confess "Object must be a hashref";
     }
 
     my $id = $obj->{_id} ||= Data::UUID->new->create_str;

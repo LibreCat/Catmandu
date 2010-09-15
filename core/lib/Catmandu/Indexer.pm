@@ -6,6 +6,7 @@ has 'driver' => (is => 'ro' , required => 1, handles => [qw(each done)]);
 
 sub BUILDARGS {
     my ($pkg, $driver_pkg, @args) = @_;
+
     $driver_pkg or confess "Driver is required";
     if ($driver_pkg !~ /::/) {
         $driver_pkg = "$pkg::$driver_pkg";
@@ -22,7 +23,6 @@ sub DEMOLISH {
     $_[0]->done;
 }
 
-
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -31,7 +31,7 @@ __END__
 
 =head1 NAME
 
- Catmandu::Indexer - An indexer for Perl bibligraphic data structures.
+ Catmandu::Indexer - An indexer for Perl bibliographic data structures.
 
 =head1 SYNOPSIS
 
