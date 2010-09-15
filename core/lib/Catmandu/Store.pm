@@ -8,10 +8,10 @@ sub BUILDARGS {
     my ($pkg, $driver_pkg, @args) = @_;
     $driver_pkg or confess "Driver is required";
     if ($driver_pkg !~ /::/) {
-        $driver_pkg = "$pkg::$driver_pkg";
+        $driver_pkg = "$pkg\::$driver_pkg";
     }
     eval { Mouse::Util::load_class($driver_pkg) } or
-        confess "Can't load driver $driver_pkg";
+        confess "Can't load driver $driver_pkg : $@";
     return {
         driver => $driver_pkg->new(@args),
     };

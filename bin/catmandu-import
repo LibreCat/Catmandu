@@ -41,6 +41,7 @@ my $count = $importer->each(sub {
 });
 
 $importer->done();
+$store->done();
 
 say "imported: $count object(s)";
 
