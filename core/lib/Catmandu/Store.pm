@@ -1,27 +1,12 @@
 package Catmandu::Store;
 
-use Mouse;
+use Catmandu::Proxy;
 
-has 'driver' => (is => 'ro', required => 1, handles => [qw(load save delete each done)]);
-
-sub BUILDARGS {
-    my ($pkg, $driver_pkg, @args) = @_;
-    $driver_pkg or confess "Driver is required";
-    if ($driver_pkg !~ /::/) {
-        $driver_pkg = "$pkg\::$driver_pkg";
-    }
-    eval { Mouse::Util::load_class($driver_pkg) } or
-        confess "Can't load driver $driver_pkg : $@";
-    return {
-        driver => $driver_pkg->new(@args),
-    };
-}
-
-sub DEMOLISH {
-    $_[0]->done;
-}
+proxy 'load','save', 'delete', 'each';
 
 __PACKAGE__->meta->make_immutable;
+no Catmandu::Proxy;
+no Mouse;
 
 __END__
 
