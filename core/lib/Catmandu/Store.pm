@@ -7,6 +7,7 @@ proxy 'load','save', 'delete', 'each';
 __PACKAGE__->meta->make_immutable;
 no Catmandu::Proxy;
 no Mouse;
+1;
 
 __END__
 

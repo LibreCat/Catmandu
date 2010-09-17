@@ -29,6 +29,7 @@ sub done {
 
 __PACKAGE__->meta->make_immutable;
 no Mouse;
+1;
 
 __END__
 
