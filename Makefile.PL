@@ -5,7 +5,7 @@ use warnings;
 use inc::Module::Install;
 use YAML ();
 
-my $stack = -f "Catmandu.yml" ? YAML::LoadFile('Catmandu.yml') : ['core'];
+my $cfg = -e "Catmandu.yml" ? YAML::LoadFile('Catmandu.yml') : { stack => ['core'] };
 
 name         'Catmandu';
 license      'perl';
@@ -13,14 +13,10 @@ perl_version '5.10.0';
 version      '0.1';
 include      'Module::AutoInstall';
 
-build_subdirs @$stack;
+build_subdirs @{ $cfg->{stack} };
 
-requires 'Dancer' => '1.1811';
-requires 'Hash::Merge' => '0.12';
 requires 'Mouse' => '0.64';
-requires 'Path::Class' => '0.21';
-requires 'YAML' => '0.72';
-#requires 'Try::Tiny' => '0.06';
+requires 'Try::Tiny' => '0.06';
 
 requires 'CGI' => '3.49';
 requires 'CGI::Application' => '4.31';
@@ -29,8 +25,8 @@ requires 'CGI::Application::Plugin::I18N' => '0.03';
 requires 'CGI::Application::Plugin::LogDispatch' => '1.02';
 requires 'CGI::Application::Plugin::Redirect' => '1.00';
 requires 'CGI::Application::Plugin::Stream' => '2.10';
-requires 'Config::Auto' => '0.20';
 requires 'CQL::Parser' => '1.0';
+requires 'Config::Auto' => '0.20';
 requires 'Crypt::Blowfish' => '2.10';
 requires 'Cwd' => '3.29';
 requires 'Daemon::Generic' => '0.61';
