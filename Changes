@@ -1,9 +1,0 @@
-2010-09-02
-  * Create Catmandu directory tree. '$Catmandu/core' contains the basic application,
-    '$Carmandu/site1' , '$Carmandu/site2' will contain local instances
-  * Makefile.PL contains all dependent modules. Using Module::Install to grab them
-    automatically from CPAN
-
-2010-09-03
-  * Adding a small test framwork. 'perl Makefile.PL; make test' should execute the
-    test code in all instances.
