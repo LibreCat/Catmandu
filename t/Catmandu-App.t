@@ -30,18 +30,18 @@ package main;
 my $app = T::App->as_psgi_app;
 
 test_psgi $app, sub {
-    my $sub = shift;
+    my $cb = shift;
     my $res;
 
-    $res = $sub->(GET "/runhelper");
+    $res = $cb->(GET "/runhelper");
     is $res->code, 200;
     is $res->content, "body";
 
-    $res = $sub->(GET "/runsub");
+    $res = $cb->(GET "/runsub");
     is $res->code, 200;
     is $res->content, "body";
 
-    $res = $sub->(GET "/404");
+    $res = $cb->(GET "/404");
     is $res->code, 404;
 };
 

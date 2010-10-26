@@ -9,6 +9,15 @@ use Template;
 use YAML ();
 use JSON ();
 
+sub instance {
+    state $instance //= $_[0]->new;
+}
+
+sub new {
+    my $class = ref $_[0] ? ref $_[0] : $_[0];
+    bless {}, $class;
+}
+
 sub home {
     $ENV{CATMANDU_HOME} or confess "CATMANDU_HOME not set";
 }
@@ -18,27 +27,30 @@ sub env {
 }
 
 sub stack {
-    state $stack //= do {
-        my $pkg = $_[0];
-        my $yml = file($pkg->home, "catmandu.yml")->stringify;
-        if (-f $yml) {
+    my $self = shift;
+    if (!ref $self) {
+        return $self->instance->stack;
+    }
+    $self->{stack} //= do {
+        my $file = file($self->home, "catmandu.yml")->stringify;
+        if (-f $file) {
             try {
                 YAML::LoadFile($file);
             } catch {
                 confess "Can't load catmandu.yml";
             };
         } else {
-            [ $pkg->home ];
+            [ $self->home ];
         }
     };
 }
 
 sub paths {
-    my ($pkg, $dir) = @_;
+    my ($self, $dir) = @_;
     if ($dir) {
-        [ grep { -d $_ } map { dir($pkg->home, $_, $dir)->stringify } @{$pkg->stack} ];
+        [ grep { -d $_ } map { dir($self->home, $_, $dir)->stringify } @{$self->stack} ];
     } else {
-        [ map { dir($pkg->home, $_)->stringify } @{$pkg->stack} ];
+        [ map { dir($self->home, $_)->stringify } @{$self->stack} ];
     }
 }
 
@@ -47,20 +59,23 @@ sub lib {
 }
 
 sub find_psgi {
-    my ($pkg, $file) = @_;
+    my ($self, $file) = @_;
     $file = "$file.psgi" if $file !~ /\.psgi$/;
-    my $paths = $pkg->paths('psgi');
+    my $paths = $self->paths('psgi');
     my @files = grep { -f $_ } map { file($_, $file)->stringify } @$paths;
     $files[0];
 }
 
 sub conf {
-    state $conf //= do {
-        my $pkg = shift;
+    my $self = shift;
+    if (!ref $self) {
+        return $self->instance->conf;
+    }
+    $self->{conf} //= do {
         my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
         my $merged = {};
 
-        foreach my $conf_path ( reverse @{$pkg->paths('conf')} ) {
+        foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
             dir($conf_path)->recurse(depthfirst => 1, callback => sub {
                 my $file = shift;
                 my $path = $file->stringify;
@@ -77,7 +92,7 @@ sub conf {
             });
         }
 
-        if (my $hash = delete $merged->{env} and $hash = delete $hash->{$pkg->env}) {
+        if (my $hash = delete $merged->{env} and $hash = delete $hash->{$self->env}) {
             $merged = $merger->merge($merged, $hash);
         }
 
@@ -86,9 +101,12 @@ sub conf {
 }
 
 sub print_template {
-    my $pkg = shift;
-    state $template //= Template->new({
-        INCLUDE_PATH => $pkg->paths('template'),
+    my $self = shift;
+    if (!ref $self) {
+        return $self->instance->print_template(@_);
+    }
+    my $template = $self->{template} //= Template->new({
+        INCLUDE_PATH => $self->paths('template'),
     });
     $template->process(@_)
         or confess $template->error;

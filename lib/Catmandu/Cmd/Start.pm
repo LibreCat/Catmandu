@@ -3,6 +3,7 @@ package Catmandu::Cmd::Start;
 use Any::Moose;
 use Plack::Runner;
 use Plack::Util;
+use Catmandu;
 
 with any_moose('X::Getopt');
 
@@ -26,21 +27,20 @@ sub BUILD {
 
 sub run {
     my $self = shift;
-    my $app  = $self->app;
+    my $catmandu = Catmandu->new;
+    my $app = $self->app;
     my $eval;
     my $psgi;
-
-    require Catmandu;
 
     if ($app =~ m/::/) {
         $eval = $app."->as_psgi_app";
     } else {
-        $psgi = Catmandu->find_psgi($app) or confess "Can't find psgi app $app";
+        $psgi = $catmandu->find_psgi($app) or confess "Can't find psgi app $app";
     }
 
     my @argv;
-    push @argv, map { ('-I', $_) } Catmandu->lib;
-    push @argv, '-E', Catmandu->env;
+    push @argv, map { ('-I', $_) } $catmandu->lib;
+    push @argv, '-E', $catmandu->env;
     push @argv, '-p', $self->port   if $self->port;
     push @argv, '-o', $self->host   if $self->host;
     push @argv, '-S', $self->socket if $self->socket;
