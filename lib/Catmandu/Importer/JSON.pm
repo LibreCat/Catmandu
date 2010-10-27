@@ -1,10 +1,10 @@
-package Catmandu::Import::JSON;
+package Catmandu::Importer::JSON;
 
 use JSON ();
 use File::Slurp ();
 use Any::Moose;
 
-with 'Catmandu::Import';
+with 'Catmandu::Importer';
 
 sub load {
     my ($self) = @_;
@@ -18,12 +18,12 @@ sub load {
 }
 
 sub each {
-    my ($self, $cb) = @_;
+    my ($self, $sub) = @_;
 
     my $array_ref = $self->load;
     my $count = 0;
     foreach my $obj (@$array_ref) {
-        $cb->($obj);
+        $sub->($obj);
         $count++;
     }
     $count;

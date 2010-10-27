@@ -1,8 +1,9 @@
-package Catmandu::Export;
+package Catmandu::Importer;
 
 use Any::Moose '::Role';
 
-requires 'dump';
+requires 'load';
+requires 'each';
 
 has 'io' => (is => 'ro', required => 1);
 

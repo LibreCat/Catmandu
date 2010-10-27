@@ -19,13 +19,13 @@ has request => (
 has response => (
     is => 'ro',
     lazy => 1,
-    builder => '__build_response',
+    builder => '_build_response',
     handles => [qw(
         redirect
     )],
 );
 
-sub __build_response {
+sub _build_response {
     $_[0]->request->new_response(200, ['Content-Type' => "text/html"]);
 }
 

@@ -1,9 +1,9 @@
-package Catmandu::Export::JSON;
+package Catmandu::Exporter::JSON;
 
 use JSON qw(encode_json);
 use Any::Moose;
 
-with 'Catmandu::Export';
+with 'Catmandu::Exporter';
 
 sub dump {
     my ($self, $obj) = @_;

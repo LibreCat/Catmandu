@@ -1,10 +1,9 @@
-package Catmandu::Store;
+package Catmandu::Index;
 
 use Any::Moose '::Role';
 
-requires 'load';
-requires 'each';
 requires 'save';
+requires 'find';
 requires 'delete';
 
 no Any::Moose '::Role';
