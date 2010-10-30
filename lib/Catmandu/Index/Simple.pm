@@ -8,6 +8,7 @@ use KinoSearch::Searcher;
 
 with 'Catmandu::Index';
 
+has fields => (is => 'ro', isa => 'HashRef', required => 1);
 has path => (is => 'ro', isa => 'Str', required => 1);
 
 has _analyzer => (
@@ -33,32 +34,44 @@ has _searcher => (
     clearer => '_clear_searcher',
 );
 
+sub BUILD {
+    my $self = shift;
+    my $id_field = $self->fields->{_id} ||= {};
+    $id_field->{vectorized} = 0;
+    $id_field->{analyzed}   = 0;
+}
+
 sub _build_analyzer {
     KinoSearch::Analysis::PolyAnalyzer->new(language => 'en');
 }
 
 sub _build_indexer {
+    my $self = shift;
     my $indexer = KinoSearch::InvIndexer->new(
-        invindex => $_[0]->path,
-        analyzer => $_[0]->_analyzer,
+        invindex => $self->path,
+        analyzer => $self->_analyzer,
         create   => 1,
     );
-    $indexer->spec_field(name => '_id', analyzed => 0, vectorized => 0);
+    while (my ($name, $spec) = each %{$self->fields}) {
+        $indexer->spec_field(%$spec, name => $name);
+    }
     $indexer;
 }
 
 sub _build_searcher {
+    my $self = shift;
     KinoSearch::Searcher->new(
-        invindex => $_[0]->path,
-        analyzer => $_[0]->_analyzer,
+        invindex => $self->path,
+        analyzer => $self->_analyzer,
     );
 }
 
 sub save {
     my ($self, $obj) = @_;
     my $doc = $self->_indexer->new_doc;
-    while (my ($key, $val) = each %$obj) {
-        $doc->set_value($key => $val);
+    while (my ($field, $value) = each %$obj) {
+        $self->fields->{$field} or return;
+        $doc->set_value($field => $value);
     }
     $self->_indexer->add_doc($doc);
     $obj;

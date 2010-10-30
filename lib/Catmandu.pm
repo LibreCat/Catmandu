@@ -2,7 +2,6 @@ package Catmandu;
 
 use 5.010;
 use Carp qw(confess);
-use Try::Tiny;
 use Hash::Merge ();
 use Path::Class;
 use Template;
@@ -26,6 +25,11 @@ sub env {
     $ENV{CATMANDU_ENV} or confess "CATMANDU_ENV not set";
 }
 
+sub catmandu_lib {
+    state $catmandu_lib //=
+        file(__FILE__)->dir->parent->subdir('lib')->absolute->resolve->stringify;
+}
+
 sub stack {
     my $self = shift;
     if (!ref $self) {
@@ -34,24 +38,26 @@ sub stack {
     $self->{stack} //= do {
         my $file = file($self->home, "catmandu.yml")->stringify;
         if (-f $file) {
-            try {
-                YAML::LoadFile($file);
-            } catch {
-                confess "Can't load catmandu.yml";
-            };
+            YAML::LoadFile($file);
         } else {
-            [ $self->home ];
+            [];
         }
     };
 }
 
 sub paths {
     my ($self, $dir) = @_;
+    my $stack = $self->stack;
+    my $paths = [ $self->home, map { dir($self->home, $_)->stringify } @$stack ];
     if ($dir) {
-        [ grep { -d $_ } map { dir($self->home, $_, $dir)->stringify } @{$self->stack} ];
+        [ grep { -d $_ } map { dir($_, $dir)->stringify } @$paths ];
     } else {
-        [ map { dir($self->home, $_)->stringify } @{$self->stack} ];
+        $paths;
     }
+}
+
+sub path_list {
+   @{$_[0]->paths($_[1])};
 }
 
 sub lib {
@@ -92,6 +98,7 @@ sub conf {
             });
         }
 
+        # load environment specific conf
         if (my $hash = delete $merged->{env} and $hash = delete $hash->{$self->env}) {
             $merged = $merger->merge($merged, $hash);
         }
@@ -106,6 +113,7 @@ sub print_template {
         return $self->instance->print_template(@_);
     }
     my $template = $self->{template} //= Template->new({
+        PLUGIN_BASE  => 'Catmandu::Template::Plugin',
         INCLUDE_PATH => $self->paths('template'),
     });
     $template->process(@_)

@@ -11,6 +11,7 @@ has host => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'o')
 has port => (traits => ['Getopt'], is => 'rw', isa => 'Int', cmd_aliases => 'p');
 has socket => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'S');
 has daemonize => (traits => ['Getopt'], is => 'rw', isa => 'Bool', cmd_aliases => 'D');
+has reload => (traits => ['Getopt'], is => 'rw', isa => 'Bool', cmd_aliases => 'r');
 has server => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 's');
 has app => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'a', default => 'app.psgi');
 has env => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'E');
@@ -39,6 +40,13 @@ sub run {
     }
 
     my @argv;
+    if ($self->reload) {
+        push @argv, '-r';
+        push @argv, '-R', join(',', $catmandu->catmandu_lib,
+                                    $catmandu->lib,
+                                    $catmandu->path_list('psgi'),
+                                    $catmandu->path_list('template'));
+    }
     push @argv, map { ('-I', $_) } $catmandu->lib;
     push @argv, '-E', $catmandu->env;
     push @argv, '-p', $self->port   if $self->port;

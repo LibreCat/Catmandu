@@ -1,5 +1,7 @@
 package Catmandu::Cmd;
 
+use strict;
+use warnings;
 use Path::Class;
 use Plack::Util;
 

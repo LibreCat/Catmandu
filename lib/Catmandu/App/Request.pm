@@ -1,5 +1,7 @@
 package Catmandu::App::Request;
 
+use strict;
+use warnings;
 use CGI::Expand;
 use base 'Plack::Request';
 

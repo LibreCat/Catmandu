@@ -13,34 +13,43 @@ BEGIN {
 BEGIN { use_ok 'Catmandu::Index::Simple'; }
 require_ok 'Catmandu::Index::Simple';
 
+my $fields = {};
 my $dir = File::Temp->newdir;
-my $idx = Catmandu::Index::Simple->new(path => $dir->dirname);
+my $idx = Catmandu::Index::Simple->new(path => $dir->dirname, fields => {});
 note "index path is $dir";
 
  isa_ok $idx, Catmandu::Index::Simple;
 does_ok $idx, Catmandu::Index;
 
-my $objs;
+my $objs = [
+    {_id => "0"},
+    {_id => "1"},
+];
 my $total_hits;
 
-$idx->save({_id => "1"});
-$idx->save({_id => "2"});
+is $idx->save({unknown => "field"}), undef;
 
-($objs, $total_hits) = $idx->find("_id:1");
+is $idx->save($objs->[0]), $objs->[0];
+
+$idx->save($objs->[1]);
+
+($objs, $total_hits) = $idx->find("_id:0");
 is scalar @$objs, 0;
 is $total_hits, 0;
 
 $idx->done;
 
+($objs, $total_hits) = $idx->find("_id:0");
+is scalar @$objs, 1;
+is $total_hits, 1;
+
 ($objs, $total_hits) = $idx->find("_id:1");
 is scalar @$objs, 1;
 is $total_hits, 1;
 
-($objs, $total_hits) = $idx->find("_id:2");
-is scalar @$objs, 1;
-is $total_hits, 1;
-
 throws_ok { $idx->delete({missing => '_id'}) } qr/Missing _id/;
+ lives_ok { $idx->delete({"_id" => "id"}) };
+ lives_ok { $idx->delete("_id") };
 
 done_testing;
 
