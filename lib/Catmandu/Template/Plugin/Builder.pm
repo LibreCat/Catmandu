@@ -79,7 +79,7 @@ sub text_field {
         $self->{context}->throw("name missing");
     $attrs->{value} //= $self->get($attrs->{name});
     $attrs->{name} = join '.', $self->var, $attrs->{name} if $self->var;
-    $label . $self->tag('input', $attrs);
+    $self->tag('input', $attrs);
 }
 
 sub text_area {
