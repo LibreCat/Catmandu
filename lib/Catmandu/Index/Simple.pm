@@ -70,7 +70,7 @@ sub save {
     my ($self, $obj) = @_;
     my $doc = $self->_indexer->new_doc;
     while (my ($field, $value) = each %$obj) {
-        $self->fields->{$field} or return;
+        return unless $self->fields->{$field};
         $doc->set_value($field => $value);
     }
     $self->_indexer->add_doc($doc);

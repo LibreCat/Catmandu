@@ -2,8 +2,8 @@ package Catmandu::App::Request;
 
 use strict;
 use warnings;
-use CGI::Expand;
 use base 'Plack::Request';
+use CGI::Expand ();
 
 sub expand_param {
     my ($self, $key) = @_;
@@ -16,7 +16,7 @@ sub expand_param {
         $flat_key =~ s/^$key\.//;
         $flat->{$flat_key} = $value;
     }
-    CGI::Expand::expand_hash($flat);
+    CGI::Expand->expand_hash($flat);
 }
 
 __PACKAGE__;

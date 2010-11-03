@@ -32,7 +32,7 @@ sub catmandu_lib {
 
 sub stack {
     my $self = shift;
-    if (!ref $self) {
+    unless (ref $self) {
         return $self->instance->stack;
     }
     $self->{stack} //= do {
@@ -74,7 +74,7 @@ sub find_psgi {
 
 sub conf {
     my $self = shift;
-    if (!ref $self) {
+    unless (ref $self) {
         return $self->instance->conf;
     }
     $self->{conf} //= do {
@@ -109,7 +109,7 @@ sub conf {
 
 sub print_template {
     my $self = shift;
-    if (!ref $self) {
+    unless (ref $self) {
         return $self->instance->print_template(@_);
     }
     my $template = $self->{template} //= Template->new({
