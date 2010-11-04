@@ -1,21 +1,12 @@
 package Catmandu;
 
 use 5.010;
-use Carp qw(confess);
 use Hash::Merge ();
 use Path::Class;
 use Template;
 use YAML ();
 use JSON ();
-
-sub instance {
-    state $instance //= $_[0]->new;
-}
-
-sub new {
-    my $class = ref $_[0] ? ref $_[0] : $_[0];
-    bless {}, $class;
-}
+use Any::Moose;
 
 sub home {
     $ENV{CATMANDU_HOME} or confess "CATMANDU_HOME not set";
@@ -30,19 +21,85 @@ sub catmandu_lib {
         file(__FILE__)->dir->parent->subdir('lib')->absolute->resolve->stringify;
 }
 
-sub stack {
-    my $self = shift;
-    unless (ref $self) {
-        return $self->instance->stack;
-    }
-    $self->{stack} //= do {
-        my $file = file($self->home, "catmandu.yml")->stringify;
-        if (-f $file) {
-            YAML::LoadFile($file);
-        } else {
-            [];
-        }
+sub instance {
+    state $instance //= do {
+        my $class = ref $_[0] ? ref $_[0] : $_[0];
+        $class->new;
     };
+}
+
+has _stack    => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_stack');
+has _conf     => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_conf');
+has _template => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_template');
+
+sub _build_stack {
+    my $self = shift;
+    my $file = file($self->home, "catmandu.yml")->stringify;
+    if (-f $file) {
+        YAML::LoadFile($file);
+    } else {
+        [];
+    }
+}
+
+sub _build_conf {
+    my $self = shift;
+    my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
+    my $conf = {};
+
+    foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
+        dir($conf_path)->recurse(depthfirst => 1, callback => sub {
+            my $file = shift;
+            my $path = $file->stringify;
+            my $hash;
+            -f $path or return;
+            given ($path) {
+                when (/\.json$/) { $hash = JSON::decode_json($file->slurp) }
+                when (/\.yml$/)  { $hash = YAML::LoadFile($path) }
+                when (/\.pl$/)   { $hash = do $path }
+            }
+            if (ref $hash eq 'HASH') {
+                $conf = $merger->merge($conf, $hash);
+            }
+        });
+    }
+
+    # load env specific conf
+    if (my $hash = delete $conf->{$self->env}) {
+        $conf = $merger->merge($conf, $hash);
+    }
+
+    $conf;
+}
+
+sub _build_template {
+    my $self = shift;
+    my $args = $self->conf->{template}{args} || {};
+    Template->new({
+        INCLUDE_PATH => $self->paths('template'),
+        PLUGIN_BASE  => 'Catmandu::Template::Plugin',
+        CONSTANTS    => {
+            catmandu => $self,
+        },
+        %$args,
+    });
+}
+
+sub stack {
+    my $self = ref $_[0] ? $_[0] : $_[0]->instance; $self->_stack;
+}
+
+sub conf {
+    my $self = ref $_[0] ? $_[0] : $_[0]->instance; $self->_conf;
+}
+
+sub print_template {
+    my $self = ref $_[0] ? shift : shift->instance;
+    my $tmpl = $self->_template;
+    my $file = shift;
+    $file = "$file.tt" if $file !~ /\.tt$/;
+    $tmpl->process($file, @_)
+        or confess $tmpl->error;
 }
 
 sub paths {
@@ -72,53 +129,7 @@ sub find_psgi {
     $files[0];
 }
 
-sub conf {
-    my $self = shift;
-    unless (ref $self) {
-        return $self->instance->conf;
-    }
-    $self->{conf} //= do {
-        my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
-        my $merged = {};
-
-        foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
-            dir($conf_path)->recurse(depthfirst => 1, callback => sub {
-                my $file = shift;
-                my $path = $file->stringify;
-                my $hash;
-                -f $path or return;
-                given ($path) {
-                    when (/\.json$/) { $hash = JSON::decode_json($file->slurp) }
-                    when (/\.yml$/)  { $hash = YAML::LoadFile($path) }
-                    when (/\.pl$/)   { $hash = do $path }
-                }
-                if (ref $hash eq 'HASH') {
-                    $merge = $merger->merge($merged, $hash);
-                }
-            });
-        }
-
-        # load environment specific conf
-        if (my $hash = delete $merged->{env} and $hash = delete $hash->{$self->env}) {
-            $merged = $merger->merge($merged, $hash);
-        }
-
-        $merged;
-    };
-}
-
-sub print_template {
-    my $self = shift;
-    unless (ref $self) {
-        return $self->instance->print_template(@_);
-    }
-    my $template = $self->{template} //= Template->new({
-        PLUGIN_BASE  => 'Catmandu::Template::Plugin',
-        INCLUDE_PATH => $self->paths('template'),
-    });
-    $template->process(@_)
-        or confess $template->error;
-}
-
+__PACKAGE__->meta->make_immutable;
+no Any::Moose;
 __PACKAGE__;
 
