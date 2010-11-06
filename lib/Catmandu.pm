@@ -76,9 +76,9 @@ sub _build_template {
     my $self = shift;
     my $args = $self->conf->{template}{args} || {};
     Template->new({
-        INCLUDE_PATH => $self->paths('template'),
         PLUGIN_BASE  => 'Catmandu::Template::Plugin',
-        CONSTANTS    => {
+        INCLUDE_PATH => $self->paths('template'),
+        VARIABLES    => {
             catmandu => $self,
         },
         %$args,

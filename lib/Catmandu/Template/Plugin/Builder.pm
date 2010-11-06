@@ -7,11 +7,14 @@ use base 'Template::Plugin';
 
 sub new {
     my ($class, $context, @vars) = @_;
+    my $opts = ref $vars[-1] eq 'HASH' ? pop @vars : {};
+    my $schema = $opts->{schema};
     my $var = join '.', @vars;
     bless {
         context => $context,
-        stack => [],
         var => $var,
+        schema => $schema,
+        stack => [],
     }, $class;
 }
 
@@ -41,6 +44,14 @@ sub get {
     $self->{context}->stash->get(\@key);
 }
 
+sub id {
+    my ($self, @vars) = @_;
+    my $var = $self->var(@vars);
+    $var =~ s/([a-z0-9])([A-Z)])/$1_\l$2/g;
+    $var =~ s/\./-/g;
+    $var;
+}
+
 sub form {
     my ($self, $attr) = @_;
     $attr ||= {};
@@ -48,47 +59,81 @@ sub form {
     $attr->{'action'} //= "";
     $attr->{'accept-charset'} //= "utf-8";
     $attr = $self->_attributes($attr);
-    my $stack = $self->{stack};
-    grep /form/, @$stack and $self->_error("Can't embed form tag");
-    push @$stack, 'form';
+    push @{$self->{stack}}, 'form';
     "<form$attr>";
+}
+
+sub fieldset {
+    my ($self, @args) = @_;
+    my $attr   = $self->_attributes(ref $args[-1] eq 'HASH' ? pop @args : {});
+    my $legend = defined $args[0] ? $self->tag('legend', $args[0]) : "";
+    push @{$self->{stack}}, 'fieldset';
+    "<fieldset$attr>$legend";
 }
 
 sub end {
     my ($self) = @_;
-    my $stack = $self->{stack};
-    my $tag = pop @$stack; 
-    $tag or return;
+    my $tag = pop @{$self->{stack}};
     "</$tag>";
 }
 
-sub _field {
+sub legend {
+    my ($self, @args) = @_;
+    $self->tag('legend', @args);
+}
+
+sub build {
+    my ($self, @vars) = @_;
+    my $attr = ref $vars[-1] eq 'HASH' ? pop @vars : {};
+
+    if ($self->{schema} and my $property = $self->{schema}{properties}{$vars[0]}) {
+        given ($property->{format}) {
+            when ('email')     { return $self->input('email',    @vars, $attr) }
+            when ('uri')       { return $self->input('url',      @vars, $attr) }
+            when ('date')      { return $self->input('date',     @vars, $attr) }
+            when ('time')      { return $self->input('time',     @vars, $attr) }
+            when ('date-time') { return $self->input('datetime', @vars, $attr) }
+            when ('color')     { return $self->input('color',    @vars, $attr) }
+        }
+    }
+
+    $self->input('text', @vars, $attr);
+}
+
+sub input {
     my ($self, $type, @vars) = @_;
     my $attr = ref $vars[-1] eq 'HASH' ? pop @vars : {};
     @vars or $self->_error("Name can't be empty");
-    $attr->{type}  = $type;
-    $attr->{name}  = $self->var(@vars);
+    $attr->{type} = $type;
+    $attr->{name} = $self->var(@vars);
     $attr->{value} = $self->get(@vars);
+    $attr->{id} //= $self->id(@vars);
+
+    if ($self->{schema} and my $prop = $self->{schema}{properties}{$vars[0]}) {
+        $attr->{required} = "required" if $prop->{required};
+    }
+
     $self->tag('input', $attr);
 }
 
-sub hidden {
-    my ($self, @vars) = @_; $self->_field('hidden', @vars);
-}
-
-sub password {
-    my ($self, @vars) = @_; $self->_field('password', @vars);
-}
-
-sub text {
-    my ($self, @vars) = @_; $self->_field('text', @vars);
-}
+sub hidden   { my ($self, @vars) = @_; $self->input('hidden', @vars); }
+sub text     { my ($self, @vars) = @_; $self->input('text', @vars); }
+sub password { my ($self, @vars) = @_; $self->input('password', @vars); }
+sub search   { my ($self, @vars) = @_; $self->input('search', @vars); }
+sub url      { my ($self, @vars) = @_; $self->input('url', @vars); }
+sub email    { my ($self, @vars) = @_; $self->input('email', @vars); }
+sub number   { my ($self, @vars) = @_; $self->input('number', @vars); }
+sub date     { my ($self, @vars) = @_; $self->input('date', @vars); }
+sub time     { my ($self, @vars) = @_; $self->input('time', @vars); }
+sub datetime { my ($self, @vars) = @_; $self->input('datetime', @vars); }
+sub color    { my ($self, @vars) = @_; $self->input('color', @vars); }
 
 sub text_area {
     my ($self, @vars) = @_;
     my $attr = ref $vars[-1] eq 'HASH' ? pop @vars : {};
     @vars or $self->_error("Name can't be empty");
     $attr->{name} = $self->var(@vars);
+    $attr->{id} //= $self->id(@vars);
     $self->tag('textarea', $self->get(@vars), $attr);
 }
 
@@ -112,6 +157,7 @@ sub select {
     my $opts = pop @vars;
     @vars or $self->_error("Name can't be empty");
     $attr->{name} = $self->var(@vars);
+    $attr->{id} //= $self->id(@vars);
     $self->tag('select', $self->select_options(@vars, $opts), $attr);
 }
 
@@ -140,7 +186,8 @@ sub tag {
 }
 
 sub _attributes {
-    my $attr = $_[1]; join "", map qq( $_="$attr->{$_}"), keys %$attr;
+    my ($self, $attr) = @_;
+    join "", map qq( $_="$attr->{$_}"), keys %$attr;
 }
 
 sub _error {
