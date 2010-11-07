@@ -93,7 +93,6 @@ sub build {
             when ('date')      { return $self->input('date',     @vars, $attr) }
             when ('time')      { return $self->input('time',     @vars, $attr) }
             when ('date-time') { return $self->input('datetime', @vars, $attr) }
-            when ('color')     { return $self->input('color',    @vars, $attr) }
         }
     }
 
@@ -111,6 +110,17 @@ sub input {
 
     if ($self->{schema} and my $prop = $self->{schema}{properties}{$vars[0]}) {
         $attr->{required} = "required" if $prop->{required};
+
+        if (my $val = $prop->{title}) { $attr->{title} = $val }
+
+        if ($type =~ /number/) {
+            if (my $val = $prop->{maximum}) { $attr->{max} = $val }
+            if (my $val = $prop->{minimum}) { $attr->{min} = $val }
+        }
+        if ($type =~ /text/) {
+            if (my $val = $prop->{maxLength}) { $attr->{maxlength} = $val }
+            if (my $val = $prop->{pattern})   { $attr->{pattern}   = $val }
+        }
     }
 
     $self->tag('input', $attr);
@@ -126,7 +136,6 @@ sub number   { my ($self, @vars) = @_; $self->input('number', @vars); }
 sub date     { my ($self, @vars) = @_; $self->input('date', @vars); }
 sub time     { my ($self, @vars) = @_; $self->input('time', @vars); }
 sub datetime { my ($self, @vars) = @_; $self->input('datetime', @vars); }
-sub color    { my ($self, @vars) = @_; $self->input('color', @vars); }
 
 sub text_area {
     my ($self, @vars) = @_;

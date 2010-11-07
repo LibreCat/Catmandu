@@ -1,12 +1,23 @@
 package Catmandu;
 
 use 5.010;
-use Hash::Merge ();
-use Path::Class;
 use Template;
+use Data::Section::Simple;
+use Path::Class;
+use Hash::Merge ();
 use YAML ();
 use JSON ();
 use Any::Moose;
+
+sub instance {
+    state $instance //= do { my $class = ref $_[0] ? ref $_[0] : $_[0]; $class->new; };
+}
+
+sub catmandu_lib {
+    state $catmandu_lib //= file(__FILE__)->dir->parent->subdir('lib')
+                            ->absolute->resolve
+                            ->stringify;
+}
 
 sub home {
     $ENV{CATMANDU_HOME} or confess "CATMANDU_HOME not set";
@@ -14,18 +25,6 @@ sub home {
 
 sub env {
     $ENV{CATMANDU_ENV} or confess "CATMANDU_ENV not set";
-}
-
-sub catmandu_lib {
-    state $catmandu_lib //=
-        file(__FILE__)->dir->parent->subdir('lib')->absolute->resolve->stringify;
-}
-
-sub instance {
-    state $instance //= do {
-        my $class = ref $_[0] ? ref $_[0] : $_[0];
-        $class->new;
-    };
 }
 
 has _stack    => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_stack');
@@ -45,7 +44,7 @@ sub _build_stack {
 sub _build_conf {
     my $self = shift;
     my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
-    my $conf = {};
+    my $conf = YAML::Load(Data::Section::Simple::get_data_section('conf.yml'));
 
     foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
         dir($conf_path)->recurse(depthfirst => 1, callback => sub {
@@ -130,6 +129,33 @@ sub find_psgi {
 }
 
 __PACKAGE__->meta->make_immutable;
+no Path::Class;
 no Any::Moose;
 __PACKAGE__;
+
+__DATA__
+
+@@ conf.yml
+---
+schema:
+  person:
+    title: A person
+    type: object
+    id: person
+    properties:
+      name:
+        title: The formatted (full) name of a person
+        type: string
+      familyName:
+        title: The family name of a person
+        type: string
+        required: true
+      givenName:
+        title: The given name of a person
+        type: string
+        required: true
+      email:
+        title: The email address of a person
+        type: string
+        format: email
 
