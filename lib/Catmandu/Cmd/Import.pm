@@ -12,6 +12,7 @@ has importer => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 
 has importer_arg => (traits => ['Getopt'], is => 'rw', isa => 'HashRef', cmd_aliases => 'i', default => sub { +{} });
 has store => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'S', default => 'Simple');
 has store_arg => (traits => ['Getopt'], is => 'rw', isa => 'HashRef', cmd_aliases => 's', default => sub { +{} });
+has verbose => (traits => ['Getopt'], is => 'rw', isa => 'Bool', cmd_aliases => 'v');
 
 sub BUILD {
     my $self = shift;
@@ -26,6 +27,7 @@ sub BUILD {
 
 sub run {
     my $self = shift;
+    my $verbose = $self->verbose;
 
     Plack::Util::load_class($self->importer);
     Plack::Util::load_class($self->store);
@@ -33,8 +35,11 @@ sub run {
     my $store = $self->store->new($self->store_arg);
 
     my $count = $importer->each(sub {
-        my $obj = shift;
+        my $obj = $_[0];
         $store->save($obj);
+        if ($verbose) {
+            say $obj->{_id};
+        }
     });
 
     say $count == 1 ? 
