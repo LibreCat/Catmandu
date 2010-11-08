@@ -8,25 +8,25 @@ with 'Catmandu::Exporter';
 sub dump {
     my ($self, $obj) = @_;
 
-    my $io = $self->io;
+    my $f = $self->file;
     my $count = 0;
 
     if (ref $obj eq 'ARRAY') {
-        print $io encode_json($obj);
+        print $f encode_json($obj);
         $count = scalar @$obj;
     }
     elsif (ref $obj eq 'HASH') {
-        print $io encode_json($obj);
+        print $f encode_json($obj);
         $count = 1;
     }
     elsif (blessed($obj) && $obj->can('each')) {
-        print $io '[';
+        print $f '[';
         $obj->each(sub {
-            print $io ',' if $count;
-            print $io encode_json(shift);
+            print $f ',' if $count;
+            print $f encode_json(shift);
             $count++;
         });
-        print $io ']';
+        print $f ']';
     }
     else {
         confess "Can't export";
@@ -35,7 +35,7 @@ sub dump {
     $count;
 }
 
-__PACKAGE->meta->make_immutable;
+__PACKAGE__->meta->make_immutable;
 no JSON;
 no Any::Moose;
 __PACKAGE__;
