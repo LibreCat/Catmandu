@@ -1,0 +1,23 @@
+---
+schema:
+  person:
+    title: A person
+    type: object
+    id: person
+    properties:
+      name:
+        title: The formatted (full) name of a person
+        type: string
+      familyName:
+        title: The family name of a person
+        type: string
+        required: true
+      givenName:
+        title: The given name of a person
+        type: string
+        required: true
+      email:
+        title: The email address of a person
+        type: string
+        format: email
+
