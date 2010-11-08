@@ -6,8 +6,6 @@ use Catmandu;
 use Catmandu::App::Request;
 use Router::Simple;
 
-with any_moose('X::Param');
-
 has request => (
     is => 'ro',
     required => 1,
@@ -25,6 +23,13 @@ has response => (
     )],
 );
 
+has params => (
+    is => 'ro',
+    isa => 'HashRef',
+    lazy => 1, 
+    default => sub { +{} },
+);
+
 sub _build_response {
     $_[0]->request->new_response(200, ['Content-Type' => "text/html"]);
 }
@@ -34,6 +39,18 @@ sub res { $_[0]->response }
 
 sub session {
     $_[0]->request->env->{'psgix.session'};
+}
+
+sub param {
+    my $self = shift;
+    my $params = $self->params;
+    return $params          if @_ == 0;
+    return $params->{$_[0]} if @_ == 1;
+    my %pairs = @_;
+    while (my ($key, $val) = each %pairs) {
+        $params->{$key} = $val;
+    }
+    $params;
 }
 
 sub print {
@@ -51,8 +68,19 @@ sub app {
     ref $_[0] ? ref $_[0] : $_[0];
 }
 
+sub stash {
+    my $stash = Catmandu->stash->{shift->app} //= {};
+    return $stash          if @_ == 0;
+    return $stash->{$_[0]} if @_ == 1;
+    my %pairs = @_;
+    while (my ($key, $val) = each %pairs) {
+        $stash->{$key} = $val;
+    }
+    $stash;
+}
+
 sub router {
-    state $routers //= {}; $routers->{$_[0]->app} //= Router::Simple->new;
+    shift->app->stash->{_router} //= Router::Simple->new;
 }
 
 sub on_any {
@@ -60,10 +88,10 @@ sub on_any {
 
     if (@_ == 3) {
         my ($methods, $pattern, $sub) = @_;
-        $self->router->connect($pattern, { run => $sub }, { method => [ map { uc $_ } @$methods ] });
+        $self->router->connect($pattern, { _run => $sub }, { method => [ map { uc $_ } @$methods ] });
     } else {
         my ($pattern, $sub) = @_;
-        $self->router->connect($pattern, { run => $sub });
+        $self->router->connect($pattern, { _run => $sub });
     }
 }
 
@@ -85,7 +113,7 @@ sub on_delete {
 
 sub run {
     my ($self, $sub) = @_;
-    $sub //= $self->param('run');
+    $sub //= $self->param('_run');
     if (ref $sub eq 'CODE') {
         $sub->($self);
     } else {
@@ -97,18 +125,15 @@ sub run {
 sub as_psgi_app {
     my $app = $_[0]->app;
     my $router = $app->router;
-    my $sub = sub {
+    sub {
         my $env = $_[0];
         my $match = $router->match($env)
             or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
-        $app->new({ request => Catmandu::App::Request->new($env),
-                    params  => $match, })
-            ->run($match->{run})
+        $app->new(request => Catmandu::App::Request->new($env), params => $match)
+            ->run($match->{_run})
             ->response
             ->finalize;
-    };
-
-    $sub;
+    }
 }
 
 no Any::Moose '::Role';

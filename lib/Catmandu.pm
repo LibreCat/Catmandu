@@ -1,8 +1,9 @@
 package Catmandu;
 
 use 5.010;
+use Try::Tiny;
 use Template;
-use Data::Section::Simple;
+use File::ShareDir;
 use Path::Class;
 use Hash::Merge ();
 use YAML ();
@@ -13,10 +14,19 @@ sub instance {
     state $instance //= do { my $class = ref $_[0] ? ref $_[0] : $_[0]; $class->new; };
 }
 
+sub catmandu_share {
+    state $catmandu_share //= try {
+        File::ShareDir::module_dir(__PACKAGE__);
+    } catch {
+        file(__FILE__)->dir->parent->subdir('share')
+            ->absolute->resolve->stringify;
+    };
+}
+
 sub catmandu_lib {
-    state $catmandu_lib //= file(__FILE__)->dir->parent->subdir('lib')
-                            ->absolute->resolve
-                            ->stringify;
+    state $catmandu_lib //= 
+        file(__FILE__)->dir->parent->subdir('lib')
+            ->absolute->resolve->stringify;
 }
 
 sub home {
@@ -30,21 +40,23 @@ sub env {
 has _stack    => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_stack');
 has _conf     => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_conf');
 has _template => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_template');
+has _stash    => (is => 'ro', isa => 'HashRef', init_arg => undef, lazy => 1, default => sub { +{} });
 
 sub _build_stack {
     my $self = shift;
     my $file = file($self->home, "catmandu.yml")->stringify;
-    if (-f $file) {
-        YAML::LoadFile($file);
-    } else {
-        [];
+    -f $file or return ['catmandu-base'];
+    my $dirs = YAML::LoadFile($file);
+    if (! grep /^catmandu-base$/, @$dirs) {
+        push @$dirs, 'catmandu-base';
     }
+    $dirs;
 }
 
 sub _build_conf {
     my $self = shift;
     my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
-    my $conf = YAML::Load(Data::Section::Simple::get_data_section('conf.yml'));
+    my $conf = {};
 
     foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
         dir($conf_path)->recurse(depthfirst => 1, callback => sub {
@@ -84,6 +96,7 @@ sub _build_template {
     });
 }
 
+
 sub stack {
     my $self = ref $_[0] ? $_[0] : $_[0]->instance; $self->_stack;
 }
@@ -101,10 +114,25 @@ sub print_template {
         or confess $tmpl->error;
 }
 
+sub stash {
+    my $self = ref $_[0] ? shift : shift->instance;
+    my $stash = $self->_stash;
+    return $stash          if @_ == 0;
+    return $stash->{$_[0]} if @_ == 1;
+    my %pairs = @_;
+    while (my ($key, $val) = each %pairs) {
+        $stash->{$key} = $val;
+    }
+    $stash;
+}
+
 sub paths {
     my ($self, $dir) = @_;
     my $stack = $self->stack;
-    my $paths = [ $self->home, map { dir($self->home, $_)->stringify } @$stack ];
+    my $paths = [
+        $self->home,
+        map { dir(/^catmandu-/ ? $self->catmandu_share : $self->home, $_)->stringify } @$stack
+    ];
     if ($dir) {
         [ grep { -d $_ } map { dir($_, $dir)->stringify } @$paths ];
     } else {
@@ -128,34 +156,8 @@ sub find_psgi {
     $files[0];
 }
 
+
 __PACKAGE__->meta->make_immutable;
-no Path::Class;
 no Any::Moose;
 __PACKAGE__;
-
-__DATA__
-
-@@ conf.yml
----
-schema:
-  person:
-    title: A person
-    type: object
-    id: person
-    properties:
-      name:
-        title: The formatted (full) name of a person
-        type: string
-      familyName:
-        title: The family name of a person
-        type: string
-        required: true
-      givenName:
-        title: The given name of a person
-        type: string
-        required: true
-      email:
-        title: The email address of a person
-        type: string
-        format: email
 
