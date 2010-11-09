@@ -3,7 +3,6 @@ package Catmandu::Store;
 use Any::Moose '::Role';
 
 requires 'load';
-requires 'each';
 requires 'save';
 requires 'delete';
 

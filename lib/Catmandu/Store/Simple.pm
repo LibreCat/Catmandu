@@ -2,39 +2,41 @@ package Catmandu::Store::Simple;
 
 use Any::Moose;
 use Data::UUID;
-use DBM::Deep;
+use JSON ();
+use DBI;
 use Try::Tiny;
 
 with 'Catmandu::Store';
 
-has path => (is => 'ro', isa => 'Str', required => 1);
-has _db  => (is => 'ro', isa => 'DBM::Deep', init_arg => undef, builder => '_build_db');
+has file => (is => 'ro', required => 1);
+has _dbh => (is => 'ro', required => 1, init_arg => undef, builder => '_build_dbh');
 
-sub _build_db {
-    DBM::Deep->new(file => $_[0]->path, locking => 1, autoflush => 1);
+sub _build_dbh {
+    my $self = shift;
+    my $file = $self->file;
+    my $_dbh = DBI->connect("dbi:SQLite:dbname=$file", "", "");
+    $_dbh->{sqlite_unicode} = 1;
+    $_dbh->do("CREATE TABLE IF NOT EXISTS objects(id TEXT PRIMARY KEY, data TEXT NOT NULL)") or
+        confess $_dbh->errstr;
+    $_dbh;
 }
 
 sub save {
     my ($self, $obj) = @_;
     my $id = $obj->{_id} ||= Data::UUID->new->create_str;
-    $self->_db->import({$id => $obj});
+    my $json = JSON::encode_json($obj);
+    my $sth = $self->_dbh->prepare("INSERT OR REPLACE INTO objects VALUES(?,?)");
+    $sth->execute($id, $json);
     $obj;
 }
 
 sub load {
     my ($self, $id) = @_;
-    my $obj = $self->_db->get($id) or return;
-    $obj->export;
-}
-
-sub each {
-    my ($self, $sub) = @_;
-    my $count = 0;
-    while (my ($id, $obj) = each %{$self->_db}) {
-        $sub->($obj->export);
-        $count++;
-    }
-    $count;
+    my $sth = $self->_dbh->prepare("SELECT data FROM objects WHERE id = ?");
+    $sth->execute($id);
+    my ($json) = $sth->fetchrow_array;
+    $json or return;
+    JSON::decode_json($json);
 }
 
 sub delete {
@@ -42,19 +44,8 @@ sub delete {
     my $id = ref $obj eq 'HASH' ? $obj->{_id} :
                                   $obj;
     $id or confess "Missing _id";
-    $self->_db->delete($id);
-}
-
-sub transaction {
-    my ($self, $sub) = @_;
-    $self->_db->begin_work;
-    try {
-        $sub->($self);
-        $self->_db->commit;
-    } catch {
-        $self->_db->rollback;
-        confess $_;
-    };
+    my $sth = $self->_dbh->prepare("DELETE FROM objects WHERE id = ?");
+    $sth->execute($id);
 }
 
 __PACKAGE__->meta->make_immutable;
