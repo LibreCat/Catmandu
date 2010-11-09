@@ -1,5 +1,7 @@
 package Catmandu;
 
+our $VERSION = 0.01;
+
 use 5.010;
 use Try::Tiny;
 use Template;
