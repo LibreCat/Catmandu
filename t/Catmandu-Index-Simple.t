@@ -55,5 +55,9 @@ is $total_hits, 1;
 throws_ok { $idx->delete({missing => '_id'}) } qr/Missing _id/;
  lives_ok { $idx->delete("001") };
 
+($hits, $total_hits) = $idx->find("_id : 001");
+is scalar @$hits, 0;
+is $total_hits, 0;
+
 done_testing;
 
