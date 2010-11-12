@@ -3,46 +3,36 @@ package Catmandu;
 our $VERSION = 0.01;
 
 use 5.010;
-use Moose;
+use MooseX::Singleton;
 use Try::Tiny;
 use Template;
 use File::ShareDir;
 use Path::Class;
+use List::Util qw(first);
 use Hash::Merge ();
 use YAML ();
 use JSON ();
 
-sub instance {
-    state $instance //= do { my $class = ref $_[0] ? ref $_[0] : $_[0]; $class->new; };
-}
+has catmandu_share => (is => 'ro', isa => 'Str', init_arg => undef, builder => '_build_catmandu_share');
+has catmandu_lib   => (is => 'ro', isa => 'Str', init_arg => undef, builder => '_build_catmandu_lib');
+has home => (is => 'ro', isa => 'Str', required => 1, default => sub { $ENV{CATMANDU_HOME} });
+has env  => (is => 'ro', isa => 'Str', required => 1, default => sub { $ENV{CATMANDU_ENV} });
+has stack     => (is => 'ro', isa => 'ArrayRef', init_arg => undef, lazy => 1, builder => '_build_stack');
+has conf      => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, builder => '_build_conf');
+has _template => (is => 'ro', isa => 'Template', init_arg => undef, lazy => 1, builder => '_build_template');
+has _stash    => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, default => sub { +{} });
 
-sub catmandu_share {
-    state $catmandu_share //= try {
+sub _build_catmandu_share {
+    try {
         File::ShareDir::module_dir(__PACKAGE__);
     } catch {
-        file(__FILE__)->dir->parent->subdir('share')
-            ->absolute->resolve->stringify;
+        file(__FILE__)->dir->parent->subdir('share')->resolve->stringify;
     };
 }
 
-sub catmandu_lib {
-    state $catmandu_lib //= 
-        file(__FILE__)->dir->parent->subdir('lib')
-            ->absolute->resolve->stringify;
+sub _build_catmandu_lib {
+    file(__FILE__)->dir->absolute->resolve->stringify;
 }
-
-sub home {
-    $ENV{CATMANDU_HOME} or confess "CATMANDU_HOME not set";
-}
-
-sub env {
-    $ENV{CATMANDU_ENV} or confess "CATMANDU_ENV not set";
-}
-
-has _stack    => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_stack');
-has _conf     => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_conf');
-has _template => (is => 'ro', init_arg => undef, lazy => 1, builder => '_build_template');
-has _stash    => (is => 'ro', isa => 'HashRef', init_arg => undef, lazy => 1, default => sub { +{} });
 
 sub _build_stack {
     my $self = shift;
@@ -98,17 +88,8 @@ sub _build_template {
     });
 }
 
-
-sub stack {
-    my $self = ref $_[0] ? $_[0] : $_[0]->instance; $self->_stack;
-}
-
-sub conf {
-    my $self = ref $_[0] ? $_[0] : $_[0]->instance; $self->_conf;
-}
-
 sub print_template {
-    my $self = ref $_[0] ? shift : shift->instance;
+    my $self = shift;
     my $tmpl = $self->_template;
     my $file = shift;
     $file = "$file.tt" if $file !~ /\.tt$/;
@@ -117,24 +98,22 @@ sub print_template {
 }
 
 sub stash {
-    my $self = ref $_[0] ? shift : shift->instance;
-    my $stash = $self->_stash;
-    return $stash          if @_ == 0;
-    return $stash->{$_[0]} if @_ == 1;
+    my $self = shift;
+    my $hash = $self->_stash;
+    return $hash          if @_ == 0;
+    return $hash->{$_[0]} if @_ == 1;
     my %pairs = @_;
     while (my ($key, $val) = each %pairs) {
-        $stash->{$key} = $val;
+        $hash->{$key} = $val;
     }
-    $stash;
+    $hash;
 }
 
 sub paths {
     my ($self, $dir) = @_;
     my $stack = $self->stack;
-    my $paths = [
-        $self->home,
-        map { dir(/^catmandu-/ ? $self->catmandu_share : $self->home, $_)->stringify } @$stack
-    ];
+    my $paths = [$self->home,
+                 map { dir(/^catmandu-/ ? $self->catmandu_share : $self->home, $_)->stringify } @$stack];
     if ($dir) {
         [ grep { -d $_ } map { dir($_, $dir)->stringify } @$paths ];
     } else {
@@ -154,11 +133,11 @@ sub find_psgi {
     my ($self, $file) = @_;
     $file = "$file.psgi" if $file !~ /\.psgi$/;
     my $paths = $self->paths('psgi');
-    my @files = grep { -f $_ } map { file($_, $file)->stringify } @$paths;
-    $files[0];
+    first { -f file($_, $file)->stringify } @$paths;
 }
 
 __PACKAGE__->meta->make_immutable;
-no Moose;
+no MooseX::Singleton;
+no List::Util;
 __PACKAGE__;
 

@@ -12,5 +12,5 @@ BEGIN {
     };
 }
 
-Catmandu::Cmd->run;
+Catmandu::Cmd::run(@ARGV);
 

@@ -5,23 +5,73 @@ use Plack::Runner;
 use Plack::Util;
 use Catmandu;
 
-with 'MooseX::Getopt';
+with 'MooseX::Getopt::GLD';
 
-has host => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'o');
-has port => (traits => ['Getopt'], is => 'rw', isa => 'Int', cmd_aliases => 'p');
-has socket => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'S');
-has daemonize => (traits => ['Getopt'], is => 'rw', isa => 'Bool', cmd_aliases => 'D');
-has reload => (traits => ['Getopt'], is => 'rw', isa => 'Bool', cmd_aliases => 'r');
-has server => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 's');
-has app => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'a', default => 'app.psgi');
-has env => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'E');
+Getopt::Long::Descriptive::prog_name('catmandu start');
+
+has host => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'o',
+    documentation => "The interface a TCP based server daemon binds to. Defaults to any (*).",
+);
+
+has port => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Int',
+    cmd_aliases => 'p',
+    default => 5000,
+    documentation => "The port number a TCP based server daemon listens on. Defaults to 5000.",
+);
+
+has socket => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'S',
+    documentation => "UNIX domain socket path to listen on. Defaults to none.",
+);
+
+has daemonize => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Bool',
+    cmd_aliases => 'D',
+    documentation => "Makes the process go background. Not all servers respect this option.",
+);
+
+has reload => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Bool',
+    cmd_aliases => 'r',
+    documentation => "Watch the lib, psgi, conf and template directories and restart the server whenever a file changes.",
+);
+
+has server => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 's',
+    documentation => "Server to run on.",
+);
+
+has app => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'a',
+    default => 'app.psgi',
+    documentation => "Either a .psgi script to run or a Catmandu::App. Defaults to app.psgi. " .
+                     "Can also be the non-option argument. The .psgi extension is optional",
+);
+
 
 sub BUILD {
     my $self = shift;
-
-    $ENV{CATMANDU_ENV} = $self->env if $self->env;
-
-    if (my $app = $self->extra_argv->[1]) {
+    if (my $app = $self->extra_argv->[0]) {
         $self->app($app);
     }
 }
@@ -44,6 +94,7 @@ sub run {
         push @argv, '-r';
         push @argv, '-R', join(',', $catmandu->catmandu_lib,
                                     $catmandu->lib,
+                                    $catmandu->path_list('conf'),
                                     $catmandu->path_list('psgi'),
                                     $catmandu->path_list('template'));
     }
