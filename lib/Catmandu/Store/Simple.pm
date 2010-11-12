@@ -86,3 +86,52 @@ __PACKAGE__->meta->make_immutable;
 no Any::Moose;
 __PACKAGE__;
 
+=head1 NAME
+
+Catmandu::Store::Simple - an implementation of L<Catmandu::Store> backed by L<DBD::SQLite>.
+
+=head1 SYNOPSIS
+
+    use Catmandu::Store::Simple
+
+    my $store = Catmandu::Store::Simple->new(file => '/tmp/store.db');
+
+=head1 DESCRIPTION
+
+See L<Catmandu::Store>.
+
+=head1 METHODS
+
+See L<Catmandu::Store> for the base methods.
+
+Extra methods for this class:
+
+=head2 Class->new(%args)
+
+Takes the following arguments:
+
+C<file>: The path to the sqlite3 database (required)
+
+=head2 $c->file
+
+Return the path to the underlying sqlite3 database as a string.
+
+=head2 $c->transaction($sub)
+
+Wraps the store actions in C<$sub> in a transaction:
+
+    # no records will be created:
+    $store->transaction(sub {
+        $store->save({_id => "1"});
+        $store->save({_id => "2"});
+        $store->save({_id => "3"});
+        die "horribly";
+    });
+
+Nested transactions aren't supported, they are subsumed by
+their parent transaction.
+
+=head1 SEE ALSO
+
+L<Catmandu::Store>, the Store role.
+
