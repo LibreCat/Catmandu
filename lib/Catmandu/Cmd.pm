@@ -2,6 +2,7 @@ package Catmandu::Cmd;
 
 use 5.010;
 use Path::Class;
+use Getopt::Long::Descriptive qw(prog_name);
 
 sub run {
     my $argv = [];
@@ -44,10 +45,18 @@ sub run {
     };
 
     if (my $pkg = $packages{$cmd}) {
+        prog_name("catmandu $cmd");
         return $pkg->new_with_options(argv => $argv)->run;
     }
 
-    
+    say "usage: catmandu <command> [options ...] <argument> ...";
+    say "commands:";
+    say "        $_" for keys %packages;
+    say "options common to all commands:";
+    say "        -? --usage --help  Prints usage information.";
+    say "        -E --env           The project environment. Defaults to development.";
+    say "        -H --home          The project home directory. Defaults to the current directory.";
+    say "Type catmandu <command> --help to get command specific usage information.";
 
     exit 0 if grep /$cmd/, qw(-? --help --usage);
     exit 1;

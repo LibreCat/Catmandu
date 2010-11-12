@@ -8,11 +8,54 @@ use lib Catmandu->lib;
 
 with 'MooseX::Getopt::Dashes';
 
-has importer => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'I', default => 'JSON');
-has importer_arg => (traits => ['Getopt'], is => 'rw', isa => 'HashRef', cmd_aliases => 'i', default => sub { +{} });
-has store => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'S', default => 'Simple');
-has store_arg => (traits => ['Getopt'], is => 'rw', isa => 'HashRef', cmd_aliases => 's', default => sub { +{} });
-has verbose => (traits => ['Getopt'], is => 'rw', isa => 'Bool', cmd_aliases => 'v');
+has importer => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'I',
+    default => 'JSON',
+    documentation => "The Catmandu::Importer class to use. Defaults to JSON.",
+);
+
+has importer_arg => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'HashRef',
+    cmd_aliases => 'i',
+    default => sub { +{} },
+    documentation => "Pass params to the importer constructor. " .
+                     "The file param can also be the first non-option argument.",
+);
+
+has store => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'S',
+    default => 'Simple',
+    documentation => "The Catmandu::Store class to use. Defaults to Simple.",
+);
+
+has store_arg => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'HashRef',
+    cmd_aliases => 's',
+    default => sub { +{} },
+    documentation => "Pass params to the store constructor.",
+);
+
+has verbose => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Bool',
+    cmd_aliases => 'v',
+    documentation => "Verbose output.",
+);
+
+sub _usage_format {
+    "usage: %c %o <file>";
+}
 
 sub BUILD {
     my $self = shift;
@@ -20,7 +63,7 @@ sub BUILD {
     $self->importer =~ /::/ or $self->importer("Catmandu::Importer::" . $self->importer);
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
-    if (my $file = $self->extra_argv->[1]) {
+    if (my $file = $self->extra_argv->[0]) {
         $self->importer_arg->{file} = $file;
     }
 }

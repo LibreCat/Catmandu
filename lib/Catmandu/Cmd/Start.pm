@@ -5,9 +5,7 @@ use Plack::Runner;
 use Plack::Util;
 use Catmandu;
 
-with 'MooseX::Getopt::GLD';
-
-Getopt::Long::Descriptive::prog_name('catmandu start');
+with 'MooseX::Getopt';
 
 has host => (
     traits => ['Getopt'],
@@ -65,9 +63,13 @@ has app => (
     cmd_aliases => 'a',
     default => 'app.psgi',
     documentation => "Either a .psgi script to run or a Catmandu::App. Defaults to app.psgi. " .
-                     "Can also be the non-option argument. The .psgi extension is optional",
+                     "Can also be the first non-option argument. " .
+                     "The .psgi extension is optional.",
 );
 
+sub _usage_format {
+    "usage: %c %o <app>";
+}
 
 sub BUILD {
     my $self = shift;
