@@ -1,13 +1,13 @@
 package Catmandu::Store;
 
-use Any::Moose '::Role';
+use Moose::Role;
 
 requires 'load';
 requires 'each';
 requires 'save';
 requires 'delete';
 
-no Any::Moose '::Role';
+no Moose::Role;
 __PACKAGE__;
 
 __END__

@@ -1,6 +1,6 @@
 package Catmandu::Index::Simple;
 
-use Any::Moose;
+use Moose;
 use KinoSearch::Plan::Schema;
 use KinoSearch::Analysis::PolyAnalyzer;
 use KinoSearch::Index::Indexer;
@@ -110,6 +110,6 @@ sub commit {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 

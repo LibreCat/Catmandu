@@ -3,6 +3,7 @@ package Catmandu;
 our $VERSION = 0.01;
 
 use 5.010;
+use Moose;
 use Try::Tiny;
 use Template;
 use File::ShareDir;
@@ -10,7 +11,6 @@ use Path::Class;
 use Hash::Merge ();
 use YAML ();
 use JSON ();
-use Any::Moose;
 
 sub instance {
     state $instance //= do { my $class = ref $_[0] ? ref $_[0] : $_[0]; $class->new; };
@@ -158,8 +158,7 @@ sub find_psgi {
     $files[0];
 }
 
-
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 

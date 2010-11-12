@@ -1,7 +1,7 @@
 package Catmandu::App::Role;
 
 use 5.010;
-use Any::Moose '::Role';
+use Moose::Role;
 use Catmandu;
 use Catmandu::App::Request;
 use Router::Simple;
@@ -136,6 +136,6 @@ sub as_psgi_app {
     }
 }
 
-no Any::Moose '::Role';
+no Moose::Role;
 __PACKAGE__;
 

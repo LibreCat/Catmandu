@@ -1,9 +1,9 @@
 package Catmandu::Cmd::Console;
 
-use Any::Moose;
+use Moose;
 use Devel::REPL;
 
-with any_moose('X::Getopt');
+with 'MooseX::Getopt';
 
 sub run {
     my $self = shift;
@@ -50,6 +50,6 @@ PERL
 }
 
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 

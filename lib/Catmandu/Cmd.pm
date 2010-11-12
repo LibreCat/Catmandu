@@ -12,7 +12,7 @@ sub run {
         $ENV{CATMANDU_HOME} = dir->absolute->stringify;
     }
 
-    $ENV{CATMANDU_ENV} //= 'development';
+    $ENV{CATMANDU_ENV} ||= 'development';
 
     my $pkg = join '::', __PACKAGE__, ucfirst $ARGV[0];
     Plack::Util::load_class($pkg);

@@ -1,11 +1,11 @@
 package Catmandu::Cmd::Start;
 
-use Any::Moose;
+use Moose;
 use Plack::Runner;
 use Plack::Util;
 use Catmandu;
 
-with any_moose('X::Getopt');
+with 'MooseX::Getopt';
 
 has host => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'o');
 has port => (traits => ['Getopt'], is => 'rw', isa => 'Int', cmd_aliases => 'p');
@@ -61,6 +61,6 @@ sub run {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 

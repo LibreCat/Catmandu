@@ -1,12 +1,12 @@
 package Catmandu::Cmd::Import;
 
 use 5.010;
-use Any::Moose;
+use Moose;
 use Plack::Util;
 use Catmandu;
 use lib Catmandu->lib;
 
-with any_moose('X::Getopt::Dashes');
+with 'MooseX::Getopt::Dashes';
 
 has importer => (traits => ['Getopt'], is => 'rw', isa => 'Str', cmd_aliases => 'I', default => 'JSON');
 has importer_arg => (traits => ['Getopt'], is => 'rw', isa => 'HashRef', cmd_aliases => 'i', default => sub { +{} });
@@ -48,6 +48,6 @@ sub run {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 

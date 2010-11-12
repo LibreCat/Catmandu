@@ -1,6 +1,6 @@
 package Catmandu::Store::Simple;
 
-use Any::Moose;
+use Moose;
 use Try::Tiny;
 use Data::UUID;
 use JSON ();
@@ -83,7 +83,7 @@ sub transaction {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 
 =head1 NAME

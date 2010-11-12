@@ -1,12 +1,12 @@
 package Catmandu::Importer;
 
-use Any::Moose '::Role';
+use Moose::Role;
 
 requires 'load';
 requires 'each';
 
 has 'file' => (is => 'ro', required => 1);
 
-no Any::Moose '::Role';
+no Moose::Role;
 __PACKAGE__;
 

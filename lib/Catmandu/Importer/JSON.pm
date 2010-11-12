@@ -1,8 +1,8 @@
 package Catmandu::Importer::JSON;
 
+use Moose;
 use JSON ();
 use File::Slurp ();
-use Any::Moose;
 
 with 'Catmandu::Importer';
 
@@ -29,6 +29,6 @@ sub each {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 
