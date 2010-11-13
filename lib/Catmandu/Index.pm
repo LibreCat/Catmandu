@@ -1,12 +1,12 @@
 package Catmandu::Index;
 
-use Any::Moose '::Role';
+use Moose::Role;
 
 requires 'save';
 requires 'find';
 requires 'delete';
 requires 'commit';
 
-no Any::Moose '::Role';
+no Moose::Role;
 __PACKAGE__;
 

@@ -1,14 +1,7 @@
 use File::Temp;
 use Test::Exception;
+use Test::Moose;
 use Test::More tests => 19;
-BEGIN {
-    require Any::Moose;
-    if (Any::Moose::moose_is_preferred) {
-        use Test::Moose;
-    } else {
-        use Test::Mouse;
-    }
-}
 
 BEGIN { use_ok 'Catmandu::Index::Simple'; }
 require_ok 'Catmandu::Index::Simple';

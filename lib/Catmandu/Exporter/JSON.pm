@@ -1,7 +1,7 @@
 package Catmandu::Exporter::JSON;
 
 use JSON qw(encode_json);
-use Any::Moose;
+use Moose;
 
 with 'Catmandu::Exporter';
 
@@ -37,6 +37,6 @@ sub dump {
 
 __PACKAGE__->meta->make_immutable;
 no JSON;
-no Any::Moose;
+no Moose;
 __PACKAGE__;
 
