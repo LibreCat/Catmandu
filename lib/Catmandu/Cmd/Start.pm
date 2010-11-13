@@ -80,28 +80,27 @@ sub BUILD {
 
 sub run {
     my $self = shift;
-    my $catmandu = Catmandu->new;
-    my $app = $self->app;
+    my $app  = $self->app;
     my $eval;
     my $psgi;
 
     if ($app =~ /::/) {
-        $eval = $app."->as_psgi_app";
+        $eval = $app."->meta->as_psgi_app";
     } else {
-        $psgi = $catmandu->find_psgi($app) or confess "Can't find psgi app $app";
+        $psgi = Catmandu->find_psgi($app) or confess "Can't find psgi app $app";
     }
 
     my @argv;
     if ($self->reload) {
         push @argv, '-r';
-        push @argv, '-R', join(',', $catmandu->catmandu_lib,
-                                    $catmandu->lib,
-                                    $catmandu->path_list('conf'),
-                                    $catmandu->path_list('psgi'),
-                                    $catmandu->path_list('template'));
+        push @argv, '-R', join(',', Catmandu->catmandu_lib,
+                                    Catmandu->lib,
+                                    Catmandu->path_list('conf'),
+                                    Catmandu->path_list('psgi'),
+                                    Catmandu->path_list('template'));
     }
-    push @argv, map { ('-I', $_) } $catmandu->lib;
-    push @argv, '-E', $catmandu->env;
+    push @argv, map { ('-I', $_) } Catmandu->lib;
+    push @argv, '-E', Catmandu->env;
     push @argv, '-p', $self->port   if $self->port;
     push @argv, '-o', $self->host   if $self->host;
     push @argv, '-S', $self->socket if $self->socket;
