@@ -1,6 +1,6 @@
-use Test::More;
-use Plack::Test;
 use HTTP::Request::Common;
+use Test::More tests => 7;
+use Plack::Test;
 
 BEGIN { use_ok 'Catmandu::App'; }
 require_ok 'Catmandu::App';
@@ -18,12 +18,6 @@ get '/runhelper' => 'helper';
 get '/runsub' => sub {
     shift->helper;
 };
-
-__PACKAGE__->on_get('/echo/:text', sub {
-    my $self = shift;
-    $self->response->content_type('text/plain');
-    $self->print($self->param('text'));
-});
 
 package main;
 

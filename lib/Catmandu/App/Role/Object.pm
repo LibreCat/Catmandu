@@ -1,4 +1,4 @@
-package Catmandu::App::Role;
+package Catmandu::App::Role::Object;
 
 use 5.010;
 use Moose::Role;
@@ -64,12 +64,9 @@ sub print_template {
     Catmandu->print_template($_[1], $_[2] // {}, $_[0]);
 }
 
-sub app {
-    ref $_[0] ? ref $_[0] : $_[0];
-}
-
 sub stash {
-    my $stash = Catmandu->stash->{shift->app} //= {};
+    my $class = ref $_[0] ? ref shift : shift;
+    my $stash = Catmandu->stash->{$class} ||= {};
     return $stash          if @_ == 0;
     return $stash->{$_[0]} if @_ == 1;
     my %pairs = @_;
@@ -77,38 +74,6 @@ sub stash {
         $stash->{$key} = $val;
     }
     $stash;
-}
-
-sub router {
-    shift->app->stash->{_router} //= Router::Simple->new;
-}
-
-sub on_any {
-    my $self = shift;
-
-    if (@_ == 3) {
-        my ($methods, $pattern, $sub) = @_;
-        $self->router->connect($pattern, { _run => $sub }, { method => [ map { uc $_ } @$methods ] });
-    } else {
-        my ($pattern, $sub) = @_;
-        $self->router->connect($pattern, { _run => $sub });
-    }
-}
-
-sub on_get {
-    my $self = shift; $self->on_any(['HEAD', 'GET'], @_);
-}
-
-sub on_put {
-    my $self = shift; $self->on_any(['PUT'], @_);
-}
-
-sub on_post {
-    my $self = shift; $self->on_any(['POST'], @_);
-}
-
-sub on_delete {
-    my $self = shift; $self->on_any(['DELETE'], @_);
 }
 
 sub run {
@@ -122,17 +87,24 @@ sub run {
     $self;
 }
 
+sub route {
+    $_[0]->stash->{_route} ||= Router::Simple->new;
+}
+
+sub add_route {
+    $_[0]->route->connect($_[1], { _run => $_[2] }, $_[3] || {});
+}
+
 sub as_psgi_app {
-    my $app = $_[0]->app;
-    my $router = $app->router;
+    my $class = ref $_[0] ? ref shift : shift;
+    my $route = $class->route;
     sub {
-        my $env = $_[0];
-        my $match = $router->match($env)
+        my $env   = $_[0];
+        my $match = $route->match($env)
             or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
-        $app->new(request => Catmandu::App::Request->new($env), params => $match)
+        $class->new(request => Catmandu::App::Request->new($env), params => $match)
             ->run($match->{_run})
-            ->response
-            ->finalize;
+            ->response->finalize;
     }
 }
 

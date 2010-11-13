@@ -15,8 +15,8 @@ use JSON ();
 
 has catmandu_share => (is => 'ro', isa => 'Str', init_arg => undef, builder => '_build_catmandu_share');
 has catmandu_lib   => (is => 'ro', isa => 'Str', init_arg => undef, builder => '_build_catmandu_lib');
-has home => (is => 'ro', isa => 'Str', required => 1, default => sub { $ENV{CATMANDU_HOME} });
-has env  => (is => 'ro', isa => 'Str', required => 1, default => sub { $ENV{CATMANDU_ENV} });
+has home => (is => 'ro', isa => 'Str', required => 1, default => sub { $ENV{CATMANDU_HOME} || dir->absolute->stringify });
+has env  => (is => 'ro', isa => 'Str', required => 1, default => sub { $ENV{CATMANDU_ENV}  || 'development' });
 has stack     => (is => 'ro', isa => 'ArrayRef', init_arg => undef, lazy => 1, builder => '_build_stack');
 has conf      => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, builder => '_build_conf');
 has _template => (is => 'ro', isa => 'Template', init_arg => undef, lazy => 1, builder => '_build_template');
