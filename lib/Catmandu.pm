@@ -133,8 +133,7 @@ sub find_psgi {
     my ($self, $file) = @_;
     $file = "$file.psgi" if $file !~ /\.psgi$/;
     my $paths = $self->paths('psgi');
-    my $dir = first { -f file($_, $file)->stringify } @$paths;
-    file($dir, $file)->stringify;
+    first { -f $_ } map { file($_, $file)->stringify } @$paths;
 }
 
 __PACKAGE__->meta->make_immutable;
