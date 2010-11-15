@@ -45,6 +45,14 @@ has store_arg => (
     documentation => "Pass params to the store constructor.",
 );
 
+has load => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'l',
+    documentation => "The id of a single object to load and export.",
+);
+
 sub _usage_format {
     "usage: %c %o <file>";
 }
@@ -56,7 +64,7 @@ sub BUILD {
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
     if (my $file = $self->extra_argv->[0]) {
-        $self->importer_arg->{file} = $file;
+        $self->exporter_arg->{file} = $file;
     }
 }
 
@@ -68,7 +76,13 @@ sub run {
     my $exporter = $self->exporter->new($self->exporter_arg);
     my $store = $self->store->new($self->store_arg);
 
-    $exporter->dump($store);
+    if ($self->load) {
+        my $obj = $store->load($self->load)
+            or die "The store doesn't contain no object with id \"" . $self->load . "\".\n";
+        $exporter->dump($obj);
+    } else {
+        $exporter->dump($store);
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
