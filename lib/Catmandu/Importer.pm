@@ -12,7 +12,7 @@ has 'file' => (
 );
 
 sub _build_file {
-    \*STDOUT;
+    \*STDIN;
 }
 
 no Moose::Role;
@@ -37,7 +37,7 @@ Catmandu::Importer - role describing an importer.
 
 =head2 $c->file
 
-Returns the stream from which objects are imported. Defaults to C<STDOUT>.
+Returns the stream from which objects are imported. Defaults to C<STDIN>.
 
 =head2 $c->load
 
