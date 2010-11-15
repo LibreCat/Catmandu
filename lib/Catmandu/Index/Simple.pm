@@ -84,8 +84,14 @@ sub find {
     );
 
     my $objs = [];
-    while (my $hit = $hits->next) {
-        push @$objs, $hit;
+    if (my $store = $opts{reify}) {
+        while (my $hit = $hits->next) {
+            push @$objs, $store->load_strict($hit->{_id});
+        }
+    } else {
+        while (my $hit = $hits->next) {
+            push @$objs, $hit;
+        }
     }
     return $objs,
            $hits->total_hits;

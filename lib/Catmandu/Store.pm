@@ -1,11 +1,18 @@
 package Catmandu::Store;
 
+use 5.010;
 use Moose::Role;
 
 requires 'load';
 requires 'each';
 requires 'save';
 requires 'delete';
+
+sub load_strict {
+    my ($self, $id) = @_;
+    $self->load($id) //
+        confess(qq(Can't find object with id "$id"));
+}
 
 no Moose::Role;
 __PACKAGE__;
@@ -48,6 +55,10 @@ represented as a hashref and uniquely identified by their _id key.
 
 Retrieve the object with _id C<$id> from the store. Returns
 the object as a hashref when found, C<undef> otherwise.
+
+=head2 $c->load_strict($id)
+
+Like C<load>, but dies instead of returning C<undef> if the object isn't found.
 
 =head2 $c->each($sub)
 

@@ -77,9 +77,7 @@ sub run {
     my $store = $self->store->new($self->store_arg);
 
     if ($self->load) {
-        my $obj = $store->load($self->load)
-            or die "The store doesn't contain no object with id \"" . $self->load . "\".\n";
-        $exporter->dump($obj);
+        $exporter->dump($store->load_strict($self->load));
     } else {
         $exporter->dump($store);
     }
