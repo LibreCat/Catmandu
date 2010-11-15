@@ -46,7 +46,7 @@ represented as a hashref and uniquely identified by their _id key.
 
 =head2 $c->load($id)
 
-Retrieve the object with _id C<$id> form the store. Returns
+Retrieve the object with _id C<$id> from the store. Returns
 the object as a hashref when found, C<undef> otherwise.
 
 =head2 $c->each($sub)
