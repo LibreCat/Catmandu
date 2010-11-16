@@ -5,6 +5,8 @@ use Moose::Role;
 use Catmandu;
 use Catmandu::App::Request;
 use Router::Simple;
+use Plack::Util;
+use Plack::Middleware::Conditional;
 
 has request => (
     is => 'ro',
@@ -87,25 +89,55 @@ sub run {
     $self;
 }
 
-sub route {
-    $_[0]->stash->{_route} ||= Router::Simple->new;
+sub _middleware {
+    $_[0]->stash->{_middleware} ||= [];
+}
+
+sub _router {
+    $_[0]->stash->{_router} ||= Router::Simple->new;
+}
+
+sub add_middleware {
+    my ($self, $sub, @args) = @_;
+    if (ref $sub ne 'CODE') {
+        my $pkg = Plack::Util::load_class($sub, 'Plack::Middleware');
+        $sub = sub { $pkg->wrap($_[0], @args) };
+    }
+    push @{$self->_middleware}, $sub;
+    1;
+}
+
+sub add_middleware_if {
+    my ($self, $cond, $sub, @args) = @_;
+    if (ref $sub ne 'CODE') {
+        my $pkg = Plack::Util::load_class($sub, 'Plack::Middleware');
+        $sub = sub { $pkg->wrap($_[0], @args) };
+    }
+    push @{$self->_middleware}, sub {
+        Plack::Middleware::Conditional->wrap($_[0], condition => $cond, builder => $sub);
+    };
+    1;
 }
 
 sub add_route {
-    $_[0]->route->connect($_[1], { _run => $_[2] }, $_[3] || {});
+    my ($self, $pattern, $sub, %opts) = @_;
+    $self->_router->connect($pattern, { _run => $sub }, \%opts);
+    1;
 }
 
 sub as_psgi_app {
-    my $class = ref $_[0] ? ref shift : shift;
-    my $route = $class->route;
-    sub {
-        my $env   = $_[0];
-        my $match = $route->match($env)
+    my $self = $_[0];
+    my $router = $self->_router;
+    my $sub = sub {
+        my $env = $_[0];
+        my $match = $router->match($env)
             or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
-        $class->new(request => Catmandu::App::Request->new($env), params => $match)
+        $self->new(request => Catmandu::App::Request->new($env), params => $match)
             ->run($match->{_run})
             ->response->finalize;
-    }
+    };
+    $sub = $_->($sub) for reverse @{$self->_middleware};
+    $sub;
 }
 
 no Moose::Role;

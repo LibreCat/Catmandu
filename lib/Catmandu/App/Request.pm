@@ -58,7 +58,6 @@ See L<CGI::Expand> for details and more examples.
 
 =head1 SEE ALSO
 
-
 L<Plack::Request>, the superclass.
 
 L<CGI::Expand>.
