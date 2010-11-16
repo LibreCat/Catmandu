@@ -86,6 +86,8 @@ __PACKAGE__->meta->make_immutable;
 no Moose;
 __PACKAGE__;
 
+__END__
+
 =head1 NAME
 
 Catmandu::Store::Simple - an implementation of L<Catmandu::Store> backed by L<DBD::SQLite>.
@@ -110,7 +112,7 @@ Extra methods for this class:
 
 Takes the following arguments:
 
-C<file>: The path to the sqlite3 database (required)
+file: The path to the sqlite3 database (required)
 
 =head2 $c->file
 
@@ -134,4 +136,6 @@ their parent transaction.
 =head1 SEE ALSO
 
 L<Catmandu::Store>, the Store role.
+
+L<DBD::SQLite>, the underlying database driver.
 

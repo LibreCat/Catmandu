@@ -46,8 +46,8 @@ Catmandu::Store - role describing a store.
 
 =head1 DESCRIPTION
 
-A class using L<Catmandu::Store> can store complex (bibliographic) objects,
-represented as a hashref and uniquely identified by their _id key.
+A class using L<Catmandu::Store> can store complex objects represented
+as a hashref and uniquely identified by their _id key.
 
 =head1 METHODS
 
@@ -67,14 +67,13 @@ Returns the number of objects found.
 
 =head2 $c->save($obj)
 
-Inserts or updates C<$obj> in the store. Returns the object as a hashref
-when found, C<undef> otherwise.
+Inserts or updates C<$obj> in the store. Returns the saved object.
 
-=head2 $c->delete($obj or $id)
+=head2 $c->delete($obj) $c->delete($id)
 
 Delete C<$obj> or object with _id C<$id> from the store.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Simple>, an included Store implementation that uses DBD::SQlite as storage layer.
+L<Catmandu::Store::Simple>, an included Store implementation that uses L<DBD::SQlite> as storage layer.
 

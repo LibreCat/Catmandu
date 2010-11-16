@@ -119,3 +119,41 @@ __PACKAGE__->meta->make_immutable;
 no Moose;
 __PACKAGE__;
 
+__END__
+
+=head1 NAME
+
+Catmandu::Index::Simple - an implementation of L<Catmandu::Index> backed by L<KinoSearch>.
+
+=head1 SYNOPSIS
+
+    use Catmandu::Index::Simple
+
+    my $index = Catmandu::Index::Simple->new(path => '/tmp/index');
+
+=head1 DESCRIPTION
+
+See L<Catmandu::Index>.
+
+=head1 METHODS
+
+See L<Catmandu::Index> for the base methods.
+
+Extra methods for this class:
+
+=head2 Class->new(%args)
+
+Takes the following arguments:
+
+path: The path to the L<KinoSearch> index files (required).
+
+=head2 $c->path
+
+Returns the path to the L<KinoSearch> index files as a string.
+
+=head1 SEE ALSO
+
+L<Catmandu::Index>, the Index role.
+
+L<KinoSearch>, the underlying search engine.
+
