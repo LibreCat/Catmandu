@@ -22,7 +22,7 @@ package main;
 
 my $enum = T::Enumerable->new(data => [1,2,3]);
 
-is_deeply $enum->as_array, [1,2,3];
+is_deeply $enum->to_array, [1,2,3];
 is $enum->all(sub { $_ > 0 }), 1;
 is $enum->all(sub { $_ > 1 }), 0;
 

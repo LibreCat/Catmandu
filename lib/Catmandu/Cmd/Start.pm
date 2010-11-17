@@ -85,7 +85,7 @@ sub run {
     my $psgi;
 
     if ($app =~ /::/) {
-        $eval = $app . "->as_psgi_app";
+        $eval = $app . '->to_app';
     } else {
         $psgi = Catmandu->find_psgi($app) or confess "Can't find psgi app $app";
     }

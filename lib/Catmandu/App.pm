@@ -5,8 +5,8 @@ use Moose::Exporter;
 use Catmandu::App::Role::Object;
 
 Moose::Exporter->setup_import_methods(
+    as_is => [qw(any get put post delete set enable enable_if mount)],
     also  => 'Moose',
-    as_is => [qw( any get put post delete set enable enable_if )],
 );
 
 sub init_meta {
@@ -38,6 +38,7 @@ sub set { my $caller = caller; $caller->stash(@_); };
 
 sub enable { my $caller = caller; $caller->add_middleware(@_); }
 sub enable_if(&$@) { my $caller = caller; $caller->add_middleware_if(@_); }
+sub mount { my $caller = caller; $caller->add_mount(@_); }
 
 __PACKAGE__;
 

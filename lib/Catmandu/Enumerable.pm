@@ -4,7 +4,7 @@ use Moose::Role;
 
 requires 'each';
 
-sub as_array {
+sub to_array {
     my ($self, $sub) = @_;
     my $all = [];
     $self->each(sub {

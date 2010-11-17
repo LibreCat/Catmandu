@@ -10,18 +10,18 @@ package T::App;
 use Catmandu::App;
 
 sub helper {
-    shift->print('body');
+    $_[0]->print('body');
 }
 
 get '/runhelper' => 'helper';
 
 get '/runsub' => sub {
-    shift->helper;
+    $_[0]->helper;
 };
 
 package main;
 
-my $app = T::App->as_psgi_app;
+my $app = T::App->to_app;
 
 test_psgi $app, sub {
     my $sub = shift;

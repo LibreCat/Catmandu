@@ -7,6 +7,7 @@ use Catmandu::App::Request;
 use Router::Simple;
 use Plack::Util;
 use Plack::Middleware::Conditional;
+use Plack::App::URLMap;
 
 has request => (
     is => 'ro',
@@ -89,12 +90,16 @@ sub run {
     $self;
 }
 
-sub _middleware {
-    $_[0]->stash->{_middleware} ||= [];
+sub _middlewares {
+    $_[0]->stash->{_middlewares} ||= [];
 }
 
 sub _router {
     $_[0]->stash->{_router} ||= Router::Simple->new;
+}
+
+sub _mounts {
+    $_[0]->stash->{_mounts} ||= {};
 }
 
 sub add_middleware {
@@ -103,7 +108,7 @@ sub add_middleware {
         my $pkg = Plack::Util::load_class($sub, 'Plack::Middleware');
         $sub = sub { $pkg->wrap($_[0], @args) };
     }
-    push @{$self->_middleware}, $sub;
+    push @{$self->_middlewares}, $sub;
     1;
 }
 
@@ -113,7 +118,7 @@ sub add_middleware_if {
         my $pkg = Plack::Util::load_class($sub, 'Plack::Middleware');
         $sub = sub { $pkg->wrap($_[0], @args) };
     }
-    push @{$self->_middleware}, sub {
+    push @{$self->_middlewares}, sub {
         Plack::Middleware::Conditional->wrap($_[0], condition => $cond, builder => $sub);
     };
     1;
@@ -125,9 +130,22 @@ sub add_route {
     1;
 }
 
-sub as_psgi_app {
+sub add_mount {
+    my ($self, $path, $sub) = @_;
+    if (ref $sub ne 'CODE') {
+        my $pkg = Plack::Util::load_class($sub);
+        $sub = $pkg->to_app;
+    }
+    $self->_mounts->{$path} = $sub;
+    1;
+}
+
+sub to_app {
     my $self = $_[0];
+    my $middlewares = $self->_middlewares;
+    my $mounts = $self->_mounts;
     my $router = $self->_router;
+
     my $sub = sub {
         my $env = $_[0];
         my $match = $router->match($env)
@@ -136,7 +154,18 @@ sub as_psgi_app {
             ->run($match->{_run})
             ->response->finalize;
     };
-    $sub = $_->($sub) for reverse @{$self->_middleware};
+
+    $sub = $_->($sub) for reverse @$middlewares;
+
+    if (keys %$mounts) {
+        my $map = Plack::App::URLMap->new;
+        while (my ($path, $sub) = each %$mounts) {
+            $map->mount($path, $sub);
+        }
+        $map->mount('/', $sub);
+        $sub = $map->to_app;
+    }
+
     $sub;
 }
 
