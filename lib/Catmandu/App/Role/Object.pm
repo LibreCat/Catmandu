@@ -78,7 +78,6 @@ sub stash {
 
 sub run {
     my ($self, $sub) = @_;
-    $sub //= $self->param('_run');
     if (ref $sub eq 'CODE') {
         $sub->($self);
     } else {
