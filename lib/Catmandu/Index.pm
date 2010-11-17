@@ -40,7 +40,7 @@ Catmandu::Index - role describing a search index.
 
 Inserts or updates C<$obj> in the index. Returns the saved object.
 
-=head2 $c->delete($obj) $c->delete($id)
+=head2 $c->delete($obj | $id)
 
 Delete C<$obj> or object with _id C<$id> from the index.
 

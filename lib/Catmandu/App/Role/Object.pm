@@ -13,6 +13,7 @@ has request => (
     is => 'ro',
     required => 1,
     handles => [qw(
+        session
         env
     )],
 );
@@ -39,10 +40,6 @@ sub _build_response {
 
 sub req { $_[0]->request }
 sub res { $_[0]->response }
-
-sub session {
-    $_[0]->request->env->{'psgix.session'};
-}
 
 sub param {
     my $self = shift;
@@ -125,8 +122,8 @@ sub add_middleware_if {
 }
 
 sub add_route {
-    my ($self, $pattern, $sub, %opts) = @_;
-    $self->_router->connect($pattern, { _run => $sub }, \%opts);
+    my ($self, $route, $sub, %opts) = @_;
+    $self->_router->connect($route, { _run => $sub }, \%opts);
     1;
 }
 

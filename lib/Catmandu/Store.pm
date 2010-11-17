@@ -69,7 +69,7 @@ Returns the number of objects found.
 
 Inserts or updates C<$obj> in the store. Returns the saved object.
 
-=head2 $c->delete($obj) $c->delete($id)
+=head2 $c->delete($obj | $id)
 
 Delete C<$obj> or object with _id C<$id> from the store.
 
