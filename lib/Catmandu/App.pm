@@ -5,8 +5,18 @@ use Moose::Exporter;
 use Catmandu::App::Role::Object;
 
 Moose::Exporter->setup_import_methods(
-    as_is => [qw(any get put post delete set enable enable_if mount)],
-    also => 'Moose',
+    also  => 'Moose',
+    as_is => [qw(
+        any
+        get
+        put
+        post
+        delete
+        set
+        enable
+        enable_if
+        mount
+    )],
 );
 
 sub init_meta {
@@ -276,6 +286,11 @@ See C<mount>.
 
 Returns the app as a coderef runnable with any psgi
 capable server.
+
+=head2 Class|$c->inspect_routes
+
+Shows a string representation of the routes matched
+by the app.
 
 =head1 SEE ALSO
 

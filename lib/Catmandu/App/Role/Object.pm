@@ -8,6 +8,7 @@ use Router::Simple;
 use Plack::Util;
 use Plack::Middleware::Conditional;
 use Plack::App::URLMap;
+use List::Util qw(max);
 
 has request => (
     is => 'ro',
@@ -128,16 +129,12 @@ sub add_route {
 
 sub add_mount {
     my ($self, $path, $sub) = @_;
-    if (ref $sub ne 'CODE') {
-        my $pkg = Plack::Util::load_class($sub);
-        $sub = $pkg->to_app;
-    }
     $self->_mounts->{$path} = $sub;
     1;
 }
 
 sub to_app {
-    my $self = $_[0];
+    my $self = shift;
     my $middlewares = $self->_middlewares;
     my $mounts = $self->_mounts;
     my $router = $self->_router;
@@ -154,15 +151,38 @@ sub to_app {
     $sub = $_->($sub) for reverse @$middlewares;
 
     if (keys %$mounts) {
-        my $map = Plack::App::URLMap->new;
+        my $url_map = Plack::App::URLMap->new;
+        $url_map->map('/', $sub);
         while (my ($path, $sub) = each %$mounts) {
-            $map->mount($path, $sub);
+            if (ref $sub ne 'CODE') {
+                $sub = Plack::Util::load_class($sub)->to_app;
+            }
+            $url_map->map($path, $sub);
         }
-        $map->mount('/', $sub);
-        $sub = $map->to_app;
+        $sub = $url_map->to_app;
     }
 
     $sub;
+}
+
+sub inspect_routes {
+    my $self = shift;
+    my $text;
+    my $mounts = $self->_mounts;
+    my $router = $self->_router;
+
+    $text .= "routes:\n";
+    $text .= " $_\n" for split /\n/, $router->as_string;
+
+    if (keys %$mounts) {
+        $text .= "mounts:\n";
+        my $max = max map(length, keys %$mounts);
+        while (my ($path, $sub) = each %$mounts) {
+            $text .= sprintf " %-${max}s %s\n", $path, ref $sub || $sub;
+        }
+    }
+
+    $text;
 }
 
 no Moose::Role;
