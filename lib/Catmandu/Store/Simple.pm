@@ -8,7 +8,7 @@ use DBI;
 
 with 'Catmandu::Store';
 
-has file => (is => 'ro', required => 1);
+has file => (is => 'ro', isa => 'Str', required => 1);
 has _dbh => (is => 'ro', required => 1, init_arg => undef, builder => '_build_dbh');
 has _transaction_running => (is => 'rw', isa => 'Bool', init_arg => undef);
 

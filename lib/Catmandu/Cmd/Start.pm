@@ -5,7 +5,7 @@ use Plack::Runner;
 use Plack::Util;
 use Catmandu;
 
-with 'MooseX::Getopt';
+with 'Catmandu::Command';
 
 has host => (
     traits => ['Getopt'],

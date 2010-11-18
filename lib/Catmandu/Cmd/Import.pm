@@ -6,7 +6,7 @@ use Plack::Util;
 use Catmandu;
 use lib Catmandu->lib;
 
-with 'MooseX::Getopt::Dashes';
+with 'Catmandu::Command';
 
 has importer => (
     traits => ['Getopt'],

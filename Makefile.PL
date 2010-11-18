@@ -25,6 +25,7 @@ requires 'JSON' => '2.22';
 requires 'KinoSearch' => '0.31';
 requires 'List::Util' => '1.23';
 requires 'Moose' => '1.19';
+requires 'MooseX::Daemonize' => '0.12';
 requires 'MooseX::Getopt' => '0.33';
 requires 'MooseX::Singleton' => '0.25';
 requires 'Path::Class' => '0.21';

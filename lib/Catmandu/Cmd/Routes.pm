@@ -5,7 +5,7 @@ use Plack::Util;
 use Catmandu;
 use lib Catmandu->lib;
 
-with 'MooseX::Getopt';
+with 'Catmandu::Command';
 
 has app => (
     traits => ['Getopt'],

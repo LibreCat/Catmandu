@@ -3,7 +3,7 @@ package Catmandu::Cmd::Console;
 use Moose;
 use Devel::REPL;
 
-with 'MooseX::Getopt';
+with 'Catmandu::Command';
 
 sub run {
     my $self = shift;
