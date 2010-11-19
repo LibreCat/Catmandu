@@ -8,8 +8,21 @@ use KinoSearch::Search::IndexSearcher;
 
 with 'Catmandu::Index';
 
-has fields => (is => 'ro', isa => 'ArrayRef', required => 1);
 has path => (is => 'ro', isa => 'Str', required => 1);
+
+has _analyzer => (
+    is => 'ro',
+    init_arg => undef,
+    lazy => 1,
+    builder => '_build_analyzer',
+);
+
+has _ft_field_type => (
+    is => 'ro',
+    init_arg => undef,
+    lazy => 1,
+    builder => '_build_ft_field_type',
+);
 
 has _schema => (
     is => 'ro',
@@ -35,20 +48,19 @@ has _searcher => (
     clearer => '_clear_searcher',
 );
 
+sub _build_analyzer {
+    KinoSearch::Analysis::PolyAnalyzer->new(language => 'en');
+}
+
+sub _build_ft_field_type {
+    my $self = shift;
+    KinoSearch::Plan::FullTextType->new(analyzer => $self->_analyzer);
+}
+
 sub _build_schema {
     my $self = shift;
-
     my $schema = KinoSearch::Plan::Schema->new;
-    my $analyzer = KinoSearch::Analysis::PolyAnalyzer->new(language => 'en');
-    my $ft_type = KinoSearch::Plan::FullTextType->new(analyzer => $analyzer);
-
-    foreach my $name (@{$self->fields}) {
-        $schema->spec_field(name => $name, type => $ft_type);
-    }
-
-    $schema->spec_field(name => '_id',
-                        type => KinoSearch::Plan::StringType->new);
-
+    $schema->spec_field(name => '_id', type => KinoSearch::Plan::StringType->new);
     $schema;
 }
 
@@ -68,6 +80,11 @@ sub _build_searcher {
 
 sub save {
     my ($self, $obj) = @_;
+    my $type   = $self->_ft_field_type;
+    my $schema = $self->_schema;
+    for my $name (keys %$obj) {
+        $schema->spec_field(name => $name, type => $type) if $name ne '_id';
+    }
     $self->_indexer->add_doc($obj);
     $obj;
 }

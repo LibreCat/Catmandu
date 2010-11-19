@@ -16,7 +16,6 @@ requires 'DBD::SQLite' => '1.31';
 requires 'DBI' => '1.607';
 requires 'Devel::REPL' => '1.003012';
 requires 'File::ShareDir' => '1.02';
-requires 'File::Temp' => '0.22';
 requires 'Getopt::Long::Descriptive' => '0.086';
 requires 'Hash::Merge' => '0.12';
 requires 'HTTP::Request::Common' => '5.824';
