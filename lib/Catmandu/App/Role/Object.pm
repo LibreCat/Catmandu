@@ -12,6 +12,7 @@ use List::Util qw(max);
 
 has request => (
     is => 'ro',
+    isa => 'Catmandu::App::Request',
     required => 1,
     handles => [qw(
         session
@@ -21,6 +22,7 @@ has request => (
 
 has response => (
     is => 'ro',
+    isa => 'Catmandu::App::Response',
     lazy => 1,
     builder => '_build_response',
     handles => [qw(

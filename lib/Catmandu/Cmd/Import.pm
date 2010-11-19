@@ -12,6 +12,7 @@ has importer => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'Str',
+    lazy => 1,
     cmd_aliases => 'I',
     default => 'JSON',
     documentation => "The Catmandu::Importer class to use. Defaults to JSON.",
@@ -21,16 +22,18 @@ has importer_arg => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'HashRef',
+    lazy => 1,
     cmd_aliases => 'i',
     default => sub { +{} },
     documentation => "Pass params to the importer constructor. " .
-                     "The file param can also be the first non-option argument.",
+                     "The file param can also be the 1st non-option argument.",
 );
 
 has store => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'Str',
+    lazy => 1,
     cmd_aliases => 'S',
     default => 'Simple',
     documentation => "The Catmandu::Store class to use. Defaults to Simple.",
@@ -40,6 +43,7 @@ has store_arg => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'HashRef',
+    lazy => 1,
     cmd_aliases => 's',
     default => sub { +{} },
     documentation => "Pass params to the store constructor.",
@@ -54,7 +58,7 @@ has verbose => (
 );
 
 sub _usage_format {
-    "usage: %c %o <file>";
+    "usage: %c %o [file]";
 }
 
 sub BUILD {
@@ -63,7 +67,7 @@ sub BUILD {
     $self->importer =~ /::/ or $self->importer("Catmandu::Importer::" . $self->importer);
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
-    if (my $file = $self->extra_argv->[0]) {
+    if (my $file = shift @{$self->extra_argv}) {
         $self->importer_arg->{file} = $file;
     }
 }
@@ -85,9 +89,9 @@ sub run {
         }
     });
 
-    say $count == 1 ? 
-        "Imported 1 object" :
-        "Imported $count objects";
+    if ($verbose) {
+        say $count == 1 ? "Imported 1 object" : "Imported $count objects";
+    }
 }
 
 __PACKAGE__->meta->make_immutable;

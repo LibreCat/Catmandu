@@ -1,18 +1,17 @@
 package Catmandu::Exporter;
 
 use Moose::Role;
+use MooseX::Types::IO::All 'IO_All';
 
 requires 'dump';
 
 has 'file' => (
-    is       => 'ro',
+    is => 'ro',
+    isa => IO_All,
+    coerce => 1,
     required => 1,
-    builder  => '_build_file',
+    default => '-',
 );
-
-sub _build_file {
-    \*STDOUT;
-}
 
 no Moose::Role;
 __PACKAGE__;
@@ -34,7 +33,7 @@ Catmandu::Exporter - role describing an exporter.
 
 =head2 $c->file
 
-Returns the stream to which objects are exported. Defaults to C<STDOUT>.
+Returns the io to which objects are exported. Defaults to C<STDOUT>.
 
 =head2 $c->dump($obj)
 

@@ -12,16 +12,16 @@ has app => (
     is => 'rw',
     isa => 'Str',
     cmd_aliases => 'a',
-    documentation => "A Catmandu::App. Can also be the first non-option argument.",
+    documentation => "A Catmandu::App. Can also be the 1st non-option argument.",
 );
 
 sub _usage_format {
-    "usage: %c %o <app>";
+    "usage: %c %o [app]";
 }
 
 sub BUILD {
     my $self = shift;
-    if (my $app = $self->extra_argv->[0]) {
+    if (my $app = shift @{$self->extra_argv}) {
         $self->app($app);
     }
 }

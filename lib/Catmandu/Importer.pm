@@ -1,19 +1,17 @@
 package Catmandu::Importer;
 
 use Moose::Role;
+use MooseX::Types::IO::All 'IO_All';
 
-requires 'load';
 requires 'each';
 
 has 'file' => (
-    is       => 'ro',
+    is => 'ro',
+    isa => IO_All,
+    coerce => 1,
     required => 1,
-    builder  => '_build_file',
+    default => '-',
 );
-
-sub _build_file {
-    \*STDIN;
-}
 
 no Moose::Role;
 __PACKAGE__;
@@ -26,8 +24,6 @@ Catmandu::Importer - role describing an importer.
 
 =head1 SYNOPSIS
 
-    my $array_ref = $importer->load;
-
     $importer->each(sub {
         my $obj = $_[0];
         ...
@@ -37,15 +33,10 @@ Catmandu::Importer - role describing an importer.
 
 =head2 $c->file
 
-Returns the stream from which objects are imported. Defaults to C<STDIN>.
-
-=head2 $c->load
-
-Imports al the objects in C<file> and returns
-the objects as an arrayref of hashrefs.
+Returns the io from which objects are imported. Defaults to C<STDIN>.
 
 =head2 $c->each($sub)
 
-Iterates over all objects in C<file> and passes them to C<$sub>.
+Iterates over all objects in C<file> and passes them to C<$sub> as a hashref.
 Returns the number of objects imported.
 

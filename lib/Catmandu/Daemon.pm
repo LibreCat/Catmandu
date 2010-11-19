@@ -3,13 +3,15 @@ package Catmandu::Daemon;
 use 5.010;
 use Moose::Role;
 
-with 'MooseX::Daemonize';
+with qw(
+    MooseX::Getopt::Dashes
+    MooseX::Daemonize
+);
 
 requires 'run_daemon';
 
 after start => sub {
-    my $self = shift;
-    $self->run_daemon if $self->is_daemon;
+    my $self = shift; $self->is_daemon and $self->run_daemon;
 };
 
 sub _usage_format {

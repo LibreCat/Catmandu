@@ -1,13 +1,13 @@
 use Test::More tests => 31;
 
-BEGIN { use_ok 'Catmandu::Enumerable'; }
-require_ok 'Catmandu::Enumerable';
+BEGIN { use_ok 'Catmandu::Each'; }
+require_ok 'Catmandu::Each';
 
-package T::Enumerable;
+package T::Each;
 
 use Moose;
 
-with 'Catmandu::Enumerable';
+with 'Catmandu::Each';
 
 has data => (is => 'rw', isa => 'ArrayRef');
 
@@ -20,7 +20,7 @@ sub each {
 
 package main;
 
-my $enum = T::Enumerable->new(data => [1,2,3]);
+my $enum = T::Each->new(data => [1,2,3]);
 
 is_deeply $enum->to_array, [1,2,3];
 is $enum->all(sub { $_ > 0 }), 1;

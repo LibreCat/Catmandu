@@ -12,21 +12,21 @@ sub dump {
     my $count = 0;
 
     if (ref $obj eq 'ARRAY') {
-        print $f encode_json($obj);
+        $f->print(encode_json($obj));
         $count = scalar @$obj;
     }
     elsif (ref $obj eq 'HASH') {
-        print $f encode_json($obj);
+        $f->print(encode_json($obj));
         $count = 1;
     }
     elsif (blessed($obj) && $obj->can('each')) {
-        print $f '[';
+        $f->print('[');
         $obj->each(sub {
-            print $f ',' if $count;
-            print $f encode_json(shift);
+            $f->print(',') if $count;
+            $f->print(encode_json(shift));
             $count++;
         });
-        print $f ']';
+        $f->print(']');
     }
     else {
         confess "Can't export";

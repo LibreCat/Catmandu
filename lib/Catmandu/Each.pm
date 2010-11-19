@@ -1,4 +1,4 @@
-package Catmandu::Enumerable;
+package Catmandu::Each;
 
 use Moose::Role;
 

@@ -19,6 +19,7 @@ has port => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'Int',
+    lazy => 1,
     cmd_aliases => 'p',
     default => 5000,
     documentation => "The port number a TCP based server daemon listens on. Defaults to 5000.",
@@ -60,6 +61,7 @@ has app => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'Str',
+    lazy => 1,
     cmd_aliases => 'a',
     default => 'app.psgi',
     documentation => "Either a .psgi script to run or a Catmandu::App. Defaults to app.psgi. " .
@@ -68,12 +70,12 @@ has app => (
 );
 
 sub _usage_format {
-    "usage: %c %o <app>";
+    "usage: %c %o [app]";
 }
 
 sub BUILD {
     my $self = shift;
-    if (my $app = $self->extra_argv->[0]) {
+    if (my $app = shift @{$self->extra_argv}) {
         $self->app($app);
     }
 }

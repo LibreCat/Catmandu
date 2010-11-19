@@ -2,7 +2,7 @@ package Catmandu::Command;
 
 use Moose::Role;
 
-with 'MooseX::Getopt';
+with 'MooseX::Getopt::Dashes';
 
 requires 'run';
 
