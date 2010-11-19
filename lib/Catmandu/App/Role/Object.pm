@@ -62,7 +62,10 @@ sub print {
 }
 
 sub print_template {
-    Catmandu->print_template($_[1], $_[2] // {}, $_[0]);
+    my ($self, $tmpl, $vars) = @_;
+    $vars ||= {};
+    $vars->{app} = $self;
+    Catmandu->print_template($tmpl, $vars, $self);
 }
 
 sub stash {
@@ -167,12 +170,10 @@ sub to_app {
 
 sub inspect_routes {
     my $self = shift;
-    my $text;
     my $mounts = $self->_mounts;
     my $router = $self->_router;
 
-    $text .= "routes:\n";
-    $text .= " $_\n" for split /\n/, $router->as_string;
+    my $text = "routes:\n" . join("", map(" $_\n", split(/\n/, $router->as_string)));
 
     if (keys %$mounts) {
         $text .= "mounts:\n";
