@@ -126,6 +126,7 @@ sub commit {
     my ($self) = @_;
     if ($self->_has_indexer) {
         $self->_indexer->commit;
+        $self->_indexer->optimize;
         $self->_clear_indexer;
         $self->_clear_searcher;
     }

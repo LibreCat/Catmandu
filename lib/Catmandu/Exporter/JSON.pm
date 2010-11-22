@@ -11,15 +11,15 @@ sub dump {
     my $f = $self->file;
     my $count = 0;
 
-    if (ref $obj eq 'ARRAY') {
-        $f->print(encode_json($obj));
-        $count = scalar @$obj;
-    }
-    elsif (ref $obj eq 'HASH') {
+    if (ref $obj eq 'HASH') {
         $f->print(encode_json($obj));
         $count = 1;
     }
-    elsif (blessed($obj) && $obj->can('each')) {
+    elsif (ref $obj eq 'ARRAY') {
+        $f->print(encode_json($obj));
+        $count = scalar @$obj;
+    }
+    elsif (blessed $obj and $obj->can('each')) {
         $f->print('[');
         $obj->each(sub {
             $f->print(',') if $count;
