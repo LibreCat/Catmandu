@@ -7,7 +7,7 @@ use Data::UUID;
 BEGIN { use_ok 'Catmandu::Store::Simple'; }
 require_ok 'Catmandu::Store::Simple';
 
-my $file = io->catfile(io->tmpdir->pathname, Data::UUID->new->create_str, '.db')->filename;
+my $file = io->catfile(io->tmpdir->pathname, Data::UUID->new->create_str)->name;
 
 my $store = Catmandu::Store::Simple->new(file => $file);
 note "store path is $file";

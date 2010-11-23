@@ -7,7 +7,8 @@ use Test::More tests => 20;
 BEGIN { use_ok 'Catmandu::Index::Simple'; }
 require_ok 'Catmandu::Index::Simple';
 
-my $path = io->catdir(io->tmpdir->pathname, Data::UUID->new->create_str)->pathname;
+my $path = io->catdir(io->tmpdir->pathname, Data::UUID->new->create_str)->name;
+
 my $index = Catmandu::Index::Simple->new(path => $path);
 note "index path is $path";
 
