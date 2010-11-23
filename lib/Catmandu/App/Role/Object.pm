@@ -67,6 +67,7 @@ sub print_template {
     my ($self, $tmpl, $vars) = @_;
     $vars ||= {};
     $vars->{app} = $self;
+    $vars->{catmandu} = Catmandu->instance;
     Catmandu->print_template($tmpl, $vars, $self);
 }
 
@@ -155,7 +156,7 @@ sub to_app {
 
     $sub = $_->($sub) for reverse @$middlewares;
 
-    if (keys %$mounts) {
+    if (keys %$mounts) { # TODO handle recursion, pass params
         my $url_map = Plack::App::URLMap->new;
         $url_map->map('/', $sub);
         while (my ($path, $sub) = each %$mounts) {

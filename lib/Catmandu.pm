@@ -81,9 +81,6 @@ sub _build_template {
     Template->new({
         PLUGIN_BASE  => 'Catmandu::Template::Plugin',
         INCLUDE_PATH => $self->paths('template'),
-        VARIABLES    => {
-            catmandu => $self,
-        },
         %$args,
     });
 }

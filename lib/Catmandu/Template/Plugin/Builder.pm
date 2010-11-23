@@ -18,6 +18,11 @@ sub new {
     }, $class;
 }
 
+sub _throw {
+    my ($self, $error) = @_;
+    $self->{context}->throw($error);
+}
+
 sub builder {
     my ($self, @vars) = @_;
     my $class = ref $self;
@@ -102,7 +107,7 @@ sub build {
 sub input {
     my ($self, $type, @vars) = @_;
     my $attr = ref $vars[-1] eq 'HASH' ? pop @vars : {};
-    @vars or $self->_error("Name can't be empty");
+    @vars or $self->_throw("Name can't be empty");
     $attr->{type} = $type;
     $attr->{name} = $self->var(@vars);
     $attr->{value} = $self->get(@vars);
@@ -140,7 +145,7 @@ sub datetime { my ($self, @vars) = @_; $self->input('datetime', @vars); }
 sub text_area {
     my ($self, @vars) = @_;
     my $attr = ref $vars[-1] eq 'HASH' ? pop @vars : {};
-    @vars or $self->_error("Name can't be empty");
+    @vars or $self->_throw("Name can't be empty");
     $attr->{name} = $self->var(@vars);
     $attr->{id} //= $self->id(@vars);
     $self->tag('textarea', $self->get(@vars), $attr);
@@ -149,8 +154,8 @@ sub text_area {
 sub select_options {
     my ($self, @vars) = @_;
     my $opts = pop @vars;
-    ref $opts eq 'ARRAY' or $self->_error("Option values missing");
-    @vars or $self->_error("Name can't be empty");
+    ref $opts eq 'ARRAY' or $self->_throw("Option values missing");
+    @vars or $self->_throw("Name can't be empty");
     my $value = $self->get(@vars);
     join '', map {
         my $pair = ref $_ eq 'ARRAY' ? $_ : [$_, $_];
@@ -164,7 +169,7 @@ sub select {
     my ($self, @vars) = @_;
     my $attr = ref $vars[-1] eq 'HASH' ? pop @vars : {};
     my $opts = pop @vars;
-    @vars or $self->_error("Name can't be empty");
+    @vars or $self->_throw("Name can't be empty");
     $attr->{name} = $self->var(@vars);
     $attr->{id} //= $self->id(@vars);
     $self->tag('select', $self->select_options(@vars, $opts), $attr);
@@ -197,10 +202,6 @@ sub tag {
 sub _attributes {
     my ($self, $attr) = @_;
     join "", map qq( $_="$attr->{$_}"), keys %$attr;
-}
-
-sub _error {
-    $_[0]->{context}->throw($_[1]);
 }
 
 __PACKAGE__;
