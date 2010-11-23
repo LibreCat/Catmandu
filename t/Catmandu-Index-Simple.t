@@ -7,12 +7,12 @@ use Test::More tests => 20;
 BEGIN { use_ok 'Catmandu::Index::Simple'; }
 require_ok 'Catmandu::Index::Simple';
 
-my $dir = io->catdir(io->tmpdir->pathname, Data::UUID->new->create_str)->pathname;
-my $idx = Catmandu::Index::Simple->new(path => $dir);
-note "index path is $dir";
+my $path = io->catdir(io->tmpdir->pathname, Data::UUID->new->create_str)->pathname;
+my $index = Catmandu::Index::Simple->new(path => $path);
+note "index path is $path";
 
- isa_ok $idx, Catmandu::Index::Simple;
-does_ok $idx, Catmandu::Index;
+ isa_ok $index, Catmandu::Index::Simple;
+does_ok $index, Catmandu::Index;
 
 $obj1 = {_id => "001", title => "the third man"};
 $obj2 = {_id => "002", title => "the tenth man"};
@@ -20,37 +20,37 @@ $obj2 = {_id => "002", title => "the tenth man"};
 my $hits;
 my $total_hits;
 
-is_deeply $idx->save($obj1), $obj1;
+is_deeply $index->save($obj1), $obj1;
 
-$idx->save($obj2);
+$index->save($obj2);
 
-($hits, $total_hits) = $idx->find("man");
+($hits, $total_hits) = $index->find("man");
 is scalar @$hits, 2;
 is $total_hits, 2;
-($hits, $total_hits) = $idx->find("third");
+($hits, $total_hits) = $index->find("third");
 is scalar @$hits, 1;
 is $total_hits, 1;
-($hits, $total_hits) = $idx->find("tenth");
+($hits, $total_hits) = $index->find("tenth");
 is scalar @$hits, 1;
 is $total_hits, 1;
-($hits, $total_hits) = $idx->find("third OR tenth");
+($hits, $total_hits) = $index->find("third OR tenth");
 is scalar @$hits, 2;
 is $total_hits, 2;
-($hits, $total_hits) = $idx->find("third AND tenth");
+($hits, $total_hits) = $index->find("third AND tenth");
 is scalar @$hits, 0;
 is $total_hits, 0;
 
-($hits, $total_hits) = $idx->find("_id : 001");
+($hits, $total_hits) = $index->find("_id : 001");
 is scalar @$hits, 1;
 is $total_hits, 1;
 
-throws_ok { $idx->delete({missing => '_id'}) } qr/Missing _id/;
+throws_ok { $index->delete({missing => '_id'}) } qr/Missing _id/;
 
-$idx->delete({_id => "001"});
-($hits, $total_hits) = $idx->find("_id : 001");
+$index->delete({_id => "001"});
+($hits, $total_hits) = $index->find("_id : 001");
 is $total_hits, 0;
-$idx->delete("002");
-($hits, $total_hits) = $idx->find("_id : 002");
+$index->delete("002");
+($hits, $total_hits) = $index->find("_id : 002");
 is $total_hits, 0;
 
 done_testing;
