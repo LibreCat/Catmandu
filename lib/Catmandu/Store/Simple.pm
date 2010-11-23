@@ -35,13 +35,12 @@ sub each {
     my ($self, $sub) = @_;
     my $sth = $self->_dbh->prepare("SELECT data FROM objects");
     $sth->execute;
-    my $count = 0;
-    my $row;
-    while ($row = $sth->fetchrow_arrayref) {
+    my $n = 0;
+    while (my $row = $sth->fetchrow_arrayref) {
         $sub->(JSON::decode_json($row->[0]));
-        $count++;
+        $n++;
     }
-    $count;
+    $n;
 }
 
 sub save {

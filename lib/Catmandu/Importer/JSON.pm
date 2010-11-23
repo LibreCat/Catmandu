@@ -2,25 +2,33 @@ package Catmandu::Importer::JSON;
 
 use 5.010;
 use Moose;
-use JSON ();
 
 with 'Catmandu::Importer';
+
+use JSON qw(decode_json);
 
 sub each {
     my ($self, $sub) = @_;
 
-    my $ref = JSON::decode_json($self->file->slurp);
-    given (ref $ref) {
+    my $obj;
+
+    if ($self->file->is_string) {
+        $obj = decode_json ${$self->file->string_ref};
+    } else {
+        $obj = decode_json $self->file->slurp;
+    }
+
+    given (ref $obj) {
         when ('ARRAY') {
-            my $count = 0;
-            foreach my $obj (@$ref) {
-                $sub->($obj);
-                $count++;
+            my $n = 0;
+            for my $o (@$obj) {
+                $sub->($o);
+                $n++;
             }
-            return $count;
+            return $n;
         }
         when ('HASH') {
-            $sub->($ref);
+            $sub->($obj);
             return 1;
         }
         default {

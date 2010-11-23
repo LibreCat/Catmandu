@@ -1,38 +1,39 @@
 package Catmandu::Exporter::JSON;
 
-use JSON qw(encode_json);
 use Moose;
 
 with 'Catmandu::Exporter';
 
+use JSON qw(encode_json);
+
 sub dump {
     my ($self, $obj) = @_;
 
-    my $f = $self->file;
-    my $count = 0;
+    my $file = $self->file;
+    my $n = 0;
 
     if (ref $obj eq 'HASH') {
-        $f->print(encode_json($obj));
-        $count = 1;
+        $file->print(encode_json($obj));
+        $n = 1;
     }
     elsif (ref $obj eq 'ARRAY') {
-        $f->print(encode_json($obj));
-        $count = scalar @$obj;
+        $file->print(encode_json($obj));
+        $n = @$obj;
     }
     elsif (blessed $obj and $obj->can('each')) {
-        $f->print('[');
+        $file->print('[');
         $obj->each(sub {
-            $f->print(',') if $count;
-            $f->print(encode_json(shift));
-            $count++;
+            $file->print(',') if $n;
+            $file->print(encode_json(shift));
+            $n++;
         });
-        $f->print(']');
+        $file->print(']');
     }
     else {
         confess "Can't export";
     }
 
-    $count;
+    $n;
 }
 
 __PACKAGE__->meta->make_immutable;

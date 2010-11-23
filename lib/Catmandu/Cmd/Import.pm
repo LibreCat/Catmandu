@@ -81,16 +81,15 @@ sub run {
     my $importer = $self->importer->new($self->importer_arg);
     my $store = $self->store->new($self->store_arg);
 
-    my $count = $importer->each(sub {
-        my $obj = $_[0];
-        $store->save($obj);
+    my $n = $importer->each(sub {
+        $store->save($_[0]);
         if ($verbose) {
-            say $obj->{_id};
+            say $_[0]->{_id};
         }
     });
 
     if ($verbose) {
-        say $count == 1 ? "Imported 1 object" : "Imported $count objects";
+        say $n == 1 ? "Imported 1 object" : "Imported $n objects";
     }
 }
 

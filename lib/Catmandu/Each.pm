@@ -35,9 +35,9 @@ sub any {
 
 sub many {
     my ($self, $sub) = @_;
-    my $count = 0;
+    my $n = 0;
     $self->each(sub {
-        $sub->($_[0]) && ++$count > 1 && goto(END);
+        $sub->($_[0]) && ++$n > 1 && goto(END);
     });
     return 0;
     END:
@@ -113,28 +113,28 @@ sub reduce {
 }
 
 sub each_slice {
-    my ($self, $n, $sub) = @_;
+    my ($self, $slice_size, $sub) = @_;
     my $slice = [];
-    my $count = 0;
+    my $n = 0;
     $self->each(sub {
         push @$slice, $_[0];
-        if (@$slice == $n) {
+        if (@$slice == $slice_size) {
             $sub->($slice);
             $slice = [];
-            $count++;
+            $n++;
         }
     });
     if (@$slice) {
         $sub->($slice);
-        $count++;
+        $n++;
     }
-    $count;
+    $n;
 }
 
 sub slice {
-    my ($self, $n) = @_;
+    my ($self, $slice_size) = @_;
     my $all = [];
-    $self->each_slice($n, sub {
+    $self->each_slice($slice_size, sub {
         push @$all, $_[0];
     });
     $all;

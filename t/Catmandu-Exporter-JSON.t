@@ -1,4 +1,5 @@
-use Test::More tests => 13;
+use Test::More tests => 14;
+use Test::Moose;
 use Test::Exception;
 use IO::All;
 use JSON;
@@ -28,30 +29,31 @@ my $file = io('$');
 
 my $exporter = Catmandu::Exporter::JSON->new(file => $file);
 
-isa_ok $exporter, 'Catmandu::Exporter::JSON', "isa exporter";
+ isa_ok $exporter, Catmandu::Exporter::JSON;
+does_ok $exporter, Catmandu::Exporter;
 
 throws_ok { $exporter->dump("1") } qr/Can't export/, 'write string';
 throws_ok { $exporter->dump(1) } qr/Can't export/, 'write integer';
 throws_ok { $exporter->dump() } qr/Can't export/, 'write undef';
 throws_ok { $exporter->dump(T::NoEach->new) } qr/Can't export/, 'write no each';
 
-my $count;
+my $n;
 
-$count = $exporter->dump($list);
+$n = $exporter->dump($list);
 is_deeply $list, decode_json(${$file->string_ref});
-is $count, 3;
+is $n, 3;
 
 $file->truncate(0);
 
-$count = $exporter->dump($hash);
+$n = $exporter->dump($hash);
 is_deeply $hash, decode_json(${$file->string_ref});
-is $count, 1;
+is $n, 1;
 
 $file->truncate(0);
 
-$count = $exporter->dump(T::Each->new);
+$n = $exporter->dump(T::Each->new);
 is_deeply $list, decode_json(${$file->string_ref});
-is $count, 3;
+is $n, 3;
 
 done_testing;
 
