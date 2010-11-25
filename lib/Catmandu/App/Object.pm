@@ -1,4 +1,4 @@
-package Catmandu::App::Role::Object;
+package Catmandu::App::Object;
 
 use 5.010;
 use Moose::Role;
@@ -10,15 +10,7 @@ use Plack::Middleware::Conditional;
 use Plack::App::URLMap;
 use List::Util qw(max);
 
-has request => (
-    is => 'ro',
-    isa => 'Catmandu::App::Request',
-    required => 1,
-    handles => [qw(
-        session
-        env
-    )],
-);
+with 'Catmandu::App::Env';
 
 has response => (
     is => 'ro',
@@ -41,7 +33,6 @@ sub _build_response {
     $_[0]->request->new_response(200, ['Content-Type' => "text/html"]);
 }
 
-sub req { $_[0]->request }
 sub res { $_[0]->response }
 
 sub param {
@@ -149,7 +140,7 @@ sub to_app {
         my $env = $_[0];
         my $match = $router->match($env)
             or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
-        $self->new(request => Catmandu::App::Request->new($env), params => $match)
+        $self->new(env => $env, params => $match)
             ->run($match->{_run})
             ->response->finalize;
     };

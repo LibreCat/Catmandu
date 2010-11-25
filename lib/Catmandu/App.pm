@@ -2,7 +2,7 @@ package Catmandu::App;
 
 use Moose ();
 use Moose::Exporter;
-use Catmandu::App::Role::Object;
+use Catmandu::App::Object;
 
 Moose::Exporter->setup_import_methods(
     also  => 'Moose',
@@ -24,7 +24,7 @@ sub init_meta {
     my %args = @_;
     my $caller = $args{for_class};
     Moose->init_meta(%args);
-    Moose::Util::apply_all_roles($caller, 'Catmandu::App::Role::Object');
+    Moose::Util::apply_all_roles($caller, 'Catmandu::App::Object');
     $caller->meta;
 }
 

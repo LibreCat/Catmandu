@@ -22,6 +22,7 @@ requires 'HTTP::Request::Common' => '5.824';
 requires 'IO::All' => '0.41';
 requires 'IO::All::LWP' => '0.14';
 requires 'JSON' => '2.22';
+requires 'JSON::Path' => '0.100';
 requires 'KinoSearch' => '0.31';
 requires 'List::Util' => '1.23';
 requires 'Moose' => '1.19';
