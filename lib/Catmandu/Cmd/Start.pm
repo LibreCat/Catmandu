@@ -41,12 +41,13 @@ has daemonize => (
     documentation => "Makes the process go background. Not all servers respect this option.",
 );
 
-has reload => (
+has loader => (
     traits => ['Getopt'],
     is => 'rw',
-    isa => 'Bool',
-    cmd_aliases => 'r',
-    documentation => "Watch the lib, psgi, conf and template directories and restart the server whenever a file changes.",
+    isa => 'Str',
+    cmd_aliases => 'L',
+    documentation => "Reloads on every request if 'Shotgun'. " .
+                     "Delays compilation until the first request if 'Delayed'.",
 );
 
 has server => (
@@ -87,30 +88,23 @@ sub run {
     my $psgi;
 
     if ($app =~ /::/) {
-        $eval = $app . '->to_app';
+        $eval = "use $app; $app\->to_app";
     } else {
         $psgi = Catmandu->find_psgi($app) or confess "Can't find psgi app $app";
     }
 
     my @argv;
-    if ($self->reload) {
-        push @argv, '-r';
-        push @argv, '-R', join(',', Catmandu->catmandu_lib,
-                                    Catmandu->lib,
-                                    Catmandu->path_list('conf'),
-                                    Catmandu->path_list('psgi'),
-                                    Catmandu->path_list('template'));
-    }
     push @argv, map { ('-I', $_) } Catmandu->lib;
     push @argv, '-E', Catmandu->env;
     push @argv, '-p', $self->port   if $self->port;
     push @argv, '-o', $self->host   if $self->host;
     push @argv, '-S', $self->socket if $self->socket;
     push @argv, '-D'                if $self->daemonize;
+    push @argv, '-L', $self->loader if $self->loader;
     push @argv, '-s', $self->server if $self->server;
     push @argv, '-a', $psgi         if $psgi;
     push @argv, '-e', $eval         if $eval;
-    push @argv, '-M', $app          if $eval;
+    push @argv, '-M', 'Moose';
     Plack::Runner->run(@argv);
 }
 
