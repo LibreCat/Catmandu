@@ -19,6 +19,7 @@ requires 'File::ShareDir' => '1.02';
 requires 'Getopt::Long::Descriptive' => '0.086';
 requires 'Hash::Merge' => '0.12';
 requires 'HTTP::Request::Common' => '5.824';
+requires 'HTTP::Status' => '5.817';
 requires 'IO::All' => '0.41';
 requires 'IO::All::LWP' => '0.14';
 requires 'JSON' => '2.22';

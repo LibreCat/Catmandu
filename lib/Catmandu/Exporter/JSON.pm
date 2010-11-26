@@ -1,21 +1,21 @@
 package Catmandu::Exporter::JSON;
 
 use Moose;
+use JSON ();
 
 with 'Catmandu::Exporter';
 
 has pretty => (
-    is => 'ro' ,
-    isa => 'Bool' ,
+    is => 'ro',
+    isa => 'Bool',
 );
 
 sub dump {
     my ($self, $obj) = @_;
 
+    my $json = JSON->new->utf8(1)->pretty($self->pretty);
     my $file = $self->file;
     my $n = 0;
-
-    my $json = JSON->new->utf8(1)->pretty($self->pretty);
 
     if (ref $obj eq 'HASH') {
         $file->print($json->encode($obj));
@@ -29,7 +29,7 @@ sub dump {
         $file->print('[');
         $obj->each(sub {
             $file->print(',') if $n;
-            $file->print($json->encode(shift));
+            $file->print($json->encode($_[0]));
             $n++;
         });
         $file->print(']');
@@ -42,7 +42,6 @@ sub dump {
 }
 
 __PACKAGE__->meta->make_immutable;
-no JSON;
 no Moose;
 __PACKAGE__;
 
