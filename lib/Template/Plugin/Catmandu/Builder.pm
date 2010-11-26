@@ -1,4 +1,4 @@
-package Catmandu::Template::Plugin::Builder;
+package Template::Plugin::Catmandu::Builder;
 
 use 5.010;
 use strict;
