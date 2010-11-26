@@ -49,6 +49,40 @@ has exporter_arg => (
                      "The file param can also be the 1st non-option argument.",
 );
 
+has store => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    lazy => 1,
+    cmd_aliases => 'S',
+    default => 'Simple',
+    documentation => "The Catmandu::Store class to use. Defaults to Simple.",
+);
+
+has store_arg => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'HashRef',
+    lazy => 1,
+    cmd_aliases => 's',
+    default => sub { +{} },
+    documentation => "Pass params to the store constructor.",
+);
+
+
+has num => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Int',
+);
+
+has start => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+);
+
 has query => (
     traits => ['NoGetopt'],
     is => 'rw',
@@ -64,7 +98,7 @@ sub BUILD {
 
     $self->index =~ /::/ or $self->index("Catmandu::Index::" . $self->index);
     $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
-
+    $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
     my $query = shift @{$self->extra_argv};
 
@@ -81,16 +115,23 @@ sub run {
 
     Plack::Util::load_class($self->index);
     Plack::Util::load_class($self->exporter);
+    Plack::Util::load_class($self->store);
 
     my $index    = $self->index->new($self->index_arg);
     my $exporter = $self->exporter->new($self->exporter_arg);
+    my $store    = $self->store->new($self->store_arg) if %{$self->store_arg};
 
-    my ($hits, $total_hits) = $index->find($self->query);
+    my %opts = ( skip => $self->start);
+    $opts{want}  = $self->num if defined $self->num;
+    $opts{reify} = $store if defined $store;
+
+    my ($hits, $total_hits) = $index->find($self->query, %opts);
 
     print STDERR $self->query. " : $total_hits hits\n";
 
     foreach my $h (@$hits) {
-        $exporter->dump($h->get_fields);
+        my $obj = $store ? $h : $h->get_fields;
+        $exporter->dump($obj);
     }
 }
 
