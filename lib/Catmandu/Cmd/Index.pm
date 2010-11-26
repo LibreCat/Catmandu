@@ -8,6 +8,8 @@ use Catmandu;
 use JSON::Path;
 use lib Catmandu->lib;
 
+no warnings "uninitialized";
+
 with 'Catmandu::Command';
 
 has store => (
@@ -50,11 +52,21 @@ has index_arg => (
     documentation => "Pass params to the index constructor.",
 );
 
+
 has map => (
     traits => ['Getopt'],
     is => 'rw',
     isa => IO_All,
     coerce => 1,
+    documentation => "Path to the index definition file to use."
+);
+
+has verbose => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Bool',
+    cmd_aliases => 'v',
+    documentation => "Verbose output.",
 );
 
 sub _usage_format {
@@ -83,33 +95,41 @@ sub run {
    
     my %map = $self->parse_map;
 
-
-    print "Indexing: ";
+    $self->msg("Indexing:\n");
 
     my $count = 0;
     $store->each(sub {
         my $obj = shift;  
     
-        my %idx_obj = ();
+        my $idx_obj = {};
 
         foreach my $key (keys %map) {
             foreach my $path (@{$map{$key}}) {
                 my $jpath  = JSON::Path->new($path);
                 my @values = $jpath->values($obj);
 
-                push(@{$idx_obj{$key}}, @values);
+                $idx_obj->{$key} .= join " " , @values;
             }
         }
 
-        print ".";
-        $index->save($obj);
+        $self->msg(".. $count\n") if $count % 100 == 0;
+
+        $index->save($idx_obj);
 
         $count++;
     });
 
-    print "\n";
+    $self->msg("Committing...\n");
+    $index->commit;
 
-    print "Indexed: $count objects\n";
+    $self->msg("\nIndexed: $count objects\n");
+}
+
+sub msg {
+    my $self = shift;
+    my $str  = shift; 
+    local $| = 1;
+    print $str if ($self->verbose);
 }
 
 sub parse_map {
