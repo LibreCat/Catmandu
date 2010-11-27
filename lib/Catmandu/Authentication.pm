@@ -13,13 +13,14 @@ has app => (
     handles => [qw(
         default_strategies
         default_scope
+        strategies
         scopes
         from_session
         into_session
     )],
 );
 
-for (qw( _strategies _winning_strategies _users )) {
+for (qw( _cached_strategies _winning_strategies _users )) {
     has $_ => (
         is => 'rw',
         isa => 'HashRef',
@@ -180,12 +181,12 @@ sub _run_strategies {
 
 sub _get_strategy {
     my ($self, $key, $scope) = @_;
-    $self->_strategies->{$scope}{$key} ||= do {
+    $self->_cached_strategies->{$scope}{$key} ||= do {
         my $class = "Catmandu::Authentication::Strategies::" . ucfirst($key);
         Plack::Util::load_class($class);
-        $class->new(env => $self->env, scope => $scope);
+        my $attrs = $self->strategies->{$key} || {};
+        $class->new(%$attrs, env => $self->env, scope => $scope);
     };
-
 }
 
 __PACKAGE__->meta->make_immutable;

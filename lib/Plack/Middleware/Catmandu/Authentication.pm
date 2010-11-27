@@ -12,6 +12,7 @@ use Plack::Util::Accessor qw(
     failure_app
     default_strategies
     default_scope
+    strategies
     scopes
     into_session
     from_session
@@ -19,13 +20,14 @@ use Plack::Util::Accessor qw(
 
 my $ENV_KEY = 'catmandu.auth';
 
-my @DEFAULT_STRATEGIES = qw(password basic);
+my @DEFAULT_STRATEGIES = qw(simple);
 my $DEFAULT_SCOPE = 'user';
 
 sub prepare_app {
     my($self) = @_;
     $self->default_strategies || $self->default_strategies([@DEFAULT_STRATEGIES]);
     $self->default_scope || $self->default_scope($DEFAULT_SCOPE);
+    $self->strategies || $self->strategies({});
     $self->scopes || $self->scopes({});
 }
 
@@ -59,7 +61,7 @@ sub call {
 }
 
 sub _authentication_failed {
-    my($self, $env) = @_;
+    my ($self, $env) = @_;
 
     my $auth = $env->{$ENV_KEY};
 
