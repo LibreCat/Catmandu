@@ -1,4 +1,4 @@
-package Catmandu::Command::OptVerbose;
+package Catmandu::Cmd::OptVerbose;
 
 use Moose::Role;
 

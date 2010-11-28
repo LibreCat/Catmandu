@@ -1,8 +1,8 @@
-package Catmandu::Authentication::Strategies::Simple;
+package Catmandu::Auth::Strategies::Simple;
 
 use Moose;
 
-with 'Catmandu::Authentication::Strategy';
+with 'Catmandu::Auth::Strategy';
 
 has username_param => (is => 'ro', isa => 'Str', default => 'username');
 has password_param => (is => 'ro', isa => 'Str', default => 'password');

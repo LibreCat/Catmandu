@@ -4,13 +4,13 @@ use strict;
 use warnings;
 
 BEGIN {
-    eval "use Catmandu::Cmd" or do {
+    eval "use Catmandu::Cmds" or do {
         use Path::Class;
         use lib file(__FILE__)->dir->parent->subdir('lib')
             ->absolute->resolve->stringify;
-        use Catmandu::Cmd;
+        use Catmandu::Cmds;
     };
 }
 
-Catmandu::Cmd::run(@ARGV);
+Catmandu::Cmds::run(@ARGV);
 

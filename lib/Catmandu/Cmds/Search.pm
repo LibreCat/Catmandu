@@ -1,4 +1,4 @@
-package Catmandu::Cmd::Search;
+package Catmandu::Cmds::Search;
 
 use 5.010;
 use Moose;
@@ -7,10 +7,10 @@ use Catmandu;
 use lib Catmandu->lib;
 
 with qw(
-    Catmandu::Command
-    Catmandu::Command::OptExporter
-    Catmandu::Command::OptIndex
-    Catmandu::Command::OptStore
+    Catmandu::Cmd
+    Catmandu::Cmd::OptExporter
+    Catmandu::Cmd::OptIndex
+    Catmandu::Cmd::OptStore
 );
 
 has limit => (

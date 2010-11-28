@@ -39,16 +39,16 @@ sub any {
     }
 }
 
-sub get { my $caller = caller; $caller->add_route(@_, method => ['GET', 'HEAD']); }
-sub put { my $caller = caller; $caller->add_route(@_, method => ['PUT']); }
-sub post { my $caller = caller; $caller->add_route(@_, method => ['POST']); }
+sub get    { my $caller = caller; $caller->add_route(@_, method => ['GET', 'HEAD']); }
+sub put    { my $caller = caller; $caller->add_route(@_, method => ['PUT']); }
+sub post   { my $caller = caller; $caller->add_route(@_, method => ['POST']); }
 sub delete { my $caller = caller; $caller->add_route(@_, method => ['DELETE']); }
 
 sub set { my $caller = caller; $caller->stash(@_); };
 
-sub enable { my $caller = caller; $caller->add_middleware(@_); }
+sub enable         { my $caller = caller; $caller->add_middleware(@_); }
 sub enable_if(&$@) { my $caller = caller; $caller->add_middleware_if(@_); }
-sub mount { my $caller = caller; $caller->add_mount(@_); }
+sub mount          { my $caller = caller; $caller->add_mount(@_); }
 
 __PACKAGE__;
 

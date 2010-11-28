@@ -1,4 +1,4 @@
-package Catmandu::Command::OptStore;
+package Catmandu::Cmd::OptStore;
 
 use Moose::Role;
 

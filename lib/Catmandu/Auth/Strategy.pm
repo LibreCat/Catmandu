@@ -1,4 +1,4 @@
-package Catmandu::Authentication::Strategy;
+package Catmandu::Auth::Strategy;
 
 use Moose::Role;
 

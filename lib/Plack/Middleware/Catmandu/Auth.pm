@@ -1,10 +1,10 @@
-package Plack::Middleware::Catmandu::Authentication;
+package Plack::Middleware::Catmandu::Auth;
 
 use 5.010;
 use strict;
 use warnings;
 use base 'Plack::Middleware';
-use Catmandu::Authentication;
+use Catmandu::Auth;
 use Scalar::Util qw(blessed);
 use Carp qw(confess);
 use Try::Tiny;
@@ -38,7 +38,7 @@ sub call {
         return $self->app->($env);
     }
 
-    $env->{$ENV_KEY} = Catmandu::Authentication->new(env => $env, app => $self);
+    $env->{$ENV_KEY} = Catmandu::Auth->new(env => $env, app => $self);
 
     my $res = try {
         $self->app->($env);

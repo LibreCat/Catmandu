@@ -1,11 +1,11 @@
-package Catmandu::Cmd::Routes;
+package Catmandu::Cmds::Routes;
 
 use Moose;
 use Plack::Util;
 use Catmandu;
 use lib Catmandu->lib;
 
-with 'Catmandu::Command';
+with 'Catmandu::Cmd';
 
 has app => (
     traits => ['Getopt'],

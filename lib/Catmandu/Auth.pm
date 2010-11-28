@@ -1,4 +1,4 @@
-package Catmandu::Authentication;
+package Catmandu::Auth;
 
 use 5.010;
 use Moose;
@@ -182,7 +182,7 @@ sub _run_strategies {
 sub _get_strategy {
     my ($self, $key, $scope) = @_;
     $self->_cached_strategies->{$scope}{$key} ||= do {
-        my $class = "Catmandu::Authentication::Strategies::" . ucfirst($key);
+        my $class = "Catmandu::Auth::Strategies::" . ucfirst($key);
         Plack::Util::load_class($class);
         my $attrs = $self->strategies->{$key} || {};
         $class->new(%$attrs, env => $self->env, scope => $scope);

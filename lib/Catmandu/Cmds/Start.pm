@@ -1,11 +1,11 @@
-package Catmandu::Cmd::Start;
+package Catmandu::Cmds::Start;
 
 use Moose;
 use Plack::Runner;
 use Plack::Util;
 use Catmandu;
 
-with 'Catmandu::Command';
+with 'Catmandu::Cmd';
 
 has host => (
     traits => ['Getopt'],

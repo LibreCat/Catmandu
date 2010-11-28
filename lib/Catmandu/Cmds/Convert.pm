@@ -1,4 +1,4 @@
-package Catmandu::Cmd::Convert;
+package Catmandu::Cmds::Convert;
 
 use 5.010;
 use Moose;
@@ -7,9 +7,9 @@ use Catmandu;
 use lib Catmandu->lib;
 
 with qw(
-    Catmandu::Command
-    Catmandu::Command::OptImporter
-    Catmandu::Command::OptExporter
+    Catmandu::Cmd
+    Catmandu::Cmd::OptImporter
+    Catmandu::Cmd::OptExporter
 );
 
 sub _usage_format {

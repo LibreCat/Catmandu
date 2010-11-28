@@ -1,4 +1,4 @@
-package Catmandu::Command::OptExporter;
+package Catmandu::Cmd::OptExporter;
 
 use Moose::Role;
 

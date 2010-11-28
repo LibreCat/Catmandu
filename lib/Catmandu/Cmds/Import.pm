@@ -1,4 +1,4 @@
-package Catmandu::Cmd::Import;
+package Catmandu::Cmds::Import;
 
 use 5.010;
 use Moose;
@@ -7,10 +7,10 @@ use Catmandu;
 use lib Catmandu->lib;
 
 with qw(
-    Catmandu::Command
-    Catmandu::Command::OptImporter
-    Catmandu::Command::OptStore
-    Catmandu::Command::OptVerbose
+    Catmandu::Cmd
+    Catmandu::Cmd::OptImporter
+    Catmandu::Cmd::OptStore
+    Catmandu::Cmd::OptVerbose
 );
 
 sub _usage_format {

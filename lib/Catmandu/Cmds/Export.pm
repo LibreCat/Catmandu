@@ -1,4 +1,4 @@
-package Catmandu::Cmd::Export;
+package Catmandu::Cmds::Export;
 
 use 5.010;
 use Moose;
@@ -7,9 +7,9 @@ use Catmandu;
 use lib Catmandu->lib;
 
 with qw(
-    Catmandu::Command
-    Catmandu::Command::OptExporter
-    Catmandu::Command::OptStore
+    Catmandu::Cmd
+    Catmandu::Cmd::OptExporter
+    Catmandu::Cmd::OptStore
 );
 
 has load => (

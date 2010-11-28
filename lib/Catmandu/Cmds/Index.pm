@@ -1,4 +1,4 @@
-package Catmandu::Cmd::Index;
+package Catmandu::Cmds::Index;
 
 use 5.010;
 use Moose;
@@ -9,10 +9,10 @@ use JSON::Path;
 use lib Catmandu->lib;
 
 with qw(
-    Catmandu::Command
-    Catmandu::Command::OptIndex
-    Catmandu::Command::OptStore
-    Catmandu::Command::OptVerbose
+    Catmandu::Cmd
+    Catmandu::Cmd::OptIndex
+    Catmandu::Cmd::OptStore
+    Catmandu::Cmd::OptVerbose
 );
 
 has map => (

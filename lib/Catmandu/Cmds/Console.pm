@@ -1,9 +1,9 @@
-package Catmandu::Cmd::Console;
+package Catmandu::Cmds::Console;
 
 use Moose;
 use Devel::REPL;
 
-with 'Catmandu::Command';
+with 'Catmandu::Cmd';
 
 sub run {
     my $self = shift;

@@ -1,4 +1,4 @@
-package Catmandu::Command::OptIndex;
+package Catmandu::Cmd::OptIndex;
 
 use Moose::Role;
 
