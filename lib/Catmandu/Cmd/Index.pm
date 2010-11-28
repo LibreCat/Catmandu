@@ -8,50 +8,12 @@ use Catmandu;
 use JSON::Path;
 use lib Catmandu->lib;
 
-no warnings "uninitialized";
-
-with 'Catmandu::Command';
-
-has store => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'Str',
-    lazy => 1,
-    cmd_aliases => 'S',
-    default => 'Simple',
-    documentation => "The Catmandu::Store class to use. Defaults to Simple.",
+with qw(
+    Catmandu::Command
+    Catmandu::Command::OptIndex
+    Catmandu::Command::OptStore
+    Catmandu::Command::OptVerbose
 );
-
-has store_arg => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'HashRef',
-    lazy => 1,
-    cmd_aliases => 's',
-    default => sub { +{} },
-    documentation => "Pass params to the store constructor.",
-);
-
-has index => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'Str',
-    lazy => 1,
-    cmd_aliases => 'I',
-    default => 'Simple',
-    documentation => "The Catmandu::Index class to use. Defaults to Simple.",
-);
-
-has index_arg => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'HashRef',
-    lazy => 1,
-    cmd_aliases => 'i',
-    default => sub { +{} },
-    documentation => "Pass params to the index constructor.",
-);
-
 
 has map => (
     traits => ['Getopt'],
@@ -61,16 +23,8 @@ has map => (
     documentation => "Path to the index definition file to use."
 );
 
-has verbose => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'Bool',
-    cmd_aliases => 'v',
-    documentation => "Verbose output.",
-);
-
 sub _usage_format {
-    "usage: %c %o conf_file"
+    "usage: %c %o [map_file]"
 }
 
 sub BUILD {
@@ -79,10 +33,10 @@ sub BUILD {
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
     $self->index =~ /::/ or $self->index("Catmandu::Index::" . $self->index);
 
-    if (my $file = shift @{$self->extra_argv}) {
-        $self->map($file);
+    if (my $arg = shift @{$self->extra_argv}) {
+        $self->map($arg);
     }
-} 
+}
 
 sub run {
     my $self = shift;
@@ -92,60 +46,55 @@ sub run {
 
     my $index = $self->index->new($self->index_arg);
     my $store = $self->store->new($self->store_arg);
-   
-    my %map = $self->parse_map;
-
-    $self->msg("Indexing:\n");
-
-    my $count = 0;
-    $store->each(sub {
-        my $obj = shift;  
-    
-        my $idx_obj = {};
-
-        foreach my $key (keys %map) {
-            foreach my $path (@{$map{$key}}) {
-                my $jpath  = JSON::Path->new($path);
-                my @values = $jpath->values($obj);
-
-                $idx_obj->{$key} .= join " " , @values;
-            }
-        }
-
-        $self->msg(".. $count\n") if $count % 100 == 0;
-
-        $index->save($idx_obj);
-
-        $count++;
-    });
-
-    $self->msg("Committing...\n");
-    $index->commit;
-
-    $self->msg("\nIndexed: $count objects\n");
-}
-
-sub msg {
-    my $self = shift;
-    my $str  = shift; 
-    local $| = 1;
-    print $str if ($self->verbose);
-}
-
-sub parse_map {
-    my $self = shift;
 
     my %map = ();
 
-    foreach my $line (split(/\n/,$self->map->slurp)) {
+    foreach my $line (split /\n/, $self->map->slurp) {
         $line =~ s/^\s*(.*)\s*$/$1/;
-        my ($path, $index) = split(/\s+/,$line);
-        push(@{$map{$index}}, $path);
+        my ($path, $key) = split /\s+/, $line;
+        my $paths = $map{$key} ||= [];
+        push @$paths, $path;
     }
 
-    return %map;
+    $self->msg("Indexing...");
+
+    my $n = 0;
+    $store->each(sub {
+        my $obj = shift;
+
+        my $doc = {};
+
+        foreach my $key (keys %map) {
+            foreach my $path (@{$map{$key}}) {
+                my $val = join ' ', JSON::Path->new($path)->values($obj);
+                exists $doc->{$key} ?
+                    $doc->{$key} .= $val : $doc->{$key} = $val;
+            }
+        }
+
+        $self->msg(" $n") if $n % 100 == 0;
+
+        $index->save($doc);
+
+        $n++;
+    });
+
+    $self->msg("Committing...");
+
+    $index->commit;
+
+    $self->msg($n == 1 ? "Indexed 1 object" : "Indexed $n objects");
+}
+
+sub msg {
+    my ($self, $text) = @_;
+    local $| = 1;
+    if ($self->verbose) {
+        say $text;
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
 __PACKAGE__;
+

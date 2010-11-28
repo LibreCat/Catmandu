@@ -89,15 +89,15 @@ sub save {
     $obj;
 }
 
-sub find {
+sub search {
     my ($self, $query, %opts) = @_;
 
     $self->commit;
 
     my $hits = $self->_searcher->hits(
         query => $query,
-        num_wanted => $opts{want} || 50,
-        offset => $opts{skip} || 0,
+        num_wanted => $opts{limit} || 50,
+        offset => $opts{start} || 0,
     );
 
     my $objs = [];
@@ -107,7 +107,7 @@ sub find {
         }
     } else {
         while (my $hit = $hits->next) {
-            push @$objs, $hit;
+            push @$objs, $hit->get_fields;
         }
     }
     return $objs,

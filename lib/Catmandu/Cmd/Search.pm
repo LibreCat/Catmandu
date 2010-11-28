@@ -6,74 +6,19 @@ use Plack::Util;
 use Catmandu;
 use lib Catmandu->lib;
 
-with 'Catmandu::Command';
-
-has index => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'Str',
-    lazy => 1,
-    cmd_aliases => 'I',
-    default => 'Simple',
-    documentation => "The Catmandu::Index class to use. Defaults to Simple.",
+with qw(
+    Catmandu::Command
+    Catmandu::Command::OptExporter
+    Catmandu::Command::OptIndex
+    Catmandu::Command::OptStore
 );
 
-has index_arg => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'HashRef',
-    lazy => 1,
-    cmd_aliases => 'i',
-    default => sub { +{} },
-    documentation => "Pass params to the index constructor.",
-);
-
-has exporter => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'Str',
-    lazy => 1,
-    cmd_aliases => 'O',
-    default => 'JSON',
-    documentation => "The Catmandu::Exporter class to use. Defaults to JSON.",
-);
-
-has exporter_arg => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'HashRef',
-    lazy => 1,
-    cmd_aliases => 'o',
-    default => sub { +{} },
-    documentation => "Pass params to the exporter constructor. " .
-                     "The file param can also be the 1st non-option argument.",
-);
-
-has store => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'Str',
-    lazy => 1,
-    cmd_aliases => 'S',
-    default => 'Simple',
-    documentation => "The Catmandu::Store class to use. Defaults to Simple.",
-);
-
-has store_arg => (
-    traits => ['Getopt'],
-    is => 'rw',
-    isa => 'HashRef',
-    lazy => 1,
-    cmd_aliases => 's',
-    default => sub { +{} },
-    documentation => "Pass params to the store constructor.",
-);
-
-
-has num => (
+has limit => (
     traits => ['Getopt'],
     is => 'rw',
     isa => 'Int',
+    predicate => 'has_limit',
+    documentation => ".",
 );
 
 has start => (
@@ -81,16 +26,19 @@ has start => (
     is => 'rw',
     isa => 'Int',
     default => 0,
+    documentation => ".",
 );
 
 has query => (
-    traits => ['NoGetopt'],
+    traits => ['Getopt'],
     is => 'rw',
     isa => 'Str',
+    cmd_aliases => 'q',
+    documentation => "The query string.",
 );
 
 sub _usage_format {
-    "usage: %c %o query"
+    "usage: %c %o [query]"
 }
 
 sub BUILD {
@@ -100,41 +48,39 @@ sub BUILD {
     $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
-    my $query = shift @{$self->extra_argv};
-
-    unless ($query) {
-        print $self->usage->text;
-        exit 1;
+    if (my $arg = shift @{$self->extra_argv}) {
+        $self->query($arg);
     }
-
-    $self->query($query);
 } 
 
 sub run {
     my $self = shift;
+    my $q = $self->query;
+
+    if (! $q) {
+        print $self->usage->text;
+        exit 1;
+    }
 
     Plack::Util::load_class($self->index);
     Plack::Util::load_class($self->exporter);
     Plack::Util::load_class($self->store);
 
-    my $index    = $self->index->new($self->index_arg);
+    my $index = $self->index->new($self->index_arg);
     my $exporter = $self->exporter->new($self->exporter_arg);
-    my $store    = $self->store->new($self->store_arg) if %{$self->store_arg};
 
-    my %opts = ( skip => $self->start);
-    $opts{want}  = $self->num if defined $self->num;
-    $opts{reify} = $store if defined $store;
+    my %opts = (start => $self->start);
+    $opts{limit} = $self->limit if $self->has_limit;
+    $opts{reify} = $self->store->new($self->store_arg) if $self->has_store_arg;
 
-    my ($hits, $total_hits) = $index->find($self->query, %opts);
+    my ($hits, $total_hits) = $index->search($q, %opts);
 
-    print STDERR $self->query. " : $total_hits hits\n";
+    say STDERR qq($total_hits hits for "$q");
 
-    foreach my $h (@$hits) {
-        my $obj = $store ? $h : $h->get_fields;
-        $exporter->dump($obj);
+    foreach (@$hits) {
+        $exporter->dump($_);
     }
 }
-
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

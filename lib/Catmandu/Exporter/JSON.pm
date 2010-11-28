@@ -6,8 +6,8 @@ use JSON ();
 with 'Catmandu::Exporter';
 
 has pretty => (
-    is => 'ro' ,
-    isa => 'Bool' ,
+    is => 'ro',
+    isa => 'Bool',
     default => 0,
 );
 

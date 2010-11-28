@@ -76,8 +76,8 @@ sub _usage_format {
 
 sub BUILD {
     my $self = shift;
-    if (my $app = shift @{$self->extra_argv}) {
-        $self->app($app);
+    if (my $arg = shift @{$self->extra_argv}) {
+        $self->app($arg);
     }
 }
 
