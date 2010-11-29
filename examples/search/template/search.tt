@@ -78,10 +78,10 @@
     <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
     show:
     <select name="num">
-      <option [% IF num == 10 %]selected="selected"[% END %]">10</option>
-      <option [% IF num == 20 %]selected="selected"[% END %]">20</option>
-      <option [% IF num == 100 %]selected="selected"[% END %]">100</option>
-      <option [% IF num == 500 %]selected="selected"[% END %]">500</option>
+      <option [% IF num == 10 %]selected="selected"[% END %]>10</option>
+      <option [% IF num == 20 %]selected="selected"[% END %]>20</option>
+      <option [% IF num == 100 %]selected="selected"[% END %]>100</option>
+      <option [% IF num == 500 %]selected="selected"[% END %]>500</option>
     </select>
     <input type="submit" value="Search"/>
    </form>
@@ -150,10 +150,10 @@
     <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
     show:
     <select name="num">
-      <option [% IF num == 10 %]selected="selected"[% END %]">10</option>
-      <option [% IF num == 20 %]selected="selected"[% END %]">20</option>
-      <option [% IF num == 100 %]selected="selected"[% END %]">100</option>
-      <option [% IF num == 500 %]selected="selected"[% END %]">500</option>
+      <option [% IF num == 10 %]selected="selected"[% END %]>10</option>
+      <option [% IF num == 20 %]selected="selected"[% END %]>20</option>
+      <option [% IF num == 100 %]selected="selected"[% END %]>100</option>
+      <option [% IF num == 500 %]selected="selected"[% END %]>500</option>
     </select>
     <input type="submit" value="Search"/>
    </form>
