@@ -1,0 +1,41 @@
+{
+   "documents" : {
+      "format" : "2"
+   },
+   "highlight" : {
+      "format" : "1"
+   },
+   "lexicon" : {
+      "counts" : {
+         "_id" : "34600",
+         "all" : "109460",
+         "author" : "36945",
+         "identifiers" : "22509",
+         "title" : "42917"
+      },
+      "format" : "3",
+      "index_counts" : {
+         "_id" : "271",
+         "all" : "856",
+         "author" : "289",
+         "identifiers" : "176",
+         "title" : "336"
+      }
+   },
+   "postings" : {
+      "format" : "1"
+   },
+   "segmeta" : {
+      "count" : "34600",
+      "field_names" : [
+         "",
+         "author",
+         "all",
+         "identifiers",
+         "title",
+         "_id"
+      ],
+      "format" : "1",
+      "name" : "seg_1"
+   }
+}

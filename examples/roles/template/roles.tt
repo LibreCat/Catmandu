@@ -1,0 +1,96 @@
+<html>
+ <head>
+  <title>Wie Doet Wat Databank</title>
+  <link rel="stylesheet" href="/css/style.css" type="text/css" />
+  <link rel="stylesheet" href="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.css" type="text/css" />
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js"></script>
+  <script>
+  $(document).ready(function(){
+    $("#users").autocomplete("/users");
+    $("#emails").autocomplete("/emails");
+    $("#roles").autocomplete("/roles");
+  });
+  </script>
+  
+ </head>
+ <body>
+  <h1>Projecten en Taken</h1>
+
+   <div class="roles">
+  <img src="/images/people.png" class="logo"/>
+  [% FOREACH role IN roles.keys.sort %]
+   <div>
+     <div class="role">
+        [% emails = [] %]
+        [% FOREACH user IN roles.$role %]
+          [% IF user.email %]
+            [% emails.push(user.email) %]
+          [% END %]
+        [% END %]
+          
+        <a href="mailto:[% emails.join(";") %]"><img src="/images/icons/mail-reply-all.png" title="email all"/></a>
+        [% role %]
+     </div>
+     [% FOREACH user IN roles.$role %]
+      <div class="user">
+       <a href="/del?name=[% user.name | url %]&amp;role=[% role | url %]"><img src="/images/icons/cross.png" title="delete task"/></a> [% user.name %] 
+       [% IF user.email %]
+        <a href="mailto:[% user.email %]"><img src="/images/icons/mail--arrow.png" title="email [% user.name %]"/></a>
+       [%END%]
+      </div>
+      [% END %]
+    </div>
+  [% END %]
+  </div>
+
+
+<div class="bottom">
+  <div class="add">
+   <h2>Voeg je naam/project toe</h2>
+   <form method="POST" action="/">
+    <table>
+      <tr>
+        <th>Naam:</th>
+      </tr>
+      <tr>
+        <td><input id="users" type="text" name="name" value="" size="40"/></td>
+      </tr>
+      <tr>
+        <th>Email:</th>
+      </tr>
+      <tr>
+        <td><input id="emails" type="text" name="email" value="" size="40"/></td>
+      </tr>
+      <tr>
+        <th>Waar ben je mee bezig?:</th>
+      </tr>
+      <tr>
+        <td>
+          <input id="roles" type="text" name="roles" value="" size="40"/><br/>
+          <i>Bijv.: aleph; catalografie; balie</i>
+        </td>
+      </tr>
+      <tr>
+        <td align="right">
+          <input type="submit" value="Toevoegen"/>
+        </td>
+      </tr>
+    </table>
+   </form>
+  </div>
+
+  <div class="desc">
+   <h2>Wie Doet Wat Databank</h2>
+   In een grote organisatie is het soms lastig om te achterhalen waar iedereen mee bezig is. <b>Wie</b> moet
+   je nu emailen als een probleem is met een bepaalde applicatie? <b>Wat</b> moet je nu antwoorden als
+   iemand voor een rondleiding vraagt? <b>Waar</b> zijn de spullen die jij nodig hebt voor je werk?
+   <br/>
+
+   Schrijf je in op deze lijst, of vul hem aan. Help ons de juiste persoon te vinden voor de juise vraag.
+  </div>
+
+</div>
+
+ </body>
+</html>
