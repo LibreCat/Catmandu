@@ -1,0 +1,149 @@
+[%USE Catmandu.UTF8 %]
+<html>
+ <head>
+   <link rel="stylesheet" href="/css/style.css" type="text/css" />
+
+   <style type="text/css">
+    body {
+      font-family: arial, sans-serif;
+    }   
+ 
+    table {
+        margin-bottom: 10px;
+    }
+
+    a:link {
+        color: #0000cc;
+    }
+
+    .np {
+       margin-bottom: 10px; 
+    }
+
+    .d_r {
+       width: 800px;
+       margin-bottom: 10px; 
+    }
+
+    .d_rt {
+       font-weight: 400;
+    }
+
+    .d_au {
+       width: 800px;
+       color: #008000;
+    }
+
+    .footer {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 80%;
+    }
+
+    dt {
+        font-weight: 800;
+    }
+
+   </style>
+ </head>
+ <body>
+  <table cellpadding="0" cellspacing="10" border="0" style="margin:1px 3px 23px 0px">
+  <tr>
+  <td>
+   <b>Academic Bibliography</b>
+  </td>
+  <td>
+   <form method="GET" action="search">
+    <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
+    show:
+    <select name="num">
+      <option [% IF num == 10 %]selected="selected"[% END %]">10</option>
+      <option [% IF num == 20 %]selected="selected"[% END %]">20</option>
+      <option [% IF num == 100 %]selected="selected"[% END %]">100</option>
+      <option [% IF num == 500 %]selected="selected"[% END %]">500</option>
+    </select>
+    <input type="submit" value="Search"/>
+   </form>
+  </td>
+  </tr>
+  </table>
+
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#dcf6db">
+     <tr>
+      <td colspan="2" bgcolor="#008000"><img width="1" height="1" alt=""/></td>
+     </tr>
+     <tr>
+      <td>
+      <font size="-1">
+      <b>Full Record</b>
+      </font>
+      </td>
+      <td width="10%" align="right">
+      <b>Demo</b>
+      &nbsp;
+      </td>
+     </tr>
+    </table>
+
+    <dl>
+      [% IF res.title %]
+      <dt>Title</dt>
+      <dd><b>[% res.title | html | utf8 %]</b></dd>
+      [% END %]
+
+      [% IF res.contributors %]
+      <dt>Authors</dt>
+      <dd>
+        [% FOREACH au IN res.contributors %]
+          <a href="/search?q=[% au.last_name | url %]%20[% au.first_name | url%]">
+            [% au.last_name | utf8 | html %], [% au.first_name | utf8 | html %] 
+          </a>;
+        [% END %]
+      </dd>
+      [% END %]
+
+      [% IF res.subjects %]
+      <dt>Subjects</dt>
+      <dd>[% res.subjects.join("; ") %]</dd>
+      [% END %]
+
+      [% IF res.parent_title %]
+      <dt>Publication</dt>
+      <dd>[% res.parent_title %]</dd>
+      [% END %]
+
+      [% IF res.publication_year || res.volume || res.issue %]
+      <dt>Publication Details</dt>
+      <dd>
+       [% res.publication_year %] [% res.volume %] [% res.issue %]
+      </dd>
+      [% END %]
+
+      [% IF res.identifiers %]
+      <dt>Publiction Identifiers</dt>
+      <dd>
+        [% FOREACH id IN res.identifiers %]
+            [% id.type %] : [% id.value %]<br/>
+        [% END %]
+      </dd>
+      [% END %]
+
+      [% IF res.classification %]
+      <dt>UGent Classification</dt>
+      <dd>[% res.classification %]</dd>
+      [% END %]
+
+      [% IF res.affiliations %]
+      <dt>Affiliations</dt>
+      <dd>[% res.affiliations.join(" ") %]</dd>
+      [% END %]
+
+      <dt>Id</dt>
+      <dd>[% res.id %]</dd>
+    </dl>
+
+  <div class="footer">
+   <a href="#">Institution Home</a> - <a href="#">About Catmandu</a> - <a href="#">About Academic Bibliography</a>
+  </div>
+ </body>
+</html>

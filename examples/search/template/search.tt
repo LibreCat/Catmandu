@@ -1,0 +1,173 @@
+[%USE Catmandu.UTF8 %]
+<html>
+ <head>
+   <link rel="stylesheet" href="/css/style.css" type="text/css" />
+
+   <style type="text/css">
+    body {
+      font-family: arial, sans-serif;
+    }   
+ 
+    table {
+        margin-bottom: 10px;
+    }
+
+    a:link {
+        color: #0000cc;
+    }
+
+    .np {
+       margin-bottom: 10px; 
+    }
+
+    .d_r {
+       width: 800px;
+       margin-bottom: 10px; 
+    }
+
+    .d_rt {
+       font-weight: 400;
+    }
+
+    .d_au {
+       width: 800px;
+       color: #008000;
+    }
+
+    .footer {
+        width: 800px;
+        margin-top: 10px;
+        font-size: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .np {
+        width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    a.se , a.se:link , a.se:visited {
+        color: #00c;
+        font-size: 12pt;
+        font-weight: 700;
+    }
+
+    a.flw , a.flw:link , a.flw:visited {
+        color: #000;
+    }
+
+    a.curr , a.curr:link , a.curr:visited {
+        color: #a90a08;
+        text-decoration: none;
+    }
+
+   </style>
+ </head>
+ <body>
+  <table cellpadding="0" cellspacing="10" border="0" style="margin:1px 3px 23px 0px">
+  <tr>
+  <td>
+   <b>Academic Bibliography</b>
+  </td>
+  <td>
+   <form method="GET" action="search">
+    <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
+    show:
+    <select name="num">
+      <option [% IF num == 10 %]selected="selected"[% END %]">10</option>
+      <option [% IF num == 20 %]selected="selected"[% END %]">20</option>
+      <option [% IF num == 100 %]selected="selected"[% END %]">100</option>
+      <option [% IF num == 500 %]selected="selected"[% END %]">500</option>
+    </select>
+    <input type="submit" value="Search"/>
+   </form>
+  </td>
+  </tr>
+  </table>
+
+  [% IF hits %]
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#dcf6db">
+     <tr>
+      <td colspan="2" bgcolor="#008000"><img width="1" height="1" alt=""/></td>
+     </tr>
+     <tr>
+      <td width="90%">
+      <b>Demo</b>
+      </td>
+      <td nowrap="nowrap">
+      <font size="-1">
+      Results <b>[% start %]</b> - <b>[% end %]</b> of <b>[% hits %]</b> hits for <b>[% app.req.param('q') | html %]</b>
+      &nbsp;
+      </font>
+      </td>
+     </tr>
+    </table>
+
+    [% FOREACH res IN results %]
+    <div class="d_r">
+     <div class="d_rt">
+      <a href="/view?id=[% res.id %]">[% res.title | utf8 | html %]</a>
+     </div>
+     <font size="-1">
+        <span class="d_au">
+        [% FOREACH au IN res.contributors %]
+            [% au.last_name | utf8 | html %], [% au.first_name | utf8 | html %] ;
+        [% END %]
+        </span>
+        <br/>
+        [% res.publication_type | html %]
+     </font>
+    </div>
+    [% END %]
+
+    <div class="np">
+    Result Page:
+    [% IF prev != -1 %]
+     <a class="se" href="?q=[% app.req.param('q') | html %]&amp;start=[% prev %]&amp;num=[% num %]">&lt;&lt; Previous</a>
+    [% END %]
+
+    [% FOREACH i IN [ spage .. epage] %]
+     [% page = i * num  - 10 %]
+     <a [% IF curr==i %]class="curr"[%ELSE%]class="flw"[%END%] href="?q=[% app.req.param('q') | html %]&amp;start=[% page %]&amp;num=[% num %]">[% i %]</a>
+    [% END %]
+
+    [% IF next != -1 %]
+     <a class="se" href="?q=[% app.req.param('q') | html %]&amp;start=[% next %]&amp;num=[% num %]">Next &gt;&gt;</a>
+    [% END %]
+    </div>
+
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#dcf6db">
+     <tr>
+      <td bgcolor="#008000"><img width="1" height="1" alt=""/></td>
+     </tr>
+     <tr>
+      <td align="center" style="height: 40px; vertical-align: center;"> 
+   <form method="GET" action="search">
+    <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
+    show:
+    <select name="num">
+      <option [% IF num == 10 %]selected="selected"[% END %]">10</option>
+      <option [% IF num == 20 %]selected="selected"[% END %]">20</option>
+      <option [% IF num == 100 %]selected="selected"[% END %]">100</option>
+      <option [% IF num == 500 %]selected="selected"[% END %]">500</option>
+    </select>
+    <input type="submit" value="Search"/>
+   </form>
+     </tr>
+     <tr>
+      <td bgcolor="#008000"><img width="1" height="1" alt=""/></td>
+
+    </table>
+
+
+  [% END %]
+
+  <div class="footer">
+   <a href="#">Institution Home</a> - <a href="#">About Catmandu</a> - <a href="#">About Academic Bibliography</a>
+  </div>
+ </body>
+</html>
