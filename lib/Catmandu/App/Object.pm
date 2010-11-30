@@ -119,8 +119,15 @@ sub add_middleware_if {
 }
 
 sub add_route {
-    my ($self, $route, $sub, %opts) = @_;
-    $self->_router->connect($route, { _run => $sub }, \%opts);
+    my $opts = ref $_[-1] eq 'HASH' ? pop @_ : {};
+    if (@_ == 4) {
+        my ($self, $route, $name, $sub) = @_;
+        $self->meta->add_method($name, $sub);
+        $self->_router->connect($name, $route, { _run => $name }, $opts);
+    } else {
+        my ($self, $route, $sub) = @_;
+        $self->_router->connect($route, { _run => $sub }, $opts);
+    }
     1;
 }
 
