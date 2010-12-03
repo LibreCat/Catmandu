@@ -9,7 +9,6 @@ perl_version '5.10.0';
 version      '0.1';
 include      'Module::AutoInstall';
 
-requires 'all' => '0.5101';
 requires 'CGI::Expand' => '2.02';
 requires 'Data::UUID' => '1.216';
 requires 'DBD::SQLite' => '1.31';
@@ -27,7 +26,9 @@ requires 'JSON::Path' => '0.100';
 requires 'KinoSearch' => '0.31';
 requires 'List::Util' => '1.23';
 requires 'Moose' => '1.19';
+requires 'MooseX::App::Cmd' => '0.06';
 requires 'MooseX::Daemonize' => '0.12';
+requires 'MooseX::Declare' => '0.34';
 requires 'MooseX::Getopt' => '0.33';
 requires 'MooseX::Singleton' => '0.25';
 requires 'MooseX::Types::IO' => '0.03';
