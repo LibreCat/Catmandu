@@ -1,72 +1,13 @@
 [%USE Catmandu.UTF8 %]
 <html>
- <head>
-   <link rel="stylesheet" href="/css/style.css" type="text/css" />
 
-   <style type="text/css">
-    body {
-      font-family: arial, sans-serif;
-    }   
- 
-    table {
-        margin-bottom: 10px;
-    }
+ [% INCLUDE head.tt %]
 
-    a:link {
-        color: #0000cc;
-    }
-
-    .np {
-       margin-bottom: 10px; 
-    }
-
-    .d_r {
-       width: 800px;
-       margin-bottom: 10px; 
-    }
-
-    .d_rt {
-       font-weight: 400;
-    }
-
-    .d_au {
-       width: 800px;
-       color: #008000;
-    }
-
-    .footer {
-        margin-top: 10px;
-        text-align: center;
-        font-size: 80%;
-    }
-
-    dt {
-        font-weight: 800;
-    }
-
-   </style>
- </head>
  <body>
-  <table cellpadding="0" cellspacing="10" border="0" style="margin:1px 3px 23px 0px">
-  <tr>
-  <td>
-   <b>Academic Bibliography</b>
-  </td>
-  <td>
-   <form method="GET" action="search">
-    <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
-    show:
-    <select name="num">
-      <option [% IF num == 10 %]selected="selected"[% END %]">10</option>
-      <option [% IF num == 20 %]selected="selected"[% END %]">20</option>
-      <option [% IF num == 100 %]selected="selected"[% END %]">100</option>
-      <option [% IF num == 500 %]selected="selected"[% END %]">500</option>
-    </select>
-    <input type="submit" value="Search"/>
-   </form>
-  </td>
-  </tr>
-  </table>
+
+  [% INCLUDE menu.tt %]
+
+  [% INCLUDE form.tt %]
 
     <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#dcf6db">
      <tr>
@@ -104,18 +45,18 @@
 
       [% IF res.subjects %]
       <dt>Subjects</dt>
-      <dd>[% res.subjects.join("; ") %]</dd>
+      <dd>[% res.subjects.join("; ") | utf8 %]</dd>
       [% END %]
 
       [% IF res.parent_title %]
       <dt>Publication</dt>
-      <dd>[% res.parent_title %]</dd>
+      <dd>[% res.parent_title | utf8 %]</dd>
       [% END %]
 
       [% IF res.publication_year || res.volume || res.issue %]
       <dt>Publication Details</dt>
       <dd>
-       [% res.publication_year %] [% res.volume %] [% res.issue %]
+       [% res.publication_year | utf8 %] [% res.volume | utf8 %] [% res.issue | utf8 %]
       </dd>
       [% END %]
 
@@ -123,27 +64,26 @@
       <dt>Publiction Identifiers</dt>
       <dd>
         [% FOREACH id IN res.identifiers %]
-            [% id.type %] : [% id.value %]<br/>
+            [% id.type | utf8 %] : [% id.value | utf8 %]<br/>
         [% END %]
       </dd>
       [% END %]
 
       [% IF res.classification %]
       <dt>UGent Classification</dt>
-      <dd>[% res.classification %]</dd>
+      <dd>[% res.classification | utf8 %]</dd>
       [% END %]
 
       [% IF res.affiliations %]
       <dt>Affiliations</dt>
-      <dd>[% res.affiliations.join(" ") %]</dd>
+      <dd>[% res.affiliations.join(" ") | utf8 %]</dd>
       [% END %]
 
       <dt>Id</dt>
-      <dd>[% res.id %]</dd>
+      <dd>[% res.id | utf8 %]</dd>
     </dl>
 
-  <div class="footer">
-   <a href="#">Institution Home</a> - <a href="#">About Catmandu</a> - <a href="#">About Academic Bibliography</a>
-  </div>
+  [% INCLUDE foot.tt %]
+
  </body>
 </html>

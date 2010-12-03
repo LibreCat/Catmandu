@@ -6,7 +6,29 @@ use Catmandu::Index::Simple;
 
 get '/' => sub {
     my $self  = shift;
-    $self->print_template('search' );
+    $self->print_template('search');
+};
+
+get '/login' => sub {
+    my $self  = shift;
+
+    $self->print_template('login');
+};
+
+post '/login' => sub {
+    my $self  = shift;
+
+    $self->auth->authenticate;
+
+    $self->redirect('/');
+};
+
+get '/logout' => sub {
+    my $self = shift;
+
+    $self->auth->clear_user;
+
+    $self->redirect('/');
 };
 
 get '/view' => sub {
@@ -45,6 +67,36 @@ get '/search' => sub {
                             epage => $epage ,
                         });
 };
+
+# Authentication magic
+enable 'Session';
+enable 'Catmandu::Auth' ,
+        failure_app => sub { [301, [ 'Location' => '/login' ] , []] },
+        strategies => {
+            simple => {
+                auth => sub {
+                    my ($username,$password) = @_;
+                    if ($username eq 'phochste') {
+                        1;
+                    }
+                    else {
+                        0; 
+                    }
+                } ,
+                load_user => sub {
+                    my ($username) = @_;
+                    return {_id => 1 , name => uc $username};
+                }
+            }
+        },
+        into_session => sub { $_[0]->{_id} },
+        from_session => sub { {_id => $_[0] , name => 'xx'} };
+
+sub auth {
+    my $self = shift;
+
+    $self->env->{'catmandu.auth'};
+}
 
 sub pages {
     my $self = shift;
