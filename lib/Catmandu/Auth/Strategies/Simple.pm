@@ -12,7 +12,7 @@ has auth => (is => 'ro', required => 1);
 sub can_authenticate {
     my $self = shift;
     my $params = $self->request->parameters;
-    $params->{$self->username_param} || $params->{$self->password_param};
+    $params->{$self->username_param} && $params->{$self->password_param};
 }
 
 sub authenticate {

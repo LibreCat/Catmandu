@@ -25,33 +25,33 @@ is_deeply $index->save($obj1), $obj1;
 
 $index->save($obj2);
 
-($hits, $total_hits) = $index->find("man");
+($hits, $total_hits) = $index->search("man");
 is scalar @$hits, 2;
 is $total_hits, 2;
-($hits, $total_hits) = $index->find("third");
+($hits, $total_hits) = $index->search("third");
 is scalar @$hits, 1;
 is $total_hits, 1;
-($hits, $total_hits) = $index->find("tenth");
+($hits, $total_hits) = $index->search("tenth");
 is scalar @$hits, 1;
 is $total_hits, 1;
-($hits, $total_hits) = $index->find("third OR tenth");
+($hits, $total_hits) = $index->search("third OR tenth");
 is scalar @$hits, 2;
 is $total_hits, 2;
-($hits, $total_hits) = $index->find("third AND tenth");
+($hits, $total_hits) = $index->search("third AND tenth");
 is scalar @$hits, 0;
 is $total_hits, 0;
 
-($hits, $total_hits) = $index->find("_id : 001");
+($hits, $total_hits) = $index->search("_id : 001");
 is scalar @$hits, 1;
 is $total_hits, 1;
 
 throws_ok { $index->delete({missing => '_id'}) } qr/Missing _id/;
 
 $index->delete({_id => "001"});
-($hits, $total_hits) = $index->find("_id : 001");
+($hits, $total_hits) = $index->search("_id : 001");
 is $total_hits, 0;
 $index->delete("002");
-($hits, $total_hits) = $index->find("_id : 002");
+($hits, $total_hits) = $index->search("_id : 002");
 is $total_hits, 0;
 
 done_testing;

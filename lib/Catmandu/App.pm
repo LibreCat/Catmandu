@@ -30,19 +30,18 @@ sub init_meta {
 
 sub any {
     my $caller = caller;
-    if (@_ == 3) {
-        my ($methods, $route, $sub) = @_;
-        $caller->add_route($route, $sub, method => [ map { uc $_ } @$methods ]);
+    if (ref $_[0] eq 'ARRAY') {
+        my $methods = shift;
+        $caller->add_route(@_, { method => [ map { uc $_ } @$methods ] });
     } else {
-        my ($route, $sub) = @_;
-        $caller->add_route($route, $sub);
+        $caller->add_route(@_);
     }
 }
 
-sub get    { my $caller = caller; $caller->add_route(@_, method => ['GET', 'HEAD']); }
-sub put    { my $caller = caller; $caller->add_route(@_, method => ['PUT']); }
-sub post   { my $caller = caller; $caller->add_route(@_, method => ['POST']); }
-sub delete { my $caller = caller; $caller->add_route(@_, method => ['DELETE']); }
+sub get    { my $caller = caller; $caller->add_route(@_, { method => ['GET', 'HEAD'] }); }
+sub put    { my $caller = caller; $caller->add_route(@_, { method => ['PUT'] }) ; }
+sub post   { my $caller = caller; $caller->add_route(@_, { method => ['POST'] }); }
+sub delete { my $caller = caller; $caller->add_route(@_, { method => ['DELETE'] }); }
 
 sub set { my $caller = caller; $caller->stash(@_); };
 
@@ -93,7 +92,8 @@ Catmandu::App
     # without the sugar
     __PACKAGE__->stash(foo => 'bar');
     __PACKAGE__->stash(foo);
-    __PACKAGE__->add_route('/foo', sub { ... }, method => ['GET', 'POST']);
+    __PACKAGE__->add_route('/foo', 'foo', sub { ... }, {method => ['GET', 'POST']});
+    __PACKAGE__->add_route('/foo', sub { ... }, {method => ['GET', 'POST']});
     __PACKAGE__->add_middleware("Header", 'X-Foo' => 1);
     __PACKAGE__->add_mount('/bar', 'BarApp');
 

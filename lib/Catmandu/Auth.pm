@@ -36,17 +36,7 @@ has _winning_strategy => (
 
 my $SESSION_KEY = "catmandu.auth";
 
-sub _get_user {
-    my ($self, $scope) = @_;
-    my $session_key = "$SESSION_KEY.$scope.key";
-    my $session = $self->session;
-    my $user_key = $session->{$session_key} or return;
-    my $user = $self->from_session->($user_key);
-    $user or delete $session->{$session_key};
-    $user;
-}
-
-sub clear_user {
+sub logout {
     my ($self, @scopes) = @_;
     my $all = !@scopes;
 
@@ -65,7 +55,7 @@ sub clear_user {
     }
 }
 
-sub set_user {
+sub login {
     my ($self, $user, %opts) = @_;
     my $scope = $opts{scope} ||= $self->default_scope;
 
@@ -87,17 +77,29 @@ sub set_user {
 sub user {
     my ($self, $scope) = @_;
     $scope ||= $self->default_scope;
+
     $self->_users->{$scope} ||= do {
-        my $user = $self->_get_user($scope);
-        $self->set_user($user, scope => $scope) if $user;
-        $user;
+        my $session_key = "$SESSION_KEY.$scope.key";
+        my $key = $self->session->{$session_key};
+
+        my $user;
+
+        if ($key and $user = $self->from_session->($key)) {
+            $self->login($user, scope => $scope)
+        }
+
+        if (! $user) {
+            delete $self->session->{$session_key};
+        }
+
+        $user
     };
 }
 
 sub user_session {
     my ($self, $scope) = @_;
     $scope ||= $self->default_scope;
-    $self->is_authenticated($scope) || return;
+    $self->authenticated($scope) || return;
     $self->session->{"$SESSION_KEY.$scope.session"} ||= {};
 }
 
@@ -125,20 +127,18 @@ sub custom_response {
     return;
 }
 
-sub is_authenticated {
+sub needs_authentication {
+    my $self = shift;
+    $self->authenticate(@_) || Catmandu::Err::HTTP->throw(401);
+}
+
+sub authenticated {
     my ($self, $scope) = @_;
     $scope ||= $self->default_scope;
     defined $self->user($scope);
 }
 
 sub authenticate {
-    my $self = shift;
-    my $user = $self->run_authentication(@_);
-    $user || Catmandu::Err::HTTP->throw(401);
-    $user;
-}
-
-sub run_authentication {
     my ($self, %opts) = @_;
     my $scope = $opts{scope} ||= $self->default_scope;
 
@@ -154,7 +154,7 @@ sub run_authentication {
 
     if ($self->_winning_strategy and $user = $self->_winning_strategy->user) {
         $opts{store} ||= $self->_winning_strategy->store;
-        $self->set_user($user, %opts);
+        $self->login($user, %opts);
     }
 
     $self->_users->{$scope};
@@ -187,6 +187,47 @@ sub _get_strategy {
         my $attrs = $self->strategies->{$key} || {};
         $class->new(%$attrs, env => $self->env, scope => $scope);
     };
+}
+
+sub permit {
+    my ($self, $verb, %opts) = @_;
+    my $scope = $opts{scope} ||= $self->default_scope;
+    my $rules = $self->rules->{$scope}{permissions} or return 0;
+    my $user  = $self->user($scope) or return 0;
+    $rules->add_rule(
+        $user->{_id},
+        $verb,
+        $opts{of} || $opts{on} || $opts{for}
+    );
+}
+
+sub forbid {
+    my ($self, $verb, %opts) = @_;
+    my $scope = $opts{scope} ||= $self->default_scope;
+    my $rules = $self->rules->{$scope}{permissions} or return 0;
+    my $user  = $self->user($scope) or return 0;
+    $rules->delete_rule(
+        $user->{_id},
+        $verb,
+        $opts{of} || $opts{on} || $opts{for}
+    );
+}
+
+sub needs_permission {
+    my $self = shift;
+    $self->permitted(@_) || Catmandu::Err::HTTP->throw(401);
+}
+
+sub permitted {
+    my ($self, $verb, %opts) = @_;
+    my $scope = $opts{scope} ||= $self->default_scope;
+    my $rules = $self->rules->{$scope}{permissions} or return 0;
+    my $user  = $self->user($scope) or return 0;
+    $rules->has_rule(
+        $user->{_id},
+        $verb,
+        $opts{of} || $opts{on} || $opts{for}
+    );
 }
 
 __PACKAGE__->meta->make_immutable;

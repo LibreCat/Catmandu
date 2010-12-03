@@ -50,7 +50,7 @@ sub param {
 sub print {
     my $self = shift;
     my $body = $self->response->body // [];
-    push(@$body, @_);
+    push @$body, @_;
     $self->response->body($body);
 }
 
@@ -119,8 +119,15 @@ sub add_middleware_if {
 }
 
 sub add_route {
-    my ($self, $route, $sub, %opts) = @_;
-    $self->_router->connect($route, { _run => $sub }, \%opts);
+    my $opts = ref $_[-1] eq 'HASH' ? pop @_ : {};
+    if (@_ == 4) {
+        my ($self, $route, $name, $sub) = @_;
+        $self->meta->add_method($name, $sub);
+        $self->_router->connect($name, $route, { _run => $name }, $opts);
+    } else {
+        my ($self, $route, $sub) = @_;
+        $self->_router->connect($route, { _run => $sub }, $opts);
+    }
     1;
 }
 
@@ -141,8 +148,8 @@ sub to_app {
         my $match = $router->match($env)
             or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
         $self->new(env => $env, params => $match)
-            ->run($match->{_run})
-            ->response->finalize;
+             ->run($match->{_run})
+             ->response->finalize;
     };
 
     $sub = $_->($sub) for reverse @$middlewares;
