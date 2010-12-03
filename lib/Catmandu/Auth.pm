@@ -192,7 +192,7 @@ sub _get_strategy {
 sub permit {
     my ($self, $verb, %opts) = @_;
     my $scope = $opts{scope} ||= $self->default_scope;
-    my $rules = $self->rules->{$scope}{rules} or return 0;
+    my $rules = $self->rules->{$scope}{permissions} or return 0;
     my $user  = $self->user($scope) or return 0;
     $rules->add_rule(
         $user->{_id},
@@ -204,7 +204,7 @@ sub permit {
 sub forbid {
     my ($self, $verb, %opts) = @_;
     my $scope = $opts{scope} ||= $self->default_scope;
-    my $rules = $self->rules->{$scope}{rules} or return 0;
+    my $rules = $self->rules->{$scope}{permissions} or return 0;
     my $user  = $self->user($scope) or return 0;
     $rules->delete_rule(
         $user->{_id},
@@ -221,7 +221,7 @@ sub needs_permission {
 sub permitted {
     my ($self, $verb, %opts) = @_;
     my $scope = $opts{scope} ||= $self->default_scope;
-    my $rules = $self->rules->{$scope}{rules} or return 0;
+    my $rules = $self->rules->{$scope}{permissions} or return 0;
     my $user  = $self->user($scope) or return 0;
     $rules->has_rule(
         $user->{_id},

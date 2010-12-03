@@ -50,7 +50,7 @@ sub param {
 sub print {
     my $self = shift;
     my $body = $self->response->body // [];
-    push(@$body, @_);
+    push @$body, @_;
     $self->response->body($body);
 }
 
@@ -148,8 +148,8 @@ sub to_app {
         my $match = $router->match($env)
             or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
         $self->new(env => $env, params => $match)
-            ->run($match->{_run})
-            ->response->finalize;
+             ->run($match->{_run})
+             ->response->finalize;
     };
 
     $sub = $_->($sub) for reverse @$middlewares;

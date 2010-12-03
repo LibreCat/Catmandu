@@ -1,0 +1,13 @@
+* more store backends (look at KiokuDB, KiokuDB::Entry)
+* solr indexer
+* logger in Catmandu.pm
+* Rules.pm is lame
+* Tranform role (flattening objects for indexing with JSONPath etc)
+* Validation role
+* mounting should handle recursion and take parameters
+* gobble routes from another app instead of mounting
+* pluggable classes / instances so that we can inject behavior
+* use Moose duck_type instead of static roles ?
+* Dist::Zilla ?
+* Catmandu.pm files/file paths/path methods
+
