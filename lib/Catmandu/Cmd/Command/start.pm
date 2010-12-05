@@ -67,29 +67,24 @@ class Catmandu::Cmd::Command::start extends Catmandu::Cmd::Command {
     );
 
     method execute ($opts, $args) {
-        my $psgi_eval;
-        my $psgi_file;
-
         my $psgi_app = $self->psgi_app || $args->[0];
-
-        if ($psgi_app =~ /::/) {
-            $psgi_eval = "use $psgi_app; $psgi_app->to_app;";
-        } else {
-            $psgi_file = Catmandu->find_psgi($psgi_app) or die "Can't find psgi app '$psgi_app'";
-        }
 
         my @argv;
         push @argv, map { ('-I', $_) } Catmandu->lib;
         push @argv, '-E', Catmandu->env;
+        push @argv, '-Moose';
         push @argv, '-p', $self->port   if $self->port;
         push @argv, '-o', $self->host   if $self->host;
         push @argv, '-S', $self->socket if $self->socket;
         push @argv, '-D'                if $self->daemonize;
         push @argv, '-L', $self->loader if $self->loader;
         push @argv, '-s', $self->server if $self->server;
-        push @argv, '-a', $psgi_file    if $psgi_file;
-        push @argv, '-e', $psgi_eval    if $psgi_eval;
-        push @argv, '-Moose';
+        if ($psgi_app =~ /\.psgi$/) {
+            $psgi_app = Catmandu->file('psgi', $psgi_app) or die "Can't find psgi app $psgi_app";
+            push @argv, '-a', $psgi_app;
+        } else {
+            push @argv, '-e', "use $psgi_app; $psgi_app->to_app;";
+        }
         Plack::Runner->run(@argv);
     }
 }

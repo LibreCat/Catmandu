@@ -25,7 +25,7 @@ has response => (
 has params => (
     is => 'ro',
     isa => 'HashRef',
-    lazy => 1, 
+    lazy => 1,
     default => sub { +{} },
 );
 
@@ -57,8 +57,8 @@ sub print {
 sub print_template {
     my ($self, $tmpl, $vars) = @_;
     $vars ||= {};
-    $vars->{app} = $self;
     $vars->{catmandu} = Catmandu->instance;
+    $vars->{app} = $self;
     Catmandu->print_template($tmpl, $vars, $self);
 }
 

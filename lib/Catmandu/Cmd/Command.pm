@@ -1,6 +1,6 @@
 use MooseX::Declare;
 
-class Catmandu::Cmd::Command extends MooseX::App::Cmd::Command 
+class Catmandu::Cmd::Command extends MooseX::App::Cmd::Command
     with MooseX::Getopt::Dashes {
     use 5.010;
     use Path::Class;
