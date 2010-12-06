@@ -7,7 +7,7 @@ use WebService::Solr::Document;
 
 with 'Catmandu::Index';
 
-has path => (is => 'ro', isa => 'Str', required => 1);
+has path => (is => 'ro', isa => 'Str', default => 'http://localhost:8983/solr');
 
 has id_term => (is => 'ro', isa => 'Str', default => '_id');
 
@@ -67,10 +67,25 @@ sub search {
 
     $self->commit;
 
-    my $response = $self->_indexer->search($query);
+    my $start = $opts{start};
+    my $limit = $opts{limit};
 
-    return $response->content->{response}->{docs}, 
-           $response->content->{response}->{numFound};
+    my $response = $self->_indexer->search($query, { start => $start , rows => $limit });
+
+    my $docs = $response->content->{response}->{docs};
+    my $hits = $response->content->{response}->{numFound};
+    my $objs = [];
+
+    if (my $store = $opts{reify}) {
+        foreach my $hit (@$docs) {
+            push @$objs, $store->load_strict($hit->{_id});
+        }
+    } 
+    else {
+        $objs = $docs;
+    }
+
+    return $objs, $hits;
 }
 
 __PACKAGE__->meta->make_immutable;

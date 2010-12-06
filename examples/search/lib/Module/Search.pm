@@ -1,8 +1,7 @@
 package Module::Search;
 
 use Catmandu::App;
-use Catmandu::Store::Simple;
-use Catmandu::Index::Simple;
+use Plack::Util;
 
 get '/' => sub {
     my $self  = shift;
@@ -115,16 +114,22 @@ sub pages {
 
 sub store {
     my $self = shift;
+
+    my $class = Plack::Util::load_class(Catmandu->conf->{db}->{_type});
+
     $self->stash->{store} ||=
-        Catmandu::Store::Simple->new(
+        $class->new(
           file => Catmandu->conf->{db}->{biblio}
         );
 }
 
 sub index {
     my $self = shift;
+
+    my $class = Plack::Util::load_class(Catmandu->conf->{index}->{_type});
+
     $self->stash->{index} ||=
-        Catmandu::Index::Simple->new(
+        $class->new(
           path => Catmandu->conf->{index}->{biblio}
         );
 }

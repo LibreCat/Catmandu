@@ -1,4 +1,5 @@
 ---
 db:
+  _type:  Catmandu::Store::Simple
   biblio: data/biblio.db
 
