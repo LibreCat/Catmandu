@@ -1,0 +1,7 @@
+$.publication_type                        type
+$.title                                   title 
+$.parent_title                            jtitle
+$.contributors..first_name                author
+$.contributors..last_name                 author
+$.classification                          classification
+$._id                                     _id
