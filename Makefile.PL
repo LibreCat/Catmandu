@@ -39,6 +39,7 @@ requires 'Template' => '2.22';
 test_requires 'Test::Exception' => '0.27';
 test_requires 'Test::More' => '0.94';
 requires 'Try::Tiny' => '0.07';
+requires 'WebService::Solr' => '0.11';''
 requires 'YAML' => '0.72';
 
 # Devel::REPL plugin dependencies
