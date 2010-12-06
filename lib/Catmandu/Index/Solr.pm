@@ -76,3 +76,42 @@ sub search {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 __PACKAGE__;
+
+__END__
+
+=head1 NAME
+
+Catmandu::Index::Solr - an implementation of L<Catmandu::Index> backed by L<WebService::Solr>.
+
+=head1 SYNOPSIS
+
+    use Catmandu::Index::Solr
+
+    my $index = Catmandu::Index::Solr->new(path => 'http://localhost:8983/solr');
+
+=head1 DESCRIPTION
+
+See L<Catmandu::Index>.
+
+=head1 METHODS
+
+See L<Catmandu::Index> for the base methods.
+
+Extra methods for this class:
+
+=head2 Class->new(%args)
+
+Takes the following arguments:
+
+path: The url to the L<Solr> index (required). The url shouldn't contain the 'select|update' subpaths.
+
+=head2 $c->path
+
+Returns the url to the L<Solr> index files as a string.
+
+=head1 SEE ALSO
+
+L<Catmandu::Index>, the Index role.
+
+L<WebService::Solr>, the underlying search engine.
+
