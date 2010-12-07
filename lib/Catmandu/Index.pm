@@ -1,14 +1,13 @@
-package Catmandu::Index;
+use MooseX::Declare;
 
-use Moose::Role;
+role Catmandu::Index {
+    requires 'save';
+    requires 'search';
+    requires 'delete';
+    requires 'commit';
+}
 
-requires 'save';
-requires 'search';
-requires 'delete';
-requires 'commit';
-
-no Moose::Role;
-__PACKAGE__;
+1;
 
 __END__
 

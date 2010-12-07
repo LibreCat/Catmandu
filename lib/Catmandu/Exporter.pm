@@ -1,20 +1,20 @@
-package Catmandu::Exporter;
+use MooseX::Declare;
 
-use Moose::Role;
-use MooseX::Types::IO::All 'IO_All';
+role Catmandu::Exporter {
+    use MooseX::Types::IO::All 'IO_All';
 
-requires 'dump';
+    requires 'dump';
 
-has 'file' => (
-    is => 'ro',
-    isa => IO_All,
-    coerce => 1,
-    required => 1,
-    default => '-',
-);
+    has file => (
+        is => 'ro',
+        isa => IO_All,
+        coerce => 1,
+        required => 1,
+        default => '-',
+    );
+}
 
-no Moose::Role;
-__PACKAGE__;
+1;
 
 __END__
 

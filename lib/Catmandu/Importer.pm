@@ -1,20 +1,20 @@
-package Catmandu::Importer;
+use MooseX::Declare;
 
-use Moose::Role;
-use MooseX::Types::IO::All 'IO_All';
+role Catmandu::Importer {
+    use MooseX::Types::IO::All 'IO_All';
 
-requires 'each';
+    requires 'each';
 
-has 'file' => (
-    is => 'ro',
-    isa => IO_All,
-    coerce => 1,
-    required => 1,
-    default => '-',
-);
+    has file => (
+        is => 'ro',
+        isa => IO_All,
+        coerce => 1,
+        required => 1,
+        default => '-',
+    );
+}
 
-no Moose::Role;
-__PACKAGE__;
+1;
 
 __END__
 

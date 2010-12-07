@@ -3,8 +3,8 @@ use MooseX::Declare;
 class Catmandu::Cmd::Command extends MooseX::App::Cmd::Command
     with MooseX::Getopt::Dashes {
     use 5.010;
+    use Catmandu qw(project);
     use Path::Class;
-    use Catmandu;
 
     has home => (
         traits => ['Getopt'],
@@ -32,10 +32,10 @@ class Catmandu::Cmd::Command extends MooseX::App::Cmd::Command
             $self->home(dir->absolute->stringify);
         }
 
-        Catmandu->initialize(home => $self->home,
-                             env  => $self->env);
+        project(home => $self->home,
+                env  => $self->env);
 
-        unshift @INC, Catmandu->lib;
+        unshift(@INC, project->lib);
     }
 
     method help_text {

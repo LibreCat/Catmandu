@@ -3,10 +3,11 @@ package Catmandu::App;
 use Moose ();
 use Moose::Exporter;
 use Catmandu::App::Object;
+use Catmandu;
 
 Moose::Exporter->setup_import_methods(
     also  => 'Moose',
-    as_is => [qw(
+    as_is => [\&Catmandu::project, qw(
         any
         get
         put

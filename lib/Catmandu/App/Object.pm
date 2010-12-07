@@ -2,7 +2,7 @@ package Catmandu::App::Object;
 
 use 5.010;
 use Moose::Role;
-use Catmandu;
+use Catmandu qw(project);
 use Catmandu::App::Request;
 use Router::Simple;
 use Plack::Util;
@@ -57,14 +57,13 @@ sub print {
 sub print_template {
     my ($self, $tmpl, $vars) = @_;
     $vars ||= {};
-    $vars->{catmandu} = Catmandu->instance;
     $vars->{app} = $self;
-    Catmandu->print_template($tmpl, $vars, $self);
+    project->print_template($tmpl, $vars, $self);
 }
 
 sub stash {
     my $class = ref $_[0] ? ref shift : shift;
-    my $stash = Catmandu->stash->{$class} ||= {};
+    my $stash = project->stash->{$class} ||= {};
     return $stash          if @_ == 0;
     return $stash->{$_[0]} if @_ == 1;
     my %pairs = @_;

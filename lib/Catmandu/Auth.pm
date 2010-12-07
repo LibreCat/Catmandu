@@ -129,7 +129,7 @@ sub custom_response {
 
 sub needs_authentication {
     my $self = shift;
-    $self->authenticate(@_) || Catmandu::Err::HTTP->throw(401);
+    $self->authenticate(@_) || Catmandu::HTTPErr->throw(401);
 }
 
 sub authenticated {
@@ -215,7 +215,7 @@ sub forbid {
 
 sub needs_permission {
     my $self = shift;
-    $self->permitted(@_) || Catmandu::Err::HTTP->throw(401);
+    $self->permitted(@_) || Catmandu::HTTPErr->throw(401);
 }
 
 sub permitted {

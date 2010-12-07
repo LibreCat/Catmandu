@@ -33,6 +33,7 @@ class Catmandu::Cmd::Command::repl extends Catmandu::Cmd::Command {
         });
 
         $repl->current_package('main');
+        $repl->eval('use Catmandu -all');
         $repl->run;
     }
 }

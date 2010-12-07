@@ -10,4 +10,4 @@
 * use Moose duck_type instead of static roles ?
 * Dist::Zilla ?
 * Catmandu.pm files/file paths/path methods
-
+* Index search with hashref for termquery

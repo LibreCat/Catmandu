@@ -2,9 +2,9 @@ package Catmandu::App::Response;
 
 use strict;
 use warnings;
-use base 'Plack::Response';
+use parent 'Plack::Response';
 
-__PACKAGE__;
+1;
 
 __END__
 
