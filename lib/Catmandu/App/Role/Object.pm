@@ -1,4 +1,4 @@
-package Catmandu::App::Object;
+package Catmandu::App::Role::Object;
 
 use 5.010;
 use Moose::Role;
