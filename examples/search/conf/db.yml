@@ -1,5 +1,6 @@
 ---
 db:
-  _type:  Catmandu::Store::Simple
-  biblio: data/biblio.db
+  class:  Catmandu::Store::Simple
+  args: 
+    file: data/biblio.db
 
