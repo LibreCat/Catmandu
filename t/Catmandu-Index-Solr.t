@@ -7,7 +7,7 @@ require_ok 'Catmandu::Index::Solr';
 
 my $path = 'http://localhost:8983/solr';
 
-my $index = Catmandu::Index::Solr->new(path => $path, id_term => 'id');
+my $index = Catmandu::Index::Solr->new(url => $path, id_term => 'id');
 note "index path is $path";
 
  isa_ok $index, Catmandu::Index::Solr;
