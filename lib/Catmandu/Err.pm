@@ -5,23 +5,19 @@ class Catmandu::Err {
 
     has message => (is => 'rw', isa => 'Str', required => 1);
 
-    around BUILDARGS => sub {
-        my ($sub, $self, $code, $msg) = @_;
+    around BUILDARGS ($class: $msg) {
         { message => $msg };
-    };
-
-    sub throw {
-        my ($self, @args) = @_;
-        die $self->new(@args);
     }
 
-    sub rethrow {
-        my ($self) = @_;
+    method throw ($class: @args) {
+        die $class->new(@args);
+    }
+
+    method rethrow () {
         die $self;
     }
 
-    sub stringify {
-        my ($self) = @_;
+    method stringify () {
         $self->message;
     }
 }
@@ -31,10 +27,9 @@ class Catmandu::HTTPErr extends Catmandu::Err {
 
     has code => (is => 'rw', isa => 'Int', required => 1);
 
-    around BUILDARGS => sub {
-        my ($sub, $self, $code, $msg) = @_;
+    around BUILDARGS ($class: $code, $msg?) {
         { code => $code, message => $msg || HTTP::Status::status_message($code) };
-    };
+    }
 }
 
 1;

@@ -1,6 +1,7 @@
 use MooseX::Declare;
 
 class Catmandu::Cmd::Command::start extends Catmandu::Cmd::Command {
+    use Catmandu qw(project);
     use Plack::Runner;
     use Plack::Util;
 
@@ -67,15 +68,14 @@ class Catmandu::Cmd::Command::start extends Catmandu::Cmd::Command {
     );
 
     method execute ($opts, $args) {
-        my $psgi_app = $self->psgi_app ||
-                       $args->[0];
+        my $app = $args->[0] || $self->psgi_app;
 
         my @argv;
-        if ($psgi_app =~ /\.psgi$/) {
-            $psgi_app = project->file('psgi', $psgi_app) or die "Can't find psgi app $psgi_app";
-            push @argv, '-a', $psgi_app;
+        if ($app =~ /\.psgi$/) {
+            $app = project->file('psgi', $app) or die "Can't find psgi app $app";
+            push @argv, '-a', $app;
         } else {
-            push @argv, '-e', "use $psgi_app; $psgi_app->to_app";
+            push @argv, '-e', "use $app; $app->to_app";
         }
         push @argv, map { ('-I', $_) } project->lib;
         push @argv, '-E', project->env;

@@ -1,8 +1,8 @@
 use MooseX::Declare;
 
-class Catmandu::Project {
+class Catmandu::Project
+    with MooseX::LogDispatch {
     use 5.010;
-    use Moose::Util::TypeConstraints;
     use Catmandu::Dist;
     use Template;
     use Path::Class ();
@@ -10,12 +10,19 @@ class Catmandu::Project {
     use YAML ();
     use JSON ();
 
-    has home      => (is => 'ro', isa => 'Str', required => 1);
-    has env       => (is => 'ro', isa => 'Str', required => 1);
-    has stack     => (is => 'ro', isa => 'ArrayRef', init_arg => undef, lazy => 1, builder => '_build_stack');
-    has conf      => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, builder => '_build_conf');
-    has _template => (is => 'ro', isa => 'Template', init_arg => undef, lazy => 1, builder => '_build_template');
-    has _stash    => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, default => sub { +{} });
+    has home     => (is => 'ro', isa => 'Str', required => 1);
+    has env      => (is => 'ro', isa => 'Str', required => 1);
+    has stack    => (is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_stack');
+    has conf     => (is => 'ro', isa => 'HashRef',  lazy => 1, builder => '_build_conf');
+    has template => (is => 'ro', isa => 'Template', lazy => 1, builder => '_build_template');
+    has _stash   => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, builder => '_build_stash');
+    has log_dispatch_conf => (
+        is => 'ro',
+        isa => 'HashRef',
+        lazy => 1,
+        required => 1,
+        builder => '_build_log_dispatch_conf',
+    );
 
     method _build_stack () {
         my $file = Path::Class::file($self->home, "catmandu.yml")->stringify;
@@ -29,7 +36,7 @@ class Catmandu::Project {
 
     method _build_conf () {
         my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
-        my $conf = {};
+        my $conf   = {};
 
         foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
             Path::Class::dir($conf_path)->recurse(depthfirst => 1, callback => sub {
@@ -57,18 +64,32 @@ class Catmandu::Project {
     }
 
     method _build_template () {
-        my $args = $self->conf->{template}{args} || {};
+        my $args = $self->conf->{template} || {};
         Template->new({
             INCLUDE_PATH => $self->paths('template'),
             %$args,
         });
     }
 
+    method _build_stash {
+        {};
+    }
+
+    method _build_log_dispatch_conf {
+        $self->conf->{logger} || {
+            class     => 'Log::Dispatch::Screen',
+            min_level => 'debug',
+            stderr    => 1,
+            newline   => 1,
+            format    => '[%p] %m at %F line %L',
+        };
+    }
+
     method print_template (Str|ScalarRef[Str]|GlobRef $file, HashRef $vars = {}, @rest) {
         $file = "$file.tt" if ! ref $file && $file !~ /\.tt$/;
         $vars->{project} = $self;
-        $self->_template->process($file, $vars, @rest) or
-            confess $self->_template->error;
+        $self->template->process($file, $vars, @rest) or
+            confess $self->template->error;
     }
 
     sub stash {

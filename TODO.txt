@@ -9,7 +9,6 @@
 * pluggable classes / instances so that we can inject behavior
 * use Moose duck_type instead of static roles ?
 * Dist::Zilla ?
-* Catmandu.pm files/file paths/path methods
 * Index search with hashref for termquery
 * Make sensible defaults for command line tools: E.g.
     catmandu export data/biblio.db
