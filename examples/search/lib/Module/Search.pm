@@ -115,23 +115,19 @@ sub pages {
 sub store {
     my $self = shift;
 
-    my $class = Plack::Util::load_class(Catmandu->conf->{db}->{_type});
+    my $class = Plack::Util::load_class(Catmandu->conf->{db}->{class});
+    my $args  = Catmandu->conf->{db}->{args};
 
-    $self->stash->{store} ||=
-        $class->new(
-          file => Catmandu->conf->{db}->{biblio}
-        );
+    $self->stash->{store} ||= $class->new(%$args);
 }
 
 sub index {
     my $self = shift;
 
-    my $class = Plack::Util::load_class(Catmandu->conf->{index}->{_type});
+    my $class = Plack::Util::load_class(Catmandu->conf->{index}->{class});
+    my $args  = Catmandu->conf->{index}->{args};
 
-    $self->stash->{index} ||=
-        $class->new(
-          path => Catmandu->conf->{index}->{biblio}
-        );
+    $self->stash->{index} ||= $class->new(%$args);
 }
 
 __PACKAGE__->meta->make_immutable;

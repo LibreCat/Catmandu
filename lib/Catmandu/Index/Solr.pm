@@ -7,7 +7,7 @@ use WebService::Solr::Document;
 
 with 'Catmandu::Index';
 
-has path => (is => 'ro', isa => 'Str', default => 'http://localhost:8983/solr');
+has url => (is => 'ro', isa => 'Str', default => 'http://localhost:8983/solr');
 
 has id_term => (is => 'ro', isa => 'Str', default => '_id');
 
@@ -22,7 +22,7 @@ has _indexer => (
 
 sub _build_indexer {
     my $self = shift;
-    WebService::Solr->new($self->path, { default_params => { wt => 'json' }});
+    WebService::Solr->new($self->url, { default_params => { wt => 'json' }});
 }
 
 sub save {
@@ -102,7 +102,7 @@ Catmandu::Index::Solr - an implementation of L<Catmandu::Index> backed by L<WebS
 
     use Catmandu::Index::Solr
 
-    my $index = Catmandu::Index::Solr->new(path => 'http://localhost:8983/solr');
+    my $index = Catmandu::Index::Solr->new(url => 'http://localhost:8983/solr');
 
 =head1 DESCRIPTION
 
@@ -118,9 +118,9 @@ Extra methods for this class:
 
 Takes the following arguments:
 
-path: The url to the L<Solr> index (required). The url shouldn't contain the 'select|update' subpaths.
+url: The url to the L<Solr> index (required). The url shouldn't contain the 'select|update' subpaths.
 
-=head2 $c->path
+=head2 $c->url
 
 Returns the url to the L<Solr> index files as a string.
 

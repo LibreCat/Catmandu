@@ -1,4 +1,5 @@
 ---
 index:
-  _type:  Catmandu::Index::Solr
-  biblio: http://localhost:8983/solr
+  class: Catmandu::Index::Solr
+  args:
+    url: http://localhost:8983/solr

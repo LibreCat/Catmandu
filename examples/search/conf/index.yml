@@ -1,4 +1,5 @@
 ---
 index:
-  _type: Catmandu::Index::Simple
-  biblio: data/biblio
+  class: Catmandu::Index::Simple
+  args: 
+    path: data/biblio
