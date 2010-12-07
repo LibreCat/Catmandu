@@ -1,3 +1,4 @@
 ---
 index:
+  _type: Catmandu::Index::Simple
   biblio: data/biblio

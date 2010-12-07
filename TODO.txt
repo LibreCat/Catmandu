@@ -11,3 +11,7 @@
 * Dist::Zilla ?
 * Catmandu.pm files/file paths/path methods
 * Index search with hashref for termquery
+* Make sensible defaults for command line tools: E.g.
+    catmandu export data/biblio.db
+    catmandu index  data/biblio.db
+    catmandu import data/biblio.db < /tmp/marc.export.20100101

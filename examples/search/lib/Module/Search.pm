@@ -1,12 +1,33 @@
 package Module::Search;
 
 use Catmandu::App;
-use Catmandu::Store::Simple;
-use Catmandu::Index::Simple;
+use Plack::Util;
 
 get '/' => sub {
     my $self  = shift;
-    $self->print_template('search' );
+    $self->print_template('search');
+};
+
+get '/login' => sub {
+    my $self  = shift;
+
+    $self->print_template('login');
+};
+
+post '/login' => sub {
+    my $self  = shift;
+
+    $self->auth->authenticate;
+
+    $self->redirect('/');
+};
+
+get '/logout' => sub {
+    my $self = shift;
+
+    $self->auth->clear_user;
+
+    $self->redirect('/');
 };
 
 get '/view' => sub {
@@ -46,6 +67,36 @@ get '/search' => sub {
                         });
 };
 
+# Authentication magic
+enable 'Session';
+enable 'Catmandu::Auth' ,
+        failure_app => sub { [301, [ 'Location' => '/login' ] , []] },
+        strategies => {
+            simple => {
+                auth => sub {
+                    my ($username,$password) = @_;
+                    if ($username eq 'phochste') {
+                        1;
+                    }
+                    else {
+                        0; 
+                    }
+                } ,
+                load_user => sub {
+                    my ($username) = @_;
+                    return {_id => 1 , name => uc $username};
+                }
+            }
+        },
+        into_session => sub { $_[0]->{_id} },
+        from_session => sub { {_id => $_[0] , name => 'xx'} };
+
+sub auth {
+    my $self = shift;
+
+    $self->env->{'catmandu.auth'};
+}
+
 sub pages {
     my $self = shift;
     my ($start, $num, $hits) = @_;
@@ -63,16 +114,22 @@ sub pages {
 
 sub store {
     my $self = shift;
+
+    my $class = Plack::Util::load_class(Catmandu->conf->{db}->{_type});
+
     $self->stash->{store} ||=
-        Catmandu::Store::Simple->new(
+        $class->new(
           file => Catmandu->conf->{db}->{biblio}
         );
 }
 
 sub index {
     my $self = shift;
+
+    my $class = Plack::Util::load_class(Catmandu->conf->{index}->{_type});
+
     $self->stash->{index} ||=
-        Catmandu::Index::Simple->new(
+        $class->new(
           path => Catmandu->conf->{index}->{biblio}
         );
 }
