@@ -2,7 +2,7 @@ use Data::UUID;
 use IO::All;
 use Test::Exception;
 use Test::Moose;
-use Test::More tests => 20;
+use Test::More tests => 22;
 
 BEGIN { use_ok 'Catmandu::Index::Simple'; }
 require_ok 'Catmandu::Index::Simple';
@@ -42,6 +42,10 @@ is scalar @$hits, 0;
 is $total_hits, 0;
 
 ($hits, $total_hits) = $index->search("_id : 001");
+is scalar @$hits, 1;
+is $total_hits, 1;
+
+($hits, $total_hits) = $index->search({_id => "001"});
 is scalar @$hits, 1;
 is $total_hits, 1;
 

@@ -5,8 +5,8 @@ use warnings;
 
 BEGIN {
     eval "use Catmandu::Cmd" or do {
-        use Path::Class;
-        use lib file(__FILE__)->dir->parent->subdir('lib')
+        use Path::Class ();
+        use lib Path::Class::file(__FILE__)->dir->parent->subdir('lib')
             ->absolute->resolve->stringify;
         use Catmandu::Cmd;
     };

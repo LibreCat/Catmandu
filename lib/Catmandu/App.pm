@@ -30,7 +30,7 @@ sub init_meta {
     $caller->meta;
 }
 
-sub app { caller(0); }
+sub app { my $caller = caller; $caller; }
 
 sub set { my $caller = caller; $caller->stash(@_); }
 

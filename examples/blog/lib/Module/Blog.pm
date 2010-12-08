@@ -3,7 +3,6 @@ package Module::Blog;
 use Catmandu::App;
 use Catmandu::Store::Simple;
 
-
 get '/' => sub {
     my $self  = shift;
     $self->print_template('blog', { blog => $self->list} );

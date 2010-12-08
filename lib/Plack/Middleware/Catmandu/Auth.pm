@@ -77,5 +77,5 @@ sub _authentication_failed {
     }
 }
 
-__PACKAGE__;
+1;
 

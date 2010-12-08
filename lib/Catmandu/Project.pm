@@ -1,14 +1,21 @@
 use MooseX::Declare;
 
 class Catmandu::Project
-    with MooseX::LogDispatch {
+    with MooseX::LogDispatch
+    is dirty {
     use 5.010;
-    use Catmandu::Dist;
+    use Catmandu::Dist qw(share_dir);
+    use List::Util qw(first);
     use Template;
     use Path::Class ();
     use Hash::Merge ();
     use YAML ();
     use JSON ();
+
+    sub _file { Path::Class::File->new(@_) }
+    sub _dir { Path::Class::Dir->new(@_) }
+
+    clean;
 
     has home     => (is => 'ro', isa => 'Str', required => 1);
     has env      => (is => 'ro', isa => 'Str', required => 1);
@@ -25,13 +32,13 @@ class Catmandu::Project
     );
 
     method _build_stack () {
-        my $file = Path::Class::file($self->home, "catmandu.yml")->stringify;
-        -f $file or return ['catmandu-base'];
+        my $file = first { -f _file($self->home, $_)->stringify } qw(catmandu.yml catmandu.yaml);
+        $file or return ['catmandu-base'];
         my $dirs = YAML::LoadFile($file);
         if (! grep /^catmandu-base$/, @$dirs) {
             push @$dirs, 'catmandu-base';
         }
-        $dirs;
+        [ map { _dir($_)->resolve->stringify } @$dirs ];
     }
 
     method _build_conf () {
@@ -39,7 +46,7 @@ class Catmandu::Project
         my $conf   = {};
 
         foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
-            Path::Class::dir($conf_path)->recurse(depthfirst => 1, callback => sub {
+            _dir($conf_path)->recurse(depthfirst => 1, callback => sub {
                 my $file = shift;
                 my $path = $file->stringify;
                 my $hash;
@@ -107,9 +114,10 @@ class Catmandu::Project
     method paths (Str $dir?) {
         my $stack = $self->stack;
         my $paths = [ $self->home,
-                      map { Path::Class::dir(/^catmandu-/ ? Catmandu::Dist::share : $self->home, $_)->stringify } @$stack ];
+                      map { _dir($_)->is_absolute ? $_ : 
+                            _dir(/^catmandu-/ ? share_dir : $self->home, $_)->stringify; } @$stack ];
         if ($dir) {
-            [ grep { -d $_ } map { Path::Class::dir($_, $dir)->stringify } @$paths ];
+            [ grep { -d $_ } map { _dir($_, $dir)->stringify } @$paths ];
         } else {
             $paths;
         }
@@ -121,7 +129,7 @@ class Catmandu::Project
 
     method files (Str $dir, Str $file) {
         my $paths = $self->paths($dir);
-        [ grep { -f $_ } map { Path::Class::file($_, $file)->stringify } @$paths ];
+        [ grep { -f $_ } map { _file($_, $file)->stringify } @$paths ];
     }
 
     method file (Str $dir, Str $file) {
