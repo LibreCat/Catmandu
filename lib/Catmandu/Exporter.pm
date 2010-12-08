@@ -12,6 +12,12 @@ role Catmandu::Exporter {
         required => 1,
         default => '-',
     );
+
+    has pretty => (
+        is => 'ro',
+        isa => 'Bool',
+        default => 0,
+    );
 }
 
 1;
@@ -34,6 +40,11 @@ Catmandu::Exporter - role describing an exporter.
 =head2 $c->file
 
 Returns the io to which objects are exported. Defaults to C<STDOUT>.
+
+=head2 $c->pretty([0|1])
+
+Return or set the pretty printing flag. Not all exporters
+will respect this flag (eg. binary formats).
 
 =head2 $c->dump($obj)
 

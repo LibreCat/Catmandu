@@ -75,6 +75,20 @@ role Catmandu::Cmd::Opts::Exporter {
         predicate => 'has_exporter_arg',
         documentation => "Pass params to the exporter constructor.",
     );
+
+    has pretty => (
+        traits => ['Getopt'],
+        is => 'rw',
+        isa => 'Bool',
+        predicate => 'has_pretty',
+        documentation => "Pretty print exported objects. Equivalent to '-o pretty=1'.",
+    );
+
+    method BUILD {
+        if ($self->has_pretty) {
+            $self->exporter_arg->{pretty} = $self->pretty;
+        }
+    }
 }
 
 role Catmandu::Cmd::Opts::Importer {

@@ -1,43 +1,37 @@
-package Catmandu::Importer::JSON;
+use MooseX::Declare;
 
-use 5.010;
-use Moose;
+class Catmandu::Importer::JSON with Catmandu::Importer {
+    use 5.010;
+    use JSON qw(decode_json);
 
-with 'Catmandu::Importer';
+    method each (CodeRef $sub) {
+        my $obj;
 
-use JSON qw(decode_json);
+        if ($self->file->is_string) {
+            $obj = decode_json ${$self->file->string_ref};
+        } else {
+            $obj = decode_json $self->file->slurp;
+        }
 
-sub each {
-    my ($self, $sub) = @_;
-
-    my $obj;
-
-    if ($self->file->is_string) {
-        $obj = decode_json ${$self->file->string_ref};
-    } else {
-        $obj = decode_json $self->file->slurp;
-    }
-
-    given (ref $obj) {
-        when ('ARRAY') {
-            my $n = 0;
-            for my $o (@$obj) {
-                $sub->($o);
-                $n++;
+        given (ref $obj) {
+            when ('ARRAY') {
+                my $n = 0;
+                for my $o (@$obj) {
+                    $sub->($o);
+                    $n++;
+                }
+                return $n;
             }
-            return $n;
-        }
-        when ('HASH') {
-            $sub->($obj);
-            return 1;
-        }
-        default {
-            confess "Can only import a JSON hash or array of hashes";
+            when ('HASH') {
+                $sub->($obj);
+                return 1;
+            }
+            default {
+                confess "Can only import a JSON hash or array of hashes";
+            }
         }
     }
 }
 
-__PACKAGE__->meta->make_immutable;
-no Moose;
-__PACKAGE__;
+1;
 

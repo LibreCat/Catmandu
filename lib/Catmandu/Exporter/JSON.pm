@@ -1,48 +1,41 @@
-package Catmandu::Exporter::JSON;
+use MooseX::Declare;
 
-use Moose;
-use JSON ();
+class Catmandu::Exporter::JSON with Catmandu::Exporter {
+    use JSON ();
 
-with 'Catmandu::Exporter';
+    method dump ($obj) {
+        my $json = JSON->new->utf8(1)->pretty($self->pretty);
+        my $file = $self->file;
 
-has pretty => (
-    is => 'ro',
-    isa => 'Bool',
-    default => 0,
-);
+        if (ref $obj eq 'ARRAY') {
+            $file->print($json->encode($obj));
+            return scalar @$obj;
+        }
+        if (ref $obj eq 'HASH') {
+            $file->print($json->encode($obj));
+            return 1;
+        }
+        if (blessed $obj and $obj->can('each')) {
+            my $pretty = $self->pretty;
+            my $n = 0;
+            $file->print("[");
+            $file->print("\n") if $pretty;
+            $obj->each(sub {
+                my $text = $json->encode($_[0]);
+                $pretty and chomp $text;
+                $n      and $file->print($pretty ? ",\n" : ",");
+                $file->print($text);
+                $n++;
+            });
+            $file->print("\n") if $pretty;
+            $file->print("]");
+            $file->print("\n") if $pretty;
+            return $n;
+        }
 
-sub dump {
-    my ($self, $obj) = @_;
-
-    my $json = JSON->new->utf8(1)->pretty($self->pretty);
-    my $file = $self->file;
-    my $n = 0;
-
-    if (ref $obj eq 'HASH') {
-        $file->print($json->encode($obj));
-        $n = 1;
+        confess "Can't export object";
     }
-    elsif (ref $obj eq 'ARRAY') {
-        $file->print($json->encode($obj));
-        $n = @$obj;
-    }
-    elsif (blessed $obj and $obj->can('each')) {
-        $file->print('[');
-        $obj->each(sub {
-            $file->print(',') if $n;
-            $file->print($json->encode($_[0]));
-            $n++;
-        });
-        $file->print(']');
-    }
-    else {
-        confess "Can't export";
-    }
-
-    $n;
 }
 
-__PACKAGE__->meta->make_immutable;
-no Moose;
-__PACKAGE__;
+1;
 
