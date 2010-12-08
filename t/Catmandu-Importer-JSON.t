@@ -1,6 +1,7 @@
 use Test::More tests => 9;
 use Test::Moose;
 use Test::Exception;
+use IO::String;
 use JSON;
 
 BEGIN { use_ok 'Catmandu::Importer::JSON'; }
@@ -11,9 +12,7 @@ my $objs = [
     { id => 2, another => { deeply => { nested => { data => { structure => "ok" }}}}},
 ];
 
-my $json = encode_json($objs);
-
-my $importer = Catmandu::Importer::JSON->new(file => \$json);
+my $importer = Catmandu::Importer::JSON->new(file => IO::String->new(JSON::encode_json($objs)));
 
  isa_ok $importer, Catmandu::Importer::JSON;
 does_ok $importer, Catmandu::Importer;

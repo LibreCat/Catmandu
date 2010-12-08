@@ -9,6 +9,7 @@ class Catmandu::Project
     use Template;
     use Path::Class ();
     use Hash::Merge ();
+    use File::Slurp qw(slurp);
     use YAML ();
     use JSON ();
 
@@ -52,7 +53,7 @@ class Catmandu::Project
                 my $hash;
                 -f $path or return;
                 given ($path) {
-                    when (/\.json$/)  { $hash = JSON::decode_json($file->slurp) }
+                    when (/\.json$/)  { $hash = JSON::decode_json(slurp($file)) }
                     when (/\.ya?ml$/) { $hash = YAML::LoadFile($path) }
                     when (/\.pl$/)    { $hash = do $path }
                 }

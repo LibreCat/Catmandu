@@ -1,16 +1,15 @@
-use Data::UUID;
-use IO::All;
 use Test::Exception;
 use Test::Moose;
 use Test::More tests => 22;
+use File::Temp;
 
 BEGIN { use_ok 'Catmandu::Index::Simple'; }
 require_ok 'Catmandu::Index::Simple';
 
-my $path = io->catdir(io->tmpdir->pathname, Data::UUID->new->create_str)->name;
+my $tmp = File::Temp->newdir;
 
-my $index = Catmandu::Index::Simple->new(path => $path);
-note "index path is $path";
+my $index = Catmandu::Index::Simple->new(path => $tmp->dirname);
+note "index path is " . $tmp->dirname;
 
  isa_ok $index, Catmandu::Index::Simple;
 does_ok $index, Catmandu::Index;

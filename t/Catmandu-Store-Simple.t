@@ -1,16 +1,17 @@
 use Test::More tests => 11;
 use Test::Moose;
 use Test::Exception;
-use IO::All;
-use Data::UUID;
+use File::Spec;
+use File::Temp;
 
 BEGIN { use_ok 'Catmandu::Store::Simple'; }
 require_ok 'Catmandu::Store::Simple';
 
-my $file = io->catfile(io->tmpdir->pathname, Data::UUID->new->create_str)->name;
+my $tmp = File::Temp->newdir;
+my $path = File::Spec->catfile($tmp->dirname, 'store.db');
 
-my $store = Catmandu::Store::Simple->new(file => $file);
-note "store path is $file";
+my $store = Catmandu::Store::Simple->new(path => $path);
+note "store path is $path";
 
  isa_ok $store, Catmandu::Store::Simple;
 does_ok $store, Catmandu::Store;

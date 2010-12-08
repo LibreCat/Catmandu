@@ -1,35 +1,57 @@
 use MooseX::Declare;
 
 class Catmandu::Importer::JSON with Catmandu::Importer {
-    use 5.010;
-    use JSON qw(decode_json);
+    use JSON ();
 
     method each (CodeRef $sub) {
-        my $obj;
+        my $json = JSON->new->utf8(1);
+        my $file = $self->file;
+        my $load_one;
+        my $n = 0;
 
-        if ($self->file->is_string) {
-            $obj = decode_json ${$self->file->string_ref};
-        } else {
-            $obj = decode_json $self->file->slurp;
+        # find and remove the initial "["
+        for (;;) {
+            $file->sysread(my $buf, 65536) or confess $@;
+            $json->incr_parse($buf); # doesn't parse in void context
+            $json->incr_text =~ s/^\s*//;
+            last if $load_one = $json->incr_text =~ m/^\{/;
+            last if $json->incr_text =~ s/^\[\s*//x;
         }
 
-        given (ref $obj) {
-            when ('ARRAY') {
-                my $n = 0;
-                for my $o (@$obj) {
-                    $sub->($o);
+        PARSE: for (;;) {
+            # read data until we have a single object
+            for (;;) {
+                if (my $obj = $json->incr_parse) {
+                    $sub->($obj);
                     $n++;
+
+                    last PARSE if $load_one;
+
+                    last;
                 }
-                return $n;
+
+                $file->sysread(my $buf, 65536) or confess $@;
+                $json->incr_parse($buf);
             }
-            when ('HASH') {
-                $sub->($obj);
-                return 1;
-            }
-            default {
-                confess "Can only import a JSON hash or array of hashes";
+
+            # read data until we get "," or the final "]"
+            for (;;) {
+                $json->incr_text =~ s/^\s*//;
+
+                last PARSE if $json->incr_text =~ s/^\]//;
+
+                last if $json->incr_text =~ s/^,//;
+
+                if (length $json->incr_text) {
+                    confess "JSON parse error near ", $json->incr_text;
+                }
+
+                $file->sysread(my $buf, 65536) or confess $@;
+                $json->incr_parse($buf);
             }
         }
+
+        $n;
     }
 }
 

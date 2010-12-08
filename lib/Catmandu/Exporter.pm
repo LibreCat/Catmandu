@@ -1,16 +1,16 @@
 use MooseX::Declare;
 
 role Catmandu::Exporter {
-    use MooseX::Types::IO::All 'IO_All';
+    use MooseX::Types::IO qw(IO);
 
     requires 'dump';
 
     has file => (
         is => 'ro',
-        isa => IO_All,
+        isa => IO,
         coerce => 1,
         required => 1,
-        default => '-',
+        builder => '_build_file',
     );
 
     has pretty => (
@@ -18,6 +18,10 @@ role Catmandu::Exporter {
         isa => 'Bool',
         default => 0,
     );
+
+    method _build_file () {
+        IO::Handle->new_from_fd(fileno(STDOUT), 'w');
+    }
 }
 
 1;

@@ -15,15 +15,15 @@ my $SQL_ST_EACH   = "SELECT data FROM objects";
 my $SQL_ST_SAVE   = "INSERT OR REPLACE INTO objects VALUES(?,?)";
 my $SQL_ST_DELETE = "DELETE FROM objects WHERE id = ?";
 
-has file => (is => 'ro', isa => 'Str', required => 1);
+has path => (is => 'ro', isa => 'Str', required => 1);
 has _dbh => (is => 'ro', isa => 'Ref', required => 1, init_arg => undef, builder => '_build_dbh');
 has _in_transaction => (is => 'rw', isa => 'Bool', init_arg => undef);
 
 sub _build_dbh {
     my $self = shift;
-    my $file = $self->file;
+    my $path = $self->path;
 
-    my $dbh = DBI->connect("dbi:SQLite:dbname=$file", "", "");
+    my $dbh = DBI->connect("dbi:SQLite:dbname=$path", "", "");
     $dbh->{sqlite_unicode} = 1;
     $dbh->do($SQL_CREATE_TABLE) or confess $dbh->errstr;
     $dbh;
@@ -101,7 +101,7 @@ Catmandu::Store::Simple - an implementation of L<Catmandu::Store> backed by L<DB
 
     use Catmandu::Store::Simple
 
-    my $store = Catmandu::Store::Simple->new(file => '/tmp/store.db');
+    my $store = Catmandu::Store::Simple->new(path => '/tmp/store.db');
 
 =head1 DESCRIPTION
 
@@ -117,9 +117,9 @@ Extra methods for this class:
 
 Takes the following arguments:
 
-file: The path to the sqlite3 database (required)
+path: The path to the sqlite3 database (required)
 
-=head2 $c->file
+=head2 $c->path
 
 Return the path to the underlying sqlite3 database as a string.
 
