@@ -1,8 +1,8 @@
-package Catmandu::App::Object;
+package Catmandu::App::Role::Object;
 
 use 5.010;
 use Moose::Role;
-use Catmandu;
+use Catmandu qw(project);
 use Catmandu::App::Request;
 use Router::Simple;
 use Plack::Util;
@@ -25,7 +25,7 @@ has response => (
 has params => (
     is => 'ro',
     isa => 'HashRef',
-    lazy => 1, 
+    lazy => 1,
     default => sub { +{} },
 );
 
@@ -58,13 +58,12 @@ sub print_template {
     my ($self, $tmpl, $vars) = @_;
     $vars ||= {};
     $vars->{app} = $self;
-    $vars->{catmandu} = Catmandu->instance;
-    Catmandu->print_template($tmpl, $vars, $self);
+    project->print_template($tmpl, $vars, $self);
 }
 
 sub stash {
     my $class = ref $_[0] ? ref shift : shift;
-    my $stash = Catmandu->stash->{$class} ||= {};
+    my $stash = project->stash->{$class} ||= {};
     return $stash          if @_ == 0;
     return $stash->{$_[0]} if @_ == 1;
     my %pairs = @_;

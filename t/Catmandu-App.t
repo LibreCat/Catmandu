@@ -1,6 +1,11 @@
 use HTTP::Request::Common;
+use Path::Class;
 use Test::More tests => 7;
 use Plack::Test;
+use Catmandu qw(project);
+
+project home => file(__FILE__)->dir->stringify,
+        env  => 'test';
 
 BEGIN { use_ok 'Catmandu::App'; }
 require_ok 'Catmandu::App';

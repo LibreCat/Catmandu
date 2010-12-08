@@ -2,11 +2,13 @@ package Catmandu::App;
 
 use Moose ();
 use Moose::Exporter;
-use Catmandu::App::Object;
+use Catmandu::App::Role::Object;
+use Catmandu;
 
 Moose::Exporter->setup_import_methods(
     also  => 'Moose',
-    as_is => [qw(
+    as_is => [\&Catmandu::project, qw(
+        app
         any
         get
         put
@@ -24,9 +26,18 @@ sub init_meta {
     my %args = @_;
     my $caller = $args{for_class};
     Moose->init_meta(%args);
-    Moose::Util::apply_all_roles($caller, 'Catmandu::App::Object');
+    Moose::Util::apply_all_roles($caller, 'Catmandu::App::Role::Object');
     $caller->meta;
 }
+
+sub app { my $caller = caller; $caller; }
+
+sub set { my $caller = caller; $caller->stash(@_); }
+
+sub get    { my $caller = caller; $caller->add_route(@_, { method => ['GET', 'HEAD'] }); }
+sub put    { my $caller = caller; $caller->add_route(@_, { method => ['PUT'] }) ; }
+sub post   { my $caller = caller; $caller->add_route(@_, { method => ['POST'] }); }
+sub delete { my $caller = caller; $caller->add_route(@_, { method => ['DELETE'] }); }
 
 sub any {
     my $caller = caller;
@@ -38,18 +49,11 @@ sub any {
     }
 }
 
-sub get    { my $caller = caller; $caller->add_route(@_, { method => ['GET', 'HEAD'] }); }
-sub put    { my $caller = caller; $caller->add_route(@_, { method => ['PUT'] }) ; }
-sub post   { my $caller = caller; $caller->add_route(@_, { method => ['POST'] }); }
-sub delete { my $caller = caller; $caller->add_route(@_, { method => ['DELETE'] }); }
-
-sub set { my $caller = caller; $caller->stash(@_); };
-
 sub enable         { my $caller = caller; $caller->add_middleware(@_); }
 sub enable_if(&$@) { my $caller = caller; $caller->add_middleware_if(@_); }
 sub mount          { my $caller = caller; $caller->add_mount(@_); }
 
-__PACKAGE__;
+1;
 
 __END__
 

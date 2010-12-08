@@ -2,9 +2,15 @@ package Catmandu::App::Request;
 
 use strict;
 use warnings;
-use base 'Plack::Request';
-use CGI::Expand ();
+use parent 'Plack::Request';
 use Catmandu::App::Response;
+use namespace::autoclean;
+use CGI::Expand;
+
+sub new_response {
+    my ($self, @arg) = @_;
+    Catmandu::App::Response->new(@arg);
+}
 
 sub expand_param {
     my ($self, $key) = @_;
@@ -17,14 +23,10 @@ sub expand_param {
         $flat_key =~ s/^$key\.//;
         $flat->{$flat_key} = $value;
     }
-    CGI::Expand->expand_hash($flat);
+    expand_hash($flat);
 }
 
-sub new_response {
-    shift; Catmandu::App::Response->new(@_);
-}
-
-__PACKAGE__;
+1;
 
 __END__
 

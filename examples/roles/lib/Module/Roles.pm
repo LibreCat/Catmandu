@@ -103,7 +103,7 @@ sub all_roles {
 
 sub all_users {
     my $self = shift;
-    
+
     my @users = ();
 
     $self->store->each(sub {

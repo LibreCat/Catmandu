@@ -94,6 +94,14 @@ sub search {
 
     $self->commit;
 
+    if (ref $query eq 'HASH') {
+        $query = KinoSearch::Search::ANDQuery->new(
+            children => [ map {
+                KinoSearch::Search::TermQuery->new(field => $_, term => $query->{$_});
+            } keys %$query ],
+        );
+    }
+
     my $hits = $self->_searcher->hits(
         query => $query,
         num_wanted => $opts{limit} || 50,

@@ -1,11 +1,8 @@
-package Catmandu::Cmd;
+use MooseX::Declare;
 
-use Moose::Role;
+class Catmandu::Cmd extends MooseX::App::Cmd {
 
-with 'MooseX::Getopt::Dashes';
+}
 
-requires 'run';
-
-no Moose::Role;
-__PACKAGE__;
+1;
 

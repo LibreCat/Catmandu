@@ -43,7 +43,7 @@ sub call {
     my $res = try {
         $self->app->($env);
     } catch {
-        if (blessed $_ && $_->isa('Catmandu::Err::HTTP') && $_->code == 401) {
+        if (blessed $_ && $_->isa('Catmandu::HTTPErr') && $_->code == 401) {
             $_;
         } else {
             confess $_;
@@ -77,5 +77,5 @@ sub _authentication_failed {
     }
 }
 
-__PACKAGE__;
+1;
 

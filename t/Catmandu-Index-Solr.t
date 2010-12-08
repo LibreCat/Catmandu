@@ -1,14 +1,20 @@
 use Test::Exception;
 use Test::Moose;
-use Test::More tests => 19;
+use Test::More;
+
+BEGIN {
+    $ENV{CATMANDU_TEST_SOLR} ?
+        plan( tests => 19 ) :
+        plan( skip_all => "enable tests with env CATMANDU_TEST_SOLR" );
+}
 
 BEGIN { use_ok 'Catmandu::Index::Solr'; }
 require_ok 'Catmandu::Index::Solr';
 
-my $path = 'http://localhost:8983/solr';
+my $url = 'http://localhost:8983/solr';
 
-my $index = Catmandu::Index::Solr->new(url => $path, id_term => 'id');
-note "index path is $path";
+my $index = Catmandu::Index::Solr->new(url => $url, id_term => 'id');
+note "index url is $url";
 
  isa_ok $index, Catmandu::Index::Solr;
 does_ok $index, Catmandu::Index;
@@ -42,7 +48,6 @@ is $total_hits, 2;
 is scalar @$hits, 0;
 is $total_hits, 0;
 
-
 throws_ok { $index->delete({missing => '_id'}) } qr/Missing/;
 
 $index->delete({id => "001"});
@@ -54,3 +59,4 @@ $index->delete("002");
 is $total_hits, 0;
 
 done_testing;
+

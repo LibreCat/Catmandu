@@ -1,6 +1,4 @@
 * more store backends (look at KiokuDB, KiokuDB::Entry)
-* solr indexer
-* logger in Catmandu.pm
 * Rules.pm is lame
 * Tranform role (flattening objects for indexing with JSONPath etc)
 * Validation role
@@ -9,7 +7,8 @@
 * pluggable classes / instances so that we can inject behavior
 * use Moose duck_type instead of static roles ?
 * Dist::Zilla ?
-* Catmandu.pm files/file paths/path methods
+* Index::Solr search with hashref for termquery
+* Index::Simple id_term
 * Make sensible defaults for command line tools: E.g.
     catmandu export data/biblio.db
     catmandu index  data/biblio.db
