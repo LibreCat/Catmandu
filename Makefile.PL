@@ -10,6 +10,7 @@ version      '0.1';
 include      'Module::AutoInstall';
 
 requires 'CGI::Expand' => '2.02';
+requires 'Clone' => '0.31';
 requires 'Data::UUID' => '1.216';
 requires 'DBD::SQLite' => '1.31';
 requires 'DBI' => '1.607';
