@@ -1,30 +1,39 @@
-use MooseX::Declare;
+package Catmandu::Cmd::Command::convert;
 
-class Catmandu::Cmd::Command::convert extends Catmandu::Cmd::Command 
-    with Catmandu::Cmd::Opts::Importer
-    with Catmandu::Cmd::Opts::Exporter {
-    use Plack::Util;
+use namespace::autoclean;
+use Moose;
+use Plack::Util;
 
-    method execute ($opts, $args) {
-        $self->importer =~ /::/ or $self->importer("Catmandu::Importer::" . $self->importer);
-        $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
+extends qw(Catmandu::Cmd::Command);
 
-        if (my $arg = shift @$args) {
-            $self->importer_arg->{file} = $arg;
-        }
-        if (my $arg = shift @$args) {
-            $self->exporter_arg->{file} = $arg;
-        }
+with qw(
+    Catmandu::Cmd::Opts::Importer
+    Catmandu::Cmd::Opts::Exporter
+);
 
-        Plack::Util::load_class($self->importer);
-        Plack::Util::load_class($self->exporter);
+sub execute {
+    my ($self, $opts, $args) = @_;
 
-        my $importer = $self->importer->new($self->importer_arg);
-        my $exporter = $self->exporter->new($self->exporter_arg);
+    $self->importer =~ /::/ or $self->importer("Catmandu::Importer::" . $self->importer);
+    $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
 
-        $exporter->dump($importer);
+    if (my $arg = shift @$args) {
+        $self->importer_arg->{file} = $arg;
     }
+    if (my $arg = shift @$args) {
+        $self->exporter_arg->{file} = $arg;
+    }
+
+    Plack::Util::load_class($self->importer);
+    Plack::Util::load_class($self->exporter);
+
+    my $importer = $self->importer->new($self->importer_arg);
+    my $exporter = $self->exporter->new($self->exporter_arg);
+
+    $exporter->dump($importer);
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

@@ -1,21 +1,21 @@
-use MooseX::Declare;
+package Catmandu::Importer;
 
-role Catmandu::Importer {
-    use MooseX::Types::IO qw(IO);
+use namespace::autoclean;
+use Moose::Role;
+use MooseX::Types::IO qw(IO);
 
-    requires 'each';
+requires 'each';
 
-    has file => (
-        is => 'ro',
-        isa => IO,
-        coerce => 1,
-        required => 1,
-        builder => '_build_file',
-    );
+has file => (
+    is => 'ro',
+    isa => IO,
+    coerce => 1,
+    required => 1,
+    builder => '_build_file',
+);
 
-    method _build_file () {
-        IO::Handle->new_from_fd(fileno(STDIN), 'r');
-    }
+sub _build_file {
+    IO::Handle->new_from_fd(fileno(STDIN), 'r');
 }
 
 1;

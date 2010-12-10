@@ -96,8 +96,8 @@ Catmandu::App
     # without the sugar
     __PACKAGE__->stash(foo => 'bar');
     __PACKAGE__->stash(foo);
-    __PACKAGE__->add_route('/foo', 'foo', sub { ... }, {method => ['GET', 'POST']});
-    __PACKAGE__->add_route('/foo', sub { ... }, {method => ['GET', 'POST']});
+    __PACKAGE__->add_route('/foo', 'foo', sub { ... }, {methods => ['GET', 'POST']});
+    __PACKAGE__->add_route('/foo', sub { ... }, {methods => ['GET', 'POST']});
     __PACKAGE__->add_middleware("Header", 'X-Foo' => 1);
     __PACKAGE__->add_mount('/bar', 'BarApp');
 
@@ -188,13 +188,11 @@ Conditionaly enables L<Plack::Middleware>.
 
     enable_if { $_[0]->{REMOTE_ADDR} eq '127.0.0.1' } 'StackTrace';
 
-=head2 mount($path|$url, $sub)
+=head2 mount($path, $app)
 
-Uses L<Plack::App::URLMap> to mount C<$sub> at the specified C<$path>
-or C<$url>. C<$sub> can be a coderef or another L<Catmandu::App>.
+mount another C<$app> at the specified C<$path>.
 
     mount '/foo' => FooApp;
-    mount 'http://bar/' => 'BarApp';
 
 =head1 METHODS
 
@@ -280,7 +278,6 @@ See C<enable_if>.
 Connects the route C<$route> to C<$sub>.
 C<$sub> can either be a coderef that takes an app instance
 or the name of a method of the app.
-See L<Router::Simple> for possible values of C<$route> and C<%opts>.
 
 =head2 Class|$c->add_mount($path|$url, $sub)
 
@@ -298,8 +295,6 @@ by the app.
 
 =head1 SEE ALSO
 
-L<Router::Simple>.
-
 L<Catmandu::App::Request>.
 
 L<Plack::Response>.
@@ -307,8 +302,6 @@ L<Plack::Response>.
 L<Plack::Middleware>.
 
 L<Plack::Middleware::Conditional>.
-
-L<Plack::App::URLMap>.
 
 L<Plack::Builder>.
 

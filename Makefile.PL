@@ -28,7 +28,6 @@ requires 'List::Util' => '1.23';
 requires 'Moose' => '1.19';
 requires 'MooseX::App::Cmd' => '0.06';
 requires 'MooseX::Daemonize' => '0.12';
-requires 'MooseX::Declare' => '0.34';
 requires 'MooseX::Getopt' => '0.33';
 requires 'MooseX::LogDispatch' => '1.2002';
 requires 'MooseX::Types::IO' => '0.03';

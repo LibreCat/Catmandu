@@ -1,83 +1,92 @@
-use MooseX::Declare;
+package Catmandu::Cmd::Command::index;
 
-class Catmandu::Cmd::Command::index extends Catmandu::Cmd::Command
-    with Catmandu::Cmd::Opts::Index
-    with Catmandu::Cmd::Opts::Store
-    with Catmandu::Cmd::Opts::Verbose {
-    use MooseX::Types::IO qw(IO);
-    use File::Slurp qw(slurp);
-    use Plack::Util;
-    use JSON::Path;
+use namespace::autoclean;
+use Moose;
+use MooseX::Types::IO qw(IO);
+use File::Slurp qw(slurp);
+use Plack::Util;
+use JSON::Path;
 
-    has map => (
-        traits => ['Getopt'],
-        is => 'rw',
-        isa => IO,
-        coerce => 1,
-        documentation => "Path to the index definition file to use.",
-    );
+extends qw(Catmandu::Cmd::Command);
 
-    method execute ($opts, $args) {
-        $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
-        $self->index =~ /::/ or $self->index("Catmandu::Index::" . $self->index);
+with qw(
+    Catmandu::Cmd::Opts::Index
+    Catmandu::Cmd::Opts::Store
+    Catmandu::Cmd::Opts::Verbose
+);
 
-        if (my $arg = shift @$args) {
-            $self->map($arg);
-        }
+has map => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => IO,
+    coerce => 1,
+    documentation => "Path to the index definition file to use.",
+);
 
-        Plack::Util::load_class($self->index);
-        Plack::Util::load_class($self->store);
+sub execute {
+    my ($self, $opts, $args) = @_;
 
-        my $index = $self->index->new($self->index_arg);
-        my $store = $self->store->new($self->store_arg);
+    $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
+    $self->index =~ /::/ or $self->index("Catmandu::Index::" . $self->index);
 
-        my %map = ();
+    if (my $arg = shift @$args) {
+        $self->map($arg);
+    }
 
-        foreach my $line (split /\n/, slurp($self->map)) {
-            $line =~ s/^\s*(.*)\s*$/$1/;
-            my ($path, $key) = split /\s+/, $line;
-            my $paths = $map{$key} ||= [];
-            push @$paths, $path;
-        }
+    Plack::Util::load_class($self->index);
+    Plack::Util::load_class($self->store);
 
-        $self->msg("Indexing...");
+    my $index = $self->index->new($self->index_arg);
+    my $store = $self->store->new($self->store_arg);
 
-        my $n = 0;
-        $store->each(sub {
-            my $obj = shift;
+    my %map = ();
 
-            my $doc = {};
+    foreach my $line (split /\n/, slurp($self->map)) {
+        $line =~ s/^\s*(.*)\s*$/$1/;
+        my ($path, $key) = split /\s+/, $line;
+        my $paths = $map{$key} ||= [];
+        push @$paths, $path;
+    }
 
-            foreach my $key (keys %map) {
-                foreach my $path (@{$map{$key}}) {
-                    my $val = join ' ', JSON::Path->new($path)->values($obj);
-                    exists $doc->{$key} ?
-                        $doc->{$key} .= $val : $doc->{$key} = $val;
-                }
+    $self->msg("Indexing...");
+
+    my $n = 0;
+    $store->each(sub {
+        my $obj = shift;
+
+        my $doc = {};
+
+        foreach my $key (keys %map) {
+            foreach my $path (@{$map{$key}}) {
+                my $val = join ' ', JSON::Path->new($path)->values($obj);
+                exists $doc->{$key} ?
+                    $doc->{$key} .= $val : $doc->{$key} = $val;
             }
-
-            $self->msg(" $n") if $n % 100 == 0;
-
-            $index->save($doc);
-
-            $n++;
-        });
-
-        $self->msg("Committing...");
-
-        $index->commit;
-
-        $self->msg($n == 1 ? "Indexed 1 object" : "Indexed $n objects");
-    }
-
-    method msg (Str $text) {
-        local $| = 1;
-        if ($self->verbose) {
-            say $text;
         }
-    }
 
+        $self->msg(" $n") if $n % 100 == 0;
+
+        $index->save($doc);
+
+        $n++;
+    });
+
+    $self->msg("Committing...");
+
+    $index->commit;
+
+    $self->msg($n == 1 ? "Indexed 1 object" : "Indexed $n objects");
 }
+
+sub msg {
+    my ($self, $text) = @_;
+    local $| = 1;
+    if ($self->verbose) {
+        say $text;
+    }
+}
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

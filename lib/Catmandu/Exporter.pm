@@ -1,27 +1,27 @@
-use MooseX::Declare;
+package Catmandu::Exporter;
 
-role Catmandu::Exporter {
-    use MooseX::Types::IO qw(IO);
+use namespace::autoclean;
+use Moose::Role;
+use MooseX::Types::IO qw(IO);
 
-    requires 'dump';
+requires 'dump';
 
-    has file => (
-        is => 'ro',
-        isa => IO,
-        coerce => 1,
-        required => 1,
-        builder => '_build_file',
-    );
+has file => (
+    is => 'ro',
+    isa => IO,
+    coerce => 1,
+    required => 1,
+    builder => '_build_file',
+);
 
-    has pretty => (
-        is => 'ro',
-        isa => 'Bool',
-        default => 0,
-    );
+has pretty => (
+    is => 'ro',
+    isa => 'Bool',
+    default => 0,
+);
 
-    method _build_file () {
-        IO::Handle->new_from_fd(fileno(STDOUT), 'w');
-    }
+sub _build_file {
+    IO::Handle->new_from_fd(fileno(STDOUT), 'w');
 }
 
 1;

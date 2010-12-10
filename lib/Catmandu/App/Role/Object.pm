@@ -1,5 +1,6 @@
 package Catmandu::App::Role::Object;
 
+use namespace::autoclean;
 use 5.010;
 use Moose::Role;
 use Catmandu qw(project);
@@ -155,6 +156,5 @@ sub inspect_routes {
     $self->_router->stringify;
 }
 
-no Moose::Role;
 1;
 

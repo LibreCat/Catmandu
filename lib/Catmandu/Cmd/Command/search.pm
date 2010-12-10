@@ -1,66 +1,75 @@
-use MooseX::Declare;
+package Catmandu::Cmd::Command::search;
 
-class Catmandu::Cmd::Command::search extends Catmandu::Cmd::Command
-    with Catmandu::Cmd::Opts::Index
-    with Catmandu::Cmd::Opts::Exporter
-    with Catmandu::Cmd::Opts::Store {
-    use Plack::Util;
+use namespace::autoclean;
+use Moose;
+use Plack::Util;
 
-    has limit => (
-        traits => ['Getopt'],
-        is => 'rw',
-        isa => 'Int',
-        predicate => 'has_limit',
-        documentation => "Maximum number of objects to return.",
-    );
+extends qw(Catmandu::Cmd::Command);
 
-    has start => (
-        traits => ['Getopt'],
-        is => 'rw',
-        isa => 'Int',
-        default => 0,
-        documentation => "Number of objects to skip.",
-    );
+with qw(
+    Catmandu::Cmd::Opts::Index
+    Catmandu::Cmd::Opts::Exporter
+    Catmandu::Cmd::Opts::Store
+);
 
-    has query => (
-        traits => ['Getopt'],
-        is => 'rw',
-        isa => 'Str',
-        cmd_aliases => 'q',
-        documentation => "The query string. Can also be the first non-option argument.",
-    );
+has limit => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Int',
+    predicate => 'has_limit',
+    documentation => "Maximum number of objects to return.",
+);
 
-    method execute ($opts, $args) {
-        my $q = shift @$args || $self->query;
+has start => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+    documentation => "Number of objects to skip.",
+);
 
-        if (! $q) {
-            $self->usage->die;
-        }
+has query => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    cmd_aliases => 'q',
+    documentation => "The query string. Can also be the first non-option argument.",
+);
 
-        $self->index =~ /::/ or $self->index("Catmandu::Index::" . $self->index);
-        $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
-        $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
+sub execute {
+    my ($self, $opts, $args) = @_;
 
-        Plack::Util::load_class($self->index);
-        Plack::Util::load_class($self->exporter);
-        Plack::Util::load_class($self->store);
+    my $q = shift @$args || $self->query;
 
-        my $index = $self->index->new($self->index_arg);
-        my $exporter = $self->exporter->new($self->exporter_arg);
+    if (! $q) {
+        $self->usage->die;
+    }
 
-        my %opts = (start => $self->start);
-        $opts{limit} = $self->limit                        if $self->has_limit;
-        $opts{reify} = $self->store->new($self->store_arg) if $self->has_store_arg;
+    $self->index =~ /::/ or $self->index("Catmandu::Index::" . $self->index);
+    $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
+    $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
-        my ($hits, $total_hits) = $index->search($q, %opts);
+    Plack::Util::load_class($self->index);
+    Plack::Util::load_class($self->exporter);
+    Plack::Util::load_class($self->store);
 
-        say STDERR qq($total_hits hits for "$q");
+    my $index = $self->index->new($self->index_arg);
+    my $exporter = $self->exporter->new($self->exporter_arg);
 
-        foreach (@$hits) {
-            $exporter->dump($_);
-        }
+    my %opts = (start => $self->start);
+    $opts{limit} = $self->limit                        if $self->has_limit;
+    $opts{reify} = $self->store->new($self->store_arg) if $self->has_store_arg;
+
+    my ($hits, $total_hits) = $index->search($q, %opts);
+
+    say STDERR qq($total_hits hits for "$q");
+
+    foreach (@$hits) {
+        $exporter->dump($_);
     }
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

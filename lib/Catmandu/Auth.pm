@@ -1,4 +1,6 @@
 package Catmandu::Auth;
+
+use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::Err;
@@ -228,5 +230,6 @@ sub permitted {
 }
 
 __PACKAGE__->meta->make_immutable;
+
 1;
 

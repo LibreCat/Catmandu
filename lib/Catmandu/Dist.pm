@@ -22,6 +22,5 @@ sub share_dir {
     };
 }
 
-no Try::Tiny;
 1;
 

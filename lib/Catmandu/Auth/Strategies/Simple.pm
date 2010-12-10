@@ -1,5 +1,6 @@
 package Catmandu::Auth::Strategies::Simple;
 
+use namespace::autoclean;
 use Moose;
 
 with 'Catmandu::Auth::Strategy';
@@ -31,6 +32,6 @@ sub authenticate {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Moose;
-__PACKAGE__;
+
+1;
 

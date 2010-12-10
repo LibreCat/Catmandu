@@ -1,16 +1,17 @@
-use MooseX::Declare;
+package Catmandu::Store;
 
-role Catmandu::Store {
-    requires 'load';
-    requires 'each';
-    requires 'save';
-    requires 'delete';
+use namespace::autoclean;
+use Moose::Role;
 
-    sub load_strict {
-        my ($self, $id) = @_;
-        $self->load($id) or
-            confess "Can't find object with id '$id'";
-    }
+requires 'load';
+requires 'each';
+requires 'save';
+requires 'delete';
+
+sub load_strict {
+    my ($self, $id) = @_;
+    $self->load($id) or
+        confess "Can't find object with id '$id'";
 }
 
 1;

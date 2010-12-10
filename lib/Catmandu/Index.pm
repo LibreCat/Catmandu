@@ -1,11 +1,12 @@
-use MooseX::Declare;
+package Catmandu::Index;
 
-role Catmandu::Index {
-    requires 'save';
-    requires 'search';
-    requires 'delete';
-    requires 'commit';
-}
+use namespace::autoclean;
+use Moose::Role;
+
+requires 'save';
+requires 'search';
+requires 'delete';
+requires 'commit';
 
 1;
 

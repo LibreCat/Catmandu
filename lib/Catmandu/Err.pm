@@ -1,36 +1,46 @@
-use MooseX::Declare;
+package Catmandu::Err;
 
-class Catmandu::Err {
-    use overload q("") => \&stringify;
+use namespace::autoclean;
+use Moose;
+use overload q("") => \&stringify;
 
-    has message => (is => 'rw', isa => 'Str', required => 1);
+has message => (is => 'rw', isa => 'Str', required => 1);
 
-    around BUILDARGS ($class: $msg) {
-        { message => $msg };
-    }
+around BUILDARGS => sub {
+    my ($orig, $class, $msg) = @_;
+    { message => $msg };
+};
 
-    method throw ($class: @args) {
-        die $class->new(@args);
-    }
-
-    method rethrow () {
-        die $self;
-    }
-
-    method stringify () {
-        $self->message;
-    }
+sub throw {
+    my $class = shift; die $class->new(@_);
 }
 
-class Catmandu::HTTPErr extends Catmandu::Err {
-    use HTTP::Status;
-
-    has code => (is => 'rw', isa => 'Int', required => 1);
-
-    around BUILDARGS ($class: $code, $msg?) {
-        { code => $code, message => $msg || HTTP::Status::status_message($code) };
-    }
+sub rethrow {
+    die $_[0];
 }
+
+sub stringify {
+    $_[0]->message;
+}
+
+__PACKAGE__->meta->make_immutable;
+
+package Catmandu::HTTPErr;
+
+use namespace::autoclean;
+use Moose;
+use HTTP::Status;
+
+extends qw(Catmandu::Err);
+
+has code => (is => 'rw', isa => 'Int', required => 1);
+
+around BUILDARGS => sub {
+    my ($orig, $class, $code, $msg) = @_;
+    { code => $code, message => $msg || HTTP::Status::status_message($code) };
+};
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

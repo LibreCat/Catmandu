@@ -2,9 +2,9 @@ package Catmandu::App::Request;
 
 use strict;
 use warnings;
+use namespace::autoclean;
 use parent 'Plack::Request';
 use Catmandu::App::Response;
-use namespace::autoclean;
 use CGI::Expand;
 
 sub new_response {
