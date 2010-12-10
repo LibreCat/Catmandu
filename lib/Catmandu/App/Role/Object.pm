@@ -4,10 +4,9 @@ use 5.010;
 use Moose::Role;
 use Catmandu qw(project);
 use Catmandu::App::Request;
-use Router::Simple;
+use Catmandu::App::Router;
 use Plack::Util;
 use Plack::Middleware::Conditional;
-use Plack::App::URLMap;
 use List::Util qw(max);
 
 with 'Catmandu::App::Env';
@@ -88,11 +87,7 @@ sub _middlewares {
 }
 
 sub _router {
-    $_[0]->stash->{_router} ||= Router::Simple->new;
-}
-
-sub _mounts {
-    $_[0]->stash->{_mounts} ||= {};
+    $_[0]->stash->{_router} ||= Catmandu::App::Router->new;
 }
 
 sub add_middleware {
@@ -122,70 +117,44 @@ sub add_route {
     if (@_ == 4) {
         my ($self, $route, $name, $sub) = @_;
         $self->meta->add_method($name, $sub);
-        $self->_router->connect($name, $route, { _run => $name }, $opts);
+        $self->_router->route(%$opts, app => ref $self ? ref $self : $self, sub => $name, path => $route);
     } else {
         my ($self, $route, $sub) = @_;
-        $self->_router->connect($route, { _run => $sub }, $opts);
+        $self->_router->route(%$opts, app => ref $self ? ref $self : $self, sub => $sub, path => $route);
     }
     1;
 }
 
 sub add_mount {
-    my ($self, $path, $sub) = @_;
-    $self->_mounts->{$path} = $sub;
+    my ($self, $path, $app) = @_;
+    Plack::Util::load_class($app);
+    $self->_router->steal_routes($path, $app->_router);
     1;
 }
 
 sub to_app {
     my $self = shift;
-    my $middlewares = $self->_middlewares;
-    my $mounts = $self->_mounts;
     my $router = $self->_router;
 
     my $sub = sub {
         my $env = $_[0];
-        my $match = $router->match($env)
-            or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
-        $self->new(env => $env, params => $match)
-             ->run($match->{_run})
+        my ($match, $route) = $router->match($env);
+        $match or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
+        $route->app->new(env => $env, params => $match)
+             ->run($route->sub)
              ->response->finalize;
     };
 
-    $sub = $_->($sub) for reverse @$middlewares;
-
-    if (keys %$mounts) { # TODO handle recursion, pass params
-        my $url_map = Plack::App::URLMap->new;
-        $url_map->map('/', $sub);
-        while (my ($path, $sub) = each %$mounts) {
-            if (ref $sub ne 'CODE') {
-                $sub = Plack::Util::load_class($sub)->to_app;
-            }
-            $url_map->map($path, $sub);
-        }
-        $sub = $url_map->to_app;
-    }
+    $sub = $_->($sub) for reverse @{$self->_middlewares};
 
     $sub;
 }
 
 sub inspect_routes {
     my $self = shift;
-    my $mounts = $self->_mounts;
-    my $router = $self->_router;
-
-    my $text = "routes:\n" . join("", map(" $_\n", split(/\n/, $router->as_string)));
-
-    if (keys %$mounts) {
-        $text .= "mounts:\n";
-        my $max = max map(length, keys %$mounts);
-        while (my ($path, $sub) = each %$mounts) {
-            $text .= sprintf " %-${max}s %s\n", $path, ref $sub || $sub;
-        }
-    }
-
-    $text;
+    $self->_router->stringify;
 }
 
 no Moose::Role;
-__PACKAGE__;
+1;
 

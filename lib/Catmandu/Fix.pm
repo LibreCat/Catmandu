@@ -1,17 +1,21 @@
-use MooseX::Declare;
+package Catmandu::Fix;
 
-class Catmandu::Fix {
-    use Clone qw(clone);
+use namespace::autoclean;
+use Moose;
+use Clone ();
 
-    method fix ($obj) {
-        $self->apply_fix(clone($obj));
-    }
-
-    method apply_fix ($obj) {
-        inner;
-        $obj;
-    }
+sub fix {
+    my ($self, $obj) = @_;
+    $self->apply_fix(Clone::clone($obj));
 }
+
+sub apply_fix {
+    my ($self, $obj) = @_;
+    inner;
+    $obj;
+}
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 

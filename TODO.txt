@@ -1,9 +1,7 @@
 * more store backends (look at KiokuDB, KiokuDB::Entry)
 * Rules.pm is lame
-* Tranform role (flattening objects for indexing with JSONPath etc)
 * Validation role
-* mounting should handle recursion and take parameters
-* gobble routes from another app instead of mounting
+* url_for in router
 * pluggable classes / instances so that we can inject behavior
 * use Moose duck_type instead of static roles ?
 * Dist::Zilla ?

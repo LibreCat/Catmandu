@@ -36,7 +36,6 @@ requires 'namespace::autoclean' => '0.11';
 requires 'Path::Class' => '0.21';
 requires 'Plack' => '0.9949';
 requires 'Plack::Middleware::Session' => '0.12';
-requires 'Router::Simple' => '0.07';
 requires 'Sub::Exporter' => '0.982';
 requires 'Template' => '2.22';
 test_requires 'Test::Exception' => '0.27';

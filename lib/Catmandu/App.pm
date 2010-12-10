@@ -34,16 +34,16 @@ sub app { my $caller = caller; $caller; }
 
 sub set { my $caller = caller; $caller->stash(@_); }
 
-sub get    { my $caller = caller; $caller->add_route(@_, { method => ['GET', 'HEAD'] }); }
-sub put    { my $caller = caller; $caller->add_route(@_, { method => ['PUT'] }) ; }
-sub post   { my $caller = caller; $caller->add_route(@_, { method => ['POST'] }); }
-sub delete { my $caller = caller; $caller->add_route(@_, { method => ['DELETE'] }); }
+sub get    { my $caller = caller; $caller->add_route(@_, { methods => ['GET', 'HEAD'] }); }
+sub put    { my $caller = caller; $caller->add_route(@_, { methods => ['PUT'] }) ; }
+sub post   { my $caller = caller; $caller->add_route(@_, { methods => ['POST'] }); }
+sub delete { my $caller = caller; $caller->add_route(@_, { methods => ['DELETE'] }); }
 
 sub any {
     my $caller = caller;
     if (ref $_[0] eq 'ARRAY') {
         my $methods = shift;
-        $caller->add_route(@_, { method => [ map { uc $_ } @$methods ] });
+        $caller->add_route(@_, { methods => [ map { uc $_ } @$methods ] });
     } else {
         $caller->add_route(@_);
     }
