@@ -2,13 +2,15 @@ package Catmandu::Cmd::Command::convert;
 
 use namespace::autoclean;
 use Moose;
-use Plack::Util;
+use Catmandu::Util qw(load_class);
+use File::Slurp qw(slurp);
 
 extends qw(Catmandu::Cmd::Command);
 
 with qw(
     Catmandu::Cmd::Opts::Importer
     Catmandu::Cmd::Opts::Exporter
+    Catmandu::Cmd::Opts::Fix
 );
 
 sub execute {
@@ -24,13 +26,17 @@ sub execute {
         $self->exporter_arg->{file} = $arg;
     }
 
-    Plack::Util::load_class($self->importer);
-    Plack::Util::load_class($self->exporter);
+    load_class($self->importer);
+    load_class($self->exporter);
 
     my $importer = $self->importer->new($self->importer_arg);
     my $exporter = $self->exporter->new($self->exporter_arg);
 
-    $exporter->dump($importer);
+    if ($self->has_fix) {
+        $exporter->dump(Catmandu::Fixer->new($self->fix_list)->fix($importer));
+    } else {
+        $exporter->dump($importer);
+    }
 }
 
 __PACKAGE__->meta->make_immutable;

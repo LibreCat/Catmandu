@@ -32,6 +32,7 @@ requires 'MooseX::Getopt' => '0.33';
 requires 'MooseX::LogDispatch' => '1.2002';
 requires 'MooseX::Types::IO' => '0.03';
 requires 'namespace::autoclean' => '0.11';
+requires 'namespace::clean' => '0.18';
 requires 'Path::Class' => '0.21';
 requires 'Plack' => '0.9949';
 requires 'Plack::Middleware::Session' => '0.12';

@@ -2,7 +2,7 @@ package Catmandu::Cmd::Command::search;
 
 use namespace::autoclean;
 use Moose;
-use Plack::Util;
+use Catmandu::Util qw(load_class);
 
 extends qw(Catmandu::Cmd::Command);
 
@@ -49,9 +49,9 @@ sub execute {
     $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
 
-    Plack::Util::load_class($self->index);
-    Plack::Util::load_class($self->exporter);
-    Plack::Util::load_class($self->store);
+    load_class($self->index);
+    load_class($self->exporter);
+    load_class($self->store);
 
     my $index = $self->index->new($self->index_arg);
     my $exporter = $self->exporter->new($self->exporter_arg);

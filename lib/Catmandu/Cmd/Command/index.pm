@@ -4,7 +4,7 @@ use namespace::autoclean;
 use Moose;
 use MooseX::Types::IO qw(IO);
 use File::Slurp qw(slurp);
-use Plack::Util;
+use Catmandu::Util qw(load_class);
 use JSON::Path;
 
 extends qw(Catmandu::Cmd::Command);
@@ -20,7 +20,7 @@ has map => (
     is => 'rw',
     isa => IO,
     coerce => 1,
-    documentation => "Path to the index definition file to use.",
+    documentation => "Path to the map definition file to use.",
 );
 
 sub execute {
@@ -33,8 +33,8 @@ sub execute {
         $self->map($arg);
     }
 
-    Plack::Util::load_class($self->index);
-    Plack::Util::load_class($self->store);
+    load_class($self->index);
+    load_class($self->store);
 
     my $index = $self->index->new($self->index_arg);
     my $store = $self->store->new($self->store_arg);

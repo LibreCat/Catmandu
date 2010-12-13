@@ -2,7 +2,7 @@ package Catmandu::Cmd::Command::export;
 
 use namespace::autoclean;
 use Moose;
-use Plack::Util;
+use Catmandu::Util qw(load_class);
 
 extends qw(Catmandu::Cmd::Command);
 
@@ -29,8 +29,8 @@ sub execute {
         $self->exporter_arg->{file} = $arg;
     }
 
-    Plack::Util::load_class($self->exporter);
-    Plack::Util::load_class($self->store);
+    load_class($self->exporter);
+    load_class($self->store);
 
     my $exporter = $self->exporter->new($self->exporter_arg);
     my $store = $self->store->new($self->store_arg);

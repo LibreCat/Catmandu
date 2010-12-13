@@ -11,7 +11,7 @@ sub each {
 
     my $json = JSON->new->utf8(1);
     my $file = $self->file;
-    my $load_one;
+    my $load_single = 0;
     my $n = 0;
 
     # find and remove the initial "["
@@ -19,7 +19,7 @@ sub each {
         $file->sysread(my $buf, 65536) or confess $@;
         $json->incr_parse($buf); # doesn't parse in void context
         $json->incr_text =~ s/^\s*//;
-        last if $load_one = $json->incr_text =~ m/^\{/;
+        last if $load_single = $json->incr_text =~ m/^\{/;
         last if $json->incr_text =~ s/^\[\s*//x;
     }
 
@@ -30,7 +30,7 @@ sub each {
                 $sub->($obj);
                 $n++;
 
-                last PARSE if $load_one;
+                last PARSE if $load_single;
 
                 last;
             }

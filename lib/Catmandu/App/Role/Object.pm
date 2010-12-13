@@ -4,6 +4,7 @@ use namespace::autoclean;
 use 5.010;
 use Moose::Role;
 use Catmandu qw(project);
+use Catmandu::Util qw(load_class);
 use Catmandu::App::Request;
 use Catmandu::App::Router;
 use Plack::Util;
@@ -94,7 +95,7 @@ sub _router {
 sub add_middleware {
     my ($self, $sub, @args) = @_;
     if (ref $sub ne 'CODE') {
-        my $pkg = Plack::Util::load_class($sub, 'Plack::Middleware');
+        my $pkg = load_class($sub, 'Plack::Middleware');
         $sub = sub { $pkg->wrap($_[0], @args) };
     }
     push @{$self->_middlewares}, $sub;
@@ -104,7 +105,7 @@ sub add_middleware {
 sub add_middleware_if {
     my ($self, $cond, $sub, @args) = @_;
     if (ref $sub ne 'CODE') {
-        my $pkg = Plack::Util::load_class($sub, 'Plack::Middleware');
+        my $pkg = load_class($sub, 'Plack::Middleware');
         $sub = sub { $pkg->wrap($_[0], @args) };
     }
     push @{$self->_middlewares}, sub {
@@ -128,7 +129,7 @@ sub add_route {
 
 sub add_mount {
     my ($self, $path, $app) = @_;
-    Plack::Util::load_class($app);
+    load_class($app);
     $self->_router->steal_routes($path, $app->_router);
     1;
 }

@@ -132,5 +132,27 @@ has store_arg => (
     documentation => "Pass params to the store constructor.",
 );
 
+package Catmandu::Cmd::Opts::Fix;
+
+use namespace::autoclean;
+use Moose::Role;
+use File::Slurp qw(slurp);
+use Catmandu::Fixer;
+
+has fix => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    predicate => 'has_fix',
+    documentation => "Path to the map definition file to use.",
+);
+
+sub fix_list {
+    my $self = shift;
+    my @list;
+    @list = slurp $self->fix if $self->has_fix;
+    @list;
+}
+
 1;
 

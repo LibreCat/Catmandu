@@ -182,7 +182,7 @@ sub _get_strategy {
     my ($self, $key, $scope) = @_;
     $self->_cached_strategies->{$scope}{$key} ||= do {
         my $class = "Catmandu::Auth::Strategies::" . ucfirst($key);
-        Plack::Util::load_class($class);
+        Catmandu::Util::load_class($class);
         my $attrs = $self->strategies->{$key} || {};
         $class->new(%$attrs, env => $self->env, scope => $scope);
     };

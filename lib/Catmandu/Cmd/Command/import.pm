@@ -2,7 +2,7 @@ package Catmandu::Cmd::Command::import;
 
 use namespace::autoclean;
 use Moose;
-use Plack::Util;
+use Catmandu::Util qw(load_class);
 
 extends qw(Catmandu::Cmd::Command);
 
@@ -24,16 +24,17 @@ sub execute {
 
     my $verbose = $self->verbose;
 
-    Plack::Util::load_class($self->importer);
-    Plack::Util::load_class($self->store);
+    load_class($self->importer);
+    load_class($self->store);
 
     my $importer = $self->importer->new($self->importer_arg);
     my $store = $self->store->new($self->store_arg);
 
     my $n = $importer->each(sub {
-        $store->save($_[0]);
+        my $obj = $_[0];
+        $store->save($obj);
         if ($verbose) {
-            say $_[0]->{_id};
+            say $obj->{_id};
         }
     });
 

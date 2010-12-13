@@ -1,4 +1,4 @@
-package Catmandu::Each;
+package Catmandu::Iterable;
 
 use namespace::autoclean;
 use Moose::Role;
