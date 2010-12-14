@@ -8,7 +8,7 @@ has message => (is => 'rw', isa => 'Str', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $msg) = @_;
-    { message => $msg };
+    { message => $msg, };
 };
 
 sub throw {
@@ -37,7 +37,8 @@ has code => (is => 'rw', isa => 'Int', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $code, $msg) = @_;
-    { code => $code, message => $msg || HTTP::Status::status_message($code) };
+    { code    => $code,
+      message => $msg || HTTP::Status::status_message($code), };
 };
 
 __PACKAGE__->meta->make_immutable;

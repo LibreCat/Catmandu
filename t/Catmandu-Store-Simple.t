@@ -38,7 +38,7 @@ my $n = $store->each(sub { is_deeply $_[0], $obj });
 
 is $n, 1;
 
-throws_ok { $store->delete({missing => '_id'}) } qr/Missing _id/;
+throws_ok { $store->delete({missing => '_id'}) } qr/Missing/;
 
 $store->delete($obj);
 

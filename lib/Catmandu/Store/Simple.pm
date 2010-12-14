@@ -51,7 +51,7 @@ sub each {
 
 sub save {
     my ($self, $obj) = @_;
-    my $id = $obj->{_id} ||= Data::UUID->new->create_str;
+    my $id = $obj->{$self->id_field} ||= Data::UUID->new->create_str;
     my $json = JSON::encode_json($obj);
     my $sth = $self->_dbh->prepare($SQL_ST_SAVE);
     $sth->execute($id, $json);
@@ -60,9 +60,10 @@ sub save {
 
 sub delete {
     my ($self, $obj) = @_;
-    my $id = ref $obj eq 'HASH' ? $obj->{_id} :
+    my $id_field = $self->id_field;
+    my $id = ref $obj eq 'HASH' ? $obj->{$id_field} :
                                   $obj;
-    $id or confess "Missing _id";
+    $id or confess "Missing $id_field";
     my $sth = $self->_dbh->prepare($SQL_ST_DELETE);
     $sth->execute($id);
 }

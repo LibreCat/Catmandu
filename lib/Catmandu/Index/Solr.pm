@@ -9,8 +9,6 @@ with 'Catmandu::Index';
 
 has url => (is => 'ro', isa => 'Str', default => 'http://localhost:8983/solr');
 
-has id_term => (is => 'ro', isa => 'Str', default => '_id');
-
 has _indexer => (
     is => 'ro',
     init_arg => undef,
@@ -27,9 +25,9 @@ sub _build_indexer {
 
 sub save {
     my ($self,$obj) = @_;
-    my $id_term = $self->id_term;
+    my $id_field = $self->id_field;
 
-    $obj->{$id_term} or confess "Missing $id_term";
+    $obj->{$id_field} or confess "Missing $id_field";
 
     my @fields = ();
 
@@ -46,14 +44,14 @@ sub save {
 
 sub delete {
     my ($self,$obj) = @_;
-    my $id_term = $self->id_term;
+    my $id_field = $self->id_field;
 
-    my $id = ref $obj eq 'HASH' ? $obj->{$id_term} :
+    my $id = ref $obj eq 'HASH' ? $obj->{$id_field} :
                                   $obj;
 
-    $id or confess "Missing $id_term";
+    $id or confess "Missing $id_field";
 
-    $self->_indexer->delete({ $id_term => $id });
+    $self->_indexer->delete({ $id_field => $id });
 }
 
 sub commit {

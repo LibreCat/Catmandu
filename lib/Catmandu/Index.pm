@@ -8,6 +8,8 @@ requires 'search';
 requires 'delete';
 requires 'commit';
 
+has id_field => (is => 'ro', isa => 'Str', default => '_id');
+
 1;
 
 __END__

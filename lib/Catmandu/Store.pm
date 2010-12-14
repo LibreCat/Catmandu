@@ -8,10 +8,12 @@ requires 'each';
 requires 'save';
 requires 'delete';
 
+has id_field => (is => 'ro', isa => 'Str', default => '_id');
+
 sub load_strict {
     my ($self, $id) = @_;
     $self->load($id) or
-        confess "Can't find object with id '$id'";
+        confess "Can't find object with ". $self->id_field . " '$id'";
 }
 
 1;

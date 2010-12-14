@@ -60,7 +60,7 @@ sub _build_ft_field_type {
 sub _build_schema {
     my $self = shift;
     my $schema = KinoSearch::Plan::Schema->new;
-    $schema->spec_field(name => '_id', type => KinoSearch::Plan::StringType->new);
+    $schema->spec_field(name => $self->id_field, type => KinoSearch::Plan::StringType->new);
     $schema;
 }
 
@@ -83,7 +83,7 @@ sub save {
     my $type   = $self->_ft_field_type;
     my $schema = $self->_schema;
     for my $name (keys %$obj) {
-        $schema->spec_field(name => $name, type => $type) if $name ne '_id';
+        $schema->spec_field(name => $name, type => $type) if $name ne $self->id_field;
     }
     $self->_indexer->add_doc($obj);
     $obj;
@@ -108,10 +108,11 @@ sub search {
         offset => $opts{start} || 0,
     );
 
+    my $id_field = $self->id_field;
     my $objs = [];
     if (my $store = $opts{reify}) {
         while (my $hit = $hits->next) {
-            push @$objs, $store->load_strict($hit->{_id});
+            push @$objs, $store->load_strict($hit->{$id_field});
         }
     } else {
         while (my $hit = $hits->next) {
@@ -124,10 +125,11 @@ sub search {
 
 sub delete {
     my ($self, $obj) = @_;
-    my $id = ref $obj eq 'HASH' ? $obj->{_id} :
+    my $id_field = $self->id_field;
+    my $id = ref $obj eq 'HASH' ? $obj->{$id_field} :
                                   $obj;
-    $id or confess "Missing _id";
-    $self->_indexer->delete_by_term(field => '_id', term => $id);
+    $id or confess "Missing $id_field";
+    $self->_indexer->delete_by_term(field => $id_field, term => $id);
 }
 
 sub commit {

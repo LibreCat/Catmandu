@@ -48,7 +48,7 @@ is $total_hits, 1;
 is scalar @$hits, 1;
 is $total_hits, 1;
 
-throws_ok { $index->delete({missing => '_id'}) } qr/Missing _id/;
+throws_ok { $index->delete({missing => '_id'}) } qr/Missing/;
 
 $index->delete({_id => "001"});
 ($hits, $total_hits) = $index->search("_id : 001");
