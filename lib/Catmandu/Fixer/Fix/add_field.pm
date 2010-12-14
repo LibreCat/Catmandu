@@ -1,36 +1,43 @@
 package Catmandu::Fixer::Fix::add_field;
 
 use namespace::autoclean;
-use Catmandu::Util qw(quoted unquote);
-use Catmandu::Types qw(JSONPath);
+use Catmandu::Fixer::Util -all;
 use Moose;
 
 extends qw(Catmandu::Fixer::Fix);
 
-has jpath => (is => 'ro', isa => JSONPath, coerce => 1, required => 1);
-has field => (is => 'ro', required => 1);
-has value => (is => 'ro', required => 1);
+has [qw(path field value)] => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $field, $value) = @_;
-    $field =~ /(.+)\.(\w+)$/ or confess "Invalid path";
-    my $jpath = $1;
-    $field = $2;
-    { jpath => $jpath,
+    (my $path, $field) = path_and_field($field);
+    { path  => $path,
       field => $field,
       value => $value, };
 };
 
-augment apply_fix => sub {
+sub apply_fix {
     my ($self, $obj) = @_;
-    if ($self->jpath->to_string eq '$') { #TODO JSON::Path doesn't seem to handle root references correctly
-        $obj->{$self->field} = unquote($self->value);
-    } else {
-        foreach my $o ($self->jpath->values($obj)) {
-            $o->{$self->field} = unquote($self->value);
+
+    my $field = $self->field;
+
+    my @vals = path_values($obj, $self->value);
+
+    if (my $path = $self->path) {
+        my @objs = $path->values($obj);
+        if (@objs == @vals) {
+            for my $i (0..@objs-1) {
+                $objs[$i]->{$field} = $vals[$i];
+            }
+        } else {
+            for my $o (@objs) {
+                $o->{$field} = $vals[0];
+            }
         }
+    } else {
+        $obj->{$field} = $vals[0];
     }
-    inner;
+
     $obj;
 };
 

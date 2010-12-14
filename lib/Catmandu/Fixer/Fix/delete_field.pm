@@ -1,33 +1,33 @@
 package Catmandu::Fixer::Fix::delete_field;
 
 use namespace::autoclean;
-use Catmandu::Types qw(JSONPath);
+use Catmandu::Fixer::Util -all;
 use Moose;
 
 extends qw(Catmandu::Fixer::Fix);
 
-has jpath => (is => 'ro', isa => JSONPath, coerce => 1, required => 1);
-has field => (is => 'ro', required => 1);
+has [qw(path field)] => (is => 'ro');
 
 around BUILDARGS => sub {
-    my ($orig, $class, $field, $value) = @_;
-    $field =~ m/(.+)\.(\w+)$/ or confess "Invalid path";
-    my $jpath = $1;
-    $field = $2;
-    { jpath => $jpath,
+    my ($orig, $class, $path) = @_;
+    ($path, my $field) = path_and_field($path);
+    { path  => $path,
       field => $field, };
 };
 
-augment apply_fix => sub {
+sub apply_fix {
     my ($self, $obj) = @_;
-    if ($self->jpath->to_string eq '$') { #TODO JSON::Path doesn't seem to handle root references correctly
-        delete $obj->{$self->field};
-    } else {
-        foreach my $o ($self->jpath->values($obj)) {
-            delete $o->{$self->field};
+
+    my $field = $self->field;
+
+    if (my $path = $self->path) {
+        for my $o ($path->values($obj)) {
+            delete $o->{$field};
         }
+    } else {
+        delete $obj->{$field};
     }
-    inner;
+
     $obj;
 };
 

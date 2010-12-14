@@ -1,11 +1,42 @@
 package Catmandu::Fixer;
 
-use namespace::autoclean;
+use namespace::autoclean -also => [qw(load_fix_arg load_arg)];
 use Moose;
+use Catmandu::Util qw(load_class unquote quoted trim);
 use Catmandu::Iterator;
-use File::Slurp qw(slurp);
-use Catmandu::Util qw(load_class);
+use JSON::Path;
 use Clone ();
+
+sub load_fix_arg {
+    my $arg = shift;
+
+    if (quoted($arg)) {
+        return unquote($arg);
+    } elsif ($arg =~ /^\d+$/) {
+        return $arg;
+    } elsif ($arg =~ /^\$.+/) {
+        return JSON::Path->new($arg);
+    } elsif ($arg eq '$') {
+        return undef;
+    }
+
+    confess "Invalid argument";
+}
+
+sub load_fix {
+    my $fix = shift;
+
+    return if not $fix;
+    return $fix if blessed $fix and $fix->isa('Catmandu::Fixer::Fix');
+    return if ref $fix;
+
+    if (my ($name, $args) = ($fix =~ /^\s*(\w+)\((.*)\)\s*$/)) {
+        my $class = load_class $name, 'Catmandu::Fixer::Fix';
+        my @args  = map { load_fix_arg trim($_) } split /,/, $args;
+        return $class->new(@args);
+    }
+    return;
+}
 
 has fixes => (
     is => 'ro',
@@ -13,23 +44,6 @@ has fixes => (
     required => 1,
     default => sub { [] },
 );
-
-sub load_fix {
-    my $fix = pop;
-
-    return if not $fix;
-    return $fix if blessed $fix and $fix->isa('Catmandu::Fixer::Fix');
-    return if ref $fix;
-
-    if ($fix =~ /^\s*(\w+)\((.*)\)\s*$/) {
-        my $name = $1;
-        my @args = split /\s*,\s*/, $2;
-
-        return load_class($name, 'Catmandu::Fixer::Fix')->new(@args);
-    }
-
-    return;
-}
 
 around BUILDARGS => sub {
     my ($orig, $class, @args) = @_;

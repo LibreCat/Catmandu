@@ -2,6 +2,7 @@ package Catmandu::Fixer::Fix;
 
 use namespace::autoclean;
 use Moose;
+use JSON::Path;
 use Clone ();
 
 sub fix {
@@ -11,7 +12,6 @@ sub fix {
 
 sub apply_fix {
     my ($self, $obj) = @_;
-    inner;
     $obj;
 }
 
@@ -28,8 +28,8 @@ Catmandu::Fixer::Fix
 =head1 DESCRIPTION
 
 This base class for a series of object fixers only deep clones
-the object given. Child classes augment C<fix> to build
-a useful transformation.
+the object given. Child classes flesh out C<apply_fix>
+to build a useful transformation.
 
 =head1 SYNOPSIS
 
@@ -37,10 +37,9 @@ a useful transformation.
     use Moose;
     extends 'Catmandu::Fixer::Fix';
 
-    augment apply_fix => sub {
+    sub apply_fix {
         my ($self, $obj) = @_;
         $obj->{foo} = 'bar';
-        inner;
         $obj;
     }
 

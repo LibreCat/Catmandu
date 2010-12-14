@@ -9,7 +9,7 @@ use Moose;
 
 extends 'Catmandu::Fixer::Fix';
 
-augment apply_fix => sub {
+sub apply_fix {
     my ($self, $obj) = @_;
     my $given_name = delete $obj->{authors}->[0]->{given_name};
     my $last_name = delete $obj->{authors}->[0]->{last_name};
