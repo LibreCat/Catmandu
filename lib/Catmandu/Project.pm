@@ -7,7 +7,7 @@ use Catmandu::Dist qw(share_dir);
 use List::Util qw(first);
 use Template;
 use Path::Class ();
-use Hash::Merge ();
+use Hash::Merge::Simple qw(merge);
 use File::Slurp qw(slurp);
 use YAML ();
 use JSON ();
@@ -44,7 +44,6 @@ sub _build_stack {
 
 sub _build_conf {
     my $self = shift;
-    my $merger = Hash::Merge->new('RIGHT_PRECEDENT');
     my $conf = {};
 
     foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
@@ -59,14 +58,14 @@ sub _build_conf {
                 when (/\.pl$/)    { $hash = do $path }
             }
             if (ref $hash eq 'HASH') {
-                $conf = $merger->merge($conf, $hash);
+                $conf = merge($conf, $hash);
             }
         });
     }
 
     # load env specific conf
     if (my $hash = delete $conf->{$self->env}) {
-        $conf = $merger->merge($conf, $hash);
+        $conf = merge($conf, $hash);
     }
 
     $conf;
