@@ -16,7 +16,14 @@ my $SQL_ST_SAVE   = "INSERT OR REPLACE INTO objects VALUES(?,?)";
 my $SQL_ST_DELETE = "DELETE FROM objects WHERE id = ?";
 
 has path => (is => 'ro', isa => 'Str', required => 1);
+
 has _dbh => (is => 'ro', isa => 'Ref', required => 1, init_arg => undef, builder => '_build_dbh');
+
+has _sth_load   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { $_[0]->_dbh->prepare($SQL_ST_LOAD) });
+has _sth_each   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { $_[0]->_dbh->prepare($SQL_ST_EACH) });
+has _sth_save   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { $_[0]->_dbh->prepare($SQL_ST_SAVE) });
+has _sth_delete => (is => 'ro', lazy => 1, init_arg => undef, default => sub { $_[0]->_dbh->prepare($SQL_ST_DELETE) });
+
 has _in_transaction => (is => 'rw', isa => 'Bool', init_arg => undef);
 
 sub _build_dbh {
@@ -31,15 +38,13 @@ sub _build_dbh {
 
 sub load {
     my ($self, $id) = @_;
-    my $sth = $self->_dbh->prepare($SQL_ST_LOAD);
-    $sth->execute($id);
-    my $row = $sth->fetchrow_arrayref || return;
+    my $row = $self->_dbh->selectrow_arrayref($self->_sth_load, {}, $id) || return;
     JSON::decode_json($row->[0]);
 }
 
 sub each {
     my ($self, $sub) = @_;
-    my $sth = $self->_dbh->prepare($SQL_ST_EACH);
+    my $sth = $self->_sth_each;
     $sth->execute;
     my $n = 0;
     while (my $row = $sth->fetchrow_arrayref) {
@@ -51,10 +56,9 @@ sub each {
 
 sub save {
     my ($self, $obj) = @_;
-    my $id = $obj->{$self->id_field} ||= Data::UUID->new->create_str;
+    my $id   = $obj->{$self->id_field} ||= Data::UUID->new->create_str;
     my $json = JSON::encode_json($obj);
-    my $sth = $self->_dbh->prepare($SQL_ST_SAVE);
-    $sth->execute($id, $json);
+    $self->_sth_save->execute($id, $json);
     $obj;
 }
 
@@ -64,8 +68,7 @@ sub delete {
     my $id = ref $obj eq 'HASH' ? $obj->{$id_field} :
                                   $obj;
     $id or confess "Missing $id_field";
-    my $sth = $self->_dbh->prepare($SQL_ST_DELETE);
-    $sth->execute($id);
+    $self->_sth_delete->execute($id);
 }
 
 sub transaction {
