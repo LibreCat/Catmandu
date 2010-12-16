@@ -7,6 +7,7 @@
 * Dist::Zilla ?
 * Index::Solr search with hashref for termquery
 * Store::CouchDB handle revisions
+* Store::Simple id_field keys
 * Make sensible defaults for command line tools: E.g.
     catmandu export data/biblio.db
     catmandu index  data/biblio.db

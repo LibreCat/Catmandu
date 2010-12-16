@@ -7,7 +7,7 @@ use Data::UUID;
 use JSON ();
 use DBI;
 
-with 'Catmandu::Store';
+with qw(Catmandu::Store);
 
 my $SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS objects(id TEXT PRIMARY KEY, data TEXT NOT NULL)";
 
@@ -40,7 +40,8 @@ sub _build_dbh {
 sub load {
     my ($self, $id) = @_;
     my $row = $self->_dbh->selectrow_arrayref($self->_sth_load, {}, $id) || return;
-    JSON::decode_json($row->[0]);
+    my $obj = JSON::decode_json($row->[0]);
+    $obj;
 }
 
 sub each {
