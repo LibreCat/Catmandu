@@ -13,7 +13,15 @@ has id_field => (is => 'ro', isa => 'Str', default => '_id');
 sub load_strict {
     my ($self, $id) = @_;
     $self->load($id) or
-        confess "Can't find object with ". $self->id_field . " '$id'";
+        confess "Can't find object with ". $self->id_field . " $id";
+}
+
+sub need_id {
+    my ($self, $id) = @_;
+    if (ref $id) {
+        $id = $id->{$self->id_field};
+    }
+    $id or confess "Missing " . $self->id_field;
 }
 
 1;

@@ -11,6 +11,19 @@ sub execute {
 
     my $repl = Devel::REPL->new;
 
+    my $banner = <<'TEXT';
+  ____      _                             _
+ / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _
+| |   / _` | __| '_ ` _ \ / _` | '_ \ / _` | | | |
+| |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |
+ \____\__,_|\__|_| |_| |_|\__,_|_| |_|\__,_|\__,_|
+
+TEXT
+
+    my $eval = <<'PERL';
+use Catmandu -all;
+PERL
+
     $repl->load_plugin($_) for qw(Colors LexEnv MultiLine::PPI Completion
         CompletionDriver::LexEnv CompletionDriver::LexEnv
         CompletionDriver::Keywords CompletionDriver::INC
@@ -38,7 +51,8 @@ sub execute {
     });
 
     $repl->current_package('main');
-    $repl->eval('use Catmandu -all');
+    $repl->print($banner);
+    $repl->eval($eval);
     $repl->run;
 }
 

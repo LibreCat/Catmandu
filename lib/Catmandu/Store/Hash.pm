@@ -11,7 +11,7 @@ has hash => (is => 'rw', isa => 'HashRef', required => 1, default => sub { {} })
 
 sub load {
     my ($self, $id) = @_;
-    $id or confess "Missing ".$self->id_field;
+    $id = $self->need_id($id);
     my $obj = $self->hash->{$id} or return;
     Clone::clone($obj);
 }
@@ -34,10 +34,8 @@ sub save {
 }
 
 sub delete {
-    my ($self, $obj) = @_;
-    my $id = ref $obj ? $obj->{$self->id_field} : $obj;
-    $id or confess "Missing ".$self->id_field;
-    delete $self->hash->{$id};
+    my ($self, $id) = @_;
+    delete $self->hash->{$self->need_id($id)};
 }
 
 __PACKAGE__->meta->make_immutable;
