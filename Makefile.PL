@@ -51,6 +51,8 @@ requires 'PPI' => '1.213';
 requires 'Term::ANSIColor' => '3.00';
 requires 'Term::ReadLine::Perl' => '1.0303';
 
+# Catmandu::Store::CouchDB
+# requires 'AnyEvent::CouchDB' => '1.22';
 # Catmandu::Index::Solr
 # requires 'WebService::Solr' => '0.11';
 

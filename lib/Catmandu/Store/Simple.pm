@@ -1,5 +1,6 @@
 package Catmandu::Store::Simple;
 
+use namespace::autoclean;
 use Moose;
 use Try::Tiny;
 use Data::UUID;
@@ -65,8 +66,7 @@ sub save {
 sub delete {
     my ($self, $obj) = @_;
     my $id_field = $self->id_field;
-    my $id = ref $obj eq 'HASH' ? $obj->{$id_field} :
-                                  $obj;
+    my $id = ref $obj ? $obj->{$id_field} : $obj;
     $id or confess "Missing $id_field";
     $self->_sth_delete->execute($id);
 }
@@ -92,8 +92,8 @@ sub transaction {
 }
 
 __PACKAGE__->meta->make_immutable;
-no Moose;
-__PACKAGE__;
+
+1;
 
 __END__
 
