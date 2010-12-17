@@ -31,9 +31,7 @@ sub session {
 
 sub clear_session {
     my $session = $_[0]->session;
-    for (keys %$session) {
-        delete $session->{$_};
-    }
+    delete $session->{$_} for keys %$session;
     $session;
 }
 
