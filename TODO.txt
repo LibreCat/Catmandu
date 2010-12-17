@@ -1,4 +1,5 @@
-* more store backends (look at KiokuDB, KiokuDB::Entry)
+* asynchonous ?
+* more store backends
 * Rules.pm is lame
 * Validation role
 * url_for in router
@@ -12,3 +13,5 @@
     catmandu export data/biblio.db
     catmandu index  data/biblio.db
     catmandu import data/biblio.db < /tmp/marc.export.20100101
+* stores: expand requirements to: _id, _revisions, _bucket ?
+
