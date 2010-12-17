@@ -1,5 +1,6 @@
 package Catmandu::Cmd::Daemon;
-
+# ABSTRACT: Base class for daemons
+# VERSION
 use namespace::autoclean;
 use 5.010;
 use Moose;

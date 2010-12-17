@@ -1,5 +1,6 @@
 package Catmandu::Importer;
-
+# ABSTRACT: Role describing an importer
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 use MooseX::Types::IO qw(IO);
@@ -19,12 +20,6 @@ sub _build_file {
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::Importer - role describing an importer.
 
 =head1 SYNOPSIS
 

@@ -17,20 +17,20 @@ sub to_array {
 sub all {
     my ($self, $sub) = @_;
     $self->each(sub {
-        $sub->($_[0]) || goto(END);
+        $sub->($_[0]) || goto(STOP_ITERATION);
     });
     return 1;
-    END:
+    STOP_ITERATION:
     return 0;
 }
 
 sub any {
     my ($self, $sub) = @_;
     $self->each(sub {
-        $sub->($_[0]) && goto(END);
+        $sub->($_[0]) && goto(STOP_ITERATION);
     });
     return 0;
-    END:
+    STOP_ITERATION:
     return 1;
 }
 
@@ -38,10 +38,10 @@ sub many {
     my ($self, $sub) = @_;
     my $n = 0;
     $self->each(sub {
-        $sub->($_[0]) && ++$n > 1 && goto(END);
+        $sub->($_[0]) && ++$n > 1 && goto(STOP_ITERATION);
     });
     return 0;
-    END:
+    STOP_ITERATION:
     return 1;
 }
 
@@ -60,9 +60,9 @@ sub detect {
     $self->each(sub {
         $sub->($_[0]) || return;
         $val = $_[0];
-        goto END;
+        goto STOP_ITERATION;
     });
-    END:
+    STOP_ITERATION:
     $val;
 }
 
@@ -155,9 +155,9 @@ sub first {
     my $val;
     $self->each(sub {
         $val = $_[0];
-        goto END;
+        goto STOP_ITERATION;
     });
-    END:
+    STOP_ITERATION:
     $val;
 }
 
@@ -168,9 +168,9 @@ sub take {
         if ($n--) {
             push @$all, $_[0];
         }
-        $n || goto(END);
+        $n || goto(STOP_ITERATION);
     });
-    END:
+    STOP_ITERATION:
     $all;
 }
 

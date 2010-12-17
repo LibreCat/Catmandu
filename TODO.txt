@@ -5,7 +5,6 @@
 * url_for in router
 * pluggable classes / instances so that we can inject behavior
 * use Moose duck_type instead of static roles ?
-* Dist::Zilla ?
 * Index::Solr search with hashref for termquery
 * Store::CouchDB handle revisions
 * Store::Simple id_field keys

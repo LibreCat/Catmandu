@@ -1,5 +1,6 @@
 package Catmandu::Store::Hash;
-
+# ABSTRACT: An in-memory Catmandu::Store backed by a hash
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Data::UUID;

@@ -9,12 +9,6 @@ use Sub::Exporter -setup => {
     )],
 };
 
-our $VERSION = 0.01;
-
-sub version {
-    $VERSION;
-}
-
 sub project {
     state $project;
     if (@_) {

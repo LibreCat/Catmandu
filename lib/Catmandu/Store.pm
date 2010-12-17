@@ -1,5 +1,6 @@
 package Catmandu::Store;
-
+# ABSTRACT: Role describing a store.
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -12,8 +13,7 @@ has id_field => (is => 'ro', isa => 'Str', default => '_id');
 
 sub load_strict {
     my ($self, $id) = @_;
-    $self->load($id) or
-        confess "Can't find object with ". $self->id_field . " $id";
+    $self->load($id) or confess "Can't find object with ". $self->id_field . " $id";
 }
 
 sub need_id {
@@ -25,12 +25,6 @@ sub need_id {
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::Store - role describing a store.
 
 =head1 SYNOPSIS
 

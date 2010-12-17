@@ -1,5 +1,6 @@
 package Catmandu::Store::MongoDB;
-
+# ABSTRACT: A Catmandu::Store backed by MongoDB
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Data::UUID;

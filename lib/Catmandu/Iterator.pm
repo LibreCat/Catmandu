@@ -1,5 +1,6 @@
 package Catmandu::Iterator;
-
+# ABSTRACT Make an iteratable object by providing a closure
+# VERSION
 use namespace::autoclean;
 use Moose;
 
@@ -20,4 +21,19 @@ sub each {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 SYNOPSIS
+
+    my $data = [1,2,3];
+    my $iterator = Catmandu::Iterator->new(sub {
+        my $callback = shift;
+        for my $num (@$data) {
+            $callback->($num);
+        }
+    });
+
+    $iterator->each(sub {
+        my $num = shift;
+        print $num;
+    });
 

@@ -1,5 +1,6 @@
 package Catmandu::Store::Simple;
-
+# ABSTRACT: A Catmandu::Store backed by DBD::SQLite
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Try::Tiny;
@@ -39,7 +40,7 @@ sub _build_dbh {
 
 sub load {
     my ($self, $id) = @_;
-    my $row = $self->_dbh->selectrow_arrayref($self->_sth_load, {}, $id) || return;
+    my $row = $self->_dbh->selectrow_arrayref($self->_sth_load, {}, $self->need_id($id)) || return;
     my $obj = JSON::decode_json($row->[0]);
     $obj;
 }
@@ -65,11 +66,8 @@ sub save {
 }
 
 sub delete {
-    my ($self, $obj) = @_;
-    my $id_field = $self->id_field;
-    my $id = ref $obj ? $obj->{$id_field} : $obj;
-    $id or confess "Missing $id_field";
-    $self->_sth_delete->execute($id);
+    my ($self, $id) = @_;
+    $self->_sth_delete->execute($self->need_id($id));
 }
 
 sub transaction {
@@ -95,12 +93,6 @@ sub transaction {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::Store::Simple - an implementation of L<Catmandu::Store> backed by L<DBD::SQLite>.
 
 =head1 SYNOPSIS
 

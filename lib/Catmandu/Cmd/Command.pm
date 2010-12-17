@@ -1,5 +1,6 @@
 package Catmandu::Cmd::Command;
-
+# ABSTRACT: Base class for commands
+# VERSION
 use namespace::autoclean;
 use 5.010;
 use Moose;

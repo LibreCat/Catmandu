@@ -1,5 +1,6 @@
 package Catmandu::Exporter;
-
+# ABSTRACT: Role describing an exporter
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 use MooseX::Types::IO qw(IO);
@@ -25,12 +26,6 @@ sub _build_file {
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::Exporter - role describing an exporter.
 
 =head1 SYNOPSIS
 
