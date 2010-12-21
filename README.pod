@@ -7,15 +7,17 @@
 Catmandu uses Dist::Zilla as build tool.
 
 Make sure you have the following CPAN modules installed:
-* Dist::Zilla
-* Dist::Zilla::Plugin::OurPkgVersion
-* Dist::Zilla::Plugin::PodWeaver
+
+    Dist::Zilla
+    Dist::Zilla::Plugin::OurPkgVersion
+    Dist::Zilla::Plugin::PodWeaver
 
 Use the C<dzil> command:
 
     dzil build
     dzil test
     dzil clean
+    dzil release
     ...
 
 =cut
