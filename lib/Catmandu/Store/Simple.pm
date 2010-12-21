@@ -1,5 +1,5 @@
 package Catmandu::Store::Simple;
-# ABSTRACT: A Catmandu::Store backed by DBD::SQLite
+# ABSTRACT: An embedded Catmandu::Store backed by DBD::SQLite
 # VERSION
 use namespace::autoclean;
 use Moose;

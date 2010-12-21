@@ -1,8 +1,8 @@
-* asynchonous ?
-* more store backends
+* asynchronous ?
+* Terrastore, ElasticSearch Backends
 * Rules.pm is lame
 * Validation role
-* url_for in router
+* handle stolen routes in Router::path_for
 * pluggable classes / instances so that we can inject behavior
 * use Moose duck_type instead of static roles ?
 * Index::Solr search with hashref for termquery

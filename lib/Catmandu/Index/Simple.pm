@@ -1,5 +1,6 @@
 package Catmandu::Index::Simple;
-
+# ABSTRACT: An embedded Catmandu::Index backed by KinoSearch
+# VERSION
 use Moose;
 use KinoSearch::Plan::Schema;
 use KinoSearch::Analysis::PolyAnalyzer;

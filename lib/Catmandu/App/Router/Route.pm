@@ -21,6 +21,16 @@ has path => (
     required => 1,
 );
 
+has path_parts => (
+    traits => ['Array'],
+    is => 'ro',
+    isa => 'ArrayRef[Str|HashRef]',
+    default => sub { [] },
+    handles => {
+        _add_path_part => 'push',
+    },
+);
+
 has components => (
     traits => ['Array'],
     is => 'ro',
@@ -56,32 +66,36 @@ sub BUILD {
 
     my $path = $self->path;
 
-    if ($self->has_methods) {
-        my $methods = join '|', $self->method_list;
-        $self->_re_methods(qr/^(?:$methods)$/);
-    }
-
     $path =~ s!
         \{((?:\{[0-9,]+\}|[^{}]+)+)\} | # /blog/{year:\d{4}}
         :([A-Za-z0-9_]+)              | # /blog/:year
         (\*)                          | # /blog/*/*
-        ([^{:*]+)                       # normal string
+        ([^{:*]+)
     !
         if ($1) {
             my ($name, $re) = split /:/, $1, 2;
+            $self->_add_path_part({key => $name});
             $self->_add_component($name);
             $re ? "($re)" : "([^/]+)";
         } elsif ($2) {
+            $self->_add_path_part({key => $2});
             $self->_add_component($2);
             "([^/]+)";
         } elsif ($3) {
+            $self->_add_path_part({});
             $self->_add_component('__splat__');
             "(.+)";
         } else {
+            $self->_add_path_part($4);
             quotemeta($4);
         }
     !gex;
     $self->_re_path(qr/^$path$/);
+
+    if ($self->has_methods) {
+        my $methods = join '|', $self->method_list;
+        $self->_re_methods(qr/^(?:$methods)$/);
+    }
 }
 
 sub match {

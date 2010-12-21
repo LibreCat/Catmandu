@@ -2,6 +2,7 @@ package Catmandu::App::Router;
 # ABSTRACT: HTTP router
 # VERSION
 use namespace::autoclean;
+use 5.010;
 use Moose;
 use Catmandu::App::Router::Route;
 use List::Util qw(max);
@@ -47,12 +48,46 @@ sub route {
 sub match {
     my ($self, $env) = @_;
 
-    $env = { PATH_INFO => $env } unless ref $env;
+    $env = { PATH_INFO => $env } if ! ref $env;
 
     for my $route ($self->route_list) {
         my $match = $route->match($env);
         return $match, $route if $match;
     }
+    return;
+}
+
+sub path_for {
+    my $self = shift;
+    my $name = shift;
+    my $args = ref $_[-1] eq 'HASH' ? pop : { @_ };
+
+    my ($route) = grep { $_->named and $_->sub eq $name } $self->route_list;
+
+    if ($route) {
+        while (my ($key, $val) = each %{$route->defaults}) {
+            $args->{$key} //= $val;
+        }
+
+        my $splats = $args->{splat} || [];
+
+        my $path = "";
+
+        for my $part (@{$route->path_parts}) {
+            if (ref $part) {
+                if ($part->{key}) {
+                    $path .= $args->{$part->{key}} // return;
+                } else {
+                    $path .= shift(@$splats) // return;
+                }
+            } else {
+                $path .= $part;
+            }
+        }
+
+        return $path;
+    }
+
     return;
 }
 
