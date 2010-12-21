@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::export;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Catmandu::Util qw(load_class);
@@ -45,4 +45,8 @@ sub execute {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::export - export a store to a data file
 

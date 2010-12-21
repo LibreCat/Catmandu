@@ -1,5 +1,6 @@
 package Catmandu::Exporter::JSON;
-
+# ABSTRACT: Streaming JSON exporter
+# VERSION
 use namespace::autoclean;
 use JSON ();
 use Moose;

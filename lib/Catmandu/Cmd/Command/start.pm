@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::start;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Catmandu;
@@ -97,4 +97,9 @@ sub execute {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::start - start a Catmandu::App's server
+
 

@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::routes;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Catmandu::Util;
@@ -26,4 +26,8 @@ sub execute {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::routes - inspect a Catmandu::App's routes
 

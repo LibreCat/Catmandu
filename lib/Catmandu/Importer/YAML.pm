@@ -1,5 +1,6 @@
 package Catmandu::Importer::YAML;
-
+# ABSTRACT: Streaming YAML importer
+# VERSION
 use namespace::autoclean;
 use IO::YAML;
 use Moose;

@@ -1,16 +1,11 @@
 package Catmandu::App::Response;
-
+# ABSTRACT: Object wrapping a HTTP response
+# VERSION
 use strict;
 use warnings;
 use parent 'Plack::Response';
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::App::Response - class representing a HTTP response.
 
 =head1 METHODS
 

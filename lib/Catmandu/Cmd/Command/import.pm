@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::import;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Catmandu::Util qw(load_class);
@@ -47,4 +47,8 @@ sub execute {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::import - import a data file into a store
 

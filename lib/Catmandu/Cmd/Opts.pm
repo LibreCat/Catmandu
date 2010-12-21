@@ -1,7 +1,8 @@
 package Catmandu::Cmd::Opts;
+# VERSION
 
 package Catmandu::Cmd::Opts::Verbose;
-
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -14,7 +15,7 @@ has verbose => (
 );
 
 package Catmandu::Cmd::Opts::Exporter;
-
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -56,7 +57,7 @@ sub BUILD {
 }
 
 package Catmandu::Cmd::Opts::Importer;
-
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -82,7 +83,7 @@ has importer_arg => (
 );
 
 package Catmandu::Cmd::Opts::Index;
-
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -107,7 +108,7 @@ has index_arg => (
 );
 
 package Catmandu::Cmd::Opts::Store;
-
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -133,7 +134,7 @@ has store_arg => (
 );
 
 package Catmandu::Cmd::Opts::Fix;
-
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 use File::Slurp qw(slurp);

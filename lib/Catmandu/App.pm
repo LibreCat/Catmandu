@@ -1,5 +1,5 @@
 package Catmandu::App;
-
+# VERSION
 use Moose ();
 use Moose::Exporter;
 use Catmandu::App::Role::Object;

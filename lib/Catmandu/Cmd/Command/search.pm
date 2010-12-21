@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::search;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Catmandu::Util qw(load_class);
@@ -72,4 +72,8 @@ sub execute {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::search - search indexed data
 

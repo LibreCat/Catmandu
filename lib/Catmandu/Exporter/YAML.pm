@@ -1,5 +1,6 @@
 package Catmandu::Exporter::YAML;
-
+# ABSTRACT: Streaming YAML exporter
+# VERSION
 use namespace::autoclean;
 use IO::YAML;
 use Moose;

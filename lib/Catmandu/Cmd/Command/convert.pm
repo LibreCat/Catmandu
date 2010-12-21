@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::convert;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use Catmandu::Util qw(load_class);
@@ -42,4 +42,8 @@ sub execute {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::convert - convert a data file using importers and exporters
 

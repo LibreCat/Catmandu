@@ -1,5 +1,5 @@
 package Catmandu::Cmd::Command::index;
-
+# VERSION
 use namespace::autoclean;
 use Moose;
 use MooseX::Types::IO qw(IO);
@@ -89,4 +89,8 @@ sub msg {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+=head1 NAME
+
+Catmandu::Cmd::Command::index - index a store
 

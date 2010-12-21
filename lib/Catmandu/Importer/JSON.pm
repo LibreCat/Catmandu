@@ -1,5 +1,6 @@
 package Catmandu::Importer::JSON;
-
+# ABSTRACT: Streaming JSON importer
+# VERSION
 use namespace::autoclean;
 use JSON ();
 use Moose;

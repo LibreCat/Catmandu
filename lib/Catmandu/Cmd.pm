@@ -1,5 +1,6 @@
 package Catmandu::Cmd;
-
+# ABSTRACT: Command line app runner
+# VERSION
 use namespace::autoclean;
 use Moose;
 

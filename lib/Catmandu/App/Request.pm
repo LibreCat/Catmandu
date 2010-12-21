@@ -1,5 +1,6 @@
 package Catmandu::App::Request;
-
+# ABSTRACT: Object wrapping a HTTP request
+# VERSION
 use strict;
 use warnings;
 use namespace::autoclean;
@@ -27,12 +28,6 @@ sub expand_param {
 }
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::App::Request - class representing a HTTP request.
 
 =head1 DESCRIPTION
 

@@ -1,5 +1,6 @@
 package Catmandu::Index;
-
+# ABSTRACT: Role describing a search index
+# VERSION
 use namespace::autoclean;
 use Moose::Role;
 
@@ -11,12 +12,6 @@ requires 'commit';
 has id_field => (is => 'ro', isa => 'Str', default => '_id');
 
 1;
-
-__END__
-
-=head1 NAME
-
-Catmandu::Index - role describing a search index.
 
 =head1 SYNOPSIS
 

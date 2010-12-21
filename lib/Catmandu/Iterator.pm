@@ -1,5 +1,5 @@
 package Catmandu::Iterator;
-# ABSTRACT Make an iteratable object by providing a closure
+# ABSTRACT: Make a Catmandu::Iteratable object by providing a closure
 # VERSION
 use namespace::autoclean;
 use Moose;

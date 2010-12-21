@@ -1,5 +1,5 @@
 package Catmandu::Store;
-# ABSTRACT: Role describing a store.
+# ABSTRACT: Role describing a store
 # VERSION
 use namespace::autoclean;
 use Moose::Role;
