@@ -9,9 +9,9 @@ extends qw(Catmandu::Cmd::Command);
 with qw(
     Catmandu::Cmd::Opts::Importer
     Catmandu::Cmd::Opts::Store
+    Catmandu::Cmd::Opts::Fix
     Catmandu::Cmd::Opts::Verbose
 );
-
 
 sub execute {
     my ($self, $opts, $args) = @_;
@@ -28,6 +28,10 @@ sub execute {
 
     my $importer = $self->importer->new($self->importer_arg);
     my $store = $self->store->new($self->store_arg);
+
+    if ($self->has_fix) {
+        $importer = $self->fixer->fix($importer);
+    }
 
     my $verbose = $self->verbose;
 

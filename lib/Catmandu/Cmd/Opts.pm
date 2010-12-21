@@ -145,14 +145,21 @@ has fix => (
     is => 'rw',
     isa => 'Str',
     predicate => 'has_fix',
-    documentation => "Path to the map definition file to use.",
+    documentation => "Path to the fix definition file to use.",
 );
 
-sub fix_list {
+has fixer => (
+    traits => ['NoGetopt'],
+    is => 'ro',
+    isa => 'Catmandu::Fixer',
+    lazy => 1,
+    builder => '_build_fixer',
+);
+
+sub _build_fixer {
     my $self = shift;
-    my @list;
-    @list = slurp $self->fix if $self->has_fix;
-    @list;
+    my @args = $self->has_fix ? slurp($self->fix) : ();
+    Catmandu::Fixer->new(@args);
 }
 
 1;

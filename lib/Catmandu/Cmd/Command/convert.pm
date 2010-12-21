@@ -33,7 +33,7 @@ sub execute {
     my $exporter = $self->exporter->new($self->exporter_arg);
 
     if ($self->has_fix) {
-        $exporter->dump(Catmandu::Fixer->new($self->fix_list)->fix($importer));
+        $exporter->dump($self->fixer->fix($importer));
     } else {
         $exporter->dump($importer);
     }
