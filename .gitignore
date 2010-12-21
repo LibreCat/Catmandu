@@ -1,7 +1,4 @@
 .DS_Store
 *.swp
-blib/*
-Makefile
-Makefile.old
-META.yml
-pm_to_blib
+.build
+

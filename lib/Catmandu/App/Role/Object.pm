@@ -3,7 +3,7 @@ package Catmandu::App::Role::Object;
 use namespace::autoclean;
 use 5.010;
 use Moose::Role;
-use Catmandu qw(project);
+use Catmandu;
 use Catmandu::Util qw(load_class);
 use Catmandu::App::Request;
 use Catmandu::App::Router;
@@ -59,12 +59,12 @@ sub print_template {
     my ($self, $tmpl, $vars) = @_;
     $vars ||= {};
     $vars->{app} = $self;
-    project->print_template($tmpl, $vars, $self);
+    Catmandu->print_template($tmpl, $vars, $self);
 }
 
 sub stash {
     my $class = ref $_[0] ? ref shift : shift;
-    my $stash = project->stash->{$class} ||= {};
+    my $stash = Catmandu->stash->{$class} ||= {};
     return $stash          if @_ == 0;
     return $stash->{$_[0]} if @_ == 1;
     my %pairs = @_;

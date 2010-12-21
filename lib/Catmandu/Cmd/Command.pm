@@ -5,7 +5,7 @@ use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::Cmd::Opts;
-use Catmandu qw(project);
+use Catmandu;
 use Path::Class;
 
 extends qw(MooseX::App::Cmd::Command);
@@ -40,10 +40,10 @@ sub BUILD {
         $self->home(dir->absolute->stringify);
     }
 
-    project(home => $self->home,
-            env  => $self->env);
+    Catmandu->initialize(home => $self->home,
+                         env  => $self->env);
 
-    unshift(@INC, project->lib);
+    unshift @INC, Catmandu->lib;
 }
 
 sub help_text {

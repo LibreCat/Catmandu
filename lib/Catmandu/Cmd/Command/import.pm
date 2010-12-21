@@ -12,6 +12,7 @@ with qw(
     Catmandu::Cmd::Opts::Verbose
 );
 
+
 sub execute {
     my ($self, $opts, $args) = @_;
 
@@ -22,13 +23,13 @@ sub execute {
         $self->importer_arg->{file} = $arg;
     }
 
-    my $verbose = $self->verbose;
-
     load_class($self->importer);
     load_class($self->store);
 
     my $importer = $self->importer->new($self->importer_arg);
     my $store = $self->store->new($self->store_arg);
+
+    my $verbose = $self->verbose;
 
     my $n = $importer->each(sub {
         my $obj = $_[0];

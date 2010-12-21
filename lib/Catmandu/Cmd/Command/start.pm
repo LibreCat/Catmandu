@@ -2,7 +2,7 @@ package Catmandu::Cmd::Command::start;
 
 use namespace::autoclean;
 use Moose;
-use Catmandu qw(project);
+use Catmandu;
 use Plack::Runner;
 use Plack::Util;
 
@@ -77,13 +77,13 @@ sub execute {
 
     my @argv;
     if ($app =~ /\.psgi$/) {
-        $app = project->file('psgi', $app) or die "Can't find psgi app $app";
+        $app = Catmandu->file('psgi', $app) or die "Can't find psgi app $app";
         push @argv, '-a', $app;
     } else {
         push @argv, '-e', "use $app; $app->to_app";
     }
-    push @argv, map { ('-I', $_) } project->lib;
-    push @argv, '-E', project->env;
+    push @argv, map { ('-I', $_) } Catmandu->lib;
+    push @argv, '-E', Catmandu->env;
     push @argv, '-Moose';
     push @argv, '-p', $self->port   if $self->port;
     push @argv, '-o', $self->host   if $self->host;

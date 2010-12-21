@@ -13,4 +13,4 @@
     catmandu index  data/biblio.db
     catmandu import data/biblio.db < /tmp/marc.export.20100101
 * stores: expand requirements to: _id, _revisions, _bucket ?
-
+* use Logdispatchouli ?

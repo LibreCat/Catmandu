@@ -21,14 +21,16 @@ sub execute {
 TEXT
 
     my $eval = <<'PERL';
-use Catmandu -all;
+use Catmandu;
 PERL
 
-    $repl->load_plugin($_) for qw(Colors LexEnv MultiLine::PPI Completion
-        CompletionDriver::LexEnv CompletionDriver::LexEnv
-        CompletionDriver::Keywords CompletionDriver::INC
-        CompletionDriver::Methods
-        Packages FancyPrompt DDC);
+    $repl->load_plugin($_) for qw(
+        Colors LexEnv MultiLine::PPI
+        Packages FancyPrompt DDC Completion
+        CompletionDriver::LexEnv
+        CompletionDriver::Keywords
+        CompletionDriver::INC
+        CompletionDriver::Methods);
 
     $repl->fancy_prompt(sub {
         my $self  = shift;

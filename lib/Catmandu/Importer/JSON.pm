@@ -16,7 +16,7 @@ sub each {
 
     # find and remove the initial "["
     for (;;) {
-        $file->sysread(my $buf, 65536) or confess $@;
+        $file->sysread(my $buf, 65536) or confess $!;
         $json->incr_parse($buf); # doesn't parse in void context
         $json->incr_text =~ s/^\s*//;
         last if $load_single = $json->incr_text =~ m/^\{/;
@@ -34,8 +34,7 @@ sub each {
 
                 last;
             }
-
-            $file->sysread(my $buf, 65536) or confess $@;
+            $file->sysread(my $buf, 65536) or confess $!;
             $json->incr_parse($buf);
         }
 
@@ -48,10 +47,10 @@ sub each {
             last if $json->incr_text =~ s/^,//;
 
             if (length $json->incr_text) {
-                confess "JSON parse error near ", $json->incr_text;
+                confess "JSON parse error near " . $json->incr_text;
             }
 
-            $file->sysread(my $buf, 65536) or confess $@;
+            $file->sysread(my $buf, 65536) or confess $!;
             $json->incr_parse($buf);
         }
     }
