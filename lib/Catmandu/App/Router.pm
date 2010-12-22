@@ -5,6 +5,8 @@ use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::App::Router::Route;
+use URI;
+use URI::QueryParam;
 use List::Util qw(max);
 use overload q("") => sub { $_[0]->stringify };
 
@@ -76,13 +78,20 @@ sub path_for {
         for my $part (@{$route->path_parts}) {
             if (ref $part) {
                 if ($part->{key}) {
-                    $path .= $args->{$part->{key}} // return;
+                    $path .= delete($args->{$part->{key}}) // return;
                 } else {
                     $path .= shift(@$splats) // return;
                 }
             } else {
                 $path .= $part;
             }
+        }
+
+        if (%$args) {
+            my $uri = URI->new("", "http");
+            $uri->query_param(%$args);
+            $path .= "?";
+            $path .= $uri->query;
         }
 
         return $path;
