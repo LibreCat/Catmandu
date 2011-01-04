@@ -3,7 +3,7 @@ package Catmandu::App::Response;
 # VERSION
 use strict;
 use warnings;
-use parent 'Plack::Response';
+use base 'Plack::Response';
 
 1;
 

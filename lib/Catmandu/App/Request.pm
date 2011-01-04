@@ -4,7 +4,7 @@ package Catmandu::App::Request;
 use strict;
 use warnings;
 use namespace::autoclean;
-use parent 'Plack::Request';
+use base 'Plack::Request';
 use Catmandu::App::Response;
 use CGI::Expand;
 

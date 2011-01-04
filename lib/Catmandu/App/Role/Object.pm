@@ -7,12 +7,14 @@ use Catmandu;
 use Catmandu::Util qw(load_class);
 use Catmandu::App::Request;
 use Catmandu::App::Router;
-use Plack::Util;
 use Plack::Middleware::Conditional;
 use URI;
 use List::Util qw(max);
 
-with 'Catmandu::App::Env';
+with qw(
+    Catmandu::App::Env
+    Catmandu::App::Role::Locale
+);
 
 has response => (
     is => 'ro',
@@ -147,7 +149,8 @@ sub to_app {
         $match or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
         $route->app->new(env => $env, params => $match)
              ->run($route->sub)
-             ->response->finalize;
+             ->response
+             ->finalize;
     };
 
     $sub = $_->($sub) for reverse @{$self->_middlewares};
@@ -183,9 +186,9 @@ sub base_uri {
     my $env = $_[0]->env;
 
     my $uri = URI->new;
-    $uri->scheme($env->{'psgi.url_scheme'} // $env->{'PSGI.URL_SCHEME'});
+    $uri->scheme($env->{'psgi.url_scheme'});
     $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
-    $uri->path($env->{SCRIPT_NAME} || '/');
+    $uri->path($env->{SCRIPT_NAME} // '/');
 
     $uri->canonical;
 }
