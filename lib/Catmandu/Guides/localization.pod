@@ -1,0 +1,26 @@
+=pod
+
+=head1 NAME
+
+Catmandu::Guides::localization - Localizing a Catmandu app
+
+=head1 IN YOUR APP
+
+    package Example::App;
+
+    use Catmandu::App;
+    use Locale::TextDomain 'example';
+
+    get '/foo' => sub {
+        my $self = shift;
+        $self->print(__"Hello");
+    }
+
+=head1 IN YOUR TEMPLATES
+
+    [% USE Catmandu.Locale('example') %]
+
+    <h1>[% __("Hello") %]</h1>
+
+=cut
+

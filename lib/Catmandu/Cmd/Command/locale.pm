@@ -35,7 +35,7 @@ sub execute {
             my $file = shift;
             my $path = $file->stringify;
 
-            return if $path !~ /\.pm$/;
+            return unless -f $path && $path =~ /\.pm$/;
 
             my $doc = PPI::Document->new($path);
             my $statement = $doc->find_first($statement_finder);
@@ -52,6 +52,36 @@ sub execute {
                 my $paths = $self->domains->{$domain} ||= [];
                 push @$paths, $path;
             }
+        });
+    }
+
+    if (my $template = Catmandu->path('template')) {
+        dir($template)->recurse(callback => sub {
+            my $file = shift;
+            my $path = $file->stringify;
+
+            return unless -f $path;
+
+            my $extract = 0;
+            my $domain = 'messages';
+
+            my $fh = $file->openr;
+            while (defined(my $line = $fh->getline)) {
+                if ($line =~ /(?:use|USE)\s+Catmandu\.Locale/) {
+                    $extract = 1;
+                    if ((my $d) = $line =~ /(?:use|USE)\s+Catmandu\.Locale\([\'\"](\w+)[\'\"]\)/) {
+                        $domain = $d;
+                    }
+                    last;
+                }
+            }
+            $fh->close;
+
+            if ($extract) {
+                my $paths = $self->domains->{$domain} ||= [];
+                push @$paths, $path;
+            }
+
         });
     }
 
@@ -102,7 +132,7 @@ sub execute {
             $locale =~ s/\.mo$//;
             my $dest_dir = File::Spec->catfile($loc_data_dir, $locale, 'LC_MESSAGES');
             make_path($dest_dir);
-            copy($path, File::Spec->catfile($dest_dir, $mo->basename)) or die "Copy failed: $!";
+            copy($path, File::Spec->catfile($dest_dir, "$domain.mo")) or die "Copy failed: $!";
         }
     }
 }
