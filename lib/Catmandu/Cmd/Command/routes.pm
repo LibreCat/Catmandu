@@ -29,5 +29,5 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Catmandu::Cmd::Command::routes - inspect a Catmandu::App's routes
+Catmandu::Cmd::Command::routes - inspect an app's routes
 

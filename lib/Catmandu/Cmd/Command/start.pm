@@ -100,6 +100,6 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Catmandu::Cmd::Command::start - start a Catmandu::App's server
+Catmandu::Cmd::Command::start - start an app's server
 
 

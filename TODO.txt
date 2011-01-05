@@ -1,4 +1,3 @@
-* localization cmd
 * asynchronous app mode ?
 * Terrastore, ElasticSearch Backends
 * Rules.pm is lame
