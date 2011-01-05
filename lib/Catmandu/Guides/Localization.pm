@@ -1,8 +1,6 @@
-=pod
-
-=head1 NAME
-
-Catmandu::Guides::localization - Localizing a Catmandu app
+package Catmandu::Guides::Localization;
+# ABSTRACT: Localizing a Catmandu app
+# VERSION
 
 =head1 IN YOUR APP
 
@@ -21,6 +19,4 @@ Catmandu::Guides::localization - Localizing a Catmandu app
     [% USE Catmandu.Locale('example') %]
 
     <h1>[% __("Hello") %]</h1>
-
-=cut
 
