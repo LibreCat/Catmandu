@@ -8,8 +8,9 @@ use Catmandu::Util qw(load_class);
 use Catmandu::App::Request;
 use Catmandu::App::Router;
 use Plack::Middleware::Conditional;
-use URI;
+use Encode qw(encode_utf8);
 use List::Util qw(max);
+use URI;
 
 with qw(
     Catmandu::App::Env
@@ -56,7 +57,7 @@ sub param {
 sub print {
     my $self = shift;
     my $body = $self->response->body // [];
-    push @$body, @_;
+    push @$body, map encode_utf8($_), @_;
     $self->response->body($body);
 }
 
