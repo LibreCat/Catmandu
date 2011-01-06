@@ -42,15 +42,13 @@ sub BUILD {
 
     Catmandu->initialize(home => $self->home,
                          env  => $self->env);
-
     unshift @INC, Catmandu->lib;
+    Catmandu->auto;
 }
 
 sub help_text {
     my $self = shift;
-
-    $self->usage->leader_text . "\n" .
-    $self->usage->option_text;
+    $self->usage->leader_text . "\n" . $self->usage->option_text;
 }
 
 __PACKAGE__->meta->make_immutable;

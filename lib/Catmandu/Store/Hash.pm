@@ -12,8 +12,7 @@ has hash => (is => 'rw', isa => 'HashRef', required => 1, default => sub { {} })
 
 sub load {
     my ($self, $id) = @_;
-    $id = $self->need_id($id);
-    my $obj = $self->hash->{$id} or return;
+    my $obj = $self->hash->{$self->need_id($id)} or return;
     Clone::clone($obj);
 }
 

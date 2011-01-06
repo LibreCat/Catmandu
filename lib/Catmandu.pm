@@ -67,12 +67,12 @@ sub _build_conf {
     my $self = shift;
     my $conf = {};
 
-    foreach my $conf_path ( reverse @{$self->paths('conf')} ) {
-        _dir($conf_path)->recurse(depthfirst => 1, callback => sub {
+    for my $dir (reverse $self->path_list('conf')) {
+        _dir($dir)->recurse(depthfirst => 1, callback => sub {
             my $file = shift;
             my $path = $file->stringify;
             my $hash;
-            -f $path or return;
+            return unless -f $path;
             given ($path) {
                 when (/\.json$/)  { $hash = JSON::decode_json(slurp($file)) }
                 when (/\.ya?ml$/) { $hash = YAML::LoadFile($path) }
@@ -116,6 +116,19 @@ sub _build_log_dispatch_conf {
     };
 }
 
+sub auto {
+    my $self = shift;
+
+    for my $dir (reverse $self->path_list('auto')) {
+        _dir($dir)->recurse(depthfirst => 1, callback => sub {
+            my $file = shift;
+            my $path = $file->stringify;
+            return unless -f $path && $path =~ /\.pl$/;
+            do $path;
+        });
+    }
+}
+
 sub print_template {
     my ($self, $file, $vars, @rest) = @_;
     $vars ||= {};
@@ -152,6 +165,10 @@ sub paths {
     }
 }
 
+sub path_list {
+    @{$_[0]->paths($_[1])};
+}
+
 sub path {
     my ($self, $dir) = @_;
     $self->paths($dir)->[0];
@@ -159,8 +176,7 @@ sub path {
 
 sub files {
     my ($self, $dir, $file) = @_;
-    my $paths = $self->paths($dir);
-    [ grep { -f $_ } map { _file($_, $file)->stringify } @$paths ];
+    [ grep { -f $_ } map { _file($_, $file)->stringify } $self->path_list($dir) ];
 }
 
 sub file {
