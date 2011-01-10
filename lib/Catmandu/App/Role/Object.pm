@@ -190,7 +190,6 @@ sub base_uri {
     $uri->scheme($env->{'psgi.url_scheme'});
     $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
     $uri->path($env->{SCRIPT_NAME} // '/');
-
     $uri->canonical;
 }
 

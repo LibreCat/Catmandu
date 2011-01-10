@@ -50,7 +50,7 @@ sub route {
 sub match {
     my ($self, $env) = @_;
 
-    $env = { PATH_INFO => $env } if ! ref $env;
+    $env = { PATH_INFO => $env } unless ref $env;
 
     for my $route ($self->route_list) {
         my $match = $route->match($env);
