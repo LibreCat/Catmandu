@@ -68,15 +68,16 @@ sub search {
     my $start = $opts{start};
     my $limit = $opts{limit};
 
-    my $response = $self->_indexer->search($query, { start => $start , rows => $limit });
+    my $response = $self->_indexer->search($query, {start => $start , rows => $limit});
 
     my $docs = $response->content->{response}->{docs};
     my $hits = $response->content->{response}->{numFound};
     my $objs = [];
 
     if (my $store = $opts{reify}) {
+        my $id_field = $self->id_field;
         foreach my $hit (@$docs) {
-            push @$objs, $store->load_strict($hit->{_id});
+            push @$objs, $store->load_strict($hit->{$id_field});
         }
     } 
     else {
