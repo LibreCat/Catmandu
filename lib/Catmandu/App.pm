@@ -1,7 +1,6 @@
 package Catmandu::App;
 # ABSTRACT: web application
 # VERSION
-use namespace::autoclean;
 use Moose;
 use MooseX::Traits;
 use Catmandu::App::Router;
@@ -44,6 +43,8 @@ sub psgi_handler {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

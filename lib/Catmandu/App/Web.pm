@@ -1,21 +1,40 @@
 package Catmandu::App::Web;
 # VERSION
-use namespace::autoclean;
 use Moose;
+use Moose::Util::TypeConstraints;
+use Catmandu::App::Env;
 use Hash::MultiValue;
 
-has env        => (is => 'ro', required => 1);
-has req        => (is => 'ro');
-has res        => (is => 'ro', builder => '_build_res');
-has parameters => (is => 'ro', builder => '_build_parameters');
+with qw(Catmandu::App::Env);
 
-sub BUILD {
-    my $self = $_[0];
-    $self->req($self->new_request);
-}
+subtype 'MultiHash'
+    => as 'Object'
+    => where { $_->isa('Hash::MultiValue') };
+
+coerce 'MultiHash'
+    => from 'ArrayRef'
+    => via { Hash::MultiValue->new(@$_) };
+
+coerce 'MultiHash'
+    => from 'HashRef'
+    => via { Hash::MultiValue->from_mixed($_) };
+
+has res => (
+    is => 'ro',
+    isa => 'Plack::Response',
+    lazy => 1,
+    builder => '_build_res',
+);
+
+has parameters => (
+    is => 'ro',
+    isa => 'MultiHash',
+    coerce => 1,
+    lazy => 1,
+    builder => '_build_parameters',
+);
 
 sub _build_res {
-    my ($self) = @_;
     $_[0]->req->new_response(200);
 }
 
@@ -23,13 +42,9 @@ sub _build_parameters {
     Hash::MultiValue->new;
 }
 
-sub new_request {
-    my ($self, $env) = @_;
-    Catmandu::App::Req->new($env);
+sub response {
+    $_[0]->res;
 }
-
-sub request  { $_[0]->{req} }
-sub response { $_[0]->{res} }
 
 sub param {
     my ($self, $key) = @_;
@@ -43,6 +58,9 @@ sub param {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose::Util::TypeConstraints;
+no Moose;
 
 1;
 
