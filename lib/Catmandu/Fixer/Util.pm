@@ -1,8 +1,7 @@
 package Catmandu::Fixer::Util;
 
-use Carp qw(confess);
+use Carp ();
 use JSON::Path;
-use namespace::clean;
 use Sub::Exporter -setup => {
     exports => [qw(
         path_and_field
@@ -13,10 +12,10 @@ use Sub::Exporter -setup => {
 sub path_and_field {
     my $arg = pop;
 
-    confess "Not a JSONPath" if ref $arg ne 'JSON::Path';
+    Carp::confess "Not a JSONPath" if ref $arg ne 'JSON::Path';
 
     my ($path, $field) = ($arg->to_string =~ /(.+)\.(\w+)$/) or
-        confess "JSONPath doesn't point to a field";
+        Carp::confess "JSONPath doesn't point to a field";
 
     if ($path eq '$') {
         $path = undef;

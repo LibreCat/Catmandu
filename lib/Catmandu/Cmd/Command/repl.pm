@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::repl;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Devel::REPL;
 
@@ -59,6 +58,8 @@ PERL
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::import;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Catmandu::Util qw(load_class);
 
@@ -49,6 +48,9 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Catmandu::Util;
 
 1;
 

@@ -1,6 +1,5 @@
 package Catmandu::Fixer::Fix;
-
-use namespace::autoclean;
+# VERSION
 use Moose;
 use JSON::Path;
 use Clone ();
@@ -16,6 +15,8 @@ sub apply_fix {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

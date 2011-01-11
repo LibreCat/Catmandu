@@ -1,6 +1,5 @@
 package Catmandu::Auth::Strategy;
-
-use namespace::autoclean;
+# VERSION
 use Moose::Role;
 
 with 'Catmandu::App::Env';
@@ -72,6 +71,8 @@ sub respond {
     $self->result('custom');
     $self;
 }
+
+no Moose::Role;
 
 1;
 

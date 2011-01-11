@@ -1,6 +1,5 @@
 package Catmandu::App::Role::Locale;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 use Locale::Util ();
 
@@ -19,6 +18,8 @@ before run => sub {
 
     Locale::Util::web_set_locale(\@locales);
 };
+
+no Moose::Role;
 
 1;
 

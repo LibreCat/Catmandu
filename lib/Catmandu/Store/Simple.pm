@@ -1,7 +1,6 @@
 package Catmandu::Store::Simple;
 # ABSTRACT: An embedded Catmandu::Store backed by DBD::SQLite
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Try::Tiny;
 use Data::UUID;
@@ -91,6 +90,9 @@ sub transaction {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Try::Tiny;
 
 1;
 

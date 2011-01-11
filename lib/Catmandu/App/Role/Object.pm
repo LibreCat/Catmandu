@@ -1,6 +1,5 @@
 package Catmandu::App::Role::Object;
-
-use namespace::autoclean;
+# VERSION
 use 5.010;
 use Moose::Role;
 use Catmandu;
@@ -192,6 +191,11 @@ sub base_uri {
     $uri->path($env->{SCRIPT_NAME} // '/');
     $uri->canonical;
 }
+
+no Moose::Role;
+no Catmandu::Util;
+no Encode;
+no List::Util;
 
 1;
 

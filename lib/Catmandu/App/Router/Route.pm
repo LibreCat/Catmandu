@@ -1,7 +1,6 @@
 package Catmandu::App::Router::Route;
 # ABSTRACT: HTTP route
 # VERSION
-use namespace::autoclean;
 use Moose;
 
 has app => (
@@ -135,6 +134,8 @@ sub anonymous {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

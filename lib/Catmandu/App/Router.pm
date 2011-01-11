@@ -1,7 +1,6 @@
 package Catmandu::App::Router;
 # ABSTRACT: HTTP router
 # VERSION
-use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::App::Router::Route;
@@ -117,6 +116,9 @@ sub stringify {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no List::Util;
 
 1;
 

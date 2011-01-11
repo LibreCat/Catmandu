@@ -1,7 +1,6 @@
 package Catmandu::Exporter;
 # ABSTRACT: Role describing an exporter
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 use MooseX::Types::IO qw(IO);
 
@@ -24,6 +23,9 @@ has pretty => (
 sub _build_file {
     IO::Handle->new_from_fd(fileno(STDOUT), 'w');
 }
+
+no Moose::Role;
+no MooseX::Types::IO;
 
 1;
 

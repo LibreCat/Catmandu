@@ -1,7 +1,6 @@
 package Catmandu::Exporter::JSON;
 # ABSTRACT: Streaming JSON exporter
 # VERSION
-use namespace::autoclean;
 use JSON ();
 use Moose;
 
@@ -43,6 +42,8 @@ sub dump {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

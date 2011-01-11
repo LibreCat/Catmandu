@@ -1,7 +1,6 @@
 package Catmandu::Importer::JSON;
 # ABSTRACT: Streaming JSON importer
 # VERSION
-use namespace::autoclean;
 use JSON ();
 use Moose;
 
@@ -60,6 +59,8 @@ sub each {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

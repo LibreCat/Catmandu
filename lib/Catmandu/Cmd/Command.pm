@@ -1,7 +1,6 @@
 package Catmandu::Cmd::Command;
 # ABSTRACT: Base class for commands
 # VERSION
-use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::Cmd::Opts;
@@ -52,6 +51,9 @@ sub help_text {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Path::Class;
 
 1;
 

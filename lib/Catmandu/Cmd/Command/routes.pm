@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::routes;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Catmandu::Util;
 
@@ -24,6 +23,8 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 
