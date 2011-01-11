@@ -1,7 +1,6 @@
 package Catmandu::Store;
 # ABSTRACT: Role describing a store
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 requires 'load';
@@ -23,6 +22,8 @@ sub need_id {
     }
     $id or confess "Missing " . $self->id_field;
 }
+
+no Moose;
 
 1;
 

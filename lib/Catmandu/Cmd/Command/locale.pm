@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::locale;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Path::Class;
 use File::Path qw(make_path);
@@ -138,6 +137,11 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Path::Class;
+no File::Path;
+no File::Copy;
 
 1;
 

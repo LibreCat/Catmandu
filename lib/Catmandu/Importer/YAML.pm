@@ -1,7 +1,6 @@
 package Catmandu::Importer::YAML;
 # ABSTRACT: Streaming YAML importer
 # VERSION
-use namespace::autoclean;
 use IO::YAML;
 use Moose;
 
@@ -22,6 +21,8 @@ sub each {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::conf;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Catmandu;
 use Catmandu::Util;
@@ -28,6 +27,8 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

@@ -3,7 +3,6 @@ package Catmandu::App::Request;
 # VERSION
 use strict;
 use warnings;
-use namespace::autoclean;
 use base 'Plack::Request';
 use Catmandu::App::Response;
 use CGI::Expand;
@@ -26,6 +25,8 @@ sub expand_param {
     }
     expand_hash($flat);
 }
+
+no CGI::Expand;
 
 1;
 

@@ -1,7 +1,6 @@
 package Catmandu::Iterable;
 # ABSTRACT: Role providing collection methods to any class providing an each method
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 requires 'each';
@@ -174,6 +173,8 @@ sub take {
     STOP_ITERATION:
     $all;
 }
+
+no Moose::Role;
 
 1;
 

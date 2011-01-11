@@ -1,6 +1,5 @@
 package Catmandu::Fixer;
-
-use namespace::autoclean -also => [qw(load_fix_arg load_arg)];
+# VERSION
 use Moose;
 use Catmandu::Util qw(load_class unquote quoted trim);
 use Catmandu::Iterator;
@@ -90,6 +89,9 @@ sub fix {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Catmandu::Util;
 
 1;
 

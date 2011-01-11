@@ -1,7 +1,6 @@
 package Catmandu;
 # ABSTRACT: Singleton class representing a Catmandu project
 # VERSION
-use namespace::autoclean -also => [qw(_file _dir)];
 use 5.010;
 use Try::Tiny;
 use MooseX::Singleton;
@@ -189,6 +188,14 @@ sub lib {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Try::Tiny;
+no MooseX::Singleton;
+no Moose;
+no List::Util;
+no File::ShareDir;
+no Hash::Merge::Simple;
+no File::Slurp;
 
 1;
 

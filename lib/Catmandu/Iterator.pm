@@ -1,7 +1,6 @@
 package Catmandu::Iterator;
 # ABSTRACT: Make a Catmandu::Iteratable object by providing a closure
 # VERSION
-use namespace::autoclean;
 use Moose;
 
 with qw(Catmandu::Iterable);
@@ -19,6 +18,8 @@ sub each {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

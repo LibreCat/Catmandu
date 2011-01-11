@@ -1,6 +1,5 @@
 package Catmandu::Err;
-
-use namespace::autoclean;
+# VERSION
 use Moose;
 use overload q("") => sub {
     $_[0]->stringify;
@@ -16,9 +15,10 @@ sub rethrow {
 
 __PACKAGE__->meta->make_immutable;
 
-package Catmandu::HTTPErr;
+no Moose;
 
-use namespace::autoclean;
+package Catmandu::HTTPErr;
+# VERSION
 use Moose;
 use HTTP::Status;
 use Data::Dumper::Concise;
@@ -53,6 +53,8 @@ sub stringify {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

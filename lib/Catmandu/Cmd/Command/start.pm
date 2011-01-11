@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::start;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Catmandu;
 use Plack::Runner;
@@ -95,6 +94,8 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 
