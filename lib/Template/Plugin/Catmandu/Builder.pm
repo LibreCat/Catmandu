@@ -1,5 +1,6 @@
 package Template::Plugin::Catmandu::Builder;
-
+# ABSTRACT: HTML5 en JSONSchema aware form builder for TT
+# VERSION
 use 5.010;
 use strict;
 use warnings;
@@ -204,5 +205,5 @@ sub _attributes {
     join "", map qq( $_="$attr->{$_}"), keys %$attr;
 }
 
-__PACKAGE__;
+1;
 

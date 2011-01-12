@@ -1,17 +1,20 @@
 package Catmandu::App::Role::Object;
-
-use namespace::autoclean;
+# VERSION
 use 5.010;
 use Moose::Role;
 use Catmandu;
 use Catmandu::Util qw(load_class);
 use Catmandu::App::Request;
 use Catmandu::App::Router;
-use Plack::Util;
 use Plack::Middleware::Conditional;
+use Encode qw(encode_utf8);
 use List::Util qw(max);
+use URI;
 
-with 'Catmandu::App::Env';
+with qw(
+    Catmandu::App::Env
+    Catmandu::App::Role::Locale
+);
 
 has response => (
     is => 'ro',
@@ -34,7 +37,9 @@ sub _build_response {
     $_[0]->request->new_response(200, ['Content-Type' => "text/html"]);
 }
 
-sub res { $_[0]->response }
+sub res {
+    $_[0]->response
+}
 
 sub param {
     my $self = shift;
@@ -51,7 +56,7 @@ sub param {
 sub print {
     my $self = shift;
     my $body = $self->response->body // [];
-    push @$body, @_;
+    push @$body, map encode_utf8($_), @_;
     $self->response->body($body);
 }
 
@@ -88,8 +93,8 @@ sub _middlewares {
     $_[0]->stash->{_middlewares} ||= [];
 }
 
-sub _router {
-    $_[0]->stash->{_router} ||= Catmandu::App::Router->new;
+sub router {
+    $_[0]->stash->{router} ||= Catmandu::App::Router->new;
 }
 
 sub add_middleware {
@@ -119,10 +124,10 @@ sub add_route {
     if (@_ == 4) {
         my ($self, $route, $name, $sub) = @_;
         $self->meta->add_method($name, $sub);
-        $self->_router->route(%$opts, app => ref $self ? ref $self : $self, sub => $name, path => $route);
+        $self->router->route(%$opts, app => ref $self ? ref $self : $self, sub => $name, path => $route);
     } else {
         my ($self, $route, $sub) = @_;
-        $self->_router->route(%$opts, app => ref $self ? ref $self : $self, sub => $sub, path => $route);
+        $self->router->route(%$opts, app => ref $self ? ref $self : $self, sub => $sub, path => $route);
     }
     1;
 }
@@ -130,13 +135,13 @@ sub add_route {
 sub add_mount {
     my ($self, $path, $app) = @_;
     load_class($app);
-    $self->_router->steal_routes($path, $app->_router);
+    $self->router->steal_routes($path, $app->router);
     1;
 }
 
 sub to_app {
     my $self = shift;
-    my $router = $self->_router;
+    my $router = $self->router;
 
     my $sub = sub {
         my $env = $_[0];
@@ -144,7 +149,8 @@ sub to_app {
         $match or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
         $route->app->new(env => $env, params => $match)
              ->run($route->sub)
-             ->response->finalize;
+             ->response
+             ->finalize;
     };
 
     $sub = $_->($sub) for reverse @{$self->_middlewares};
@@ -154,8 +160,42 @@ sub to_app {
 
 sub inspect_routes {
     my $self = shift;
-    $self->_router->stringify;
+    $self->router->stringify;
 }
+
+sub path_for {
+    my $self = shift;
+    $self->router->path_for(@_);
+}
+
+sub uri_for {
+    my $self = shift;
+    my $path = $self->router->path_for(@_) // return;
+    my $base = $self->base_uri;
+
+    $base =~ s!/$!!;
+    $path =~ s!^/!!;
+    "$base/$path";
+}
+
+sub base_path {
+    $_[0]->env->{SCRIPT_NAME} || '/';
+}
+
+sub base_uri {
+    my $env = $_[0]->env;
+
+    my $uri = URI->new;
+    $uri->scheme($env->{'psgi.url_scheme'});
+    $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
+    $uri->path($env->{SCRIPT_NAME} // '/');
+    $uri->canonical;
+}
+
+no Moose::Role;
+no Catmandu::Util;
+no Encode;
+no List::Util;
 
 1;
 

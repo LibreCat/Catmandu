@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::convert;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Catmandu::Util qw(load_class);
 use File::Slurp qw(slurp);
@@ -40,6 +39,10 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Catmandu::Util;
+no File::Slurp;
 
 1;
 

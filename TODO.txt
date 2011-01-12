@@ -1,4 +1,4 @@
-* asynchronous ?
+* asynchronous app mode ?
 * Terrastore, ElasticSearch Backends
 * Rules.pm is lame
 * Validation role
@@ -8,9 +8,12 @@
 * Index::Solr search with hashref for termquery
 * Store::CouchDB handle revisions
 * Store::Simple id_field keys
-* Make sensible defaults for command line tools: E.g.
+* Store::MongoDB last_error / safe
+* make sensible defaults for the command line tools, eg:
     catmandu export data/biblio.db
     catmandu index  data/biblio.db
     catmandu import data/biblio.db < /tmp/marc.export.20100101
 * stores: expand requirements to: _id, _revisions, _bucket ?
-* use Logdispatchouli ?
+* use Log::Dispatchouli ?
+* Catmandu::App::Declare
+* initializers

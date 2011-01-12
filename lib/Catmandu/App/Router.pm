@@ -1,10 +1,11 @@
 package Catmandu::App::Router;
 # ABSTRACT: HTTP router
 # VERSION
-use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::App::Router::Route;
+use URI;
+use URI::QueryParam;
 use List::Util qw(max);
 use overload q("") => sub { $_[0]->stringify };
 
@@ -48,7 +49,7 @@ sub route {
 sub match {
     my ($self, $env) = @_;
 
-    $env = { PATH_INFO => $env } if ! ref $env;
+    $env = { PATH_INFO => $env } unless ref $env;
 
     for my $route ($self->route_list) {
         my $match = $route->match($env);
@@ -76,13 +77,20 @@ sub path_for {
         for my $part (@{$route->path_parts}) {
             if (ref $part) {
                 if ($part->{key}) {
-                    $path .= $args->{$part->{key}} // return;
+                    $path .= delete($args->{$part->{key}}) // return;
                 } else {
                     $path .= shift(@$splats) // return;
                 }
             } else {
                 $path .= $part;
             }
+        }
+
+        if (%$args) {
+            my $uri = URI->new("", "http");
+            $uri->query_param(%$args);
+            $path .= "?";
+            $path .= $uri->query;
         }
 
         return $path;
@@ -108,6 +116,9 @@ sub stringify {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no List::Util;
 
 1;
 

@@ -1,6 +1,5 @@
 package Catmandu::Store::CouchDB;
 
-use namespace::autoclean;
 use 5.010;
 use Moose;
 use AnyEvent::CouchDB;

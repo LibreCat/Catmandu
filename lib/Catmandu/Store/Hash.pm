@@ -1,7 +1,6 @@
 package Catmandu::Store::Hash;
 # ABSTRACT: An in-memory Catmandu::Store backed by a hash
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Data::UUID;
 use Clone ();
@@ -12,8 +11,7 @@ has hash => (is => 'rw', isa => 'HashRef', required => 1, default => sub { {} })
 
 sub load {
     my ($self, $id) = @_;
-    $id = $self->need_id($id);
-    my $obj = $self->hash->{$id} or return;
+    my $obj = $self->hash->{$self->need_id($id)} or return;
     Clone::clone($obj);
 }
 
@@ -40,6 +38,8 @@ sub delete {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

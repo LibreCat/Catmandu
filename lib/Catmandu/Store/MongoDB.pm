@@ -1,7 +1,6 @@
 package Catmandu::Store::MongoDB;
 # ABSTRACT: A Catmandu::Store backed by MongoDB
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Data::UUID;
 use Clone ();
@@ -69,6 +68,8 @@ sub delete {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

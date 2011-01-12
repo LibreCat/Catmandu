@@ -1,7 +1,6 @@
 package Catmandu::Cmd::Command;
 # ABSTRACT: Base class for commands
 # VERSION
-use namespace::autoclean;
 use 5.010;
 use Moose;
 use Catmandu::Cmd::Opts;
@@ -42,18 +41,19 @@ sub BUILD {
 
     Catmandu->initialize(home => $self->home,
                          env  => $self->env);
-
     unshift @INC, Catmandu->lib;
+    Catmandu->auto;
 }
 
 sub help_text {
     my $self = shift;
-
-    $self->usage->leader_text . "\n" .
-    $self->usage->option_text;
+    $self->usage->leader_text . "\n" . $self->usage->option_text;
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Path::Class;
 
 1;
 

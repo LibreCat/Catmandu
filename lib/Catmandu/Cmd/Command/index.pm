@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::index;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use MooseX::Types::IO qw(IO);
 use File::Slurp qw(slurp);
@@ -88,6 +87,11 @@ sub msg {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
+no MooseX::Types::IO;
+no File::Slurp;
+no Catmandu::Util;
 
 1;
 

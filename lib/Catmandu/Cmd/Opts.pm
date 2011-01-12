@@ -3,7 +3,6 @@ package Catmandu::Cmd::Opts;
 
 package Catmandu::Cmd::Opts::Verbose;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 has verbose => (
@@ -14,9 +13,10 @@ has verbose => (
     documentation => "Verbose output.",
 );
 
+no Moose::Role;
+
 package Catmandu::Cmd::Opts::Exporter;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 has exporter => (
@@ -56,9 +56,10 @@ sub BUILD {
     }
 }
 
+no Moose::Role;
+
 package Catmandu::Cmd::Opts::Importer;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 has importer => (
@@ -82,9 +83,10 @@ has importer_arg => (
     documentation => "Pass params to the importer constructor.",
 );
 
+no Moose::Role;
+
 package Catmandu::Cmd::Opts::Index;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 has index => (
@@ -107,9 +109,10 @@ has index_arg => (
     documentation => "Pass params to the index constructor.",
 );
 
+no Moose::Role;
+
 package Catmandu::Cmd::Opts::Store;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 has store => (
@@ -133,9 +136,10 @@ has store_arg => (
     documentation => "Pass params to the store constructor.",
 );
 
+no Moose::Role;
+
 package Catmandu::Cmd::Opts::Fix;
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 use File::Slurp qw(slurp);
 use Catmandu::Fixer;
@@ -161,6 +165,9 @@ sub _build_fixer {
     my @args = $self->has_fix ? slurp($self->fix) : ();
     Catmandu::Fixer->new(@args);
 }
+
+no Moose::Role;
+no File::Slurp;
 
 1;
 

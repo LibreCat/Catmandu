@@ -1,8 +1,7 @@
 package Catmandu::Fixer::Fix::delete_field;
-
-use namespace::autoclean;
-use Catmandu::Fixer::Util -all;
+# VERSION
 use Moose;
+use Catmandu::Fixer::Util -all;
 
 extends qw(Catmandu::Fixer::Fix);
 
@@ -30,6 +29,11 @@ sub apply_fix {
 
     $obj;
 };
+
+__PACKAGE__->meta->make_immutable;
+
+no Moose;
+no Catmandu::Fixer::Util;
 
 1;
 

@@ -1,6 +1,5 @@
 package Catmandu::Cmd::Command::start;
 # VERSION
-use namespace::autoclean;
 use Moose;
 use Catmandu;
 use Plack::Runner;
@@ -96,10 +95,12 @@ sub execute {
 
 __PACKAGE__->meta->make_immutable;
 
+no Moose;
+
 1;
 
 =head1 NAME
 
-Catmandu::Cmd::Command::start - start a Catmandu::App's server
+Catmandu::Cmd::Command::start - start an app's server
 
 

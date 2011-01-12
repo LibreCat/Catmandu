@@ -1,7 +1,6 @@
 package Catmandu::Index;
 # ABSTRACT: Role describing a search index
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 
 requires 'save';
@@ -10,6 +9,8 @@ requires 'delete';
 requires 'commit';
 
 has id_field => (is => 'ro', isa => 'Str', default => '_id');
+
+no Moose::Role;
 
 1;
 

@@ -1,6 +1,5 @@
 package Catmandu::App::Env;
-
-use namespace::autoclean;
+# VERSION
 use Moose::Role;
 use Catmandu::App::Request;
 
@@ -34,6 +33,8 @@ sub clear_session {
     delete $session->{$_} for keys %$session;
     $session;
 }
+
+no Moose::Role;
 
 1;
 

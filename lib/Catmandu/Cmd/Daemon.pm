@@ -1,7 +1,6 @@
 package Catmandu::Cmd::Daemon;
 # ABSTRACT: Base class for daemons
 # VERSION
-use namespace::autoclean;
 use 5.010;
 use Moose;
 
@@ -31,6 +30,8 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+no Moose;
 
 1;
 

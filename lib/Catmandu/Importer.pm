@@ -1,7 +1,6 @@
 package Catmandu::Importer;
 # ABSTRACT: Role describing an importer
 # VERSION
-use namespace::autoclean;
 use Moose::Role;
 use MooseX::Types::IO qw(IO);
 
@@ -18,6 +17,9 @@ has file => (
 sub _build_file {
     IO::Handle->new_from_fd(fileno(STDIN), 'r');
 }
+
+no Moose::Role;
+no MooseX::Types::IO;
 
 1;
 
