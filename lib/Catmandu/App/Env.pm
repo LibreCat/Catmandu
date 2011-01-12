@@ -1,13 +1,13 @@
 package Catmandu::App::Env;
 # VERSION
 use Moose::Role;
-use Catmandu::App::Request;
+use Plack::Request;
 
 has env => (is => 'ro', isa => 'HashRef', required => 1);
-has req => (is => 'ro', isa => 'Plack::Request', lazy => 1, builder => '_build_req');
+has req => (is => 'ro', isa => 'Plack::Request', lazy => 1, builder => 'new_request');
 
-sub _build_req {
-    Catmandu::App::Request->new($_[0]->env);
+sub new_request {
+    Plack::Request->new($_[0]->env);
 }
 
 sub request {

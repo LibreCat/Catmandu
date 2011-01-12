@@ -79,7 +79,7 @@ sub execute {
         $app = Catmandu->file('psgi', $app) or die "Can't find psgi app $app";
         push @argv, '-a', $app;
     } else {
-        push @argv, '-e', "use $app; $app->to_app";
+        push @argv, '-e', "use ${app}; ${app}->psgi_app";
     }
     push @argv, map { ('-I', $_) } Catmandu->lib;
     push @argv, '-E', Catmandu->env;
