@@ -57,7 +57,8 @@ sub execute {
 
         foreach my $key (keys %map) {
             foreach my $path (@{$map{$key}}) {
-                my $val = join ' ', JSON::Path->new($path)->values($obj);
+                my @values = JSON::Path->new($path)->values($obj);
+                my $val = join ' ', @values ? @values : ();
                 exists $doc->{$key} ?
                     $doc->{$key} .= $val : $doc->{$key} = $val;
             }
