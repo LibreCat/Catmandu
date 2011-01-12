@@ -18,6 +18,10 @@ sub session {
     $_[0]->env->{'psgix.session'};
 }
 
+sub session_options {
+    $_[0]->env->{'psgix.session.options'};
+}
+
 sub clear_session {
     if (my $ref = $_[0]->session) {
         delete $ref->{$_} for keys %$ref;

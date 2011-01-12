@@ -9,35 +9,29 @@ Catmandu->initialize(env => 'test');
 BEGIN { use_ok 'Catmandu::App'; }
 require_ok 'Catmandu::App';
 
-package T::App;
+my $app = Catmandu::App->new;
 
-use Catmandu::App;
+$app->route('/anonymous', to => sub {
+    my ($self, $web) = @_;
+    $web->print('anonymous');
+});
 
-sub helper {
-    $_[0]->print('body');
-}
+$app->route('/named', as => 'named', to => sub {
+    my ($self, $web) = @_;
+    $web->print('named');
+});
 
-get '/runhelper' => 'helper';
-
-get '/runsub' => sub {
-    $_[0]->helper;
-};
-
-package main;
-
-my $app = T::App->to_app;
-
-test_psgi $app, sub {
+test_psgi $app->psgi_app, sub {
     my $sub = shift;
     my $res;
 
-    $res = $sub->(GET "/runhelper");
+    $res = $sub->(GET "/anonymous");
     is $res->code, 200;
-    is $res->content, "body";
+    is $res->content, "anonymous";
 
-    $res = $sub->(GET "/runsub");
+    $res = $sub->(GET "/named");
     is $res->code, 200;
-    is $res->content, "body";
+    is $res->content, "named";
 
     $res = $sub->(GET "/404");
     is $res->code, 404;

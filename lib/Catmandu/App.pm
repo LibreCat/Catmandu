@@ -7,7 +7,7 @@ use Catmandu::App::Web;
 use Plack::Middleware::Conditional;
 
 with qw(
-    MooseX::SingletonMethod
+    MooseX::SingletonMethod::Role
     MooseX::Traits
 );
 
@@ -27,28 +27,29 @@ sub _build_stash {
     {};
 }
 
-sub add_route {
-    my ($self, $route, %opts) = @_;
-    if (my $name = delete $opts{name}) {
+sub route {
+    my ($self, $pattern, %opts) = @_;
+    if (my $name = delete $opts{as}) {
         unless ($self->meta->has_method($name)) {
-            $self->add_singleton_method($name => $opts{sub});
+            $self->add_singleton_method($name => $opts{to});
         }
-        $opts{sub} = $name;
+        $opts{to} = $name;
     }
-    $self->router->route(%opts);
+    $self->router->route(%opts, app => $self, path => $pattern);
     $self;
 }
 
-sub add_mount {
+sub mount {
     my ($self, $path, $app) = @_;
     load_class($app);
     $self->router->steal_routes($path, $app->router);
     $self;
 }
 
-sub add_middleware {
+sub middleware {
     my ($self, $mw, %opts) = @_;
-    push @{$self->middlewares}, [$mw, %opts];
+    my $cond = delete $opts{if};
+    push @{$self->middlewares}, [ $mw, $cond, %opts ];
     $self;
 }
 
@@ -62,7 +63,6 @@ sub run {
 
 sub psgi_app {
     my $self = shift;
-    my $middlewares = $self->middlewares;
     my $router = $self->router;
 
     my $sub = sub {
@@ -73,21 +73,22 @@ sub psgi_app {
 
         my $app = $route->app;
         my $web = Catmandu::App::Web->new(app => $app, env => $env, parameters => $match);
-        $app->run($route->sub, $web);
+        $app->run($route->to, $web);
         $web->res->finalize;
     };
 
-    foreach (@$middlewares) {
-        my ($mw, %opts) = @$_;
-        my $cond = delete $opts{if};
-        if (ref $mw eq "CODE") {
-            
-        } else {
-            
-        }
+    foreach (reverse @{$self->middlewares}) {
+        my ($mw, $cond, %opts) = @$_;
 
-        unless (ref $mw eq 'CODE') {
-            my $mw = load_class($mw, 'Plack::Middleware');
+        if (ref $mw eq "CODE") {
+            $sub = $cond ?
+                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => $mw) :
+                $mw->($sub);
+        } else {
+            load_class($mw, 'Plack::Middleware');
+            $sub = $cond ?
+                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => sub { $mw->wrap($_[0], %opts) }) :
+                $mw->wrap($sub, %opts);
         }
     }
 

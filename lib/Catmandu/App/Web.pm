@@ -46,7 +46,7 @@ has parameters => (
 );
 
 sub new_response {
-    $_[0]->req->new_repsonse(200, ['Content-Type' => 'text/html']);
+    $_[0]->req->new_response(200, ['Content-Type' => 'text/html']);
 }
 
 sub response {
