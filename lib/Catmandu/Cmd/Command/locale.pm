@@ -95,7 +95,7 @@ sub execute {
         $fh->print("$_\n") for @$domain_files;
         $fh->close;
         system(join(" ",
-            "xgettext --output=$po_dir/$domain.pot --from-code=utf-8 --language=perl",
+            "xgettext --output=$po_dir/$domain.pot --from-code=utf-8",
             "--files-from=$po_dir/$domain.files",
             "--keyword --keyword='\$\$__' --keyword=__ --keyword=__x",
             "--keyword=__n:1,2 --keyword=__nx:1,2 --keyword=__xn:1,2",
