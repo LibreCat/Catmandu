@@ -31,7 +31,7 @@ sub steal_routes {
     $self->add_routes(map {
         Catmandu::App::Router::Route->new(
             app => $_->app,
-            to => $_->to,
+            sub => $_->sub,
             methods => $_->methods,
             defaults => { %{$_->defaults}, %$defaults },
             path => $path . $_->path,
@@ -63,7 +63,7 @@ sub path_for {
     my $name = shift;
     my $args = ref $_[-1] eq 'HASH' ? pop : { @_ };
 
-    my ($route) = grep { $_->named and $_->to eq $name } $self->route_list;
+    my ($route) = grep { $_->named and $_->sub eq $name } $self->route_list;
 
     if ($route) {
         while (my ($key, $val) = each %{$route->defaults}) {
@@ -104,13 +104,13 @@ sub stringify {
 
     my $max_a = max(map { length $_->app } $self->route_list);
     my $max_m = max(map { length join(',', $_->method_list) } $self->route_list);
-    my $max_s = max(map { $_->named ? length $_->to : 7 } $self->route_list);
+    my $max_s = max(map { $_->named ? length $_->sub : 7 } $self->route_list);
 
     join '', map {
         sprintf "%-${max_a}s %-${max_m}s %-${max_s}s %s\n",
             $_->app,
             join(',', $_->method_list),
-            $_->named ? $_->to : 'CODEREF',
+            $_->named ? $_->sub : 'CODEREF',
             $_->path;
     } $self->route_list;
 }

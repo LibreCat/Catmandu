@@ -8,7 +8,7 @@ has app => (
     required => 1,
 );
 
-has to => (
+has sub => (
     is => 'ro',
     isa => 'CodeRef|Str',
     required => 1,
@@ -126,11 +126,11 @@ sub match {
 }
 
 sub anonymous {
-    !! ref $_[0]->to;
+    !! ref $_[0]->sub;
 }
 
 sub named {
-    ! ref $_[0]->to;
+    ! ref $_[0]->sub;
 }
 
 __PACKAGE__->meta->make_immutable;

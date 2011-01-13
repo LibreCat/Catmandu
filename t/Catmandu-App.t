@@ -9,19 +9,19 @@ Catmandu->initialize(env => 'test');
 BEGIN { use_ok 'Catmandu::App'; }
 require_ok 'Catmandu::App';
 
-my $app = Catmandu::App->new;
+my $test_app = Catmandu::App->new;
 
-$app->route('/anonymous', to => sub {
-    my ($self, $web) = @_;
+$test_app->route('/anonymous', to => sub {
+    my ($app, $web) = @_;
     $web->print('anonymous');
 });
 
-$app->route('/named', as => 'named', to => sub {
-    my ($self, $web) = @_;
+$test_app->route('/named', as => 'named', to => sub {
+    my ($app, $web) = @_;
     $web->print('named');
 });
 
-test_psgi $app->psgi_app, sub {
+test_psgi $test_app->psgi_app, sub {
     my $sub = shift;
     my $res;
 

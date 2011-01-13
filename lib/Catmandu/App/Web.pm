@@ -93,6 +93,35 @@ sub object {
     expand_hash($flat);
 }
 
+sub path_for {
+    my $self = shift;
+    $self->app->router->path_for(@_);
+}
+
+sub uri_for {
+    my $self = shift;
+    my $path = $self->path_for(@_) // return;
+    my $base = $self->base_uri;
+
+    $base =~ s!/$!!;
+    $path =~ s!^/!!;
+    "$base/$path";
+}
+
+sub base_path {
+    $_[0]->env->{SCRIPT_NAME} || '/';
+}
+
+sub base_uri {
+    my $env = $_[0]->env;
+
+    my $uri = URI->new;
+    $uri->scheme($env->{'psgi.url_scheme'});
+    $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
+    $uri->path($env->{SCRIPT_NAME} // '/');
+    $uri->canonical;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 no Moose::Util::TypeConstraints;
