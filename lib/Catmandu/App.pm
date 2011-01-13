@@ -39,6 +39,36 @@ sub route {
     $self;
 }
 
+sub set {
+    my ($self, $key, $value) = @_;
+    $self->stash->{$key} = $value;
+    $self;
+}
+
+sub get {
+    my ($self, $pattern, %opts) = @_;
+    $self->route($pattern, %opts, methods => ['GET', 'HEAD']);
+    $self;
+}
+
+sub put {
+    my ($self, $pattern, %opts) = @_;
+    $self->route($pattern, %opts, methods => ['PUT']);
+    $self;
+}
+
+sub post {
+    my ($self, $pattern, %opts) = @_;
+    $self->route($pattern, %opts, methods => ['POST']);
+    $self;
+}
+
+sub delete {
+    my ($self, $pattern, %opts) = @_;
+    $self->route($pattern, %opts, methods => ['DELETE']);
+    $self;
+}
+
 sub mount {
     my ($self, $path, $app) = @_;
     load_class($app);
@@ -56,9 +86,11 @@ sub middleware {
 sub run {
     my ($self, $sub, $web) = @_;
     if (ref $sub) {
-        return $sub->($self, $web);
+        $sub->($self, $web);
+    } else {
+        $self->$sub($web);
     }
-    $self->$sub($web);
+    $web;
 }
 
 sub psgi_app {
