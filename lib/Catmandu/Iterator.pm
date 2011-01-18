@@ -5,7 +5,11 @@ use Moose;
 
 with qw(Catmandu::Iterable);
 
-has _each => (is => 'ro', isa => 'CodeRef', required => 1);
+has _each => (
+    is => 'ro',
+    isa => 'CodeRef',
+    required => 1
+);
 
 around BUILDARGS => sub {
     my ($orig, $class, $sub) = @_;

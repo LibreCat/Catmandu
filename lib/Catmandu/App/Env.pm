@@ -1,17 +1,25 @@
 package Catmandu::App::Env;
 # VERSION
 use Moose::Role;
+use MooseX::Aliases;
 use Plack::Request;
 
-has env => (is => 'ro', isa => 'HashRef', required => 1);
-has req => (is => 'ro', isa => 'Plack::Request', lazy => 1, builder => 'new_request');
+has env => (
+    is => 'ro',
+    isa => 'HashRef',
+    required => 1,
+);
+
+has request => (
+    is => 'ro',
+    isa => 'Plack::Request',
+    alias => 'req',
+    lazy => 1,
+    builder => 'new_request',
+);
 
 sub new_request {
     Plack::Request->new($_[0]->env);
-}
-
-sub request {
-    $_[0]->req;
 }
 
 sub session {
@@ -29,6 +37,7 @@ sub clear_session {
     }
 }
 
+no MooseX::Aliases;
 no Moose::Role;
 
 1;

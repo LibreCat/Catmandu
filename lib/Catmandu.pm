@@ -24,7 +24,7 @@ has share_dir => (is => 'ro', isa => 'Str', lazy => 1, builder => '_build_share_
 has stack     => (is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_stack');
 has conf      => (is => 'ro', isa => 'HashRef',  lazy => 1, builder => '_build_conf');
 has template  => (is => 'ro', isa => 'Template', lazy => 1, builder => '_build_template');
-has _stash    => (is => 'ro', isa => 'HashRef',  init_arg => undef, lazy => 1, builder => '_build_stash');
+has stash     => (is => 'ro', isa => 'HashRef',  lazy => 1, builder => '_build_stash');
 has log_dispatch_conf => (
     is => 'ro',
     isa => 'HashRef',
@@ -96,6 +96,7 @@ sub _build_template {
     my $args = $self->conf->{template} || {};
     Template->new({
         INCLUDE_PATH => $self->paths('template'),
+        ENCODING => 'UTF-8',
         %$args,
     });
 }
@@ -135,18 +136,6 @@ sub print_template {
     $vars->{catmandu} = $self->instance;
     $self->template->process($file, $vars, @rest) or
         confess $self->template->error;
-}
-
-sub stash {
-    my $self = shift;
-    my $hash = $self->_stash;
-    return $hash          if @_ == 0;
-    return $hash->{$_[0]} if @_ == 1;
-    my %pairs = @_;
-    while (my ($key, $val) = each %pairs) {
-        $hash->{$key} = $val;
-    }
-    $hash;
 }
 
 sub paths {

@@ -1,9 +1,16 @@
 package Catmandu::App;
 # VERSION
 use Moose;
-use Catmandu::Util;
+
+BEGIN {
+    extends qw(MooseX::MethodAttributes::Inheritable);
+}
+
+use MooseX::MethodAttributes;
+use MooseX::Aliases;
 use Catmandu::App::Router;
 use Catmandu::App::Web;
+use Catmandu::Util qw(load_class unquote trim);
 use Plack::Middleware::Conditional;
 
 with qw(
@@ -27,23 +34,40 @@ sub _build_stash {
     {};
 }
 
-sub route {
-    my ($self, $path, %opts) = @_;
-    $opts{sub} ||= delete($opts{run}) ||
-                   delete($opts{to});
+sub _parse_method_attributes {
+    my $self = shift;
 
-    $opts{path} = $path;
-    $opts{app}  = $self;
-
-    if (my $name = delete $opts{as}) {
-        unless ($self->meta->has_method($name)) {
-            $self->add_singleton_method($name => $opts{sub});
+    for my $method ($self->meta->get_nearest_methods_with_attributes) {
+        for my $attr (@{$method->attributes}) {
+            if (my ($http_method, $pattern) = $attr =~ /^(GET|PUT|POST|DELETE)\((.+)\)$/) {
+                $self->route(trim(unquote($pattern)), as => $method->name, methods => [$http_method]);
+            } elsif (my ($args) = $attr =~ /^(?:route|R)\((.+)\)$/) {
+                my @http_methods = map { trim unquote $_ } split /,/, $args;
+                my $pattern = shift @http_methods;
+                if (@http_methods) {
+                    $self->route($pattern, as => $method->name, methods => \@http_methods);
+                } else {
+                    $self->route($pattern, as => $method->name);
+                }
+            }
         }
-        $opts{sub} = $name;
+    }
+}
+
+sub BUILD {
+    my ($self, $args) = @_;
+
+    $self->_parse_method_attributes;
+
+    if (ref $args->{routes} eq 'ARRAY') {
+        $self->route(@$_) for @{$args->{routes}};
     }
 
-    $self->router->route(%opts);
-    $self;
+    $self->initialize;
+}
+
+sub initialize {
+    # empty hook
 }
 
 sub set {
@@ -52,33 +76,65 @@ sub set {
     $self;
 }
 
-sub get {
+sub route {
+    my ($self, $pattern, %opts) = @_;
+    $opts{sub} ||= delete($opts{run}) ||
+                   delete($opts{to});
+
+    $opts{app} = $self;
+
+    if ($opts{methods}) {
+        $opts{methods} = [map uc, @{$opts{methods}}];
+    }
+
+    if (my $name = delete $opts{as}) {
+        unless ($self->meta->has_method($name)) {
+            $self->add_singleton_method($name => $opts{sub});
+        }
+        $opts{sub} = $name;
+    }
+
+    $self->router->route($pattern, %opts);
+    $self;
+}
+
+alias R => 'route';
+
+sub GET {
     my ($self, $pattern, %opts) = @_;
     $self->route($pattern, %opts, methods => ['GET', 'HEAD']);
     $self;
 }
 
-sub put {
+sub PUT {
     my ($self, $pattern, %opts) = @_;
     $self->route($pattern, %opts, methods => ['PUT']);
     $self;
 }
 
-sub post {
+sub POST {
     my ($self, $pattern, %opts) = @_;
     $self->route($pattern, %opts, methods => ['POST']);
     $self;
 }
 
-sub delete {
+sub DELETE {
     my ($self, $pattern, %opts) = @_;
     $self->route($pattern, %opts, methods => ['DELETE']);
     $self;
 }
 
+sub method_not_allowed {
+    $_[1]->custom_response([ 405, ['Content-Type' => "text/plain"], ["Method Not Allowed"] ]);
+}
+
+sub not_found {
+    $_[1]->custom_response([ 404, ['Content-Type' => "text/plain"], ["Not Found"] ]);
+}
+
 sub mount {
     my ($self, $path, $app) = @_;
-    Catmandu::Util::load_class($app);
+    load_class($app);
     $self->router->steal_routes($path, $app->router);
     $self;
 }
@@ -88,6 +144,27 @@ sub middleware {
     my $cond = delete $opts{if};
     push @{$self->middlewares}, [$mw, $cond, %opts];
     $self;
+}
+
+sub wrap_middleware {
+    my ($self, $sub) = @_;
+
+    foreach (reverse @{$self->middlewares}) {
+        my ($mw, $cond, %opts) = @$_;
+
+        if (ref $mw eq "CODE") {
+            $sub = $cond ?
+                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => $mw) :
+                $mw->($sub);
+        } else {
+            load_class($mw, 'Plack::Middleware');
+            $sub = $cond ?
+                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => sub { $mw->wrap($_[0], %opts) }) :
+                $mw->wrap($sub, %opts);
+        }
+    }
+
+    $sub;
 }
 
 sub run {
@@ -101,48 +178,40 @@ sub run {
 }
 
 sub psgi_app {
-    my $self = ref $_[0] ? $_[0] : $_[0]->new;
-    my $middlewares = $self->middlewares;
+    my $self   = ref $_[0] ? $_[0] : $_[0]->new;
     my $router = $self->router;
 
-    my $sub = sub {
+    $self->wrap_middleware(sub {
         my $env = $_[0];
+        my $app;
+        my $sub;
+        my $web;
 
-        my ($match, $route) = $router->match($env)
-            or return [ 404, ['Content-Type' => "text/plain"], ["Not Found"] ];
+        my ($match, $route, $code) = $router->match($env);
 
-        my $app = $route->app;
-        my $web = Catmandu::App::Web->new(
-            app => $app,
-            env => $env,
-            parameters => $match,
-        );
-
-        $app->run($route->sub, $web);
-        $web->res->finalize;
-    };
-
-    foreach my $args (reverse @$smiddlewares) {
-        my ($mw, $cond, %opts) = @$args;
-
-        if (ref $mw eq "CODE") {
-            $sub = $cond ?
-                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => $mw) :
-                $mw->($sub);
+        if ($match) {
+            $app = $route->app;
+            $sub = $route->sub;
+            $web = Catmandu::App::Web->new(app => $app, env => $env, parameters => $match);
         } else {
-            Catmandu::Util::load_class($mw, 'Plack::Middleware');
-            $sub = $cond ?
-                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => sub { $mw->wrap($_[0], %opts) }) :
-                $mw->wrap($sub, %opts);
+            $app = $self;
+            $sub = $code == 405 ? 'method_not_allowed' : 'not_found';
+            $web = Catmandu::App::Web->new(app => $app, env => $env);
         }
-    }
 
-    $sub;
+        $app->run($sub, $web);
+
+        $web->has_custom_response ?
+            $web->custom_response :
+            $web->response->finalize;
+    });
 }
 
 __PACKAGE__->meta->make_immutable;
 
 no Moose;
+no MooseX::Aliases;
+no Catmandu::Util;
 
 1;
 

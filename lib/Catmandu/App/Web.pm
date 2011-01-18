@@ -1,26 +1,15 @@
 package Catmandu::App::Web;
 # VERSION
 use Moose;
-use Moose::Util::TypeConstraints;
+use MooseX::Aliases;
 use Catmandu;
-use Catmandu::App::Env;
+use Catmandu::Types qw(MultiValueHash);
 use Hash::MultiValue;
 use CGI::Expand;
+use URI;
 use Encode ();
 
 with qw(Catmandu::App::Env);
-
-subtype 'Catmandu::App::Web::Parameters'
-    => as 'Object'
-    => where { $_->isa('Hash::MultiValue') };
-
-coerce 'Catmandu::App::Web::Parameters'
-    => from 'ArrayRef'
-    => via { Hash::MultiValue->new(@$_) };
-
-coerce 'Catmandu::App::Web::Parameters'
-    => from 'HashRef'
-    => via { Hash::MultiValue->from_mixed($_) };
 
 has app => (
     is => 'ro',
@@ -28,29 +17,33 @@ has app => (
     required => 1,
 );
 
-has res => (
+has response => (
     is => 'ro',
     isa => 'Plack::Response',
     lazy => 1,
+    alias => 'res',
     builder => 'new_response',
     handles => [qw(
         redirect
     )],
 );
 
+has custom_response => (
+    is => 'rw',
+    isa => 'ArrayRef',
+    predicate => 'has_custom_response',
+    clearer => 'clear_custom_response',
+);
+
 has parameters => (
     is => 'ro',
-    isa => 'Catmandu::App::Web::Parameters',
+    isa => MultiValueHash,
     coerce => 1,
-    required => 1,
+    default => sub { Hash::MultiValue->new },
 );
 
 sub new_response {
     $_[0]->req->new_response(200, ['Content-Type' => 'text/html']);
-}
-
-sub response {
-    $_[0]->res;
 }
 
 sub param {
@@ -81,21 +74,29 @@ sub print_template {
 
 sub object {
     my ($self, $key) = @_;
-    my $params = $self->req->parameters;
-    my @keys = grep /^$key\./, keys %$params;
-    @keys or return;
-    my $flat = {};
-    foreach my $flat_key (@keys) {
-        my $value = $params->get($flat_key);
-        $flat_key =~ s/^$key\.//;
-        $flat->{$flat_key} = $value;
+
+    my $obj = {};
+
+    for my $hash (($self->req->parameters, $self->parameters)) {
+        for my $obj_key (grep /^$key\./, keys %$hash) {
+            my $val = $hash->get($obj_key);
+            $obj_key =~ s/^$key\.//;
+            $obj->{$obj_key} = $val;
+        }
     }
-    expand_hash($flat);
+
+    expand_hash($obj);
 }
 
 sub path_for {
     my $self = shift;
-    $self->app->router->path_for(@_);
+    my $name = shift;
+    my $opts = ref $_[-1] eq 'HASH' ? pop : { @_ };
+
+    if (my ($route) = grep { $_->named and $_->sub eq $name } $self->app->router->route_list) {
+        return $route->path_for($opts);
+    }
+    return;
 }
 
 sub uri_for {
@@ -124,7 +125,8 @@ sub base_uri {
 
 __PACKAGE__->meta->make_immutable;
 
-no Moose::Util::TypeConstraints;
+no Catmandu::Types;
+no MooseX::Aliases;
 no Moose;
 no CGI::Expand;
 

@@ -47,7 +47,7 @@ has loader => (
     isa => 'Str',
     cmd_aliases => 'L',
     documentation => "Reloads on every request if 'Shotgun'. " .
-                    "Delays compilation until the first request if 'Delayed'.",
+                     "Delays compilation until the first request if 'Delayed'.",
 );
 
 has server => (
