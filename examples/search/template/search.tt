@@ -20,7 +20,7 @@
       </td>
       <td nowrap="nowrap">
       <font size="-1">
-      Results <b>[% start %]</b> - <b>[% end %]</b> of <b>[% hits %]</b> hits for <b>[% app.req.param('q') | html %]</b>
+      Results <b>[% start %]</b> - <b>[% end %]</b> of <b>[% hits %]</b> hits for <b>[% web.req.param('q') | html %]</b>
       &nbsp;
       </font>
       </td>
@@ -55,7 +55,7 @@
      <tr>
       <td align="center" style="height: 40px; vertical-align: center;"> 
    <form method="GET" action="search">
-    <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
+    <input type="text" name="q" value="[% web.req.param('q') | html %]" size="60"/>
     show:
     <select name="num">
       <option [% IF num == 10 %]selected="selected"[% END %]>10</option>

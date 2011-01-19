@@ -3,6 +3,8 @@ package Catmandu::Store;
 # VERSION
 use Moose::Role;
 
+with qw(MooseX::Traits);
+
 requires 'load';
 requires 'each';
 requires 'save';

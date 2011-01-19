@@ -1,13 +1,13 @@
 package Catmandu::Fixer::Util;
-
-use Carp ();
+# VERSION
+use Exporter qw(import);
 use JSON::Path;
-use Sub::Exporter -setup => {
-    exports => [qw(
-        path_and_field
-        path_values
-    )],
-};
+use Carp ();
+
+@EXPORT_OK = qw(
+    path_and_field
+    path_values
+);
 
 sub path_and_field {
     my $arg = pop;

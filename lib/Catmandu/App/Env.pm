@@ -1,7 +1,8 @@
 package Catmandu::App::Env;
 # VERSION
 use Moose::Role;
-use Catmandu::App::Request;
+use MooseX::Aliases;
+use Plack::Request;
 
 has env => (
     is => 'ro',
@@ -11,29 +12,32 @@ has env => (
 
 has request => (
     is => 'ro',
-    isa => 'Catmandu::App::Request',
+    isa => 'Plack::Request',
+    alias => 'req',
     lazy => 1,
-    builder => '_build_request',
+    builder => 'new_request',
 );
 
-sub _build_request {
-    Catmandu::App::Request->new($_[0]->env);
-}
-
-sub req {
-    $_[0]->request;
+sub new_request {
+    Plack::Request->new($_[0]->env);
 }
 
 sub session {
     $_[0]->env->{'psgix.session'};
 }
 
-sub clear_session {
-    my $session = $_[0]->session;
-    delete $session->{$_} for keys %$session;
-    $session;
+sub session_options {
+    $_[0]->env->{'psgix.session.options'};
 }
 
+sub clear_session {
+    if (my $ref = $_[0]->session) {
+        delete $ref->{$_} for keys %$ref;
+        $ref;
+    }
+}
+
+no MooseX::Aliases;
 no Moose::Role;
 
 1;

@@ -1,7 +1,7 @@
 package Catmandu::Fixer::Fix::add_field;
 # VERSION
 use Moose;
-use Catmandu::Fixer::Util -all;
+use Catmandu::Fixer::Util qw(path_and_field path_values);
 
 extends qw(Catmandu::Fixer::Fix);
 

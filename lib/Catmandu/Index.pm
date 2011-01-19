@@ -3,6 +3,8 @@ package Catmandu::Index;
 # VERSION
 use Moose::Role;
 
+with qw(MooseX::Traits);
+
 requires 'save';
 requires 'search';
 requires 'delete';

@@ -1,15 +1,15 @@
 package Catmandu::Util;
 # ABSTRACT: Utility functions for Catmandu
 # VERSION
+use Exporter qw(import);
 use Plack::Util;
-use Sub::Exporter -setup => {
-    exports => [qw(
-        load_class
-        unquote
-        quoted
-        trim
-    )],
-};
+
+@EXPORT_OK = qw(
+    load_class
+    unquote
+    quoted
+    trim
+);
 
 sub load_class {
     Plack::Util::load_class(@_);

@@ -1,12 +1,11 @@
 package Catmandu::App::Router;
 # ABSTRACT: HTTP router
 # VERSION
-use 5.010;
 use Moose;
 use Catmandu::App::Router::Route;
-use URI;
-use URI::QueryParam;
+use Hash::Merge::Simple qw(merge);
 use List::Util qw(max);
+
 use overload q("") => sub { $_[0]->stringify };
 
 has routes => (
@@ -22,9 +21,11 @@ has routes => (
 );
 
 sub steal_routes {
-    my ($self, $path, $router, $defaults) = @_;
+    my ($self, $pattern, $router, $defaults) = @_;
 
-    confess "Malformed path: path must start with a slash" if $path !~ /^\//;
+    confess "Pattern can't be empty" if ! $pattern;
+    confess "Pattern must start with a slash" if $pattern !~ /^\//;
+    confess "Pattern can't end with a slash" if $pattern =~ /\/$/;
 
     $defaults ||= {};
 
@@ -32,71 +33,37 @@ sub steal_routes {
         Catmandu::App::Router::Route->new(
             app => $_->app,
             sub => $_->sub,
+            pattern => $pattern . $_->pattern,
+            defaults => merge($_->defaults, $defaults),
             methods => $_->methods,
-            defaults => { %{$_->defaults}, %$defaults },
-            path => $path . $_->path,
         );
     } $router->route_list);
     $self;
 }
 
 sub route {
-    my $self = shift;
-    $self->add_routes(Catmandu::App::Router::Route->new(@_));
+    my ($self, $pattern, %opts) = @_;
+    $self->add_routes(Catmandu::App::Router::Route->new(%opts, pattern => $pattern));
     $self;
 }
 
 sub match {
     my ($self, $env) = @_;
 
-    $env = { PATH_INFO => $env } unless ref $env;
+    ref $env or $env = { PATH_INFO => $env };
+
+    my $code = 404;
 
     for my $route ($self->route_list) {
-        my $match = $route->match($env);
-        return $match, $route if $match;
-    }
-    return;
-}
-
-sub path_for {
-    my $self = shift;
-    my $name = shift;
-    my $args = ref $_[-1] eq 'HASH' ? pop : { @_ };
-
-    my ($route) = grep { $_->named and $_->sub eq $name } $self->route_list;
-
-    if ($route) {
-        while (my ($key, $val) = each %{$route->defaults}) {
-            $args->{$key} //= $val;
+        my ($match, $c) = $route->match($env);
+        if ($match) {
+            return $match, $route, $c;
+        } elsif ($code == 404 && $c != 404) {
+            $code = $c;
         }
-
-        my $splats = $args->{splat} || [];
-
-        my $path = "";
-
-        for my $part (@{$route->path_parts}) {
-            if (ref $part) {
-                if ($part->{key}) {
-                    $path .= delete($args->{$part->{key}}) // return;
-                } else {
-                    $path .= shift(@$splats) // return;
-                }
-            } else {
-                $path .= $part;
-            }
-        }
-
-        if (%$args) {
-            my $uri = URI->new("", "http");
-            $uri->query_param(%$args);
-            $path .= "?";
-            $path .= $uri->query;
-        }
-
-        return $path;
     }
 
-    return;
+    return undef, undef, $code;
 }
 
 sub stringify {
@@ -111,13 +78,14 @@ sub stringify {
             $_->app,
             join(',', $_->method_list),
             $_->named ? $_->sub : 'CODEREF',
-            $_->path;
+            $_->pattern;
     } $self->route_list;
 }
 
 __PACKAGE__->meta->make_immutable;
 
 no Moose;
+no Hash::Merge::Simple;
 no List::Util;
 
 1;

@@ -10,15 +10,6 @@ sub execute {
 
     my $repl = Devel::REPL->new;
 
-    my $banner = <<'TEXT';
-  ____      _                             _
- / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _
-| |   / _` | __| '_ ` _ \ / _` | '_ \ / _` | | | |
-| |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |
- \____\__,_|\__|_| |_| |_|\__,_|_| |_|\__,_|\__,_|
-
-TEXT
-
     my $eval = <<'PERL';
 use Catmandu;
 PERL
@@ -52,7 +43,6 @@ PERL
     });
 
     $repl->current_package('main');
-    $repl->print($banner);
     $repl->eval($eval);
     $repl->run;
 }
