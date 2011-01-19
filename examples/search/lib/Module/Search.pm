@@ -7,7 +7,7 @@ use POSIX qw(ceil floor);
 
 has indexer => (
     is => 'ro',
-    does => 'Catmandu::Indexer',
+    does => 'Catmandu::Index',
     default => sub {
         my $self = shift;
         my $class = Catmandu::Util::load_class(Catmandu->conf->{index}->{class});
@@ -30,8 +30,6 @@ has store => (
 sub BUILD {
     my $self = shift;
 
-    $self->locale_param('lang');
-
     $self->middleware('Session');
 
     $self->middleware('Catmandu::Auth' ,
@@ -53,7 +51,7 @@ sub BUILD {
     );
 }
 
-sub home : GET {
+sub home : GET("/") {
     my ($self, $web) = @_;
 
     $web->print_template('search');
@@ -85,14 +83,14 @@ sub logout : R {
 sub view : GET {
     my ($self, $web) = @_;
 
-    my $id  = $self->req->param('id');
+    my $id  = $web->req->param('id');
 
     my $obj = $self->store->load($id);
 
     $web->print_template('view', { id => $id , res => $obj });
-};
+}
 
-get '/search' => sub {
+sub search : GET {
     my ($self, $web) = @_;
 
     my $q     = $web->req->param('q');
@@ -120,7 +118,7 @@ get '/search' => sub {
         curr    => $curr,
         epage   => $epage,
     });
-};
+}
 
 sub paginate {
     my ($self, $start, $num, $hits) = @_;
