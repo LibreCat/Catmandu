@@ -1,107 +1,126 @@
 package Module::Search;
+use Moose;
+use base qw(Catmandu::App);
+use Catmandu;
+use Catmandu::Util;
+use POSIX qw(ceil floor);
 
-use Catmandu::App;
-use Plack::Util;
+has indexer => (
+    is => 'ro',
+    does => 'Catmandu::Indexer',
+    default => sub {
+        my $self = shift;
+        my $class = Catmandu::Util::load_class(Catmandu->conf->{index}->{class});
+        my $args = Catmandu->conf->{index}->{args};
+        $class->new($args);
+    },
+);
 
-get '/' => sub {
-    my $self  = shift;
-    $self->print_template('search');
-};
+has store => (
+    is => 'ro',
+    does => 'Catmandu::Store',
+    default => sub {
+        my $self = shift;
+        my $class = Catmandu::Util::load_class(Catmandu->conf->{db}->{class});
+        my $args = Catmandu->conf->{db}->{args};
+        $class->new($args);
+    },
+);
 
-get '/login' => sub {
-    my $self  = shift;
-
-    $self->print_template('login');
-};
-
-post '/login' => sub {
-    my $self  = shift;
-
-    $self->auth->authenticate;
-
-    $self->redirect('/');
-};
-
-get '/logout' => sub {
+sub BUILD {
     my $self = shift;
 
-    $self->auth->clear_user;
+    $self->middleware('Session');
 
-    $self->redirect('/');
-};
-
-get '/view' => sub {
-    my $self  = shift;
-    my $id    = $self->req->param('id');
-
-    my $obj = $self->store->load($id);
-
-    $self->print_template('view' , { id => $id , res => $obj});
-};
-
-get '/search' => sub {
-    my $self  = shift;
-    my $q     = $self->req->param('q');
-    my $start = $self->req->param('start') || 0;
-    my $num   = $self->req->param('num') || 10;
-
-    my ($results, $hits) = $self->index->search($q, start => $start , limit => $num, reify => $self->store);
-
-    my $next = ($start + $num < $hits) ? $start + $num : -1;
-    my $prev = ($start - $num >= 0) ? $start - $num : -1; 
-    my $end  = ($start + $num < $hits) ? $start + $num : $hits;
-
-    my ($spage,$curr,$epage) = $self->pages($start, $num, $hits); 
-
-    $self->print_template('search' , { 
-                            hits => $hits , 
-                            results => $results , 
-                            next  => $next , 
-                            prev  => $prev ,
-                            start => $start + 1,
-                            end   => $end ,
-                            num   => $num ,
-                            spage => $spage ,
-                            curr  => $curr ,
-                            epage => $epage ,
-                        });
-};
-
-# Authentication magic
-enable 'Session';
-enable 'Catmandu::Auth' ,
+    $self->middleware('Catmandu::Auth' ,
         failure_app => sub { [301, [ 'Location' => '/login' ] , []] },
         strategies => {
             simple => {
                 auth => sub {
-                    my ($username,$password) = @_;
-                    if ($username eq 'phochste') {
-                        1;
-                    }
-                    else {
-                        0; 
-                    }
-                } ,
+                    my ($username, $password) = @_;
+                    $username eq 'phochste' ? 1 : 0;
+                },
                 load_user => sub {
                     my ($username) = @_;
-                    return {_id => 1 , name => uc $username};
+                    {_id => 1 , name => uc $username};
                 }
             }
         },
         into_session => sub { $_[0]->{_id} },
-        from_session => sub { {_id => $_[0] , name => 'xx'} };
-
-sub auth {
-    my $self = shift;
-
-    $self->env->{'catmandu.auth'};
+        from_session => sub { {_id => $_[0] , name => 'xx'} }
+    );
 }
 
-sub pages {
-    my $self = shift;
-    my ($start, $num, $hits) = @_;
+sub home : GET {
+    my ($self, $web) = @_;
 
-    use POSIX qw/ceil floor/;
+    $web->print_template('search');
+}
+
+sub login : GET {
+    my ($self, $web) = @_;
+
+    $web->print_template('login');
+}
+
+sub authenticate : POST("/login") {
+    my ($self, $web) = @_;
+
+    $web->env->{'catmandu.auth'}->authenticate;
+
+    $web->redirect('/');
+}
+
+sub logout : R {
+    my ($self, $web) = @_;
+
+    $web->env->{'catmandu.auth'}->clear_user;
+
+    $web->redirect('/');
+}
+
+
+sub view : GET {
+    my ($self, $web) = @_;
+
+    my $id  = $self->req->param('id');
+
+    my $obj = $self->store->load($id);
+
+    $web->print_template('view', { id => $id , res => $obj });
+};
+
+get '/search' => sub {
+    my ($self, $web) = @_;
+
+    my $q     = $web->req->param('q');
+    my $start = $web->req->param('start') || 0;
+    my $num   = $web->req->param('num')   || 10;
+
+    my ($results, $hits) = $self->indexer->search($q, start => $start, limit => $num, reify => $self->store);
+
+    my $next = ($start + $num < $hits) ? $start + $num : -1;
+    my $prev = ($start - $num >= 0) ? $start - $num : -1;
+    my $end  = ($start + $num < $hits) ? $start + $num : $hits;
+
+    my ($spage, $curr, $epage) = $self->paginate($start, $num, $hits); 
+
+    $web->print_template('search', {
+        hits    => $hits,
+        results => $results,
+        next    => $next,
+        prev    => $prev,
+        start   => $start + 1,
+        end     => $end,
+        num     => $num,
+        spage   => $spage,
+        curr    => $curr,
+        epage   => $epage,
+    });
+};
+
+sub paginate {
+    my ($self, $start, $num, $hits) = @_;
 
     my $curr = floor($start/$num);
     my $last = ceil($hits/$num);
@@ -112,25 +131,10 @@ sub pages {
     ($spage,$curr,$epage);
 }
 
-sub store {
-    my $self = shift;
-
-    my $class = Plack::Util::load_class(Catmandu->conf->{db}->{class});
-    my $args  = Catmandu->conf->{db}->{args};
-
-    $self->stash->{store} ||= $class->new(%$args);
-}
-
-sub index {
-    my $self = shift;
-
-    my $class = Plack::Util::load_class(Catmandu->conf->{index}->{class});
-    my $args  = Catmandu->conf->{index}->{args};
-
-    $self->stash->{index} ||= $class->new(%$args);
-}
-
 __PACKAGE__->meta->make_immutable;
-no Catmandu::App;
-__PACKAGE__;
+
+no Moose;
+no POSIX;
+
+1;
 
