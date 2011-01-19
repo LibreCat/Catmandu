@@ -1,0 +1,8 @@
+<form style="margin-bottom: 20px; background: #eceff8; font-weight: bold; padding: 5px 0 5px 10px;">
+Please use this identifier to cite or link to this item: 
+<input id="doi" type="text" size="35" value="http://hdl.handle.net/1854/LU-480767" readonly="readonly">
+<a href="/ore/480767"><img src="/images/rdf.gif" border="0" width="20" height="20" align="bottom" title="This record in RDF"></a>
+<a href="/mets/480767"><img src="/images/xml.gif" border="0" width="36" height="14" align="bottom" title="This record in XML"></a>
+<a href="/json/480767"><img src="/images/json.png" border="0" width="36" height="14" align="bottom" title="This record in JSON"></a>
+</form>
+

@@ -29,11 +29,17 @@ has 'setSpec' => (
     isa     => 'Str',
 );
 
+has 'url' => (
+    is       => 'rw',
+    isa      => 'Str',
+    required => 1,
+);
+
 
 sub each {
    my ($self, $callback) = @_;
 
-   my $url = $self->file;
+   my $url = $self->url;
    my $fmt = $self->metadataPrefix;
    my $set = $self->setSpec;
 

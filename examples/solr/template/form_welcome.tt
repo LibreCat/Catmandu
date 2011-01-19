@@ -1,0 +1,63 @@
+<form class="form" action="/search" method="get" accept-charset="utf-8">
+  <fieldset>
+    <legend>[% __("Search") %]</legend>
+    
+    <div class="field">
+      <label for="searchDocType">[% __("Enter your query") %]:</label>
+      <input type="text" name="q" size="80" style="font-size: 110%;"/>
+      <input type="submit" value="[% __("Search") %]"/>
+
+      [% IF error %]
+        <div class="error" style="margin-top: 5px; color: #f00;">[% error %]</div>
+      [% END %]
+    </div>
+
+    <div class="field">
+     [% __("Examples") %]:<br/>
+      <i>"QCD and instantons"</i><br/>
+      <i>classification:A1</i><br/>
+      <i>author:"Hawking SW"</i><br/>
+      <i>year:2011</i>
+      <i>QCD AND year:2011 AND (author:Hawking OR author:Gibbons)</i>
+    </div>
+  </fieldset>
+
+  <fieldset>
+   <legend>[% __("Sorting") %]</legend>
+  
+    <div class="field">
+    <label for="sortField">[% __("Field") %]:</label>
+    <select name="sort">
+     <option value="author">[% __("Author") %]</option>
+     <option value="title">[% __("Title") %]</option>
+     <option value="publishingYear">[% __("Publishing Year") %]</option>
+     <option value="classification">[% __("Classification") %]</option>
+     <option value="dateLastChanged">[% __("Last changed") %]</option>
+     <option value="documentType">[% __("Document Type") %]</option>
+     <option value="publication">[% __("Publication (Journal) Title") %]</option>
+     <option value="submissionStatus">[% __("Submission Status") %]</option>
+    </select>
+    </div>
+  
+    <div class="field">
+    <label for="sortAsc">[% __("Direction") %]:</label>
+    <select name="sortAsc">
+      <option value="1">[% __("Ascending") %]</option>
+      <option value="0">[% __("Descending") %]</option>
+    </select>
+    </div>
+  
+    <div class="field">
+    <label for="numRecords">[% __("Per page") %]:</label>
+    <select name="numRecords">
+      <option>5</option>
+      <option>10</option>
+      <option>20</option>
+      <option>50</option>
+      <option>100</option>
+      <option>200</option>
+    </select>
+   </div>
+  </fieldset>
+</div>
+</form>

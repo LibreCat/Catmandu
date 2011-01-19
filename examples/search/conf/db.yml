@@ -2,5 +2,5 @@
 db:
   class:  Catmandu::Store::Simple
   args: 
-    file: data/biblio.db
+    path: data/biblio.db
 

@@ -1,0 +1,20 @@
+---
+display:
+  fields:
+    - id 
+    - publication_type
+    - title
+    - contributors
+    - publication_status
+    - identifiers
+    - subjects
+    - languages
+    - classification
+    - pages 
+    - publisher
+    - parent_title
+  field_template:
+    default: simple
+    contributors: contributors
+    identifiers: identifiers
+    pages: pages 

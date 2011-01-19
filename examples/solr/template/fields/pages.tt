@@ -1,0 +1,5 @@
+[% IF value.first || value.last %]
+ [% value.first | utf8 | html %] - [% value.last | utf8 | html %]
+[% ELSIF value.count %]
+ [% value.count | utf8 | html %]
+[% END %]

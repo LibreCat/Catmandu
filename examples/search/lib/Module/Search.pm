@@ -45,7 +45,7 @@ get '/search' => sub {
     my $start = $self->req->param('start') || 0;
     my $num   = $self->req->param('num') || 10;
 
-    my ($results, $hits) = $self->index->search($q, start => $start , limit => $num, reify => $self->store);
+    my ($results, $hits, $error) = $self->index->search($q, start => $start , limit => $num, reify => $self->store);
 
     my $next = ($start + $num < $hits) ? $start + $num : -1;
     my $prev = ($start - $num >= 0) ? $start - $num : -1; 
@@ -54,6 +54,7 @@ get '/search' => sub {
     my ($spage,$curr,$epage) = $self->pages($start, $num, $hits); 
 
     $self->print_template('search' , { 
+                            error => $error ,
                             hits => $hits , 
                             results => $results , 
                             next  => $next , 
@@ -112,6 +113,10 @@ sub pages {
     ($spage,$curr,$epage);
 }
 
+sub conf {
+    Catmandu->conf;
+}
+
 sub store {
     my $self = shift;
 
@@ -128,6 +133,11 @@ sub index {
     my $args  = Catmandu->conf->{index}->{args};
 
     $self->stash->{index} ||= $class->new(%$args);
+}
+
+sub BUILD {
+    my $self = shift;
+    $self->locale_param('lang');
 }
 
 __PACKAGE__->meta->make_immutable;

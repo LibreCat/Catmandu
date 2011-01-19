@@ -1,0 +1,5 @@
+<ul>
+ [% FOREACH au IN value %]
+    <li>[% au.last_name | utf8 | html %], [% au.first_name | utf8 | html %]</li>
+ [% END %]
+</ul>

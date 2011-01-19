@@ -1,0 +1,27 @@
+ <head>
+   <link rel="icon" type="image/vnd.microsoft.icon" href="http://www.ugent.be/favicon.ico"/>
+   <link rel="SHORTCUT ICON" href="http://www.ugent.be/favicon.ico"/>
+   
+   <title>
+     Ghent University Academic Bibliography &amp; Institutional Repository
+   </title>
+
+   <style type="text/css">
+    @import url(/css/portal.css);
+    @import url(/css/sbcat.css);
+   </style>
+
+   <!--[if IE 6]>
+   <style type="text/css" media="screen">
+     .pages .previous {
+        left: -560px;
+     }
+    .pages .next {
+        right: 25px;
+    }
+   </style>
+   <![endif]-->
+
+   <script src="/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/js/jquery.basket.js" type="text/javascript" charset="utf-8"></script>
+ </head>

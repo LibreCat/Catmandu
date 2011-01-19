@@ -21,7 +21,7 @@ java -jar start.jar
 # We use the UGent Biblio as an example which provides a specialized importer
 #
 
-catmandu import -v -I Luur -s file=data/biblio.db http://biblio.ugent.be/oai/
+catmandu import -v -I Luur -s file=data/biblio.db -i http://biblio.ugent.be/oai/
 
 # You can type Ctr-c to import only a handful of documents as example
 
@@ -63,7 +63,7 @@ catmandu import -v -I Luur -s file=data/biblio.db http://biblio.ugent.be/oai/
 ##############################################################################
 # 4) Index the data
 
-catmandu index -T Solr -s file=data/biblio.db data/biblio.idx
+catmandu index -T Solr -s path=data/biblio.db data/biblio.idx
 
 
 ##############################################################################

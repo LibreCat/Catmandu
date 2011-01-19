@@ -1,0 +1,7 @@
+<h1>[% __("Welcome to the Academic Bibliography and Institutional Repository of Ghent University.") %]</h1>
+
+<p style="margin-top: 10px;">
+[% __("This database registers the scientific publications of UGent researchers, including articles, books, book chapters, conference proceedings and other material.  To search the Academic Bibliography, use the search form below.  To register a publication, <a href=\"#\">log in</a> using your UGent account.") %]
+</p>
+
+[% INCLUDE form_welcome.tt %]

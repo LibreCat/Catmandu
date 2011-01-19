@@ -1,0 +1,36 @@
+<div class="hidden">
+  <h2><a name="pagenavigation" id="pagenavigation">Paginanavigatie</a></h2>
+</div>
+
+<div id="mainnav">
+  <ul>
+    <li class="first"><a href="/">[% __("Home") %]</a></li>
+    <li><a href="#">[% __("Contact") %]</a></li>
+    <li><a href="#">[% __("FAQ") %]</a></li>
+    <li><a href="#">[% __("Open Access") %]</a></li>
+    <li><a href="#">[% __("Demo's") %]</a></li>
+    <li><a href="#">[% __("Download|API") %]</a></li>
+  </ul>
+</div>
+
+<div id="logo">
+  <img src="/images/logo.gif" width="200" height="60" alt="Logo Universiteit Gent" usemap="#linklogo" />
+  <map name="linklogo" id="linklogo"><area shape="rect" coords="60,0,142,60" href="http://www.ugent.be" alt="Portal Ghent University" /></map>
+</div>
+
+<div id="siteid">
+  <img src="/images/siteid.jpg" width="300" height="80" />
+  <a href="/" class="text" >[% __("Ghent University Academic Bibliography &amp; Institutional Repository") %]</a>
+</div>
+
+<div id="login">
+  <a href="#">[% __("login") %]</a>
+</div>
+
+<div id="footer" style="margin-left: 60px;">
+  [% __("Powered by Catmandu developed by:") %] <a href="http://lib.ugent.be/">[% __("Ghent University Library") %]</a>, <a href="http://www.lub.lu.se/">[% __("Lund University Libraries") %]</a> [% __("and") %] <a href="http://www.ub.uni-bielefeld.de/english/">[% __("Bielefeld University Library") %]</a>.
+</div>
+
+<div id="topanchor">
+  <a name="top" id="top">&nbsp;</a>
+</div>

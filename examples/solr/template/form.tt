@@ -1,0 +1,11 @@
+<form class="form" action="/search" method="get" accept-charset="utf-8">
+  <fieldset>
+    <legend>[% __("Search") %]</legend>
+    
+    <div class="field">
+      <label for="searchDocType">[% __("Enter your query") %]:</label>
+      <input type="text" name="q" value="[% app.req.param('q') | html %]" size="80" style="font-size: 110%;"/>
+      <input type="submit" value="[% __("Search") %]"/>
+    </div>
+  </fieldset>
+</form>
