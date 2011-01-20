@@ -1,5 +1,6 @@
 package Catmandu::Cmd::Command::import;
 # VERSION
+use 5.010;
 use Moose;
 use Catmandu::Util qw(load_class);
 

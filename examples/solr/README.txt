@@ -21,13 +21,13 @@ java -jar start.jar
 # We use the UGent Biblio as an example which provides a specialized importer
 #
 
-catmandu import -v -I Luur -s file=data/biblio.db -i http://biblio.ugent.be/oai/
+catmandu import -v -I Luur -s path=data/biblio.db -i http://biblio.ugent.be/oai/
 
 # You can type Ctr-c to import only a handful of documents as example
 
 # To view the content of this store use:
 # 
-# catmandu export -o pretty=1 -s file=data/biblio.db
+# catmandu export -o pretty=1 -s path=data/biblio.db
 #
 
 
