@@ -1,0 +1,20 @@
+#
+# Aleph Mapping
+#
+# E.g.
+# 
+#   245    title     :: store the content of all the '245' fields in the 'title' field
+#   540+a  rights    :: store only the 'a' subfield of all 540 in the 'rights' field
+#   540-j  foobar    :: store every subfield except 'j' of all 540 in the 'foobar' field''
+#
+# P@ 2011-01
+
+245     title
+300     description
+100     author
+700     author
+260     publisher
+662     subject
+690     subject
+540+a   rights
+852+j   callnr

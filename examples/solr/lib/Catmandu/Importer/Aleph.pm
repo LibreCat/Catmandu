@@ -3,7 +3,6 @@ package Catmandu::Importer::Aleph;
 use 5.010;
 
 use Moose;
-use Data::Dumper;
 use File::Slurp qw(slurp);
 use List::MoreUtils qw(natatime);
 
@@ -39,7 +38,8 @@ sub each {
  
      if (defined $prev_id && $prev_id != $sysid) {
         if (defined $callback) {
-            &$callback( $mapper->($rec) ); 
+            $callback->( $mapper->($rec) ); 
+            $num++;
         }
 
         $rec = {};
@@ -52,7 +52,8 @@ sub each {
    }
 
    if (defined $callback) {
-      &$callback( $mapper->($rec) ); 
+      $callback->( $mapper->($rec) ); 
+      $num++;
    }
 
    return $num;
@@ -75,8 +76,11 @@ sub load_map {
     my $map = [];
 
     foreach my $line (split /\n/, slurp($self->map)) {
+        next if ($line =~ /^\s*#/);
+        next if ($line =~ /^\s*$/);
+
         my ($path, $key) = split /\s+/, $line;
-        push (@$map , [ $path => $key ]);
+        push (@$map , $path => $key );
     }
 
     $map;
@@ -88,7 +92,6 @@ sub default_map {
 
     [
       '245'   => 'title' ,
-      '260'   => 'title' ,
       '300'   => 'description' ,
       '100'   => 'creator' ,
       '700'   => 'creator' ,
@@ -119,7 +122,7 @@ sub {
 
    my \$dc = {};
 
-   \$dc->{identifier} = [ "rug01:" . \$rec->{id} ];
+   \$dc->{_id} = "rug01:" . \$rec->{id};
 EOF
 
     while (@$map) {
@@ -148,9 +151,11 @@ EOF
 
 sub clean_empty {
     my $rec = shift;
-    my $out = {};
+    my $out = { _id => $rec->{_id} };
 
     foreach my $key (keys %$rec) {
+        next if $key eq '_id';
+
         my $val = $rec->{$key};
 
         $out->{$key} = $val if defined $val && @$val > 0; 
@@ -190,6 +195,10 @@ sub field {
     @out; 
 }
 
+# Parse ALEPH sequential lines into Perl arrays
+#
+# [ '0123456789' , '001' , ' ' , ' ' , 'L' , '_' , '0123456789' ]
+# [ '0123456789' , '100' , ' ' , ' ' , 'L' , 'a' , 'Mijn konijn' ]
 sub parse_line {
     my ($line) = @_;
     my $sysid = substr($line,0,9);
@@ -207,3 +216,47 @@ sub parse_line {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 __PACKAGE__;
+
+=head1 SYNOPSIS
+
+    use Catmandu::Importer::Aleph;
+
+
+    my $importer = Catmandu::Importer::Aleph(file => 'import.marc' , map => 'aleph.map');
+
+    $importer->each(sub {
+        my $obj = shift;
+
+        ...
+    });
+
+    or via the command line
+
+    catmandu convert -I Aleph -i map=data/aleph.map -o pretty=1 import.txt
+
+    catmandu import  -I Aleph -i map=data/aleph.map -o path=data/aleph.db import.txt
+
+=head1 METHODS
+
+=head2 $c->new(file => $file , map => $map_file)
+
+Creates a new Catmandu::Importer for parsing MARC sequential data from $file into
+Perl hashes. The contents of the Perl hash is defined by the $map_file which has
+a contents like:
+
+   245      title
+   852+j    relation
+   700-x    author
+
+Which states that the '245' field should be extracted into a 'title' key. The
+'852' only the 'j' subfield should be extracted into the 'relation' key. And the
+'700' field without the 'x' subfield should be in the author field.
+
+=head2 $c->each($callback)
+
+Execute $callback for every record imported
+
+=head1 SEE ALSO
+
+L<Catmandu::Importer>
+

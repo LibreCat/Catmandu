@@ -35,11 +35,15 @@ sub execute {
 
     my $verbose = $self->verbose;
 
+    my $count = 0;
     my $n = $importer->each(sub {
         my $obj = $_[0];
         $store->save($obj);
+
+        $count++;
+
         if ($verbose) {
-            say $obj->{_id};
+            say "importing: $count..." if $count % 100 == 0;
         }
     });
 
