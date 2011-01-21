@@ -19,7 +19,7 @@ sub execute {
 
     my $app = shift @$args || $self->psgi_app;
     Catmandu::Util::load_class($app);
-    print $app->router->stringify;
+    print $app->new->router->stringify;
 }
 
 __PACKAGE__->meta->make_immutable;

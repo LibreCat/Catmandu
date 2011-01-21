@@ -69,13 +69,13 @@ sub match {
 sub stringify {
     my $self = shift;
 
-    my $max_a = max(map { length $_->app } $self->route_list);
+    my $max_a = max(map { length ref $_->app } $self->route_list);
     my $max_m = max(map { length join(',', $_->method_list) } $self->route_list);
     my $max_s = max(map { $_->named ? length $_->sub : 7 } $self->route_list);
 
     join '', map {
         sprintf "%-${max_a}s %-${max_m}s %-${max_s}s %s\n",
-            $_->app,
+            ref $_->app,
             join(',', $_->method_list),
             $_->named ? $_->sub : 'CODEREF',
             $_->pattern;

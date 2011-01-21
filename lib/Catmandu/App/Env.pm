@@ -13,6 +13,7 @@ has env => (
 has request => (
     is => 'ro',
     isa => 'Plack::Request',
+    traits => [qw(Aliased)],
     alias => 'req',
     lazy => 1,
     builder => 'new_request',

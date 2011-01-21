@@ -39,16 +39,19 @@ sub _parse_method_attributes {
 
     for my $method ($self->meta->get_nearest_methods_with_attributes) {
         for my $attr (@{$method->attributes}) {
-            if (my $http_method = $attr =~ /^GET|PUT|POST|DELETE$/) {
+            if (my ($http_method) = $attr =~ /^(GET|PUT|POST|DELETE)$/) {
                 $self->route('/' . $method->name, as => $method->name, methods => [$http_method]);
+                next;
             }
-            elsif ($attr =~ /^route|R$/) {
+            if ($attr =~ /^(route|R)$/) {
                 $self->route('/' . $method->name, as => $method->name);
+                next;
             }
-            elsif (my ($http_method, $pattern) = $attr =~ /^(GET|PUT|POST|DELETE)\((.+)\)$/) {
+            if (my ($http_method, $pattern) = $attr =~ /^(GET|PUT|POST|DELETE)\((.+)\)$/) {
                 $self->route(trim(unquote($pattern)), as => $method->name, methods => [$http_method]);
+                next;
             }
-            elsif (my ($args) = $attr =~ /^(?:route|R)\((.+)\)$/) {
+            if (my ($args) = $attr =~ /^(?:route|R)\((.+)\)$/) {
                 my @http_methods = map { trim unquote $_ } split /,/, $args;
                 my $pattern = $http_methods[0] =~ /^GET|PUT|POST|DELETE$/ ? $method->name : shift @http_methods;
                 if (@http_methods) {
@@ -56,6 +59,7 @@ sub _parse_method_attributes {
                 } else {
                     $self->route($pattern, as => $method->name);
                 }
+                next;
             }
         }
     }
@@ -164,7 +168,7 @@ sub wrap_middleware {
                 Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => $mw) :
                 $mw->($sub);
         } else {
-            load_class($mw, 'Plack::Middleware');
+            $mw  = load_class($mw, 'Plack::Middleware');
             $sub = $cond ?
                 Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => sub { $mw->wrap($_[0], %opts) }) :
                 $mw->wrap($sub, %opts);
