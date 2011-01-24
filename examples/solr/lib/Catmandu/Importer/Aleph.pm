@@ -12,7 +12,6 @@ no strict "subs";
 with 'Catmandu::Importer';
 
 has map => (
-    traits => ['Getopt'],
     is => 'ro',
     isa => IO,
     coerce => 1,
@@ -234,7 +233,8 @@ __PACKAGE__;
     $importer->each(sub {
         my $obj = shift;
 
-        ...
+        $obj->{_id}->[0];
+        $obj->{_title}->[0]; 
     });
 
     or via the command line
