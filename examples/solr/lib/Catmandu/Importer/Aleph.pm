@@ -149,7 +149,7 @@ EOF
 
 sub clean_empty {
     my $rec = shift;
-    my $out = { _id => $rec->{_id} };
+    my $out = { _id => $rec->{_id}->[0] };
 
     foreach my $key (keys %$rec) {
         next if $key eq '_id';
