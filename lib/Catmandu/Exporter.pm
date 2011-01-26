@@ -21,7 +21,9 @@ has pretty => (
 );
 
 sub _build_file {
-    IO::Handle->new_from_fd(fileno(STDOUT), 'w');
+    my $file = IO::File->new_from_fd(fileno(STDOUT), 'w');
+    $file->binmode(':utf8');
+    $file;
 }
 
 no Moose::Role;
