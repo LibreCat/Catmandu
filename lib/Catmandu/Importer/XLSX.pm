@@ -3,7 +3,9 @@ package Catmandu::Importer::XLSX;
 # VERSION
 use Spreadsheet::XLSX;
 use List::MoreUtils qw(zip);
+use Encode;
 use Moose;
+use utf8;
 
 with qw(Catmandu::Importer);
 
@@ -41,7 +43,7 @@ sub _load_data {
 	
 	foreach my $col ($sheet->{MinCol} ..  $sheet->{MaxCol}) {
 	   my $cell = $sheet->{Cells}[$row][$col];
-	   my $val  = $cell->{Val};
+	   my $val  = decode("utf8", $cell->{Val});
 
 	   push(@col,$val);
 	}
