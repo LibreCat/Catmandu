@@ -279,7 +279,8 @@ Mapping syntax:
 =head2 $c->each($callback)
 
 Execute $callback for every record imported. The callback functions get as 
-first argument the parsed object (a ref hash of key => [ values ]).
+first argument the parsed object (a ref hash of key => [ values ]). Returns
+the number of objects in the stream.
 
 =head1 SEE ALSO
 

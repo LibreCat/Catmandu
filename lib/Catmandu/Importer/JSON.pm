@@ -11,6 +11,7 @@ sub each {
 
     my $json = JSON->new->utf8(1);
     my $file = $self->file;
+
     my $load_single = 0;
     my $n = 0;
 

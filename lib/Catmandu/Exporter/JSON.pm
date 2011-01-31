@@ -9,7 +9,8 @@ with qw(Catmandu::Exporter);
 sub dump {
     my ($self, $obj) = @_;
 
-    my $json = JSON->new->utf8(1)->pretty($self->pretty);
+    # Putting utf8 off .. we expect that all our data is UTF8
+    my $json = JSON->new->utf8(0)->pretty($self->pretty);
     my $file = $self->file;
 
     if (ref $obj eq 'ARRAY') {
