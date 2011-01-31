@@ -52,50 +52,50 @@ sub BUILD {
 }
 
 sub home : GET("/") {
-    my ($self, $web) = @_;
+    my $self = $_[0];
 
-    $web->print_template('search');
+    $self->print_template('search');
 }
 
 sub login : GET {
-    my ($self, $web) = @_;
+    my $self = $_[0];
 
-    $web->print_template('login');
+    $self->print_template('login');
 }
 
 sub authenticate : POST("/login") {
-    my ($self, $web) = @_;
+    my $self = $_[0];
 
-    $web->env->{'catmandu.auth'}->authenticate;
+    $self->env->{'catmandu.auth'}->authenticate;
 
-    $web->redirect('/');
+    $self->redirect('/');
 }
 
 sub logout : R {
-    my ($self, $web) = @_;
+    my $self = $_[0];
 
-    $web->env->{'catmandu.auth'}->clear_user;
+    $self->env->{'catmandu.auth'}->clear_user;
 
-    $web->redirect('/');
+    $self->redirect('/');
 }
 
 
 sub view : GET {
-    my ($self, $web) = @_;
+    my $self = $_[0];
 
-    my $id  = $web->req->param('id');
+    my $id  = $self->req->param('id');
 
     my $obj = $self->store->load($id);
 
-    $web->print_template('view', { id => $id , res => $obj });
+    $self->print_template('view', { id => $id , res => $obj });
 }
 
 sub search : GET {
-    my ($self, $web) = @_;
+    my $self = $_[0];
 
-    my $q     = $web->req->param('q');
-    my $start = $web->req->param('start') || 0;
-    my $num   = $web->req->param('num')   || 10;
+    my $q     = $self->req->param('q');
+    my $start = $self->req->param('start') || 0;
+    my $num   = $self->req->param('num')   || 10;
 
     my ($results, $hits, $error) = $self->indexer->search($q, start => $start, limit => $num, reify => $self->store);
 
@@ -105,7 +105,7 @@ sub search : GET {
 
     my ($spage, $curr, $epage) = $self->paginate($start, $num, $hits); 
 
-    $web->print_template('search', {
+    $self->print_template('search', {
         error   => $error,
         hits    => $hits,
         results => $results,

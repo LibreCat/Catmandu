@@ -5,6 +5,6 @@ builder {
     mount "/" => builder {
         enable "Plack::Middleware::Static" ,
             path => qr{^/(images|js|css)/} , root => './htdocs/';
-        Module::Search->psgi_app;
+        Module::Search->as_psgi_app;
     };
 };

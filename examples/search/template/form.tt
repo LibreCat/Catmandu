@@ -5,7 +5,7 @@
   </td>
   <td>
    <form method="GET" action="search">
-    <input type="text" name="q" value="[% web.req.param('q') | html %]" size="60"/>
+    <input type="text" name="q" value="[% app.req.param('q') | html %]" size="60"/>
     show:
     <select name="num">
       <option [% IF num == 10 %]selected="selected"[% END %]>10</option>

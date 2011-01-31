@@ -1,34 +1,38 @@
 package Module::Blog;
 
-use Catmandu::App;
+use Moose;
+
+BEGIN { extends 'Catmandu::App' }
+
 use Catmandu::Store::Simple;
 
-get '/' => sub {
-    my $self  = shift;
-    $self->print_template('blog', { blog => $self->list} );
-};
+has store => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        Catmandu::Store::Simple->new(
+            path => Catmandu->conf->{db}->{blog}
+        );
+    },
+);
 
-post '/' => sub {
+sub home :GET('/') {
+    my $self  = shift;
+    $self->print_template('blog', { blog => $self->list });
+}
+
+sub save :POST('/') {
     my $self  = shift;
     my $msg   = $self->request->param('msg');
-    
+
     my $date = localtime time;
 
     $self->store->save({
-            date => $date , 
-            msg  => $msg ,
-        });
+        date => $date,
+        msg  => $msg,
+    });
 
-
-    $self->print_template('blog', { blog => $self->list } );
-};
-
-sub store {
-    my $self = shift;
-    $self->stash->{store} ||=
-        Catmandu::Store::Simple->new(
-          file => Catmandu->conf->{db}->{blog}
-        );
+    $self->print_template('blog', { blog => $self->list });
 }
 
 sub list {
@@ -36,14 +40,15 @@ sub list {
     my @list = ();
 
     $self->store->each(sub {
-        my $obj = shift;
-        push(@list, $obj);
+        push @list, $_[0];
     });
-   
+
     [ reverse @list ];
 }
 
 __PACKAGE__->meta->make_immutable;
-no Catmandu::App;
-__PACKAGE__;
+
+no Moose;
+
+1;
 

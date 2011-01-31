@@ -1,8 +1,8 @@
 package Catmandu::Auth::Strategy;
 # VERSION
 use Moose::Role;
-
-with 'Catmandu::App::Env';
+use MooseX::Aliases;
+use Plack::Request;
 
 requires 'can_authenticate';
 requires 'authenticate';
@@ -15,6 +15,20 @@ has user    => (is => 'rw');
 has message => (is => 'rw');
 has result  => (is => 'rw');
 has custom_response => (is => 'rw', isa => 'ArrayRef');
+
+has env => (
+    is => 'ro',
+    isa => 'HashRef',
+    required => 1,
+);
+
+has request => (
+    is => 'ro',
+    isa => 'Plack::Request',
+    traits => [qw(Aliased)],
+    alias => 'req',
+    default => sub { Plack::Request->new($_[0]->env) },
+);
 
 sub run {
     my $self = shift;
@@ -72,6 +86,7 @@ sub respond {
     $self;
 }
 
+no MooseX::Aliases;
 no Moose::Role;
 
 1;

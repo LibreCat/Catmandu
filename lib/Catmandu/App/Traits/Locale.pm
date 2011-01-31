@@ -6,12 +6,12 @@ use Locale::Util ();
 has locale_param => (is => 'rw', isa => 'Str');
 
 before run => sub {
-    my ($app, $sub, $web) = @_;
+    my ($self, $sub) = @_;
 
-    my @locales = Locale::Util::parse_http_accept_language($web->env->{HTTP_ACCEPT_LANGUAGE});
+    my @locales = Locale::Util::parse_http_accept_language($self->env->{HTTP_ACCEPT_LANGUAGE});
 
-    if (my $key = $app->locale_param) {
-        if (my $loc = $web->param($key) || $web->req->param($key)) {
+    if (my $key = $self->locale_param) {
+        if (my $loc = $self->param($key) || $self->req->param($key)) {
             unshift @locales, $loc;
         }
     }

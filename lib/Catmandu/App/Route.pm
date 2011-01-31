@@ -1,4 +1,4 @@
-package Catmandu::App::Router::Route;
+package Catmandu::App::Route;
 # ABSTRACT: HTTP route
 # VERSION
 use 5.010;
@@ -110,24 +110,24 @@ sub match {
     my @captures = $env->{PATH_INFO} =~ $self->_pattern_regex or return undef, 404;
 
     if (my $re = $self->_methods_regex) {
-        ($env->{REQUEST_METHOD} || '') =~ $re or return undef, 405;
+        ($env->{REQUEST_METHOD} || "") =~ $re or return undef, 405;
     }
 
-    my $match = Hash::MultiValue->new;
-    my $comps = $self->components;
+    my $parameters = Hash::MultiValue->new;
+    my $components = $self->components;
 
-    for my $i (0..@$comps-1) {
-        $match->add($comps->[$i], $captures[$i]);
+    for my $i (0..@$components-1) {
+        $parameters->add($components->[$i], $captures[$i]);
     }
 
     if ($self->has_defaults) {
         my $defaults = $self->defaults;
         for my $key (keys %$defaults) {
-            $match->get($key) // $match->add($defaults->{$key});
+            $parameters->get($key) // $parameters->add($defaults->{$key});
         }
     }
 
-    return $match, 200;
+    return $parameters, 200;
 }
 
 sub anonymous {

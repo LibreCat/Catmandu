@@ -1,43 +1,53 @@
 package Module::Roles;
 
-use Catmandu::App;
+use Moose;
+use base 'Catmandu::App';
 use Catmandu::Store::Simple;
 
-get '/' => sub {
+has store => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        Catmandu::Store::Simple->new(
+            path => Catmandu->conf->{db}->{roles}
+        );
+    },
+);
+
+sub home :GET('/') {
     my $self  = shift;
     $self->print_template('roles', { roles => { $self->all_roles } });
 };
 
-get '/roles' => sub {
+sub roles :GET {
     my $self  = shift;
     my $query = $self->req->param('q');
     my %lib   = $self->all_roles;
     my @roles = grep {/^$query/} keys %lib;
 
     $self->print(join "\n" , sort @roles);
-};
+}
 
-get '/users' => sub {
+sub users :GET {
     my $self  = shift;
     my $query = $self->req->param('q');
     my @users = grep {/^$query/} map { $_->{name} } $self->all_users;
 
     $self->print(join "\n" , sort @users);
-};
+}
 
-get '/emails' => sub {
+sub emails :GET {
     my $self  = shift;
     my $query = $self->req->param('q');
     my @emails = grep {/^$query/} map { $_->{email} } $self->all_users;
 
     $self->print(join "\n" , sort @emails);
-};
+}
 
-
-any '/del' => sub {
+sub del :R {
     my $self = shift;
-    my $name  = $self->req->param('name');
-    my $role  = $self->req->param('role');
+    my $name = $self->req->param('name');
+    my $role = $self->req->param('role');
 
     my $user = $self->find_roles($name);
 
@@ -45,11 +55,12 @@ any '/del' => sub {
 
     $self->store->save($user);
 
-    $self->response->redirect('/');
-};
+    $self->redirect('/');
+}
 
-post '/' => sub {
+sub save_roles :POST('/') {
     my $self = shift;
+
     my $name  = $self->req->param('name');
     my $email = $self->req->param('email');
     my $roles = $self->req->param('roles');
@@ -73,7 +84,7 @@ post '/' => sub {
     $self->store->save($user);
 
     $self->print_template('roles', { roles => { $self->all_roles } });
-};
+}
 
 sub find_roles {
     my $self = shift;
@@ -82,7 +93,7 @@ sub find_roles {
     foreach my $role ($self->all_users) {
         return $role if ($role->{name} eq $name);
     }
-    
+
     { name => $name , roles => [] };
 }
 
@@ -113,14 +124,8 @@ sub all_users {
     @users;
 }
 
-sub store {
-    my $self = shift;
-    $self->stash->{store} ||=
-        Catmandu::Store::Simple->new(
-          file => Catmandu->conf->{db}->{roles}
-        );
-}
-
 __PACKAGE__->meta->make_immutable;
-no Catmandu::App;
-__PACKAGE__;
+
+no Moose;
+
+1;

@@ -75,12 +75,14 @@ sub execute {
     my $app = $args->[0] || $self->psgi_app;
 
     my @argv;
+
     if ($app =~ /\.psgi$/) {
         $app = Catmandu->file('psgi', $app) or die "Can't find psgi app $app";
         push @argv, '-a', $app;
     } else {
-        push @argv, '-e', "use ${app}; ${app}->psgi_app";
+        push @argv, '-e', "use $app; ${app}->as_psgi_app";
     }
+
     push @argv, map { ('-I', $_) } Catmandu->lib;
     push @argv, '-E', Catmandu->env;
     push @argv, '-Moose';
@@ -90,6 +92,7 @@ sub execute {
     push @argv, '-D'                if $self->daemonize;
     push @argv, '-L', $self->loader if $self->loader;
     push @argv, '-s', $self->server if $self->server;
+
     Plack::Runner->run(@argv);
 }
 
