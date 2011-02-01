@@ -2,25 +2,11 @@ package Catmandu::Importer;
 # ABSTRACT: Role describing an importer
 # VERSION
 use Moose::Role;
-use MooseX::Types::IO qw(IO);
 
+requires 'default_attribute';
 requires 'each';
 
-has file => (
-    is => 'ro',
-    isa => IO,
-    coerce => 1,
-    required => 1,
-    builder => '_build_file',
-);
-
-sub _build_file {
-    IO::Handle->new_from_fd(fileno(STDIN), 'r');
-}
-
 no Moose::Role;
-no MooseX::Types::IO;
-
 1;
 
 =head1 SYNOPSIS

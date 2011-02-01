@@ -2,57 +2,46 @@ package Catmandu::Exporter::Template;
 # ABSTRACT: Export data via a Template Toolkit template
 # VERSION
 use 5.010;
-
 use Moose;
 
-with qw(Catmandu::Exporter);
+with qw(
+    Catmandu::FileWriter
+    Catmandu::Exporter
+);
 
 has template => (
-    is => 'ro' ,
-    isa => 'Any' ,
-    required => 1 ,
-    documentation => 'Template to use in conversopn',
+    is => 'ro',
+    isa => 'Str',
+    required => 1,
+    documentation => 'Template to use in conversion',
 );
 
 sub dump {
     my ($self, $obj) = @_;
 
-    if (ref $obj eq 'ARRAY') {
-        foreach (@$obj) {
-            $self->_dump($_);
-        }
+    my $tmpl = $self->template;
+    my $file = $self->file;
 
+    if (ref $obj eq 'ARRAY') {
+        Catmandu->print_template($tmpl, $_, $file) for @$obj;
         return scalar @$obj;
     }
     if (ref $obj eq 'HASH') {
-        $self->_dump($obj);
+        Catmandu->print_template($tmpl, $obj, $file);
         return 1;
     }
     if (blessed $obj and $obj->can('each')) {
-        my $n = 0;
-        $obj->each(sub {
-            $self->_dump(shift);
-            $n++;
+        return $obj->each(sub {
+            Catmandu->print_template($tmpl, $_[0], $file);
         });
-        return $n;
     }
 
     confess "Can't export object";
 }
 
-sub _dump {
-    my ($self,$obj) = @_;
-    my $output = '';
-    my $io = IO::String->new($output);
-           
-    Catmandu->print_template($self->template, $obj, $io);
-   
-    $self->file->print($output);
-}
-
 __PACKAGE__->meta->make_immutable;
 no Moose;
-__PACKAGE__;
+1;
 
 =head1 SYNOPSIS
 

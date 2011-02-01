@@ -6,10 +6,10 @@ package Catmandu::Guides::Localization;
 
     package Example::App;
 
-    use Catmandu::App;
+    use base 'Catmandu::App';
     use Locale::TextDomain 'example';
 
-    get '/foo' => sub {
+    sub hello :GET {
         my $self = shift;
         $self->print(__"Hello");
     }

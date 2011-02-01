@@ -1,10 +1,17 @@
 package Catmandu::Importer::JSON;
 # ABSTRACT: Streaming JSON importer
 # VERSION
-use JSON ();
 use Moose;
+use JSON ();
 
-with qw(Catmandu::Importer);
+with qw(
+    Catmandu::FileReader
+    Catmandu::Importer
+);
+
+sub default_attribute {
+    'file';
+}
 
 sub each {
     my ($self, $sub) = @_;
@@ -60,8 +67,6 @@ sub each {
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
-
 1;
 

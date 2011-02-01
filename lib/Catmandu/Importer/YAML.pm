@@ -1,10 +1,17 @@
 package Catmandu::Importer::YAML;
 # ABSTRACT: Streaming YAML importer
 # VERSION
-use IO::YAML;
 use Moose;
+use IO::YAML;
 
-with qw(Catmandu::Importer);
+with qw(
+    Catmandu::FileReader
+    Catmandu::Importer
+);
+
+sub default_attribute {
+    'file';
+}
 
 sub each {
     my ($self, $sub) = @_;
@@ -21,8 +28,6 @@ sub each {
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
-
 1;
 

@@ -1,10 +1,13 @@
 package Catmandu::Exporter::YAML;
 # ABSTRACT: Streaming YAML exporter
 # VERSION
-use IO::YAML;
 use Moose;
+use IO::YAML;
 
-with qw(Catmandu::Exporter);
+with qw(
+    Catmandu::FileWriter
+    Catmandu::Exporter
+);
 
 sub dump {
     my ($self, $obj) = @_;
@@ -20,20 +23,15 @@ sub dump {
         return 1;
     }
     if (blessed $obj and $obj->can('each')) {
-        my $n = 0;
-        $obj->each(sub {
+        return $obj->each(sub {
             $file->print($_[0]);
-            $n++;
         });
-        return $n;
     }
 
     confess "Can't export object";
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
-
 1;
 

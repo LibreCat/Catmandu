@@ -1,15 +1,18 @@
 package Catmandu::Exporter::JSON;
 # ABSTRACT: Streaming JSON exporter
 # VERSION
-use JSON ();
 use Moose;
+use JSON ();
 
-with qw(Catmandu::Exporter);
+with qw(
+    Catmandu::FileWriter
+    Catmandu::Exporter
+);
 
 sub dump {
     my ($self, $obj) = @_;
 
-    # Putting utf8 off .. we expect that all our data is UTF8
+    # we expect that all our data is utf8
     my $json = JSON->new->utf8(0)->pretty($self->pretty);
     my $file = $self->file;
 
@@ -22,8 +25,8 @@ sub dump {
         return 1;
     }
     if (blessed $obj and $obj->can('each')) {
-        my $pretty = $self->pretty;
         my $n = 0;
+        my $pretty = $self->pretty;
         $file->print("[");
         $file->print("\n") if $pretty;
         $obj->each(sub {
@@ -43,8 +46,6 @@ sub dump {
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
-
 1;
 
