@@ -175,6 +175,5 @@ sub take {
 }
 
 no Moose::Role;
-
 1;
 

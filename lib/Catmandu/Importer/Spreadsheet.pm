@@ -2,48 +2,24 @@ package Catmandu::Importer::Spreadsheet;
 # ABSTRACT: Importer for csv, xls, xlsx, sxc, ods
 # VERSION
 use Moose;
-use MooseX::Aliases;
+use Moose::Util::TypeConstraints;
 use Spreadsheet::Read;
+use Encode ();
 
 with qw(
     Catmandu::Importer
 );
 
+subtype 'Catmandu::Importer::Spreadsheet::Path'
+    => as 'Str'
+    => where { $_ =~ /\.(xls|xlsx|sxc|ods)$/ }
+    => message { "The spreadsheet must be a .xls, .xlsx, .sxc or .ods file" };
+
 has path => (
     is => 'ro',
-    isa => 'Str',
+    isa => 'Catmandu::Importer::Spreadsheet::Path',
     required => 1,
 );
-
-has format => (
-    is => 'ro',
-    isa => 'Str',
-    alias => [qw(fmt)],
-    builder => '_build_format',
-);
-
-has quote => (
-    is => 'ro',
-    isa => 'Str',
-    default => '"',
-);
-
-has separator => (
-    is => 'ro',
-    isa => 'Str',
-    alias => [qw(sep)],
-    default => ',',
-);
-
-sub _build_format {
-    my $self = $_[0];
-
-    if (my ($format) = $self->path =~ /\.(csv|xls|xlsx|sxc|ods)$/) {
-        $format;
-    } else {
-        'csv';
-    }
-}
 
 sub default_attribute {
     'path';
@@ -52,16 +28,13 @@ sub default_attribute {
 sub each {
     my ($self, $sub) = @_;
 
-    my $ss = ReadData($self->path,
-        parser => $self->format,
-        sep    => $self->separator,
-        quote  => $self->quote,
-    );
+    my $ss = ReadData($self->path);
 
     my $n = $ss->[1]->{maxrow} - 1;
 
     my @rows = Spreadsheet::Read::rows($ss->[1]);
     my $keys = shift @rows;
+    my $cols = @$keys;
 
     undef $ss;
 
@@ -71,8 +44,8 @@ sub each {
     my $i;
     for $row (@rows) {
         $obj = {};
-        for ($i = 0; $i < @$keys; $i++) {
-            $val = $row->[$i] and $obj->{$keys->[$i]} = $val;
+        for ($i = 0; $i < $cols; $i++) {
+            $val = $row->[$i] and $obj->{$keys->[$i]} = Encode::decode_utf8($val);
         }
         $sub->($obj);
     }
@@ -82,6 +55,7 @@ sub each {
 
 __PACKAGE__->meta->make_immutable;
 no Spreadsheet::Read;
+no Moose::Util::TypeConstraints;
 no Moose;
 1;
 

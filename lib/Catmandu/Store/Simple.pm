@@ -90,10 +90,8 @@ sub transaction {
 }
 
 __PACKAGE__->meta->make_immutable;
-
-no Moose;
 no Try::Tiny;
-
+no Moose;
 1;
 
 =head1 SYNOPSIS
