@@ -104,7 +104,8 @@ sub route {
 
     $opts{pattern} = $pattern;
 
-    $opts{sub} ||= delete($opts{run}) ||
+    $opts{sub} ||= delete($opts{handler}) ||
+                   delete($opts{run}) ||
                    delete($opts{to});
 
     $opts{app} = $self;
@@ -400,11 +401,13 @@ sub base_path {
 sub base_uri {
     my $env = $_[0]->env;
 
-    my $uri = URI->new;
-    $uri->scheme($env->{'psgi.url_scheme'});
-    $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
-    $uri->path($env->{SCRIPT_NAME} // '/');
-    $uri->canonical;
+    $env->{'catmandu.base_uri'} ||= do {
+        my $uri = URI->new;
+        $uri->scheme($env->{'psgi.url_scheme'});
+        $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
+        $uri->path($env->{SCRIPT_NAME} // '/');
+        $uri->canonical;
+    };
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -417,4 +420,242 @@ no Hash::Merge::Simple;
 no CGI::Expand;
 
 1;
+
+=head1 METHODS
+
+=head2 new()
+
+Constructs a new L<Catmandu::App> instance.
+
+=head2 stash()
+
+The stash hashref can be used to hold application
+data that persists between requests.
+
+    $self->stash->{foo} = "bar"
+
+=head2 set($key, $value)
+
+Sets C<$key> to C<$value> in the stash.
+
+    $self->set('foo', 'bar')
+
+=head2 env()
+
+The C<PSGI> environment hashref.
+
+    $self->env->{REQUEST_URI}
+
+=head2 request()
+
+The C<Plack::Request> object.
+
+=head2 req()
+
+Alias for C<request>.
+
+=head2 parameters()
+
+Returns or creates a L<Hash::MultiValue> object with
+matched route and other parameters for the current request.
+Query and body parameters are found in request.
+
+    $self->parameters->get_all('foo')
+    # ("bar", "baz")
+    $self->parameters->get('foo')
+    # "baz"
+
+=head2 has_parameters()
+
+Returns 1 if there is a parameters object, 0 otherwise.
+
+=head2 param()
+
+Returns parameters with a CGI.pm-compatible param method.
+This is an alternative method for accessing parameters.
+Unlike CGI.pm, it does not allow setting or modifying parameters.
+Query and body parameters are found in request.
+
+    $value = $self->param('foo');
+    @values = $self->param('foo');
+    @keys = $self->param;
+
+=head2 object()
+
+
+
+=head2 session()
+
+See L<Plack::Request>.
+
+=head2 has_session()
+
+Returns 1 if there is a session hashref, 0 otherwise.
+
+=head2 clear_session()
+
+Deletes all key/value pairs from the session hashref.
+
+=head2 session_options()
+
+See L<Plack::Request>.
+
+=head2 response()
+
+creates or return the C<Plack::Response> object.
+
+=head2 res()
+
+Alias for C<response>.
+
+=head2 redirect($url, [$status])
+
+See L<Plack::Response>.
+
+=head2 custom_response()
+
+Sets or replaces a custom PSGI response. This is faster than
+creating and finalizing a response object.
+
+    $self->custom_response([ 404, ['Content-Type' => "text/plain"], ["Not Found"] ]);
+
+=head2 has_custom_response()
+
+Returns 1 if there is a custom repsonse, 0 otherwise.
+
+=head2 clear_custom_response()
+
+Clears the custom response if there is one.
+
+=head2 method_not_allowed()
+
+This method gets called if the requested route is found, but the
+HTTP method doesn't match. Sets a custom response with HTTP
+status 405. You can override this method with your own logic.
+
+=head2 not_found()
+
+This method gets called if the requested route isn't found. Sets
+a custom response with HTTP status 404. You can override this
+method with your own logic.
+
+    sub not_found {
+        my $self = shift;
+        $self->print_template('404');
+    }
+
+    before run => sub {
+        my ($self, $sub) = @_;
+        if ($sub eq 'not_found') {
+            ...
+        }
+    }
+
+=head2 print(@strings)
+
+utf-8 encodes and adds C<@strings> to the response body.
+
+=head2 print_template($template, \%variables)
+
+Renders C<$template> and prints it to the response body.
+
+    $self->print_template('foo_bar', {foo => 'bar'}).
+
+The C<app> and C<catmandu> variables will be set to C<$self> and L<Catmandu> and
+passed to the first 'foo_bar.tt' template found in the template stack.
+
+=head2 path_for($route, %params|\%params)
+
+Returns a path string for the named route C<$route>. Params that are part
+of the route pattern get filled in (or their defaults), other params are treated
+as HTTP query params.
+
+    $app->route('/users/:name', run => sub { ... }, as => 'show_user')
+    $app->path_for('show_user', name => 'nicolas', foo => 'bar')
+    # "/users/nicolas?foo=bar"
+
+=head2 uri_for($route, %params|\%params)
+
+Same as C<path_for>, but prepends the C<base_uri>.
+
+    $app->uri_for('show_user', name => 'nicolas', foo => 'bar')
+    # "http://localhost:5000/users/nicolas?foo=bar"
+
+=head2 base_path()
+
+Returns the base path the app is mounted under. By default this is '/'.
+
+=head2 base_uri()
+
+Returns the base uri the app is mounted under. C<catmandu start> by default
+mounts the app under C<http://localhost:5000/>.
+
+=head2 route($pattern, %options)
+
+
+
+=head2 R($pattern, %options)
+
+Alias for C<route>.
+
+=head2 GET($pattern, %options)
+
+Same as C<route> but sets the C<methods> option to C<['GET', 'HEAD']>.
+
+=head2 PUT($pattern, %options)
+
+Same as C<route> but sets the C<methods> option to C<['PUT']>.
+
+=head2 POST($pattern, %options)
+
+Same as C<route> but sets the C<methods> option to C<['POST']>.
+
+=head2 DELETE($pattern, %options)
+
+Same as C<route> but sets the C<methods> option to C<['DELETE']>.
+
+=head2 mount()
+
+
+
+=head2 inspect_routes()
+
+Returns an overview of the app's routes in a string.
+
+=head2 middleware()
+
+
+
+=head2 run()
+
+Wraps the current request handler. Useful to hook
+into every request handled.
+
+    around run => sub {
+        my ($run, $app, $handler) = @_;
+        # do stuff
+        $app->$run($handler);
+        # do stuff
+    };
+
+An app basically handles every request like this:
+
+    $app->request($request)     # set current request
+    $app->run($sub)             # set current handler
+    $app->has_custom_response ? # return response
+        $app->custom_response :
+        $app->response->finalize;
+
+=head2 as_psgi_app()
+
+Returns the app as a L<PSGI> application (a coderef which
+accepts an C<env> hashref).
+
+=head1 SEE ALSO
+
+L<Plack::Request>
+
+L<Plack::Response>
+
+L<Hash::MultiValue>
 

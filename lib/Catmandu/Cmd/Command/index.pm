@@ -1,5 +1,6 @@
 package Catmandu::Cmd::Command::index;
 # VERSION
+use 5.010;
 use Moose;
 use MooseX::Types::IO qw(IO);
 use File::Slurp qw(slurp);
@@ -19,6 +20,7 @@ has map => (
     is => 'rw',
     isa => IO,
     coerce => 1,
+    predicate => 'has_map',
     documentation => "Path to the map definition file to use.",
 );
 
@@ -40,36 +42,47 @@ sub execute {
 
     my %map = ();
 
-    foreach my $line (split /\n/, slurp($self->map)) {
-        $line =~ s/^\s*(.*)\s*$/$1/;
-        my ($path, $key) = split /\s+/, $line;
-        my $paths = $map{$key} ||= [];
-        push @$paths, $path;
+    if ($self->has_map) {
+        foreach my $line (split /\n/, slurp($self->map)) {
+            $line =~ s/^\s*(.*)\s*$/$1/;
+            my ($path, $key) = split /\s+/, $line;
+            my $paths = $map{$key} ||= [];
+            push @$paths, $path;
+        }
     }
 
     $self->msg("Indexing...");
 
     my $n = 0;
-    $store->each(sub {
-        my $obj = shift;
+    if ($self->has_map) {
+        $store->each(sub {
+            my $obj = shift;
+            my $doc = {};
 
-        my $doc = {};
-
-        foreach my $key (keys %map) {
-            foreach my $path (@{$map{$key}}) {
-                my @values = JSON::Path->new($path)->values($obj);
-                my $val = join ' ', @values ? @values : ();
-                exists $doc->{$key} ?
-                    $doc->{$key} .= $val : $doc->{$key} = $val;
+            foreach my $key (keys %map) {
+                foreach my $path (@{$map{$key}}) {
+                    my @values = JSON::Path->new($path)->values($obj);
+                    my $val = join ' ', @values ? @values : ();
+                    exists $doc->{$key} ?
+                        $doc->{$key} .= $val : $doc->{$key} = $val;
+                }
             }
-        }
 
-        $self->msg(" $n") if $n % 100 == 0;
+            $self->msg(" $n") if $n % 100 == 0;
 
-        $index->save($doc);
+            $index->save($doc);
 
-        $n++;
-    });
+            $n++;
+        });
+    } else {
+        $store->each(sub {
+            $self->msg(" $n") if $n % 100 == 0;
+
+            $index->save($_[0]);
+
+            $n++;
+        });
+    }
 
     $self->msg("Committing...");
 
