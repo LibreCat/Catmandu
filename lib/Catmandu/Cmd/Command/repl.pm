@@ -17,6 +17,7 @@ PERL
     $repl->load_plugin($_) for qw(
         Colors LexEnv MultiLine::PPI
         Packages FancyPrompt DDC Completion
+        Timing Refresh
         CompletionDriver::LexEnv
         CompletionDriver::Keywords
         CompletionDriver::INC

@@ -44,9 +44,9 @@ sub _dump {
     my ($self,$obj) = @_;
     my $output = '';
     my $io = IO::String->new($output);
-           
+
     Catmandu->print_template($self->template, $obj, $io);
-   
+
     $self->file->print($output);
 }
 
