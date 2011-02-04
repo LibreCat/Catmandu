@@ -15,9 +15,10 @@ sub new { bless {}, shift }
 
 sub each {
     my ($self, $sub) = @_;
-    foreach my $obj (@$list) {
+    for my $obj (@$list) {
         $sub->($obj);
     }
+    scalar @$list;
 }
 
 package main;
@@ -33,19 +34,19 @@ does_ok $exporter, Catmandu::Exporter;
 
 my $n = $exporter->dump({ title => 'abcd'});
 
-is $n , 1;
+is $n, 1;
 like $xml , qr/<title>abcd<\/title>/ , "matching otuput";
 
-$file->truncate();
+$file->truncate;
 
 $n = $exporter->dump([{ title => 'aa'} , { title => 'bb'}]);
 
-is $n , 2;
+is $n, 2;
 
 like $xml , qr/>aa</;
 like $xml , qr/>bb</;
 
-$file->truncate();
+$file->truncate;
 
 $n = $exporter->dump(T::Each->new);
 

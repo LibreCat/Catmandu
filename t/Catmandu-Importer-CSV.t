@@ -1,4 +1,4 @@
-use Test::More tests => 8;
+use Test::More tests => 7;
 use Test::Moose;
 use Test::Exception;
 use IO::String;
@@ -7,12 +7,12 @@ BEGIN { use_ok 'Catmandu::Importer::CSV'; }
 require_ok 'Catmandu::Importer::CSV';
 
 my $objs = [
-   { 'Name' => 'Patrick' , 'Age' => '39' } ,
-   { 'Name' => 'Nicolas' , 'Age' => '34' } ,
+   { 'name' => 'Patrick' , 'age' => '39' },
+   { 'name' => 'Nicolas' , 'age' => '34' },
 ];
 
 my $csv =<<EOF;
-"Name","Age"
+"name","age"
 "Patrick","39"
 "Nicolas","34"
 EOF
@@ -25,12 +25,10 @@ does_ok $importer, Catmandu::Importer;
 my $n = $importer->each(sub {
     my $obj = shift;
 
-    like $obj->{Name}, qr/^\w+/, 'got Name';
-
-    if ($obj->{Name} eq 'Patrick') {
+    if ($obj->{name} eq 'Patrick') {
       is_deeply $obj, $objs->[0], 'deeply one';
     }
-    if ($obj->{id} eq 'Nicolas') {
+    if ($obj->{name} eq 'Nicolas') {
       is_deeply $obj, $objs->[1], 'deeply another';
     }
 });
@@ -39,3 +37,4 @@ my $n = $importer->each(sub {
 is $n, 2;
 
 done_testing;
+
