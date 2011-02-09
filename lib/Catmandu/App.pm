@@ -19,12 +19,15 @@ use Encode ();
 use Hash::Merge::Simple qw(merge);
 use Hash::MultiValue;
 use CGI::Expand;
-use URI;
 
 with qw(
     MooseX::SingletonMethod::Role
     MooseX::Traits
 );
+
+my $RESPONSE_KEY = "catmandu.response";
+my $CUSTOM_RESPONSE_KEY = "catmandu.response.custom";
+my $PARAMETERS_KEY = "catmandu.parameters";
 
 has middlewares => (
     is => 'ro',
@@ -104,9 +107,7 @@ sub route {
 
     $opts{pattern} = $pattern;
 
-    $opts{sub} ||= delete($opts{handler}) ||
-                   delete($opts{run}) ||
-                   delete($opts{to});
+    $opts{handler} ||= delete($opts{run}) || delete($opts{to});
 
     $opts{app} = $self;
 
@@ -116,9 +117,9 @@ sub route {
 
     if (my $name = delete $opts{as}) {
         unless ($self->meta->has_method($name)) {
-            $self->add_singleton_method($name => $opts{sub});
+            $self->add_singleton_method($name => $opts{handler});
         }
-        $opts{sub} = $name;
+        $opts{handler} = $name;
     }
 
     push @{$self->routes}, Catmandu::App::Route->new(%opts);
@@ -131,9 +132,6 @@ alias R => 'route';
 sub mount {
     my ($self, $pattern, $app, $defaults) = @_;
 
-    confess "Pattern must start with a slash" if $pattern !~ /^\//;
-    confess "Pattern cannot end with a slash" if $pattern =~ /\/$/;
-
     $app = load_class($app)->new unless ref $app;
 
     $defaults ||= {};
@@ -141,8 +139,8 @@ sub mount {
     push @{$self->routes}, map {
         Catmandu::App::Route->new(
             app => $_->app,
-            sub => $_->sub,
             pattern => $pattern . $_->pattern,
+            handler => $_->handler,
             defaults => merge($_->defaults, $defaults),
             methods => $_->methods,
         );
@@ -150,6 +148,7 @@ sub mount {
 
     $self;
 }
+
 sub GET {
     my ($self, $pattern, %opts) = @_;
     $self->route($pattern, %opts, methods => ['GET', 'HEAD']);
@@ -175,20 +174,42 @@ sub DELETE {
 }
 
 sub match_route {
-    my ($self, $env) = @_;
+    my ($self, $request) = @_;
 
-    my $code = 404;
+    my $error_code = 404;
+
+    my $method = $request->method || '';
+    my $path   = $request->path_info;
+    $path =~ s!(.+)/$!$1!;
 
     for my $route (@{$self->routes}) {
-        my ($parameters, $c) = $route->match($env);
-        if ($parameters) {
-            return $route, $parameters, $c;
-        } elsif ($code == 404 && $c != 404) {
-            $code = $c;
+        my @captures = $path =~ $route->pattern_regex or next;
+
+        if (my $re = $route->methods_regex) {
+            if ($method !~ $re) {
+                $error_code = 405;
+                next;
+            }
         }
+
+        my $parameters = Hash::MultiValue->new;
+        my $components = $route->components;
+
+        for my $i (0..@$components-1) {
+            $parameters->add($components->[$i], $captures[$i]);
+        }
+
+        if ($route->has_defaults) {
+            my $defaults = $route->defaults;
+            for my $key (keys %$defaults) {
+                $parameters->get($key) // $parameters->add($defaults->{$key});
+            }
+        }
+
+        return $route, $parameters, 200;
     }
 
-    return undef, undef, $code;
+    return undef, undef, $error_code;
 }
 
 sub inspect_routes {
@@ -198,13 +219,13 @@ sub inspect_routes {
 
     my $max_a = max(map { length ref $_->app } @$routes);
     my $max_m = max(map { length join(',', $_->method_list) } @$routes);
-    my $max_s = max(map { $_->named ? length $_->sub : 7 } @$routes);
+    my $max_s = max(map { length $_->name } @$routes);
 
     join '', map {
         sprintf "%-${max_a}s %-${max_m}s %-${max_s}s %s\n",
             ref $_->app,
             join(',', $_->method_list),
-            $_->named ? $_->sub : 'CODEREF',
+            $_->name,
             $_->pattern;
     } @$routes;
 }
@@ -238,11 +259,11 @@ sub wrap_middleware {
 }
 
 sub run {
-    my ($self, $sub) = @_;
-    if (ref $sub) {
-        $sub->($self);
+    my ($self, $handler) = @_;
+    if (ref $handler) {
+        $handler->($self);
     } else {
-        $self->$sub();
+        $self->$handler();
     }
 }
 
@@ -251,26 +272,28 @@ sub as_psgi_app {
 
     $self->wrap_middleware(sub {
         my $env = $_[0];
-        my $app;
-        my $sub;
+        my $request = Plack::Request->new($env);
 
-        my ($route, $parameters, $code) = $self->match_route($env);
+        my ($route, $parameters, $http_status) = $self->match_route($request);
+
+        my $app;
+        my $handler;
 
         if ($route) {
-            $app = $route->app;
-            $sub = $route->sub;
+            $app     = $route->app;
+            $handler = $route->handler;
             $env->{'catmandu.parameters'} = $parameters;
         } else {
             $app = $self;
-            given ($code) {
-                when (404) { $sub = 'not_found' }
-                when (405) { $sub = 'method_not_allowed' }
+            given ($http_status) {
+                when (404) { $handler = 'not_found' }
+                when (405) { $handler = 'method_not_allowed' }
             }
         }
 
-        $app->request(Plack::Request->new($env));
+        $app->request($request);
 
-        $app->run($sub);
+        $app->run($handler);
 
         $app->has_custom_response ?
             $app->custom_response :
@@ -279,11 +302,11 @@ sub as_psgi_app {
 }
 
 sub parameters {
-    $_[0]->env->{'catmandu.parameters'} ||= Hash::MultiValue->new;
+    $_[0]->env->{$PARAMETERS_KEY} ||= Hash::MultiValue->new;
 }
 
 sub has_parameters {
-    defined $_[0]->env->{'catmandu.parameters'};
+    defined $_[0]->env->{$PARAMETERS_KEY};
 }
 
 sub param {
@@ -326,7 +349,7 @@ sub clear_session {
 }
 
 sub response {
-    $_[0]->env->{'catmandu.response'} ||= Plack::Response->new(200, ['Content-Type' => 'text/html']);
+    $_[0]->env->{$RESPONSE_KEY} ||= Plack::Response->new(200, ['Content-Type' => 'text/html']);
 }
 
 alias res => 'response';
@@ -337,18 +360,18 @@ sub redirect {
 
 sub custom_response {
     if ($_[1]) {
-        $_[0]->env->{'catmandu.response.custom'} = $_[1];
+        $_[0]->env->{$CUSTOM_RESPONSE_KEY} = $_[1];
     } else {
-        $_[0]->env->{'catmandu.response.custom'};
+        $_[0]->env->{$CUSTOM_RESPONSE_KEY};
     }
 }
 
 sub has_custom_response {
-    exists $_[0]->env->{'catmandu.response.custom'};
+    exists $_[0]->env->{$CUSTOM_RESPONSE_KEY};
 }
 
 sub clear_custom_response {
-    delete $_[0]->env->{'catmandu.response.custom'};
+    delete $_[0]->env->{$CUSTOM_RESPONSE_KEY};
 }
 
 sub method_not_allowed {
@@ -373,52 +396,56 @@ sub print_template {
     Catmandu->print_template($tmpl, $vars, $self);
 }
 
-sub path_for {
+sub uri {
     my $self = shift;
+    my $params = ref $_[-1] ? pop : undef;
     my $name = shift;
-    my $opts = ref $_[-1] eq 'HASH' ? pop : { @_ };
+    my $uri = $self->request->base;
 
-    if (my ($route) = grep { $_->named and $_->sub eq $name } $self->router->route_list) {
-        return $route->path_for($opts);
+    if ($name) {
+        if ($name =~ /^\//) {
+            $uri->path($uri->path . $name);
+        } elsif (my ($route) = grep { $_->named and $_->sub eq $name } @{$self->routes}) {
+            $params ||= {};
+            while (my ($key, $value) = each %{$route->defaults}) {
+                $params->{$key} //= $value;
+            }
+
+            my $splats = $params->{splat} || [];
+            my $path = "";
+
+            for my $part (@{$route->parts}) {
+                if (ref $part) {
+                    if ($part->{key} eq 'splat') {
+                        $path .= shift(@$splats) // return;
+                    } else {
+                        $path .= delete($params->{$part->{key}}) // return;
+                    }
+                } else {
+                    $path .= $part;
+                }
+            }
+
+            $uri->path($uri->path . $path);
+        } else {
+            return;
+        }
     }
-    return;
-}
 
-sub uri_for {
-    my $self = shift;
-    my $path = $self->path_for(@_) // return;
-    my $base = $self->base_uri;
+    if ($params) {
+        $uri->query_form($params);
+    }
 
-    $base =~ s!/$!!;
-    $path =~ s!^/!!;
-    "$base/$path";
-}
-
-sub base_path {
-    $_[0]->env->{SCRIPT_NAME} || '/';
-}
-
-sub base_uri {
-    my $env = $_[0]->env;
-
-    $env->{'catmandu.base_uri'} ||= do {
-        my $uri = URI->new;
-        $uri->scheme($env->{'psgi.url_scheme'});
-        $uri->authority($env->{HTTP_HOST} // "$env->{SERVER_NAME}:$env->{SERVER_PORT}");
-        $uri->path($env->{SCRIPT_NAME} // '/');
-        $uri->canonical;
-    };
+    $uri->canonical;
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
 no MooseX::Aliases;
 no List::Util;
 no Catmandu::Util;
 no Hash::Merge::Simple;
 no CGI::Expand;
-
 1;
 
 =head1 METHODS
@@ -564,31 +591,22 @@ Renders C<$template> and prints it to the response body.
 The C<app> and C<catmandu> variables will be set to C<$self> and L<Catmandu> and
 passed to the first 'foo_bar.tt' template found in the template stack.
 
-=head2 path_for($route, %params|\%params)
+=head2 uri([$path, \%params])
 
-Returns a path string for the named route C<$route>. Params that are part
-of the route pattern get filled in (or their defaults), other params are treated
-as HTTP query params.
+Returns the uri for a named route if path is a route name, constructs a uri
+with $path or returns the base uri otherwise. Params that are part
+of the route pattern get filled in (or their defaults), other params are
+treated as HTTP query params.
 
+    $app->uri
+    # "http://localhost:5000/app"
+    $app->uri({foo => 'bar'})
+    # "http://localhost:5000/app?foo=bar"
+    $app->uri('/path', {foo => 'bar'})
+    # "http://localhost:5000/app/path?foo=bar"
     $app->route('/users/:name', run => sub { ... }, as => 'show_user')
-    $app->path_for('show_user', name => 'nicolas', foo => 'bar')
-    # "/users/nicolas?foo=bar"
-
-=head2 uri_for($route, %params|\%params)
-
-Same as C<path_for>, but prepends the C<base_uri>.
-
-    $app->uri_for('show_user', name => 'nicolas', foo => 'bar')
-    # "http://localhost:5000/users/nicolas?foo=bar"
-
-=head2 base_path()
-
-Returns the base path the app is mounted under. By default this is '/'.
-
-=head2 base_uri()
-
-Returns the base uri the app is mounted under. C<catmandu start> by default
-mounts the app under C<http://localhost:5000/>.
+    $app->uri('show_user', {name => 'nicolas', foo => 'bar'})
+    # "http://localhost:5000/app/users/nicolas?foo=bar"
 
 =head2 route($pattern, %options)
 

@@ -3,16 +3,13 @@ package Catmandu::App::Route;
 # VERSION
 use 5.010;
 use Moose;
-use Hash::MultiValue;
-use URI;
-use URI::QueryParam;
 
 has app => (
     is => 'ro',
     required => 1,
 );
 
-has sub => (
+has handler => (
     is => 'ro',
     isa => 'CodeRef|Str',
     required => 1,
@@ -63,8 +60,21 @@ has methods => (
     },
 );
 
-has _pattern_regex => (is => 'rw', isa => 'RegexpRef');
-has _methods_regex => (is => 'rw', isa => 'RegexpRef');
+has pattern_regex => (is => 'rw', isa => 'RegexpRef', init_arg => undef, writer => '_set_pattern_regex');
+has methods_regex => (is => 'rw', isa => 'RegexpRef', init_arg => undef, writer => '_set_methods_regex');
+
+around BUILDARGS => sub {
+    my $sub   = shift;
+    my $class = shift;
+    my $args  = $class->$sub(@_);
+
+    my $pattern = $args->{pattern} || "/";
+    $pattern !~ m!^/! and $pattern = "/$pattern";
+    $pattern =~ s!(.+)/$!$1!;
+    $args->{pattern} = $pattern;
+
+    $args;
+};
 
 sub BUILD {
     my $self = shift;
@@ -96,84 +106,27 @@ sub BUILD {
         }
     !gex;
 
-    $self->_pattern_regex(qr/^$pattern$/);
+    $self->_set_pattern_regex(qr/^$pattern$/);
 
     if ($self->has_methods) {
         my $methods = join '|', $self->method_list;
-        $self->_methods_regex(qr/^(?:$methods)$/);
+        $self->_set_methods_regex(qr/^(?:$methods)$/);
     }
-}
-
-sub match {
-    my ($self, $env) = @_;
-
-    my @captures = $env->{PATH_INFO} =~ $self->_pattern_regex or return undef, 404;
-
-    if (my $re = $self->_methods_regex) {
-        ($env->{REQUEST_METHOD} || "") =~ $re or return undef, 405;
-    }
-
-    my $parameters = Hash::MultiValue->new;
-    my $components = $self->components;
-
-    for my $i (0..@$components-1) {
-        $parameters->add($components->[$i], $captures[$i]);
-    }
-
-    if ($self->has_defaults) {
-        my $defaults = $self->defaults;
-        for my $key (keys %$defaults) {
-            $parameters->get($key) // $parameters->add($defaults->{$key});
-        }
-    }
-
-    return $parameters, 200;
 }
 
 sub anonymous {
-    !! ref $_[0]->sub;
+    !! ref $_[0]->handler;
 }
 
 sub named {
-    ! ref $_[0]->sub;
+    ! ref $_[0]->handler;
 }
 
-sub path_for {
-    my ($self, $opts) = @_;
-
-    while (my ($key, $val) = each %{$self->defaults}) {
-        $opts->{$key} //= $val;
-    }
-
-    my $splats = $opts->{splat} || [];
-
-    my $path = "";
-
-    for my $part (@{$self->parts}) {
-        if (ref $part) {
-            if ($part->{key} ne 'splat') {
-                $path .= delete($opts->{$part->{key}}) // return;
-            } else {
-                $path .= shift(@$splats) // return;
-            }
-        } else {
-            $path .= $part;
-        }
-    }
-
-    if (%$opts) {
-        my $uri = URI->new("", "http");
-        $uri->query_param(%$opts);
-        $path .= "?";
-        $path .= $uri->query;
-    }
-
-    $path;
+sub name {
+    my $handler = $_[0]->handler; ref $handler ? 'CODEREF' : $handler;
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
-
 1;
 
