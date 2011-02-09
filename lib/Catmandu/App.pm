@@ -29,6 +29,8 @@ my $RESPONSE_KEY = "catmandu.response";
 my $CUSTOM_RESPONSE_KEY = "catmandu.response.custom";
 my $PARAMETERS_KEY = "catmandu.parameters";
 
+has '+_trait_namespace' => (default => 'Catmandu::App::Plugin');
+
 has middlewares => (
     is => 'ro',
     isa => 'ArrayRef',

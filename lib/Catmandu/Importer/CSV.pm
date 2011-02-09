@@ -36,7 +36,7 @@ sub each {
     my $csv  = Text::CSV->new({
         binary => 1,
         sep_char => $self->sep_char,
-        quote_char => $self->quote_char
+        quote_char => $self->quote_char,
     });
     my $keys = $csv->getline($file);
     my $cols = @$keys;
