@@ -73,6 +73,10 @@ around BUILDARGS => sub {
     $pattern =~ s!(.+)/$!$1!;
     $args->{pattern} = $pattern;
 
+    if ($args->{methods}) {
+        $args->{methods} = [ grep /^GET|HEAD|PUT|POST|DELETE$/, map uc, @{$args->{methods}} ];
+    }
+
     $args;
 };
 

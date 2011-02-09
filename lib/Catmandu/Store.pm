@@ -26,7 +26,6 @@ sub need_id {
 }
 
 no Moose;
-
 1;
 
 =head1 SYNOPSIS
@@ -57,25 +56,25 @@ as a hashref and uniquely identified by their _id key.
 
 =head1 METHODS
 
-=head2 $c->load($id)
+=head2 load($id)
 
 Retrieve the object with _id C<$id> from the store. Returns
 the object as a hashref when found, C<undef> otherwise.
 
-=head2 $c->load_strict($id)
+=head2 load_strict($id)
 
 Like C<load>, but dies instead of returning C<undef> if the object isn't found.
 
-=head2 $c->each($sub)
+=head2 each($sub)
 
 Iterates over all objects in the store and passes them to C<$sub>.
 Returns the number of objects found.
 
-=head2 $c->save($obj)
+=head2 save($obj)
 
 Inserts or updates C<$obj> in the store. Returns the saved object.
 
-=head2 $c->delete($obj|$id)
+=head2 delete($obj|$id)
 
 Delete C<$obj> or object with _id C<$id> from the store.
 

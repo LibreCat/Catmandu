@@ -109,13 +109,10 @@ sub route {
 
     $opts{pattern} = $pattern;
 
-    $opts{handler} ||= delete($opts{run}) || delete($opts{to});
+    $opts{handler} ||= delete($opts{run}) ||
+                       delete($opts{to});
 
     $opts{app} = $self;
-
-    if ($opts{methods}) {
-        $opts{methods} = [map uc, @{$opts{methods}}];
-    }
 
     if (my $name = delete $opts{as}) {
         unless ($self->meta->has_method($name)) {

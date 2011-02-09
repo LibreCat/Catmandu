@@ -213,47 +213,6 @@ sub clear_session {
     $session;
 }
 
-sub permit {
-    my ($self, $verb, %opts) = @_;
-    my $scope = $opts{scope} ||= $self->default_scope;
-    my $rules = $self->rules->{$scope}{permissions} or return 0;
-    my $user  = $self->user($scope) or return 0;
-    $rules->add_rule(
-        $user->{_id},
-        $verb,
-        $opts{of} || $opts{on} || $opts{for}
-    );
-}
-
-sub forbid {
-    my ($self, $verb, %opts) = @_;
-    my $scope = $opts{scope} ||= $self->default_scope;
-    my $rules = $self->rules->{$scope}{permissions} or return 0;
-    my $user  = $self->user($scope) or return 0;
-    $rules->delete_rule(
-        $user->{_id},
-        $verb,
-        $opts{of} || $opts{on} || $opts{for}
-    );
-}
-
-sub needs_permission {
-    my $self = shift;
-    $self->permitted(@_) || Catmandu::HTTPErr->throw(401);
-}
-
-sub permitted {
-    my ($self, $verb, %opts) = @_;
-    my $scope = $opts{scope} ||= $self->default_scope;
-    my $rules = $self->rules->{$scope}{permissions} or return 0;
-    my $user  = $self->user($scope) or return 0;
-    $rules->has_rule(
-        $user->{_id},
-        $verb,
-        $opts{of} || $opts{on} || $opts{for}
-    );
-}
-
 __PACKAGE__->meta->make_immutable;
 
 no MooseX::Aliases;

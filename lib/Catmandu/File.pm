@@ -39,6 +39,5 @@ around BUILDARGS => sub {
 
 no MooseX::Types::IO;
 no Moose::Role;
-
 1;
 

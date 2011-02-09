@@ -1,12 +1,10 @@
 * asynchronous app mode ?
 * Terrastore, ElasticSearch Backends
-* Rules.pm is lame
 * Validation role
 * handle stolen routes in Router::path_for
 * pluggable classes / instances so that we can inject behavior
 * use Moose duck_type instead of static roles ?
 * Index::Solr search with hashref for termquery
-* Store::CouchDB handle revisions
 * Store::Simple id_field keys
 * Store::MongoDB last_error / safe
 * make sensible defaults for the command line tools, eg:
