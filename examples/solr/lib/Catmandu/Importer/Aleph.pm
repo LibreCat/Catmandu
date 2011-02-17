@@ -9,7 +9,7 @@ use List::MoreUtils qw(natatime);
 
 no strict "subs";
 
-with 'Catmandu::Importer';
+with qw(Catmandu::Importer Catmandu::FileReader);
 
 has map => (
     is => 'ro',
@@ -23,6 +23,10 @@ has inline_map => (
     isa => 'ArrayRef',
     documentation => "Inline definition of MARC mapping definition.",
 );
+
+sub default_attribute {
+    'file';
+}
 
 sub each {
    my ($self, $callback) = @_;
@@ -279,7 +283,8 @@ Mapping syntax:
 =head2 $c->each($callback)
 
 Execute $callback for every record imported. The callback functions get as 
-first argument the parsed object (a ref hash of key => [ values ]).
+first argument the parsed object (a ref hash of key => [ values ]). Returns
+the number of objects in the stream.
 
 =head1 SEE ALSO
 

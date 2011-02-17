@@ -12,9 +12,10 @@ use Carp ();
 sub path_and_field {
     my $arg = pop;
 
-    Carp::confess "Not a JSONPath" if ref $arg ne 'JSON::Path';
+    Carp::confess "Not a JSONPath" unless ref $arg eq 'JSON::Path';
 
-    my ($path, $field) = ($arg->to_string =~ /(.+)\.(\w+)$/) or
+    # should match $.foo.bar, $.foo['bar'] or $.foo["bar"]
+    my ($path, $b1, $field , $b2) = ($arg->to_string =~ /(.+)(\.|\[['"])([^'"\.]+)(['"]\])?$/) or
         Carp::confess "JSONPath doesn't point to a field";
 
     if ($path eq '$') {

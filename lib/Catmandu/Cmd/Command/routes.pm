@@ -18,8 +18,8 @@ sub execute {
     my ($self, $opts, $args) = @_;
 
     my $app = shift @$args || $self->psgi_app;
-    Catmandu::Util::load_class($app);
-    print $app->router->stringify;
+
+    print Catmandu::Util::load_class($app)->new->inspect_routes;
 }
 
 __PACKAGE__->meta->make_immutable;

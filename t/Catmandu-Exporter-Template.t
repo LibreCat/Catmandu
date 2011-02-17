@@ -38,7 +38,7 @@ like $xml , qr/<title>abcd<\/title>/ , "matching otuput";
 
 $file->truncate();
 
-my $n = $exporter->dump([{ title => 'aa'} , { title => 'bb'}]);
+$n = $exporter->dump([{ title => 'aa'} , { title => 'bb'}]);
 
 is $n , 2;
 
@@ -47,7 +47,7 @@ like $xml , qr/>bb</;
 
 $file->truncate();
 
-my $n = $exporter->dump(T::Each->new);
+$n = $exporter->dump(T::Each->new);
 
 is $n, 3;
 
@@ -56,3 +56,4 @@ like $xml , qr/>dd</;
 like $xml , qr/>ee</;
 
 done_testing;
+

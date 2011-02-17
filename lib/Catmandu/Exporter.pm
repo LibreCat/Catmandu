@@ -2,17 +2,8 @@ package Catmandu::Exporter;
 # ABSTRACT: Role describing an exporter
 # VERSION
 use Moose::Role;
-use MooseX::Types::IO qw(IO);
 
 requires 'dump';
-
-has file => (
-    is => 'ro',
-    isa => IO,
-    coerce => 1,
-    required => 1,
-    builder => '_build_file',
-);
 
 has pretty => (
     is => 'ro',
@@ -20,15 +11,7 @@ has pretty => (
     default => 0,
 );
 
-sub _build_file {
-    my $file = IO::File->new_from_fd(fileno(STDOUT), 'w');
-    $file->binmode(':utf8');
-    $file;
-}
-
 no Moose::Role;
-no MooseX::Types::IO;
-
 1;
 
 =head1 SYNOPSIS

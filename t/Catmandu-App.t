@@ -12,16 +12,16 @@ require_ok 'Catmandu::App';
 my $test_app = Catmandu::App->new;
 
 $test_app->route('/anonymous', to => sub {
-    my ($app, $web) = @_;
-    $web->print('anonymous');
+    my ($self) = @_;
+    $self->print('anonymous');
 });
 
 $test_app->route('/named', as => 'named', to => sub {
-    my ($app, $web) = @_;
-    $web->print('named');
+    my ($self) = @_;
+    $self->print('named');
 });
 
-test_psgi $test_app->psgi_app, sub {
+test_psgi $test_app->as_psgi_app, sub {
     my $sub = shift;
     my $res;
 

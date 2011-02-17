@@ -18,13 +18,12 @@ sub execute {
 
     $self->importer =~ /::/ or $self->importer("Catmandu::Importer::" . $self->importer);
     $self->store =~ /::/ or $self->store("Catmandu::Store::" . $self->store);
-
-    if (my $arg = shift @$args) {
-        $self->importer_arg->{file} = $arg;
-    }
-
     load_class($self->importer);
     load_class($self->store);
+
+    if (my $arg = shift @$args and my $key = $self->importer->default_attribute) {
+        $self->importer_arg->{$key} = $arg;
+    }
 
     my $importer = $self->importer->new($self->importer_arg);
     my $store = $self->store->new($self->store_arg);
@@ -42,8 +41,8 @@ sub execute {
 
         $count++;
 
-        if ($verbose) {
-            say "importing: $count..." if $count % 100 == 0;
+        if ($verbose and $count % 100 == 0) {
+            say "importing: $count...";
         }
     });
 

@@ -17,16 +17,15 @@ sub execute {
 
     $self->importer =~ /::/ or $self->importer("Catmandu::Importer::" . $self->importer);
     $self->exporter =~ /::/ or $self->exporter("Catmandu::Exporter::" . $self->exporter);
-
-    if (my $arg = shift @$args) {
-        $self->importer_arg->{file} = $arg;
-    }
-    if (my $arg = shift @$args) {
-        $self->exporter_arg->{file} = $arg;
-    }
-
     load_class($self->importer);
     load_class($self->exporter);
+
+    if (my $arg = shift @$args and my $key = $self->importer->default_attribute) {
+        $self->importer_arg->{$key} = $arg;
+    }
+    if (my $arg = shift @$args and my $key = $self->exporter->default_attribute) {
+        $self->exporter_arg->{$key} = $arg;
+    }
 
     my $importer = $self->importer->new($self->importer_arg);
     my $exporter = $self->exporter->new($self->exporter_arg);

@@ -51,9 +51,7 @@ sub help_text {
 }
 
 __PACKAGE__->meta->make_immutable;
-
-no Moose;
 no Path::Class;
-
+no Moose;
 1;
 

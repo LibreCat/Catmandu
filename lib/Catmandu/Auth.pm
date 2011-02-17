@@ -2,10 +2,10 @@ package Catmandu::Auth;
 # VERSION
 use 5.010;
 use Moose;
+use MooseX::Aliases;
 use Catmandu::Err;
 use Plack::Util;
-
-with 'Catmandu::App::Env';
+use Plack::Request;
 
 my $SESSION_KEY = "catmandu.auth";
 
@@ -20,6 +20,20 @@ has app => (
         from_session
         into_session
     )],
+);
+
+has env => (
+    is => 'ro',
+    isa => 'HashRef',
+    required => 1,
+);
+
+has request => (
+    is => 'ro',
+    isa => 'Plack::Request',
+    alias => 'req',
+    lazy => 1,
+    default => sub { Plack::Request->new($_[0]->env) },
 );
 
 has [qw(_cached_strategies _winning_strategies _users)] => (
@@ -187,6 +201,18 @@ sub _get_strategy {
     };
 }
 
+sub session {
+    $_[0]->env->{'psgix.session'};
+}
+
+sub clear_session {
+    my $session = $_[0]->env->{'psgix.session'} or return;
+    for my $key (keys %$session) {
+        delete $session->{$key};
+    }
+    $session;
+}
+
 sub permit {
     my ($self, $verb, %opts) = @_;
     my $scope = $opts{scope} ||= $self->default_scope;
@@ -230,6 +256,7 @@ sub permitted {
 
 __PACKAGE__->meta->make_immutable;
 
+no MooseX::Aliases;
 no Moose;
 
 1;

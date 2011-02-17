@@ -10,7 +10,7 @@
     </td>
     <td align="right" style="font-size: 80%;">
       [% env_auth_key = 'catmandu.auth' %]
-      [% IF web.env.$env_auth_key.user %]
+      [% IF app.env.$env_auth_key.user %]
       <a href="/logout">Sign out</a>
       [% ELSE %]
       <a href="/login">Sign in</a>

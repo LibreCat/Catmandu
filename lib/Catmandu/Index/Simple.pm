@@ -146,7 +146,7 @@ sub commit {
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
-__PACKAGE__;
+1;
 
 __END__
 
