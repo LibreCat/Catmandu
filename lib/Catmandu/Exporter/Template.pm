@@ -11,9 +11,9 @@ with qw(
 
 has template => (
     is => 'ro',
-    isa => 'Str',
+    isa => 'Str|ScalarRef|GlobRef',
     required => 1,
-    documentation => 'Template to use in conversion',
+    documentation => 'Template to use for the conversion',
 );
 
 sub dump {

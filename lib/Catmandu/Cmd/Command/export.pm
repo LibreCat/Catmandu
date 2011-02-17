@@ -42,10 +42,8 @@ sub execute {
 }
 
 __PACKAGE__->meta->make_immutable;
-
 no Moose;
 no Catmandu::Util;
-
 1;
 
 =head1 NAME

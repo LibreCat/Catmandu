@@ -4,11 +4,11 @@
 
 =head2 Building Catmandu
 
-Catmandu uses Dist::Zilla as build tool.
+Catmandu uses L<Dist::Zilla> as build tool.
 
 Make sure you have the following CPAN modules installed:
-   
-    App::cpanm
+
+    App::cpanminus
     Dist::Zilla
     Dist::Zilla::Plugin::OurPkgVersion
     Dist::Zilla::Plugin::PodWeaver

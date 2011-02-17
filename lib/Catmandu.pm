@@ -2,14 +2,14 @@ package Catmandu;
 # ABSTRACT: Singleton class representing a Catmandu project
 # VERSION
 use 5.010;
-use Try::Tiny;
 use MooseX::Singleton;
-use List::Util qw(first);
+use Try::Tiny;
 use Path::Class ();
-use File::ShareDir;
+use File::Slurp qw(slurp);
+use File::ShareDir ();
+use List::Util qw(first);
 use Template;
 use Hash::Merge::Simple qw(merge);
-use File::Slurp qw(slurp);
 use YAML ();
 use JSON ();
 
@@ -177,14 +177,11 @@ sub lib {
 }
 
 __PACKAGE__->meta->make_immutable;
-
-no Try::Tiny;
 no MooseX::Singleton;
 no Moose;
-no List::Util;
-no File::ShareDir;
-no Hash::Merge::Simple;
+no Try::Tiny;
 no File::Slurp;
-
+no List::Util;
+no Hash::Merge::Simple;
 1;
 

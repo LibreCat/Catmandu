@@ -8,7 +8,7 @@ with qw(Catmandu::Iterable);
 has _each => (
     is => 'ro',
     isa => 'CodeRef',
-    required => 1
+    required => 1,
 );
 
 around BUILDARGS => sub {

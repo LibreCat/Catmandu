@@ -18,9 +18,10 @@ sub new { bless {}, shift }
 
 sub each {
     my ($self, $sub) = @_;
-    foreach my $obj (@$list) {
+    for my $obj (@$list) {
         $sub->($obj);
     }
+    scalar @$list;
 }
 
 package main;
