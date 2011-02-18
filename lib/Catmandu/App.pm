@@ -55,6 +55,7 @@ has request => (
     is => 'rw',
     isa => 'Plack::Request',
     alias => 'req',
+    weak_ref => 1,
     handles => [qw(
         env
         session
@@ -122,7 +123,6 @@ sub route {
     }
 
     push @{$self->routes}, Catmandu::App::Route->new(%opts);
-
     $self;
 }
 

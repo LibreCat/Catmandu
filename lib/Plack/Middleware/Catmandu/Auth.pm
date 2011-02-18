@@ -34,7 +34,7 @@ sub prepare_app {
 sub call {
     my($self, $env) = @_;
 
-    if ($env->{$ENV_KEY} and $env->{$ENV_KEY} ne $self) {
+    if ($env->{$ENV_KEY} and $env->{$ENV_KEY} != $self) {
         return $self->app->($env);
     }
 
