@@ -9,7 +9,7 @@ use List::MoreUtils qw(natatime);
 
 no strict "subs";
 
-with 'Catmandu::Importer';
+with qw(Catmandu::Importer Catmandu::FileReader);
 
 has map => (
     is => 'ro',
@@ -23,6 +23,10 @@ has inline_map => (
     isa => 'ArrayRef',
     documentation => "Inline definition of MARC mapping definition.",
 );
+
+sub default_attribute {
+    'file';
+}
 
 sub each {
    my ($self, $callback) = @_;

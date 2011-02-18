@@ -39,6 +39,16 @@ sub dump {
     confess "Can't export object";
 }
 
+sub _dump {
+    my ($self,$obj) = @_;
+    my $output = '';
+    my $io = IO::String->new($output);
+
+    Catmandu->print_template($self->template, $obj, $io);
+
+    $self->file->print($output);
+}
+
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;
