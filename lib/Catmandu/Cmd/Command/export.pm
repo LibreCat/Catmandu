@@ -8,6 +8,7 @@ extends qw(Catmandu::Cmd::Command);
 with qw(
     Catmandu::Cmd::Opts::Exporter
     Catmandu::Cmd::Opts::Store
+    Catmandu::Cmd::Opts::Fix
 );
 
 has load => (
@@ -35,8 +36,15 @@ sub execute {
     my $store = $self->store->new($self->store_arg);
 
     if ($self->load) {
-        $exporter->dump($store->load_strict($self->load));
+        my $obj = $store->load_strict($self->load);
+        if ($self->has_fix) {
+            $obj = $self->fixer->fix($obj);
+        }
+        $exporter->dump($obj);
     } else {
+        if ($self->has_fix) {
+            $store = $self->fixer->fix($store);
+        }
         $exporter->dump($store);
     }
 }

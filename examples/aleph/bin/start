@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PROJ_DIR=/Users/hochsten/Dev/perl/Catmandu/examples/aleph
+
+cd ${PROJ_DIR}/engine
+
+java -Xmx1024m -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar

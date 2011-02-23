@@ -1,6 +1,7 @@
 package Catmandu::Index::Solr;
 
 use Moose;
+use Hash::Flatten qw(:all);
 use WebService::Solr;
 use WebService::Solr::Field;
 use WebService::Solr::Document;
@@ -8,6 +9,8 @@ use WebService::Solr::Document;
 with 'Catmandu::Index';
 
 has url => (is => 'ro', isa => 'Str', default => 'http://localhost:8983/solr');
+
+has maxdoc => (is => 'ro', isa => 'Int', default => 100);
 
 has _indexer => (
     is => 'ro',
@@ -18,9 +21,20 @@ has _indexer => (
     clearer => '_clear_indexer',
 );
 
+has _stack => (
+    traits => ['Array'],
+    is => 'rw',
+    isa => 'ArrayRef',
+    default => sub { [] },
+    handles => {
+        _push_stack  => 'push' ,
+        _count_stack => 'count' ,
+    }
+);
+
 sub _build_indexer {
     my $self = shift;
-    WebService::Solr->new($self->url, { default_params => { wt => 'json' }});
+    WebService::Solr->new($self->url, { autocommit => 0 , default_params => { wt => 'json' }});
 }
 
 sub save {
@@ -33,13 +47,44 @@ sub save {
 
     foreach my $key (keys %$obj) {
         my $value = $obj->{$key};
-        my $field = WebService::Solr::Field->new($key => $value);
-        push(@fields, $field);
+
+        if (! defined $value) {
+            next;
+        }
+        elsif (ref($value) eq 'ARRAY') {
+            foreach (@$value) {
+                my $field = WebService::Solr::Field->new($key => $_);
+                push(@fields, $field);
+            }
+        }
+        elsif (ref($value) eq 'HASH') {
+            foreach (values %{flatten($value)}) {
+                my $field = WebService::Solr::Field->new($key => $_);
+                push(@fields, $field);
+            }
+        }
+        else {
+            my $field = WebService::Solr::Field->new($key => $value);
+            push(@fields, $field);
+        }
     }
 
     my $document = WebService::Solr::Document->new(@fields);
 
-    $self->_indexer->add($document) ? $obj : undef;
+    $self->_push_stack($document);
+
+    if ($self->_count_stack == $self->maxdoc) {
+        $self->_save;
+    }
+
+    $obj;
+}
+
+sub _save {
+    my $self = shift;
+    
+    $self->_indexer->add($self->_stack);
+    $self->_stack([]);
 }
 
 sub delete {
@@ -57,6 +102,7 @@ sub delete {
 sub commit {
     my ($self) = @_;
 
+    $self->_save;
     $self->_indexer->commit;
 }
 

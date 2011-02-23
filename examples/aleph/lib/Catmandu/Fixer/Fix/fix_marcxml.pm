@@ -64,7 +64,7 @@ EOF
 <marc:controlfield tag="$field">$value</marc:controlfield>
 EOF
         }
-        else {
+        elsif ($field =~ /^(\d+|STA)$/) {
             $xml .=<<EOF;
 <marc:datafield ind1="$ind1" ind2="$ind2" tag="$field">
 EOF

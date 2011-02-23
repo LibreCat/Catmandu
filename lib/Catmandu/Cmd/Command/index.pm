@@ -6,12 +6,14 @@ use MooseX::Types::IO qw(IO);
 use File::Slurp qw(slurp);
 use Catmandu::Util qw(load_class);
 use JSON::Path;
+use Time::HiRes qw(gettimeofday tv_interval);
 
 extends qw(Catmandu::Cmd::Command);
 
 with qw(
     Catmandu::Cmd::Opts::Index
     Catmandu::Cmd::Opts::Store
+    Catmandu::Cmd::Opts::Fix
     Catmandu::Cmd::Opts::Verbose
 );
 
@@ -22,6 +24,15 @@ has map => (
     coerce => 1,
     predicate => 'has_map',
     documentation => "Path to the map definition file to use.",
+);
+
+has delkey => (
+    traits => ['Getopt'],
+    is => 'rw',
+    isa => 'Str',
+    default => 'DEL',
+    predicate => 'has_delkey',
+    documentation => "If this key is available in the object, then the record should be deleted.",
 );
 
 sub execute {
@@ -42,18 +53,16 @@ sub execute {
 
     my %map = ();
 
-    if ($self->has_map) {
-        foreach my $line (split /\n/, slurp($self->map)) {
-            $line =~ s/^\s*(.*)\s*$/$1/;
-            my ($path, $key) = split /\s+/, $line;
-            my $paths = $map{$key} ||= [];
-            push @$paths, $path;
-        }
+    if ($self->has_fix) {
+        $store = $self->fixer->fix($store);
     }
 
     $self->msg("Indexing...");
 
     my $n = 0;
+    my $delkey = $self->delkey;
+    my $t0 = [gettimeofday];
+
     if ($self->has_map) {
         $store->each(sub {
             my $obj = shift;
@@ -68,21 +77,24 @@ sub execute {
                 }
             }
 
-            $self->msg(" $n") if $n % 100 == 0;
+            $self->msg(sprintf "$n %d rec/sec", $n/tv_interval($t0)) if $n % 100 == 0;
 
-            $index->save($doc);
+            exists $doc->{$delkey} ? $index->delete($doc) : $index->save($doc);
 
             $n++;
         });
     } else {
         $store->each(sub {
-            $self->msg(" $n") if $n % 100 == 0;
+            my $doc = shift;
+            $self->msg(sprintf "$n %d rec/sec", $n/tv_interval($t0)) if $n % 100 == 0;
 
-            $index->save($_[0]);
+            exists $doc->{$delkey} ? $index->delete($doc) : $index->save($doc);
 
             $n++;
         });
     }
+
+    $self->msg(sprintf "=$n %d rec/sec", $n/tv_interval($t0));
 
     $self->msg("Committing...");
 
@@ -111,4 +123,3 @@ no Catmandu::Util;
 =head1 NAME
 
 Catmandu::Cmd::Command::index - index a store
-

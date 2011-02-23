@@ -1,0 +1,2 @@
+# We don't want stores '_id' exported
+delete_field($._id)

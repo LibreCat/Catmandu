@@ -1,19 +1,19 @@
-package Catmandu::Fixer::Fix::replace;
+package Catmandu::Fixer::Fix::join;
 # VERSION
 use Moose;
+use Hash::Flatten qw(:all);
 use Catmandu::Fixer::Util qw(path_and_field path_values);
 
 extends qw(Catmandu::Fixer::Fix);
 
-has [qw(path field search replace)] => (is => 'ro');
+has [qw(path field expr)] => (is => 'ro');
 
 around BUILDARGS => sub {
-    my ($orig, $class, $field, $search, $replace) = @_;
+    my ($orig, $class, $field, $expr) = @_;
     (my $path, $field) = path_and_field($field);
     { path      => $path,
       field     => $field,
-      search    => $search,
-      replace   => $replace };
+      expr      => $expr };
 };
 
 sub apply_fix {
@@ -37,14 +37,16 @@ sub _fixme {
 
     return undef unless $val;
 
-    my $search  = $self->search;
-    my $replace = $self->replace;
+    my $expr = $self->expr;
 
     if (ref $val eq 'ARRAY') {
-        [ map { $_ =~ s/$search/$replace/g; $_ } @$val ];
-    } else {
-        $val =~ s/$search/$replace/g;
-        $val;
+        join($expr, @$val)
+    } 
+    elsif (ref $val eq 'HASH') {
+        join($expr, values(%$val));
+    }
+    else {
+        $val
     }
 }
 
