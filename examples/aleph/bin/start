@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJ_DIR=/Users/hochsten/Dev/perl/Catmandu/examples/aleph
+PROJ_DIR=${HOME}/Dev/perl/Catmandu/examples/aleph
 
 cd ${PROJ_DIR}/engine
 

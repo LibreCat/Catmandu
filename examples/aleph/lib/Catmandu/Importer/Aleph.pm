@@ -24,6 +24,13 @@ has inline_map => (
     documentation => "Inline definition of MARC mapping definition.",
 );
 
+has skip => (
+    is => 'ro',
+    isa => 'Int',
+    default => 0,
+    documentation => "Number of records to skip",
+);
+
 sub default_attribute {
     'file';
 }
@@ -44,6 +51,12 @@ sub each {
 
    while(<$fh>) {
      chomp;
+	
+     if (length $_ <= 18) {
+	warn "syntax error on line $. : $_";
+	next;
+     }
+
      my $sysid = substr($_,0,9);
      my $tag   = substr($_,10,3);
      my $ind1  = substr($_,13,1);
@@ -55,7 +68,7 @@ sub each {
      if (defined $prev_id && $prev_id != $sysid) {
 
         if (defined $callback) {
-            $callback->( $mapper ? $mapper->($rec) : $rec ); 
+            $callback->( $mapper ? $mapper->($rec) : $rec ) if ($self->skip <= $num); 
         }
 
         $num++;

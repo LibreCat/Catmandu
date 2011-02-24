@@ -11,6 +11,6 @@ CATMANDU=${HOME}/Dev/perl/Catmandu
 PROJ=${CATMANDU}/examples/aleph
 
 ${PERL} ${CATMANDU}/bin/catmandu convert \
-     -I Aleph -i map=${PROJ}/data/aleph.map \
+     -I Aleph -i map=${PROJ}/data/aleph.map -i skip=$2 \
      --fix=${PROJ}/data/aleph.fix \
      --pretty $1
