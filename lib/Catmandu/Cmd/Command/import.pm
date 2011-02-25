@@ -2,6 +2,7 @@ package Catmandu::Cmd::Command::import;
 # VERSION
 use 5.010;
 use Moose;
+use Time::HiRes qw(gettimeofday tv_interval);
 use Catmandu::Util qw(load_class);
 
 extends qw(Catmandu::Cmd::Command);
@@ -35,6 +36,8 @@ sub execute {
     my $verbose = $self->verbose;
 
     my $count = 0;
+    my $t0 = [gettimeofday];
+
     my $n = $importer->each(sub {
         my $obj = $_[0];
         $store->save($obj);
@@ -42,7 +45,7 @@ sub execute {
         $count++;
 
         if ($verbose and $count % 100 == 0) {
-            say "importing: $count...";
+            say sprintf "importing: $count  %d rec/sec..." , $count/tv_interval($t0);
         }
     });
 

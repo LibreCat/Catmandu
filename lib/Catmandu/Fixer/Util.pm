@@ -28,11 +28,11 @@ sub path_and_field {
 }
 
 sub path_values {
-    my $path = pop;
-    my $obj  = pop;
-    return $obj                if not $path; # root path
-    return $path->values($obj) if ref $path; # path
-    return $path;                            # scalar
+    my ($obj,$path_or_value) = @_;
+
+    return $obj                         if not $path_or_value; # root path
+    return $path_or_value->values($obj) if ref $path_or_value eq 'JSON::Path'; # path
+    return $path_or_value;                                     # value 
 }
 
 1;

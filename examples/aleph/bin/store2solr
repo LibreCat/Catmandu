@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PERL="/usr/bin/perl"
+CATMANDU=${HOME}/Dev/perl/Catmandu
+PROJ=${CATMANDU}/examples/aleph
+
+${PERL} ${CATMANDU}/bin/catmandu index -v \
+     -T Solr -t id_field=fSYS \
+     --fix=${PROJ}/data/index.fix \
+     -s path=data/aleph.db 

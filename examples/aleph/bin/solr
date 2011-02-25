@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# solr
+#
+# chkconfig: 345 95 25
+# description: solr script
+#
+. /etc/rc.d/init.d/functions
+
+SOLR_DIR="/home/ec2-user/Dev/perl/Catmandu/examples/aleph/engine"
+JAVA_OPTIONS="-Xmx1024m -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
+LOG_FILE="/tmp/solr.log"
+JAVA="/usr/java/latest/bin/java"
+
+case $1 in
+    start)
+        echo "Starting Solr"
+        cd $SOLR_DIR
+        $JAVA $JAVA_OPTIONS 2> $LOG_FILE &
+        ;;
+    stop)
+        echo "Stopping Solr"
+        cd $SOLR_DIR
+        $JAVA $JAVA_OPTIONS --stop
+        ;;
+    status)
+        status solr
+        ;;
+    restart)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}" >&2
+        exit 1
+        ;;
+esac

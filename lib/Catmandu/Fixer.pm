@@ -17,6 +17,10 @@ sub load_fix_arg {
         return JSON::Path->new($arg);
     } elsif ($arg eq '$') {
         return undef;
+    } else {
+        my $val = eval $arg;
+        confess "Whoops : $@" if $@;
+        return $val;
     }
 
     confess "Invalid argument";

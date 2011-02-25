@@ -44,11 +44,18 @@ sub each {
 
    while(<$fh>) {
      chomp;
-     my ($sysid,@data)  = &parse_line($_);
- 
+     my $sysid = substr($_,0,9);
+     my $tag   = substr($_,10,3);
+     my $ind1  = substr($_,13,1);
+     my $ind2  = substr($_,14,1);
+     my $char  = substr($_,16,1);
+     my $data  = substr($_,18);
+     my @parts = ('_' , split(/\$\$(.)/, $data) );
+
      if (defined $prev_id && $prev_id != $sysid) {
+
         if (defined $callback) {
-            $callback->( $mapper->($rec) ); 
+            $callback->( $mapper ? $mapper->($rec) : $rec ); 
         }
 
         $num++;
@@ -57,12 +64,12 @@ sub each {
      }
 
      $rec->{id} = $sysid;
-     push @{$rec->{data}}, [@data];
+     push @{$rec->{data}}, [$tag, $ind1, $ind2, $char , @parts];
 
      $prev_id = $sysid;
    }
 
-   if (defined $callback) {
+   if (defined $callback && defined $mapper) {
       $callback->( $mapper->($rec) ); 
    }
 
@@ -107,7 +114,7 @@ sub file_map {
 #
 sub mapper {
     my ($self,$map) = @_;
-    $map = [] unless $map;
+    return undef unless $map;
 
     my $dc = {};
    
@@ -121,8 +128,11 @@ EOF
 
     while (@$map) {
         my ($key,$value) = splice(@$map, 0, 2);
-
-        if ($key =~ /^([A-Z0-9*]{3})(\+([a-z0-9]+))?(\-([a-z0-9]+))?/) {
+        
+        if ($key eq 'MRC') {
+            $eval .= "   push \@{\$dc->{$value}} , \$rec;\n";
+        }
+        elsif ($key =~ /^([A-Z0-9*]{3})(\+([a-z0-9]+))?(\-([a-z0-9]+))?/) {
             my $field    = $1; $field =~ s/\*/./g;
             my $includes = $3 ? join '|' , split (// , $3) : undef;
             my $excludes = $5 ? join '|' , split (// , $5) : undef;
@@ -169,7 +179,7 @@ sub clean_empty {
 sub field {
     my ($rec,$field, %opts) = @_;
 
-    my @fields = grep { $_->[0] =~ /$field/ } @{$rec->{data}};
+    my @fields = grep { $_->[0] eq $field } @{$rec->{data}};
 
     my @out = ();
 
@@ -184,34 +194,16 @@ sub field {
             next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/;
             next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/;
 
-            push (@values, $v[1]);
+            push (@values, $v[1]) if length $v[1];
         }
 
         my $str = join(" ",@values);
         $str =~ s/(^\s+|\s+$)//;
 
-        push @out , $str;
+        push @out , $str if length $str;
     }
 
     @out; 
-}
-
-# Parse ALEPH sequential lines into Perl arrays
-#
-# [ '0123456789' , '001' , ' ' , ' ' , 'L' , '_' , '0123456789' ]
-# [ '0123456789' , '100' , ' ' , ' ' , 'L' , 'a' , 'Mijn konijn' ]
-sub parse_line {
-    my ($line) = @_;
-    my $sysid = substr($line,0,9);
-    my $tag   = substr($line,10,3);
-    my $ind1  = substr($line,13,1);
-    my $ind2  = substr($line,14,1);
-    my $char  = substr($line,16,1);
-    my $data  = substr($line,18);
-
-    my @parts = ('_' , split(/\$\$(.)/, $data) );
-
-    ( $sysid , $tag , $ind1 , $ind2 , $char , @parts );
 }
 
 __PACKAGE__->meta->make_immutable;
