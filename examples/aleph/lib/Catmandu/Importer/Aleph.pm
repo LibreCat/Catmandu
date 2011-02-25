@@ -31,6 +31,13 @@ has skip => (
     documentation => "Number of records to skip",
 );
 
+has count => (
+    is => 'ro',
+    isa => 'Int',
+    default => -1,
+    documentation => "Number of records to skip",
+);
+
 sub default_attribute {
     'file';
 }
@@ -52,10 +59,7 @@ sub each {
    while(<$fh>) {
      chomp;
 	
-     if (length $_ <= 18) {
-	warn "syntax error on line $. : $_";
-	next;
-     }
+     next unless (length $_ >= 18);
 
      my $sysid = substr($_,0,9);
      my $tag   = substr($_,10,3);
@@ -71,9 +75,11 @@ sub each {
             $callback->( $mapper ? $mapper->($rec) : $rec ) if ($self->skip <= $num); 
         }
 
+        $rec = {};
+
         $num++;
 
-        $rec = {};
+	last if ($self->count != -1 && $num == $self->count + $self->skip);
      }
 
      $rec->{id} = $sysid;
@@ -82,8 +88,8 @@ sub each {
      $prev_id = $sysid;
    }
 
-   if (defined $callback && defined $mapper) {
-      $callback->( $mapper->($rec) ); 
+   if (defined $callback && defined $mapper && keys %$rec) {
+       $callback->( $mapper->($rec) ); 
    }
 
    $num++;
@@ -193,7 +199,7 @@ sub field {
     my ($rec,$field, %opts) = @_;
 
     return $rec->{id} if $field eq 'SYS';
-
+   
     my @fields = grep { $_->[0] eq $field } @{$rec->{data}};
 
     my @out = ();
@@ -203,9 +209,7 @@ sub field {
         my @data   = @$_[4 .. $len -1 ];
         my @values = ();
 
-        my $it = natatime 2, @data;
-
-        INNER: while (my @v = $it->() ) {
+        INNER: while (my @v = splice(@data,0,2)) {
             next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/;
             next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/;
 

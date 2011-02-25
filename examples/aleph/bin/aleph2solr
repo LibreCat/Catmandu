@@ -22,9 +22,7 @@ PERL="/usr/bin/perl"
 CATMANDU=${HOME}/Dev/perl/Catmandu
 PROJ=${CATMANDU}/examples/aleph
 
-cd ${PROJ}
-
-${PERL} ${CATMANDU}/bin/catmandu convert \
-     -I Aleph -i map=./data/aleph.map -i count=$COUNT -i skip=$SKIP \
-     --fix=./data/aleph.fix \
-     --pretty $1
+${PERL} ${CATMANDU}/bin/catmandu index -v \
+     -T Solr -t id_field=fSYS \
+     -S Catmandu::Importer::Aleph -s map=${PROJ}/data/aleph.map -s file=$1 -s count=$COUNT -s skip=$SKIP \
+     --fix=${PROJ}/data/aleph.fix 

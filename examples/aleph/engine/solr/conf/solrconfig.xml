@@ -686,7 +686,7 @@
   WANT FOR YOUR PRODUCTION SYSTEM!
   #############################################################################
   -->
-  <requestHandler name="/spell" class="solr.SearchHandler" lazy="true">
+  <requestHandler name="/spellCheckCompRH" class="solr.SearchHandler" lazy="true">
     <lst name="defaults">
       <!-- omp = Only More Popular -->
       <str name="spellcheck.onlyMorePopular">false</str>
@@ -694,6 +694,8 @@
       <str name="spellcheck.extendedResults">false</str>
       <!--  The number of suggestions to return -->
       <str name="spellcheck.count">1</str>
+      <!-- Max query time -->
+      <int name="timeAllowed">30000</int>
     </lst>
     <arr name="last-components">
       <str>spellcheck</str>
