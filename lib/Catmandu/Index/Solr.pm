@@ -111,10 +111,10 @@ sub search {
 
     $self->commit;
 
-    my $start = $opts{start};
-    my $limit = $opts{limit};
+    my $start = $opts{start}; delete $opts{start};
+    my $limit = $opts{limit}; delete $opts{limit};
 
-    my $response = $self->_indexer->search($query, {start => $start , rows => $limit});
+    my $response = $self->_indexer->search($query, {start => $start , rows => $limit , %opts});
 
     my $docs = $response->content->{response}->{docs};
     my $hits = $response->content->{response}->{numFound};
