@@ -68,8 +68,7 @@
   <!-- Used to specify an alternate directory to hold all index data
        other than the default ./data under the Solr home.
        If replication is in use, this should match the replication configuration. -->
-  <dataDir>${solr.data.dir:./solr/data}</dataDir>
-
+   <dataDir>${solr.data.dir:./solr/data}</dataDir>
 
   <!-- WARNING: this <indexDefaults> section only provides defaults for index writers
        in general. See also the <mainIndex> section after that when changing parameters
@@ -81,12 +80,12 @@
     <mergeFactor>10</mergeFactor>
     <!-- If both ramBufferSizeMB and maxBufferedDocs is set, then Lucene will flush
      based on whichever limit is hit first.  -->
-    <!--<maxBufferedDocs>1000</maxBufferedDocs>-->
+    <maxBufferedDocs>1000</maxBufferedDocs>
 
     <!-- Sets the amount of RAM that may be used by Lucene indexing
       for buffering added documents and deletions before they are
       flushed to the Directory.  -->
-    <ramBufferSizeMB>32</ramBufferSizeMB>
+    <ramBufferSizeMB>256</ramBufferSizeMB>
     <!-- <maxMergeDocs>2147483647</maxMergeDocs> -->
     <maxFieldLength>10000</maxFieldLength>
     <writeLockTimeout>1000</writeLockTimeout>

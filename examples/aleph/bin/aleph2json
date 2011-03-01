@@ -1,30 +1,25 @@
 #!/bin/bash
 
-if [ "$1" == "" ]; then
- echo "usage: $0 file"
- exit 1
-fi
-
-if [ "$2" == "" ]; then
-  COUNT=-1
-else
-  COUNT=$2
-fi
-
-if [ "$3" == "" ]; then
-  SKIP=0
-else
-  SKIP=$3
-fi
-
-#PERL="/usr/bin/perl -d:NYTProf"
 PERL="/usr/bin/perl"
 CATMANDU=${HOME}/Dev/perl/Catmandu
 PROJ=${CATMANDU}/examples/aleph
 
-cd ${PROJ}
+if [ "$1" == "" -o "$2" == "" ]; then
+ echo "usage: $0 file type"
+ exit 1
+fi
 
+TYPE_FIX=""
+
+if [ -r ${PROJ}/data/${2}.fix ]; then
+ TYPE_FIX="--fix=${PROJ}/data/${2}.fix"
+else
+ echo "failed to read =${PROJ}/data/${TYPE}.fix"
+ exit 2
+fi
+
+zcat $1 | \
 ${PERL} ${CATMANDU}/bin/catmandu convert \
-     -I Aleph -i map=./data/aleph.map -i count=$COUNT -i skip=$SKIP \
-     --fix=./data/aleph.fix \
-     --pretty $1
+     -I Aleph -i map=${PROJ}/data/aleph.map  \
+     ${TYPE_FIX} \
+     --pretty /dev/stdin

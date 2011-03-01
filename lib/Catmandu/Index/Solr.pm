@@ -2,6 +2,7 @@ package Catmandu::Index::Solr;
 
 use Moose;
 use Hash::Flatten qw(:all);
+use Data::Dumper;
 use WebService::Solr;
 use WebService::Solr::Field;
 use WebService::Solr::Document;
@@ -82,28 +83,63 @@ sub save {
 
 sub _save {
     my $self = shift;
-    
-    $self->_indexer->add($self->_stack);
+    my $ok   = 1;
+ 
+    eval {  
+    	$self->_indexer->add($self->_stack);
+    	$self->_indexer->commit;
+    };
+
+    if ($@) {
+	warn "ERROR: $@";
+	warn Dumper($self->_stack);
+	$ok = 0;
+    }
+
     $self->_stack([]);
+
+    $ok;
 }
 
 sub delete {
     my ($self,$obj) = @_;
     my $id_field = $self->id_field;
+    my $ok = 1;
 
     my $id = ref $obj eq 'HASH' ? $obj->{$id_field} :
                                   $obj;
 
     $id or confess "Missing $id_field";
 
-    $self->_indexer->delete({ $id_field => $id });
+    eval {
+    	$self->_indexer->delete_by_query("$id_field:$id");
+    };
+
+    if ($@) {
+	warn "ERROR: $@";
+	warn Dumper({ $id_field => $id });
+	$ok = 0;
+    }
+
+    $ok;
 }
 
 sub commit {
     my ($self) = @_;
+    my $ok = 1;
+	
+    eval {
+    	$self->_save;
+    	$self->_indexer->commit;
+    };
 
-    $self->_save;
-    $self->_indexer->commit;
+    if ($@) {
+	warn "ERROR: $@";
+	warn "COMMIT";
+	$ok = 0;
+    }
+
+    $ok;
 }
 
 sub search {

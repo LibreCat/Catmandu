@@ -63,8 +63,8 @@ sub each {
 
      my $sysid = substr($_,0,9);
      my $tag   = substr($_,10,3);
-     my $ind1  = substr($_,13,1);
-     my $ind2  = substr($_,14,1);
+     my $ind1  = substr($_,13,1); $ind1 =~ s/\W/ /;
+     my $ind2  = substr($_,14,1); $ind2 =~ s/\W/ /;
      my $char  = substr($_,16,1);
      my $data  = substr($_,18);
      my @parts = ('_' , split(/\$\$(.)/, $data) );

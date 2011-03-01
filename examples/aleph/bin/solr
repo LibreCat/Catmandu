@@ -8,7 +8,8 @@
 . /etc/rc.d/init.d/functions
 
 SOLR_DIR="/home/ec2-user/Dev/perl/Catmandu/examples/aleph/engine"
-JAVA_OPTIONS="-Xmx1024m -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
+DATA_DIR="/data/solr"
+JAVA_OPTIONS="-Xmx1024m -Dsolr.data.dir=${DATA_DIR} -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
 LOG_FILE="/tmp/solr.log"
 JAVA="/usr/java/latest/bin/java"
 
