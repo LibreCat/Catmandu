@@ -8,12 +8,10 @@ extends qw(Catmandu::Cmd::Command);
 
 with qw(MooseX::Daemonize);
 
-requires 'run_daemon';
-
 after start => sub {
     my $self = shift;
     $self->run_daemon if $self->is_daemon;
-}
+};
 
 sub execute {
     my ($self, $opts, $args) = @_;
@@ -28,6 +26,8 @@ sub execute {
         }
     }
 }
+
+sub run_daemon {}
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
