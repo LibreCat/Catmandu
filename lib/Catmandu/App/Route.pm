@@ -7,6 +7,7 @@ use Moose;
 has app => (
     is => 'ro',
     required => 1,
+    weak_ref => 1,
 );
 
 has handler => (
