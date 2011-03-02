@@ -39,7 +39,10 @@ sub _fixme {
 
     my $expr = $self->expr;
 
-    if (ref $val eq 'ARRAY') {
+    if (!defined $val) {
+	undef;
+    }
+    elsif (ref $val eq 'ARRAY') {
         join($expr, @$val)
     } 
     elsif (ref $val eq 'HASH') {

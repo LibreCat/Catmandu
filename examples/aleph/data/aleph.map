@@ -23,6 +23,7 @@ SYS     fSYS
 008     period
 008     lang
 009     collection
+022     _issn
 
 100     author
 111     author
@@ -73,4 +74,3 @@ SYS     all
 260     all
 700     all
 720     all
-Z30+5   all
