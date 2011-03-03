@@ -147,9 +147,10 @@ use Catmandu::Fixer;
 has fix => (
     traits => ['Getopt'],
     is => 'rw',
-    isa => 'Str',
+    isa => 'ArrayRef[Str]',
+    lazy => 1,
     predicate => 'has_fix',
-    documentation => "Path to the fix definition file to use.",
+    documentation => "Fixes or paths to the fix definition file.",
 );
 
 has fixer => (
@@ -162,12 +163,20 @@ has fixer => (
 
 sub _build_fixer {
     my $self = shift;
-    my @args = $self->has_fix ? slurp($self->fix) : ();
-    Catmandu::Fixer->new(@args);
+    my @fixes;
+
+    for my $fix (@{$self->fix}) {
+        if ($fix =~ /^\s*(\w+)\((.*)\)\s*$/) {
+            push @fixes, $fix;
+        } else {
+            my @lines = slurp($fix);
+            push @fixes, @lines;
+        }
+    }
+
+    Catmandu::Fixer->new(@fixes);
 }
 
 no Moose::Role;
 no File::Slurp;
-
 1;
-
