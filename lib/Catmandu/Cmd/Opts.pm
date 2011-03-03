@@ -150,6 +150,7 @@ has fix => (
     isa => 'ArrayRef[Str]',
     lazy => 1,
     predicate => 'has_fix',
+    default => sub { [] },
     documentation => "Fixes or paths to the fix definition file.",
 );
 
