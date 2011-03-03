@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+
+use Catmandu::Index::Solr;
+
+my $clause = shift;
+
+die "usage: $0 clause" unless $clause;
+
+my $solr = new Catmandu::Index::Solr;
+
+$solr->delete_where($clause);
+$solr->commit;

@@ -77,7 +77,10 @@ sub BUILD {
 sub parse {
     my $self = shift;
     my $val  = shift;
-    $val = [] unless $val;
+
+    unless ($val) {
+      return { years => [] , text => "" };
+    }
 
     my $res = $self->parser->startrule(join "; ", @$val);
 

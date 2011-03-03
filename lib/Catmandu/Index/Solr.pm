@@ -124,6 +124,23 @@ sub delete {
     $ok;
 }
 
+sub delete_where {
+    my ($self,$clause) = @_;
+    my $ok = 1;
+  
+    eval {
+    	$self->_indexer->delete_by_query("$clause");
+    };
+
+    if ($@) {
+	warn "ERROR: $@";
+	warn $clause;
+	$ok = 0;
+    }
+
+    $ok;
+}
+
 sub commit {
     my ($self) = @_;
     my $ok = 1;

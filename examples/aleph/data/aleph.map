@@ -43,8 +43,6 @@ SYS     fSYS
 
 245     title_sort
 
-250+a   edition
-
 852+a   holding
 852+b   department
 852+c   library

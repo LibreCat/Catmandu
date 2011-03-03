@@ -37,15 +37,17 @@ sub _fixme {
 
     return undef unless $val;
 
-    my $expr = $self->expr;
+    my $expr = $self->expr || ' ';
 
     if (!defined $val) {
 	undef;
     }
     elsif (ref $val eq 'ARRAY') {
-        join($expr, @$val)
+	no warnings;
+        join($expr, @$val);
     } 
     elsif (ref $val eq 'HASH') {
+	no warnings;
         join($expr, values(%$val));
     }
     else {

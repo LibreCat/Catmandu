@@ -9,17 +9,22 @@ if [ "$1" == "" -o "$2" == "" ]; then
  exit 1
 fi
 
-TYPE_FIX=""
+FILE="$1"
+TYPE="$2"
 
-if [ -r ${PROJ}/data/${2}.fix ]; then
- TYPE_FIX="--fix=${PROJ}/data/${2}.fix"
-else
- echo "failed to read =${PROJ}/data/${TYPE}.fix"
- exit 2
+FILTER="cat"
+
+if [ "$2" == "ejn01" ]; then
+  FILTER="${PERL} ${PROJ}/bin/marc2aleph --fix add_field('920','','',a=>'ejournal') /dev/stdin"
 fi
 
-zcat $1 | \
+zcat ${FILE} | ${FILTER} | \
 ${PERL} ${CATMANDU}/bin/catmandu convert \
      -I Aleph -i map=${PROJ}/data/aleph.map  \
-     ${TYPE_FIX} \
+     --fix="add_field($.source,'${TYPE}')"  \
+     --fix="replace(\$._id,'^','${TYPE}')" \
+     --fix="copy_field(\$.fSYS,'${TYPE}')" \
+     --fix="join(\$.${TYPE},'')" \
+     --fix="${PROJ}/data/aleph.fix" \
+     --fix="${PROJ}/data/${TYPE}.fix" \
      --pretty /dev/stdin

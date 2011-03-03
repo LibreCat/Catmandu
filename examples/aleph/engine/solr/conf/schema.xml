@@ -399,12 +399,12 @@
     <fieldType name="lupetext" class="solr.TextField" positionIncrementGap="0">
       <analyzer type="index">
         <tokenizer class="solr.PatternTokenizerFactory" pattern="[^\p{L}\p{N}]+"/>
-		<filter class="solr.LowerCaseFilterFactory"/>
-	    <filter class="solr.ISOLatin1AccentFilterFactory"/>
+	<filter class="solr.LowerCaseFilterFactory"/>
+	<filter class="solr.ISOLatin1AccentFilterFactory"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.PatternTokenizerFactory" pattern="[^\p{L}\p{N}]+"/>
-		<filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
       	<filter class="solr.ISOLatin1AccentFilterFactory"/> 
        	<filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="true"/>
       </analyzer>
@@ -415,26 +415,24 @@
 
 
  <fields>
-   <field name="all" type="lupetext" indexed="true" stored="false" multiValued="true"/>   
-   <field name="author" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
-   <field name="barcode" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
-   <field name="bak" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
-   <field name="period" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="collection" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
-   <field name="cid" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
-   <field name="department" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
-   <field name="edition" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="eid" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
-   <field name="faculty" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
+   <field name="all" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="author" type="lupetext" indexed="true" stored="false" multiValued="true"/>   
+   <field name="barcode" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="bak" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="period" type="string" indexed="true" stored="false" multiValued="false"/>   
+   <field name="collection" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="cid" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="department" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="faculty" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="fDATE" type="string" indexed="true" stored="true" multiValued="false"/>   
    <field name="fXML" type="string" indexed="false" stored="true" multiValued="false"/>   
    <field name="fSYS" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="holding" type="string" indexed="true" stored="true" multiValued="true"/>
-   <field name="impact" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="lang" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="library" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
-   <field name="location" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
-   <field name="material" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
+   <field name="holding" type="lupetext" indexed="true" stored="false" multiValued="false"/>
+   <field name="holding_txt" type="string" indexed="false" stored="true" multiValued="false"/>
+   <field name="impact" type="string" indexed="true" stored="false" multiValued="false"/>   
+   <field name="lang" type="string" indexed="true" stored="false" multiValued="false"/>   
+   <field name="library" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="location" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="rug01" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="rug02" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="rug03" type="string" indexed="true" stored="false" multiValued="false"/>   
@@ -468,18 +466,16 @@
    <field name="ovk01" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="img01" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="pug01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="perm" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
+   <field name="perm" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="source" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="status" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
-   <field name="title" type="lupetext" indexed="true" stored="true" multiValued="true"/>   
+   <field name="status" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="title" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false"/>
-   <field name="type" type="lupetext" indexed="true" stored="true" multiValued="false"/>   
-   <field name="year" type="string" indexed="true" stored="true" multiValued="false"/>
+   <field name="type" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="year" type="string" indexed="true" stored="false" multiValued="false"/>
  </fields>
 
  <uniqueKey>fSYS</uniqueKey>
  <defaultSearchField>all</defaultSearchField>
  <solrQueryParser defaultOperator="AND"/>
-
- <copyField source="fSYS" dest="all"/>
 </schema>

@@ -55,18 +55,25 @@ sub each {
    binmode $fh, ':utf8';
 
    my $mapper  = $self->mapper( $self->inline_map || $self->file_map );
+   my $id_len  = undef;
 
    while(<$fh>) {
      chomp;
 	
      next unless (length $_ >= 18);
-
-     my $sysid = substr($_,0,9);
-     my $tag   = substr($_,10,3);
-     my $ind1  = substr($_,13,1); $ind1 =~ s/\W/ /;
-     my $ind2  = substr($_,14,1); $ind2 =~ s/\W/ /;
-     my $char  = substr($_,16,1);
-     my $data  = substr($_,18);
+     
+     # dynamically guess the id length
+     unless ($id_len) {
+	my ($id) = ($_ =~ /^(\S+)/g);
+        $id_len = length $id;
+     }
+     
+     my $sysid = substr($_,0,$id_len);
+     my $tag   = substr($_,$id_len+1,3);
+     my $ind1  = substr($_,$id_len+4,1); $ind1 =~ s/\W/ /;
+     my $ind2  = substr($_,$id_len+5,1); $ind2 =~ s/\W/ /;
+     my $char  = substr($_,$id_len+7,1);
+     my $data  = substr($_,$id_len+9);
      my @parts = ('_' , split(/\$\$(.)/, $data) );
 
      if (defined $prev_id && $prev_id != $sysid) {
@@ -213,7 +220,7 @@ sub field {
             next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/;
             next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/;
 
-            push (@values, $v[1]) if length $v[1];
+            push (@values, $v[1]) if defined $v[1] && length $v[1];
         }
 
         my $str = join(" ",@values);

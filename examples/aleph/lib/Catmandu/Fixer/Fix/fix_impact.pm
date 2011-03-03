@@ -2,6 +2,7 @@ package Catmandu::Fixer::Fix::fix_impact;
 # Calculate the JCR impact factor of an ISSN number
 # VERSION
 use Moose;
+use List::Util qw(first);
 use Catmandu::Fixer::Util qw(path_and_field path_values);
 
 extends qw(Catmandu::Fixer::Fix);
@@ -58,7 +59,7 @@ sub _fixme {
     my ($self,$val, $callback) = @_;
 
     if (ref $val eq 'ARRAY') {
-        [ map { $callback->($_)  } @$val ];
+        [ first { $_ > 0.000 } sort {$a <=>$b} map { $callback->($_)  } @$val ];
     } else {
         $callback->($val);
     }
