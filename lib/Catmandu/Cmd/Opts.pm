@@ -142,6 +142,7 @@ package Catmandu::Cmd::Opts::Fix;
 # VERSION
 use Moose::Role;
 use File::Slurp qw(slurp);
+use Catmandu::Util qw(unquote);
 use Catmandu::Fixer;
 
 has fix => (
@@ -167,8 +168,8 @@ sub _build_fixer {
     my @fixes;
 
     for my $fix (@{$self->fix}) {
-        if ($fix =~ /^\s*(\w+)\((.*)\)\s*$/) {
-            push @fixes, $fix;
+        if ($fix =~ /\w+\(.+\)/) {
+            push @fixes, unquote($fix);
         } else {
             my @lines = slurp($fix);
             push @fixes, @lines;
