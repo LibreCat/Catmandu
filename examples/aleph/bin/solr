@@ -5,13 +5,18 @@
 # chkconfig: 345 95 25
 # description: solr script
 #
-. /etc/rc.d/init.d/functions
 
-SOLR_DIR="/home/ec2-user/Dev/perl/Catmandu/examples/aleph/engine"
-DATA_DIR="/data/solr"
-JAVA_OPTIONS="-Xmx1024m -Dsolr.data.dir=${DATA_DIR} -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
+if [ "${SOLR_DIR}" == "" ]; then
+    SOLR_DIR="./engine"
+fi
+
+if [ "${SOLR_DATA_DIR}" == "" ]; then
+    SOLR_DATA_DIR="./solr/data"
+fi
+
+JAVA_OPTIONS="-Xmx1024m -Dsolr.data.dir=${SOLR_DATA_DIR} -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
 LOG_FILE="/tmp/solr.log"
-JAVA="/usr/java/latest/bin/java"
+JAVA="java"
 
 case $1 in
     start)

@@ -1,10 +1,18 @@
 #!/bin/bash
 
-PERL="/usr/bin/perl"
-CATMANDU=${HOME}/Dev/perl/Catmandu
-PROJ=${CATMANDU}/examples/aleph
+PERL="perl"
+
+if [ "${CATMANDU_HOME}" == "" ]; then
+    CATMANDU_HOME="../.."
+fi
+
+if [ "${ALEPH_HOME}" == "" ]; then
+    ALEPH_HOME=${CATMANDU_HOME}/examples/aleph
+fi
+
+PROJ=${ALEPH_HOME}
 
 ${PERL} ${CATMANDU}/bin/catmandu index -v \
      -T Solr -t id_field=fSYS \
      --fix=${PROJ}/data/index.fix \
-     -s path=data/aleph.db 
+     -s path=${PROJ}/data/aleph.db 

@@ -1,8 +1,16 @@
 #!/bin/bash
 
-PERL="/usr/bin/perl"
-CATMANDU=${HOME}/Dev/perl/Catmandu
-PROJ=${CATMANDU}/examples/aleph
+PERL="perl"
+
+if [ "${CATMANDU_HOME}" == "" ]; then
+    CATMANDU_HOME="../.."
+fi
+
+if [ "${ALEPH_HOME}" == "" ]; then
+    ALEPH_HOME=${CATMANDU_HOME}/examples/aleph
+fi
+
+PROJ=${ALEPH_HOME}
 
 if [ "$1" == "" -o "$2" == "" ]; then
  echo "usage: $0 file type"
@@ -19,7 +27,7 @@ if [ "$2" == "ejn01" ]; then
 fi
 
 zcat ${FILE} | ${FILTER} | \
-${PERL} ${CATMANDU}/bin/catmandu index -v \
+${PERL} ${CATMANDU_HOME}/bin/catmandu index -v \
      -T Solr -t id_field=fSYS \
      -S Catmandu::Importer::Aleph -s map=${PROJ}/data/aleph.map -s file=/dev/stdin \
      --fix="add_field($.source,'${TYPE}')"  \

@@ -1,15 +1,24 @@
 #!/bin/bash
 
-PERL="/usr/bin/perl"
-CATMANDU=${HOME}/Dev/perl/Catmandu
-PROJ=${CATMANDU}/examples/aleph
+PERL="perl"
+
+if [ "${CATMANDU_HOME}" == "" ]; then
+    CATMANDU_HOME="../.."
+fi
+
+if [ "${ALEPH_HOME}" == "" ]; then
+    ALEPH_HOME=${CATMANDU_HOME}/examples/aleph
+fi
+
+PROJ=${ALEPH_HOME}
+
 
 if [ "$1" == "" ]; then
-  ${PERL} ${CATMANDU}/bin/catmandu export \
+  ${PERL} ${CATMANDU_HOME}/bin/catmandu export \
      --pretty \
-     -s path=data/aleph.db 
+     -s path=${PROJ}/data/aleph.db 
 else
-  ${PERL} ${CATMANDU}/bin/catmandu export \
+  ${PERL} ${CATMANDU_HOME}/bin/catmandu export \
      --pretty -l $1 \
-     -s path=data/aleph.db 
+     -s path=${PROJ}/data/aleph.db 
 fi
