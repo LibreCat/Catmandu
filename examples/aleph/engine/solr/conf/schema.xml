@@ -433,39 +433,6 @@
    <field name="lang" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="library" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="location" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
-   <field name="rug01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="rug02" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="rug03" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="ser01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="bkt01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="ebk01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="ecco01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="eebo1" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="eebo2" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="eebo3" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="eebo4" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="ejn01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="miu01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="hathi" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="dbs01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="dbnl" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cgw01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cgw02" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cgw03" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cgw04" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cgw05" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cgw07" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="hog01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="howest" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="dmg" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="mem01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="miat" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="msk" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="amsab" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="ath01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="ovk01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="img01" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="pug01" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="perm" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="source" type="string" indexed="true" stored="true" multiValued="false"/>   
    <field name="status" type="lupetext" indexed="true" stored="false" multiValued="false"/>   

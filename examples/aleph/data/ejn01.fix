@@ -1,0 +1,56 @@
+#
+# Aleph fix routines
+#
+# Syntax:
+#
+#   add_field(path,value)
+#   rename_field(old_path,new_path)
+#   delete_field(path)
+#   substring(path,offset,length)
+#   replace(path,search,replace)
+#   tolower(path)
+#   toupper(path)
+#   join(path,expr)
+#   lookup(path,config)
+#   fix_faculty(path)
+#   fix_marcxml(path)
+#   fix_impact(path,dest)
+#
+# Where
+#
+#   path is a JSON::Path [http://goessner.net/articles/JsonPath/]
+#
+# $.name        - points to the name field
+# $.name.first  - points to the fist subfield of name
+# $.title[0]    - points to the first title field
+# $..title      - points to all title fields
+#
+# P@ 2011-02
+# 
+
+# Create sort titles of max 80 characters all lowercase no space or special characters
+substring($.title_sort,0,80)
+tolower($.title_sort)
+replace($.title_sort,'[^a-z0-9]','')
+
+# Lookup journal impact factor
+fix_impact($._issn,'impact')
+fix_holding_sfx($.holding,'holding','holding_txt')
+
+# Transform field into MARCML
+fix_marcxml($.fXML)
+
+# Do some cleaning for the indexes..some fields can't be multi-valued
+# we need to 'join' all values
+join($.all,' ')
+join($.fSYS,' ')
+join($.fXML,' ')
+join($.faculty,' ')
+join($.holding, ' ')
+join($.impact,' ')
+join($.title,' ')
+join($.title_sort,' ')
+join($.type,' ')
+
+delete_field($._id)
+delete_field($._issn)

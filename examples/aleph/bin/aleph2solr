@@ -11,20 +11,21 @@ fi
 
 FILE="$1"
 TYPE="$2"
+MAP="${PROJ}/data/aleph.map"
+TYPE_FIX="${PROJ}/data/aleph.fix"
 
-FILTER="cat"
-
-if [ "$2" == "ejn01" ]; then
-  FILTER="${PERL} ${PROJ}/bin/marc2aleph /dev/stdin"
+if [ -r "${PROJ}/data/${TYPE}.map" ]; then
+  MAP="${PROJ}/data/${TYPE}.map"
 fi
 
-zcat ${FILE} | ${FILTER} | \
+if [ -r "${PROJ}/data/${TYPE}.fix" ]; then
+  TYPE_FIX=${PROJ}/data/${TYPE}.fix
+fi
+
+zcat ${FILE} | \
 ${PERL} ${CATMANDU}/bin/catmandu index -v \
      -T Solr -t id_field=fSYS \
-     -S Catmandu::Importer::Aleph -s map=${PROJ}/data/aleph.map -s file=/dev/stdin \
+     -S Catmandu::Importer::Aleph -s map=${MAP} -s file=/dev/stdin \
      --fix="add_field($.source,'${TYPE}')"  \
-     --fix="replace(\$._id,'^','${TYPE}')" \
-     --fix="copy_field(\$.fSYS,'${TYPE}')" \
-     --fix="join(\$.${TYPE},'')" \
-     --fix="${PROJ}/data/aleph.fix" \
-     --fix="${PROJ}/data/${TYPE}.fix" 
+     --fix="replace(\$.fSYS,'^','${TYPE}:')" \
+     --fix="${TYPE_FIX}" 
