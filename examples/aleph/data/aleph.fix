@@ -5,6 +5,7 @@
 #
 #   add_field(path,value)
 #   rename_field(old_path,new_path)
+#   copy_field(old_field,new_field)
 #   delete_field(path)
 #   substring(path,offset,length)
 #   replace(path,search,replace)
@@ -41,6 +42,9 @@ substring($.title_sort,0,80)
 tolower($.title_sort)
 replace($.title_sort,'[^a-z0-9]','')
 
+# Create a created field
+replace($.created,'(\S+) (\S+)','$2$1')
+
 # Special fixes needed to parse faculty out of holding
 fix_faculty($.faculty)
 
@@ -75,6 +79,7 @@ join($.title,' ')
 join($.title_sort,' ')
 join($.type,' ')
 join($.year,' ')
+join($.id,' ')
 
 delete_field($._id)
 delete_field($._issn)

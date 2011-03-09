@@ -40,9 +40,6 @@ sub _build_indexer {
 
 sub save {
     my ($self,$obj) = @_;
-    my $id_field = $self->id_field;
-
-    $obj->{$id_field} or confess "Missing $id_field";
 
     my @fields = ();
 

@@ -404,24 +404,23 @@
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.PatternTokenizerFactory" pattern="[^\p{L}\p{N}]+"/>
-        <filter class="solr.LowerCaseFilterFactory"/>
       	<filter class="solr.ISOLatin1AccentFilterFactory"/> 
+        <filter class="solr.LowerCaseFilterFactory"/>
        	<filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="true"/>
       </analyzer>
     </fieldType>
-    
-
  </types>
 
-
  <fields>
+   <field name="id" type="string" indexed="true" stored="true" multiValued="false"/>   
    <field name="all" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="author" type="lupetext" indexed="true" stored="false" multiValued="true"/>   
    <field name="barcode" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
-   <field name="bak" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="bak" type="string" indexed="false" stored="false" multiValued="false"/>   
    <field name="period" type="string" indexed="true" stored="false" multiValued="false"/>   
-   <field name="collection" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
-   <field name="cid" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="collection" type="string" indexed="true" stored="false" multiValued="false"/>   
+   <field name="cid" type="string" indexed="false" stored="false" multiValued="false"/>   
+   <field name="created" type="string" indexed="true" stored="false" multiValued="true"/>   
    <field name="department" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="faculty" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="fDATE" type="string" indexed="true" stored="true" multiValued="false"/>   
@@ -433,16 +432,26 @@
    <field name="lang" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="library" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="location" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
-   <field name="perm" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="perm" type="string" indexed="false" stored="false" multiValued="false"/>   
    <field name="source" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="status" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="status" type="string" indexed="false" stored="false" multiValued="false"/>   
    <field name="title" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false"/>
-   <field name="type" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="type" type="string" indexed="true" stored="false" multiValued="false"/>   
    <field name="year" type="string" indexed="true" stored="false" multiValued="false"/>
+
+   <dynamicField name="*01" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*02" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*03" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*04" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*05" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*06" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*07" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*08" type="string" indexed="true" stored="false" multiValued="false"/>
+   <dynamicField name="*09" type="string" indexed="true" stored="false" multiValued="false"/>
  </fields>
 
- <uniqueKey>fSYS</uniqueKey>
+ <uniqueKey>id</uniqueKey>
  <defaultSearchField>all</defaultSearchField>
  <solrQueryParser defaultOperator="AND"/>
 </schema>

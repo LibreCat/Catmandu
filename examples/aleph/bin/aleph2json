@@ -35,9 +35,11 @@ if [ "$3" == "nofix" ]; then
 fi
 
 zcat ${FILE} | \
-${PERL} ${CATMANDU}/bin/catmandu convert \
+${PERL} ${CATMANDU_HOME}/bin/catmandu convert \
      -I Aleph -i map=${MAP}  \
      --fix="add_field($.source,'${TYPE}')"  \
-     --fix="replace(\$.fSYS,'^','${TYPE}:')" \
+     --fix="copy_field($.id,'${TYPE}')"  \
+     --fix="join($.${TYPE},' ')"  \
+     --fix="replace(\$.id,'^','${TYPE}:')" \
      --fix="${TYPE_FIX}" \
      --pretty /dev/stdin

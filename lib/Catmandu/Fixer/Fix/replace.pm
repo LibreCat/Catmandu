@@ -40,10 +40,12 @@ sub _fixme {
     my $search  = $self->search;
     my $replace = $self->replace;
 
+    my $replace_eval = qq{"$replace"};
+
     if (ref $val eq 'ARRAY') {
-        [ map { $_ =~ s/$search/$replace/g; $_ } @$val ];
+        [ map { $_ =~ s/$search/$replace_eval/eeg; $_ } @$val ];
     } else {
-        $val =~ s/$search/$replace/g;
+        $val =~ s/$search/$replace_eval/g;
         $val;
     }
 }

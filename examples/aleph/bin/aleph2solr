@@ -31,9 +31,10 @@ if [ -r "${PROJ}/data/${TYPE}.fix" ]; then
 fi
 
 zcat ${FILE} | \
-${PERL} ${CATMANDU}/bin/catmandu index -v \
-     -T Solr -t id_field=fSYS \
+${PERL} ${CATMANDU_HOME}/bin/catmandu index -v \
+     -T Solr -t id_field=id \
      -S Catmandu::Importer::Aleph -s map=${MAP} -s file=/dev/stdin \
      --fix="add_field($.source,'${TYPE}')"  \
-     --fix="replace(\$.fSYS,'^','${TYPE}:')" \
+     --fix="copy_field($.id,'${TYPE}')"  \
+     --fix="join($.${TYPE},' ')"  \
      --fix="${TYPE_FIX}" 

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+PERL="/usr/bin/perl"
+CATMANDU=${HOME}/Dev/perl/Catmandu
+PROJ=${CATMANDU}/examples/aleph
+
+if [ "$1" == "" ]; then
+  echo "usage: $0 file"
+  exit 1
+fi
+
+OUTFILE="$1.$$"
+
+zcat $1 | iconv -f ISO88592 -t UTF8  | gzip > $OUTFILE
+
+mv $OUTFILE $1
+

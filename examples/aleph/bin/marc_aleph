@@ -6,26 +6,28 @@ use Data::Dumper;
 use MARC::File::XML ( BinaryEncoding => 'utf8' );
 MARC::File::XML->default_record_format('USMARC');
 
+my $type  = 'XML';
 my $fixes = [];
 
-GetOptions("--fix=s@" => \$fixes);
+GetOptions("fix=s@" => \$fixes , "type=s" => \$type);
 
 my $file = shift;
 
-die "usage: $0 file" unless $file;
+die "usage: $0 [--fix <mmm>]* [--type=XML|MARC] file" unless $file;
 
-my $batch = MARC::Batch->new('XML', $file);
+warn "Parsing: $file as $type...";
+
+my $batch = MARC::Batch->new($type, $file);
 
 my $marc;
+my $cnt = 0;
 while ($marc = $batch->next()) {
-  my $id    = $marc->field('090')->subfield('a');
-
   foreach my $fix (@$fixes) {
     eval "$fix;";
     warn "ERROR: $@" if $@;
   }
 
-  my $aleph = Aleph::Record->new(rec => $marc, fmt => 'BK', seq => $id, enc => 'L');
+  my $aleph = Aleph::Record->new(rec => $marc, fmt => 'BK', seq => ++$cnt , enc => 'L');
   print $aleph->as_aleph_sequential();
 }
 

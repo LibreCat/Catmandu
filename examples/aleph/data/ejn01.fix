@@ -51,6 +51,7 @@ join($.impact,' ')
 join($.title,' ')
 join($.title_sort,' ')
 join($.type,' ')
+join($.id,' ')
 
 delete_field($._id)
 delete_field($._issn)

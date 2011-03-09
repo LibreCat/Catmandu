@@ -17,14 +17,8 @@ DEL     DEL
 
 MRC     fXML
 
-001     id 
-001     fSYS
-005     fDATE
-008     year
-008     period
-008     lang
-009     collection
-022     _issn
+SYS     fSYS
+776     _issn
 
 100     author
 111     author
@@ -44,18 +38,9 @@ MRC     fXML
 
 245     title_sort
 
-852+a   holding
-852+b   department
-852+c   library
-852+c   faculty 
-852+j   location
+866+a   holding
 
 920+a   type
-
-CAT+f   cid
-CAT+x   bak
-STA     perm
-Z30+82	created
 
 SYS     all
 020     all

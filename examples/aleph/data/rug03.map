@@ -17,8 +17,8 @@ DEL     DEL
 
 MRC     fXML
 
-001     id 
-001     fSYS
+SYS     id 
+SYS     fSYS
 005     fDATE
 008     year
 008     period
@@ -55,9 +55,17 @@ MRC     fXML
 CAT+f   cid
 CAT+x   bak
 STA     perm
-Z30+82	created
 
 SYS     all
+L01     all
+L02     all
+L03     all
+L04     all
+L05	all
+L06	all
+L07	all
+L08	all
+L09	all
 020     all
 022     all
 100     all
