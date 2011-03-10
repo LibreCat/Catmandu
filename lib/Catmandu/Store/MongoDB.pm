@@ -1,47 +1,30 @@
 package Catmandu::Store::MongoDB;
-# ABSTRACT: A Catmandu::Store backed by MongoDB
-# VERSION
-use Moose;
 use Data::UUID;
-use Clone ();
 use MongoDB;
+use Catmandu::Class qw(connection db collection);
+use parent qw(
+    Catmandu::Modifiable
+    Catmandu::Pluggable
+);
 
-with qw(Catmandu::Store);
+sub plugin_namespace { 'Catmandu::Store::Plugin' }
 
-has connection_args => (is => 'ro', isa => 'HashRef', required => 1);
-has connection      => (is => 'ro', lazy => 1, builder => '_build_connection');
-has db_name         => (is => 'ro', isa => 'Str', required => 1);
-has db              => (is => 'ro', lazy => 1, builder => '_build_db');
-has collection_name => (is => 'ro', isa => 'Str', required => 1);
-has collection      => (is => 'ro', lazy => 1, builder => '_build_collection');
+sub build {
+    my ($self, $args) = @_;
 
-around BUILDARGS => sub {
-    my ($orig, $class, @args) = @_;
-    my $args = $class->$orig(@args);
-    $args->{connection_args} ||= Clone::clone($class->default_connection_args);
-    $args;
-};
+    my $collection = delete($args->{collection}) || confess("Attribute collection is required");
+    my $db = delete($args->{db}) || confess("Attribute db is required");
 
-sub default_connection_args {
-    {};
-}
-
-sub _build_connection {
-    my $self = shift; MongoDB::Connection->new($self->connection_args);
-}
-
-sub _build_db {
-    my $self = shift; $self->connection->get_database($self->db_name);
-}
-
-sub _build_collection {
-    my $self = shift;
-    $self->db->get_collection($self->collection_name);
+    $self->{connection} = $args->{connection} || MongoDB::Connection->new($args);
+    $self->{db} = $self->connection->get_database($db);
+    $self->{collection} = $self->db->get_collection($collection);
 }
 
 sub load {
     my ($self, $id) = @_;
-    $self->collection->find_one({_id => $self->need_id($id)});
+    $id = $id->{_id} if ref $id eq 'HASH';
+    $id or confess "_id missing";
+    $self->collection->find_one({_id => $id});
 }
 
 sub each {
@@ -57,19 +40,16 @@ sub each {
 
 sub save {
     my ($self, $obj) = @_;
-    my $id = $obj->{$self->id_field} ||= Data::UUID->new->create_str;
-    $self->collection->save($obj);
+    $obj->{_id} ||= Data::UUID->new->create_str;
+    $self->collection->save($obj, {safe => 1});
     $obj;
 }
 
 sub delete {
     my ($self, $id) = @_;
-    $self->collection->remove({_id => $self->need_id($id)});
+    $id = $id->{_id} if ref $id eq 'HASH';
+    $id or confess "_id missing";
+    $self->collection->remove({_id => $id}, {safe => 1});
 }
 
-__PACKAGE__->meta->make_immutable;
-
-no Moose;
-
 1;
-

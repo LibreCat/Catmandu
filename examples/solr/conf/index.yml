@@ -1,5 +1,0 @@
----
-index:
-  class: Catmandu::Index::Solr
-  args:
-    url: http://localhost:8983/solr

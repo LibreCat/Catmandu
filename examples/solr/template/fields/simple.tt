@@ -1,5 +1,0 @@
-[% IF value.size %]
-  [% value.join("; ") | utf8 | html %]
-[% ELSE %]
-  [% value | html | utf8 %]
-[% END %] 

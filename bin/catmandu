@@ -1,17 +1,15 @@
 #!/usr/bin/env perl
-# ABSTRACT: Run Catmandu commands
-# PODNAME: catmandu
 use strict;
 use warnings;
 
 BEGIN {
-    eval "use Catmandu::Cmd" or do {
-        use Path::Class ();
-        use lib Path::Class::file(__FILE__)->dir->parent->subdir('lib')
-            ->absolute->resolve->stringify;
-        use Catmandu::Cmd;
+    eval "use Catmandu::CLI" or do {
+        use File::Spec::Functions qw(catdir);
+        use File::Basename qw(dirname);
+        use Cwd qw(realpath);
+        use lib realpath(catdir(dirname(__FILE__), '..', 'lib'));
+        use Catmandu::CLI;
     };
 }
 
-Catmandu::Cmd->run;
-
+Catmandu::CLI->run;

@@ -1,187 +1,164 @@
 package Catmandu;
-# ABSTRACT: Singleton class representing a Catmandu project
-# VERSION
-use 5.010;
-use MooseX::Singleton;
-use Try::Tiny;
-use Path::Class ();
-use File::Slurp qw(slurp);
-use File::ShareDir ();
+use Catmandu::Sane;
 use List::Util qw(first);
-use Template;
-use Hash::Merge::Simple qw(merge);
-use YAML ();
+use Cwd qw(getcwd realpath);
+use File::Spec::Functions qw(catfile catdir file_name_is_absolute);
+use File::Basename qw(basename);
+use File::Find;
+use File::Slurp qw(slurp);
 use JSON ();
+use YAML ();
+use Template;
 
-with qw(MooseX::LogDispatch);
+our $VERSION = '0.01';
 
-sub _file { Path::Class::file(@_) }
-sub _dir { Path::Class::dir(@_) }
+my $home;
+my $env;
+my $stash;
+my $paths;
+my $renderer;
 
-has home      => (is => 'ro', isa => 'Str', builder => '_build_home');
-has env       => (is => 'ro', isa => 'Str', builder => '_build_env');
-has share_dir => (is => 'ro', isa => 'Str', lazy => 1, builder => '_build_share_dir');
-has stack     => (is => 'ro', isa => 'ArrayRef', lazy => 1, builder => '_build_stack');
-has conf      => (is => 'ro', isa => 'HashRef',  lazy => 1, builder => '_build_conf');
-has template  => (is => 'ro', isa => 'Template', lazy => 1, builder => '_build_template');
-has stash     => (is => 'ro', isa => 'HashRef',  lazy => 1, builder => '_build_stash');
-has log_dispatch_conf => (
-    is => 'ro',
-    isa => 'HashRef',
-    lazy => 1,
-    required => 1,
-    builder => '_build_log_dispatch_conf',
-);
-
-sub _build_home {
-    _dir->absolute->stringify;
+sub default_home {
+    getcwd;
 }
 
-sub _build_env {
+sub default_env {
     'development';
 }
 
-sub _build_share_dir {
-    try {
-        File::ShareDir::dist_dir('Catmandu');
-    } catch {
-        /failed to find share dir for dist/i or confess $_;
-        _file(__FILE__)->dir->parent->subdir('share')
-            ->absolute->resolve->stringify;
-    };
-}
-
-sub _build_stack {
+sub init {
     my $self = shift;
-    my $file = first { -f _file($self->home, $_)->stringify } qw(catmandu.yml catmandu.yaml);
-    $file or return ['catmandu-base'];
-    my $dirs = YAML::LoadFile($file);
-    if (! grep /^catmandu-base$/, @$dirs) {
-        push @$dirs, 'catmandu-base';
-    }
-    [ map { _dir($_)->resolve->stringify } @$dirs ];
-}
+    my $args = ref $_[0] eq 'HASH' ? $_[0] : {@_};
 
-sub _build_conf {
-    my $self = shift;
-    my $conf = {};
-
-    for my $dir (reverse $self->path_list('conf')) {
-        _dir($dir)->recurse(depthfirst => 1, callback => sub {
-            my $file = shift;
-            my $path = $file->stringify;
-            my $hash;
-            return unless -f $path;
-            given ($path) {
-                when (/\.json$/)  { $hash = JSON::decode_json(slurp($file)) }
-                when (/\.ya?ml$/) { $hash = YAML::LoadFile($path) }
-                when (/\.pl$/)    { $hash = do $path }
-            }
-            if (ref $hash eq 'HASH') {
-                $conf = merge($conf, $hash);
-            }
-        });
+    if ($home || $env) {
+        confess "Already initialized";
     }
 
-    # load env specific conf
-    if (my $hash = delete $conf->{$self->env}) {
-        $conf = merge($conf, $hash);
-    }
-
-    $conf;
+    $home = $args->{home} ? realpath($args->{home}) : $self->default_home;
+    $env  = $args->{env}  ? $args->{env}            : $self->default_env;
 }
 
-sub _build_template {
-    my $self = shift;
-    my $args = $self->conf->{template} || {};
-    Template->new({
-        INCLUDE_PATH => $self->paths('template'),
-        ENCODING => 'UTF-8',
-        %$args,
-    });
-}
-
-sub _build_stash {
-    {};
-}
-
-sub _build_log_dispatch_conf {
-    my $self = shift;
-    $self->conf->{logger} || {
-        class     => 'Log::Dispatch::Screen',
-        min_level => 'debug',
-        stderr    => 1,
-        newline   => 1,
-        format    => '[%p] %m at %F line %L',
-    };
+sub load_libs {
+    unshift @INC, $_[0]->path_list('lib');
 }
 
 sub auto {
-    my $self = shift;
-
-    for my $dir (reverse $self->path_list('auto')) {
-        _dir($dir)->recurse(depthfirst => 1, callback => sub {
-            my $file = shift;
-            my $path = $file->stringify;
-            return unless -f $path && $path =~ /\.pl$/;
-            do $path;
-        });
-    }
+    find sub { do $_ if -f and /^\w+\.pl$/ }, reverse $_[0]->path_list('auto') || return;
 }
 
-sub print_template {
-    my ($self, $file, $vars, @rest) = @_;
-    $vars ||= {};
-    $file = "$file.tt" if ! ref $file && $file !~ /\.tt$/;
-    $vars->{catmandu} = $self->instance;
-    $self->template->process($file, $vars, @rest) or
-        confess $self->template->error;
+sub home {
+    $home ||= $_[0]->default_home;
+}
+
+sub env {
+    $env ||= $_[0]->default_env;
+}
+
+sub stash {
+    $stash ||= {};
 }
 
 sub paths {
-    my ($self, $dir) = @_;
-    my @paths = (
-        $self->home,
-        map {
-            _dir($_)->is_absolute ? $_ : _dir(/^catmandu-/ ? $self->share_dir : $self->home, $_)->stringify;
-        } @{$self->stack}
-    );
-    if ($dir) {
-        [ grep { -d $_ } map { _dir($_, $dir)->stringify } @paths ];
+    my ($self, @dir) = @_;
+
+    $paths || do {
+        $paths = [$self->home];
+        if (my $stack = $self->load_conf_file($self->home, 'catmandu')) {
+            push @$paths, map {
+                file_name_is_absolute($_) ? realpath($_) : catdir($self->home, $_);
+            } @$stack;
+        }
+    };
+
+    if (@dir) {
+        [ grep { -d } map { catdir($_, @dir) } @$paths ];
     } else {
-        \@paths;
+        [ @$paths ];
     }
 }
 
 sub path_list {
-    @{$_[0]->paths($_[1])};
+    my ($self, @dir) = @_; @{$self->paths(@dir)};
 }
 
 sub path {
-    my ($self, $dir) = @_;
-    $self->paths($dir)->[0];
-}
+    my ($self, @dir) = @_;
 
-sub files {
-    my ($self, $dir, $file) = @_;
-    [ grep { -f $_ } map { _file($_, $file)->stringify } $self->path_list($dir) ];
+    if (@dir) {
+        $self->paths(@dir)->[0];
+    } else {
+        $self->home;
+    }
 }
 
 sub file {
-    my ($self, $dir, $file) = @_;
-    $self->files($dir, $file)->[0];
+    my ($self, @file) = @_;
+
+    first { -f } map { catfile($_, @file) } $self->path_list;
 }
 
-sub lib {
-    @{$_[0]->paths('lib')};
+sub renderer {
+    my $self = $_[0];
+
+    $renderer ||= Template->new({
+        INCLUDE_PATH => $self->paths('templates'),
+        ENCODING => 'UTF-8',
+        VARIABLES => {
+            catmandu => {
+                default_home => sub { $self->default_home },
+                default_env  => sub { $self->default_env },
+                home  => sub { $self->home },
+                env   => sub { $self->env },
+                stash => sub { $self->stash },
+                paths => sub { $self->paths(@_) },
+                path  => sub { $self->path(@_) },
+                file  => sub { $self->file(@_) },
+            },
+        },
+    });
 }
 
-__PACKAGE__->meta->make_immutable;
-no MooseX::Singleton;
-no Moose;
-no Try::Tiny;
-no File::Slurp;
+sub render {
+    my $self = shift;
+    my $tmpl = shift;
+    unless (ref $tmpl || $tmpl =~ /\.tt$/) {
+        $tmpl = "$tmpl.tt";
+    }
+
+    local $Template::Stash::PRIVATE; # we want to see underscored vars
+
+    $self->renderer->process($tmpl, @_)
+        or confess $self->renderer->error;
+}
+
+sub load_conf_file {
+    my $self = shift;
+    my $file = catfile(@_);
+
+    if ($file =~ /\.(?:ya?ml|json|pl)$/) {
+        -f $file or return;
+    } else {
+        $file = first { -f } map { "$file.$_" } qw(yaml yml json pl) or return;
+    }
+
+    given ($file) {
+        when (/\.json$/)  { return JSON::decode_json(slurp($file)) }
+        when (/\.ya?ml$/) { return YAML::LoadFile($file) }
+        when (/\.pl$/)    { return do $file }
+    }
+}
+
 no List::Util;
-no Hash::Merge::Simple;
+no Cwd;
+no File::Spec::Functions;
+no File::Basename;
+no File::Find;
+no File::Slurp;
 1;
 
+__END__
+=pod
+
+=head1 NAME
+
+Catmandu - web application glue with a focus on storing complex, nested data structures

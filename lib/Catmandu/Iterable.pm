@@ -1,9 +1,9 @@
 package Catmandu::Iterable;
-# ABSTRACT: Role providing collection methods to any class providing an each method
-# VERSION
-use Moose::Role;
+use Catmandu::Sane;
 
-requires 'each';
+sub each {
+    confess "Not implemented";
+}
 
 sub to_array {
     my ($self) = @_;
@@ -174,6 +174,4 @@ sub take {
     $all;
 }
 
-no Moose::Role;
 1;
-

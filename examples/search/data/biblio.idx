@@ -1,9 +1,0 @@
-  $.title                                   title 
-  $.title                                   all
-  $.identifiers..value                      identifiers
-  $.identifiers..value                      all 
-  $.contributors..first_name                author
-  $.contributors..first_name                all 
-  $.contributors..last_name                 author
-  $.contributors..last_name                 all 
-  $._id                                     _id

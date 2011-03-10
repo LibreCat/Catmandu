@@ -1,24 +1,32 @@
 package Catmandu::Store::Hash;
-# ABSTRACT: An in-memory Catmandu::Store backed by a hash
-# VERSION
-use Moose;
 use Data::UUID;
-use Clone ();
+use Clone;
+use Catmandu::Class;
+use parent qw(
+    Catmandu::Modifiable
+    Catmandu::Pluggable
+);
 
-with qw(Catmandu::Store);
+sub plugin_namespace { 'Catmandu::Store::Plugin' }
 
-has hash => (is => 'rw', isa => 'HashRef', required => 1, default => sub { {} });
+sub build {
+    my ($self, $args) = @_;
+    $self->{hash} = $args->{hash} || {};
+}
 
 sub load {
     my ($self, $id) = @_;
-    my $obj = $self->hash->{$self->need_id($id)} or return;
+    $id = $id->{_id} if ref $id eq 'HASH';
+    $id or confess "_id missing";
+    my $obj = $self->{hash}{$id};
+    $obj or return;
     Clone::clone($obj);
 }
 
 sub each {
     my ($self, $sub) = @_;
     my $n = 0;
-    while ( my ($id, $obj) = each(%{$self->hash}) ) {
+    while (my ($id, $obj) = each(%{$self->{hash}})) {
         $sub->(Clone::clone($obj));
         $n++;
     }
@@ -27,19 +35,16 @@ sub each {
 
 sub save {
     my ($self, $obj) = @_;
-    my $id = $obj->{$self->id_field} ||= Data::UUID->new->create_str;
-    $self->hash->{$id} = Clone::clone($obj);
+    my $id = $obj->{_id} ||= Data::UUID->new->create_str;
+    $self->{hash}{$id} = Clone::clone($obj);
     $obj;
 }
 
 sub delete {
     my ($self, $id) = @_;
-    delete $self->hash->{$self->need_id($id)};
+    $id = $id->{_id} if ref $id eq 'HASH';
+    $id or confess "_id missing";
+    delete $self->{hash}{$id};
 }
 
-__PACKAGE__->meta->make_immutable;
-
-no Moose;
-
 1;
-

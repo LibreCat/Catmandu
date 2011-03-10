@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Blogmandu</title>
+</head>
+<body>
+    <h1>Blogmandu</h1>
+    [% IF errors %]
+    [% FOREACH error IN errors %]
+    <p style="font-weight: bold;color:red;">[% error %]</p>
+    [% END %]
+    [% END %]
+    <form action="/" method="post" accept-charset="utf-8">
+      <p><label>Title:</label> <input type="text" name="title"></p>
+      <p><label>Message:</label> <textarea name="message"></textarea></p>
+      <p><input type="submit" value="Post"></p>
+    </form>
+    [% FOREACH post IN posts %]
+     <h3>[% post.title %]</h3>
+      <p style="font-style:italic;">posted at: [% post._created_at %]</p>
+      <p>[% post.message %]</p>
+     </li>
+    [% END %]
+  </ul>
+</body>
+</html>

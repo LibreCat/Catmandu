@@ -1,5 +1,0 @@
-<ul>
-[% FOREACH id IN value %]
- <li><i>[% id.type | utf8 | html %]</i> : [% id.value | utf8 | html %]</li>
-[% END %]
-</ul>

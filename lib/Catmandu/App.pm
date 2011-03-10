@@ -1,311 +1,147 @@
 package Catmandu::App;
-# VERSION
-use 5.010;
-use Moose;
+use Catmandu::Sane;
+use Catmandu::Util;
 
-BEGIN {
-    extends qw(MooseX::MethodAttributes::Inheritable);
+sub base { 'Catmandu::App::Base' }
+
+sub import {
+    my ($self) = @_;
+
+    my $caller = caller;
+
+    Catmandu::Sane->import(level => 2);
+
+    my $stash = {};
+    my $render_vars = {app => $caller};
+    my $middlewares = [];
+    my $mounts = [];
+    my $routes = [];
+    my $env;
+    my $request;
+
+    Catmandu::Util::add_parent($caller, $self->base);
+    Catmandu::Util::add_subroutine($caller,
+        app         => sub { $caller },
+        stash       => sub { $stash },
+        render_vars => sub { $render_vars },
+        middlewares => sub { $middlewares },
+        mounts      => sub { $mounts },
+        routes      => sub { $routes },
+        handle      => sub { $request = $_[0]->new_request($env = $_[1]) },
+        env         => sub { $env     || confess("Not running") },
+        request     => sub { $request || confess("Not running") },
+    );
 }
 
-use MooseX::MethodAttributes;
-use MooseX::Aliases;
+package Catmandu::App::Base;
+use Catmandu::Sane;
 use List::Util qw(max);
-use Catmandu::Util qw(load_class unquote trim);
-use Catmandu::App::Route;
-use Plack::Middleware::Conditional;
-use Plack::Request;
-use Plack::Response;
-use Encode ();
-use Hash::Merge::Simple qw(merge);
 use Hash::MultiValue;
-use CGI::Expand;
-
-with qw(
-    MooseX::SingletonMethod::Role
-    MooseX::Traits
+use CGI::Expand ();
+use Plack::Builder ();
+use Catmandu;
+use Catmandu::Route;
+use Catmandu::Request;
+use parent qw(
+    Catmandu::Modifiable
+    Catmandu::Pluggable
 );
 
-my $RESPONSE_KEY = "catmandu.response";
-my $CUSTOM_RESPONSE_KEY = "catmandu.response.custom";
-my $PARAMETERS_KEY = "catmandu.parameters";
+my $response_key = "catmandu.response";
+my $custom_response_key = "catmandu.custom_response";
+my $parameters_key = "catmandu.parameters";
 
-has '+_trait_namespace' => (default => 'Catmandu::App::Plugin');
+my $http_status_codes = { # stolen from HTTP::Status
+    100 => 'Continue',
+    101 => 'Switching Protocols',
+    102 => 'Processing',                      # RFC 2518 (WebDAV)
+    200 => 'OK',
+    201 => 'Created',
+    202 => 'Accepted',
+    203 => 'Non-Authoritative Information',
+    204 => 'No Content',
+    205 => 'Reset Content',
+    206 => 'Partial Content',
+    207 => 'Multi-Status',                    # RFC 2518 (WebDAV)
+    300 => 'Multiple Choices',
+    301 => 'Moved Permanently',
+    302 => 'Found',
+    303 => 'See Other',
+    304 => 'Not Modified',
+    305 => 'Use Proxy',
+    307 => 'Temporary Redirect',
+    400 => 'Bad Request',
+    401 => 'Unauthorized',
+    402 => 'Payment Required',
+    403 => 'Forbidden',
+    404 => 'Not Found',
+    405 => 'Method Not Allowed',
+    406 => 'Not Acceptable',
+    407 => 'Proxy Authentication Required',
+    408 => 'Request Timeout',
+    409 => 'Conflict',
+    410 => 'Gone',
+    411 => 'Length Required',
+    412 => 'Precondition Failed',
+    413 => 'Request Entity Too Large',
+    414 => 'Request-URI Too Large',
+    415 => 'Unsupported Media Type',
+    416 => 'Request Range Not Satisfiable',
+    417 => 'Expectation Failed',
+    422 => 'Unprocessable Entity',            # RFC 2518 (WebDAV)
+    423 => 'Locked',                          # RFC 2518 (WebDAV)
+    424 => 'Failed Dependency',               # RFC 2518 (WebDAV)
+    425 => 'No code',                         # WebDAV Advanced Collections
+    426 => 'Upgrade Required',                # RFC 2817
+    449 => 'Retry with',                      # unofficial Microsoft
+    500 => 'Internal Server Error',
+    501 => 'Not Implemented',
+    502 => 'Bad Gateway',
+    503 => 'Service Unavailable',
+    504 => 'Gateway Timeout',
+    505 => 'HTTP Version Not Supported',
+    506 => 'Variant Also Negotiates',         # RFC 2295
+    507 => 'Insufficient Storage',            # RFC 2518 (WebDAV)
+    509 => 'Bandwidth Limit Exceeded',        # unofficial
+    510 => 'Not Extended',                    # RFC 2774
+};
 
-has middlewares => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    lazy => 1,
-    default => sub { [] },
-);
+sub plugin_namespace { 'Catmandu::App' }
 
-has routes => (
-    is => 'ro',
-    isa => 'ArrayRef[Catmandu::App::Route]',
-    default => sub { [] },
-);
-
-has stash => (
-    is => 'ro',
-    isa => 'HashRef',
-    lazy => 1,
-    default => sub { {} },
-);
-
-has request => (
-    is => 'rw',
-    isa => 'Plack::Request',
-    alias => 'req',
-    weak_ref => 1,
-    handles => [qw(
-        env
-        session
-        session_options
-    )],
-);
-
-sub BUILD {
-    my ($self, $args) = @_;
-
-    $self->_parse_method_attributes;
+sub req {
+    $_[0]->request;
 }
 
-sub _parse_method_attributes {
-    my $self = shift;
+sub res {
+    $_[0]->response;
+}
 
-    for my $method ($self->meta->get_nearest_methods_with_attributes) {
-        for my $attr (@{$method->attributes}) {
-            if (my ($http_method) = $attr =~ /^(GET|PUT|POST|DELETE)$/) {
-                $self->route('/' . $method->name, as => $method->name, methods => [$http_method]);
-                next;
-            }
-            if ($attr =~ /^(route|R)$/) {
-                $self->route('/' . $method->name, as => $method->name);
-                next;
-            }
-            if (my ($http_method, $pattern) = $attr =~ /^(GET|PUT|POST|DELETE)\((.+)\)$/) {
-                $self->route(trim(unquote($pattern)), as => $method->name, methods => [$http_method]);
-                next;
-            }
-            if (my ($args) = $attr =~ /^(?:route|R)\((.+)\)$/) {
-                my @http_methods = map { trim unquote $_ } split /,/, $args;
-                my $pattern = $http_methods[0] =~ /^GET|PUT|POST|DELETE$/ ? $method->name : shift @http_methods;
-                if (@http_methods) {
-                    $self->route($pattern, as => $method->name, methods => \@http_methods);
-                } else {
-                    $self->route($pattern, as => $method->name);
-                }
-            }
-        }
-    }
+sub get {
+    $_[0]->stash->{$_[1]};
 }
 
 sub set {
-    my ($self, $key, $value) = @_;
-    $self->stash->{$key} = $value;
-    $self;
+    $_[0]->stash->{$_[1]} = $_[2];
 }
 
-sub route {
-    my ($self, $pattern, %opts) = @_;
+sub response {
+    my $self = $_[0];
+    $self->env->{$response_key} ||= $self->req->new_response;
+}
 
-    $opts{pattern} = $pattern;
-
-    $opts{handler} ||= delete($opts{run}) ||
-                       delete($opts{to});
-
-    $opts{app} = $self;
-
-    if (my $name = delete $opts{as}) {
-        unless ($self->meta->has_method($name)) {
-            $self->add_singleton_method($name => $opts{handler});
-        }
-        $opts{handler} = $name;
+sub custom_response {
+    if (@_ == 2) {
+        return $_[0]->env->{$custom_response_key} = $_[1];
     }
-
-    push @{$self->routes}, Catmandu::App::Route->new(%opts);
-    $self;
+    $_[0]->env->{$custom_response_key};
 }
 
-alias R => 'route';
-
-sub mount {
-    my ($self, $pattern, $app, $defaults) = @_;
-
-    $app = load_class($app)->new unless ref $app;
-
-    $defaults ||= {};
-
-    push @{$self->routes}, map {
-        Catmandu::App::Route->new(
-            app => $_->app,
-            pattern => $pattern . $_->pattern,
-            handler => $_->handler,
-            defaults => merge($_->defaults, $defaults),
-            methods => $_->methods,
-        );
-    } @{$app->routes};
-
-    $self;
-}
-
-sub GET {
-    my ($self, $pattern, %opts) = @_;
-    $self->route($pattern, %opts, methods => ['GET', 'HEAD']);
-    $self;
-}
-
-sub PUT {
-    my ($self, $pattern, %opts) = @_;
-    $self->route($pattern, %opts, methods => ['PUT']);
-    $self;
-}
-
-sub POST {
-    my ($self, $pattern, %opts) = @_;
-    $self->route($pattern, %opts, methods => ['POST']);
-    $self;
-}
-
-sub DELETE {
-    my ($self, $pattern, %opts) = @_;
-    $self->route($pattern, %opts, methods => ['DELETE']);
-    $self;
-}
-
-sub match_route {
-    my ($self, $request) = @_;
-
-    my $error_code = 404;
-
-    my $method = $request->method || '';
-    my $path   = $request->path_info;
-    $path =~ s!(.+)/$!$1!;
-
-    for my $route (@{$self->routes}) {
-        my @captures = $path =~ $route->pattern_regex or next;
-
-        if (my $re = $route->methods_regex) {
-            if ($method !~ $re) {
-                $error_code = 405;
-                next;
-            }
-        }
-
-        my $parameters = Hash::MultiValue->new;
-        my $components = $route->components;
-
-        for my $i (0..@$components-1) {
-            $parameters->add($components->[$i], $captures[$i]);
-        }
-
-        if ($route->has_defaults) {
-            my $defaults = $route->defaults;
-            for my $key (keys %$defaults) {
-                $parameters->get($key) // $parameters->add($defaults->{$key});
-            }
-        }
-
-        return $route, $parameters, 200;
-    }
-
-    return undef, undef, $error_code;
-}
-
-sub inspect_routes {
-    my $self = shift;
-
-    my $routes = $self->routes;
-
-    my $max_a = max(map { length ref $_->app } @$routes);
-    my $max_m = max(map { length join(',', $_->method_list) } @$routes);
-    my $max_s = max(map { length $_->name } @$routes);
-
-    join '', map {
-        sprintf "%-${max_a}s %-${max_m}s %-${max_s}s %s\n",
-            ref $_->app,
-            join(',', $_->method_list),
-            $_->name,
-            $_->pattern;
-    } @$routes;
-}
-
-sub middleware {
-    my ($self, $mw, %opts) = @_;
-    my $cond = delete $opts{if};
-    push @{$self->middlewares}, [$mw, $cond, %opts];
-    $self;
-}
-
-sub wrap_middleware {
-    my ($self, $sub) = @_;
-
-    foreach (reverse @{$self->middlewares}) {
-        my ($mw, $cond, %opts) = @$_;
-
-        if (ref $mw eq "CODE") {
-            $sub = $cond ?
-                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => $mw) :
-                $mw->($sub);
-        } else {
-            my $mw_class = load_class($mw, 'Plack::Middleware');
-            $sub = $cond ?
-                Plack::Middleware::Conditional->wrap($sub, condition => $cond, builder => sub { $mw_class->wrap($_[0], %opts) }) :
-                $mw_class->wrap($sub, %opts);
-        }
-    }
-
-    $sub;
-}
-
-sub run {
-    my ($self, $handler) = @_;
-    if (ref $handler) {
-        $handler->($self);
-    } else {
-        $self->$handler();
-    }
-}
-
-sub as_psgi_app {
-    my $self = ref $_[0] ? $_[0] : $_[0]->new;
-
-    $self->wrap_middleware(sub {
-        my $env = $_[0];
-        my $request = Plack::Request->new($env);
-
-        my ($route, $parameters, $http_status) = $self->match_route($request);
-
-        my $app;
-        my $handler;
-
-        if ($route) {
-            $app     = $route->app;
-            $handler = $route->handler;
-            $env->{'catmandu.parameters'} = $parameters;
-        } else {
-            $app = $self;
-            given ($http_status) {
-                when (404) { $handler = 'not_found' }
-                when (405) { $handler = 'method_not_allowed' }
-            }
-        }
-
-        $app->request($request);
-
-        $app->run($handler);
-
-        $app->has_custom_response ?
-            $app->custom_response :
-            $app->response->finalize;
-    });
+sub new_request {
+    Catmandu::Request->new($_[1]);
 }
 
 sub parameters {
-    $_[0]->env->{$PARAMETERS_KEY} ||= Hash::MultiValue->new;
-}
-
-sub has_parameters {
-    defined $_[0]->env->{$PARAMETERS_KEY};
+    $_[0]->env->{$parameters_key} ||= Hash::MultiValue->new;
 }
 
 sub param {
@@ -320,359 +156,172 @@ sub param {
 }
 
 sub object {
-    my ($self, $key) = @_;
+    my ($self, $prefix) = @_;
 
     my $obj = {};
 
-    for my $hash (($self->req->parameters, $self->parameters)) {
-        for my $obj_key (grep /^$key\./, keys %$hash) {
-            my $val = $hash->get($obj_key);
-            $obj_key =~ s/^$key\.//;
-            $obj->{$obj_key} = $val;
+    for my $params (($self->request->parameters, $self->parameters)) {
+        for my $key (grep { s/^$prefix\.// } keys %$params) {
+            $obj->{$key} = $params->get($key);
         }
     }
 
-    expand_hash($obj);
+    CGI::Expand->expand_hash($obj);
 }
 
-sub has_session {
-    defined $_[0]->session;
-}
-
-sub clear_session {
-    my $session = $_[0]->session or return;
-    for my $key (keys %$session) {
-        delete $session->{$key};
-    }
-    $session;
-}
-
-sub response {
-    $_[0]->env->{$RESPONSE_KEY} ||= Plack::Response->new(200, ['Content-Type' => 'text/html']);
-}
-
-alias res => 'response';
-
-sub redirect {
-    my ($self, @args) = @_; $self->response->redirect(@args);
-}
-
-sub custom_response {
-    if ($_[1]) {
-        $_[0]->env->{$CUSTOM_RESPONSE_KEY} = $_[1];
-    } else {
-        $_[0]->env->{$CUSTOM_RESPONSE_KEY};
-    }
-}
-
-sub has_custom_response {
-    exists $_[0]->env->{$CUSTOM_RESPONSE_KEY};
-}
-
-sub clear_custom_response {
-    delete $_[0]->env->{$CUSTOM_RESPONSE_KEY};
-}
-
-sub method_not_allowed {
-    $_[0]->custom_response([ 405, ['Content-Type' => "text/plain"], ["Method Not Allowed"] ]);
-}
-
-sub not_found {
-    $_[0]->custom_response([ 404, ['Content-Type' => "text/plain"], ["Not Found"] ]);
-}
-
-sub print {
+sub render {
     my $self = shift;
-    my $body = $self->res->body || [];
-    push @$body, map Encode::encode_utf8($_), @_;
-    $self->res->body($body);
+    my $tmpl = shift;
+    my $vars = ref $_[0] eq 'HASH' ? $_[0] : {@_};
+    my $render_vars = $self->render_vars;
+    foreach (keys %$render_vars) {
+        $vars->{$_} = $render_vars->{$_} unless exists $vars->{$_};
+    }
+    Catmandu->render($tmpl, $vars, $self->res);
 }
 
-sub print_template {
-    my ($self, $tmpl, $vars) = @_;
-    $vars ||= {};
-    $vars->{app} = $self;
-    Catmandu->print_template($tmpl, $vars, $self);
-}
-
-sub uri {
+sub add_middleware {
     my $self = shift;
-    my $params = ref $_[-1] ? pop : undef;
-    my $name = shift;
-    my $uri = $self->request->base;
+    my $mw   = shift;
+    my $opts = ref $_[0] eq 'HASH' ? $_[0] : {@_};
+    my $if   = delete $opts->{if};
 
-    if ($name) {
-        if ($name =~ /^\//) {
-            $uri->path($uri->path . $name);
-        } elsif (my ($route) = grep { $_->named and $_->sub eq $name } @{$self->routes}) {
-            $params ||= {};
-            while (my ($key, $value) = each %{$route->defaults}) {
-                $params->{$key} //= $value;
-            }
+    push @{$self->middlewares}, [$mw, $if, $opts];
 
-            my $splats = $params->{splat} || [];
-            my $path = "";
-
-            for my $part (@{$route->parts}) {
-                if (ref $part) {
-                    if ($part->{key} eq 'splat') {
-                        $path .= shift(@$splats) // return;
-                    } else {
-                        $path .= delete($params->{$part->{key}}) // return;
-                    }
-                } else {
-                    $path .= $part;
-                }
-            }
-
-            $uri->path($uri->path . $path);
-        } else {
-            return;
-        }
-    }
-
-    if ($params) {
-        $uri->query_form($params);
-    }
-
-    $uri->canonical;
+    $self;
 }
 
-__PACKAGE__->meta->make_immutable;
-no Moose;
-no MooseX::Aliases;
-no List::Util;
-no Catmandu::Util;
-no Hash::Merge::Simple;
-no CGI::Expand;
-1;
+sub add_mount {
+    my ($self, $path, $app) = @_;
+    push @{$self->mounts}, [$path, $app];
+    $self;
+}
 
-=head1 METHODS
+sub add_route {
+    my $self    = shift;
+    my $pattern = shift;
+    my $handler = ref $_[0] eq 'CODE' ? shift : undef;
+    my $args    = ref $_[0] eq 'HASH' ? shift : {@_};
 
-=head2 new()
+    $args->{handler} ||= $handler || delete($args->{to}) || delete($args->{run});
+    $args->{pattern} = $pattern;
 
-Constructs a new L<Catmandu::App> instance.
-
-=head2 stash()
-
-The stash hashref can be used to hold application
-data that persists between requests.
-
-    $self->stash->{foo} = "bar"
-
-=head2 set($key, $value)
-
-Sets C<$key> to C<$value> in the stash.
-
-    $self->set('foo', 'bar')
-
-=head2 env()
-
-The C<PSGI> environment hashref.
-
-    $self->env->{REQUEST_URI}
-
-=head2 request()
-
-The C<Plack::Request> object.
-
-=head2 req()
-
-Alias for C<request>.
-
-=head2 parameters()
-
-Returns or creates a L<Hash::MultiValue> object with
-matched route and other parameters for the current request.
-Query and body parameters are found in request.
-
-    $self->parameters->get_all('foo')
-    # ("bar", "baz")
-    $self->parameters->get('foo')
-    # "baz"
-
-=head2 has_parameters()
-
-Returns 1 if there is a parameters object, 0 otherwise.
-
-=head2 param()
-
-Returns parameters with a CGI.pm-compatible param method.
-This is an alternative method for accessing parameters.
-Unlike CGI.pm, it does not allow setting or modifying parameters.
-Query and body parameters are found in request.
-
-    $value = $self->param('foo');
-    @values = $self->param('foo');
-    @keys = $self->param;
-
-=head2 object()
-
-
-
-=head2 session()
-
-See L<Plack::Request>.
-
-=head2 has_session()
-
-Returns 1 if there is a session hashref, 0 otherwise.
-
-=head2 clear_session()
-
-Deletes all key/value pairs from the session hashref.
-
-=head2 session_options()
-
-See L<Plack::Request>.
-
-=head2 response()
-
-creates or return the C<Plack::Response> object.
-
-=head2 res()
-
-Alias for C<response>.
-
-=head2 redirect($url, [$status])
-
-See L<Plack::Response>.
-
-=head2 custom_response()
-
-Sets or replaces a custom PSGI response. This is faster than
-creating and finalizing a response object.
-
-    $self->custom_response([ 404, ['Content-Type' => "text/plain"], ["Not Found"] ]);
-
-=head2 has_custom_response()
-
-Returns 1 if there is a custom repsonse, 0 otherwise.
-
-=head2 clear_custom_response()
-
-Clears the custom response if there is one.
-
-=head2 method_not_allowed()
-
-This method gets called if the requested route is found, but the
-HTTP method doesn't match. Sets a custom response with HTTP
-status 405. You can override this method with your own logic.
-
-=head2 not_found()
-
-This method gets called if the requested route isn't found. Sets
-a custom response with HTTP status 404. You can override this
-method with your own logic.
-
-    sub not_found {
-        my $self = shift;
-        $self->print_template('404');
+    if (my $as = delete($args->{as}) || delete($args->{name})) {
+        { no strict 'refs'; *{$as} = $args->{handler} };
+        $args->{handler} = $as;
     }
 
-    before run => sub {
-        my ($self, $sub) = @_;
-        if ($sub eq 'not_found') {
-            ...
-        }
-    }
+    push @{$self->routes}, Catmandu::Route->new($args);
 
-=head2 print(@strings)
+    $self;
+}
 
-utf-8 encodes and adds C<@strings> to the response body.
+for my $http_methods ((['GET', 'HEAD'], ['PUT'], ['POST'], ['DELETE'])) {
+    my $sym = $http_methods->[0];
+    my $sub = sub {
+        my $self    = shift;
+        my $pattern = shift;
+        my $handler = ref $_[0] eq 'CODE' ? shift : undef;
+        my $args    = ref $_[0] eq 'HASH' ? shift : {@_};
 
-=head2 print_template($template, \%variables)
-
-Renders C<$template> and prints it to the response body.
-
-    $self->print_template('foo_bar', {foo => 'bar'}).
-
-The C<app> and C<catmandu> variables will be set to C<$self> and L<Catmandu> and
-passed to the first 'foo_bar.tt' template found in the template stack.
-
-=head2 uri([$path, \%params])
-
-Returns the uri for a named route if path is a route name, constructs a uri
-with $path or returns the base uri otherwise. Params that are part
-of the route pattern get filled in (or their defaults), other params are
-treated as HTTP query params.
-
-    $app->uri
-    # "http://localhost:5000/app"
-    $app->uri({foo => 'bar'})
-    # "http://localhost:5000/app?foo=bar"
-    $app->uri('/path', {foo => 'bar'})
-    # "http://localhost:5000/app/path?foo=bar"
-    $app->route('/users/:name', run => sub { ... }, as => 'show_user')
-    $app->uri('show_user', {name => 'nicolas', foo => 'bar'})
-    # "http://localhost:5000/app/users/nicolas?foo=bar"
-
-=head2 route($pattern, %options)
-
-
-
-=head2 R($pattern, %options)
-
-Alias for C<route>.
-
-=head2 GET($pattern, %options)
-
-Same as C<route> but sets the C<methods> option to C<['GET', 'HEAD']>.
-
-=head2 PUT($pattern, %options)
-
-Same as C<route> but sets the C<methods> option to C<['PUT']>.
-
-=head2 POST($pattern, %options)
-
-Same as C<route> but sets the C<methods> option to C<['POST']>.
-
-=head2 DELETE($pattern, %options)
-
-Same as C<route> but sets the C<methods> option to C<['DELETE']>.
-
-=head2 mount()
-
-
-
-=head2 inspect_routes()
-
-Returns an overview of the app's routes in a string.
-
-=head2 middleware()
-
-
-
-=head2 run()
-
-Wraps the current request handler. Useful to hook
-into every request handled.
-
-    around run => sub {
-        my ($run, $app, $handler) = @_;
-        # do stuff
-        $app->$run($handler);
-        # do stuff
+        $args->{handler} ||= $handler if $handler;
+        $args->{methods} = $http_methods;
+        $self->add_route($pattern, $args);
+        $self;
     };
+    no strict 'refs'; *{$sym} = $sub;
+}
 
-An app basically handles every request like this:
+sub match_route {
+    my ($self, $req) = @_;
+    my $status = 404;
+    my $method;
+    my $path = $req->path_info;
+    $path =~ s!(.+)/+$!$1!; # remove trailing slashes
 
-    $app->request($request)     # set current request
-    $app->run($sub)             # set current handler
-    $app->has_custom_response ? # return response
-        $app->custom_response :
-        $app->response->finalize;
+    for my $route (@{$self->routes}) {
+        my @captures = $path =~ $route->pattern_regex or next;
 
-=head2 as_psgi_app()
+        if (my $regex = $route->methods_regex) {
+            $method ||= $req->parameters->{_method} || $req->method || '';
+            if ($method !~ $regex) {
+                $status = 405;
+                next;
+            }
+        }
 
-Returns the app as a L<PSGI> application (a coderef which
-accepts an C<env> hashref).
+        my $keys     = $route->parameters;
+        my $defaults = $route->defaults;
+        my $params   = $req->env->{$parameters_key} ||= Hash::MultiValue->new;
 
-=head1 SEE ALSO
+        $params->add($keys->[$_], $captures[$_]) for (0 .. @$keys-1);
 
-L<Plack::Request>
+        for my $key (keys %$defaults) {
+            $params->get($key) //
+            $params->add($key, $defaults->{$key});
+        }
 
-L<Plack::Response>
+        return ($route, 200);
+    }
 
-L<Hash::MultiValue>
+    (undef, $status);
+}
 
+sub inspect_routes {
+    my $self = $_[0];
+
+    my $max_m = max(map { length join(',', @{$_->methods}) } @{$self->routes});
+    my $max_n = max(map { length $_->name } @{$self->routes});
+
+    join '', map {
+        sprintf "%-${max_m}s %-${max_n}s %s\n",
+            join(',', @{$_->methods}),
+            $_->name,
+            $_->pattern;
+    } @{$self->routes};
+}
+
+sub psgi_app {
+    my $self = $_[0];
+    my $builder = Plack::Builder->new;
+
+    foreach (@{$self->middlewares}) {
+        my ($mw, $if, $opts) = @$_;
+        $if ? $builder->add_middleware_if($if, $mw, %$opts)
+            : $builder->add_middleware($mw, %$opts);
+    }
+
+    foreach (@{$self->mounts}) {
+        my ($path, $app) = @$_;
+        $builder->mount($path, ref $app eq 'CODE' ? $app : $app->psgi_app);
+    }
+
+    $builder->to_app(sub {
+        my ($route, $status) = $self->match_route($self->handle($_[0]));
+
+        $self->run($route ? $route->handler : "handle_$status");
+        $self->custom_response ||
+            $self->response->finalize;
+    });
+}
+
+sub run {
+    my ($self, $handler) = @_;
+    if (ref $handler) {
+        $handler->($self);
+    } else {
+        $self->$handler();
+    }
+}
+
+for my $status (grep { $_ >= 400 } keys %$http_status_codes) {
+    my $msg = $http_status_codes->{$status};
+    my $sym = "handle_$status";
+    my $sub = sub {
+        $_[0]->custom_response([ $status, ['Content-Type' => 'text/plain'], [$msg] ])
+    };
+    no strict 'refs'; *{$sym} = $sub;
+}
+
+no List::Util;
+1;

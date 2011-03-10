@@ -1,44 +1,14 @@
 package Catmandu::Iterator;
-# ABSTRACT: Make a Catmandu::Iterable object by providing a closure
-# VERSION
-use Moose;
+use Catmandu::Class;
+use parent qw(Catmandu::Iterable);
 
-with qw(Catmandu::Iterable);
-
-has _each => (
-    is => 'ro',
-    isa => 'CodeRef',
-    required => 1,
-);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $sub) = @_;
-    { _each => $sub };
-};
+sub build_args {
+    { each => $_[1] };
+}
 
 sub each {
     my ($self, $sub) = @_;
-    $self->_each->($sub);
+    $self->{each}->($sub);
 }
 
-__PACKAGE__->meta->make_immutable;
-
-no Moose;
-
 1;
-
-=head1 SYNOPSIS
-
-    my $data = [1,2,3];
-    my $iterator = Catmandu::Iterator->new(sub {
-        my $callback = shift;
-        for my $num (@$data) {
-            $callback->($num);
-        }
-    });
-
-    $iterator->each(sub {
-        my $num = shift;
-        print $num;
-    });
-
