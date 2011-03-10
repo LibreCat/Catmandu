@@ -43,7 +43,10 @@ sub load_libs {
 }
 
 sub auto {
-    find sub { do $_ if -f and /^\w+\.pl$/ }, reverse $_[0]->path_list('auto') || return;
+    my @dirs = $_[0]->path_list('auto');
+    return 0 unless @dirs;
+    find sub { do $_ if -f and /^\w+\.pl$/ }, reverse @dirs;
+    return 1;
 }
 
 sub home {
