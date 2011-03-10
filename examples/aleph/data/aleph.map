@@ -17,8 +17,8 @@ DEL     DEL
 
 MRC     fXML
 
-001     id 
-001     fSYS
+SYS     id 
+SYS     fSYS
 005     fDATE
 008     year
 008     period
@@ -72,5 +72,6 @@ SYS     all
 246     all
 249     all
 260     all
+650	all
 700     all
 720     all

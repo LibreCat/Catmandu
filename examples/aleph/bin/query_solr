@@ -1,2 +1,23 @@
 #!/usr/bin/env perl
 
+use Catmandu::Index::Solr;
+
+my $q = shift;
+
+die "usage: $0 query" unless $q;
+
+my $solr = Catmandu::Index::Solr->new();
+
+&query($solr,$q,0);
+
+sub query {
+   my ($index,$query,$start) = @_;
+
+   my ($objs,$hits) = $index->search($query, start => $start, limit => 10);
+
+   foreach my $obj (@$objs) {
+      printf "%s\n" , $obj->{id};
+   }
+
+   &query($index,$query,$start + 10) if @$objs;
+}

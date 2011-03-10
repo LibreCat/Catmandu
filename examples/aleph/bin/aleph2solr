@@ -37,4 +37,5 @@ ${PERL} ${CATMANDU_HOME}/bin/catmandu index -v \
      --fix="add_field($.source,'${TYPE}')"  \
      --fix="copy_field($.id,'${TYPE}')"  \
      --fix="join($.${TYPE},' ')"  \
+     --fix="replace(\$.id,'^','${TYPE}:')" \
      --fix="${TYPE_FIX}" 
