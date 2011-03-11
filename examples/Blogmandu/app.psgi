@@ -15,10 +15,24 @@ sub posts {
 }
 
 app->GET('/' => sub {
-    app->render(index => {
-        posts => app->posts,
-    });
+    app->render(index => {posts => app->posts});
 });
+
+# equivalent with subroutine attributes:
+# sub index :GET('/') {
+#     app->render(index => {posts => app->posts});
+# }
+
+# also equivalent:
+# sub index :R('/', GET) {
+#     app->render(index => {posts => app->posts});
+# }
+
+# also equivalent:
+# sub index {
+#     app->render(index => {posts => app->posts});
+# }
+# app->GET('/', run => 'index');
 
 app->POST('/' => sub {
     my $errors = [];
