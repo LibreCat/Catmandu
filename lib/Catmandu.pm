@@ -2,7 +2,7 @@ package Catmandu;
 use Catmandu::Sane;
 use List::Util qw(first);
 use Cwd qw(getcwd realpath);
-use File::Spec::Functions qw(catfile catdir file_name_is_absolute);
+use File::Spec::Functions qw(catfile catdir);
 use File::Basename qw(basename);
 use File::Find;
 use File::Slurp qw(slurp);
@@ -68,7 +68,7 @@ sub paths {
         $paths = [$self->home];
         if (my $stack = $self->load_conf_file($self->home, 'catmandu')) {
             push @$paths, map {
-                file_name_is_absolute($_) ? realpath($_) : catdir($self->home, $_);
+                File::Spec->file_name_is_absolute($_) ? realpath($_) : catdir($self->home, $_);
             } @$stack;
         }
     };

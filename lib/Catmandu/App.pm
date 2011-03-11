@@ -1,6 +1,6 @@
 package Catmandu::App;
 use Catmandu::Sane;
-use Catmandu::Util;
+use Catmandu::Util qw(add_parent get_subroutine_info add_subroutine trim unquote);
 
 sub base { 'Catmandu::App::Base' }
 
@@ -16,22 +16,68 @@ sub import {
     my $middlewares = [];
     my $mounts = [];
     my $routes = [];
+    my @code_attribute_routes;
     my $env;
     my $request;
 
-    Catmandu::Util::add_parent($caller, $self->base);
-    Catmandu::Util::add_subroutine($caller,
+    add_parent($caller, $self->base);
+
+    add_subroutine($caller,
         app         => sub { $caller },
         stash       => sub { $stash },
         render_vars => sub { $render_vars },
         middlewares => sub { $middlewares },
         mounts      => sub { $mounts },
-        routes      => sub { $routes },
         handle      => sub { $request = $_[0]->new_request($env = $_[1]) },
         env         => sub { $env     || confess("Not running") },
         request     => sub { $request || confess("Not running") },
+        routes      => sub {
+            if (@code_attribute_routes) {
+                my $app = $_[0];
+                while (my $info = shift @code_attribute_routes) {
+                    my ($sub, $pattern, $opts) = @$info;
+                    my ($pkg, $sym) = get_subroutine_info($app, $sub);
+                    $opts->{handler} = $sym;
+                    $app->add_route($pattern || "/$sym", $opts);
+                }
+            }
+            $routes;
+        },
+        MODIFY_CODE_ATTRIBUTES => sub {
+            my ($pkg, $sub, @attrs) = @_;
+            my @rest;
+            for my $attr (@attrs) {
+                if (my ($http_method) = $attr =~ /^(GET|PUT|POST|DELETE)$/) {
+                    push @code_attribute_routes, [0+$sub, undef, {methods => [$http_method]}];
+                    next;
+                }
+                if (my ($http_method, $pattern) = $attr =~ /^(GET|PUT|POST|DELETE)\((.+)\)$/) {
+                    push @code_attribute_routes, [0+$sub, trim(unquote($pattern)), {methods => [$http_method]}];
+                    next;
+                }
+                if ($attr =~ /^R$/) {
+                    push @code_attribute_routes, [0+$sub, undef, {}];
+                    next;
+                }
+                if (my ($args) = $attr =~ /^R\((.+)\)$/) {
+                    my @http_methods = map { trim unquote $_ } split /,/, $args;
+                    my $pattern = $http_methods[0] =~ /^GET|PUT|POST|DELETE$/ ? undef : shift @http_methods;
+                    if (@http_methods) {
+                        push @code_attribute_routes, [0+$sub, $pattern, {methods => [@http_methods]}];
+                    } else {
+                        push @code_attribute_routes, [0+$sub, $pattern, {}];
+                    }
+                    next;
+                }
+
+                push @rest, $attr;
+            }
+            @rest;
+        },
     );
 }
+
+no Catmandu::Util;
 
 package Catmandu::App::Base;
 use Catmandu::Sane;
@@ -214,6 +260,10 @@ sub add_route {
     push @{$self->routes}, Catmandu::Route->new($args);
 
     $self;
+}
+
+sub R {
+    my $self = shift; $self->add_route(@_);
 }
 
 for my $http_methods ((['GET', 'HEAD'], ['PUT'], ['POST'], ['DELETE'])) {

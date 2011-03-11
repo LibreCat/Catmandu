@@ -10,6 +10,7 @@ our @EXPORT_OK = qw(
     load_package
     create_package
     add_parent
+    get_subroutine_info
     get_subroutine
     add_subroutine
     io
@@ -38,15 +39,37 @@ sub add_parent {
     @isa;
 }
 
+sub get_subroutine_info {
+    my ($pkg, $sub, %opts) = @_;
+    my $isa = $opts{parents} ? mro::get_linear_isa($pkg) : [$pkg];
+
+    for $pkg (@$isa) {
+        no strict 'refs';
+        my @syms = values %{"${pkg}::"};
+        use strict;
+        for my $sym (@syms) {
+            next unless ref \$sym eq 'GLOB';
+
+            if (*{$sym}{CODE} && *{$sym}{CODE} == $sub) {
+                return wantarray ? ($pkg, *{$sym}{NAME}) : join('::', $pkg, *{$sym}{NAME});
+            }
+        }
+    }
+
+    return;
+}
+
 sub get_subroutine {
     my ($pkg, $sym, %opts) = @_;
     my $isa = $opts{parents} ? mro::get_linear_isa($pkg) : [$pkg];
+
     for $pkg (@$isa) {
         no strict 'refs';
         if (defined &{"${pkg}::$sym"}) {
             return \&{"${pkg}::$sym"};
         }
     }
+
     return;
 }
 
