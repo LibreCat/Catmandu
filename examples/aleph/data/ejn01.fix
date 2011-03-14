@@ -42,7 +42,6 @@ fix_marcxml($.fXML)
 
 # Do some cleaning for the indexes..some fields can't be multi-valued
 # we need to 'join' all values
-join($.all,' ')
 join($.fSYS,' ')
 join($.fXML,' ')
 join($.faculty,' ')

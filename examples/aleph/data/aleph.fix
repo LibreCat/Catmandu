@@ -57,7 +57,6 @@ fix_marcxml($.fXML)
 
 # Do some cleaning for the indexes..some fields can't be multi-valued
 # we need to 'join' all values
-join($.all,' ')
 join($.bak,' ')
 join($.barcode,' ')
 join($.cid,' ')

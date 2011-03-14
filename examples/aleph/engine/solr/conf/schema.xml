@@ -413,7 +413,7 @@
 
  <fields>
    <field name="id" type="string" indexed="true" stored="true" multiValued="false"/>   
-   <field name="all" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
+   <field name="all" type="lupetext" indexed="true" stored="false" multiValued="true"/>   
    <field name="author" type="lupetext" indexed="true" stored="false" multiValued="true"/>   
    <field name="barcode" type="lupetext" indexed="true" stored="false" multiValued="false"/>   
    <field name="bak" type="string" indexed="false" stored="false" multiValued="false"/>   

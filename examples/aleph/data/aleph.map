@@ -1,7 +1,7 @@
 #
 # Aleph Mapping
 #
-# E.g.
+# E*g*
 # 
 #   245    title     :: store the content of all the '245' fields in the 'title' field
 #   540+a  rights    :: store only the 'a' subfield of all 540 in the 'rights' field
@@ -58,20 +58,13 @@ STA     perm
 Z30+82	created
 
 SYS     all
-020     all
-022     all
-100     all
-111     all
-130     all
-170     all
-210     all
-222     all
-240     all
-241     all
-245     all
-246     all
-249     all
-260     all
-650	all
-700     all
-720     all
+0**     all
+1**     all
+2**     all
+3**     all
+4**     all
+5**     all
+6**     all
+7**     all
+8**     all
+9**     all

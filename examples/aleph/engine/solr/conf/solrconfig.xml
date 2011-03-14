@@ -520,36 +520,21 @@
        of "dismax". 
        see http://wiki.apache.org/solr/DisMaxRequestHandler
    -->
-  <requestHandler name="dismax" class="solr.SearchHandler" >
+  <requestHandler name="/dismax" class="solr.SearchHandler" >
     <lst name="defaults">
      <str name="defType">dismax</str>
      <str name="echoParams">explicit</str>
      <float name="tie">0.01</float>
      <str name="qf">
-        text^0.5 features^1.0 name^1.2 sku^1.5 id^10.0 manu^1.1 cat^1.4
+        title^2 all^0.5
      </str>
      <str name="pf">
-        text^0.2 features^1.1 name^1.5 manu^1.4 manu_exact^1.9
-     </str>
-     <str name="bf">
-        popularity^0.5 recip(price,1,1000,1000)^0.3
-     </str>
-     <str name="fl">
-        id,name,price,score
+        impact^2
      </str>
      <str name="mm">
         2&lt;-1 5&lt;-2 6&lt;90%
      </str>
      <int name="ps">100</int>
-     <str name="q.alt">*:*</str>
-     <!-- example highlighter config, enable per-query with hl=true -->
-     <str name="hl.fl">text features name</str>
-     <!-- for this field, we want no fragmenting, just highlighting -->
-     <str name="f.name.hl.fragsize">0</str>
-     <!-- instructs Solr to return the field itself if no query terms are
-          found -->
-     <str name="f.name.hl.alternateField">name</str>
-     <str name="f.text.hl.fragmenter">regex</str> <!-- defined below -->
     </lst>
   </requestHandler>
 
@@ -687,12 +672,13 @@
   -->
   <requestHandler name="/spellCheckCompRH" class="solr.SearchHandler" lazy="true">
     <lst name="defaults">
+      <str name="qt">standard</str>
       <!-- omp = Only More Popular -->
-      <str name="spellcheck.onlyMorePopular">false</str>
+      <str name="spellcheck.onlyMorePopular">true</str>
       <!-- exr = Extended Results -->
       <str name="spellcheck.extendedResults">false</str>
       <!--  The number of suggestions to return -->
-      <str name="spellcheck.count">1</str>
+      <str name="spellcheck.count">3</str>
       <!-- Max query time -->
       <int name="timeAllowed">30000</int>
     </lst>

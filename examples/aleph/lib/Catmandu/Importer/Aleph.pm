@@ -207,7 +207,9 @@ sub field {
 
     return $rec->{id} if $field eq 'SYS';
    
-    my @fields = grep { $_->[0] eq $field } @{$rec->{data}};
+    my $field_regex = qr{$field};
+
+    my @fields = grep { $_->[0] =~ $field_regex } @{$rec->{data}};
 
     my @out = ();
 
