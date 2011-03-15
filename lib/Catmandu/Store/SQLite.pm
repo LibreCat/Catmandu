@@ -1,7 +1,7 @@
 package Catmandu::Store::SQLite;
 use DBI;
 use Data::UUID;
-use JSON ();
+use JSON qw(encode_json decode_json);
 use Catmandu::Class qw(path);
 use parent qw(
     Catmandu::Modifiable
@@ -41,7 +41,7 @@ sub load {
     $id = $id->{_id} if ref $id eq 'HASH';
     $id or confess "_id missing";
     my $row = $self->dbh->selectrow_arrayref($self->sth_load, {}, $id) or return;
-    JSON::decode_json($row->[0]);
+    decode_json($row->[0]);
 }
 
 sub each {
@@ -50,7 +50,7 @@ sub each {
     $sth->execute;
     my $n = 0;
     while (my $row = $sth->fetchrow_arrayref) {
-        $sub->(JSON::decode_json($row->[0]));
+        $sub->(decode_json($row->[0]));
         $n++;
     }
     $n;
@@ -59,7 +59,7 @@ sub each {
 sub save {
     my ($self, $obj) = @_;
     my $id = $obj->{_id} ||= Data::UUID->new->create_str;
-    $self->sth_save->execute($id, JSON::encode_json($obj));
+    $self->sth_save->execute($id, encode_json($obj));
     $obj;
 }
 
@@ -73,26 +73,26 @@ sub delete {
 sub transaction {
     my ($self, $sub) = @_;
 
-    return $sub->() if $self->{in_transaction};
+    return &$sub if $self->{in_transaction};
 
     my $dbh = $self->dbh;
     my @res;
 
-    eval {
+    try {
         $self->{in_transaction} = 1;
         $dbh->begin_work;
-        @res = $sub->();
+        @res = &$sub;
         $dbh->commit;
-        $self->{in_transaction} = 0;
-        1;
-    } or do {
-        my $error = $@;
+    } catch {
+        my $e = $_;
         $dbh->rollback;
+        confess $e;
+    } finally {
         $self->{in_transaction} = 0;
-        confess $error;
     };
 
     @res;
 }
 
+no JSON;
 1;

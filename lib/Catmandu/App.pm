@@ -152,7 +152,7 @@ my $http_status_codes = { # stolen from HTTP::Status
     510 => 'Not Extended',                    # RFC 2774
 };
 
-sub plugin_namespace { 'Catmandu::App' }
+sub plugin_namespace { 'Catmandu::App::Plugin' }
 
 sub req {
     $_[0]->request;

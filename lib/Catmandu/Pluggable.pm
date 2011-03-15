@@ -12,7 +12,7 @@ sub load_plugins {
 
     my $ns = $pkg->plugin_namespace;
 
-    for my $plugin (@plugins) {
+    while (my $plugin = shift @plugins) {
         $plugin = load_package($plugin, $ns);
         {
             no strict 'refs';
@@ -21,8 +21,11 @@ sub load_plugins {
             }
         };
         if ($plugin->can('import_plugin')) {
-            $plugin->import_plugin($pkg);
+            $plugin->import_plugin($pkg, ref $plugins[0] eq 'HASH' ? shift @plugins : {});
         }
+    }
+    for my $plugin (@plugins) {
+        $plugin = load_package($plugin, $ns);
     }
 }
 

@@ -11,7 +11,9 @@ sub import {
 
     Catmandu::Sane->import(level => 2);
 
-    Catmandu::Util::add_parent($caller, $self->base) if !$caller->isa($self->base);
+    unless ($caller->isa($self->base)) {
+        Catmandu::Util::add_parent($caller, $self->base);
+    }
 
     for my $field (@fields) {
         Catmandu::Util::add_subroutine($caller, $field => sub { $_[0]->{$field} });

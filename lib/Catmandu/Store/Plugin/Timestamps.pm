@@ -3,7 +3,7 @@ use Catmandu::Sane;
 use DateTime;
 
 sub import_plugin {
-    my ($plugin, $store) = @_;
+    my ($plugin, $store, $opts) = @_;
 
     $store->before(save => sub {
         my $obj = $_[1];

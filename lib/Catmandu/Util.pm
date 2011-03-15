@@ -1,6 +1,7 @@
 package Catmandu::Util;
 use Catmandu::Sane;
 use Exporter qw(import);
+use Scalar::Util;
 use Plack::Util;
 use IO::Handle;
 use IO::String;
@@ -113,14 +114,14 @@ sub io {
 
 sub is_instance {
     my $obj = shift;
-    return 0 unless blessed($obj);
+    return 0 unless Scalar::Util::blessed($obj);
     $obj->isa($_) || return 0 foreach @_;
     return 1;
 }
 
 sub is_able {
     my $obj = shift;
-    return 0 unless blessed($obj);
+    return 0 unless Scalar::Util::blessed($obj);
     $obj->can($_) || return 0 foreach @_;
     return 1;
 }
