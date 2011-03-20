@@ -34,9 +34,7 @@
      </div>
      <font size="-1">
         <span class="d_au">
-        [% FOREACH au IN res.contributors %]
-            [% au.last_name | utf8 | html %], [% au.first_name | utf8 | html %] ;
-        [% END %]
+        [% res.authors | utf8 | html %]
         </span>
         <br/>
         [% res.publication_type | html %]
