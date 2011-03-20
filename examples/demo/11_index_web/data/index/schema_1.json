@@ -1,0 +1,211 @@
+{
+   "_class" : "KinoSearch::Plan::Schema",
+   "analyzers" : [
+      null,
+      {
+         "_class" : "KinoSearch::Analysis::PolyAnalyzer",
+         "analyzers" : [
+            {
+               "_class" : "KinoSearch::Analysis::CaseFolder"
+            },
+            {
+               "_class" : "KinoSearch::Analysis::Tokenizer",
+               "pattern" : "\\w+(?:['\\x{2019}]\\w+)*"
+            },
+            {
+               "_class" : "KinoSearch::Analysis::Stemmer",
+               "language" : "en"
+            }
+         ]
+      }
+   ],
+   "fields" : {
+      "_id" : {
+         "type" : "string"
+      },
+      "abstracts" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "additionalInformation" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "article_type" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "authors" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "classification" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "conference_date" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "conference_date_end" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "conference_location" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "conference_name" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "creator" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "date_created" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "date_updated" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "departments" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "doi" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "editors" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "has_full_text" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "id" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "isbn" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "isi_id" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "isi_type" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "issn" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "issue" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "issue_title" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "keywords" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "language" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "misc_type" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "oldId" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "open_access" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "other_identifiers" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "pages" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "pages_end" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "pages_start" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "people" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publication_abbreviation" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publication_reference" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publication_status" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publication_title" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publication_year" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publisher" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "publisher_place" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "sourceDb" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "subjects" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "title" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "type" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "ugent_publication" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      },
+      "volume" : {
+         "analyzer" : "1",
+         "type" : "fulltext"
+      }
+   }
+}

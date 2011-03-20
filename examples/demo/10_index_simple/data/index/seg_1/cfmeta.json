@@ -1,0 +1,777 @@
+{
+   "files" : {
+      "documents.dat" : {
+         "length" : "32649",
+         "offset" : "0"
+      },
+      "documents.ix" : {
+         "length" : "192",
+         "offset" : "32656"
+      },
+      "highlight.dat" : {
+         "length" : "22",
+         "offset" : "32848"
+      },
+      "highlight.ix" : {
+         "length" : "192",
+         "offset" : "32872"
+      },
+      "lexicon-1.dat" : {
+         "length" : "220",
+         "offset" : "33064"
+      },
+      "lexicon-1.ix" : {
+         "length" : "4",
+         "offset" : "33288"
+      },
+      "lexicon-1.ixix" : {
+         "length" : "8",
+         "offset" : "33296"
+      },
+      "lexicon-10.dat" : {
+         "length" : "119",
+         "offset" : "33304"
+      },
+      "lexicon-10.ix" : {
+         "length" : "4",
+         "offset" : "33424"
+      },
+      "lexicon-10.ixix" : {
+         "length" : "8",
+         "offset" : "33432"
+      },
+      "lexicon-11.dat" : {
+         "length" : "293",
+         "offset" : "33440"
+      },
+      "lexicon-11.ix" : {
+         "length" : "4",
+         "offset" : "33736"
+      },
+      "lexicon-11.ixix" : {
+         "length" : "8",
+         "offset" : "33744"
+      },
+      "lexicon-12.dat" : {
+         "length" : "819",
+         "offset" : "33752"
+      },
+      "lexicon-12.ix" : {
+         "length" : "4",
+         "offset" : "34576"
+      },
+      "lexicon-12.ixix" : {
+         "length" : "8",
+         "offset" : "34584"
+      },
+      "lexicon-13.dat" : {
+         "length" : "14",
+         "offset" : "34592"
+      },
+      "lexicon-13.ix" : {
+         "length" : "4",
+         "offset" : "34608"
+      },
+      "lexicon-13.ixix" : {
+         "length" : "8",
+         "offset" : "34616"
+      },
+      "lexicon-14.dat" : {
+         "length" : "142",
+         "offset" : "34624"
+      },
+      "lexicon-14.ix" : {
+         "length" : "4",
+         "offset" : "34768"
+      },
+      "lexicon-14.ixix" : {
+         "length" : "8",
+         "offset" : "34776"
+      },
+      "lexicon-15.dat" : {
+         "length" : "218",
+         "offset" : "34784"
+      },
+      "lexicon-15.ix" : {
+         "length" : "4",
+         "offset" : "35008"
+      },
+      "lexicon-15.ixix" : {
+         "length" : "8",
+         "offset" : "35016"
+      },
+      "lexicon-16.dat" : {
+         "length" : "58",
+         "offset" : "35024"
+      },
+      "lexicon-16.ix" : {
+         "length" : "4",
+         "offset" : "35088"
+      },
+      "lexicon-16.ixix" : {
+         "length" : "8",
+         "offset" : "35096"
+      },
+      "lexicon-17.dat" : {
+         "length" : "61",
+         "offset" : "35104"
+      },
+      "lexicon-17.ix" : {
+         "length" : "4",
+         "offset" : "35168"
+      },
+      "lexicon-17.ixix" : {
+         "length" : "8",
+         "offset" : "35176"
+      },
+      "lexicon-18.dat" : {
+         "length" : "1293",
+         "offset" : "35184"
+      },
+      "lexicon-18.ix" : {
+         "length" : "22",
+         "offset" : "36480"
+      },
+      "lexicon-18.ixix" : {
+         "length" : "16",
+         "offset" : "36504"
+      },
+      "lexicon-19.dat" : {
+         "length" : "228",
+         "offset" : "36520"
+      },
+      "lexicon-19.ix" : {
+         "length" : "4",
+         "offset" : "36752"
+      },
+      "lexicon-19.ixix" : {
+         "length" : "8",
+         "offset" : "36760"
+      },
+      "lexicon-2.dat" : {
+         "length" : "256",
+         "offset" : "36768"
+      },
+      "lexicon-2.ix" : {
+         "length" : "4",
+         "offset" : "37024"
+      },
+      "lexicon-2.ixix" : {
+         "length" : "8",
+         "offset" : "37032"
+      },
+      "lexicon-20.dat" : {
+         "length" : "1438",
+         "offset" : "37040"
+      },
+      "lexicon-20.ix" : {
+         "length" : "16",
+         "offset" : "38480"
+      },
+      "lexicon-20.ixix" : {
+         "length" : "16",
+         "offset" : "38496"
+      },
+      "lexicon-21.dat" : {
+         "length" : "1270",
+         "offset" : "38512"
+      },
+      "lexicon-21.ix" : {
+         "length" : "14",
+         "offset" : "39784"
+      },
+      "lexicon-21.ixix" : {
+         "length" : "16",
+         "offset" : "39800"
+      },
+      "lexicon-22.dat" : {
+         "length" : "411",
+         "offset" : "39816"
+      },
+      "lexicon-22.ix" : {
+         "length" : "4",
+         "offset" : "40232"
+      },
+      "lexicon-22.ixix" : {
+         "length" : "8",
+         "offset" : "40240"
+      },
+      "lexicon-23.dat" : {
+         "length" : "181",
+         "offset" : "40248"
+      },
+      "lexicon-23.ix" : {
+         "length" : "4",
+         "offset" : "40432"
+      },
+      "lexicon-23.ixix" : {
+         "length" : "8",
+         "offset" : "40440"
+      },
+      "lexicon-24.dat" : {
+         "length" : "208",
+         "offset" : "40448"
+      },
+      "lexicon-24.ix" : {
+         "length" : "4",
+         "offset" : "40656"
+      },
+      "lexicon-24.ixix" : {
+         "length" : "8",
+         "offset" : "40664"
+      },
+      "lexicon-25.dat" : {
+         "length" : "73",
+         "offset" : "40672"
+      },
+      "lexicon-25.ix" : {
+         "length" : "4",
+         "offset" : "40752"
+      },
+      "lexicon-25.ixix" : {
+         "length" : "8",
+         "offset" : "40760"
+      },
+      "lexicon-26.dat" : {
+         "length" : "82",
+         "offset" : "40768"
+      },
+      "lexicon-26.ix" : {
+         "length" : "4",
+         "offset" : "40856"
+      },
+      "lexicon-26.ixix" : {
+         "length" : "8",
+         "offset" : "40864"
+      },
+      "lexicon-27.dat" : {
+         "length" : "827",
+         "offset" : "40872"
+      },
+      "lexicon-27.ix" : {
+         "length" : "4",
+         "offset" : "41704"
+      },
+      "lexicon-27.ixix" : {
+         "length" : "8",
+         "offset" : "41712"
+      },
+      "lexicon-28.dat" : {
+         "length" : "66",
+         "offset" : "41720"
+      },
+      "lexicon-28.ix" : {
+         "length" : "4",
+         "offset" : "41792"
+      },
+      "lexicon-28.ixix" : {
+         "length" : "8",
+         "offset" : "41800"
+      },
+      "lexicon-29.dat" : {
+         "length" : "11",
+         "offset" : "41808"
+      },
+      "lexicon-29.ix" : {
+         "length" : "4",
+         "offset" : "41824"
+      },
+      "lexicon-29.ixix" : {
+         "length" : "8",
+         "offset" : "41832"
+      },
+      "lexicon-3.dat" : {
+         "length" : "114",
+         "offset" : "41840"
+      },
+      "lexicon-3.ix" : {
+         "length" : "4",
+         "offset" : "41960"
+      },
+      "lexicon-3.ixix" : {
+         "length" : "8",
+         "offset" : "41968"
+      },
+      "lexicon-30.dat" : {
+         "length" : "1052",
+         "offset" : "41976"
+      },
+      "lexicon-30.ix" : {
+         "length" : "14",
+         "offset" : "43032"
+      },
+      "lexicon-30.ixix" : {
+         "length" : "16",
+         "offset" : "43048"
+      },
+      "lexicon-31.dat" : {
+         "length" : "58",
+         "offset" : "43064"
+      },
+      "lexicon-31.ix" : {
+         "length" : "4",
+         "offset" : "43128"
+      },
+      "lexicon-31.ixix" : {
+         "length" : "8",
+         "offset" : "43136"
+      },
+      "lexicon-32.dat" : {
+         "length" : "54",
+         "offset" : "43144"
+      },
+      "lexicon-32.ix" : {
+         "length" : "4",
+         "offset" : "43200"
+      },
+      "lexicon-32.ixix" : {
+         "length" : "8",
+         "offset" : "43208"
+      },
+      "lexicon-33.dat" : {
+         "length" : "101",
+         "offset" : "43216"
+      },
+      "lexicon-33.ix" : {
+         "length" : "4",
+         "offset" : "43320"
+      },
+      "lexicon-33.ixix" : {
+         "length" : "8",
+         "offset" : "43328"
+      },
+      "lexicon-34.dat" : {
+         "length" : "12",
+         "offset" : "43336"
+      },
+      "lexicon-34.ix" : {
+         "length" : "4",
+         "offset" : "43352"
+      },
+      "lexicon-34.ixix" : {
+         "length" : "8",
+         "offset" : "43360"
+      },
+      "lexicon-35.dat" : {
+         "length" : "5215",
+         "offset" : "43368"
+      },
+      "lexicon-35.ix" : {
+         "length" : "65",
+         "offset" : "48584"
+      },
+      "lexicon-35.ixix" : {
+         "length" : "48",
+         "offset" : "48656"
+      },
+      "lexicon-36.dat" : {
+         "length" : "102",
+         "offset" : "48704"
+      },
+      "lexicon-36.ix" : {
+         "length" : "4",
+         "offset" : "48808"
+      },
+      "lexicon-36.ixix" : {
+         "length" : "8",
+         "offset" : "48816"
+      },
+      "lexicon-37.dat" : {
+         "length" : "114",
+         "offset" : "48824"
+      },
+      "lexicon-37.ix" : {
+         "length" : "4",
+         "offset" : "48944"
+      },
+      "lexicon-37.ixix" : {
+         "length" : "8",
+         "offset" : "48952"
+      },
+      "lexicon-38.dat" : {
+         "length" : "30",
+         "offset" : "48960"
+      },
+      "lexicon-38.ix" : {
+         "length" : "4",
+         "offset" : "48992"
+      },
+      "lexicon-38.ixix" : {
+         "length" : "8",
+         "offset" : "49000"
+      },
+      "lexicon-39.dat" : {
+         "length" : "66",
+         "offset" : "49008"
+      },
+      "lexicon-39.ix" : {
+         "length" : "4",
+         "offset" : "49080"
+      },
+      "lexicon-39.ixix" : {
+         "length" : "8",
+         "offset" : "49088"
+      },
+      "lexicon-4.dat" : {
+         "length" : "44",
+         "offset" : "49096"
+      },
+      "lexicon-4.ix" : {
+         "length" : "4",
+         "offset" : "49144"
+      },
+      "lexicon-4.ixix" : {
+         "length" : "8",
+         "offset" : "49152"
+      },
+      "lexicon-40.dat" : {
+         "length" : "109",
+         "offset" : "49160"
+      },
+      "lexicon-40.ix" : {
+         "length" : "4",
+         "offset" : "49272"
+      },
+      "lexicon-40.ixix" : {
+         "length" : "8",
+         "offset" : "49280"
+      },
+      "lexicon-41.dat" : {
+         "length" : "23",
+         "offset" : "49288"
+      },
+      "lexicon-41.ix" : {
+         "length" : "4",
+         "offset" : "49312"
+      },
+      "lexicon-41.ixix" : {
+         "length" : "8",
+         "offset" : "49320"
+      },
+      "lexicon-42.dat" : {
+         "length" : "20",
+         "offset" : "49328"
+      },
+      "lexicon-42.ix" : {
+         "length" : "4",
+         "offset" : "49352"
+      },
+      "lexicon-42.ixix" : {
+         "length" : "8",
+         "offset" : "49360"
+      },
+      "lexicon-43.dat" : {
+         "length" : "26",
+         "offset" : "49368"
+      },
+      "lexicon-43.ix" : {
+         "length" : "4",
+         "offset" : "49400"
+      },
+      "lexicon-43.ixix" : {
+         "length" : "8",
+         "offset" : "49408"
+      },
+      "lexicon-44.dat" : {
+         "length" : "18",
+         "offset" : "49416"
+      },
+      "lexicon-44.ix" : {
+         "length" : "4",
+         "offset" : "49440"
+      },
+      "lexicon-44.ixix" : {
+         "length" : "8",
+         "offset" : "49448"
+      },
+      "lexicon-45.dat" : {
+         "length" : "33",
+         "offset" : "49456"
+      },
+      "lexicon-45.ix" : {
+         "length" : "4",
+         "offset" : "49496"
+      },
+      "lexicon-45.ixix" : {
+         "length" : "8",
+         "offset" : "49504"
+      },
+      "lexicon-46.dat" : {
+         "length" : "21",
+         "offset" : "49512"
+      },
+      "lexicon-46.ix" : {
+         "length" : "4",
+         "offset" : "49536"
+      },
+      "lexicon-46.ixix" : {
+         "length" : "8",
+         "offset" : "49544"
+      },
+      "lexicon-47.dat" : {
+         "length" : "26",
+         "offset" : "49552"
+      },
+      "lexicon-47.ix" : {
+         "length" : "4",
+         "offset" : "49584"
+      },
+      "lexicon-47.ixix" : {
+         "length" : "8",
+         "offset" : "49592"
+      },
+      "lexicon-5.dat" : {
+         "length" : "665",
+         "offset" : "49600"
+      },
+      "lexicon-5.ix" : {
+         "length" : "4",
+         "offset" : "50272"
+      },
+      "lexicon-5.ixix" : {
+         "length" : "8",
+         "offset" : "50280"
+      },
+      "lexicon-6.dat" : {
+         "length" : "47",
+         "offset" : "50288"
+      },
+      "lexicon-6.ix" : {
+         "length" : "4",
+         "offset" : "50336"
+      },
+      "lexicon-6.ixix" : {
+         "length" : "8",
+         "offset" : "50344"
+      },
+      "lexicon-7.dat" : {
+         "length" : "157",
+         "offset" : "50352"
+      },
+      "lexicon-7.ix" : {
+         "length" : "4",
+         "offset" : "50512"
+      },
+      "lexicon-7.ixix" : {
+         "length" : "8",
+         "offset" : "50520"
+      },
+      "lexicon-8.dat" : {
+         "length" : "21",
+         "offset" : "50528"
+      },
+      "lexicon-8.ix" : {
+         "length" : "4",
+         "offset" : "50552"
+      },
+      "lexicon-8.ixix" : {
+         "length" : "8",
+         "offset" : "50560"
+      },
+      "lexicon-9.dat" : {
+         "length" : "243",
+         "offset" : "50568"
+      },
+      "lexicon-9.ix" : {
+         "length" : "4",
+         "offset" : "50816"
+      },
+      "lexicon-9.ixix" : {
+         "length" : "8",
+         "offset" : "50824"
+      },
+      "postings-1.dat" : {
+         "length" : "96",
+         "offset" : "50832"
+      },
+      "postings-10.dat" : {
+         "length" : "42",
+         "offset" : "50928"
+      },
+      "postings-11.dat" : {
+         "length" : "113",
+         "offset" : "50976"
+      },
+      "postings-12.dat" : {
+         "length" : "66",
+         "offset" : "51096"
+      },
+      "postings-13.dat" : {
+         "length" : "66",
+         "offset" : "51168"
+      },
+      "postings-14.dat" : {
+         "length" : "75",
+         "offset" : "51240"
+      },
+      "postings-15.dat" : {
+         "length" : "387",
+         "offset" : "51320"
+      },
+      "postings-16.dat" : {
+         "length" : "66",
+         "offset" : "51712"
+      },
+      "postings-17.dat" : {
+         "length" : "45",
+         "offset" : "51784"
+      },
+      "postings-18.dat" : {
+         "length" : "548",
+         "offset" : "51832"
+      },
+      "postings-19.dat" : {
+         "length" : "81",
+         "offset" : "52384"
+      },
+      "postings-2.dat" : {
+         "length" : "95",
+         "offset" : "52472"
+      },
+      "postings-20.dat" : {
+         "length" : "717",
+         "offset" : "52568"
+      },
+      "postings-21.dat" : {
+         "length" : "554",
+         "offset" : "53288"
+      },
+      "postings-22.dat" : {
+         "length" : "527",
+         "offset" : "53848"
+      },
+      "postings-23.dat" : {
+         "length" : "66",
+         "offset" : "54376"
+      },
+      "postings-24.dat" : {
+         "length" : "81",
+         "offset" : "54448"
+      },
+      "postings-25.dat" : {
+         "length" : "39",
+         "offset" : "54536"
+      },
+      "postings-26.dat" : {
+         "length" : "62",
+         "offset" : "54576"
+      },
+      "postings-27.dat" : {
+         "length" : "290",
+         "offset" : "54640"
+      },
+      "postings-28.dat" : {
+         "length" : "45",
+         "offset" : "54936"
+      },
+      "postings-29.dat" : {
+         "length" : "66",
+         "offset" : "54984"
+      },
+      "postings-3.dat" : {
+         "length" : "24",
+         "offset" : "55056"
+      },
+      "postings-30.dat" : {
+         "length" : "641",
+         "offset" : "55080"
+      },
+      "postings-31.dat" : {
+         "length" : "15",
+         "offset" : "55728"
+      },
+      "postings-32.dat" : {
+         "length" : "66",
+         "offset" : "55744"
+      },
+      "postings-33.dat" : {
+         "length" : "69",
+         "offset" : "55816"
+      },
+      "postings-34.dat" : {
+         "length" : "66",
+         "offset" : "55888"
+      },
+      "postings-35.dat" : {
+         "length" : "3922",
+         "offset" : "55960"
+      },
+      "postings-36.dat" : {
+         "length" : "39",
+         "offset" : "59888"
+      },
+      "postings-37.dat" : {
+         "length" : "57",
+         "offset" : "59928"
+      },
+      "postings-38.dat" : {
+         "length" : "33",
+         "offset" : "59992"
+      },
+      "postings-39.dat" : {
+         "length" : "81",
+         "offset" : "60032"
+      },
+      "postings-4.dat" : {
+         "length" : "24",
+         "offset" : "60120"
+      },
+      "postings-40.dat" : {
+         "length" : "57",
+         "offset" : "60144"
+      },
+      "postings-41.dat" : {
+         "length" : "24",
+         "offset" : "60208"
+      },
+      "postings-42.dat" : {
+         "length" : "12",
+         "offset" : "60232"
+      },
+      "postings-43.dat" : {
+         "length" : "9",
+         "offset" : "60248"
+      },
+      "postings-44.dat" : {
+         "length" : "18",
+         "offset" : "60264"
+      },
+      "postings-45.dat" : {
+         "length" : "9",
+         "offset" : "60288"
+      },
+      "postings-46.dat" : {
+         "length" : "6",
+         "offset" : "60304"
+      },
+      "postings-47.dat" : {
+         "length" : "9",
+         "offset" : "60312"
+      },
+      "postings-5.dat" : {
+         "length" : "302",
+         "offset" : "60328"
+      },
+      "postings-6.dat" : {
+         "length" : "66",
+         "offset" : "60632"
+      },
+      "postings-7.dat" : {
+         "length" : "195",
+         "offset" : "60704"
+      },
+      "postings-8.dat" : {
+         "length" : "66",
+         "offset" : "60904"
+      },
+      "postings-9.dat" : {
+         "length" : "380",
+         "offset" : "60976"
+      },
+      "postings.skip" : {
+         "length" : "16",
+         "offset" : "61360"
+      }
+   },
+   "format" : "2"
+}

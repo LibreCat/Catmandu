@@ -1,6 +1,8 @@
 #!/bin/bash
 
-PERL="perl"
+if [ "${PERL}" == "" ]; then
+    PERL="perl"
+fi
 
 if [ "${CATMANDU_HOME}" == "" ]; then
     CATMANDU_HOME="../.."
@@ -35,7 +37,7 @@ if [ "$3" == "nofix" ]; then
 fi
 
 zcat ${FILE} | \
-${PERL} ${CATMANDU_HOME}/bin/catmandu convert \
+${PERL} ${OPTS} ${CATMANDU_HOME}/bin/catmandu convert \
      -I Aleph -i map=${MAP}  \
      --fix="add_field($.source,'${TYPE}')"  \
      --fix="copy_field($.id,'${TYPE}')"  \

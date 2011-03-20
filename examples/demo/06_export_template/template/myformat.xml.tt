@@ -1,0 +1,5 @@
+<myformat>
+ <title>[% title %]</title>
+ <creator>[% creator %]</creator>
+ <classification>[% classification %]</classification>
+</myformat>

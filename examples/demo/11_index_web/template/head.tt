@@ -1,0 +1,67 @@
+ <head>
+   <link rel="stylesheet" href="/css/style.css" type="text/css" />
+
+   <style type="text/css">
+    body {
+      font-family: arial, sans-serif;
+    }   
+ 
+    table {
+        margin-bottom: 10px;
+    }
+
+    a:link {
+        color: #0000cc;
+    }
+
+    .np {
+       margin-bottom: 10px; 
+    }
+
+    .d_r {
+       width: 800px;
+       margin-bottom: 10px; 
+    }
+
+    .d_rt {
+       font-weight: 400;
+    }
+
+    .d_au {
+       width: 800px;
+       color: #008000;
+    }
+
+    .footer {
+        width: 800px;
+        margin-top: 10px;
+        font-size: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .np {
+        width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    a.se , a.se:link , a.se:visited {
+        color: #00c;
+        font-size: 12pt;
+        font-weight: 700;
+    }
+
+    a.flw , a.flw:link , a.flw:visited {
+        color: #000;
+    }
+
+    a.curr , a.curr:link , a.curr:visited {
+        color: #a90a08;
+        text-decoration: none;
+    }
+
+   </style>
+ </head>

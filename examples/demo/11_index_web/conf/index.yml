@@ -1,0 +1,5 @@
+---
+index:
+  class: Catmandu::Index::Simple
+  args: 
+    path: data/index

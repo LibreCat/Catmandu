@@ -1,0 +1,28 @@
+# Demo fix file
+#
+# Syntax:
+#
+#   add_field(path,value)
+#   rename_field(old_path,new_path)
+#   copy_field(old_field,new_field)
+#   delete_field(path)
+#   substring(path,offset,length)
+#   replace(path,search,replace)
+#   tolower(path)
+#   toupper(path)
+#   join(path,expr)
+#   lookup(path,config)
+#
+# Where
+#
+#   path is a JSON::Path [http://goessner.net/articles/JsonPath/]
+#
+# $.name        - points to the name field
+# $.name.first  - points to the fist subfield of name
+# $.title[0]    - points to the first title field
+# $..title      - points to all title fields
+#
+# P@ 2011-02
+add_field($.test,'123')
+toupper($.type)
+lookup($.classification,'classification.txt')
