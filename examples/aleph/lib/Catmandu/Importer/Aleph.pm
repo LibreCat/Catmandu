@@ -152,11 +152,15 @@ sub {
 
 EOF
 
-    while (@$map) {
-        my ($key,$value) = splice(@$map, 0, 2);
+    for (my $i = 0 ; $i < @$map ; $i += 2) {
+        my $key = $map->[$i];
+	my $value = $map->[$i+1];
         
         if ($key eq 'MRC') {
             $eval .= "   push \@{\$dc->{$value}} , \$rec;\n";
+        }
+        elsif ($key eq 'SYS') {
+            $eval .= "   push \@{\$dc->{$value}} , \$rec->{id};\n";
         }
         elsif ($key =~ /^([A-Z0-9*]{3})(\+([a-z0-9]+))?(\-([a-z0-9]+))?/) {
             my $field    = $1; $field =~ s/\*/./g;
@@ -201,26 +205,21 @@ sub clean_empty {
     $out;
 }
 
-
 sub field {
-    my ($rec,$field, %opts) = @_;
+    my ($rec,$field_regex, %opts) = @_;
 
-    return $rec->{id} if $field eq 'SYS';
-   
-    my $field_regex = qr{$field};
-
-    my @fields = grep { $_->[0] =~ $field_regex } @{$rec->{data}};
+    my @fields = grep { $_->[0] =~ /$field_regex/goc } @{$rec->{data}};
 
     my @out = ();
 
     foreach (@fields) {
         my $len    = @$_;
-        my @data   = @$_[4 .. $len -1 ];
+        my @data   = @$_[4 .. $len-1];
         my @values = ();
 
         INNER: while (my @v = splice(@data,0,2)) {
-            next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/;
-            next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/;
+            next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/goc;
+            next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/goc;
 
             push (@values, $v[1]) if defined $v[1] && length $v[1];
         }

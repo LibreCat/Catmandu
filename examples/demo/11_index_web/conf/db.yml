@@ -1,0 +1,5 @@
+---
+db:
+  class:  Catmandu::Store::Simple
+  args: 
+    path: data/database.db

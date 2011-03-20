@@ -1,0 +1,12 @@
+A1	Journal Article
+A2	Journal Article
+A3	Journal Article
+A4 	Journal Article
+B1	Book
+B2	Book
+B3	Book
+C1	Conference Paper
+C3	Conference Paper
+P1	Conference Paper
+D1	Dissertation
+V	Miscellaneous
