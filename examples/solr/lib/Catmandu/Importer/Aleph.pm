@@ -24,6 +24,20 @@ has inline_map => (
     documentation => "Inline definition of MARC mapping definition.",
 );
 
+has skip => (
+    is => 'ro',
+    isa => 'Int',
+    default => 0,
+    documentation => "Number of records to skip",
+);
+
+has count => (
+    is => 'ro',
+    isa => 'Int',
+    default => -1,
+    documentation => "Number of records to skip",
+);
+
 sub default_attribute {
     'file';
 }
@@ -41,26 +55,38 @@ sub each {
    binmode $fh, ':utf8';
 
    my $mapper  = $self->mapper( $self->inline_map || $self->file_map );
+   my $id_len  = undef;
 
    while(<$fh>) {
      chomp;
-     my $sysid = substr($_,0,9);
-     my $tag   = substr($_,10,3);
-     my $ind1  = substr($_,13,1);
-     my $ind2  = substr($_,14,1);
-     my $char  = substr($_,16,1);
-     my $data  = substr($_,18);
+	
+     next unless (length $_ >= 18);
+     
+     # dynamically guess the id length
+     unless ($id_len) {
+	my ($id) = ($_ =~ /^(\S+)/g);
+        $id_len = length $id;
+     }
+     
+     my $sysid = substr($_,0,$id_len);
+     my $tag   = substr($_,$id_len+1,3);
+     my $ind1  = substr($_,$id_len+4,1); $ind1 =~ s/\W/ /;
+     my $ind2  = substr($_,$id_len+5,1); $ind2 =~ s/\W/ /;
+     my $char  = substr($_,$id_len+7,1);
+     my $data  = substr($_,$id_len+9);
      my @parts = ('_' , split(/\$\$(.)/, $data) );
 
      if (defined $prev_id && $prev_id != $sysid) {
 
         if (defined $callback) {
-            $callback->( $mapper ? $mapper->($rec) : $rec ); 
+            $callback->( $mapper ? $mapper->($rec) : $rec ) if ($self->skip <= $num); 
         }
+
+        $rec = {};
 
         $num++;
 
-        $rec = {};
+	last if ($self->count != -1 && $num == $self->count + $self->skip);
      }
 
      $rec->{id} = $sysid;
@@ -69,8 +95,8 @@ sub each {
      $prev_id = $sysid;
    }
 
-   if (defined $callback && defined $mapper) {
-      $callback->( $mapper->($rec) ); 
+   if (defined $callback && defined $mapper && keys %$rec) {
+       $callback->( $mapper->($rec) ); 
    }
 
    $num++;
@@ -179,7 +205,11 @@ sub clean_empty {
 sub field {
     my ($rec,$field, %opts) = @_;
 
-    my @fields = grep { $_->[0] eq $field } @{$rec->{data}};
+    return $rec->{id} if $field eq 'SYS';
+   
+    my $field_regex = qr{$field};
+
+    my @fields = grep { $_->[0] =~ $field_regex } @{$rec->{data}};
 
     my @out = ();
 
@@ -188,13 +218,11 @@ sub field {
         my @data   = @$_[4 .. $len -1 ];
         my @values = ();
 
-        my $it = natatime 2, @data;
-
-        INNER: while (my @v = $it->() ) {
+        INNER: while (my @v = splice(@data,0,2)) {
             next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/;
             next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/;
 
-            push (@values, $v[1]) if length $v[1];
+            push (@values, $v[1]) if defined $v[1] && length $v[1];
         }
 
         my $str = join(" ",@values);

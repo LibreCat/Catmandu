@@ -63,7 +63,7 @@ catmandu import -v -I Luur -s path=data/biblio.db -i http://biblio.ugent.be/oai/
 ##############################################################################
 # 4) Index the data
 
-catmandu index -T Solr -s path=data/biblio.db data/biblio.idx
+catmandu index -T Solr -s path=data/biblio.db 
 
 
 ##############################################################################

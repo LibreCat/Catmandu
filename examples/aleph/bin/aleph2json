@@ -34,7 +34,7 @@ if [ "$3" == "nofix" ]; then
   TYPE_FIX="/dev/null"
 fi
 
-zcat ${FILE} | \
+gunzip -c ${FILE} | \
 ${PERL} ${CATMANDU_HOME}/bin/catmandu convert \
      -I Aleph -i map=${MAP}  \
      --fix="add_field($.source,'${TYPE}')"  \
