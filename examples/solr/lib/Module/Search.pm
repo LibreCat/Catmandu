@@ -1,76 +1,79 @@
 package Module::Search;
+use Moose;
+BEGIN { extends 'Catmandu::App' };
+use Catmandu;
+use Catmandu::Util;
 
-use Catmandu::App;
-use Plack::Util;
-
-get '/' => sub {
-    my $self  = shift;
-    $self->print_template('search');
-};
-
-get '/login' => sub {
-    my $self  = shift;
-
-    $self->print_template('login');
-};
-
-post '/login' => sub {
-    my $self  = shift;
-
-    $self->auth->authenticate;
-
-    $self->redirect('/');
-};
-
-get '/logout' => sub {
-    my $self = shift;
-
-    $self->auth->clear_user;
-
-    $self->redirect('/');
-};
-
-get '/view' => sub {
-    my $self  = shift;
-    my $id    = $self->req->param('id');
-
-    my $obj = $self->store->load($id);
-
-    $self->print_template('view' , { id => $id , res => $obj});
-};
-
-get '/search' => sub {
-    my $self  = shift;
-    my $q     = $self->req->param('q');
-    my $start = $self->req->param('start') || 0;
-    my $num   = $self->req->param('num') || 10;
-
-    my ($results, $hits, $error) = $self->index->search($q, start => $start , limit => $num, reify => $self->store);
-
-    my $next = ($start + $num < $hits) ? $start + $num : -1;
-    my $prev = ($start - $num >= 0) ? $start - $num : -1; 
-    my $end  = ($start + $num < $hits) ? $start + $num : $hits;
-
-    my ($spage,$curr,$epage) = $self->pages($start, $num, $hits); 
-
-    $self->print_template('search' , { 
-                            error => $error ,
-                            hits => $hits , 
-                            results => $results , 
-                            next  => $next , 
-                            prev  => $prev ,
-                            start => $start + 1,
-                            end   => $end ,
-                            num   => $num ,
-                            spage => $spage ,
-                            curr  => $curr ,
-                            epage => $epage ,
-                        });
-};
+with 'Catmandu::App::Plugin::Locale';
 
 sub BUILD {
     my $self = shift;
     $self->locale_param('lang');
+    
+    $self->GET('/', run => sub {
+        my $self  = shift;
+        $self->print_template('search');
+    });
+
+    $self->GET('/login', run => sub {
+        my $self  = shift;
+
+        $self->print_template('login');
+    });
+
+    $self->POST('/login', run => sub {
+        my $self  = shift;
+
+        $self->auth->authenticate;
+
+        $self->redirect('/');
+    });
+
+    $self->GET('/logout', run => sub {
+        my $self = shift;
+
+        $self->auth->clear_user;
+
+        $self->redirect('/');
+    });
+
+    $self->GET('/view', run => sub {
+        my $self  = shift;
+        my $id    = $self->req->param('id');
+
+        my $obj = $self->store->load($id);
+
+        $self->print_template('view' , { id => $id , res => $obj});
+    });
+
+    $self->GET('/search', run => sub {
+        my $self  = shift;
+        my $q     = $self->req->param('q');
+        my $start = $self->req->param('start') || 0;
+        my $num   = $self->req->param('num') || 10;
+
+        my ($results, $hits, $error) = $self->index->search($q, start => $start , limit => $num, reify => $self->store);
+
+        my $next = ($start + $num < $hits) ? $start + $num : -1;
+        my $prev = ($start - $num >= 0) ? $start - $num : -1; 
+        my $end  = ($start + $num < $hits) ? $start + $num : $hits;
+
+        my ($spage,$curr,$epage) = $self->pages($start, $num, $hits); 
+
+        $self->print_template('search' , { 
+                                error => $error ,
+                                hits => $hits , 
+                                results => $results , 
+                                next  => $next , 
+                                prev  => $prev ,
+                                start => $start + 1,
+                                end   => $end ,
+                                num   => $num ,
+                                spage => $spage ,
+                                curr  => $curr ,
+                                epage => $epage ,
+                            });
+    });
 }
 
 sub pages {
