@@ -1,0 +1,79 @@
+<%USE Catmandu.UTF8 %>
+<div id="page">
+  <% INCLUDE header.tt %>
+
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#dcf6db">
+     <tr>
+      <td colspan="2" bgcolor="#008000"><img width="1" height="1" alt=""/></td>
+     </tr>
+     <tr>
+      <td>
+      <font size="-1">
+      <b>Full Record</b>
+      </font>
+      </td>
+      <td width="10%" align="right">
+      <b>Demo</b>
+      &nbsp;
+      </td>
+     </tr>
+    </table>
+
+    <dl>
+      <% IF res.title %>
+      <dt>Title</dt>
+      <dd><b><% res.title | html | utf8 %></b></dd>
+      <% END %>
+
+      <% IF res.contributors %>
+      <dt>Authors</dt>
+      <dd>
+        <% FOREACH au IN res.contributors %>
+          <a href="/search?q=<% au.last_name | url %>%20<% au.first_name | url%>">
+            <% au.last_name | utf8 | html %>, <% au.first_name | utf8 | html %>
+          </a>;
+        <% END %>
+      </dd>
+      <% END %>
+
+      <% IF res.subjects %>
+      <dt>Subjects</dt>
+      <dd><% res.subjects.join("; ") | utf8 %></dd>
+      <% END %>
+
+      <% IF res.parent_title %>
+      <dt>Publication</dt>
+      <dd><% res.parent_title | utf8 %></dd>
+      <% END %>
+
+      <% IF res.publication_year || res.volume || res.issue %>
+      <dt>Publication Details</dt>
+      <dd>
+       <% res.publication_year | utf8 %> <% res.volume | utf8 %> <% res.issue | utf8 %>
+      </dd>
+      <% END %>
+
+      <% IF res.identifiers %>
+      <dt>Publiction Identifiers</dt>
+      <dd>
+        <% FOREACH id IN res.identifiers %>
+            <% id.type | utf8 %> : <% id.value | utf8 %><br/>
+        <% END %>
+      </dd>
+      <% END %>
+
+       <% IF res.classification %>
+      <dt>UGent Classification</dt>
+      <dd><% res.classification | utf8 %></dd>
+      <% END %>
+
+      <% IF res.affiliations %>
+      <dt>Affiliations</dt>
+      <dd><% res.affiliations.join(" ") | utf8 %></dd>
+      <% END %>
+
+      <dt>Id</dt>
+      <dd><% res.id | utf8 %></dd>
+    </dl>
+
+</div>
