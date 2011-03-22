@@ -1,6 +1,6 @@
 === Installation ===
 
-This example requires Module::Pluggable to be installed.  All other
+This example requires Dancer and Module::Pluggable to be installed.  All other
 dependencies should already be satisfied by the normal Catmandu installation
 process.
 
@@ -12,4 +12,8 @@ To start the server:
 
 To access the application, once the server is running:
 http://localhost:3000/
+
+App login credentials:
+  Username: dave
+  Password: secret
 
