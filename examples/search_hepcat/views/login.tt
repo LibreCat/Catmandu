@@ -7,4 +7,7 @@
     <p>Password: <input type=password name=pass></p>
     <input type=submit value='Login'>
   </form>
+
+  <p>To log in, use any (non-empty) username of your choice and the password
+  "secret".</p>
 </div>

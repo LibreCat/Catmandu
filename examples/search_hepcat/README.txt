@@ -18,7 +18,3 @@ To start the server:
 To access the application, once the server is running:
 http://localhost:3000/
 
-App login credentials:
-  Username: dave
-  Password: secret
-

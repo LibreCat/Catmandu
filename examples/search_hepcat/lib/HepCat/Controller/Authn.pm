@@ -15,7 +15,7 @@ get '/login' => sub {
 };
 
 post '/login' => sub {
-    if (params->{user} eq 'dave' && params->{pass} eq 'secret') {
+    if (params->{user} && params->{pass} eq 'secret') {
         session user => params->{user};
         redirect params->{original_path} || '/';
     } else {
