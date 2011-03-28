@@ -8,5 +8,10 @@ get '/' => sub {
     template 'index';
 };
 
+before_template sub {
+    my $tokens = shift;
+    $tokens->{config} = config;
+};
+
 1;
 
