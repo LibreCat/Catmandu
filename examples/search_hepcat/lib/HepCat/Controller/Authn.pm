@@ -23,4 +23,9 @@ post '/login' => sub {
     }
 };
 
+post '/logout' => sub {
+    session user => undef;
+    redirect '/';
+};
+
 true;
