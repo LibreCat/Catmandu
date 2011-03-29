@@ -1,0 +1,12 @@
+#!/bin/bash
+
+SOURCES="rug01 dbs01 ser01 ebo01 ebo02 ebo03 ebo04 ejn01 bkt01 ebk01"
+
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+echo "<marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">"
+
+for type in $SOURCES; do
+  ./query_solr --field=fXML "source:$type" 
+done
+
+echo "</marc:collection>"
