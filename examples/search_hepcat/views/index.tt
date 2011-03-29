@@ -1,0 +1,58 @@
+<%USE Catmandu.UTF8 %>
+<div id="page">
+  <% INCLUDE header.tt %>
+
+  <% IF hits %>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#dcf6db">
+     <tr>
+      <td colspan="2" bgcolor="#008000"><img width="1" height="1" alt=""/></td>
+     </tr>
+     <tr>
+      <td width="90%">
+      <b>Demo</b>
+      </td>
+      <td nowrap="nowrap">
+      <font size="-1">
+      Results <b><% start %></b> - <b><% finish %></b> of
+      <b><% hits %></b> hits for <b><% q | html %></b>
+      &nbsp;
+      </font>
+      </td>
+     </tr>
+    </table>
+
+    <% FOREACH res IN results %>
+    <div class="d_r">
+     <div class="d_rt">
+      <a href="/view/<% res.id %>"><% res.title | utf8 | html %></a>
+     </div>
+     <font size="-1">
+        <span class="d_au">
+        <% FOREACH au IN res.contributors %>
+            <% au.last_name | utf8 | html %>,
+            <% au.first_name | utf8 | html %> ;
+        <% END %>
+        </span>
+        <br/>
+        <% res.publication_type | html %>
+     </font>
+    </div>
+    <% END %>
+
+    <div class="np">
+    Result Page:
+    <% IF prev != -1 %>
+     <a class="se" href="?q=<% q | html %>&amp;start=<% prev %>&amp;num=<% num %>">&lt;&lt; Previous</a>
+    <% END %>
+
+    <% FOREACH i IN [spage .. epage] %>
+     <% page = i * num  - 10 %>
+     <a <% IF curr==i %>class="curr"<%ELSE%>class="flw"<%END%> href="?q=<% q | html %>&amp;start=<% page %>&amp;num=<% num %>"><% i %></a>
+    <% END %>
+
+    <% IF more != -1 %>
+     <a class="se" href="?q=<% q | html %>&amp;start=<% more %>&amp;num=<% num %>">Next &gt;&gt;</a>
+    <% END %>
+    </div>
+  <% END # IF hits %>
+</div>
