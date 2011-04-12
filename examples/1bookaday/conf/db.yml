@@ -1,0 +1,3 @@
+---
+db:
+  blog: data/tweets.db

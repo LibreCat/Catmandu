@@ -1,0 +1,14 @@
+<html>
+ <body>
+  <h1>#1bookaday</h1>
+
+  <hr/>
+
+  [% FOREACH book IN list %]
+   <p>
+     [% book.content %]<br/>
+     [% book.author %]
+   </p>
+  [% END %]
+ </body>
+</html>
