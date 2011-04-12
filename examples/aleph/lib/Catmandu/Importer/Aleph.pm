@@ -208,7 +208,7 @@ sub clean_empty {
 sub field {
     my ($rec,$field_regex, %opts) = @_;
 
-    my @fields = grep { $_->[0] =~ /$field_regex/goc } @{$rec->{data}};
+    my @fields = grep { $_->[0] =~ /$field_regex/ } @{$rec->{data}};
 
     my @out = ();
 

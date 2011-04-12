@@ -74,7 +74,6 @@ EOF
                 $value = &_escape($value);
                 $xml .= <<EOF;
 <marc:subfield code="$subfield">$value</marc:subfield>
-
 EOF
             }
             $xml .=<<EOF;

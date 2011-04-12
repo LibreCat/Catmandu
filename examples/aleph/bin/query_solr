@@ -1,6 +1,11 @@
 #!/usr/bin/env perl
 
 use Catmandu::Index::Solr;
+use Getopt::Long;
+
+my $fields = [qw(id)];
+
+GetOptions ("field=s@" => \$fields);
 
 my $q = shift;
 
@@ -16,7 +21,9 @@ sub query {
    my ($objs,$hits) = $index->search($query, start => $start, limit => 10);
 
    foreach my $obj (@$objs) {
-      printf "%s\n" , $obj->{id};
+     foreach my $field (@$fields) {
+      printf "%s\n" , $obj->{$field};
+     }
    }
 
    &query($index,$query,$start + 10) if @$objs;

@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [ "${PERL}" == "" ]; then
+    PERL="perl"
+fi
+
+if [ "${CATMANDU_HOME}" == "" ]; then
+    CATMANDU_HOME="../.."
+fi
+
+if [ "${ALEPH_HOME}" == "" ]; then
+    ALEPH_HOME=${CATMANDU_HOME}/examples/aleph
+fi
+
+PROJ=${ALEPH_HOME}
+
+if [ "$1" == "" -o "$2" == "" ]; then
+ echo "usage: $0 file type [nofix]"
+ exit 1
+fi
+
+FILE="$1"
+TYPE="$2"
+MAP="${PROJ}/data/aleph.map"
+TYPE_FIX="${PROJ}/data/aleph.fix"
+
+if [ -r "${PROJ}/data/${TYPE}.map" ]; then
+  MAP="${PROJ}/data/${TYPE}.map"
+fi
+
+if [ -r "${PROJ}/data/${TYPE}.fix" ]; then
+  TYPE_FIX=${PROJ}/data/${TYPE}.fix
+fi
+
+if [ "$3" == "nofix" ]; then
+  TYPE_FIX="/dev/null"
+fi
+
+gunzip -c ${FILE} | \
+${PERL} ${OPTS} ${CATMANDU_HOME}/bin/catmandu convert \
+     -I Aleph -i map=${MAP}  \
+     -O NVPair \
+     --fix="add_field($.source,'${TYPE}')"  \
+     --fix="copy_field($.id,'${TYPE}')"  \
+     --fix="join($.${TYPE},' ')"  \
+     --fix="replace(\$.id,'^','${TYPE}:')" \
+     --fix="${TYPE_FIX}" \
+     --pretty /dev/stdin
