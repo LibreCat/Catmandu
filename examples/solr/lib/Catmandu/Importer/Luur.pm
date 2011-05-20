@@ -35,6 +35,9 @@ has 'url' => (
     required => 1,
 );
 
+sub default_attribute {
+    'url';
+}
 
 sub each {
    my ($self, $callback) = @_;
