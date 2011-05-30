@@ -3,4 +3,3 @@ db:
   class:  Catmandu::Store::Simple
   args: 
     path: data/biblio.db
-

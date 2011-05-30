@@ -35,6 +35,7 @@ has 'url' => (
     required => 1,
 );
 
+sub default_attribute {}
 
 sub each {
    my ($self, $callback) = @_;
@@ -59,6 +60,7 @@ sub each {
     $identifier =~ s/.*://;
 
     my $json = get($self->jsonurl . "$identifier");
+
     my $obj  = decode_json($json);
 
     $obj->{_id} = $identifier;

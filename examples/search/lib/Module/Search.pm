@@ -90,7 +90,7 @@ sub view : GET {
     $self->print_template('view', { id => $id , res => $obj });
 }
 
-sub search : R("/search",GET,POST) {
+sub search : R {
     my $self = $_[0];
 
     my $q     = $self->req->param('q');

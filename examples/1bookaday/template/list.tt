@@ -1,14 +1,12 @@
-<html>
- <body>
-  <h1>#1bookaday</h1>
+[% INCLUDE header.tt %]
 
-  <hr/>
+<h1>#1bookaday</h1>
 
-  [% FOREACH book IN list %]
+[% FOREACH b IN list %]
    <p>
-     [% book.content %]<br/>
-     [% book.author %]
+    [% b.content %]<br/>
+    <b>[% b.author %]</b>
    </p>
-  [% END %]
- </body>
-</html>
+[% END %]
+
+[% INCLUDE footer.tt %]
