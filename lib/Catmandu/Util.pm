@@ -1,86 +1,64 @@
 package Catmandu::Util;
 use Catmandu::Sane;
 use Exporter qw(import);
-use Scalar::Util;
-use Plack::Util;
-use IO::Handle;
-use IO::String;
+use List::Util;
+use Data::UUID;
 use IO::File;
+use IO::String;
 
 our @EXPORT_OK = qw(
     load_package
-    create_package
     add_parent
-    get_subroutine_info
-    get_subroutine
-    add_subroutine
-    io
-    is_instance
-    is_able
-    is_value
-    is_quoted
-    unquote
+    add_sub
+
+    quack
+    value
+
+    new_id
+    get_id
+    ensure_id
+    assert_id
+
+    group_by
+    pluck
+
     trim
+
+    io
 );
 
-*load_package = \&Plack::Util::load_class;
+sub load_package { # stolen from Plack::Util
+    my ($pkg, $prefix) = @_;
 
-sub create_package {
-    my ($pkg) = @_;
-    state $prefix = 'Catmandu::__SERIAL_PACKAGES__::';
-    state $serial = 0;
-    $pkg ||= $prefix . ++$serial;
-    eval "package $pkg;'$pkg'" or confess $@;
+    if ($prefix) {
+        unless ($pkg =~ s/^\+// || $pkg =~ /^$prefix/) {
+            $pkg = "${prefix}::$pkg";
+        }
+    }
+
+    my $file = "$pkg.pm";
+    $file =~ s!::!/!g;
+
+    require $file;
+
+    $pkg;
 }
 
 sub add_parent {
     my ($pkg, @isa) = @_;
+
     no strict 'refs';
     push @{"${pkg}::ISA"}, @isa;
-    @isa;
+    @isa
 }
 
-sub get_subroutine_info {
-    my ($pkg, $sub, %opts) = @_;
-    my $isa = $opts{parents} ? mro::get_linear_isa($pkg) : [$pkg];
+sub add_sub {
+    my ($pkg, %args) = @_;
 
-    for $pkg (@$isa) {
-        no strict 'refs';
-        my @syms = values %{"${pkg}::"};
-        use strict;
-        for my $sym (@syms) {
-            next unless ref \$sym eq 'GLOB';
-
-            if (*{$sym}{CODE} && *{$sym}{CODE} == $sub) {
-                return wantarray ? ($pkg, *{$sym}{NAME}) : join('::', $pkg, *{$sym}{NAME});
-            }
-        }
-    }
-
-    return;
-}
-
-sub get_subroutine {
-    my ($pkg, $sym, %opts) = @_;
-    my $isa = $opts{parents} ? mro::get_linear_isa($pkg) : [$pkg];
-
-    for $pkg (@$isa) {
-        no strict 'refs';
-        if (defined &{"${pkg}::$sym"}) {
-            return \&{"${pkg}::$sym"};
-        }
-    }
-
-    return;
-}
-
-sub add_subroutine {
-    my ($pkg, %pairs) = @_;
-
-    my @syms = keys %pairs;
+    my @syms = keys %args;
 
     for my $sym (@syms) {
-        my $sub = $pairs{$sym};
+        my $sub = $args{$sym};
         unless (ref $sub) {
             $sub = eval "package $pkg; $sub" or confess $@;
         }
@@ -91,61 +69,41 @@ sub add_subroutine {
     @syms;
 }
 
-sub io {
-    my ($io, @args) = @_;
-
-    my $io_obj;
-
-    if (ref($io) eq 'SCALAR') {
-        $io_obj = IO::String->new($$io);
-    }
-    elsif (ref(\$io) eq 'GLOB' || ref($io)) {
-        $io_obj = IO::Handle->new_from_fd($io, @args);
-    }
-    else {
-        $io_obj = IO::File->new;
-        $io_obj->open($io, @args);
-    }
-
-    binmode $io_obj, ':utf8';
-
-    $io_obj;
-}
-
-sub is_instance {
+sub quack {
     my $obj = shift;
-    return 0 unless Scalar::Util::blessed($obj);
-    $obj->isa($_) || return 0 foreach @_;
-    return 1;
-}
-
-sub is_able {
-    my $obj = shift;
-    return 0 unless Scalar::Util::blessed($obj);
+    blessed($obj) || return 0;
     $obj->can($_) || return 0 foreach @_;
-    return 1;
+    1;
 }
 
-sub is_value {
+sub value {
     my $val = $_[0]; defined($val) && !ref($val) && ref(\$val) ne 'GLOB';
 }
 
-sub is_quoted {
-    my $str = $_[0];
-
-    $str and $str =~ /^\"(.*)\"$/ or
-             $str =~ /^\'(.*)\'$/;
+sub new_id {
+    Data::UUID->new->create_str;
 }
 
-sub unquote {
-    my $str = $_[0];
+sub get_id {
+    ref $_[0] ? $_[0]->{_id} : $_[0];
+}
 
-    if ($str) {
-        $str =~ s/^\"(.*)\"$/$1/s or
-        $str =~ s/^\'(.*)\'$/$1/s;
-    }
+sub ensure_id {
+    $_[0]->{_id} ||= new_id;
+}
 
-    $str;
+sub assert_id {
+    get_id(@_) || confess("missing _id");
+}
+
+sub group_by {
+    my $key = shift;
+    List::Util::reduce { push @{$a->{$b->{$key}} ||= []}, $b; $a; } {}, @_;
+}
+
+sub pluck {
+    my $key = shift;
+    map { $_->{$key} } @_;
 }
 
 sub trim {
@@ -157,6 +115,25 @@ sub trim {
     }
 
     $str;
+}
+
+sub io {
+    my ($io, @args) = @_;
+
+    my $io_obj;
+
+    if (ref($io) eq 'SCALAR') {
+        $io_obj = IO::String->new($$io);
+    } elsif (ref(\$io) eq 'GLOB' || ref($io)) {
+        $io_obj = IO::Handle->new_from_fd($io, @args);
+    } else {
+        $io_obj = IO::File->new;
+        $io_obj->open($io, @args);
+    }
+
+    binmode $io_obj, ':utf8';
+
+    $io_obj;
 }
 
 1;

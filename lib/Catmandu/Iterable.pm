@@ -1,9 +1,8 @@
 package Catmandu::Iterable;
 use Catmandu::Sane;
+use Catmandu::Iterator;
 
-sub each {
-    confess "Not implemented";
-}
+sub each {}
 
 sub to_array {
     my ($self) = @_;
@@ -14,23 +13,45 @@ sub to_array {
     $all;
 }
 
+sub slice {
+    my ($self, $skip, $size) = @_;
+    $size //= -1;
+    Catmandu::Iterator->new(sub {
+        return 0 if $size == 0;
+        my $sub = $_[0];
+        my $n = 0;
+        $self->each(sub {
+            if ($skip > 0) {
+                $skip--;
+            } else {
+                $sub->($_[0]);
+                if (++$n == $size) {
+                    goto STOP_EACH;
+                }
+            }
+        });
+        STOP_EACH:
+        $n;
+    });
+}
+
 sub all {
     my ($self, $sub) = @_;
     $self->each(sub {
-        $sub->($_[0]) || goto(STOP_ITERATION);
+        $sub->($_[0]) || goto(STOP_EACH);
     });
     return 1;
-    STOP_ITERATION:
+    STOP_EACH:
     return 0;
 }
 
 sub any {
     my ($self, $sub) = @_;
     $self->each(sub {
-        $sub->($_[0]) && goto(STOP_ITERATION);
+        $sub->($_[0]) && goto(STOP_EACH);
     });
     return 0;
-    STOP_ITERATION:
+    STOP_EACH:
     return 1;
 }
 
@@ -38,10 +59,10 @@ sub many {
     my ($self, $sub) = @_;
     my $n = 0;
     $self->each(sub {
-        $sub->($_[0]) && ++$n > 1 && goto(STOP_ITERATION);
+        $sub->($_[0]) && ++$n > 1 && goto(STOP_EACH);
     });
     return 0;
-    STOP_ITERATION:
+    STOP_EACH:
     return 1;
 }
 
@@ -60,9 +81,9 @@ sub detect {
     $self->each(sub {
         $sub->($_[0]) || return;
         $val = $_[0];
-        goto STOP_ITERATION;
+        goto STOP_EACH;
     });
-    STOP_ITERATION:
+    STOP_EACH:
     $val;
 }
 
@@ -110,29 +131,29 @@ sub reduce {
     $memo;
 }
 
-sub each_slice {
+sub each_group {
     my ($self, $size, $sub) = @_;
-    my $slice = [];
+    my $group = [];
     my $n = 0;
     $self->each(sub {
-        push @$slice, $_[0];
-        if (@$slice == $size) {
-            $sub->($slice);
-            $slice = [];
+        push @$group, $_[0];
+        if (@$group == $size) {
+            $sub->($group);
+            $group = [];
             $n++;
         }
     });
-    if (@$slice) {
-        $sub->($slice);
+    if (@$group) {
+        $sub->($group);
         $n++;
     }
     $n;
 }
 
-sub slice {
+sub group {
     my ($self, $size) = @_;
     my $all = [];
-    $self->each_slice($size, sub {
+    $self->each_group($size, sub {
         push @$all, $_[0];
     });
     $all;
@@ -155,9 +176,9 @@ sub first {
     my $val;
     $self->each(sub {
         $val = $_[0];
-        goto STOP_ITERATION;
+        goto STOP_EACH;
     });
-    STOP_ITERATION:
+    STOP_EACH:
     $val;
 }
 
@@ -168,9 +189,9 @@ sub take {
         if ($n--) {
             push @$all, $_[0];
         }
-        $n || goto(STOP_ITERATION);
+        $n || goto(STOP_EACH);
     });
-    STOP_ITERATION:
+    STOP_EACH:
     $all;
 }
 

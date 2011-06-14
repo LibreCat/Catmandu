@@ -1,25 +1,35 @@
 package Catmandu::CLI;
 use Catmandu::Sane;
-use Catmandu;
+use Catmandu::Util qw(load_package);
 use App::Cmd::Setup -app;
+use FindBin;
+use File::Spec;
+use Cwd qw(realpath);
+
+sub default_appdir { state $default_appdir = realpath(File::Spec->catdir($FindBin::Bin, '..')) }
+
+sub plugin_search_path { 'Catmandu::Cmd' }
 
 sub global_opt_spec {
     (
-        [ 'home|H=s', "the application's home directory" ],
-        [ 'env|E=s', "the application's environment" ],
+        ['environment=s', "application environment (default is development)"],
+        ['appdir=s', "application directory (default is cwd)"],
+        ['confdir=s', "application conf directory (default is appdir)"],
     );
 }
 
-# we overload run to read the global options before
-# the App::Cmd object is created, giving us a chance to setup @INC etc.
+# overload run to read the global options before
+# the App::Cmd object is created
 sub run {
   my ($class) = @_;
 
   my ($global_opts, $argv) = $class->_process_args(\@ARGV, $class->_global_option_processing_params);
 
-  Catmandu->init(home => $global_opts->{home}, env => $global_opts->{env});
-  Catmandu->load_libs;
-  Catmandu->auto;
+  $ENV{DANCER_APPDIR} ||= $global_opts->{appdir} || $class->default_appdir;
+  $ENV{DANCER_CONFDIR} ||= $global_opts->{confdir} if $global_opts->{confdir};
+  $ENV{DANCER_ENVIRONMENT} ||= $global_opts->{environment} if $global_opts->{environment};
+
+  load_package('Dancer')->import(':script');
 
   my $self = $class->new;
 

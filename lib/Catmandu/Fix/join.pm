@@ -1,8 +1,9 @@
 package Catmandu::Fix::substring;
-use Catmandu::Util qw(is_value);
-use Catmandu::Class;
+use Catmandu::Sane;
+use Catmandu::Util qw(value);
+use Catmandu::Object;
 
-sub build_args {
+sub _build_args {
     my ($self, $path, $key, $str) = @_;
     { path => $path,
       key  => $key,
@@ -22,14 +23,16 @@ sub fix {
         my $val = $o->{$key};
 
         if (ref $val eq 'ARRAY') {
-            is_value($_) || next FIX for @$val;
+            value($_) || next FIX for @$val;
             $o->{$key} = join $str, @$val;
         } elsif (ref $val eq 'HASH') {
             my @vals = values %$val;
-            is_value($_) || next FIX for @vals;
+            value($_) || next FIX for @vals;
             $o->{$key} = join $str, @vals;
         }
     }
+
+    $obj;
 }
 
 1;

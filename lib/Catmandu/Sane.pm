@@ -1,28 +1,23 @@
 package Catmandu::Sane;
+use 5.010;
 use strict;
 use warnings;
-use feature qw(:5.10);
+use feature ();
 use utf8;
-use Carp ();
-use Try::Tiny ();
 use mro ();
+use Scalar::Util ();
+use Carp ();
 
 sub import {
-    my ($self, %opts) = @_;
-
-    my $caller = caller;
-
-    $opts{level} //= 1;
+    my $pkg = caller;
 
     strict->import;
     warnings->import;
     feature->import(':5.10');
     utf8->import;
-
-    Carp->export_to_level($opts{level}, $caller, qw(confess));
-    Try::Tiny->export_to_level($opts{level}, $caller, qw(try catch finally));
-
-    mro::set_mro($caller, 'c3');
+    mro::set_mro($pkg, 'c3');
+    Scalar::Util->export_to_level(1, $pkg, qw(blessed));
+    Carp->export_to_level(1, $pkg, qw(confess));
 }
 
 1;

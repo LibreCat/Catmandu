@@ -4,8 +4,7 @@
 
 =head2 Building or contributing to Catmandu
 
-Catmandu uses L<Module::Build> as build tool.
-Use the C<Build> command:
+Catmandu uses L<Module::Build> as build tool:
 
     perl Build.PL
     ./Build help

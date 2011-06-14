@@ -13,16 +13,15 @@ my $build = Module::Build->new(
         'App::Cmd' => '0.310',
         'CGI::Expand' => '2.02',
         'Clone' => '0.31',
+        'Dancer' => '1.3051',
         'Data::UUID' => '1.217',
-        'File::Slurp' => '9999.13 ',
-        'Hash::MultiValue' => '0.08',
+        'File::Path' => '2.08',
+        'File::Slurp' => '9999.13',
         'IO::String' => '1.08',
         'IO::YAML' => '0.08',
         'JSON' => '2.51',
         'JSON::Path' => '0.100',
-        'Plack' => '0.9974',
-        'Plack::Middleware::Session' => '0.13',
-        'Template' => '2.22',
+        'Time::HiRes' => '1.9724',
         'YAML' => '0.72',
     },
 
@@ -32,22 +31,10 @@ my $build = Module::Build->new(
     },
 
     auto_features => {
-        app_plugin_locale => {
-            description => "App localization support",
+        store_dbi => {
+            description => "Store backed by DBI",
             requires => {
-                'Locale::TextDomain' => '1.20',
-            },
-        },
-        template_plugin_locale => {
-            description => "Template localization support",
-            requires => {
-                'Locale::TextDomain' => '1.20',
-            },
-        },
-        store_sqlite => {
-            description => "Store backed by SQLite",
-            requires => {
-                'DBD::SQLite' => '1.31',
+                'DBI' => '1.616',
             },
         },
         store_mongodb => {
@@ -56,16 +43,10 @@ my $build = Module::Build->new(
                 'MongoDB' => '0.42',
             },
         },
-        store_plugin_timestamps => {
-            description => "Timestamp stored objects",
+        index_lucy => {
+            description => "Index backed by Lucy",
             requires => {
-                'DateTime' => '0.66',
-            },
-        },
-        index_kinosearch => {
-            description => "Index backed by Kinosearch",
-            requires => {
-                'KinoSearch' => '0.31',
+                'Lucy' => '0.1.0',
             },
         },
         import_csv => {
@@ -78,6 +59,12 @@ my $build = Module::Build->new(
             description => "Import objects from a spreadsheet",
             requires => {
                 'Spreadsheet::Read' => '0.41',
+            },
+        },
+        import_atom => {
+            description => "Import objects from an Atom feed",
+            requires => {
+                'XML::Atom::Client' => '0.38',
             },
         },
     }

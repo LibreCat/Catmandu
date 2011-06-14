@@ -1,167 +1,76 @@
 package Catmandu;
 use Catmandu::Sane;
-use List::Util qw(first);
-use Cwd qw(getcwd realpath);
-use File::Spec::Functions qw(catfile catdir);
-use File::Basename qw(basename);
-use File::Find;
-use File::Slurp qw(slurp);
-use JSON ();
-use YAML ();
-use Template;
+use Catmandu::Util qw(load_package);
+use Dancer qw(:syntax config);
+use Exporter qw(import);
 
-our $VERSION = '0.01';
+our @EXPORT_OK = qw(
+    new_store
+    new_index
+    new_filestore
+    new_importer
+    new_exporter
+    get_store
+    get_index
+    get_filestore
+);
 
-my $home;
-my $env;
-my $stash;
-my $paths;
-my $renderer;
-
-sub default_home {
-    getcwd;
-}
-
-sub default_env {
-    'development';
-}
-
-sub init {
-    my $self = shift;
-    my $args = ref $_[0] eq 'HASH' ? $_[0] : {@_};
-
-    if ($home || $env) {
-        confess "Already initialized";
+sub new_store {
+    my ($pkg, @args) = @_;
+    $pkg ||= 'default';
+    if ($pkg !~ /^[A-Z]/) {
+        my $cfg = config->{store}{$pkg};
+        ($pkg, @args) = @$cfg;
     }
-
-    $home = $args->{home} ? realpath($args->{home}) : $self->default_home;
-    $env  = $args->{env}  ? $args->{env}            : $self->default_env;
+    load_package($pkg, 'Catmandu::Store')->new(@args);
 }
 
-sub load_libs {
-    unshift @INC, $_[0]->path_list('lib');
-}
-
-sub auto {
-    my @dirs = $_[0]->path_list('auto');
-    return 0 unless @dirs;
-    find sub { do $_ if -f and /^\w+\.pl$/ }, reverse @dirs;
-    return 1;
-}
-
-sub home {
-    $home ||= $_[0]->default_home;
-}
-
-sub env {
-    $env ||= $_[0]->default_env;
-}
-
-sub stash {
-    $stash ||= {};
-}
-
-sub paths {
-    my ($self, @dir) = @_;
-
-    $paths || do {
-        $paths = [$self->home];
-        if (my $stack = $self->load_conf_file($self->home, 'catmandu')) {
-            push @$paths, map {
-                File::Spec->file_name_is_absolute($_) ? realpath($_) : catdir($self->home, $_);
-            } @$stack;
-        }
-    };
-
-    if (@dir) {
-        [ grep { -d } map { catdir($_, @dir) } @$paths ];
-    } else {
-        [ @$paths ];
+sub new_index {
+    my ($pkg, @args) = @_;
+    $pkg ||= 'default';
+    if ($pkg !~ /^[A-Z]/) {
+        my $cfg = config->{index}{$pkg};
+        ($pkg, @args) = @$cfg;
     }
+    load_package($pkg, 'Catmandu::Index')->new(@args);
 }
 
-sub path_list {
-    my ($self, @dir) = @_; @{$self->paths(@dir)};
-}
-
-sub path {
-    my ($self, @dir) = @_;
-
-    if (@dir) {
-        $self->paths(@dir)->[0];
-    } else {
-        $self->home;
+sub new_filestore {
+    my ($pkg, @args) = @_;
+    $pkg ||= 'default';
+    if ($pkg !~ /^[A-Z]/) {
+        my $cfg = config->{filestore}{$pkg};
+        ($pkg, @args) = @$cfg;
     }
+    load_package($pkg, 'Catmandu::Filestore')->new(@args);
 }
 
-sub file {
-    my ($self, @file) = @_;
-
-    first { -f } map { catfile($_, @file) } $self->path_list;
+sub new_importer {
+    my ($pkg, @args) = @_;
+    load_package($pkg, 'Catmandu::Importer')->new(@args);
 }
 
-sub renderer {
-    my $self = $_[0];
-
-    $renderer ||= Template->new({
-        INCLUDE_PATH => $self->paths('templates'),
-        ENCODING => 'UTF-8',
-        VARIABLES => {
-            catmandu => {
-                default_home => sub { $self->default_home },
-                default_env  => sub { $self->default_env },
-                home  => sub { $self->home },
-                env   => sub { $self->env },
-                stash => sub { $self->stash },
-                paths => sub { $self->paths(@_) },
-                path  => sub { $self->path(@_) },
-                file  => sub { $self->file(@_) },
-            },
-        },
-    });
+sub new_exporter {
+    my ($pkg, @args) = @_;
+    load_package($pkg, 'Catmandu::Exporter')->new(@args);
 }
 
-sub render {
-    my $self = shift;
-    my $tmpl = shift;
-    unless (ref $tmpl || $tmpl =~ /\.tt$/) {
-        $tmpl = "$tmpl.tt";
-    }
-
-    local $Template::Stash::PRIVATE; # we want to see underscored vars
-
-    $self->renderer->process($tmpl, @_)
-        or confess $self->renderer->error;
+sub get_store {
+    my $key = $_[0] || 'default';
+    state $memo = {};
+    $memo->{$key} ||= new_store($key);
 }
 
-sub load_conf_file {
-    my $self = shift;
-    my $file = catfile(@_);
-
-    if ($file =~ /\.(?:ya?ml|json|pl)$/) {
-        -f $file or return;
-    } else {
-        $file = first { -f } map { "$file.$_" } qw(yaml yml json pl) or return;
-    }
-
-    given ($file) {
-        when (/\.json$/)  { return JSON::decode_json(slurp($file)) }
-        when (/\.ya?ml$/) { return YAML::LoadFile($file) }
-        when (/\.pl$/)    { return do $file }
-    }
+sub get_index {
+    my $key = $_[0] || 'default';
+    state $memo = {};
+    $memo->{$key} ||= new_index($key);
 }
 
-no List::Util;
-no Cwd;
-no File::Spec::Functions;
-no File::Basename;
-no File::Find;
-no File::Slurp;
+sub get_filestore {
+    my $key = $_[0] || 'default';
+    state $memo = {};
+    $memo->{$key} ||= new_filestore($key);
+}
+
 1;
-
-__END__
-=pod
-
-=head1 NAME
-
-Catmandu - web application glue with a focus on storing complex, nested data structures
