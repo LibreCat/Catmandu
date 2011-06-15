@@ -1,18 +1,14 @@
 package Catmandu::Store::Hash;
 use Catmandu::Sane;
+use parent qw(Catmandu::Store);
 use Catmandu::Object hash => 'r';
-use Catmandu::Util qw(ensure_id assert_id);
+use Catmandu::Util qw(get_id);
 use Clone qw(clone);
 
 sub _build {
     my ($self, $args) = @_;
     $self->{hash} = $args;
-}
-
-sub get {
-    my ($self, $id) = @_;
-    my $obj = $self->hash->{assert_id($id)} || return;
-    clone($obj);
+    $self->SUPER::_build($args);
 }
 
 sub each {
@@ -26,25 +22,21 @@ sub each {
     $n;
 }
 
-sub _add_obj {
+sub _get {
+    my ($self, $id) = @_;
+    my $obj = $self->hash->{$id} || return;
+    clone($obj);
+}
+
+sub _add {
     my ($self, $obj) = @_;
-    my $id = ensure_id($obj);
-    $self->hash->{$id} = clone($obj);
+    $self->hash->{get_id($obj)} = clone($obj);
     $obj;
 }
 
-sub add {
-    my ($self, $obj) = @_;
-    if (quack $obj, 'each') {
-        $obj->each(sub { $self->_add_obj($_[0]) });
-    } else {
-        $self->_add_obj($obj);
-    }
-}
-
-sub delete {
+sub _delete {
     my ($self, $id) = @_;
-    delete $self->hash->{assert_id($id)};
+    delete $self->hash->{$id};
 }
 
 1;

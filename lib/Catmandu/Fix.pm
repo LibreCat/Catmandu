@@ -15,7 +15,7 @@ sub __EVAL_FIXES {
 
 sub j {
     my $path = $_[0];
-    $path = "\$$path" if $path !~ /^\$/;
+    $path = "\$$path" unless $path =~ /^\$/;
     JSON::Path->new($path);
 }
 

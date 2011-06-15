@@ -19,6 +19,8 @@ our @EXPORT_OK = qw(
     ensure_id
     assert_id
 
+    opts
+
     group_by
     pluck
 
@@ -94,6 +96,10 @@ sub ensure_id {
 
 sub assert_id {
     get_id(@_) || confess("missing _id");
+}
+
+sub opts {
+    ref $_[0] ? $_[0] : {@_};
 }
 
 sub group_by {

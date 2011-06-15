@@ -1,13 +1,13 @@
 package Catmandu::Store::MongoDB;
 use Catmandu::Sane;
-use Catmandu::Util qw(quack ensure_id assert_id);
 use MongoDB;
+use parent qw(Catmandu::Store);
 use Catmandu::Object
     db_name => 'r',
     collection_name => 'r',
     connection_args => { default => sub { {} } },
     connection => { default => '_build_connection' },
-    db => { default => '_build_db' },
+    db         => { default => '_build_db' },
     collection => { default => '_build_collection' };
 
 sub _build_connection {
@@ -30,11 +30,7 @@ sub _build {
     $self->{db_name} = delete($args->{db});
     $self->{collection_name} = delete($args->{collection});
     $self->{connection_args} = delete($args->{connection}) || $args;
-}
-
-sub get {
-    my ($self, $id) = @_;
-    $self->collection->find_one({_id => assert_id($id)});
+    $self->SUPER::_build($args);
 }
 
 sub each {
@@ -48,25 +44,20 @@ sub each {
     $n;
 }
 
-sub _add_obj {
+sub _get {
+    my ($self, $id) = @_;
+    $self->collection->find_one({_id => $id});
+}
+
+sub _add {
     my ($self, $obj) = @_;
-    ensure_id($obj);
     $self->collection->save($obj);
     $obj;
 }
 
-sub add {
-    my ($self, $obj) = @_;
-    if (quack $obj, 'each') {
-        $obj->each(sub { $self->_add_obj($_[0]) });
-    } else {
-        $self->_add_obj($obj);
-    }
-}
-
 sub delete {
     my ($self, $id) = @_;
-    $self->collection->remove({_id => assert_id($id)});
+    $self->collection->remove({_id => $id});
 }
 
 1;

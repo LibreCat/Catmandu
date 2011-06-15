@@ -1,6 +1,6 @@
 package Catmandu::Filestore::FS;
 use Catmandu::Sane;
-use Catmandu::Util qw(quack io ensure_id assert_id);
+use Catmandu::Util qw(quack io ensure_id assert_id opts);
 use File::Path ();
 use File::Copy qw(copy);
 use File::Spec;
@@ -10,7 +10,7 @@ use Catmandu::Object path => 'r';
 
 sub _build_args {
     my ($self, $path, @args) = @_;
-    my $args = $self->SUPER::_build_args(@args);
+    my $args = opts(@args);
     $args->{path} = $path;
     $args;
 }
@@ -34,7 +34,7 @@ sub each {
     confess "TODO";
 }
 
-sub _add_obj {
+sub _add {
     my ($self, $obj) = @_;
     my $id   = ensure_id($obj);
     my $from = $obj->{_file} || confess("missing _file");
@@ -49,9 +49,9 @@ sub _add_obj {
 sub add {
     my ($self, $obj) = @_;
     if (quack $obj, 'each') {
-        $obj->each(sub { $self->_add_obj($_[0]) });
+        $obj->each(sub { $self->_add($_[0]) });
     } else {
-        $self->_add_obj($obj);
+        $self->_add($obj);
     }
 }
 
