@@ -224,4 +224,3 @@ Returns the url to the L<Solr> index files as a string.
 L<Catmandu::Index>, the Index role.
 
 L<WebService::Solr>, the underlying search engine.
-

@@ -2,62 +2,32 @@ package Catmandu::Importer::Aleph;
 
 use 5.010;
 
-use Moose;
-use Data::Dumper;
 use File::Slurp qw(slurp);
 use List::MoreUtils qw(natatime);
 
-no strict "subs";
-
-with qw(Catmandu::Importer Catmandu::FileReader);
-
-has map => (
-    is => 'ro',
-    isa => IO,
-    coerce => 1,
-    documentation => "Path to the MARC mapping definition file to use.",
-);
-
-has inline_map => (
-    is => 'ro',
-    isa => 'ArrayRef',
-    documentation => "Inline definition of MARC mapping definition.",
-);
-
-has skip => (
-    is => 'ro',
-    isa => 'Int',
-    default => 0,
-    documentation => "Number of records to skip",
-);
-
-has count => (
-    is => 'ro',
-    isa => 'Int',
-    default => -1,
-    documentation => "Number of records to skip",
-);
+sub new {
+   my ($pkg,$opts) = @_;
+   return bless $opts, $pkg;
+}
 
 sub default_attribute {
-    'file';
+   'file';
 }
 
 sub each {
    my ($self, $callback) = @_;
    my $num = 0;
 
-   my $fh  = $self->file;
+   local(*F);
+   open(F,'<:utf8',$self->{file}) || die "failed to open " . $self->{file} . " for reading :$ $!\n";
 
    my $rec     = {};
-
    my $prev_id = undef;
 
-   binmode $fh, ':utf8';
-
-   my $mapper  = $self->mapper( $self->inline_map || $self->file_map );
+   my $mapper  = $self->mapper( $self->{inline_map} || $self->{file_map} );
    my $id_len  = undef;
 
-   while(<$fh>) {
+   while(<F>) {
      chomp;
 	
      next unless (length $_ >= 18);
@@ -67,26 +37,21 @@ sub each {
 	my ($id) = ($_ =~ /^(\S+)/g);
         $id_len = length $id;
      }
-     
-     my $sysid = substr($_,0,$id_len);
-     my $tag   = substr($_,$id_len+1,3);
-     my $ind1  = substr($_,$id_len+4,1); $ind1 =~ s/\W/ /;
-     my $ind2  = substr($_,$id_len+5,1); $ind2 =~ s/\W/ /;
-     my $char  = substr($_,$id_len+7,1);
-     my $data  = substr($_,$id_len+9);
+    
+     my ($sysid,$s1,$tag,$ind1,$ind2,$s2,$char,$s3,$data) = unpack("A9A1A3A1A1A1A1A1U0A*",$_);
      my @parts = ('_' , split(/\$\$(.)/, $data) );
 
      if (defined $prev_id && $prev_id != $sysid) {
 
         if (defined $callback) {
-            $callback->( $mapper ? $mapper->($rec) : $rec ) if ($self->skip <= $num); 
+            $callback->( $mapper ? $mapper->($rec) : $rec ) if ($self->{skip} <= $num); 
         }
 
         $rec = {};
 
         $num++;
 
-	last if ($self->count != -1 && $num == $self->count + $self->skip);
+	last if ($self->{count} != -1 && $num == $self->{count} + $self->{skip});
      }
 
      $rec->{id} = $sysid;
@@ -116,11 +81,11 @@ sub each {
 sub file_map {
     my $self = shift;
 
-    return undef unless $self->map;
+    return undef unless $self->{map};
 
     my $map = [];
 
-    foreach my $line (split /\n/, slurp($self->map)) {
+    foreach my $line (split /\n/, slurp($self->{map})) {
         next if ($line =~ /^\s*#/);
         next if ($line =~ /^\s*$/);
 
@@ -218,8 +183,8 @@ sub field {
         my @values = ();
 
         INNER: while (my @v = splice(@data,0,2)) {
-            next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/goc;
-            next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/goc;
+            next INNER if defined $opts{includes} && $v[0] !~ /$opts{includes}/;
+            next INNER if defined $opts{excludes} && $v[0] =~ /$opts{excludes}/;
 
             push (@values, $v[1]) if defined $v[1] && length $v[1];
         }
@@ -233,9 +198,7 @@ sub field {
     @out; 
 }
 
-__PACKAGE__->meta->make_immutable;
-no Moose;
-__PACKAGE__;
+1;
 
 =head1 SYNOPSIS
 

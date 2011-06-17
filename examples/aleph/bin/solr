@@ -7,7 +7,7 @@
 #
 
 if [ "${SOLR_DIR}" == "" ]; then
-    SOLR_DIR="./engine"
+    SOLR_DIR="./engine-1.4"
 fi
 
 if [ "${SOLR_DATA_DIR}" == "" ]; then
@@ -29,6 +29,9 @@ case $1 in
         cd $SOLR_DIR
         $JAVA $JAVA_OPTIONS --stop
         ;;
+    log)
+	tail -f $LOG_FILE
+	;;
     status)
         status solr
         ;;
@@ -38,7 +41,7 @@ case $1 in
         $0 start
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart}" >&2
+        echo "Usage: $0 {start|stop|restart|status|log}" >&2
         exit 1
         ;;
 esac
