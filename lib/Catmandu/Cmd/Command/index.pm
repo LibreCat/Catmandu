@@ -7,6 +7,7 @@ use File::Slurp qw(slurp);
 use Catmandu::Util qw(load_class);
 use JSON::Path;
 use Time::HiRes qw(gettimeofday tv_interval);
+use List::Flatten;
 
 extends qw(Catmandu::Cmd::Command);
 
@@ -51,8 +52,6 @@ sub execute {
     my $index = $self->index->new($self->index_arg);
     my $store = $self->store->new($self->store_arg);
 
-    my %map = ();
-
     if ($self->has_fix) {
         $store = $self->fixer->fix($store);
     }
@@ -64,19 +63,19 @@ sub execute {
     my $t0 = [gettimeofday];
 
     if ($self->has_map) {
+        my %map = $self->file_map;
         $store->each(sub {
             my $obj = shift;
             my $doc = {};
 
             foreach my $key (keys %map) {
                 foreach my $path (@{$map{$key}}) {
-                    my @values = JSON::Path->new($path)->values($obj);
+                    my @values = flat (JSON::Path->new($path)->values($obj));
                     my $val = join ' ', @values ? @values : ();
-                    exists $doc->{$key} ?
-                        $doc->{$key} .= $val : $doc->{$key} = $val;
+
+                    $doc->{$key} .= $val; 
                 }
             }
-
             $self->msg(sprintf "$n %d rec/sec", $n/tv_interval($t0)) if $n % 100 == 0;
 
             exists $doc->{$delkey} ? $index->delete($doc) : $index->save($doc);
@@ -101,6 +100,24 @@ sub execute {
     $index->commit;
 
     $self->msg($n == 1 ? "Indexed 1 object" : "Indexed $n objects");
+}
+
+sub file_map {
+    my $self = shift;
+
+    return undef unless $self->map;
+
+    my %map = ();
+
+    foreach my $line (split /\n/, slurp($self->map)) {
+        next if ($line =~ /^\s*#/);
+        next if ($line =~ /^\s*$/);
+
+        my ($path, $key) = split /\s+/, $line;
+        push @{$map{$key}} , $path;
+    }
+
+    %map;
 }
 
 sub msg {
