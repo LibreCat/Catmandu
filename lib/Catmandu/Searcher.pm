@@ -2,12 +2,13 @@ package Catmandu::Searcher;
 use Catmandu::Sane;
 use parent qw(Catmandu::Iterable);
 use Catmandu::Object total_hits => 'r', hits => 'r';
+use Catmandu::Util qw(opts);
 
 sub _build_args {
     my ($self, $index, $q, @opts) = @_;
     { index => $index,
       q     => $q,
-      opts  => $self->SUPER::_build_args(@opts), };
+      opts  => opts(@opts), };
 }
 
 sub _build {

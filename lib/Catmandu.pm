@@ -4,6 +4,8 @@ use Catmandu::Util qw(load_package);
 use Dancer qw(:syntax config);
 use Exporter qw(import);
 
+our $VERSION = '0.01';
+
 our @EXPORT_OK = qw(
     new_store
     new_index

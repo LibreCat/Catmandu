@@ -68,7 +68,7 @@ sub command {
     my $n = 0;
 
     if ($opts->from eq 'from_index') {
-        $from = Catmandu::Searcher->new($from, $q,
+        $from = Catmandu::Searcher->new($from, $opts->query,
             reify => $opts->reify,
             skip  => $opts->skip,
             size  => $opts->size);

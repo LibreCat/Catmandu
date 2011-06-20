@@ -1,7 +1,8 @@
 package Catmandu::Store::DBI;
 use Catmandu::Sane;
-use Catmandu::Util qw(quack ensure_id assert_id);
-use JSON qw(to_json from_json);
+use parent qw(Catmandu::Store);
+use Catmandu::Util qw(get_id opts);
+use JSON;
 use DBI;
 use Catmandu::Object
     dsn => 'r',
@@ -17,13 +18,14 @@ use Catmandu::Object
 
 sub _build_args {
     my ($self, $dsn, @args) = @_;
-    my $args = $self->SUPER::_build_args(@args);
+    my $args = opts(@args);
     $args->{dsn} = $dsn;
     $args;
 }
 
 sub _build {
     my ($self, $args) = @_;
+
     $self->{dsn}      = $args->{dsn};
     $self->{username} = $args->{username};
     $self->{password} = $args->{password};
@@ -35,6 +37,8 @@ sub _build {
     $self->dbh->do("set collation 'utf8_general_ci'");
     $self->dbh->do("set character set 'utf8'");
     $self->dbh->do("create table if not exists $table(id text not null primary key, data text not null)");
+
+    $self->SUPER::_build($args);
 }
 
 sub _build_sth_get {
@@ -101,12 +105,6 @@ sub type {
     $_[0]->dbh->{Driver}{Name};
 }
 
-sub get {
-    my ($self, $id) = @_;
-    my $row = $self->dbh->selectrow_arrayref($self->_sth_get, {}, assert_id($id)) || return;
-    from_json($row->[0]);
-}
-
 sub each {
     my ($self, $sub) = @_;
     my $sth = $self->_sth_each;
@@ -119,25 +117,21 @@ sub each {
     $n;
 }
 
-sub _add_obj {
+sub _get {
+    my ($self, $id) = @_;
+    my $row = $self->dbh->selectrow_arrayref($self->_sth_get, {}, $id) || return;
+    from_json($row->[0]);
+}
+
+sub _add {
     my ($self, $obj) = @_;
-    my $id = ensure_id($obj);
-    $self->_dbh_add->($self, $id, to_json($obj));
+    $self->_dbh_add->($self, get_id($obj), to_json($obj));
     $obj;
 }
 
-sub add {
-    my ($self, $obj) = @_;
-    if (quack $obj, 'each') {
-        $obj->each(sub { $self->_add_obj($_[0]) });
-    } else {
-        $self->_add_obj($obj);
-    }
-}
-
-sub delete {
+sub _delete {
     my ($self, $id) = @_;
-    $self->_sth_delete->execute(assert_id($id));
+    $self->_sth_delete->execute($id);
 }
 
 sub transaction {

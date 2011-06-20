@@ -40,7 +40,7 @@ sub _build_searcher {
     Lucy::Search::IndexSearcher->new(index => $self->path);
 }
 
-sub _add_obj {
+sub _add {
     my ($self, $obj) = @_;
     assert_id($obj);
     my $type   = $self->_ft_field_type;
@@ -55,9 +55,9 @@ sub _add_obj {
 sub add {
     my ($self, $obj) = @_;
     if (quack $obj, 'each') {
-        $obj->each(sub { $self->_add_obj($_[0]) });
+        $obj->each(sub { $self->_add($_[0]) });
     } else {
-        $self->_add_obj($obj);
+        $self->_add($obj);
     }
 }
 

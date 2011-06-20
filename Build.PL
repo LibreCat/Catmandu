@@ -4,8 +4,8 @@ my $build = Module::Build->new(
     module_name => 'Catmandu',
     license => 'perl',
     dist_author => [
-        "Nicolas Steenlant <nicolas.steenlant@ugent.be>",
-        "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>",
+        'Nicolas Steenlant <nicolas.steenlant@ugent.be>',
+        'Patrick Hochstenbach <patrick.hochstenbach@ugent.be>',
     ],
 
     requires => {
@@ -15,6 +15,7 @@ my $build = Module::Build->new(
         'Clone' => '0.31',
         'Dancer' => '1.3051',
         'Data::UUID' => '1.217',
+        'DateTime' => '0.70',
         'File::Path' => '2.08',
         'File::Slurp' => '9999.13',
         'IO::String' => '1.08',

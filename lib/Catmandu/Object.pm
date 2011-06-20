@@ -25,23 +25,6 @@ use Catmandu::Util qw(add_parent add_sub);
 
 sub base { 'Catmandu::Object::Base' }
 
-sub _field_registry {
-    state $field_registry = {};
-}
-
-sub fields {
-    my ($self, $pkg) = @_;
-    my $isa = mro::get_linear_isa(ref($pkg) || $pkg);
-    my $all = [];
-    for my $pkg (@$isa) {
-        continue unless $pkg->isa($self->base);
-        if (my $fields = $self->_field_registry->{$pkg}) {
-            push @$all, keys %$fields;
-        }
-    }
-    $all;
-}
-
 sub import {
     my ($self, %fields) = @_;
 
@@ -67,8 +50,6 @@ sub import {
 
         $opt->{reader} = $key       if $opt->{reader} && $opt->{reader} == 1;
         $opt->{writer} = "set_$key" if $opt->{writer} && $opt->{writer} == 1;
-
-        $self->_field_registry->{$pkg}{$key} = $opt;
 
         if ($opt->{reader}) {
             my $sub = $opt->{default};
