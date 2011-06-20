@@ -7,9 +7,9 @@ sub new {
 
     my $each;
 
-    if (ref $arg eq 'CODE') {
+    if (ref($arg) eq 'CODE') {
         $each = $arg;
-    } elsif (ref $arg eq 'ARRAY') {
+    } elsif (ref($arg) eq 'ARRAY') {
         $each = sub { my $sub = $_[0]; $sub->($_) for @$arg; scalar(@$arg); };
     } elsif (quack $arg, 'each') {
         $each = sub { my $sub = $_[0]; $arg->each($sub) };
