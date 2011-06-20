@@ -64,8 +64,6 @@ sub add {
 sub search {
     my ($self, $query, %opts) = @_;
 
-    $self->commit;
-
     if (ref $query) {
         $query = Lucy::Search::ANDQuery->new(
             children => [ map {
@@ -83,7 +81,7 @@ sub search {
     my $objs = [];
     if (my $store = $opts{reify}) {
         while (my $hit = $hits->next) {
-            push @$objs, $store->get($hit->{_id}) || confess("object not found: $hit->{_id}");
+            push @$objs, $store->get($hit->{_id});
         }
     } else {
         while (my $hit = $hits->next) {
@@ -100,7 +98,7 @@ sub delete {
     $self->_indexer->delete_by_term(field => '_id', term => assert_id($id));
 }
 
-sub delete_by_query {
+sub delete_where {
     my ($self, $query) = @_;
 
     if (ref $query) {
@@ -115,17 +113,14 @@ sub delete_by_query {
     $self->_indexer->delete_by_query($query);
 }
 
-sub commit {
+sub commit { # TODO optimize
     my ($self) = @_;
 
     if ($self->{_indexer}) {
         $self->{_indexer}->commit;
-        $self->{_indexer}->optimize;
         delete $self->{_indexer};
         delete $self->{_searcher};
     }
-
-    $self;
 }
 
 1;

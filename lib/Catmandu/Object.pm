@@ -48,8 +48,17 @@ sub import {
             }
         }
 
-        $opt->{reader} = $key       if $opt->{reader} && $opt->{reader} == 1;
-        $opt->{writer} = "set_$key" if $opt->{writer} && $opt->{writer} == 1;
+        if ($opt->{reader} && $opt->{reader} == 1) {
+            $opt->{reader} = $key;
+        }
+
+        if ($opt->{writer} && $opt->{writer} == 1) {
+            $opt->{writer} = $key =~ /^_/ ? "_set_$key" : "set_$key";
+        }
+
+        if ($opt->{clearer} && $opt->{clearer} == 1) {
+            $opt->{clearer} = $key =~ /^_/ ? "_clear_$key" : "clear_$key";
+        }
 
         if ($opt->{reader}) {
             my $sub = $opt->{default};
@@ -65,6 +74,10 @@ sub import {
 
         if ($opt->{writer}) {
             add_sub($pkg, $opt->{writer} => sub { $_[0]->{$key} = $_[1] });
+        }
+
+        if ($opt->{clearer}) {
+            add_sub($pkg, $opt->{clearer} => sub { delete $_[0]->{$key} });
         }
     }
 }
