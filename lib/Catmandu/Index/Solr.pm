@@ -1,5 +1,6 @@
 package Catmandu::Index::Solr;
 use Catmandu::Sane;
+use Catmandu::Util qw(assert_id);
 use WebService::Solr;
 use Catmandu::Object
     url         => { default => sub { 'http://localhost:8983/solr' } },
