@@ -49,6 +49,12 @@ my $build = Module::Build->new(
                 'Lucy' => '0.1.0',
             },
         },
+        index_solr => {
+            description => "Index backed by Solr",
+            requires => {
+                'WebService::Solr' => '0.1.4',
+            },
+        },
         import_csv => {
             description => "Import objects from a CSV file",
             requires => {
