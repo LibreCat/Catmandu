@@ -16,7 +16,7 @@ my $build = Module::Build->new(
         'Dancer' => '1.3051',
         'Data::UUID' => '1.217',
         'DateTime' => '0.70',
-        'File::Path' => '2.08',
+        'File::Path' => '2.07',
         'File::Slurp' => '9999.13',
         'IO::String' => '1.08',
         'IO::YAML' => '0.08',
@@ -71,7 +71,7 @@ my $build = Module::Build->new(
         import_atom => {
             description => "Import objects from an Atom feed",
             requires => {
-                'XML::Atom::Client' => '0.38',
+                'XML::Atom::Client' => 0,
             },
         },
     }
