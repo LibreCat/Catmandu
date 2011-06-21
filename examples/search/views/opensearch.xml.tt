@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+    <ShortName>[% settings.app_name %]</ShortName>
+    <Url type="text/html"
+        template="[% request.uri_base %]?qs={searchTerms}&amp;size={count?}&amp;skip={startIndex?}"/>
+    <Query role="example" searchTerms="dna"/>
+    <Syndication>limited</Syndication>
+    <AdultContent>false</AdultContent>
+    <Language>*</Language>
+    <OutputEncoding>UTF-8</OutputEncoding>
+    <InputEncoding>UTF-8</InputEncoding>
+</OpenSearchDescription>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>[% settings.app_name %]</title>
+    <link rel="stylesheet" href="[% request.uri_base %]/css/screen.css" type="text/css" media="screen">
+    <link rel="search" type="application/opensearchdescription+xml"
+        href="[% request.uri_base %]/opensearch.xml" title="Search">
+    [%- IF hits %]
+    <meta name="totalResults" content="[% total_hits %]">
+    <meta name="startIndex" content="[% skip %]">
+    <meta name="itemsPerPage" content="[% size %]">
+    [%- END %]
+</head>
+<body>
+    <div id="head">
+        <div id="search">
+            <form action="[% request.uri_base %]" method="get" id="search-form">
+                <input type="search" name="qs" value="[% qs | html %]">
+                <input type="submit" value="Search">
+                <label for="search-size">show:</label>
+                <select name="size" id="search-size" size="1">
+                    [%- FOREACH n in [10 20 50 100] %]
+                    <option value="[% n %]"[% IF n == size %] selected[% END %]>[% n %]</option>
+                    [%- END %]
+                </select>
+            </form>
+        </div>
+    </div>
+    <div id="content">
+        [% content %]
+    </div>
+</body>
+</html>

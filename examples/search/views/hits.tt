@@ -1,0 +1,31 @@
+<p><span class="total">[% total_hits %]</span> publications found</p>
+
+[% IF hits.size %]
+[% BLOCK prevnext %]
+<p class="prevnext">
+    [%- IF total_hits <= size %]
+    showing all <span class="total">[% total_hits %]</span>
+    [%- ELSE %]
+    showing <span class="first">[% skip + 1 %]</span> 
+    to <span class="last">[% skip + size > total_hits ? total_hits : skip + size %]</span> 
+    of <span class="total">[% total_hits %]</span>
+    [%- END %]
+    </span>
+    [%- IF skip %]
+    <span class="prev"><a href="[% request.uri_for('', qs=qs, skip=skip-size < 0 ? 0 : skip-size, size=size) %]">previous</a></span>
+    [%- END %]
+    [%- IF total_hits > (skip + size) %]
+    <span class="next"><a href="[% request.uri_for('', qs=qs, skip=skip+size, size=size) %]">next</a></span>
+    [%- END %]
+</p>
+[% END %]
+[% PROCESS prevnext %]
+<ul class="list">
+    [%- FOREACH hit IN hits %]
+    <li>
+        [% hit.title.0 %]
+    </li>
+    [%- END %]
+</ul>
+[% PROCESS prevnext %]
+[% END %]
