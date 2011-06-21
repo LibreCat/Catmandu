@@ -31,6 +31,7 @@ sub command_opt_spec {
         [ "query|q=s", "" ],
         [ "pretty", "" ],
         [ "from-file=s", "" ],
+        [ "from-url=s", "" ],
         [ "into-file=s", "" ],
     );
 }
@@ -40,6 +41,7 @@ sub command {
 
     if ($opts->from eq 'from_importer') {
         $opts->from_opt->{file}   = $opts->from_file if $opts->from_file;
+        $opts->from_opt->{url}    = $opts->from_url  if $opts->from_url;
     }
 
     if ($opts->into eq 'into_exporter') {
@@ -110,4 +112,4 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::Command::data - store, index, search, import, export or convert objects
+Catmandu::Cmd::data - store, index, search, import, export or convert objects

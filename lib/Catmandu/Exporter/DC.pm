@@ -8,7 +8,7 @@ my $oai_dc_ns = "http://www.openarchives.org/OAI/2.0/oai_dc/";
 my $dc_ns = "http://purl.org/dc/elements/1.1/";
 my $xsi_ns = "http://www.w3.org/2001/XMLSchema-instance";
 my $oai_dc_schema = "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd";
-my @dc_keys = qw(
+my @oai_dc_elements = qw(
     title
     creator
     subject
@@ -40,7 +40,7 @@ sub add { # TODO handle each
     $root->setNamespace($xsi_ns, 'xsi', 0);
     $root->setAttributeNS($xsi_ns, 'schemaLocation', $oai_dc_schema);
     $xml->setDocumentElement($root);
-    for my $key (@dc_keys) {
+    for my $key (@oai_dc_elements) {
         my $val = $obj->{$key} || next;
         $root->addNewChild($dc_ns, $key)->appendText($_) for @$val;
     }

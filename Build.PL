@@ -10,6 +10,7 @@ my $build = Module::Build->new(
 
     requires => {
         'perl' => '5.10.0',
+        'all' => '0.5101',
         'App::Cmd' => '0.310',
         'CGI::Expand' => '2.02',
         'Clone' => '0.31',
@@ -60,6 +61,12 @@ my $build = Module::Build->new(
             description => "Import objects from a CSV file",
             requires => {
                 'Text::CSV' => '1.21',
+            },
+        },
+        import_oai => {
+            description => "Import objects from an OAI harvestable respository",
+            requires => {
+                'Net::OAI::Harvester' => '1.13',
             },
         },
         import_spreadsheet => {

@@ -53,11 +53,11 @@ sub import {
         }
 
         if ($opt->{writer} && $opt->{writer} == 1) {
-            $opt->{writer} = $key =~ /^_/ ? "_set_$key" : "set_$key";
+            $opt->{writer} = $key =~ /^_/ ? "_set$key" : "set_$key";
         }
 
         if ($opt->{clearer} && $opt->{clearer} == 1) {
-            $opt->{clearer} = $key =~ /^_/ ? "_clear_$key" : "clear_$key";
+            $opt->{clearer} = $key =~ /^_/ ? "_clear$key" : "clear_$key";
         }
 
         if ($opt->{reader}) {

@@ -1,6 +1,6 @@
 package Catmandu::Index::Solr;
 use Catmandu::Sane;
-use Catmandu::Util qw(assert_id);
+use Catmandu::Util qw(quack assert_id);
 use WebService::Solr;
 use Catmandu::Object
     url         => { default => sub { 'http://localhost:8983/solr' } },
@@ -89,7 +89,7 @@ sub commit { # TODO optimize
     my ($self) = @_;
 
     eval {
-        $self->solr->add($self->buffer);
+        $self->solr->add($self->_buffer);
         $self->solr->commit;
         $self->_clear_buffer;
         1;
