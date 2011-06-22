@@ -28,3 +28,11 @@ or with psgi/plack (http://plackperl.org):
     plackup --port 3000 bin/app
 
 and point your browser to http://localhost:3000
+
+Commandline examples
+--------------------
+
+    bin/cmd data --from-index Solr -q "subject:history" --into-exporter JSON --pretty
+    bin/cmd data --from-index Solr -q "*" --size 10 --skip 10 --into-exporter YAML
+
+data can also be copied into another Index or a Store
