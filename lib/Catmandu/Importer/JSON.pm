@@ -8,7 +8,7 @@ sub each {
     my ($self, $sub) = @_;
 
     my $file = io $self->file, 'r';
-    my $json = JSON->new->utf8(1);
+    my $json = JSON->new->utf8(0);
 
     my $load_single = 0;
     my $n = 0;

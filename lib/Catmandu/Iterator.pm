@@ -1,6 +1,7 @@
 package Catmandu::Iterator;
 use Catmandu::Sane;
 use parent qw(Catmandu::Iterable);
+use Catmandu::Util qw(quack);
 
 sub new {
     my ($self, $arg) = @_;

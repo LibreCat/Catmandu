@@ -1,15 +1,14 @@
 package Catmandu::Store::DBI;
 use Catmandu::Sane;
 use parent qw(Catmandu::Store);
-use Catmandu::Util qw(get_id opts);
-use JSON;
+use Catmandu::Util qw(quack get_id opts);
+use JSON qw(encode_json decode_json);
 use DBI;
 use Catmandu::Object
     dsn => 'r',
     username => { default => sub { "" } },
     password => { default => sub { "" } },
-    table => { default => 'objects' },
-    transaction_running => { default => sub { 0 } },
+    table    => { default => sub {'objects'} },
     dbh         => { default => '_build_dbh' },
     _sth_get    => { default => '_build_sth_get' },
     _sth_each   => { default => '_build_sth_each' },
@@ -33,12 +32,17 @@ sub _build {
 
     my $table = $self->table;
 
-    $self->dbh->do("set names 'utf8'");
-    $self->dbh->do("set collation 'utf8_general_ci'");
-    $self->dbh->do("set character set 'utf8'");
-    $self->dbh->do("create table if not exists $table(id text not null primary key, data text not null)");
+    $self->dbh->do("create table if not exists $table(id varchar(255) not null primary key, data text not null)");
 
     $self->SUPER::_build($args);
+}
+
+sub _build_dbh {
+    my $self = $_[0];
+    DBI->connect($self->dsn, $self->username, $self->password, {
+        AutoCommit => 1,
+        RaiseError => 1,
+    });
 }
 
 sub _build_sth_get {
@@ -91,14 +95,10 @@ sub _build_dbh_add_generic {
 sub _build_dbh_add {
     my $self = $_[0];
     given ($self->type) {
-        when (/sqlite/) { $self->_build_dbh_add_sqlite }
-        when (/mysql/)  { $self->_build_dbh_add_mysql }
-        default         { $self->_build_dbh_add_generic }
+        when (/sqlite/i) { return $self->_build_dbh_add_sqlite }
+        when (/mysql/i)  { return $self->_build_dbh_add_mysql }
+        default          { return $self->_build_dbh_add_generic }
     }
-}
-
-sub _build_dbh {
-    DBI->connect($_[0]->dsn, $_[0]->username, $_[0]->password, {AutoCommit => 0, RaiseError => 1});
 }
 
 sub type {
@@ -111,7 +111,7 @@ sub each {
     $sth->execute;
     my $n = 0;
     while (my $row = $sth->fetchrow_arrayref) {
-        $sub->(from_json($row->[0]));
+        $sub->(decode_json($row->[0]));
         $n++;
     }
     $n;
@@ -120,12 +120,12 @@ sub each {
 sub _get {
     my ($self, $id) = @_;
     my $row = $self->dbh->selectrow_arrayref($self->_sth_get, {}, $id) || return;
-    from_json($row->[0]);
+    decode_json($row->[0]);
 }
 
 sub _add {
     my ($self, $obj) = @_;
-    $self->_dbh_add->($self, get_id($obj), to_json($obj));
+    $self->_dbh_add->($self, get_id($obj), encode_json($obj));
     $obj;
 }
 
@@ -135,28 +135,36 @@ sub _delete {
 }
 
 sub transaction {
-    my ($self, $work) = @_;
-
-    return $work->() if $self->{transaction_running};
+    my ($self, $sub) = @_;
 
     my $dbh = $self->dbh;
+
+    if (! $dbh->{AutoCommit}) {
+        return $sub->();
+    }
+
     my @res;
 
     eval {
-        $self->{transaction_running} = 1;
+        $dbh->{AutoCommit} = 0;
         $dbh->begin_work;
-        @res = $work->();
+        @res = $sub->();
         $dbh->commit;
-        $self->{transaction_running} = 0;
+        $dbh->{AutoCommit} = 1;
         1;
     } or do {
         my $error = $@;
         eval { $dbh->rollback };
-        $self->{transaction_running} = 0;
+        $dbh->{AutoCommit} = 1;
         confess $error;
     };
 
     @res;
+}
+
+sub DESTROY {
+    my ($self) = @_;
+    $self->dbh->disconnect;
 }
 
 1;
