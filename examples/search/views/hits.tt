@@ -19,11 +19,30 @@
     [%- END %]
 </p>
 [% END %]
+
 [% PROCESS prevnext %]
-<ul class="list">
+<ul class="hits">
     [%- FOREACH hit IN hits %]
-    <li>
-        [% hit.title.0 %]
+    <li class="hit">
+        [%- title = hit.title.0 or "[no title]" %]
+        <span class="title">[% title | html %]</span>
+        <span class="creator">[% hit.creator.join(", ") | html %]</span>
+        <div class="full">
+            <dl>
+                [%- FOREACH field IN hit %]
+                [%- IF field.value.size %]
+                <dt>[% field.key %]</dt>
+                [%- FOREACH value IN field.value %]
+                [%- IF value.match('^https?:\/\/') %]
+                <dd><a href="[% value | uri %]">[% value | html %]</a></dd>
+                [%- ELSE %]
+                <dd>[% value | html %]</dd>
+                [%- END %]
+                [%- END %]
+                [%- END %]
+                [%- END %]
+            </dl>
+        </div>
     </li>
     [%- END %]
 </ul>

@@ -11,7 +11,7 @@ get '/opensearch.xml' => sub {
 get '/' => sub {
     if (my $qs   = params->{qs}) {
         my $size = params->{size} || 15;
-        my $skip = params->{skip} // 0;
+        my $skip = params->{skip} || 0;
         $size = 1000 if $size > 1000;
         $skip = 0    if $skip < 0;
 
@@ -25,7 +25,7 @@ get '/' => sub {
             hits => $hits,
         };
     }
-    template 'welcome';
+    template 'index';
 };
 
 1;

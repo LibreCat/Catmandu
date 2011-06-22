@@ -1,0 +1,18 @@
+body { font-family: "Lucida Sans", "Lucida Grande", Lucida, sans-serif; font-size: 14px;
+    line-height: 25px; background: rgb(232,232,232); color: rgb(60,60,60); }
+h1 { font-family: Cambria, Georgia, serif; font-size: 28px; line-height: 50px; }
+a:link, a:hover, a:active, a:visited { color: rgb(60,97,158); text-decoration: underline; }
+#head, #content { margin: 20px; width: 800px; }
+#search { margin: 0 auto; }
+.prevnext { position: relative; text-align: center; }
+.prevnext .prev { position: absolute; left: 0; }
+.prevnext .next { position: absolute; right: 0; }
+.hits { margin: 0; padding: 0 0 10px 0; border-top: 1px solid rgb(195,195,195);
+    border-bottom: 1px solid rgb(195,195,195); }
+.hit { clear: both; list-style: none; line-height: 20px; padding: 10px 0 0 0; }
+.hit .title { display: block; color: rgb(60,97,158); }
+.hit .creator { font-style: italic; }
+.full { background: white; }
+.full dt, .full dd { padding: 4px; font-size: 12px; }
+.full dt { clear: left; float: left; width: 120px; margin: 0; font-weight: bold; }
+.full dd { margin-left: 130px;  }

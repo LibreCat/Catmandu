@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>[% settings.app_name %]</title>
-    <link rel="stylesheet" href="[% request.uri_base %]/css/screen.css" type="text/css" media="screen">
     <link rel="search" type="application/opensearchdescription+xml"
-        href="[% request.uri_base %]/opensearch.xml" title="Search">
+        href="[% request.uri_base %]/opensearch.xml" title="[% settings.app_name %]">
     [%- IF hits %]
     <meta name="totalResults" content="[% total_hits %]">
     <meta name="startIndex" content="[% skip %]">
     <meta name="itemsPerPage" content="[% size %]">
     [%- END %]
+    <link rel="stylesheet" href="[% request.uri_base %]/css/screen.css" type="text/css" media="screen">
 </head>
 <body>
     <div id="head">
