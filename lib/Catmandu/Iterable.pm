@@ -6,11 +6,11 @@ sub each {}
 
 sub to_array {
     my ($self) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each(sub {
-        push @$all, $_[0];
+        push @$arr, $_[0];
     });
-    $all;
+    $arr;
 }
 
 sub slice {
@@ -68,11 +68,11 @@ sub many {
 
 sub map {
     my ($self, $sub) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each(sub {
-        push @$all, $sub->($_[0]);
+        push @$arr, $sub->($_[0]);
     });
-    $all;
+    $arr;
 }
 
 sub detect {
@@ -89,30 +89,30 @@ sub detect {
 
 sub select {
     my ($self, $sub) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each(sub {
-        $sub->($_[0]) && push(@$all, $_[0]);
+        $sub->($_[0]) && push(@$arr, $_[0]);
     });
-    $all;
+    $arr;
 }
 
 sub reject {
     my ($self, $sub) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each(sub {
-        $sub->($_[0]) || push(@$all, $_[0]);
+        $sub->($_[0]) || push(@$arr, $_[0]);
     });
-    $all;
+    $arr;
 }
 
 sub partition {
     my ($self, $sub) = @_;
-    my $all_t = [];
-    my $all_f = [];
+    my $arr_t = [];
+    my $arr_f = [];
     $self->each(sub {
-        $sub->($_[0]) ? push(@$all_t, $_[0]) : push(@$all_f, $_[0]);
+        $sub->($_[0]) ? push(@$arr_t, $_[0]) : push(@$arr_f, $_[0]);
     });
-    [ $all_t, $all_f ];
+    [ $arr_t, $arr_f ];
 }
 
 sub reduce {
@@ -152,20 +152,28 @@ sub each_group {
 
 sub group {
     my ($self, $size) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each_group($size, sub {
-        push @$all, $_[0];
+        push @$arr, $_[0];
     });
-    $all;
+    $arr;
+}
+
+sub group_by {
+    my ($self, $key) = @_;
+    $self->reduce({}, sub {
+        push @{$_[0]->{$_[1]->{$key}} ||= []}, $_[1];
+        $_[0];
+    });
 }
 
 sub pluck {
     my ($self, $key) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each(sub {
-        push @$all, $_[0]->{$key};
+        push @$arr, $_[0]->{$key};
     });
-    $all;
+    $arr;
 }
 
 sub first {
@@ -184,15 +192,15 @@ sub first {
 
 sub take {
     my ($self, $n) = @_;
-    my $all = [];
+    my $arr = [];
     $self->each(sub {
         if ($n--) {
-            push @$all, $_[0];
+            push @$arr, $_[0];
         }
         $n || goto(STOP_EACH);
     });
     STOP_EACH:
-    $all;
+    $arr;
 }
 
 1;
