@@ -6,8 +6,8 @@ use JSON qw(encode_json decode_json);
 use DBI;
 use Catmandu::Object
     dsn => 'r',
-    username => { default => sub { "" } },
-    password => { default => sub { "" } },
+    username => { default => sub { '' } },
+    password => { default => sub { '' } },
     table    => { default => sub {'objects'} },
     dbh         => { default => '_build_dbh' },
     _sth_get    => { default => '_build_sth_get' },

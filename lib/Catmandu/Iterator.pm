@@ -4,21 +4,23 @@ use parent qw(Catmandu::Iterable);
 use Catmandu::Util qw(quack);
 
 sub new {
-    my ($self, $arg) = @_;
+    my ($class, $arg) = @_;
 
-    my $each;
+    my $self;
 
     if (ref($arg) eq 'CODE') {
-        $each = $arg;
+        $self = $arg;
     } elsif (ref($arg) eq 'ARRAY') {
-        $each = sub { my $sub = $_[0]; $sub->($_) for @$arg; scalar(@$arg); };
+        $self = sub { my $sub = $_[0]; for my $obj (@$arg) { $sub->($obj) }; scalar(@$arg) };
+    } elsif (quack $arg, 'next') {
+        $self = sub { my $sub = $_[0]; my $n = 0; while (my $obj = $arg->next) { $sub->($obj); $n++ }; $n };
     } elsif (quack $arg, 'each') {
-        $each = sub { my $sub = $_[0]; $arg->each($sub) };
+        $self = sub { my $sub = $_[0]; $arg->each($sub) };
     } else {
         confess "invalid arg";
     }
 
-    bless $each, ref($self) || $self;
+    bless $self, ref($class) || $class;
 }
 
 sub each {
