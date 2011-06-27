@@ -65,7 +65,7 @@ sub path_to {
     my ($self, $id) = @_;
     assert_id($id);
     $id =~ s/[^0-9a-zA-Z]//g;
-    my @path = unpack("(A2*", $id);
+    my @path = unpack("(A2)*", $id);
     File::Spec->catdir($self->path, @path);
 }
 
