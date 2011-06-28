@@ -81,6 +81,12 @@ my $build = Module::Build->new(
                 'XML::Atom::Client' => 0,
             },
         },
+        export_bibtex => {
+            description => "Export objects to BibTeX",
+            requires => {
+                'LaTeX::Encode' => '0.03',
+            },
+        },
     }
 );
 

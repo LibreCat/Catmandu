@@ -103,13 +103,14 @@ sub opts {
 }
 
 sub group_by {
-    my $key = shift;
-    List::Util::reduce { push @{$a->{$b->{$key}} ||= []}, $b; $a; } {}, @_;
+    my ($key, $list) = @_;
+    List::Util::reduce { my $k = $b->{$key}; push @{$a->{$k} ||= []}, $b if defined $k; $a } {}, @$list;
 }
 
 sub pluck {
-    my $key = shift;
-    map { $_->{$key} } @_;
+    my ($key, $list) = @_;
+    my @vals = map { $_->{$key} } @$list;
+    \@vals;
 }
 
 sub trim {
