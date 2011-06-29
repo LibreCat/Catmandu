@@ -2,7 +2,6 @@ package Catmandu::Importer::CSV;
 use Catmandu::Sane;
 use Catmandu::Util qw(io);
 use Text::CSV;
-use Encode ();
 use Catmandu::Object
     file => { default => sub { *STDIN } },
     quote_char => { default => sub { '"' } },
@@ -19,21 +18,13 @@ sub each {
         sep_char   => $self->split_char,
     });
 
-    my $keys = $csv->getline($file);
+    my $fields = $csv->getline($file);
 
-    my $num_cols = @$keys;
+    $csv->column_names($fields);
 
     my $n = 0;
 
-    my $row;
-    my $obj;
-    my $val;
-    my $i;
-    while ($row = $csv->getline($file)) {
-        $obj = {};
-        for ($i = 0; $i < $num_cols; $i++) {
-            $val = $row->[$i] and $obj->{$keys->[$i]} = Encode::decode_utf8($val);
-        }
+    while (my $obj = $csv->getline_hr($file)) {
         $sub->($obj);
         $n++;
     }

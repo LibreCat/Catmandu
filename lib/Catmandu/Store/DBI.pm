@@ -22,27 +22,15 @@ sub _build_args {
     $args;
 }
 
-sub _build {
-    my ($self, $args) = @_;
-
-    $self->{dsn}      = $args->{dsn};
-    $self->{username} = $args->{username};
-    $self->{password} = $args->{password};
-    $self->{table}    = $args->{table};
-
-    my $table = $self->table;
-
-    $self->dbh->do("create table if not exists $table(id varchar(255) not null primary key, data text not null)");
-
-    $self->SUPER::_build($args);
-}
-
 sub _build_dbh {
     my $self = $_[0];
-    DBI->connect($self->dsn, $self->username, $self->password, {
+    my $dbh = DBI->connect($self->dsn, $self->username, $self->password, {
         AutoCommit => 1,
         RaiseError => 1,
     });
+    my $table = $self->table;
+    $dbh->do("create table if not exists $table(id varchar(255) not null primary key, data text not null)");
+    $dbh;
 }
 
 sub _build_sth_get {
