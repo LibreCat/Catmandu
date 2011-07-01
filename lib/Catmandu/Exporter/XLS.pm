@@ -27,7 +27,7 @@ sub _build {
 sub add {
     my ($self, $obj) = @_;
 
-    my $xls   = Spreadsheet::WriteExcel->new(io($self->file, 'w'));
+    my $xls = Spreadsheet::WriteExcel->new(io($self->file, 'w'));
     my $sheet = $xls->add_worksheet;
 
     my $fields = $self->fields;
