@@ -87,6 +87,12 @@ my $build = Module::Build->new(
                 'LaTeX::Encode' => '0.03',
             },
         },
+        export_xls => {
+            description => "Export objects to Excel (.xls)",
+            requires => {
+                'Spreadsheet::WriteExcel' => '2.37',
+            },
+        },
     }
 );
 
