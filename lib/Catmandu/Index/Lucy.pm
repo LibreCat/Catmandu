@@ -64,7 +64,7 @@ sub add {
 sub search {
     my ($self, $query, %opts) = @_;
 
-    if (ref $query) {
+    if (ref $query eq 'HASH') {
         $query = Lucy::Search::ANDQuery->new(
             children => [ map {
                 Lucy::Search::TermQuery->new(field => $_, term => $query->{$_});
@@ -79,6 +79,7 @@ sub search {
     );
 
     my $objs = [];
+
     if (my $store = $opts{reify}) {
         while (my $hit = $hits->next) {
             push @$objs, $store->get($hit->{_id});
@@ -101,16 +102,22 @@ sub delete {
 sub delete_where {
     my ($self, $query) = @_;
 
-    if (ref $query) {
+    if (! ref $query) {
+        $query = Lucy::Search::QueryParser->new(schema => $self->_schema)->parse($query);
+    } elsif (ref $query eq 'HASH') {
         my $terms = [ map {
             Lucy::Search::TermQuery->new(field => $_, term => $query->{$_});
         } keys %$query ];
         $query = Lucy::Search::ANDQuery->new(children => $terms);
-    } else {
-        $query = Lucy::Search::QueryParser->new(schema => $self->_schema)->parse($query);
     }
 
     $self->_indexer->delete_by_query($query);
+}
+
+sub delete_all {
+    my ($self) = @_;
+    $self->delete_where(Lucy::Search::MatchAllQuery->new);
+    $self->commit;
 }
 
 sub commit { # TODO optimize

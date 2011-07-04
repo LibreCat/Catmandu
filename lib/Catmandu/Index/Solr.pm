@@ -4,8 +4,8 @@ use Catmandu::Util qw(quack assert_id);
 use WebService::Solr;
 use Catmandu::Object
     url         => { default => sub { 'http://localhost:8983/solr' } },
-    buffer_size => { default => sub { 100 } },
     solr        => { default => '_build_solr' },
+    buffer_size => { default => sub { 500 } },
     _buffer     => { default => sub { [] },
                      clearer => 1 };
 
@@ -55,19 +55,15 @@ sub search {
 
     my $skip = delete $opts{skip};
     my $size = delete $opts{size};
+    my $store = delete $opts{reify};
 
-    my $response = $self->solr->search($query, {start => $skip, rows => $size, %opts});
+    my $res = $self->solr->search($query, {start => $skip, rows => $size, %opts});
 
-    my $hits       = $response->content->{response}->{docs};
-    my $total_hits = $response->content->{response}->{numFound};
+    my $hits       = $res->content->{response}->{docs};
+    my $total_hits = $res->content->{response}->{numFound};
 
-    if (my $store = $opts{reify}) {
-        my $objs = [];
-        for my $hit (@$hits) {
-            push @$objs, $store->get($hit->{_id});
-        }
-        return $objs,
-               $total_hits;
+    if ($store) {
+        $hits = [ map { $store->get($_->{_id}) } @$hits ];
     }
 
     return $hits,
@@ -76,13 +72,19 @@ sub search {
 
 sub delete {
     my ($self, $id) = @_;
-    assert_id($id);
+    $id = assert_id($id);
     $self->solr->delete_by_query("_id:$id");
 }
 
 sub delete_where {
     my ($self, $query) = @_;
     $self->solr->delete_by_query($query);
+}
+
+sub delete_all {
+    my ($self) = @_;
+    $self->delete_where("*:*");
+    $self->commit;
 }
 
 sub commit { # TODO optimize
@@ -95,7 +97,7 @@ sub commit { # TODO optimize
         1;
     } or do {
         my $error = $@;
-        $self->_clear_buffer; #TODO log buffer contents
+        $self->_clear_buffer; #TODO shouldn't die; log buffer contents
         confess $error;
     };
 }

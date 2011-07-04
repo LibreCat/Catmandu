@@ -45,6 +45,12 @@ my $build = Module::Build->new(
                 'MongoDB' => '0.42',
             },
         },
+        index_elasticsearch => {
+            description => "Index backed by ElasticSearch",
+            requires => {
+                'ElasticSearch' => '0.38',
+            },
+        },
         index_lucy => {
             description => "Index backed by Lucy",
             requires => {
@@ -55,6 +61,12 @@ my $build = Module::Build->new(
             description => "Index backed by Solr",
             requires => {
                 'WebService::Solr' => '0.1.4',
+            },
+        },
+        import_atom => {
+            description => "Import objects from an Atom feed",
+            requires => {
+                'XML::Atom::Client' => 0,
             },
         },
         import_csv => {
@@ -75,16 +87,16 @@ my $build = Module::Build->new(
                 'Spreadsheet::Read' => '0.41',
             },
         },
-        import_atom => {
-            description => "Import objects from an Atom feed",
-            requires => {
-                'XML::Atom::Client' => 0,
-            },
-        },
         export_bibtex => {
             description => "Export objects to BibTeX",
             requires => {
                 'LaTeX::Encode' => '0.03',
+            },
+        },
+        export_csv => {
+            description => "Export objects to CSV",
+            requires => {
+                'Text::CSV' => '1.21',
             },
         },
         export_xls => {

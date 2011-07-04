@@ -28,6 +28,7 @@ sub command_opt_spec {
         [ "verbose|v", "" ],
         [ "fix=s@", "fix or fix file (repeatable)" ],
         [ "reify", "" ],
+        [ "drop", "" ],
         [ "query|q=s", "" ],
         [ "pretty", "" ],
         [ "from-file=s", "" ],
@@ -82,6 +83,10 @@ sub command {
         $from = Catmandu::Fix->new(@$fix)->fix($from);
     }
 
+    if ($opts->drop && $into->can('delete_all')) {
+        $into->delete_all;
+    }
+
     $into->add(Catmandu::Iterator->new(sub {
         my $sub = $_[0];
         my $t   = [gettimeofday];
@@ -96,7 +101,6 @@ sub command {
     }));
 
     if ($into->can('commit')) {
-        say STDERR "committing" if $v;
         $into->commit;
     }
 

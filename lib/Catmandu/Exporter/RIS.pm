@@ -7,6 +7,8 @@ my $tags = [qw(TY ID T1 TI CT T2 BT T3 A1 AU A2 ED A3 Y1 PY Y2 N1 AB N2 KW RP
                JF JO JA J1 J2 VL IS CP SP EP CY PB SN AD AV M1 M2 M3 U1 U2 U3 U4 U5
                UR L1 L2 L3 L4)];
 
+my $small_tag = qr/AU|A2|ED|KW|SP|EP|PB|SN/;
+
 sub add {
     my ($self, $obj) = @_;
 
@@ -19,7 +21,7 @@ sub add {
             if (my $val = $o->{$tag}) {
                 $val = [$val] unless ref $val;
                 for my $v (@$val) {
-                    if (length($v) > 255 && $v =~ /AU|A2|ED|KW|SP|EP|PB|SN/) {
+                    if (length($v) > 255 && $v =~ $small_tag) {
                         $v = substr($v, 255);
                     }
                     print $file "$tag  - $v\r\n";

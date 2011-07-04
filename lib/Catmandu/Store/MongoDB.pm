@@ -3,33 +3,62 @@ use Catmandu::Sane;
 use MongoDB;
 use parent qw(Catmandu::Store);
 use Catmandu::Object
-    db_name => 'r',
+    database_name => 'r',
     collection_name => 'r',
-    connection_args => { default => sub { {} } },
     connection => { default => '_build_connection' },
-    db         => { default => '_build_db' },
+    database => { default => '_build_database' },
     collection => { default => '_build_collection' };
 
-sub _build_connection {
-    my $self = $_[0];
-    MongoDB::Connection->new($self->connection_args);
+sub default_connection_args {
+    {};
 }
 
-sub _build_db {
+sub allowed_connection_args {
+    state $allowed_connection_args = [qw(
+        host
+        w
+        wtimeout
+        auto_reconnect
+        auto_connect
+        timeout
+        username
+        password
+        db_name
+        query_time
+        max_bson_size
+        find_master
+    )];
+}
+
+sub _build_connection {
+    MongoDB::Connection->new($_[0]->{connection_args});
+}
+
+sub _build_database {
     my $self = $_[0];
-    $self->connection->get_database($self->db_name);
+    $self->connection->get_database($self->database_name);
 }
 
 sub _build_collection {
     my $self = $_[0];
-    $self->db->get_collection($self->collection_name);
+    $self->connection->get_database($self->database_name)->get_collection($self->collection_name);
 }
 
 sub _build {
     my ($self, $args) = @_;
-    $self->{db_name} = delete($args->{db});
-    $self->{collection_name} = delete($args->{collection});
-    $self->{connection_args} = delete($args->{connection}) || $args;
+    $self->{database_name} = $args->{database};
+    $self->{collection_name} = $args->{collection};
+    if (blessed $args->{connection}) {
+        $self->{connection} = $args->{connection};
+    } else {
+        $self->{connection_args} = $self->default_connection_args;
+        if (my $hash = $args->{connection}) {
+            my $keys = $self->allowed_connection_args;
+            for my $key (@$keys) {
+                $self->{connection_args}{$key} = $hash->{$key} if exists $hash->{$key};
+            }
+        }
+    }
     $self->SUPER::_build($args);
 }
 
