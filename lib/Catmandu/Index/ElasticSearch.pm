@@ -40,10 +40,14 @@ sub _build {
             $self->{es_args}{$key} = $args->{$key} if exists $args->{$key};
         }
     }
-    if (my $mapping = $self->mapping) {
-        $mapping->{index} = $self->index_name;
-        $mapping->{type}  = $self->type;
-        $self->es->put_mapping($mapping);
+    if ($self->mapping) {
+        $es->create_index_template(
+            name     => $self->index_name,
+            template => $self->index_name,
+            mappings => {
+                $self->type => $self->mapping
+            },
+        );
     }
 }
 
