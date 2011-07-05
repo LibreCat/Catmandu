@@ -117,7 +117,6 @@ sub delete_where {
 sub delete_all {
     my ($self) = @_;
     $self->delete_where(Lucy::Search::MatchAllQuery->new);
-    $self->commit;
 }
 
 sub commit { # TODO optimize

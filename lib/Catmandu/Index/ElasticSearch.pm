@@ -124,10 +124,6 @@ sub delete_where {
         type => $self->type,
         query => $query,
     );
-    $self->es->optimize_index(
-        index => $self->index_name,
-        only_deletes => 1,
-    );
 }
 
 sub delete_all {
