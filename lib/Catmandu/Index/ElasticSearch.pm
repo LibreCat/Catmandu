@@ -41,12 +41,10 @@ sub _build {
         }
     }
     if ($self->mapping) {
-        $es->create_index_template(
+        $self->es->create_index_template(
             name     => $self->index_name,
             template => $self->index_name,
-            mappings => {
-                $self->type => $self->mapping
-            },
+            mappings => { $self->type => $self->mapping },
         );
     }
 }
