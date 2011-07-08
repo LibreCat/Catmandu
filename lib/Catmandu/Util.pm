@@ -18,6 +18,8 @@ our @EXPORT_OK = qw(
     get_id
     ensure_id
     assert_id
+    ensure_collection
+    assert_collection
 
     opts
 
@@ -96,6 +98,14 @@ sub ensure_id {
 
 sub assert_id {
     get_id(@_) || confess("missing _id");
+}
+
+sub ensure_collection {
+    $_[0]->{_collection} = $_[1] || confess("missing _collection");
+}
+
+sub assert_collection {
+    $_[0]->{_collection} || confess("missing _collection");
 }
 
 sub opts {

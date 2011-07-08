@@ -1,7 +1,11 @@
-package Catmandu::Plugin::Store::Timestamps;
+package Catmandu::Plugin::Timestamps;
 use Catmandu::Sane;
-use parent qw(Catmandu::Plugin::Store);
 use DateTime;
+
+sub after_get {}
+sub before_add {}
+sub after_add {}
+sub before_delete {}
 
 sub before_add {
     my ($self, $store, $obj) = @_;

@@ -6,6 +6,7 @@ use Catmandu::Object
     index_name  => 'r',
     type        => 'r',
     mapping     => 'r',
+    es_args     => 'r',
     es          => { default => '_build_es' },
     buffer_size => { default => sub { 500 } },
     _buffer     => { default => sub { [] },
@@ -32,14 +33,12 @@ sub _build {
     $self->{type} = delete $args->{type};
     $self->{mapping} = delete $args->{mapping};
     $self->{buffer_size} = delete $args->{buffer_size};
-    $self->{es} = delete $args->{es};
-    if (! $self->{es}) {
-        $self->{es_args} = $self->default_es_args;
-        my $keys = $self->allowed_es_args;
-        for my $key (@$keys) {
-            $self->{es_args}{$key} = $args->{$key} if exists $args->{$key};
-        }
+    $self->{es_args} = $self->default_es_args;
+    my $keys = $self->allowed_es_args;
+    for my $key (@$keys) {
+        $self->{es_args}{$key} = $args->{$key} if exists $args->{$key};
     }
+
     if ($self->mapping) {
         $self->es->create_index_template(
             name     => $self->index_name,
@@ -50,7 +49,7 @@ sub _build {
 }
 
 sub _build_es {
-    ElasticSearch->new($_[0]->{es_args});
+    ElasticSearch->new($_[0]->es_args);
 }
 
 sub _add {
@@ -116,6 +115,7 @@ sub delete {
         type => $self->type,
         id => assert_id($id),
     );
+    return;
 }
 
 sub delete_where {
@@ -126,6 +126,7 @@ sub delete_where {
         type => $self->type,
         query => $query,
     );
+    return;
 }
 
 sub delete_all {
@@ -134,6 +135,7 @@ sub delete_all {
         index => $self->index_name,
         ignore_missing => 1,
     );
+    return;
 }
 
 sub commit {

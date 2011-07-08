@@ -1,14 +1,16 @@
 package Catmandu::Store::Hash;
 use Catmandu::Sane;
 use parent qw(Catmandu::Store);
-use Catmandu::Object hash => 'r';
+
+package Catmandu::Store::Hash::Collection;
+use Catmandu::Sane;
+use parent qw(Catmandu::Collection);
+use Catmandu::Object hash => { default => '_build_hash' };
 use Catmandu::Util qw(get_id);
 use Clone qw(clone);
 
-sub _build {
-    my ($self, $args) = @_;
-    $self->{hash} = $args;
-    $self->SUPER::_build($args);
+sub _build_hash {
+    {};
 }
 
 sub each {
@@ -24,8 +26,8 @@ sub each {
 
 sub _get {
     my ($self, $id) = @_;
-    my $obj = $self->hash->{$id} || return;
-    clone($obj);
+    my $obj = $self->hash->{$id};
+    clone($obj || return);
 }
 
 sub _add {
@@ -37,6 +39,7 @@ sub _add {
 sub _delete {
     my ($self, $id) = @_;
     delete $self->hash->{$id};
+    return;
 }
 
 1;

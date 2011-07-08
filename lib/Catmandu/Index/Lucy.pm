@@ -97,6 +97,7 @@ sub search {
 sub delete {
     my ($self, $id) = @_;
     $self->_indexer->delete_by_term(field => '_id', term => assert_id($id));
+    return;
 }
 
 sub delete_where {
@@ -112,11 +113,13 @@ sub delete_where {
     }
 
     $self->_indexer->delete_by_query($query);
+    return;
 }
 
 sub delete_all {
     my ($self) = @_;
     $self->delete_where(Lucy::Search::MatchAllQuery->new);
+    return;
 }
 
 sub commit { # TODO optimize

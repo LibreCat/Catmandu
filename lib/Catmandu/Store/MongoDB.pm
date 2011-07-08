@@ -3,63 +3,45 @@ use Catmandu::Sane;
 use MongoDB;
 use parent qw(Catmandu::Store);
 use Catmandu::Object
-    database_name => 'r',
-    collection_name => 'r',
+    connection_args => 'r',
+    db_name => 'r',
     connection => { default => '_build_connection' },
-    database => { default => '_build_database' },
-    collection => { default => '_build_collection' };
+    db => { default => '_build_db' };
 
 sub default_connection_args {
     {};
 }
 
-sub allowed_connection_args {
-    state $allowed_connection_args = [qw(
-        host
-        w
-        wtimeout
-        auto_reconnect
-        auto_connect
-        timeout
-        username
-        password
-        db_name
-        query_time
-        max_bson_size
-        find_master
-    )];
-}
-
 sub _build_connection {
-    MongoDB::Connection->new($_[0]->{connection_args});
+    my $self = $_[0];
+    MongoDB::Connection->new($self->connection_args);
 }
 
-sub _build_database {
+sub _build_db {
     my $self = $_[0];
-    $self->connection->get_database($self->database_name);
-}
-
-sub _build_collection {
-    my $self = $_[0];
-    $self->connection->get_database($self->database_name)->get_collection($self->collection_name);
+    $self->connection->get_database($self->db_name);
 }
 
 sub _build {
     my ($self, $args) = @_;
-    $self->{database_name} = $args->{database};
-    $self->{collection_name} = $args->{collection};
-    if (blessed $args->{connection}) {
-        $self->{connection} = $args->{connection};
-    } else {
-        $self->{connection_args} = $self->default_connection_args;
-        if (my $hash = $args->{connection}) {
-            my $keys = $self->allowed_connection_args;
-            for my $key (@$keys) {
-                $self->{connection_args}{$key} = $hash->{$key} if exists $hash->{$key};
-            }
+    $self->SUPER::_build($args);
+    $self->{db_name} = $args->{db};
+    $self->{connection_args} = $self->default_connection_args;
+    if (my $ref = $args->{connection}) {
+        for my $key (keys %$ref) {
+            $self->{connection_args}{$key} = $ref->{$key};
         }
     }
-    $self->SUPER::_build($args);
+}
+
+package Catmandu::Store::MongoDB::Collection;
+use Catmandu::Sane;
+use parent qw(Catmandu::Collection);
+use Catmandu::Object collection => { default => '_build_collection' };
+
+sub _build_collection {
+    my $self = $_[0];
+    $self->store->db->get_collection($self->name);
 }
 
 sub each {
@@ -87,6 +69,7 @@ sub _add {
 sub delete {
     my ($self, $id) = @_;
     $self->collection->remove({_id => $id});
+    return;
 }
 
 1;

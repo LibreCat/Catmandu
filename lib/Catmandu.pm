@@ -20,31 +20,58 @@ our @EXPORT_OK = qw(
 sub new_store {
     my ($pkg, @args) = @_;
     $pkg ||= 'default';
-    if ($pkg !~ /^[A-Z]/) {
-        my $cfg = config->{store}{$pkg};
-        ($pkg, @args) = @$cfg;
+
+    state $memo = {};
+    if (my $val = $memo->{$pkg}) {
+        return $val;
     }
-    load_package($pkg, 'Catmandu::Store')->new(@args);
+
+    if ($pkg =~ /^[a-z]/) {
+        my $key = $pkg;
+        my $cfg = config->{store}{$key};
+        ($pkg, @args) = @$cfg;
+        $memo->{$key} = load_package($pkg, 'Catmandu::Store')->new(@args);
+    } else {
+        load_package($pkg, 'Catmandu::Store')->new(@args);
+    }
 }
 
 sub new_index {
     my ($pkg, @args) = @_;
     $pkg ||= 'default';
-    if ($pkg !~ /^[A-Z]/) {
-        my $cfg = config->{index}{$pkg};
-        ($pkg, @args) = @$cfg;
+
+    state $memo = {};
+    if (my $val = $memo->{$pkg}) {
+        return $val;
     }
-    load_package($pkg, 'Catmandu::Index')->new(@args);
+
+    if ($pkg =~ /^[a-z]/) {
+        my $key = $pkg;
+        my $cfg = config->{index}{$key};
+        ($pkg, @args) = @$cfg;
+        $memo->{$key} = load_package($pkg, 'Catmandu::Index')->new(@args);
+    } else {
+        load_package($pkg, 'Catmandu::Index')->new(@args);
+    }
 }
 
 sub new_filestore {
     my ($pkg, @args) = @_;
     $pkg ||= 'default';
-    if ($pkg !~ /^[A-Z]/) {
-        my $cfg = config->{filestore}{$pkg};
-        ($pkg, @args) = @$cfg;
+
+    state $memo = {};
+    if (my $val = $memo->{$pkg}) {
+        return $val;
     }
-    load_package($pkg, 'Catmandu::Filestore')->new(@args);
+
+    if ($pkg =~ /^[a-z]/) {
+        my $key = $pkg;
+        my $cfg = config->{filestore}{$key};
+        ($pkg, @args) = @$cfg;
+        $memo->{$key} = load_package($pkg, 'Catmandu::Filestore')->new(@args);
+    } else {
+        load_package($pkg, 'Catmandu::Filestore')->new(@args);
+    }
 }
 
 sub new_importer {
@@ -57,22 +84,8 @@ sub new_exporter {
     load_package($pkg, 'Catmandu::Exporter')->new(@args);
 }
 
-sub get_store {
-    my $key = $_[0] || 'default';
-    state $memo = {};
-    $memo->{$key} ||= new_store($key);
-}
-
-sub get_index {
-    my $key = $_[0] || 'default';
-    state $memo = {};
-    $memo->{$key} ||= new_index($key);
-}
-
-sub get_filestore {
-    my $key = $_[0] || 'default';
-    state $memo = {};
-    $memo->{$key} ||= new_filestore($key);
-}
+*get_store = \&new_store;
+*get_index = \&new_index;
+*get_filestore = \&new_filestore;
 
 1;

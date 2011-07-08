@@ -61,11 +61,7 @@ sub import {
         }
 
         if ($opt->{reader}) {
-            my $sub = $opt->{default};
-
-            if (ref $sub) {
-                add_sub($pkg, $opt->{reader} => sub { $_[0]->{$key} //= $sub->($_[0]) });
-            } elsif ($sub) {
+            if (my $sub = $opt->{default}) {
                 add_sub($pkg, $opt->{reader} => sub { $_[0]->{$key} //= $_[0]->$sub() });
             } else {
                 add_sub($pkg, $opt->{reader} => sub { $_[0]->{$key} });

@@ -33,7 +33,9 @@ sub command_opt_spec {
         [ "pretty", "" ],
         [ "from-file=s", "" ],
         [ "from-url=s", "" ],
+        [ "from-collection=s", "" ],
         [ "into-file=s", "" ],
+        [ "into-collection=s", "" ],
     );
 }
 
@@ -55,14 +57,14 @@ sub command {
 
     my $from;
     given ($opts->from) {
-        when ('from_store')    { $from = Catmandu::new_store($opts->from_store, @from_args) }
+        when ('from_store')    { $from = Catmandu::new_store($opts->from_store, @from_args)->collection($opts->from_collection) }
         when ('from_index')    { $from = Catmandu::new_index($opts->from_index, @from_args) }
         when ('from_importer') { $from = Catmandu::new_importer($opts->from_importer, @from_args) }
     }
 
     my $into;
     given ($opts->into) {
-        when ('into_store')    { $into = Catmandu::new_store($opts->into_store, @into_args) }
+        when ('into_store')    { $into = Catmandu::new_store($opts->into_store, @into_args)->collection($opts->into_collection) }
         when ('into_index')    { $into = Catmandu::new_index($opts->into_index, @into_args) }
         when ('into_exporter') { $into = Catmandu::new_exporter($opts->into_exporter, @into_args) }
     }

@@ -74,16 +74,19 @@ sub delete {
     my ($self, $id) = @_;
     $id = assert_id($id);
     $self->solr->delete_by_query("_id:$id");
+    return;
 }
 
 sub delete_where {
     my ($self, $query) = @_;
     $self->solr->delete_by_query($query);
+    return;
 }
 
 sub delete_all {
     my ($self) = @_;
     $self->delete_where("*:*");
+    return;
 }
 
 sub commit { # TODO optimize
