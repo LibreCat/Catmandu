@@ -24,7 +24,7 @@ sub _build_dbh {
     });
 }
 
-sub type {
+sub driver_name {
     $_[0]->dbh->{Driver}{Name};
 }
 
@@ -127,7 +127,7 @@ sub _build_dbh_add_generic {
 
 sub _build_dbh_add {
     my $self = $_[0];
-    given ($self->store->type) {
+    given ($self->store->driver_name) {
         when (/sqlite/i) { return $self->_build_dbh_add_sqlite }
         when (/mysql/i)  { return $self->_build_dbh_add_mysql }
         default          { return $self->_build_dbh_add_generic }
