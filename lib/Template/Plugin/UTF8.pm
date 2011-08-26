@@ -1,6 +1,6 @@
 package Template::Plugin::UTF8;
 use parent qw(Template::Plugin::Filter);
-use Encode ();
+use Encode;
 
 my $FILTER_NAME = 'utf8';
 
@@ -11,7 +11,7 @@ sub init {
 }
 
 sub filter {
-    Encode::encode_utf8($_[1]);
+    Encode::encode_utf8 $_[1];
 }
 
 1;

@@ -5,7 +5,7 @@ use WebService::Solr;
 use Catmandu::Object
     url         => { default => sub { 'http://localhost:8983/solr' } },
     solr        => { default => '_build_solr' },
-    buffer_size => { default => sub { 500 } },
+    buffer_size => { default => sub { 100 } },
     _buffer     => { default => sub { [] },
                      clearer => 1 };
 

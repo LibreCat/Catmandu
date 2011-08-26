@@ -1,6 +1,7 @@
 package Catmandu::Store::MongoDB;
 use Catmandu::Sane;
 use MongoDB;
+use Catmandu::Util qw(opts);
 use parent qw(Catmandu::Store);
 use Catmandu::Object
     connection_args => 'r',
@@ -22,16 +23,17 @@ sub _build_db {
     $self->connection->get_database($self->db_name);
 }
 
-sub _build {
-    my ($self, $args) = @_;
-    $self->SUPER::_build($args);
-    $self->{db_name} = $args->{db};
-    $self->{connection_args} = $self->default_connection_args;
-    if (my $ref = $args->{connection}) {
+sub _build_args {
+    my ($self, @args) = @_;
+    my $args = opts @args;
+    $args->{db_name} = delete($args->{db});
+    $args->{connection_args} = $self->default_connection_args;
+    if (my $ref = delete($args->{connection})) {
         for my $key (keys %$ref) {
-            $self->{connection_args}{$key} = $ref->{$key};
+            $args->{connection_args}{$key} = $ref->{$key};
         }
     }
+    $args;
 }
 
 package Catmandu::Store::MongoDB::Collection;

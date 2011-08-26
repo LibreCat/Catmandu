@@ -4,13 +4,12 @@ use Catmandu::Util qw(quack assert_id);
 use ElasticSearch;
 use Catmandu::Object 
     index_name  => 'r',
-    type        => 'r',
-    mapping     => 'r',
-    es_args     => 'r',
-    es          => { default => '_build_es' },
-    buffer_size => { default => sub { 500 } },
-    _buffer     => { default => sub { [] },
-                     clearer => 1 };
+    type => 'r',
+    index_template => 'r',
+    es_args => 'r',
+    es => { default => '_build_es' },
+    buffer_size => { default => sub { 100 } },
+    _buffer => { default => sub { [] }, clearer => 1 };
 
 sub default_es_args {
     { servers => "127.0.0.1:9200" };
@@ -31,7 +30,7 @@ sub _build {
     my ($self, $args) = @_;
     $self->{index_name} = delete $args->{index};
     $self->{type} = delete $args->{type};
-    $self->{mapping} = delete $args->{mapping};
+    $self->{index_template} = delete $args->{index_template};
     $self->{buffer_size} = delete $args->{buffer_size};
     $self->{es_args} = $self->default_es_args;
     my $keys = $self->allowed_es_args;
@@ -39,11 +38,11 @@ sub _build {
         $self->{es_args}{$key} = $args->{$key} if exists $args->{$key};
     }
 
-    if ($self->mapping) {
+    if (my $tmpl = $self->index_template) {
         $self->es->create_index_template(
             name     => $self->index_name,
             template => $self->index_name,
-            mappings => { $self->type => $self->mapping },
+            %$tmpl,
         );
     }
 }
