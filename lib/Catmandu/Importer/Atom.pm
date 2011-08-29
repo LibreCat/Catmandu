@@ -12,7 +12,7 @@ sub each {
 
     for my $entry ($feed->entries) {
         $sub->({
-          _id       => $entry->id;,
+          _id       => $entry->id,
           published => $entry->published,
           link      => $entry->link->href,
           author    => $entry->author->name,
