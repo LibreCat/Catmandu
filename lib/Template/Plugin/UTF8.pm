@@ -1,4 +1,6 @@
 package Template::Plugin::UTF8;
+use strict;
+use warnings;
 use parent qw(Template::Plugin::Filter);
 use Encode;
 
@@ -11,7 +13,7 @@ sub init {
 }
 
 sub filter {
-    Encode::encode_utf8 $_[1];
+    Encode::encode_utf8($_[1]);
 }
 
 1;

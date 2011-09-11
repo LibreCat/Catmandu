@@ -2,6 +2,7 @@ package Catmandu::Index::ElasticSearch;
 use Catmandu::Sane;
 use Catmandu::Util qw(quack assert_id);
 use ElasticSearch;
+use Catmandu::Hits;
 use Catmandu::Object 
     index_name  => 'r',
     type => 'r',
@@ -83,28 +84,34 @@ sub add {
 sub search {
     my ($self, $query, %opts) = @_;
 
-    $query = {query_string => {query => $query}} unless ref $query;
+    $query = {query => {query_string => {query => $query}}} unless ref $query;
+    $query->{index} = $self->index_name;
+    $query->{type} = $self->type;
+    $query->{size} //= $opts{size} // 50;
+    $query->{from} //= $opts{skip} // 0;
 
-    $opts{index} = $self->index_name;
-    $opts{type}  = $self->type;
-    $opts{query} = $query;
-    $opts{from}  = delete $opts{skip};
-
-    my $store = delete $opts{reify};
-
-    my $res = $self->es->search(%opts);
+    my $res = $self->es->search(%$query);
 
     my $hits = $res->{hits}{hits};
-    my $total_hits = $res->{hits}{total};
 
-    if ($store) {
-        $hits = [ map { $store->get($_->{_id}) } @$hits ];
-    } else {
-        $hits = [ map { $_->{_source} } @$hits ];
+    my $hits_obj = Catmandu::Hits->new({total_hits => $res->{hits}{total}});
+
+    if ($res->{facets}) {
+        $hits_obj->{facets} = $res->{facets};
     }
 
-    return $hits,
-           $total_hits;
+    if (my $store = $opts{reify}) {
+        $hits_obj->{hits} = [ map { $store->get($_->{_id}) } @$hits ];
+    } else {
+        $hits_obj->{hits} = [ map { 
+            if (my $hl = $_->{highlight}) {
+                $hits_obj->{highlight}{$_->{_id}} = $hl;
+            }
+            $_->{_source};
+        } @$hits ];
+    }
+
+    $hits_obj;
 }
 
 sub delete {
@@ -119,12 +126,10 @@ sub delete {
 
 sub delete_where {
     my ($self, $query) = @_;
-    $query = {query_string => {query => $query}} unless ref $query;
-    $self->es->delete_by_query(
-        index => $self->index_name,
-        type => $self->type,
-        query => $query,
-    );
+    $query = {query => {query_string => {query => $query}}} unless ref $query;
+    $query->{index} = $self->index_name;
+    $query->{type} = $self->type;
+    $self->es->delete_by_query(%$query);
     return;
 }
 

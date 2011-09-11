@@ -15,14 +15,14 @@ get '/' => sub {
         $size = 1000 if $size > 1000;
         $skip = 0    if $skip < 0;
 
-        my ($hits, $total_hits) = get_index->search($qs, size => $size, skip => $skip);
+        my $res = get_index->search($qs, size => $size, skip => $skip);
 
         return template 'hits', {
             qs => $qs,
             skip => $skip,
             size => $size,
-            total_hits => $total_hits,
-            hits => $hits,
+            total_hits => $res->total_hits,
+            hits => $res->hits,
         };
     }
     template 'index';

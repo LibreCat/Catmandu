@@ -18,10 +18,10 @@ sub _build {
     my $q     = $args->{q};
     my $opts  = $args->{opts};
 
-    my ($hits, $total_hits) = $index->search($q, %$opts);
+    my $res = $index->search($q, %$opts);
 
-    $self->{hits} = $hits;
-    $self->{total_hits} = $total_hits;
+    $self->{hits} = $$res->hits;
+    $self->{total_hits} = $res->total_hits;
 }
 
 sub each {
@@ -30,7 +30,7 @@ sub each {
     for my $hit (@$hits) {
         $sub->($hit);
     }
-    @$hits;
+    scalar @$hits;
 }
 
 1;

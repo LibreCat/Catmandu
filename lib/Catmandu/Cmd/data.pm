@@ -28,7 +28,7 @@ sub command_opt_spec {
         [ "verbose|v", "" ],
         [ "fix=s@", "fix or fix file (repeatable)" ],
         [ "reify", "" ],
-        [ "drop", "" ],
+        [ "replace", "" ],
         [ "query|q=s", "" ],
         [ "pretty", "" ],
         [ "from-file=s", "" ],
@@ -73,10 +73,11 @@ sub command {
     my $n = 0;
 
     if ($opts->from eq 'from_index') {
-        $from = Catmandu::Searcher->new($from, $opts->query,
+        $from = $from->search($opts->query,
             reify => $opts->reify,
             skip  => $opts->skip,
-            size  => $opts->size);
+            size  => $opts->size,
+        );
     } elsif ($opts->size // $opts->skip) {
         $from = Catmandu::Iterator->new($from)->slice($opts->skip, $opts->size);
     }
@@ -85,7 +86,7 @@ sub command {
         $from = Catmandu::Fix->new(@$fix)->fix($from);
     }
 
-    if ($opts->drop && $into->can('delete_all')) {
+    if ($opts->replace && $into->can('delete_all')) {
         $into->delete_all;
     }
 

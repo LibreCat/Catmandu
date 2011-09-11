@@ -6,6 +6,7 @@ use Lucy::Plan::FullTextType;
 use Lucy::Analysis::PolyAnalyzer;
 use Lucy::Index::Indexer;
 use Lucy::Search::IndexSearcher;
+use Catmandu::Hits;
 use Catmandu::Object
     path => 'r',
     _analyzer      => { default => '_build_analyzer' },
@@ -90,8 +91,10 @@ sub search {
         }
     }
 
-     return $objs,
-            $hits->total_hits;
+    Catmandu::Hits->new({
+        hits => $objs,
+        total_hits => $hits->total_hits,
+    });
 }
 
 sub delete {

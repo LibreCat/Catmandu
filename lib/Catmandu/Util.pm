@@ -1,6 +1,7 @@
 package Catmandu::Util;
 use Catmandu::Sane;
 use Exporter qw(import);
+use Plack::Util;
 use List::Util;
 use Data::UUID;
 use IO::File;
@@ -31,22 +32,7 @@ our @EXPORT_OK = qw(
     io
 );
 
-sub load_package { # stolen from Plack::Util
-    my ($pkg, $prefix) = @_;
-
-    if ($prefix) {
-        unless ($pkg =~ s/^\+// || $pkg =~ /^$prefix/) {
-            $pkg = "${prefix}::$pkg";
-        }
-    }
-
-    my $file = "$pkg.pm";
-    $file =~ s!::!/!g;
-
-    require $file;
-
-    $pkg;
-}
+sub load_package { goto &Plack::Util::load_class }
 
 sub add_parent {
     my ($pkg, @isa) = @_;
