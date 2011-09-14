@@ -16,9 +16,15 @@ sub parse {
     $self->visit($parser->parse($query));
 }
 
-sub _escape_term {
+sub escape_term {
     my $term = $_[0];
     $term =~ s/($reserved)/\\$1/g;
+    $term;
+}
+
+sub quote_term {
+    my $term = $_[0];
+    $term = qq("$term") if $term =~ /\s/;
     $term;
 }
 
@@ -33,7 +39,7 @@ sub visit {
         }
 
         my $relation  = $node->getRelation;
-        my $term      = _escape_term($node->getTerm);
+        my $term      = escape_term($node->getTerm);
         my @modifiers = $relation->getModifiers;
         my $base      = lc $relation->getBase;
 
@@ -44,6 +50,7 @@ sub visit {
         }
 
         if ($base eq '=' or $base eq 'scr') {
+            $term = quote_term($term);
             for my $m (@modifiers) {
                 if ($m->[1] eq 'fuzzy') {
                     return "$qualifier$term~";
@@ -51,17 +58,22 @@ sub visit {
             }
             return $qualifier.$term;
         } elsif ($base eq '<') {
+            $term = quote_term($term);
             return $qualifier."{* TO $term}";
         } elsif ($base eq '>') {
+            $term = quote_term($term);
             return $qualifier."{$term TO *}";
         } elsif ($base eq '<=') {
+            $term = quote_term($term);
             return $qualifier."[* TO $term]";
         } elsif ($base eq '>=') {
+            $term = quote_term($term);
             return $qualifier."[$term TO *]";
         } elsif ($base eq '<>') {
+            $term = quote_term($term);
             return "-$qualifier$term";
         } elsif ($base eq 'exact') {
-            return $qualifier.$term;
+            return $qualifier.quote_term($term);
         } elsif ($base eq 'all') {
             my @terms = split /\s+/, $term;
             if (@terms == 1) {
@@ -83,14 +95,14 @@ sub visit {
                 return $qualifier."[$range[0] TO $range[1]]";
             }
         } else {
-            return $qualifier.$term;
+            return $qualifier.quote_term($term);
         }
     }
 
     if ($node->isa('CQL::ProxNode')) {
         my $distance = 1;
         my $qualifier = $node->left->getQualifier;
-        my $term = _escape_term(join(' ', $node->left->getTerm, $node->right->getTerm));
+        my $term = escape_term(join(' ', $node->left->getTerm, $node->right->getTerm));
 
         if (my ($n) = $node->op =~ $distance_modifier) {
             $distance = $n if $n > 1;
