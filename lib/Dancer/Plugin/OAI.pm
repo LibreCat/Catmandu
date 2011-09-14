@@ -164,7 +164,7 @@ sub render {
     $out;
 }
 
-sub oai_repository {
+sub oai_provider {
     my ($path, %opts) = @_;
 
     get $path => sub {
@@ -223,8 +223,8 @@ sub oai_repository {
         if ($verb eq 'GetRecord') {
             if (my $record = $opts{record}->($params->{identifier})) {
                 $vars->{datestamp} = $opts{datestamp}->($record);
-                $vars->{deleted}   = $opts{deleted}->($record);
-                $vars->{record}    = template($format->{template}, $format->{fix} ? $format->{fix}->fix($record) : $record, {layout => $format->{layout}});
+                $vars->{deleted} = $opts{deleted}->($record);
+                $vars->{get} = template($format->{template}, $format->{fix} ? $format->{fix}->fix($record) : $record, {layout => $format->{layout}});
                 unless ($vars->{deleted} and $setting->{deletedRecord} eq 'no') {
                     return render(\$template_get_record, $vars);
                 }
@@ -245,7 +245,7 @@ sub oai_repository {
     }
 };
 
-register oai_repository => \&oai_repository;
+register oai_provider => \&oai_provider;
 
 register_plugin;
 
