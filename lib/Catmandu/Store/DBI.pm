@@ -24,10 +24,6 @@ sub _build_dbh {
     });
 }
 
-sub driver_name {
-    $_[0]->dbh->{Driver}{Name};
-}
-
 sub transaction {
     my ($self, $sub) = @_;
 
@@ -127,7 +123,7 @@ sub _build_dbh_add_generic {
 
 sub _build_dbh_add {
     my $self = $_[0];
-    given ($self->store->driver_name) {
+    given ($self->store->dbh->{Driver}{Name}) {
         when (/sqlite/i) { return $self->_build_dbh_add_sqlite }
         when (/mysql/i)  { return $self->_build_dbh_add_mysql }
         default          { return $self->_build_dbh_add_generic }

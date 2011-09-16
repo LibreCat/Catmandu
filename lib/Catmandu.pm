@@ -28,7 +28,7 @@ sub new_store {
 
     if ($pkg =~ /^[a-z]/) {
         my $key = $pkg;
-        my $cfg = config->{store}{$key};
+        my $cfg = setting('store')->{$key};
         ($pkg, @args) = @$cfg;
         $memo->{$key} = load_package($pkg, 'Catmandu::Store')->new(@args);
     } else {
@@ -47,7 +47,7 @@ sub new_index {
 
     if ($pkg =~ /^[a-z]/) {
         my $key = $pkg;
-        my $cfg = config->{index}{$key};
+        my $cfg = setting('index')->{$key};
         ($pkg, @args) = @$cfg;
         $memo->{$key} = load_package($pkg, 'Catmandu::Index')->new(@args);
     } else {
@@ -66,7 +66,7 @@ sub new_filestore {
 
     if ($pkg =~ /^[a-z]/) {
         my $key = $pkg;
-        my $cfg = config->{filestore}{$key};
+        my $cfg = setting('filestore')->{$key};
         ($pkg, @args) = @$cfg;
         $memo->{$key} = load_package($pkg, 'Catmandu::Filestore')->new(@args);
     } else {
