@@ -2,6 +2,7 @@ package Catmandu::Index::Solr;
 use Catmandu::Sane;
 use Catmandu::Util qw(quack assert_id);
 use WebService::Solr;
+use CQL::Solr;
 use Catmandu::Hits;
 use Catmandu::Object
     url         => { default => sub { 'http://localhost:8983/solr' } },
@@ -71,6 +72,11 @@ sub search {
         hits => $hits,
         total_hits => $total_hits,
     });
+}
+
+sub cql_search {
+    my ($self, $query, %opts) = @_;
+    $self->search(CQL::Solr->parse($query), %opts);
 }
 
 sub delete {

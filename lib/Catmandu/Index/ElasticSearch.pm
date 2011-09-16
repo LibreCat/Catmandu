@@ -2,6 +2,7 @@ package Catmandu::Index::ElasticSearch;
 use Catmandu::Sane;
 use Catmandu::Util qw(quack assert_id);
 use ElasticSearch;
+use CQL::ElasticSearch;
 use Catmandu::Hits;
 use Catmandu::Object 
     index_name  => 'r',
@@ -112,6 +113,11 @@ sub search {
     }
 
     $hits_obj;
+}
+
+sub cql_search {
+    my ($self, $query, %opts) = @_;
+    $self->search({query => CQL::ElasticSearch->parse($query)}, %opts);
 }
 
 sub delete {
