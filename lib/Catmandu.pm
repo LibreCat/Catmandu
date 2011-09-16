@@ -1,7 +1,7 @@
 package Catmandu;
 use Catmandu::Sane;
 use Catmandu::Util qw(load_package);
-use Dancer qw(:syntax config);
+use Dancer qw(:syntax setting);
 use Exporter qw(import);
 
 our $VERSION = '0.1';
