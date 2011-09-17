@@ -1,7 +1,6 @@
 package Dancer::Plugin::ElasticSearch;
 use strict;
 use warnings;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
 use ElasticSearch;
 

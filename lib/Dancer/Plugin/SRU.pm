@@ -1,7 +1,7 @@
 package Dancer::Plugin::SRU;
 use Catmandu::Sane;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
+use Dancer qw(:syntax);
 use Dancer::Plugin::Catmandu;
 use Catmandu::Fix;
 use SRU::Request;

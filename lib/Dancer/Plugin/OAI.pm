@@ -1,8 +1,8 @@
 package Dancer::Plugin::OAI;
 use strict;
 use warnings;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
+use Dancer qw(:syntax);
 use Catmandu::Fix;
 use Template;
 use DateTime;

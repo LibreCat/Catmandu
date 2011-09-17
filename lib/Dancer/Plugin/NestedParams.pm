@@ -1,8 +1,8 @@
 package Dancer::Plugin::NestedParams;
 use strict;
 use warnings;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
+use Dancer qw(:syntax);
 use CGI::Expand qw(expand_hash);
 
 our $VERSION = '0.1';

@@ -1,7 +1,6 @@
 package Dancer::Plugin::Cycle;
 use strict;
 use warnings;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
 
 our $VERSION = '0.1';

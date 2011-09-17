@@ -1,7 +1,6 @@
 package Dancer::Plugin::LDAP;
 use strict;
 use warnings;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
 use Net::LDAP qw(LDAP_SUCCESS);
 

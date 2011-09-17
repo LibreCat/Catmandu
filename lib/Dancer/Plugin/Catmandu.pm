@@ -1,7 +1,6 @@
 package Dancer::Plugin::Catmandu;
 use strict;
 use warnings;
-use Dancer qw(:syntax);
 use Dancer::Plugin;
 use Catmandu;
 
