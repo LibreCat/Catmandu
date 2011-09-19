@@ -3,6 +3,7 @@
 *.swp
 .build
 _build
+blib
 Build
 MYMETA.*
 
