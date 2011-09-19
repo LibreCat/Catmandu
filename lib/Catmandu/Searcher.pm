@@ -15,15 +15,15 @@ sub each {
     my ($self, $sub) = @_;
     my $index = $self->{index};
     my $query = $self->{query};
-    my %opts  = %{ $self->{opts} };
-    $opts{size} ||= 100;
-    $opts{skip} = 0;
+    my $opts  = $self->{opts};
+    $opts->{size} ||= 100;
+    my $n = 0;
     while (1) {
-        my $hits = $index->search($query, %opts);
-        $opts{skip} += $hits->each($sub);
-        last if $opts{skip} == $hits->total_hits;
+        my $hits = $index->search($query, %$opts, skip => $n);
+        $n += $hits->each($sub);
+        last if $n == $hits->total_hits;
     }
-    $opts{skip};
+    $n;
 }
 
 1;
