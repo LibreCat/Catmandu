@@ -58,7 +58,7 @@ sub command {
     my $from;
     given ($opts->from) {
         when ('from_store')    { $from = Catmandu::new_store($opts->from_store, @from_args)->collection($opts->from_collection) }
-        when ('from_index')    { $from = Catmandu::new_index($opts->from_index, @from_args) }
+        when ('from_index')    { $from = Catmandu::Searcher->new(Catmandu::new_index($opts->from_index, @from_args), $opts->query, reify => $opts->reify) }
         when ('from_importer') { $from = Catmandu::new_importer($opts->from_importer, @from_args) }
     }
 
@@ -72,14 +72,9 @@ sub command {
     my $v = $opts->verbose;
     my $n = 0;
 
-    if ($opts->from eq 'from_index') {
-        $from = $from->search($opts->query,
-            reify => $opts->reify,
-            skip  => $opts->skip,
-            size  => $opts->size,
-        );
-    } elsif ($opts->size // $opts->skip) {
-        $from = Catmandu::Iterator->new($from)->slice($opts->skip, $opts->size);
+    if ($opts->size // $opts->skip) {
+        $from = Catmandu::Iterator->new($from) unless $from->isa('Catmandu::Iterator');
+        $from->slice($opts->skip, $opts->size);
     }
 
     if (my $fix = $opts->fix) {

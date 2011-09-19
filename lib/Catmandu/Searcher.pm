@@ -1,36 +1,29 @@
 package Catmandu::Searcher;
 use Catmandu::Sane;
 use parent qw(Catmandu::Iterable);
-use Catmandu::Object total_hits => 'r', hits => 'r';
+use Catmandu::Object;
 use Catmandu::Util qw(opts);
 
 sub _build_args {
-    my ($self, $index, $q, @opts) = @_;
-    { index => $index,
-      q     => $q,
+    my ($self, $index, $query, @opts) = @_;
+    { index => $index, 
+      query => $query,
       opts  => opts(@opts), };
-}
-
-sub _build {
-    my ($self, $args) = @_;
-
-    my $index = $args->{index};
-    my $q     = $args->{q};
-    my $opts  = $args->{opts};
-
-    my $res = $index->search($q, %$opts);
-
-    $self->{hits} = $$res->hits;
-    $self->{total_hits} = $res->total_hits;
 }
 
 sub each {
     my ($self, $sub) = @_;
-    my $hits = $self->hits;
-    for my $hit (@$hits) {
-        $sub->($hit);
+    my $index = $self->{index};
+    my $query = $self->{query};
+    my %opts  = %{ $self->{opts} };
+    $opts{size} ||= 100;
+    $opts{skip} = 0;
+    while (1) {
+        my $hits = $index->search($query, %opts);
+        $opts{skip} += $hits->each($sub);
+        last if $opts{skip} == $hits->total_hits;
     }
-    scalar @$hits;
+    $opts{skip};
 }
 
 1;
