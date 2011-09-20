@@ -88,14 +88,18 @@ sub search {
     $query = {query => {query_string => {query => $query}}} unless ref $query;
     $query->{index} = $self->index_name;
     $query->{type} = $self->type;
-    $query->{size} //= $opts{size} // 50;
-    $query->{from} //= $opts{skip} // 0;
+    $query->{size} //= $opts{limit} // 50;
+    $query->{from} //= $opts{start} // 0;
 
     my $res = $self->es->search(%$query);
 
     my $hits = $res->{hits}{hits};
 
-    my $hits_obj = Catmandu::Hits->new({total_hits => $res->{hits}{total}});
+    my $hits_obj = Catmandu::Hits->new({
+        limit => $query->{size},
+        start => $query->{from},
+        total => $res->{hits}{total},
+    });
 
     if ($res->{facets}) {
         $hits_obj->{facets} = $res->{facets};

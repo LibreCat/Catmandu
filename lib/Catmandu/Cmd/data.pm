@@ -23,8 +23,8 @@ sub command_opt_spec {
         ]}],
         [ "into-arg=s@", "", { default => [] } ],
         [ "into-opt=s%", "", { default => {} } ],
-        [ "skip=i", "", { default => 0 } ],
-        [ "size=i", "" ],
+        [ "start=i", "", { default => 0 } ],
+        [ "limit=i", "" ],
         [ "verbose|v", "" ],
         [ "fix=s@", "fix or fix file (repeatable)" ],
         [ "reify", "" ],
@@ -72,9 +72,9 @@ sub command {
     my $v = $opts->verbose;
     my $n = 0;
 
-    if ($opts->size // $opts->skip) {
+    if ($opts->limit // $opts->start) {
         $from = Catmandu::Iterator->new($from) unless $from->isa('Catmandu::Iterator');
-        $from->slice($opts->skip, $opts->size);
+        $from->slice($opts->start, $opts->limit);
     }
 
     if (my $fix = $opts->fix) {

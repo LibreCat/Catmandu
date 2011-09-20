@@ -33,6 +33,6 @@ Commandline examples
 --------------------
 
     bin/cmd data --from-index Solr -q "subject:history" --into-exporter JSON --pretty
-    bin/cmd data --from-index Solr -q "*" --size 10 --skip 10 --into-exporter YAML
+    bin/cmd data --from-index Solr -q "*" --limit 10 --start 10 --into-exporter YAML
 
 data can also be copied into another Index or a Store

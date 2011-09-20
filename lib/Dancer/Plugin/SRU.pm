@@ -54,13 +54,13 @@ sub sru_provider {
                 my $template = $schema->{template};
                 my $layout = $schema->{layout};
 
-                my $skip = $request->startRecord || 0;
-                my $size = $request->maximumRecords || 20;
-                if ($size > 1000) {
-                    $size = 1000;
+                my $start = $request->startRecord || 0;
+                my $limit = $request->maximumRecords || 20;
+                if ($limit > 1000) {
+                    $limit = 1000;
                 }
 
-                my $hits = $index->cql_search($request->query, size => $size, skip => $skip);
+                my $hits = $index->cql_search($request->query, limit => $limit, start => $start);
                 $hits->each(sub {
                     my $obj = $_[0];
                     if ($fix) {

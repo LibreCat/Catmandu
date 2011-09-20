@@ -1,21 +1,21 @@
-<p><span class="total">[% total_hits %]</span> publications found</p>
+<p><span class="total">[% total %]</span> publications found</p>
 
 [% IF hits.size %]
 [% BLOCK prevnext %]
 <p class="prevnext">
-    [%- IF total_hits <= size %]
-    showing all <span class="total">[% total_hits %]</span>
+    [%- IF total <= limit %]
+    showing all <span class="total">[% total %]</span>
     [%- ELSE %]
-    showing <span class="first">[% skip + 1 %]</span> 
-    to <span class="last">[% skip + size > total_hits ? total_hits : skip + size %]</span> 
-    of <span class="total">[% total_hits %]</span>
+    showing <span class="first">[% start + 1 %]</span> 
+    to <span class="last">[% start + limit > total ? total : start + limit %]</span> 
+    of <span class="total">[% total %]</span>
     [%- END %]
     </span>
-    [%- IF skip %]
-    <span class="prev"><a href="[% request.uri_for('', qs=qs, skip=skip-size < 0 ? 0 : skip-size, size=size) %]">previous</a></span>
+    [%- IF start %]
+    <span class="prev"><a href="[% request.uri_for('', qs=qs, start=start-limit < 0 ? 0 : start-limit, limit=limit) %]">previous</a></span>
     [%- END %]
-    [%- IF total_hits > (skip + size) %]
-    <span class="next"><a href="[% request.uri_for('', qs=qs, skip=skip+size, size=size) %]">next</a></span>
+    [%- IF total > (start + limit) %]
+    <span class="next"><a href="[% request.uri_for('', qs=qs, start=start+limit, limit=limit) %]">next</a></span>
     [%- END %]
 </p>
 [% END %]

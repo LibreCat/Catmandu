@@ -89,3 +89,9 @@ sub new_exporter {
 *get_filestore = \&new_filestore;
 
 1;
+
+=head1 NAME
+
+Catmandu - a data toolkit
+
+=cut

@@ -65,6 +65,9 @@ sub add {
 sub search {
     my ($self, $query, %opts) = @_;
 
+    $opts{limit} ||= 50;
+    $opts{start} //= 0;
+
     if (ref $query eq 'HASH') {
         $query = Lucy::Search::ANDQuery->new(
             children => [ map {
@@ -75,8 +78,8 @@ sub search {
 
     my $hits = $self->_searcher->hits(
         query => $query,
-        num_wanted => $opts{size} || 50,
-        offset => $opts{skip} || 0,
+        num_wanted => $opts{limit},
+        offset => $opts{start},
     );
 
     my $objs = [];
@@ -92,8 +95,10 @@ sub search {
     }
 
     Catmandu::Hits->new({
+        limit => $opts{limit},
+        start => $opts{start},
+        total => $hits->total,
         hits => $objs,
-        total_hits => $hits->total_hits,
     });
 }
 

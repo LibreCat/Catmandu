@@ -6,9 +6,9 @@
     <link rel="search" type="application/opensearchdescription+xml"
         href="[% request.uri_base %]/opensearch.xml" title="[% settings.app_name %]">
     [%- IF hits %]
-    <meta name="totalResults" content="[% total_hits %]">
-    <meta name="startIndex" content="[% skip %]">
-    <meta name="itemsPerPage" content="[% size %]">
+    <meta name="totalResults" content="[% total %]">
+    <meta name="startIndex" content="[% start %]">
+    <meta name="itemsPerPage" content="[% limit %]">
     [%- END %]
     <link rel="stylesheet" href="[% request.uri_base %]/css/screen.css" type="text/css" media="screen">
 </head>
@@ -18,10 +18,10 @@
             <form action="[% request.uri_base %]" method="get" id="search-form">
                 <input type="search" name="qs" value="[% qs | html %]">
                 <input type="submit" value="Search">
-                <label for="search-size">show:</label>
-                <select name="size" id="search-size" size="1">
+                <label for="search-limit">show:</label>
+                <select name="limit" id="search-limit" size="1">
                     [%- FOREACH n in [10 20 50 100] %]
-                    <option value="[% n %]"[% IF n == size %] selected[% END %]>[% n %]</option>
+                    <option value="[% n %]"[% IF n == limit %] selected[% END %]>[% n %]</option>
                     [%- END %]
                 </select>
             </form>

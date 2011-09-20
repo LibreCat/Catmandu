@@ -16,12 +16,11 @@ sub each {
     my $index = $self->{index};
     my $query = $self->{query};
     my $opts  = $self->{opts};
-    $opts->{size} ||= 100;
     my $n = 0;
     while (1) {
-        my $hits = $index->search($query, %$opts, skip => $n);
+        my $hits = $index->search($query, %$opts, start => $n);
         $n += $hits->each($sub);
-        last if $n == $hits->total_hits;
+        last if $n == $hits->total;
     }
     $n;
 }

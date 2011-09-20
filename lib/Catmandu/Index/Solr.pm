@@ -55,22 +55,24 @@ sub add {
 sub search {
     my ($self, $query, %opts) = @_;
 
-    my $skip = delete $opts{skip};
-    my $size = delete $opts{size};
+    my $limit = delete($opts{limit}) || 50;
+    my $start = delete($opts{start}) // 0;
     my $store = delete $opts{reify};
 
-    my $res = $self->solr->search($query, {start => $skip, rows => $size, %opts});
+    my $res = $self->solr->search($query, {start => $start, rows => $limit, %opts});
 
     my $hits = $res->content->{response}->{docs};
-    my $total_hits = $res->content->{response}->{numFound};
+    my $total = $res->content->{response}->{numFound};
 
     if ($store) {
         $hits = [ map { $store->get($_->{_id}) } @$hits ];
     }
 
     Catmandu::Hits->new({
+        limit => $limit,
+        start => $start,
+        total => $total,
         hits => $hits,
-        total_hits => $total_hits,
     });
 }
 

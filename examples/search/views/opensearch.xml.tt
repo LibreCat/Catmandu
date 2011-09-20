@@ -2,7 +2,7 @@
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
     <ShortName>[% settings.app_name %]</ShortName>
     <Url type="text/html"
-        template="[% request.uri_base %]?qs={searchTerms}&amp;size={count?}&amp;skip={startIndex?}"/>
+        template="[% request.uri_base %]?qs={searchTerms}&amp;limit={count?}&amp;start={startIndex?}"/>
     <Query role="example" searchTerms="dna"/>
     <Syndication>limited</Syndication>
     <AdultContent>false</AdultContent>

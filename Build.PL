@@ -2,6 +2,10 @@ use strict;
 use warnings;
 use Module::Build;
 
+my $build_requires = {
+    'Software::License' => 0,
+};
+
 my $requires = {
     'perl' => '5.10.0',
     'all' => '0.5101',
@@ -170,9 +174,11 @@ my $build = Module::Build->new(
         'Nicolas Steenlant <nicolas.steenlant@ugent.be>',
         'Patrick Hochstenbach <patrick.hochstenbach@ugent.be>',
     ],
+    build_requires => $build_requires,
     requires => $requires,
     recommends => $recommends,
     auto_features => $auto_features,
+    create_license => 1,
 );
 
 for my $feature (keys %$auto_features) {

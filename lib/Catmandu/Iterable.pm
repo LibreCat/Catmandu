@@ -14,18 +14,18 @@ sub to_array {
 }
 
 sub slice {
-    my ($self, $skip, $size) = @_;
-    $size //= -1;
+    my ($self, $start, $limit) = @_;
+    $limit //= -1;
     Catmandu::Iterator->new(sub {
-        return 0 if $size == 0;
+        return 0 if $limit == 0;
         my $sub = $_[0];
         my $n = 0;
         $self->each(sub {
-            if ($skip > 0) {
-                $skip--;
+            if ($start > 0) {
+                $start--;
             } else {
                 $sub->($_[0]);
-                if (++$n == $size) {
+                if (++$n == $limit) {
                     goto STOP_EACH;
                 }
             }

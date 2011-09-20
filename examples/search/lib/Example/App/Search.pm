@@ -10,18 +10,18 @@ get '/opensearch.xml' => sub {
 
 get '/' => sub {
     if (my $qs   = params->{qs}) {
-        my $size = params->{size} || 15;
-        my $skip = params->{skip} || 0;
-        $size = 1000 if $size > 1000;
-        $skip = 0    if $skip < 0;
+        my $limit = params->{limit} || 15;
+        my $start = params->{start} || 0;
+        $limit = 1000 if $limit > 1000;
+        $start = 0    if $start < 0;
 
-        my $res = get_index->search($qs, size => $size, skip => $skip);
+        my $res = get_index->search($qs, limit => $limit, start => $start);
 
         return template 'hits', {
             qs => $qs,
-            skip => $skip,
-            size => $size,
-            total_hits => $res->total_hits,
+            start => $start,
+            limit => $limit,
+            total => $res->total,
             hits => $res->hits,
         };
     }
