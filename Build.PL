@@ -106,13 +106,13 @@ my $auto_features = {
         },
     },
     tt_language_name => {
-        description => "TT filter to lookup the language name for a ISO639-1 or ISO639-2 language code",
+        description => "Template filter to lookup the name for a ISO639-1 or ISO639-2 language code",
         requires => {
             'Locale::Codes::Language' => '3.18',
         },
     },
     tt_spread_pagination => {
-        description => "TT filter plugin that wraps Data::SpreadPagination",
+        description => "Template spread pagination plugin",
         requires => {
             'Data::SpreadPagination' => '0.1.2',
         },

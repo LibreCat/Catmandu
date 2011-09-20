@@ -14,7 +14,28 @@ sub init {
 
 sub filter {
     my $code = $_[1];
-    code2language($code, length($code) == 3 ? LOCALE_LANG_ALPHA_3 : LOCALE_LANG_ALPHA_2) || $code;
+    code2language($code, length($code) == 3 ? LOCALE_LANG_ALPHA_3 : LOCALE_LANG_ALPHA_2);
 }
 
 1;
+
+=head1 NAME
+
+Template::Plugin::LanguageName - Template filter to lookup the name for a ISO639-1 or ISO639-2 language code
+
+=head1 SYNOPSIS
+
+    [% USE LanguageName %]
+
+    [% "fr" | language_name %]
+    => "French"
+    [% "gre" | language_name %]
+    => "Greek, Modern (1453-)"
+    [% "xx" | language_name %]
+    => undef
+
+=head1 SEE ALSO
+
+L<Locale::Codes::Language>.
+
+=cut
