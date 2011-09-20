@@ -1,23 +1,3 @@
-# indexes a list of hashes by it's id key in an inverse hash
-#
-# usage:
-#   $departments = [
-#          {
-#              id => 'WE',
-#              name => 'Faculty of Science',
-#              children => [
-#                  {
-#                      id => 'WE01',
-#                      name => 'Department of Mathematics',
-#                  },
-#              ],
-#          },
-#  ]
-#
-#  [% USE Lookup %]
-#  [% lookup = Lookup.list(departments) %]
-#  [% lookup.item('WE01').name %]
-#
 package Template::Plugin::Lookup;
 use strict;
 use warnings;
@@ -49,3 +29,32 @@ sub index_list {
 }
 
 1;
+
+=head1 NAME
+
+Template::Plugin::Lookup - Template plugin to index a list or tree of hashes
+
+=head1 SYNOPSIS
+
+    $departments = [
+         {
+             id => 'FacSci',
+             name => 'Faculty of Science',
+             children => [
+                 {
+                     id => 'DepMat',
+                     name => 'Department of Mathematics',
+                 },
+             ],
+         },
+    ]
+
+    [% USE Lookup %]
+    [% lookup = Lookup.list(departments) %]
+    [% lookup.item('DepMat').name %]
+
+=head1 DESCRIPTION
+
+Template plugin to index a list or tree of hashes by it's id key in an inverse hash.
+
+=cut
