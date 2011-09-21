@@ -73,7 +73,7 @@ Instances are normally created by a L<Catmandu::Index>.
 Passes each hit in turn to the subref and returns the number of hits passed
 
     my $n = $hits->each(sub {
-        my $hit = $_[0];
+        my $hashref = $_[0];
     });
 
 =head1 SEE ALSO
