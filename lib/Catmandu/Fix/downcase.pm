@@ -1,4 +1,4 @@
-package Catmandu::Fix::upcase;
+package Catmandu::Fix::downcase;
 use Catmandu::Sane;
 use Catmandu::Util qw(value);
 use Catmandu::Object;

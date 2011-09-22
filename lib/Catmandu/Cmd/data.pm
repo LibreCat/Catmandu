@@ -77,7 +77,7 @@ sub command {
         $from->slice($opts->start, $opts->limit);
     }
 
-    if (my $fix = $opts->add) {
+    if (my $fix = $opts->fix) {
         $from = Catmandu::Fix->new(@$fix)->fix($from);
     }
 
