@@ -204,3 +204,34 @@ sub take {
 }
 
 1;
+
+=head1 NAME
+
+Catmandu::Iterable - provide collection methods to any package providing an C<each> method
+
+=head1 SYNOPSIS
+
+    package Collection;
+
+    use parent 'Catmandu::Iterable';
+
+    sub each {
+        my ($self, $sub) = @_;
+        my $collection = [{foo => 'oof'}, {bar => 'rab'}, {baz => 'zab'}];
+        $sub->($_) for @$collection;
+        scalar @$collection;
+    }
+
+    package main;
+
+    Collection->any(sub { exists $_[0]->{bar} });
+    => 1
+    Collection->take(2);
+    => [{foo => 'foo'}, {bar => 'bar'}];
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterator>.
+
+=cut
+

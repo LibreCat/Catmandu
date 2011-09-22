@@ -1,4 +1,4 @@
-package CQL::ElasticSearch; # TODO support cql 1.2, more modifiers, sortBy, encloses
+package CQL::ElasticSearch;
 use strict;
 use warnings;
 use CQL::Parser;
@@ -101,3 +101,61 @@ sub visit {
 }
 
 1;
+
+=head1 NAME
+
+CQL::ElasticSearch - Converts a CQL query string to a ElasticSearch query hashref
+
+=head1 SYNOPSIS
+
+    $es_query_hashref = CQL::ElasticSearch->parse($cql_query_string);
+
+=head1 DESCRIPTION
+
+This package currently parses most of CQL 1.1:
+
+    and
+    or
+    not
+    prox
+    prox/distance<$n
+    srw.allRecords
+    srw.serverChoice
+    srw.anywhere
+    cql.allRecords
+    cql.serverChoice
+    cql.anywhere
+    =
+    scr
+    =/fuzzy
+    scr/fuzzy
+    <
+    >
+    <=
+    >=
+    <>
+    exact
+    all
+    any
+    within
+
+=head1 METHODS
+
+=head2 parse
+
+Parses the given CQL query string with L<CQL::Parser> and converts it to a ElasticSearch query hashref.
+
+=head2 visit
+
+Converts the given L<CQL::Node> to a ElasticSearch query hashref.
+
+=head1 TODO
+
+support cql 1.2, more modifiers, sortBy, encloses
+
+=head1 SEE ALSO
+
+L<CQL::Parser>.
+
+=cut
+

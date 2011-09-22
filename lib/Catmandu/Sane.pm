@@ -25,7 +25,7 @@ sub import {
 Catmandu::Sane - Sensible package boilerplate
 
 =head1 SYNOPSIS
-    
+
     use Catmandu::Sane;
 
 =head1 DESCRIPTION

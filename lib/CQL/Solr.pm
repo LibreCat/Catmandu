@@ -128,3 +128,61 @@ sub visit {
 }
 
 1;
+
+=head1 NAME
+
+CQL::Solr - Converts a CQL query string to a Solr query string
+
+=head1 SYNOPSIS
+
+    $solr_query_string = CQL::Solr->parse($cql_query_string);
+
+=head1 DESCRIPTION
+
+This package currently parses most of CQL 1.1:
+
+    and
+    or
+    not
+    prox
+    prox/distance<$n
+    srw.allRecords
+    srw.serverChoice
+    srw.anywhere
+    cql.allRecords
+    cql.serverChoice
+    cql.anywhere
+    =
+    scr
+    =/fuzzy
+    scr/fuzzy
+    <
+    >
+    <=
+    >=
+    <>
+    exact
+    all
+    any
+    within
+
+=head1 METHODS
+
+=head2 parse
+
+Parses the given CQL query string with L<CQL::Parser> and converts it to a Solr query string.
+
+=head2 visit
+
+Converts the given L<CQL::Node> to a Solr query string.
+
+=head1 TODO
+
+support cql 1.2, more modifiers, sortBy, encloses
+
+=head1 SEE ALSO
+
+L<CQL::Parser>.
+
+=cut
+
