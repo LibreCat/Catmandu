@@ -15,6 +15,8 @@ Catmandu::Exporter - Namespace for packages that can export a hashref or iterabl
 
 =head1 METHODS
 
+=head2 new
+
 =head2 add
 
 =cut
