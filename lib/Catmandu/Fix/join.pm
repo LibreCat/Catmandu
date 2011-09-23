@@ -1,4 +1,4 @@
-package Catmandu::Fix::substring;
+package Catmandu::Fix::join;
 use Catmandu::Sane;
 use Catmandu::Util qw(value);
 use Catmandu::Object;
