@@ -8,8 +8,8 @@ Catmandu uses L<Module::Build> as build tool:
 
     perl Build.PL
     ./Build help
-    ./Build build
     ./Build installdeps
+    ./Build build
     ...
 
 =cut

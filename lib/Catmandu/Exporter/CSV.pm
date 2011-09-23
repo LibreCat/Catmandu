@@ -23,8 +23,8 @@ sub _set_fields {
 sub _build {
     my ($self, $args) = @_;
     $self->SUPER::_build($args);
-    if ($self->fields) {
-        $self->_set_fields($self->fields);
+    if ($self->{fields}) {
+        $self->{fields} = $self->_set_fields($self->{fields});
     }
 }
 
