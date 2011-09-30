@@ -34,7 +34,7 @@
                 <dt>[% field.key %]</dt>
                 [%- FOREACH value IN field.value %]
                 [%- IF value.match('^https?:\/\/') %]
-                <dd><a href="[% value | uri %]">[% value | html %]</a></dd>
+                <dd><a href="[% value %]">[% value | html %]</a></dd>
                 [%- ELSE %]
                 <dd>[% value | html %]</dd>
                 [%- END %]
