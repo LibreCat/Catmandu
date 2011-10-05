@@ -47,6 +47,7 @@ JS
 }
 
 before_template sub {
+    $_[0]->{piwik} = 1;
     $_[0]->{piwik_tracking_js} = $tracking_js;
 };
 
