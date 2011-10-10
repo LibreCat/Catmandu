@@ -26,6 +26,8 @@ sub hits {
     $_[0]->{hits};
 }
 
+sub to_array { $_[0]->hits }
+
 sub each {
     my ($self, $sub) = @_;
     my $hits = $self->hits;
