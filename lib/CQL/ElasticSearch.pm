@@ -22,7 +22,7 @@ sub visit {
         my $qualifier = $node->getQualifier;
 
         if ($qualifier =~ $match_all) {
-            return { '-all' => 1 };
+            return { match_all => {} };
         }
 
         my $relation  = $node->getRelation;
@@ -65,12 +65,10 @@ sub visit {
             my @range = split /\s+/, $term;
             if (@range == 1) {
                 return { text => { $qualifier => $term } };
-            } else {
-                return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
             }
-        } else {
-            return { text => { $qualifier => { query => $term, operator => 'AND' } } };
+            return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
         }
+        return { text => { $qualifier => { query => $term, operator => 'AND' } } };
     }
 
     if ($node->isa('CQL::ProxNode')) {

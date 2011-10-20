@@ -1,6 +1,6 @@
 package Catmandu::Index::ElasticSearch;
 use Catmandu::Sane;
-use Catmandu::Util qw(quack assert_id);
+use Catmandu::Util qw(quacks assert_id);
 use ElasticSearch;
 use CQL::ElasticSearch;
 use Catmandu::Hits;
@@ -75,7 +75,7 @@ sub _add {
 
 sub add {
     my ($self, $obj) = @_;
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         $obj->each(sub { $self->_add($_[0]) });
     } else {
         $self->_add($obj);

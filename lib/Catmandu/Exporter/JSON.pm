@@ -1,6 +1,6 @@
 package Catmandu::Exporter::JSON;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use JSON ();
 use Catmandu::Object file => { default => sub { *STDOUT } }, pretty => { default => sub { 0 } };
 
@@ -10,7 +10,7 @@ sub add {
     my $json = JSON->new->utf8(0)->pretty($self->pretty ? 1 : 0);
     my $file = io $self->file, 'w';
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         my $p = $self->pretty;
         my $n = 0;
         print $file "[";

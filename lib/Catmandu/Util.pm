@@ -12,7 +12,7 @@ our @EXPORT_OK = qw(
     add_parent
     add_sub
 
-    quack
+    quacks
     value
 
     new_id
@@ -59,7 +59,7 @@ sub add_sub {
     @syms;
 }
 
-sub quack {
+sub quacks {
     my $obj = shift;
     blessed($obj) || return 0;
     $obj->can($_) || return 0 foreach @_;

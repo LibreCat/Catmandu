@@ -1,6 +1,6 @@
 package Catmandu::Exporter::YAML;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use IO::YAML;
 use Catmandu::Object file => { default => sub { *STDOUT } };
 
@@ -9,7 +9,7 @@ sub add {
 
     my $file = IO::YAML->new(io($self->file, 'w'), auto_load => 1);
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         return $obj->each(sub {
             print $file $_[0];
         });

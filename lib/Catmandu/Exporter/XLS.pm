@@ -1,6 +1,6 @@
 package Catmandu::Exporter::XLS;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use Spreadsheet::WriteExcel;
 use Catmandu::Object file => { default => sub { *STDOUT } }, fields => 'r';
 
@@ -57,7 +57,7 @@ sub add {
         }
     };
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         $obj->each($add);
         $xls->close;
         return $n;

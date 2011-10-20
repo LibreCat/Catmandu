@@ -1,6 +1,6 @@
 package Catmandu::Exporter::Template;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use Template;
 use Catmandu::Object
     file => { default => sub { *STDOUT } },
@@ -42,7 +42,7 @@ sub add {
         print $file qq(<?xml version="1.0" encoding="UTF-8"?>\n);
     }
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         return $obj->each(sub {
             $tmpl->process($view, $_[0], $file);
         });
