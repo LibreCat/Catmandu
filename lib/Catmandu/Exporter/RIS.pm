@@ -1,6 +1,6 @@
 package Catmandu::Exporter::RIS;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use Catmandu::Object file => { default => sub { *STDOUT } };
 use Encode qw(encode_utf8);
 
@@ -32,7 +32,7 @@ sub add {
         print $file "ER  - \r\n";
     };
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         return $obj->each($add);
     }
 

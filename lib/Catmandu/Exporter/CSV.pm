@@ -1,6 +1,6 @@
 package Catmandu::Exporter::CSV;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use Text::CSV;
 use Catmandu::Object
     file => { default => sub { *STDOUT } },
@@ -58,7 +58,7 @@ sub add {
         $csv->print($file, $row);
     };
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         return $obj->each($add);
     }
 

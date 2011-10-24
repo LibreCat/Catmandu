@@ -37,7 +37,7 @@ sub DESTROY {}
 package Catmandu::Fix;
 use Catmandu::Sane;
 use Catmandu::Object;
-use Catmandu::Util qw(quack value);
+use Catmandu::Util qw(quacks value);
 use Catmandu::Iterator;
 use File::Slurp qw(read_file);
 
@@ -47,7 +47,7 @@ sub _build_args {
     my $fixes = [];
 
     for my $arg (@args) {
-        if (quack $arg, 'fix') {
+        if (quacks $arg, 'fix') {
             push @$fixes, $arg;
         } elsif (value $arg and -f $arg) {
             push @$fixes, Catmandu::Fix::EvalContext::__EVAL_FIXES(read_file($arg));
@@ -64,7 +64,7 @@ sub fix {
 
     my $fixes = $self->{fixes};
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         return Catmandu::Iterator->new(sub {
             my $sub = $_[0];
             $obj->each(sub {

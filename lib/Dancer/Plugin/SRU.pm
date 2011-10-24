@@ -35,7 +35,7 @@ sub sru_provider {
     my $index = Catmandu::get_index($setting->{index});
 
     get $path => sub {
-        content_type 'text/xml';
+        content_type 'xml';
 
         my $request = SRU::Request->newFromURI(request->uri);
         my $response = SRU::Response->newFromRequest($request);

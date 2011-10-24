@@ -1,12 +1,12 @@
 package Catmandu::CLI;
 use Catmandu::Sane;
-use Catmandu::Util qw(load_package);
 use App::Cmd::Setup -app;
-use FindBin;
+use Dancer qw(:syntax);
 use File::Spec;
 use Cwd qw(realpath);
+use FindBin;
 
-sub default_appdir { state $default_appdir = realpath(File::Spec->catdir($FindBin::Bin, '..')) }
+sub default_appdir { realpath(File::Spec->catdir($FindBin::Bin, '..')) }
 
 sub plugin_search_path { 'Catmandu::Cmd' }
 
@@ -24,12 +24,15 @@ sub run {
   my ($class) = @_;
 
   my ($global_opts, $argv) = $class->_process_args(\@ARGV, $class->_global_option_processing_params);
-
-  $ENV{DANCER_APPDIR} ||= $global_opts->{appdir} || $class->default_appdir;
-  $ENV{DANCER_CONFDIR} ||= $global_opts->{confdir} if $global_opts->{confdir};
-  $ENV{DANCER_ENVIRONMENT} ||= $global_opts->{environment} if $global_opts->{environment};
-
-  load_package('Dancer')->import(':script');
+ 
+  my $appdir = $global_opts->{appdir} || $ENV{DANCER_APPDIR} || $class->default_appdir;
+ 
+  Dancer::Config::setting('confdir', $global_opts->{confdir}) if $global_opts->{confdir};
+  Dancer::Config::setting('appdir',  $appdir);
+  config->{environment} = $global_opts->{environment} if $global_opts->{environment};
+  my ($ok, $error) = Dancer::ModuleLoader->use_lib(File::Spec->catfile($appdir, 'lib'));
+  $ok or confess "unable to set libdir : $error";
+  Dancer::Config::load;
 
   my $self = $class->new;
 

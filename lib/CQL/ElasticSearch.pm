@@ -22,7 +22,7 @@ sub visit {
         my $qualifier = $node->getQualifier;
 
         if ($qualifier =~ $match_all) {
-            return { '-all' => 1 };
+            return { match_all => {} };
         }
 
         my $relation  = $node->getRelation;
@@ -35,9 +35,10 @@ sub visit {
         }
 
         if ($base eq '=' or $base eq 'scr') {
+            $term = { query => $term, operator => 'AND' };
             for my $m (@modifiers) {
                 if ($m->[1] eq 'fuzzy') {
-                    $term = { query => $term, fuzziness => 0.5 };
+                    $term->{fuzziness} = 0.5;
                     last;
                 }
             }
@@ -51,9 +52,9 @@ sub visit {
         } elsif ($base eq '>=') {
             return { range => { $qualifier => { gte => $term } } };
         } elsif ($base eq '<>') {
-            return { bool => { must_not => [ { text => { $qualifier => $term } } ] } };
+            return { bool => { must_not => [ { text => { $qualifier => { query => $term, operator => 'AND' } } } ] } };
         } elsif ($base eq 'exact') {
-            return { text => { $qualifier => $term } };
+            return { text => { $qualifier => { query => $term, operator => 'AND' } } };
         } elsif ($base eq 'all') {
             my @terms = split /\s+/, $term;
             return { bool => { must => [ map { { text => { $qualifier => $_ } } } @terms ] } };
@@ -64,12 +65,10 @@ sub visit {
             my @range = split /\s+/, $term;
             if (@range == 1) {
                 return { text => { $qualifier => $term } };
-            } else {
-                return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
             }
-        } else {
-            return { text => { $qualifier => $term } };
+            return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
         }
+        return { text => { $qualifier => { query => $term, operator => 'AND' } } };
     }
 
     if ($node->isa('CQL::ProxNode')) {

@@ -1,6 +1,6 @@
 package Catmandu::Exporter::BibTeX;
 use Catmandu::Sane;
-use Catmandu::Util qw(io quack);
+use Catmandu::Util qw(io quacks);
 use Catmandu::Object file => { default => sub { *STDOUT } };
 use LaTeX::Encode;
 
@@ -72,7 +72,7 @@ sub add {
         print $file "}\n\n";
     };
 
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         return $obj->each($add);
     }
 

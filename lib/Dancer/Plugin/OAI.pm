@@ -118,6 +118,12 @@ TT
 my $template_list_identifiers = <<TT;
 $template_header
 <ListIdentifiers>
+[%- FOREACH record IN records %]
+<header[% IF deleted %] status="deleted"[% END %]>
+    <identifier>[% params.identifier %]</identifier>
+    <datestamp>[% datestamp %]</datestamp>
+</header>
+[%- END %]
 </ListIdentifiers>
 $template_footer
 TT
@@ -218,7 +224,7 @@ sub oai_provider {
             }
         }
 
-        content_type 'text/xml; charset=utf-8';
+        content_type 'xml';
 
         if ($verb eq 'GetRecord') {
             if (my $record = $opts{record}->($params->{identifier})) {

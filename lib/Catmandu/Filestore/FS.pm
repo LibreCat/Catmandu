@@ -1,6 +1,6 @@
 package Catmandu::Filestore::FS;
 use Catmandu::Sane;
-use Catmandu::Util qw(quack io ensure_id assert_id opts);
+use Catmandu::Util qw(quacks io ensure_id assert_id opts);
 use File::Path ();
 use File::Copy qw(copy);
 use File::Spec;
@@ -48,7 +48,7 @@ sub _add {
 
 sub add {
     my ($self, $obj) = @_;
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         $obj->each(sub { $self->_add($_[0]) });
     } else {
         $self->_add($obj);

@@ -2,7 +2,7 @@ package Catmandu::Collection;
 use Catmandu::Sane;
 use parent qw(Catmandu::Pluggable);
 use Catmandu::Object store => 'r', name => 'r';
-use Catmandu::Util qw(quack ensure_id assert_id ensure_collection);
+use Catmandu::Util qw(quacks ensure_id assert_id ensure_collection);
 
 sub each    { confess 'not implemented' }
 sub _get    { confess 'not implemented' }
@@ -34,7 +34,7 @@ sub _add_single {
 
 sub add {
     my ($self, $obj) = @_;
-    if (quack $obj, 'each') {
+    if (quacks $obj, 'each') {
         $obj->each(sub {
             $self->_add_single($_[0]);
         });
