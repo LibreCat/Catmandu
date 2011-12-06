@@ -24,7 +24,8 @@ sub default_exporter { 'JSON' }
 sub store {
     my $pkg = check_string(shift || default_store);
     $STORES->{$pkg} || do {
-        if (my $cfg = check_array_ref(config->{store}{$pkg})) {
+        if (my $cfg = config->{store}{$pkg}) {
+            check_array_ref($cfg);
             check_string($cfg->[0]);
             check_maybe_hash_ref($cfg->[1]);
             $STORES->{$pkg} = load_package($cfg->[0], 'Catmandu::Store')->new($cfg->[1] || {});
