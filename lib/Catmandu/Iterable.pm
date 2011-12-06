@@ -141,7 +141,7 @@ sub first {
 }
 
 sub rest {
-    $_[0]->slice($_[1] || 1);
+    $_[0]->slice(1);
 }
 
 sub take {

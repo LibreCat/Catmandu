@@ -32,7 +32,7 @@ sub hits {
 
 sub to_array { goto &hits }
 
-sub count { goto &count }
+sub count { goto &size }
 
 sub generator {
     my ($self) = @_;

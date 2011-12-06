@@ -12,8 +12,10 @@ sub load_fixes {
         if (is_able($fix, 'fix')) {
             push @$fixes, $fix;
         } elsif (is_string($fix)) {
-            $fix = read_file($fix) if -r $fix;
-            eval "package Catmandu::Fix::Sandbox;$fix;1" or confess $@;
+            if (-r $fix) {
+                $fix = read_file($fix);
+            }
+            eval "package Catmandu::Fix::Loader::Env;$fix;1" or confess $@;
         }
     }
     $fixes;
@@ -21,10 +23,11 @@ sub load_fixes {
 
 sub add_fix {
     my ($fix, @args) = @_;
-    push @$fixes, load_package($fix, 'Catmandu::Fix')->new(@args);
+    $fix = load_package($fix, 'Catmandu::Fix');
+    push @$fixes, $fix->new(@args);
 }
 
-package Catmandu::Fix::Sandbox;
+package Catmandu::Fix::Loader::Env;
 
 use strict;
 use warnings;
@@ -44,7 +47,7 @@ sub DESTROY {}
 package Catmandu::Fix;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(is_able);
+use Catmandu::Util qw(:is);
 use Catmandu::Iterator;
 use Moo;
 
@@ -58,23 +61,30 @@ around BUILDARGS => sub {
 sub fix {
     my ($self, $data) = @_;
 
-    if (is_able($data, 'generator') && is_able($data, 'map')) {
+    my $fixes = $self->fixes;
+
+    if (is_hash_ref($data)) {
+        for (@$fixes) {
+            $data = $_->fix($data);
+        }
+        return $data;
+    }
+
+    if (is_invocant($data)) {
         return $data->map(sub {
-            $self->fix($_[0]);
+            my $d = $_[0];
+            $d = $_->fix($d) for @$fixes;
+            $d;
         });
     }
 
-    if (ref $data eq 'CODE') {
+    if (is_code_ref($data)) {
         return sub {
-            $self->fix($data->() || return);
+            my $d = $data->();
+            $d || return;
+            $d = $_->fix($d) for @$fixes;
+            $d;
         };
-    }
-
-    if (ref $data eq 'HASH') {
-        for my $fix (@{$self->fixes}) {
-            $data = $fix->fix($data);
-        }
-        return $data;
     }
 
     return;
