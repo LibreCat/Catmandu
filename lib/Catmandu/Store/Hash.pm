@@ -1,45 +1,79 @@
 package Catmandu::Store::Hash;
-use Catmandu::Sane;
-use parent qw(Catmandu::Store);
 
-package Catmandu::Store::Hash::Collection;
 use Catmandu::Sane;
-use parent qw(Catmandu::Collection);
-use Catmandu::Object hash => { default => '_build_hash' };
-use Catmandu::Util qw(get_id);
+use Moo;
+
+with 'Catmandu::Store';
+
+package Catmandu::Store::Hash::Bag;
+
+use Catmandu::Sane;
+use Moo;
 use Clone qw(clone);
 
-sub _build_hash {
-    {};
-}
+with 'Catmandu::Bag';
 
-sub each {
-    my ($self, $sub) = @_;
-    my $hash = $self->hash;
-    my $n = 0;
-    while (my ($id, $obj) = each(%$hash)) {
-        $sub->(clone($obj));
-        $n++;
+has _hash => (is => 'rw', init_arg => undef, default => sub { +{} });
+has _head => (is => 'rw', init_arg => undef, clearer => '_clear_head');
+has _tail => (is => 'rw', init_arg => undef, clearer => '_clear_tail');
+
+sub generator {
+    my $self = $_[0];
+    sub {
+        state $node = $self->_head;
+        state $data;
+        $node || return;
+        $data = $node->[1];
+        $node = $node->[2];
+        $data;
     }
-    $n;
 }
 
-sub _get {
+sub get {
     my ($self, $id) = @_;
-    my $obj = $self->hash->{$id};
-    clone($obj || return);
+    my $node = $self->_hash->{$id} || return;
+    clone($node->[1]);
 }
 
-sub _add {
-    my ($self, $obj) = @_;
-    $self->hash->{get_id($obj)} = clone($obj);
-    $obj;
+sub add {
+    my ($self, $data) = @_;
+    my $id = $data->{_id};
+    my $node = $self->_hash->{$id};
+    if ($node) {
+        $node->[1] = clone($data);
+    } elsif (my $tail = $self->_tail) {
+        $tail->[2] = $node = [$tail, clone($data), undef];
+        $self->_hash->{$id} = $node;
+        $self->_tail($node);
+    } else {
+        $node = [undef, clone($data), undef];
+        $self->_hash->{$id} = $node;
+        $self->_head($node);
+        $self->_tail($node);
+    }
+    $data;
 }
 
-sub _delete {
+sub delete {
     my ($self, $id) = @_;
-    delete $self->hash->{$id};
-    return;
+    my $node = $self->_hash->{$id} || return;
+    if ($node->[0]) {
+        $node->[0][2] = $node->[2];
+    } else {
+        $self->_head($node->[2]);
+    }
+    if ($node->[2]) {
+        $node->[2][0] = $node->[0];
+    } else {
+        $self->_tail($node->[0]);
+    }
+    delete $self->_hash->{$id};
+}
+
+sub delete_all {
+    $_[0]->_clear_head;
+    $_[0]->_clear_tail;
+    $_[0]->_hash({});
 }
 
 1;

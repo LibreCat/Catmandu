@@ -1,5 +1,25 @@
 package Catmandu::Importer;
 
+use Catmandu::Sane;
+use Catmandu::Util qw(io);
+use Moo::Role;
+
+with 'Catmandu::Iterable';
+
+has file => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub { \*STDIN },
+);
+
+has fh   => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub { io($_[0]->file, mode => 'r', encoding => $_[0]->encoding) },
+);
+
+sub encoding { ':utf8' }
+
 =head1 NAME
 
 Catmandu::Exporter - Namespace for packages that can import

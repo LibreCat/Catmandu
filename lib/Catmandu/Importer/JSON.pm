@@ -1,59 +1,29 @@
 package Catmandu::Importer::JSON;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io);
-use Catmandu::Object file => { default => sub { *STDIN } };
+use Moo;
 use JSON ();
 
-sub each {
-    my ($self, $sub) = @_;
+my $RE_OBJ = qr'^[^{]+';
 
-    my $file = io $self->file, 'r';
-    my $json = JSON->new->utf8(0);
+with 'Catmandu::Importer';
 
-    my $load_single = 0;
-    my $n = 0;
+has json => (is => 'ro', lazy => 1, builder => '_build_json');
 
-    # find and remove the initial [
-    for (;;) {
-        $file->sysread(my $buf, 65536) or confess $!;
-        $json->incr_parse($buf); # doesn't parse in void context
-        $json->incr_text =~ s/^\s*//;
-        last if $load_single = $json->incr_text =~ m/^\{/;
-        last if $json->incr_text =~ s/^\[\s*//x;
-    }
+sub _build_json {
+     JSON->new->utf8(0);
+}
 
-    PARSE: for (;;) {
-        # read data until we have a single object
-        for (;;) {
-            if (my $obj = $json->incr_parse) {
-                $sub->($obj);
-                $n++;
-
-                last PARSE if $load_single;
-
-                last;
-            }
-            $file->sysread(my $buf, 65536) or confess $!;
-            $json->incr_parse($buf);
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $json = $self->json;
+        state $fh   = $self->fh;
+        if (defined(my $line = <$fh>)) {
+            return $json->decode($line);
         }
-        # read data until we get a comma or the final ]
-        for (;;) {
-            $json->incr_text =~ s/^\s*//;
-
-            last PARSE if $json->incr_text =~ s/^\]//;
-
-            last if $json->incr_text =~ s/^,//;
-
-            if (length $json->incr_text) {
-                confess "JSON parse error near: " . $json->incr_text;
-            }
-
-            $file->sysread(my $buf, 65536) or confess $!;
-            $json->incr_parse($buf);
-        }
-    }
-
-    $n;
+        return;
+    };
 }
 
 1;

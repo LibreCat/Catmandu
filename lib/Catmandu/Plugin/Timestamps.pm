@@ -1,16 +1,13 @@
 package Catmandu::Plugin::Timestamps;
+
 use Catmandu::Sane;
+use Role::Tiny;
 use DateTime;
 
-sub after_get {}
-sub before_add {}
-sub after_add {}
-sub before_delete {}
-
-sub before_add {
-    my ($self, $store, $obj) = @_;
-    $obj->{updated_at} = DateTime->now->iso8601.'Z';
-    $obj->{created_at} ||= $obj->{updated_at};
-}
+before add => sub {
+    my ($self, $data) = @_;
+    $data->{date_updated} = DateTime->now->iso8601.'Z';
+    $data->{date_created} ||= $data->{date_updated};
+};
 
 1;

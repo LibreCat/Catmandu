@@ -1,10 +1,11 @@
 package Dancer::Plugin::Piwik;
+
+our $VERSION = '0.1';
+
 use strict;
 use warnings;
 use Dancer::Plugin;
 use Dancer qw(:syntax);
-
-our $VERSION = '0.1';
 
 my $setting = plugin_setting;
 
@@ -41,7 +42,7 @@ JS
         var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", $setting->{id_site});
         piwikTracker.trackPageView();
         piwikTracker.enableLinkTracking();
-    } catch( err ) {}
+    } catch(err) {}
 </script>
 JS
 }

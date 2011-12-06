@@ -1,207 +1,253 @@
 package Catmandu::Iterable;
-use Catmandu::Sane;
-use Catmandu::Iterator;
 
-sub each {}
+use Catmandu::Sane;
+require Catmandu::Iterator;
+use Role::Tiny;
+
+requires 'generator';
 
 sub to_array {
     my ($self) = @_;
-    my $arr = [];
-    $self->each(sub {
-        push @$arr, $_[0];
-    });
-    $arr;
+    my $next = $self->generator;
+    my @a;
+    my $data;
+    while ($data = $next->()) {
+        push @a, $data;
+    }
+    \@a;
+}
+
+sub count {
+    my ($self) = @_;
+    my $next = $self->generator;
+    my $n = 0;
+    while ($next->()) {
+        $n++;
+    }
+    $n;
 }
 
 sub slice {
-    my ($self, $start, $limit) = @_;
-    $limit //= -1;
+    my ($self, $start, $total) = @_;
+    $start //= 0;
     Catmandu::Iterator->new(sub {
-        return 0 if $limit == 0;
-        my $sub = $_[0];
-        my $n = 0;
-        $self->each(sub {
-            if ($start > 0) {
-                $start--;
-            } else {
-                $sub->($_[0]);
-                if (++$n == $limit) {
-                    goto STOP_EACH;
-                }
+        sub {
+            if (defined $total) {
+                $total || return;
             }
-        });
-        STOP_EACH:
-        $n;
+            state $next = $self->generator;
+            state $data;
+            while ($data = $next->()) {
+                if ($start > 0) {
+                    $start--;
+                    next;
+                }
+                if (defined $total) {
+                    $total--;
+                }
+                return $data;
+            }
+            return;
+        };
     });
 }
 
-sub all {
+sub each {
     my ($self, $sub) = @_;
-    $self->each(sub {
-        $sub->($_[0]) || goto(STOP_EACH);
+    my $next = $self->generator;
+    my $n = 0;
+    my $data;
+    while ($data = $next->()) {
+        $sub->($data);
+        $n++;
+    }
+    $n;
+}
+
+sub tap {
+    my ($self, $sub) = @_;
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $next = $self->generator;
+            state $data;
+            if ($data = $next->()) {
+                $sub->($data);
+                return $data;
+            }
+            return;
+        };
     });
-    return 1;
-    STOP_EACH:
-    return 0;
 }
 
 sub any {
     my ($self, $sub) = @_;
-    $self->each(sub {
-        $sub->($_[0]) && goto(STOP_EACH);
-    });
+    my $next = $self->generator;
+    my $data;
+    while ($data = $next->()) {
+        $sub->($data) && return 1;
+    }
     return 0;
-    STOP_EACH:
-    return 1;
 }
 
 sub many {
     my ($self, $sub) = @_;
+    my $next = $self->generator;
     my $n = 0;
-    $self->each(sub {
-        $sub->($_[0]) && ++$n > 1 && goto(STOP_EACH);
-    });
+    my $data;
+    while ($data = $next->()) {
+        $sub->($data) && ++$n > 1 && return 1;
+    }
     return 0;
-    STOP_EACH:
+}
+
+sub all {
+    my ($self, $sub) = @_;
+    my $next = $self->generator;
+    my $data;
+    while ($data = $next->()) {
+        $sub->($data) || return 0;
+    }
     return 1;
 }
 
 sub map {
     my ($self, $sub) = @_;
-    my $arr = [];
-    $self->each(sub {
-        push @$arr, $sub->($_[0]);
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $next = $self->generator;
+            $sub->($next->() || return);
+        };
     });
-    $arr;
-}
-
-sub detect {
-    my ($self, $sub) = @_;
-    my $val;
-    $self->each(sub {
-        $sub->($_[0]) || return;
-        $val = $_[0];
-        goto STOP_EACH;
-    });
-    STOP_EACH:
-    $val;
-}
-
-sub select {
-    my ($self, $sub) = @_;
-    my $arr = [];
-    $self->each(sub {
-        $sub->($_[0]) && push(@$arr, $_[0]);
-    });
-    $arr;
-}
-
-sub reject {
-    my ($self, $sub) = @_;
-    my $arr = [];
-    $self->each(sub {
-        $sub->($_[0]) || push(@$arr, $_[0]);
-    });
-    $arr;
-}
-
-sub partition {
-    my ($self, $sub) = @_;
-    my $arr_t = [];
-    my $arr_f = [];
-    $self->each(sub {
-        $sub->($_[0]) ? push(@$arr_t, $_[0]) : push(@$arr_f, $_[0]);
-    });
-    [ $arr_t, $arr_f ];
 }
 
 sub reduce {
     my $self = shift;
     my $sub  = pop;
     my $memo = pop;
-    my $memo_set = defined $memo;
-    $self->each(sub {
-        if ($memo_set) {
-            $memo = $sub->($memo, $_[0]);
+    my $next = $self->generator;
+    my $data;
+    while ($data = $next->()) {
+        if (defined $memo) {
+            $memo = $sub->($memo, $data);
         } else {
-            $memo = $_[0];
-            $memo_set = 1;
+            $memo = $data;
         }
-    });
+    }
     $memo;
 }
 
-sub each_group {
-    my ($self, $size, $sub) = @_;
-    my $group = [];
-    my $n = 0;
-    $self->each(sub {
-        push @$group, $_[0];
-        if (@$group == $size) {
-            $sub->($group);
-            $group = [];
-            $n++;
-        }
+sub first {
+    $_[0]->generator->();
+}
+
+sub rest {
+    $_[0]->slice($_[1] || 1);
+}
+
+sub take {
+    my ($self, $n) = @_;
+    Catmandu::Iterator->new(sub {
+        sub {
+            --$n > 0 || return;
+            state $next = $self->generator;
+            $next->();
+        };
     });
-    if (@$group) {
-        $sub->($group);
-        $n++;
+}
+
+sub detect {
+    my ($self, $sub) = @_;
+    my $next = $self->generator;
+    my $data;
+    while ($data = $next->()) {
+        $sub->($data) && return $data;
     }
-    $n;
+    return;
 }
 
-sub group {
-    my ($self, $size) = @_;
-    my $arr = [];
-    $self->each_group($size, sub {
-        push @$arr, $_[0];
+sub select {
+    my ($self, $sub) = @_;
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $next = $self->generator;
+            state $data;
+            while ($data = $next->()) {
+                $sub->($data) && return $data;
+            }
+            return;
+        };
     });
-    $arr;
 }
 
-sub group_by {
-    my ($self, $key) = @_;
-    $self->reduce({}, sub {
-        push @{$_[0]->{$_[1]->{$key}} ||= []}, $_[1];
-        $_[0];
+sub reject {
+    my ($self, $sub) = @_;
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $next = $self->generator;
+            state $data;
+            while ($data = $next->()) {
+                $sub->($data) || return $data;
+            }
+            return;
+        };
     });
 }
 
 sub pluck {
     my ($self, $key) = @_;
-    my $arr = [];
-    $self->each(sub {
-        push @$arr, $_[0]->{$key};
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $next = $self->generator;
+            ($next->() || return)->{$key};
+        };
     });
-    $arr;
 }
 
-sub first {
-    my ($self, $n) = @_;
-    if (defined $n) {
-        return $self->take($n);
-    }
-    my $val;
-    $self->each(sub {
-        $val = $_[0];
-        goto STOP_EACH;
-    });
-    STOP_EACH:
-    $val;
-}
-
-sub take {
-    my ($self, $n) = @_;
-    my $arr = [];
-    $self->each(sub {
-        if ($n--) {
-            push @$arr, $_[0];
-        }
-        $n || goto(STOP_EACH);
-    });
-    STOP_EACH:
-    $arr;
-}
+# sub partition {
+#     my ($self, $sub) = @_;
+#     my $arr_t = [];
+#     my $arr_f = [];
+#     $self->each(sub {
+#         $sub->($_[0]) ? push(@$arr_t, $_[0]) : push(@$arr_f, $_[0]);
+#     });
+#     [ $arr_t, $arr_f ];
+# }
+# 
+# sub each_group {
+#     my ($self, $size, $sub) = @_;
+#     my $group = [];
+#     my $n = 0;
+#     $self->each(sub {
+#         push @$group, $_[0];
+#         if (@$group == $size) {
+#             $sub->($group);
+#             $group = [];
+#             $n++;
+#         }
+#     });
+#     if (@$group) {
+#         $sub->($group);
+#         $n++;
+#     }
+#     $n;
+# }
+# 
+# sub group {
+#     my ($self, $size) = @_;
+#     my $arr = [];
+#     $self->each_group($size, sub {
+#         push @$arr, $_[0];
+#     });
+#     $arr;
+# }
+# 
+# sub group_by {
+#     my ($self, $key) = @_;
+#     $self->reduce({}, sub {
+#         push @{$_[0]->{$_[1]->{$key}} ||= []}, $_[1];
+#         $_[0];
+#     });
+# }
 
 1;
 

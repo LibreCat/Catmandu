@@ -1,4 +1,5 @@
 package Template::Plugin::ToJSON;
+
 use strict;
 use warnings;
 use parent qw(Template::Plugin);

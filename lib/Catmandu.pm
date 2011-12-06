@@ -1,92 +1,48 @@
 package Catmandu;
-use Catmandu::Sane;
-use Catmandu::Util qw(load_package);
-use Dancer qw(:syntax setting);
-use Exporter qw(import);
 
 our $VERSION = '0.1';
 
+use Catmandu::Sane;
+use Catmandu::Util qw(load_package :check);
+use Dancer qw(:syntax config);
+use Exporter qw(import);
+
 our @EXPORT_OK = qw(
-    new_store
-    new_index
-    new_filestore
-    new_importer
-    new_exporter
-    get_store
-    get_index
-    get_filestore
+    store
+    importer
+    exporter
 );
 
-sub new_store {
-    my ($pkg, @args) = @_;
-    $pkg ||= 'default';
+our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 
-    state $memo = {};
-    if (my $val = $memo->{$pkg}) {
-        return $val;
-    }
+my $STORES = {};
 
-    if ($pkg =~ /^[a-z]/) {
-        my $key = $pkg;
-        my $cfg = setting('store')->{$key};
-        ($pkg, @args) = @$cfg;
-        $memo->{$key} = load_package($pkg, 'Catmandu::Store')->new(@args);
-    } else {
-        load_package($pkg, 'Catmandu::Store')->new(@args);
-    }
+sub default_store { 'default' }
+sub default_importer { 'JSON' }
+sub default_exporter { 'JSON' }
+
+sub store {
+    my $pkg = check_string(shift || default_store);
+    $STORES->{$pkg} || do {
+        if (my $cfg = check_array_ref(config->{store}{$pkg})) {
+            check_string($cfg->[0]);
+            check_maybe_hash_ref($cfg->[1]);
+            $STORES->{$pkg} = load_package($cfg->[0], 'Catmandu::Store')->new($cfg->[1] || {});
+        } else {
+            load_package($pkg, 'Catmandu::Store')->new(@_);
+        }
+    };
 }
 
-sub new_index {
-    my ($pkg, @args) = @_;
-    $pkg ||= 'default';
-
-    state $memo = {};
-    if (my $val = $memo->{$pkg}) {
-        return $val;
-    }
-
-    if ($pkg =~ /^[a-z]/) {
-        my $key = $pkg;
-        my $cfg = setting('index')->{$key};
-        ($pkg, @args) = @$cfg;
-        $memo->{$key} = load_package($pkg, 'Catmandu::Index')->new(@args);
-    } else {
-        load_package($pkg, 'Catmandu::Index')->new(@args);
-    }
+sub importer {
+    my $pkg = shift;
+    load_package($pkg, 'Catmandu::Importer')->new(@_);
 }
 
-sub new_filestore {
-    my ($pkg, @args) = @_;
-    $pkg ||= 'default';
-
-    state $memo = {};
-    if (my $val = $memo->{$pkg}) {
-        return $val;
-    }
-
-    if ($pkg =~ /^[a-z]/) {
-        my $key = $pkg;
-        my $cfg = setting('filestore')->{$key};
-        ($pkg, @args) = @$cfg;
-        $memo->{$key} = load_package($pkg, 'Catmandu::Filestore')->new(@args);
-    } else {
-        load_package($pkg, 'Catmandu::Filestore')->new(@args);
-    }
+sub exporter {
+    my $pkg = shift;
+    load_package($pkg, 'Catmandu::Exporter')->new(@_);
 }
-
-sub new_importer {
-    my ($pkg, @args) = @_;
-    load_package($pkg, 'Catmandu::Importer')->new(@args);
-}
-
-sub new_exporter {
-    my ($pkg, @args) = @_;
-    load_package($pkg, 'Catmandu::Exporter')->new(@args);
-}
-
-*get_store = \&new_store;
-*get_index = \&new_index;
-*get_filestore = \&new_filestore;
 
 1;
 

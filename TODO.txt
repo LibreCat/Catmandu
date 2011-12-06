@@ -1,4 +1,0 @@
-fix build script optional dependencies
-collections aren't really needed if we reuse connections; see catmandu.lua
-use Moo for objects
-use a simpler, faster globbing mechanism than jsonpath for fixes

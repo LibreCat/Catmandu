@@ -1,4 +1,5 @@
 package Template::Plugin::LanguageName;
+
 use strict;
 use warnings;
 use parent qw(Template::Plugin::Filter);

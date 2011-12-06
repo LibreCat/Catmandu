@@ -1,101 +1,89 @@
 package Catmandu::Util;
+
 use Catmandu::Sane;
 use Exporter qw(import);
-use Plack::Util;
+use Sub::Quote ();
+use Data::Util;
 use List::Util;
 use Data::UUID;
 use IO::File;
 use IO::String;
 
 our @EXPORT_OK = qw(
-    load_package
-    add_parent
-    add_sub
-
-    quacks
-    value
-
-    new_id
-    get_id
-    ensure_id
-    assert_id
-    ensure_collection
-    assert_collection
-
-    opts
-
-    group_by
-    pluck
-
-    trim
-
-    io
+    load_package io
+    new_id get_data_at
+    group_by pluck to_sentence
+    as_utf8 trim capitalize
 );
 
-sub load_package { goto &Plack::Util::load_class }
+our %EXPORT_TAGS = (
+    all    => \@EXPORT_OK,
+    is     => [],
+    check  => [],
+    array  => [qw(group_by pluck to_sentence)],
+    string => [qw(as_utf8 trim capitalize)],
+);
 
-sub add_parent {
-    my ($pkg, @isa) = @_;
+sub load_package { # taken fom Plack::Util
+    my ($pkg, $prefix) = @_;
 
-    no strict 'refs';
-    push @{"${pkg}::ISA"}, @isa;
-    @isa
-}
-
-sub add_sub {
-    my ($pkg, %args) = @_;
-
-    my @syms = keys %args;
-
-    for my $sym (@syms) {
-        my $sub = $args{$sym};
-        unless (ref $sub) {
-            $sub = eval "package $pkg; $sub" or confess $@;
+    if ($prefix) {
+        unless ($pkg =~ s/^\+// || $pkg =~ /^$prefix/) {
+            $pkg = "${prefix}::${pkg}";
         }
-        no strict 'refs';
-        *{"${pkg}::$sym"} = $sub;
     }
 
-    @syms;
+    eval "require $pkg" or confess $@;
+
+    $pkg;
 }
 
-sub quacks {
-    my $obj = shift;
-    blessed($obj) || return 0;
-    $obj->can($_) || return 0 foreach @_;
-    1;
-}
+sub io {
+    my ($io, %opts) = @_;
+    $opts{encoding} ||= ':utf8';
+    $opts{mode} ||= 'r';
 
-sub value {
-    my $val = $_[0]; defined($val) && !ref($val) && ref(\$val) ne 'GLOB';
+    my $io_obj;
+
+    if (is_scalar_ref($io)) {
+        $io_obj = IO::String->new($$io);
+    } elsif (is_glob_ref(\$io) || ref $io) {
+        $io_obj = IO::Handle->new_from_fd($io, $opts{mode});
+    } else {
+        $io_obj = IO::File->new;
+        $io_obj->open($io, $opts{mode});
+    }
+
+    binmode $io_obj, $opts{encoding};
+
+    $io_obj;
 }
 
 sub new_id {
     Data::UUID->new->create_str;
 }
 
-sub get_id {
-    ref $_[0] ? $_[0]->{_id} : $_[0];
-}
-
-sub ensure_id {
-    $_[0]->{_id} ||= new_id;
-}
-
-sub assert_id {
-    get_id(@_) || confess("missing _id");
-}
-
-sub ensure_collection {
-    $_[0]->{_collection} = $_[1] || confess("missing _collection");
-}
-
-sub assert_collection {
-    $_[0]->{_collection} || confess("missing _collection");
-}
-
-sub opts {
-    ref $_[0] ? $_[0] : {@_};
+sub get_data_at {
+    my ($path, $data) = @_;
+    if (ref $path) {
+        $path = [@$path];
+    } else {
+        $path = [split /\./, $path];
+    }
+    while (my $key = shift @$path) {
+        ref $data || return;
+        if (is_array_ref($data)) {
+            if ($key eq '*') {
+                return map { get_data_at($path, $_) } @$data;
+            } else {
+                is_natural($key) || return;
+                $data = $data->[$key];
+            }
+        } else {
+            $data = $data->{$key};
+        }
+    }
+    $data;
 }
 
 sub group_by {
@@ -109,34 +97,88 @@ sub pluck {
     \@vals;
 }
 
+sub to_sentence {
+    my ($join_char, $join_last_char, $list) = @_;
+    my $size = scalar @$list;
+    $size > 2
+        ? join($join_last_char, join($join_char, @$list[0..$size-1]), $list->[-1])
+        : join($join_last_char, @$list);
+}
+
+sub as_utf8 {
+    my $str = $_[0];
+    utf8::upgrade($str);
+    $str;
+}
+
 sub trim {
     my $str = $_[0];
-
     if ($str) {
         $str =~ s/^\s+//s;
         $str =~ s/\s+$//s;
     }
-
     $str;
 }
 
-sub io {
-    my ($io, @args) = @_;
+sub capitalize {
+    ucfirst lc as_utf8 $_[0];
+}
 
-    my $io_obj;
+*is_invocant = \&Data::Util::is_invocant;
+*is_scalar_ref = \&Data::Util::is_scalar_ref;
+*is_array_ref = \&Data::Util::is_array_ref;
+*is_hash_ref = \&Data::Util::is_hash_ref;
+*is_code_ref = \&Data::Util::is_code_ref;
+*is_regex_ref = \&Data::Util::is_rx;
+*is_glob_ref = \&Data::Util::is_glob_ref;
+*is_value = \&Data::Util::is_value;
+*is_string = \&Data::Util::is_string;
+*is_number = \&Data::Util::is_number;
+*is_integer = \&Data::Util::is_integer;
 
-    if (ref($io) eq 'SCALAR') {
-        $io_obj = IO::String->new($$io);
-    } elsif (ref(\$io) eq 'GLOB' || ref($io)) {
-        $io_obj = IO::Handle->new_from_fd($io, @args);
-    } else {
-        $io_obj = IO::File->new;
-        $io_obj->open($io, @args);
-    }
+sub is_natural {
+    is_integer($_[0]) && $_[0] >= 0;
+}
 
-    binmode $io_obj, ':utf8';
+sub is_ref {
+    ref $_[0] ? 1 : 0;
+}
 
-    $io_obj;
+sub is_able {
+    my $obj = shift;
+    is_invocant($obj) || return 0;
+    $obj->can($_)     || return 0 for @_;
+    1;
+}
+
+sub check_able {
+    my $obj = shift;
+    return $obj if is_able($obj, @_);
+    confess('type error: should be able to '.to_sentence(', ', ' and ', \@_));
+}
+
+sub check_maybe_able {
+    my $obj = shift;
+    return $obj if is_maybe_able($obj, @_);
+    confess('type error: should be undef or able to '.to_sentence(', ', ' and ', \@_));
+}
+
+for my $sym (qw(able invocant ref
+        scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
+        value string number integer natural)) {
+    my $pkg = __PACKAGE__;
+    push @EXPORT_OK, "is_$sym", "is_maybe_$sym", "check_$sym", "check_maybe_$sym";
+    push @{$EXPORT_TAGS{is}}, "is_$sym", "is_maybe_$sym";
+    push @{$EXPORT_TAGS{check}}, "check_$sym", "check_maybe_$sym";
+    Sub::Quote::quote_sub("${pkg}::is_maybe_$sym",
+        "!defined(\$_[0]) || ${pkg}::is_$sym(\@_)")
+            unless Data::Util::get_code_ref($pkg, "is_maybe_$sym");
+    Sub::Quote::quote_sub("${pkg}::check_$sym",
+        "${pkg}::is_$sym(\@_) || ${pkg}::confess('type error: should be $sym'); \$_[0]")
+            unless Data::Util::get_code_ref($pkg, "check_$sym");
+    Sub::Quote::quote_sub("${pkg}::check_maybe_$sym",
+        "${pkg}::is_maybe_$sym(\@_) || ${pkg}::confess('type error: should be undef or $sym'); \$_[0]")
+            unless Data::Util::get_code_ref($pkg, "check_maybe_$sym");
 }
 
 1;

@@ -1,12 +1,13 @@
 package Dancer::Plugin::Locale::TextDomain;
+
+our $VERSION = '0.1';
+
 use strict;
 use warnings;
 use Dancer::Plugin;
 use Dancer qw(:syntax);
 use Carp qw(confess);
 use Locale::TextDomain ();
-
-our $VERSION = '0.1';
 
 my $default_textdomain = plugin_setting->{textdomain} || 'messages';
 my $default_locale = plugin_setting->{locale} || 'en_US';

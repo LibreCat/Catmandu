@@ -1,55 +1,43 @@
 package Catmandu::Exporter::Template;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io quacks);
+use Moo;
 use Template;
-use Catmandu::Object
-    file => { default => sub { *STDOUT } },
-    view => 'r',
-    xml  => 'r';
 
-$Template::Stash::PRIVATE = 0;
+with 'Catmandu::Exporter';
 
-sub template_name {
-    my $name = $_[0];
-    $name = "$name.tt" if $name !~ /\.tt$/;
-    $name;
+my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
+
+sub tt {
+    state $tt = do {
+        my $args = {
+            ENCODING => 'utf8',
+            ABSOLUTE => 1,
+            ANYCASE  => 0,
+        };
+
+        if ($ENV{DANCER_APPDIR}) {
+            require Dancer;
+            $args->{INCLUDE_PATH} = Dancer::setting('views');
+            $args->{VARIABLES} = {
+                settings => Dancer::Config->settings,
+            };
+        }
+
+        Template->new($args);
+    };
 }
 
+has xml      => (is => 'ro');
+has template => (is => 'ro', required => 1);
+
 sub add {
-    my ($self, $obj) = @_;
-
-    my $file = io($self->file, 'w');
-
-    my $view = template_name($self->view);
-
-    my $tmpl_opts = {
-        ENCODING => 'utf8',
-        ABSOLUTE => 1,
-        ANYCASE  => 0,
-    };
-
-    if ($ENV{DANCER_APPDIR}) {
-        require Dancer;
-        $tmpl_opts->{INCLUDE_PATH} = Dancer::setting('views');
-        $tmpl_opts->{VARIABLES} = {
-            settings => Dancer::Config->settings,
-        };
+    my ($self, $data) = @_;
+    if ($self->count == 0 && $self->xml) {
+        $self->fh->print($XML_DECLARATION);
     }
-
-    my $tmpl = Template->new($tmpl_opts);
-
-    if ($self->xml) {
-        print $file qq(<?xml version="1.0" encoding="UTF-8"?>\n);
-    }
-
-    if (quacks $obj, 'each') {
-        return $obj->each(sub {
-            $tmpl->process($view, $_[0], $file);
-        });
-    }
-
-    $tmpl->process($view, $obj, $file);
-    1;
+    $self->tt->process($self->template, $data, $self->fh);
+    $data;
 }
 
 1;

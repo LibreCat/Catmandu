@@ -1,71 +1,58 @@
 package Catmandu::Exporter::XLS;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io quacks);
+use Moo;
 use Spreadsheet::WriteExcel;
-use Catmandu::Object file => { default => sub { *STDOUT } }, fields => 'r';
 
-sub _set_fields {
-    my ($self, $fields) = @_;
+with 'Catmandu::Exporter';
 
-    if (!ref $fields) {
-        [ split $self->split_char, $fields ];
-    } elsif (ref $fields eq 'HASH') {
-        [ keys %$fields ];
-    } elsif (ref $fields eq 'ARRAY') {
-        $fields;
-    }
+has xls => (is => 'ro', lazy => 1, builder => '_build_xls');
+has worksheet => (is => 'ro', lazy => 1, builder => '_build_worksheet');
+has header => (is => 'ro', default => sub { 1 });
+has fields => (
+    is     => 'rw',
+    coerce => sub {
+        my $fields = $_[0];
+        given (ref $fields) {
+            when ('ARRAY') { return $fields }
+            when ('HASH')  { return [keys %$fields] }
+            default        { return [split ',', $fields] }
+        }
+    },
+);
+
+sub _build_xls {
+    Spreadsheet::WriteExcel->new($_[0]->fh);
 }
 
-sub _build {
-    my ($self, $args) = @_;
-    $self->SUPER::_build($args);
-    if ($self->fields) {
-        $self->_set_fields($self->fields);
-    }
+sub _build_worksheet {
+    $_[0]->xls->add_worksheet;
 }
+
+sub encoding { ':raw' }
 
 sub add {
-    my ($self, $obj) = @_;
-
-    my $xls = Spreadsheet::WriteExcel->new(io($self->file, 'w'));
-    my $sheet = $xls->add_worksheet;
-
-    my $fields = $self->fields;
-
-    my $n = 0;
-
-    if ($fields) {
-        for (my $i = 0; $i < @$fields; $i++) {
-            $sheet->write_string($n, $i, $fields->[$i]);
-        }
-    }
-
-    my $add = sub {
-        my $o = $_[0];
-
-        if (! $fields) {
-            $fields = $self->_set_fields($o);
+    my ($self, $data) = @_;
+    my $header = $self->header;
+    my $fields = $self->fields || $self->fields($data);
+    my $worksheet = $self->worksheet;
+    my $n = $self->count;
+    if ($header) {
+        if ($n == 0) {
             for (my $i = 0; $i < @$fields; $i++) {
-                $sheet->write_string($n, $i, $fields->[$i]);
+                $worksheet->write_string($n, $i, $fields->[$i]);
             }
         }
-
         $n++;
-
-        for (my $i = 0; $i < @$fields; $i++) {
-            $sheet->write_string($n, $i, $o->{$fields->[$i]} // "");
-        }
-    };
-
-    if (quacks $obj, 'each') {
-        $obj->each($add);
-        $xls->close;
-        return $n;
     }
+    for (my $i = 0; $i < @$fields; $i++) {
+        $worksheet->write_string($n, $i, $data->{$fields->[$i]} // "");
+    }
+}
 
-    $add->($obj);
-    $xls->close;
-    $n;
+sub commit {
+    $_[0]->xls->close;
+    1;
 }
 
 1;

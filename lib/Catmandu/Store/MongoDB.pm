@@ -1,77 +1,105 @@
 package Catmandu::Store::MongoDB;
-use Catmandu::Sane;
-use MongoDB;
-use Catmandu::Util qw(opts);
-use parent qw(Catmandu::Store);
-use Catmandu::Object
-    connection_args => 'r',
-    db_name => 'r',
-    connection => { default => '_build_connection' },
-    db => { default => '_build_db' };
 
-sub default_connection_args {
-    {};
-}
+use Catmandu::Sane;
+use Moo;
+use MongoDB;
+
+with 'Catmandu::Store';
+
+my $CONNECTION_ARGS = [qw(
+    host
+    w
+    wtimeout
+    auto_reconnect
+    auto_connect
+    timeout
+    username
+    password
+    db_name
+    query_timeout
+    max_bson_size
+    find_master
+)];
+
+has connection    => (is => 'ro', lazy => 1, builder => '_build_connection');
+has database_name => (is => 'ro', required => 1);
+has database      => (is => 'ro', lazy => 1, builder => '_build_database');
 
 sub _build_connection {
-    my $self = $_[0];
-    MongoDB::Connection->new($self->connection_args);
+    MongoDB::Connection->new(delete $_[0]->{_args});
 }
 
-sub _build_db {
-    my $self = $_[0];
-    $self->connection->get_database($self->db_name);
+sub _build_database {
+    my $self = $_[0]; $self->connection->get_database($self->database_name);
 }
 
-sub _build_args {
-    my ($self, @args) = @_;
-    my $args = opts @args;
-    $args->{db_name} = delete($args->{db});
-    $args->{connection_args} = $self->default_connection_args;
-    if (my $ref = delete($args->{connection})) {
-        for my $key (keys %$ref) {
-            $args->{connection_args}{$key} = $ref->{$key};
-        }
+sub BUILD {
+    my ($self, $args) = @_;
+    $self->{_args} = {};
+    for my $key (@$CONNECTION_ARGS) {
+        $self->{_args}{$key} = $args->{$key} if exists $args->{$key};
     }
-    $args;
 }
 
-package Catmandu::Store::MongoDB::Collection;
+package Catmandu::Store::MongoDB::Bag;
+
 use Catmandu::Sane;
-use parent qw(Catmandu::Collection);
-use Catmandu::Object collection => { default => '_build_collection' };
+use Moo;
+
+with 'Catmandu::Bag';
+
+has collection => (
+    is => 'ro',
+    init_arg => undef,
+    lazy => 1,
+    builder => '_build_collection',
+);
 
 sub _build_collection {
-    my $self = $_[0];
-    $self->store->db->get_collection($self->name);
+    $_[0]->store->database->get_collection($_[0]->name);
+}
+
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $cursor = $self->collection->find;
+        $cursor->next || return;
+    };
 }
 
 sub each {
     my ($self, $sub) = @_;
     my $cursor = $self->collection->find;
     my $n = 0;
-    while (my $obj = $cursor->next) {
-        $sub->($obj);
+    while (my $data = $cursor->next) {
+        $sub->($data);
         $n++;
     }
     $n;
 }
 
-sub _get {
+sub count {
+    $_[0]->collection->count;
+}
+
+sub get {
     my ($self, $id) = @_;
     $self->collection->find_one({_id => $id});
 }
 
-sub _add {
-    my ($self, $obj) = @_;
-    $self->collection->save($obj);
-    $obj;
+sub add {
+    my ($self, $data) = @_;
+    $self->collection->save($data);
 }
 
 sub delete {
     my ($self, $id) = @_;
     $self->collection->remove({_id => $id});
-    return;
+}
+
+sub delete_all {
+    my ($self) = @_;
+    $self->collection->remove({});
 }
 
 1;

@@ -1,19 +1,22 @@
 package Catmandu::Pluggable;
+
 use Catmandu::Sane;
-use Catmandu::Object;
+use Role::Tiny;
 
-sub _build {
-    my ($self, $args) = @_;
-    my $plugins = delete($args->{plugins}) || [];
-    $self->{plugins} = [ map { load_package($_, 'Catmandu::Plugin')->new($self) } @$plugins ];
-    $self->SUPER::_build($args);
-}
+my $PLUGIN_NAMESPACE = 'Catmandu::Plugin';
 
-sub plugins {
-    if (wantarray) {
-        return @{$_[0]->{plugins}};
-    }
-    $_[0]->{plugins};
+sub with_plugins {
+    my $class = shift;
+    my @plugins = ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_;
+    @plugins || return $class;
+    @plugins = map {
+        my $pkg = $_;
+        if ($pkg !~ s/^\+// && $pkg !~ /^$PLUGIN_NAMESPACE/) {
+            $pkg = "${PLUGIN_NAMESPACE}::${pkg}";
+        }
+        $pkg;
+    } @plugins;
+    Role::Tiny->create_class_with_roles($class, @plugins);
 }
 
 1;

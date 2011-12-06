@@ -1,4 +1,5 @@
 package Template::Plugin::Content;
+
 use strict;
 use warnings;
 use parent qw(Template::Plugin);
@@ -6,16 +7,16 @@ use parent qw(Template::Plugin);
 sub new {
     my ($class, $context) = @_;
 
-    my $self = bless { stash => $context->stash }, $class;
+    my $self = bless {
+        stash => $context->stash,
+    }, $class;
 
-    my $content_for = sub {
+    $context->define_filter('content_for', sub {
         my ($filter_context, $key) = @_;
         return sub {
             $self->add($key, @_);
         };
-    };
-
-    $context->define_filter('content_for', $content_for, 1);
+    }, 1);
 
     $self;
 }

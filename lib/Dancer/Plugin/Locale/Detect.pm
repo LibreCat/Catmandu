@@ -1,11 +1,12 @@
 package Dancer::Plugin::Locale::Detect;
+
+our $VERSION = '0.1';
+
 use strict;
 use warnings;
 use Dancer::Plugin;
 use Dancer qw(:syntax);
 use Locale::Util;
-
-our $VERSION = '0.1';
 
 my $setting = plugin_setting;
 my $param = exists $setting->{param} ? $setting->{param} : 'locale';

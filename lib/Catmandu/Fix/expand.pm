@@ -1,6 +1,7 @@
 package Catmandu::Fix::expand;
+
 use Catmandu::Sane;
-use Catmandu::Object;
+use Moo;
 use CGI::Expand qw(expand_hash);
 
 sub fix {

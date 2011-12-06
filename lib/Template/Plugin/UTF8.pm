@@ -1,4 +1,5 @@
 package Template::Plugin::UTF8;
+
 use strict;
 use warnings;
 use parent qw(Template::Plugin::Filter);

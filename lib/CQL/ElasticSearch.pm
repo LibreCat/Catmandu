@@ -3,9 +3,9 @@ use strict;
 use warnings;
 use CQL::Parser;
 
-my $any_field = qr/^(srw|cql)\.(serverChoice|anywhere)$/i;
-my $match_all = qr/^(srw|cql)\.allRecords$/i;
-my $distance_modifier = qr/\s*\/\s*distance\s*<\s*(\d+)/i;
+my $any_field = qr'^(srw|cql)\.(serverChoice|anywhere)$'i;
+my $match_all = qr'^(srw|cql)\.allRecords$'i;
+my $distance_modifier = qr'\s*\/\s*distance\s*<\s*(\d+)'i;
 
 my $parser;
 
@@ -19,14 +19,14 @@ sub visit {
     my ($self, $node) = @_;
 
     if ($node->isa('CQL::TermNode')) {
-        my $qualifier = $node->getQualifier;
+        my $term = $node->getTerm;
 
-        if ($qualifier =~ $match_all) {
+        if ($term =~ $match_all) {
             return { match_all => {} };
         }
 
+        my $qualifier = $node->getQualifier;
         my $relation  = $node->getRelation;
-        my $term      = $node->getTerm;
         my @modifiers = $relation->getModifiers;
         my $base      = lc $relation->getBase;
 

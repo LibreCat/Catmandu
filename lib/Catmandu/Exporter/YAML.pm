@@ -1,22 +1,16 @@
 package Catmandu::Exporter::YAML;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io quacks);
-use IO::YAML;
-use Catmandu::Object file => { default => sub { *STDOUT } };
+use Moo;
+use YAML::Any ();
+
+with 'Catmandu::Exporter';
+
+*dump_yaml = do { no strict 'refs'; \&{YAML::Any->implementation . '::Dump'} };
 
 sub add {
-    my ($self, $obj) = @_;
-
-    my $file = IO::YAML->new(io($self->file, 'w'), auto_load => 1);
-
-    if (quacks $obj, 'each') {
-        return $obj->each(sub {
-            print $file $_[0];
-        });
-    }
-
-    print $file $obj;
-    1;
+    my ($self, $data) = @_;
+    $self->fh->print(dump_yaml($data));
 }
 
 1;
