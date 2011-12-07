@@ -28,8 +28,10 @@ sub run {
   my $appdir = $global_opts->{appdir} || $ENV{DANCER_APPDIR} || $class->default_appdir;
   my $libdir = File::Spec->catdir($appdir, 'lib');
 
-  Dancer::Config::setting('confdir', $global_opts->{confdir}) if $global_opts->{confdir};
-  Dancer::Config::setting('appdir', $appdir);
+  Dancer::setting(appdir => $appdir);
+  Dancer::setting(confdir => $global_opts->{confdir}) if $global_opts->{confdir};
+  Dancer::setting(public => $ENV{DANCER_PUBLIC} || File::Spec->catdir($appdir, 'public'));
+  Dancer::setting(views => $ENV{DANCER_VIEWS}  || File::Spec->catdir($appdir, 'views'));
   config->{environment} = $global_opts->{environment} if $global_opts->{environment};
   Dancer::ModuleLoader->use_lib($libdir);
   Dancer::Config::load;
