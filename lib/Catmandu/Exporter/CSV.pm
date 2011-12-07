@@ -22,6 +22,8 @@ has fields => (
     },
 );
 
+sub encoding { ':raw' }
+
 sub _build_csv {
     my ($self) = @_;
     Text::CSV->new({
