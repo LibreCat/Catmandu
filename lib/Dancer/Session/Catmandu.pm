@@ -22,16 +22,16 @@ sub create {
 
 sub retrieve {
     my ($class, $id) = @_;
-    my $obj = $bag->get($id) || return;
-    $obj->{id} = delete $obj->{_id};
-    bless $obj, $class;
+    my $data = $bag->get($id) || return;
+    $data->{id} = delete $data->{_id};
+    bless $data, $class;
 }
 
 sub flush {
     my ($self) = @_;
-    my $obj = {%$self};
-    $obj->{_id} = delete $obj->{id};
-    $bag->add($obj);
+    my $data = {%$self};
+    $data->{_id} = delete $data->{id};
+    $bag->add($data);
     $self;
 }
 

@@ -33,4 +33,14 @@ before delete => sub {
 
 sub commit { 1 }
 
+sub get_or_add {
+    my ($self, $id, $data) = @_;
+    check_string($id);
+    check_hash_ref($data);
+    $self->get($id) || do {
+        $data->{_id} = $id;
+        $self->add($data);
+    };
+}
+
 1;
