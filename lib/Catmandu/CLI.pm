@@ -14,7 +14,7 @@ sub global_opt_spec {
     (
         ['environment=s', "application environment (default is development)"],
         ['appdir=s', "application directory (default is cwd)"],
-        ['confdir=s', "application conf directory (default is appdir)"],
+        ['confdir=s', "application config directory (default is appdir)"],
     );
 }
 

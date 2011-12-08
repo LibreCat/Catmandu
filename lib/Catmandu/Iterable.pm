@@ -1,6 +1,7 @@
 package Catmandu::Iterable;
 
 use Catmandu::Sane;
+use Data::Compare ();
 require Catmandu::Iterator;
 use Role::Tiny;
 
@@ -203,51 +204,12 @@ sub pluck {
     });
 }
 
-# sub partition {
-#     my ($self, $sub) = @_;
-#     my $arr_t = [];
-#     my $arr_f = [];
-#     $self->each(sub {
-#         $sub->($_[0]) ? push(@$arr_t, $_[0]) : push(@$arr_f, $_[0]);
-#     });
-#     [ $arr_t, $arr_f ];
-# }
-# 
-# sub each_group {
-#     my ($self, $size, $sub) = @_;
-#     my $group = [];
-#     my $n = 0;
-#     $self->each(sub {
-#         push @$group, $_[0];
-#         if (@$group == $size) {
-#             $sub->($group);
-#             $group = [];
-#             $n++;
-#         }
-#     });
-#     if (@$group) {
-#         $sub->($group);
-#         $n++;
-#     }
-#     $n;
-# }
-# 
-# sub group {
-#     my ($self, $size) = @_;
-#     my $arr = [];
-#     $self->each_group($size, sub {
-#         push @$arr, $_[0];
-#     });
-#     $arr;
-# }
-# 
-# sub group_by {
-#     my ($self, $key) = @_;
-#     $self->reduce({}, sub {
-#         push @{$_[0]->{$_[1]->{$key}} ||= []}, $_[1];
-#         $_[0];
-#     });
-# }
+sub includes {
+    my ($self, $data) = @_;
+    $self->any(sub {
+        Data::Compare::Compare($data, $_[0]);
+    });
+}
 
 1;
 

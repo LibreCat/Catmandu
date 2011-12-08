@@ -12,17 +12,17 @@ use IO::String;
 our @EXPORT_OK = qw(
     load_package io
     get_data_at
-    group_by pluck to_sentence
+    array_group_by array_pluck array_to_sentence array_sum array_includes
     as_utf8 trim capitalize
-    is_same check_same
+    is_same check_same is_different check_different
 );
 
 our %EXPORT_TAGS = (
     all    => \@EXPORT_OK,
-    array  => [qw(group_by pluck to_sentence)],
+    array  => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes)],
     string => [qw(as_utf8 trim capitalize)],
-    is     => [qw(is_same)],
-    check  => [qw(check_same)],
+    is     => [qw(is_same is_different)],
+    check  => [qw(check_same check_different)],
 );
 
 sub load_package {
@@ -83,23 +83,37 @@ sub get_data_at {
     $data;
 }
 
-sub group_by {
-    my ($key, $list) = @_;
-    List::Util::reduce { my $k = $b->{$key}; push @{$a->{$k} ||= []}, $b if defined $k; $a } {}, @$list;
+sub array_group_by {
+    my ($arr, $key) = @_;
+    List::Util::reduce { my $k = $b->{$key}; push @{$a->{$k} ||= []}, $b if defined $k; $a } {}, @$arr;
 }
 
-sub pluck {
-    my ($key, $list) = @_;
-    my @vals = map { $_->{$key} } @$list;
+sub array_pluck {
+    my ($arr, $key) = @_;
+    my @vals = map { $_->{$key} } @$arr;
     \@vals;
 }
 
-sub to_sentence {
-    my ($join_char, $join_last_char, $list) = @_;
-    my $size = scalar @$list;
+sub array_to_sentence {
+    my ($arr, $join_char, $join_last_char) = @_;
+    $join_char //= ', ';
+    $join_last_char //= ' and ';
+    my $size = scalar @$arr;
     $size > 2
-        ? join($join_last_char, join($join_char, @$list[0..$size-1]), $list->[-1])
-        : join($join_last_char, @$list);
+        ? join($join_last_char, join($join_char, @$arr[0..$size-1]), $arr->[-1])
+        : join($join_last_char, @$arr);
+}
+
+sub array_sum {
+    List::Util::sum(0, $_[0]);
+}
+
+sub array_includes {
+    my ($arr, $val) = @_;
+    for (@$arr) {
+        return 1 if is_same($val, $_);
+    }
+    0;
 }
 
 sub as_utf8 {
@@ -126,7 +140,15 @@ sub is_same {
 }
 
 sub check_same {
-    is_same(@_) || confess('error: should be the same');
+    is_same(@_) || confess('error: should be same');
+}
+
+sub is_different {
+    !is_same(@_);
+}
+
+sub check_different {
+    !is_same(@_) || confess('error: should be different');
 }
 
 *is_invocant = \&Data::Util::is_invocant;
@@ -159,13 +181,13 @@ sub is_able {
 sub check_able {
     my $obj = shift;
     return $obj if is_able($obj, @_);
-    confess('type error: should be able to '.to_sentence(', ', ' and ', \@_));
+    confess('type error: should be able to '.array_to_sentence(\@_));
 }
 
 sub check_maybe_able {
     my $obj = shift;
     return $obj if is_maybe_able($obj, @_);
-    confess('type error: should be undef or able to '.to_sentence(', ', ' and ', \@_));
+    confess('type error: should be undef or able to '.array_to_sentence(\@_));
 }
 
 for my $sym (qw(able invocant ref

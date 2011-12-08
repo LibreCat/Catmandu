@@ -33,8 +33,9 @@ sub command {
     my $into_opts = {};
     for (my $i = 0; $i < @$args; $i++) {
         my $arg = $args->[$i];
-        if (my ($for, $key) = $arg =~ /^--(from|into)-(\w+)$/) {
+        if (my ($for, $key) = $arg =~ /^--(from|into)-([\w\-]+)$/) {
             if (my $val = $args->[++$i]) {
+                $key =~ s/-/_/g;
                 ($for eq 'from' ? $from_opts : $into_opts)->{$key} = $val;
             }
         }
@@ -50,7 +51,7 @@ sub command {
     }
 
     if ($opts->query || $opts->cql_query) {
-        $self->usage_error("Store isn't searchable") unless $from->can('searcher');
+        $self->usage_error("Bag isn't searchable") unless $from->can('searcher');
         $from = $from->searcher(
             cql_query => $opts->cql_query,
             query     => $opts->query,
