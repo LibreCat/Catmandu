@@ -5,26 +5,27 @@ use Exporter qw(import);
 use Sub::Quote ();
 use Data::Util;
 use List::Util;
-use Data::UUID;
+use Data::Compare ();
 use IO::File;
 use IO::String;
 
 our @EXPORT_OK = qw(
     load_package io
-    new_id get_data_at
+    get_data_at
     group_by pluck to_sentence
     as_utf8 trim capitalize
+    is_same check_same
 );
 
 our %EXPORT_TAGS = (
     all    => \@EXPORT_OK,
-    is     => [],
-    check  => [],
     array  => [qw(group_by pluck to_sentence)],
     string => [qw(as_utf8 trim capitalize)],
+    is     => [qw(is_same)],
+    check  => [qw(check_same)],
 );
 
-sub load_package { # taken fom Plack::Util
+sub load_package {
     my ($pkg, $prefix) = @_;
 
     if ($prefix) {
@@ -57,10 +58,6 @@ sub io {
     binmode $io_obj, $opts{encoding};
 
     $io_obj;
-}
-
-sub new_id {
-    Data::UUID->new->create_str;
 }
 
 sub get_data_at {
@@ -122,6 +119,14 @@ sub trim {
 
 sub capitalize {
     ucfirst lc as_utf8 $_[0];
+}
+
+sub is_same {
+    Data::Compare::Compare($_[0], $_[1]);
+}
+
+sub check_same {
+    is_same(@_) || confess('error: should be the same');
 }
 
 *is_invocant = \&Data::Util::is_invocant;

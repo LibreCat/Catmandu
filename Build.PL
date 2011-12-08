@@ -7,12 +7,13 @@ my $build_requires = {
 };
 
 my $requires = {
-    'perl' => '5.10.0',
+    'perl' => '5.12.0',
     'all' => '0.5101',
     'App::Cmd' => '0.310',
     'CGI::Expand' => '2.02',
     'Clone' => '0.31',
     'Dancer' => '1.3080',
+    'Data::Compare' => '1.22',
     'Data::UUID' => '1.217',
     'Data::Util' => '0.59',
     'DateTime' => '0.70',

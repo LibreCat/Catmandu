@@ -1,8 +1,9 @@
 package Catmandu::Bag;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:check new_id);
+use Catmandu::Util qw(:check);
 use Moo::Role;
+use Data::UUID;
 
 with 'Catmandu::Pluggable';
 with 'Catmandu::Iterable';
@@ -22,7 +23,7 @@ before get => sub {
 
 around add => sub {
     my ($orig, $self, $data) = @_;
-    check_hash_ref($data)->{_id} ||= new_id;
+    check_hash_ref($data)->{_id} ||= $self->generate_id;
     $orig->($self, $data);
     $data;
 };
@@ -30,6 +31,10 @@ around add => sub {
 before delete => sub {
     check_string($_[1]);
 };
+
+sub generate_id {
+    Data::UUID->new->create_str;
+}
 
 sub commit { 1 }
 
