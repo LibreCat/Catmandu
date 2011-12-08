@@ -5,13 +5,14 @@ our $VERSION = '0.01';
 use Catmandu::Sane;
 use Catmandu;
 use parent qw(Dancer::Session::Abstract);
-use Dancer::Config qw(setting);
+use Dancer qw(:syntax setting);
 
 my $bag;
 
 sub init {
     my ($class) = @_;
-    $bag = Catmandu::store(setting('session_store'))->bag(setting('session_bag') || 'sessions');
+    $bag ||= Catmandu::store(setting('session_store') || Catmandu::default_store)
+        ->bag(setting('session_bag') || 'sessions');
     $class->SUPER::init;
 }
 
