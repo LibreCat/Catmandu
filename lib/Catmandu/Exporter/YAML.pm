@@ -8,6 +8,8 @@ with 'Catmandu::Exporter';
 
 *dump_yaml = do { no strict 'refs'; \&{YAML::Any->implementation . '::Dump'} };
 
+sub encoding { ':raw' }
+
 sub add {
     my ($self, $data) = @_;
     $self->fh->print(dump_yaml($data));
