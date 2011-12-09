@@ -1,22 +1,24 @@
 package Catmandu::Pluggable;
 
 use Catmandu::Sane;
-use Role::Tiny;
+use Moo::Role;
 
-my $PLUGIN_NAMESPACE = 'Catmandu::Plugin';
+sub plugin_namespace { 'Catmandu::Plugin' }
 
 sub with_plugins {
     my $class = shift;
+    $class = ref $class || $class;
     my @plugins = ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_;
+    @plugins = split /,/, join ',', @plugins;
     @plugins || return $class;
-    @plugins = map {
+    my $ns = $class->plugin_namespace;
+    Moo::Role->create_class_with_roles($class, map {
         my $pkg = $_;
-        if ($pkg !~ s/^\+// && $pkg !~ /^$PLUGIN_NAMESPACE/) {
-            $pkg = "${PLUGIN_NAMESPACE}::${pkg}";
+        if ($pkg !~ s/^\+// && $pkg !~ /^$ns/) {
+            $pkg = "${ns}::${pkg}";
         }
         $pkg;
-    } @plugins;
-    Role::Tiny->create_class_with_roles($class, @plugins);
+    } @plugins);
 }
 
 1;
