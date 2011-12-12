@@ -9,7 +9,7 @@ use parent qw(Plack::Session::Store);
 sub new {
     my ($class, %opts) = @_;
     my $store = $opts{store} || Catmandu::default_store;
-    my $bag = $opts{bag} || 'sessions';
+    my $bag = $opts{bag} || 'session';
     bless {
         bag => Catmandu::store($store)->bag($bag),
     }, $class;

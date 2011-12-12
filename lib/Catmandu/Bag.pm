@@ -10,7 +10,6 @@ with 'Catmandu::Iterable';
 with 'Catmandu::Add';
 
 requires 'get';
-requires 'add';
 requires 'delete';
 requires 'delete_all';
 
@@ -46,6 +45,15 @@ sub get_or_add {
         $data->{_id} = $id;
         $self->add($data);
     };
+}
+
+sub to_hash {
+    my ($self) = @_;
+    $self->reduce({}, sub {
+        my ($hash, $data) = @_;
+        $hash->{$data->{_id}} = $data;
+        $hash;
+    });
 }
 
 1;

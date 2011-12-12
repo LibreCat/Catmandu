@@ -12,7 +12,7 @@ my $bag;
 sub init {
     my ($class) = @_;
     $bag ||= Catmandu::store(setting('session_store') || Catmandu::default_store)
-        ->bag(setting('session_bag') || 'sessions');
+        ->bag(setting('session_bag') || 'session');
     $class->SUPER::init;
 }
 

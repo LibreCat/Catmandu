@@ -178,7 +178,7 @@ Converts the given L<CQL::Node> to a Solr query string.
 
 =head1 TODO
 
-support cql 1.2, more modifiers, sortBy, encloses
+support cql 1.2, more modifiers (esp. masked), sortBy, encloses
 
 =head1 SEE ALSO
 
