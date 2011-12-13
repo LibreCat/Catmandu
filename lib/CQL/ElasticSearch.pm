@@ -34,15 +34,8 @@ sub visit {
             $qualifier = '_all';
         }
 
-        if ($base eq '=' or $base eq 'scr') {
-            $term = { query => $term, operator => 'AND' };
-            for my $m (@modifiers) {
-                if ($m->[1] eq 'fuzzy') {
-                    $term->{fuzziness} = 0.5;
-                    last;
-                }
-            }
-            return { text => { $qualifier => $term } };
+        if ($base eq '=' || $base eq 'scr') {
+            return _text_node($qualifier, $term, @modifiers);
         } elsif ($base eq '<') {
             return { range => { $qualifier => { lt => $term } } };
         } elsif ($base eq '>') {
@@ -52,15 +45,15 @@ sub visit {
         } elsif ($base eq '>=') {
             return { range => { $qualifier => { gte => $term } } };
         } elsif ($base eq '<>') {
-            return { bool => { must_not => [ { text => { $qualifier => { query => $term, operator => 'AND' } } } ] } };
+            return { bool => { must_not => [ _text_node($qualifier, $_, @modifiers) ] } };
         } elsif ($base eq 'exact') {
-            return { text => { $qualifier => { query => $term, operator => 'AND' } } };
-        } elsif ($base eq 'all') {
-            my @terms = split /\s+/, $term;
-            return { bool => { must => [ map { { text => { $qualifier => $_ } } } @terms ] } };
+            return { text_phrase => { $qualifier => { query => $term } } };
         } elsif ($base eq 'any') {
             my @terms = split /\s+/, $term;
-            return { bool => { should => [ map { { text => { $qualifier => $_ } } } @terms ] } };
+            return { bool => { should => [ map { _text_node($qualifier, $_, @modifiers) } @terms ] } };
+        } elsif ($base eq 'all') {
+            my @terms = split /\s+/, $term;
+            return { bool => { must => [ map { _text_node($qualifier, $_, @modifiers) } @terms ] } };
         } elsif ($base eq 'within') {
             my @range = split /\s+/, $term;
             if (@range == 1) {
@@ -68,7 +61,7 @@ sub visit {
             }
             return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
         }
-        return { text => { $qualifier => { query => $term, operator => 'AND' } } };
+        return _text_node($qualifier, $term, @modifiers);
     }
 
     if ($node->isa('CQL::ProxNode')) {
@@ -97,6 +90,21 @@ sub visit {
             $self->visit($node->right)
         ] } };
     }
+}
+
+sub _text_node {
+    my ($qualifier, $term, @modifiers) = @_;
+    if ($term =~ /^\^./) {
+        return { text_phrase_prefix => { $qualifier => { query => substr($term, 1), max_expansions => 10 } } };
+    } elsif ($term =~ /[^\\][*?]/) {
+        return { wildcard => { $qualifier => $term } };
+    }
+    for my $m (@modifiers) {
+        if ($m->[1] eq 'fuzzy') {
+            return { text_phrase => { $qualifier => { query => $term, fuzziness => 0.5 } } };
+        }
+    }
+    { text_phrase => { $qualifier => { query => $term } } };
 }
 
 1;
@@ -150,7 +158,7 @@ Converts the given L<CQL::Node> to a ElasticSearch query hashref.
 
 =head1 TODO
 
-support cql 1.2, more modifiers (esp. masked), sortBy, encloses
+support cql 1.2, more modifiers (esp. all of masked), sortBy, encloses
 
 =head1 SEE ALSO
 

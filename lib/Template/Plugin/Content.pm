@@ -2,38 +2,30 @@ package Template::Plugin::Content;
 
 use strict;
 use warnings;
-use parent qw(Template::Plugin);
+use parent qw(Template::Plugin::Filter);
+use Dancer qw(:syntax vars);
 
-sub new {
-    my ($class, $context) = @_;
+my $FILTER_NAME = 'content_for';
 
-    my $self = bless {
-        stash => $context->stash,
-    }, $class;
-
-    $context->define_filter('content_for', sub {
-        my ($filter_context, $key) = @_;
-        return sub {
-            $self->add($key, @_);
-        };
-    }, 1);
-
+sub init {
+    my $self = $_[0];
+    $self->{_DYNAMIC} = 1;
+    $self->install_filter($FILTER_NAME);
     $self;
 }
 
-sub add {
-    my ($self, $key, @more) = @_;
-    $key = "content_for_$key";
-    my $stash = $self->{stash};
-    my $content = $stash->get($key) || "";
-    $content .= join("", @more);
-    $stash->set($key, $content);
+sub filter {
+    my ($self, $text, $args) = @_;
+    for my $key (@$args) {
+        my $content = vars->{_content_for}{$key};
+        vars->{_content_for}{$key} = $content ? "$content$text" : $text;
+    }
     "";
 }
 
 sub for {
     my ($self, $key) = @_;
-    $self->{stash}->get("content_for_$key");
+    vars->{_content_for}{$key} || "";
 }
 
 1;
