@@ -22,7 +22,9 @@ has fields => (
 );
 
 sub _build_xls {
-    Spreadsheet::WriteExcel->new($_[0]->fh);
+    my $xls = Spreadsheet::WriteExcel->new($_[0]->fh);
+    $xls->set_properties(utf8 => 1);
+    $xls;
 }
 
 sub _build_worksheet {

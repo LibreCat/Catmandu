@@ -1,7 +1,7 @@
 package Catmandu::Sane;
 use strict;
 use warnings;
-use 5.012;
+use 5.010;
 use feature ();
 use Carp ();
 use utf8;
@@ -11,7 +11,7 @@ sub import {
 
     strict->import;
     warnings->import;
-    feature->import(':5.12');
+    feature->import(':5.10');
     Carp->export_to_level(1, $pkg, qw(confess));
     utf8->import;
 }

@@ -7,7 +7,7 @@ my $build_requires = {
 };
 
 my $requires = {
-    'perl' => '5.12.0',
+    'perl' => '5.10.0',
     'all' => '0.5101',
     'App::Cmd' => '0.310',
     'CGI::Expand' => '2.02',
