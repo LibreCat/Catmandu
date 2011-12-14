@@ -64,8 +64,8 @@ sub fix {
     my $fixes = $self->fixes;
 
     if (is_hash_ref($data)) {
-        for (@$fixes) {
-            $data = $_->fix($data);
+        for my $fix (@$fixes) {
+            $data = $fix->fix($data);
         }
         return $data;
     }

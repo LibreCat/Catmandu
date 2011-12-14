@@ -36,23 +36,20 @@ sub count { goto &size }
 
 sub generator {
     my ($self) = @_;
-    my $hits = $self->{hits};
+    my $hits = $self->hits;
     my $i = 0;
     sub {
-        if ($i++ < @$hits) {
-            return $hits->[$i];
-        }
-        return;
+        $hits->[$i++];
     };
 }
 
 sub each {
     my ($self, $sub) = @_;
-    my $hits = $self->{hits};
+    my $hits = $self->hits;
     for my $hit (@$hits) {
         $sub->($hit);
     }
-    scalar @$hits;
+    $self->size;
 }
 
 1;
