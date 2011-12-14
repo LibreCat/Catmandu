@@ -321,7 +321,7 @@ sub oai_provider {
                 $vars->{datestamp} = _combined_utc_datestamp($rec->{$setting->{datestamp_field}});
                 $vars->{deleted} = $sub_deleted->($rec);
                 $vars->{setSpec} = $sub_set_specs_for->($rec);
-                $vars->{metadata} = template($format->{template}, $format->{fix}
+                $vars->{metadata} = Dancer::Template::Abstract->template($format->{template}, $format->{fix}
                     ? $format->{fix}->fix($rec)
                     : $rec, {layout => $format->{layout}});
                 unless ($vars->{deleted} and $setting->{deletedRecord} eq 'no') {
@@ -399,7 +399,7 @@ sub oai_provider {
                     my $deleted = $sub_deleted->($rec);
                     my $metadata;
                     unless ($deleted) {
-                        $metadata = template($format->{template}, $format->{fix}
+                        $metadata = Dancer::Template::Abstract->template($format->{template}, $format->{fix}
                             ? $format->{fix}->fix($rec)
                             : $rec, {layout => $format->{layout}})
                     }
