@@ -67,6 +67,8 @@ my $sets = do {
     }
 };
 
+my $ns = "oai:$setting->{repositoryIdentifier}:";
+
 my $template_header = <<TT;
 <?xml version="1.0" encoding="UTF-8"?>
 <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
@@ -94,7 +96,7 @@ TT
 
 my $template_record_header = <<TT;
 <header[% IF deleted %] status="deleted"[% END %]>
-    <identifier>[% params.identifier %]</identifier>
+    <identifier>${ns}[% id %]</identifier>
     <datestamp>[% datestamp %]</datestamp>
     [%- FOREACH s IN setSpec %]
     <setSpec>[% s %]</setSpec>
@@ -317,7 +319,10 @@ sub oai_provider {
         content_type 'xml';
 
         if ($verb eq 'GetRecord') {
-            if (my $rec = $bag->get($params->{identifier})) {
+            my $id = $params->{identifier};
+            $id =~ s/^$ns//;
+            if (my $rec = $bag->get($id)) {
+                $vars->{id} = $id;
                 $vars->{datestamp} = _combined_utc_datestamp($rec->{$setting->{datestamp_field}});
                 $vars->{deleted} = $sub_deleted->($rec);
                 $vars->{setSpec} = $sub_set_specs_for->($rec);
@@ -386,7 +391,7 @@ sub oai_provider {
                 $vars->{records} = [map {
                     my $rec = $_;
                     {
-                        identifier => "$setting->{repositoryIdentifier}:$rec->{_id}",
+                        id => $rec->{_id},
                         datestamp => _combined_utc_datestamp($rec->{$setting->{datestamp_field}}),
                         deleted => $sub_deleted->($rec),
                         setSpec => $sub_set_specs_for->($rec),
@@ -404,7 +409,7 @@ sub oai_provider {
                             : $rec, {layout => $format->{layout}})
                     }
                     {
-                        identifier => "$setting->{repositoryIdentifier}:$rec->{_id}",
+                        id => $rec->{_id},
                         datestamp => _combined_utc_datestamp($rec->{$setting->{datestamp_field}}),
                         deleted => $deleted,
                         setSpec => $sub_set_specs_for->($rec),
@@ -415,9 +420,13 @@ sub oai_provider {
             }
 
         } elsif ($verb eq 'ListMetadataFormats') {
-            if ($params->{identifier} && !$bag->get($params->{identifier})) {
-                push @$errors, [idDoesNotExist => "identifier $params->{identifier} is unknown or illegal"];
-                return render(\$template_error, $vars);
+            
+            if (my $id = $params->{identifier}) {
+                $id =~ s/^$ns//;
+                unless ($bag->get($id)) {
+                    push @$errors, [idDoesNotExist => "identifier $params->{identifier} is unknown or illegal"];
+                    return render(\$template_error, $vars);
+                }
             }
             return render(\$template_list_metadata_formats, $vars);
 
