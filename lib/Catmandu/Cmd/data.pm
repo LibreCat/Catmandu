@@ -103,9 +103,9 @@ sub command {
     }
 
     if ($v) {
-        say STDERR $n > 1
-            ? "added $n objects"
-            : "added 1 object";
+        say STDERR $n == 1
+            ? "added 1 object"
+            : "added $n objects";
         say STDERR "done";
     }
 }
