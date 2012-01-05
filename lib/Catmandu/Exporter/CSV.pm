@@ -26,6 +26,7 @@ sub _build_csv {
     my ($self) = @_;
     Text::CSV->new({
         binary     => 1,
+        eol        => "\n",
         quote_char => $self->quote_char,
         sep_char   => $self->split_char,
     });
@@ -34,14 +35,18 @@ sub _build_csv {
 sub add {
     my ($self, $data) = @_;
     my $fields = $self->fields || $self->fields($data);
-    my $row = [map { $data->{$_} } @$fields];
+    my $row = [map {
+        my $val = $data->{$_} // "";
+        $val =~ s/\t/\\t/g;
+        $val =~ s/\n/\\n/g;
+        $val =~ s/\r/\\r/g;
+        $val;
+    } @$fields];
     my $fh = $self->fh;
     if ($self->count == 0 && $self->header) {
         $self->csv->print($fh, $fields);
-        print $fh "\n";
     }
     $self->csv->print($fh, $row);
-    print $fh "\n";
 }
 
 1;

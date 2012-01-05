@@ -4,7 +4,7 @@ use Catmandu::Sane;
 use Catmandu::Util qw(io);
 use Moo::Role;
 
-with 'Catmandu::Add';
+with 'Catmandu::Addable';
 with 'Catmandu::Counter';
 
 has file => (
@@ -19,11 +19,11 @@ has fh   => (
     default => sub { io($_[0]->file, mode => 'w', encoding => $_[0]->encoding) },
 );
 
-sub encoding { ':utf8' }
-
 after add => sub {
     $_[0]->inc_count;
 };
+
+sub encoding { ':utf8' }
 
 sub commit { 1 }
 

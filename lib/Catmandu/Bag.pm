@@ -7,7 +7,7 @@ use Data::UUID;
 
 with 'Catmandu::Pluggable';
 with 'Catmandu::Iterable';
-with 'Catmandu::Add';
+with 'Catmandu::Addable';
 
 requires 'get';
 requires 'delete';

@@ -12,7 +12,7 @@ sub command_opt_spec {
         [ "from-importer=s", "" ],
         [ "from-bag=s", "" ],
         [ "count", "" ],
-        [ "into-exporter=s", "", { default => Catmandu::default_exporter } ],
+        [ "into-exporter=s", "", { default => 'JSON' } ],
         [ "into-store=s", "" ],
         [ "into-bag=s", "" ],
         [ "start=i", "" ],

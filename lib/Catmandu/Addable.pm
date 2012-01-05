@@ -1,4 +1,4 @@
-package Catmandu::Add;
+package Catmandu::Addable;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is);

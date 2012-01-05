@@ -18,17 +18,19 @@ our %EXPORT_TAGS = (all => [@EXPORT_OK]);
 my $stores = {};
 
 sub default_store { 'default' }
-sub default_importer { 'JSON' }
-sub default_exporter { 'JSON' }
 
 sub store {
     my $sym = check_string(shift || default_store);
 
     $stores->{$sym} || do {
-        if (my $cfg = check_maybe_array_ref(config->{store}{$sym})) {
-            check_string(my $pkg = $cfg->[0]);
-            check_hash_ref(my $args = $cfg->[1] || {});
-            $stores->{$sym} = load_package($pkg, 'Catmandu::Store')->new($args);
+        if (my $cfg = config->{store}{$sym}) {
+            check_hash_ref($cfg);
+            check_string(my $pkg = $cfg->{package});
+            check_hash_ref(my $opts = $cfg->{options} || {});
+            $opts = is_hash_ref($_[0])
+                ? {%$opts, %{$_[0]}}
+                : {%$opts, @_};
+            $stores->{$sym} = load_package($pkg, 'Catmandu::Store')->new($opts);
         } else {
             load_package($sym, 'Catmandu::Store')->new(@_);
         }
@@ -36,13 +38,33 @@ sub store {
 }
 
 sub importer {
-    my $pkg = check_string(shift);
-    load_package($pkg, 'Catmandu::Importer')->new(@_);
+    my $sym = check_string(shift);
+    if (my $cfg = config->{importer}{$sym}) {
+        check_hash_ref($cfg);
+        check_string(my $pkg = $cfg->{package});
+        check_hash_ref(my $opts = $cfg->{options} || {});
+        $opts = is_hash_ref($_[0])
+            ? {%$opts, %{$_[0]}}
+            : {%$opts, @_};
+        load_package($pkg, 'Catmandu::Importer')->new($opts);
+    } else {
+        load_package($sym, 'Catmandu::Importer')->new(@_);
+    }
 }
 
 sub exporter {
-    my $pkg = check_string(shift);
-    load_package($pkg, 'Catmandu::Exporter')->new(@_);
+    my $sym = check_string(shift);
+    if (my $cfg = config->{exporter}{$sym}) {
+        check_hash_ref($cfg);
+        check_string(my $pkg = $cfg->{package});
+        check_hash_ref(my $opts = $cfg->{options} || {});
+        $opts = is_hash_ref($_[0])
+            ? {%$opts, %{$_[0]}}
+            : {%$opts, @_};
+        load_package($pkg, 'Catmandu::Exporter')->new($opts);
+    } else {
+        load_package($sym, 'Catmandu::Exporter')->new(@_);
+    }
 }
 
 1;

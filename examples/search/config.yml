@@ -4,7 +4,7 @@ charset: UTF-8
 
 store:
   search:
-    - Solr
+      package: Solr
 
 template: template_toolkit
 
