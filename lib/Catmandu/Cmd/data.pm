@@ -8,12 +8,12 @@ use Catmandu::Fix;
 
 sub command_opt_spec {
     (
-        [ "from-store=s", "", { default => Catmandu::default_store } ],
-        [ "from-importer=s", "" ],
+        [ "from-store=s", "",    { default => Catmandu::default_store } ],
+        [ "from-importer=s", "", { default => 'JSON' } ],
         [ "from-bag=s", "" ],
         [ "count", "" ],
         [ "into-exporter=s", "", { default => 'JSON' } ],
-        [ "into-store=s", "" ],
+        [ "into-store=s", "",    { default => Catmandu::default_store } ],
         [ "into-bag=s", "" ],
         [ "start=i", "" ],
         [ "limit=i", "" ],
@@ -44,10 +44,10 @@ sub command {
     my $from;
     my $into;
 
-    if ($opts->from_importer) {
-        $from = importer($opts->from_importer, $from_opts);
-    } else {
+    if ($opts->from_bag) {
         $from = store($opts->from_store, $from_opts)->bag($opts->from_bag)
+    } else {
+        $from = importer($opts->from_importer, $from_opts);
     }
 
     if ($opts->query || $opts->cql_query) {
@@ -67,7 +67,7 @@ sub command {
         return say $from->count;
     }
 
-    if ($opts->into_store) {
+    if ($opts->into_bag) {
         $into = store($opts->into_store, $into_opts)->bag($opts->into_bag);
     } else {
         $into = exporter($opts->into_exporter, $into_opts);
