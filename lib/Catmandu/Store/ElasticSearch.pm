@@ -63,6 +63,7 @@ sub generator {
     my $limit = $self->buffer_size;
     sub {
         state $scroller = $self->store->elastic_search->scrolled_search({
+            search_type => 'scan',
             query => {match_all => {}},
             type  => $self->name,
         });
@@ -228,6 +229,7 @@ sub generator {
             return unless $total;
         }
         state $scroller = $self->bag->store->elastic_search->scrolled_search({
+            search_type => 'scan',
             query => $self->query,
             type  => $self->bag->name,
             from  => $self->start,
