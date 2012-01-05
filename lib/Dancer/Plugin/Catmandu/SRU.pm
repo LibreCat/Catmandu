@@ -22,7 +22,7 @@ my $record_schemas = do {
         my $identifier = $schema->{identifier};
         my $short_name = $schema->{short_name};
         if (my $fix = $schema->{fix}) {
-            $schema->{fix} = Catmandu::Fix->new(@$fix);
+            $schema->{fix} = Catmandu::Fix->new(fixes => $fix);
         }
         $hash->{$identifier} = $schema;
         $hash->{$short_name} = $schema;

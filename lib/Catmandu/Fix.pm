@@ -8,7 +8,7 @@ my $fixes;
 
 sub load_fixes {
     $fixes = [];
-    for my $fix (@_) {
+    for my $fix (@{$_[0]}) {
         if (is_able($fix, 'fix')) {
             push @$fixes, $fix;
         } elsif (is_string($fix)) {
@@ -47,16 +47,17 @@ sub DESTROY {}
 package Catmandu::Fix;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(:is :check);
 use Catmandu::Iterator;
 use Moo;
 
-has fixes => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, @args) = @_;
-    $orig->($class, fixes => Catmandu::Fix::Loader::load_fixes(@args));
-};
+has fixes => (
+    is => 'ro',
+    required => 1,
+    coerce => sub {
+        Catmandu::Fix::Loader::load_fixes(check_array_ref($_[0]));
+    },
+);
 
 sub fix {
     my ($self, $data) = @_;

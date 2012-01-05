@@ -2,9 +2,15 @@ package Catmandu::Addable;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is);
-use Role::Tiny;
+use Moo::Role;
 
 requires 'add';
+
+with 'Catmandu::Fixable';
+
+before add => sub {
+    $_[1] = $_[0]->fix->fix($_[1]) if $_[0]->has_fix;
+};
 
 sub add_many {
     my ($self, $many) = @_;

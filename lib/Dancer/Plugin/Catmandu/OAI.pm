@@ -47,7 +47,7 @@ my $metadata_formats = do {
         my $prefix = $format->{metadataPrefix};
         $format = {%$format};
         if (my $fix = $format->{fix}) {
-            $format->{fix} = Catmandu::Fix->new(@$fix);
+            $format->{fix} = Catmandu::Fix->new(fixes => $fix);
         }
         $hash->{$prefix} = $format;
     }

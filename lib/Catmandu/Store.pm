@@ -25,11 +25,15 @@ sub bag {
     my $self = shift;
     my $name = shift || $self->default_bag;
     $bag_instances{$self}{$name} ||= do {
-        my $class = $self->bag_class;
+        my $pkg = $self->bag_class;
+        my $fix;
         if (exists $self->bags->{$name}{plugins}) {
-            $class = $class->with_plugins($self->bags->{$name}{plugins});
+            $pkg = $pkg->with_plugins($self->bags->{$name}{plugins});
         }
-        $class->new(store => $self, name => $name);
+        if (exists $self->bags->{$name}{fix}) {
+            $fix = $self->bags->{$name}{fix};
+        }
+        $pkg->new(store => $self, name => $name, fix => $fix);
     };
 }
 

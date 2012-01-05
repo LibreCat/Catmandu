@@ -74,7 +74,7 @@ sub command {
     }
 
     if (my $fix = $opts->fix) {
-        $from = Catmandu::Fix->new(@$fix)->fix($from);
+        $from = Catmandu::Fix->new(fixes => $fix)->fix($from);
     }
 
     if ($opts->replace && $into->can('delete_all')) {
