@@ -9,9 +9,13 @@ with 'Catmandu::Exporter';
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
-has xml      => (is => 'ro');
-has template => (is => 'ro', required => 1);
-has tt       => (is => 'ro', lazy => 1, builder => '_build_tt');
+has xml             => (is => 'ro');
+has template_before => (is => 'ro');
+has template        => (is => 'ro', required => 1);
+has template_after  => (is => 'ro');
+has tt              => (is => 'ro', lazy => 1, builder => '_build_tt');
+
+$Template::Stash::PRIVATE = 0;
 
 sub _build_tt {
     my $self = $_[0];
@@ -33,11 +37,17 @@ sub _build_tt {
 
 sub add {
     my ($self, $data) = @_;
-    if ($self->count == 0 && $self->xml) {
-        $self->fh->print($XML_DECLARATION);
+    if ($self->count == 0) {
+        $self->fh->print($XML_DECLARATION) if $self->xml;
+        $self->tt->process($self->template_before, {}, $self->fh) if $self->template_before;
     }
     $self->tt->process($self->template, $data, $self->fh);
     $data;
+}
+
+sub commit {
+    my ($self) = @_;
+    $self->tt->process($self->template_after, {}, $self->fh) if $self->template_after;
 }
 
 1;
