@@ -12,14 +12,14 @@ use IO::String;
 our @EXPORT_OK = qw(
     load_package io
     get_data_at
-    array_group_by array_pluck array_to_sentence array_sum array_includes
+    array_group_by array_pluck array_to_sentence array_sum array_includes array_any
     as_utf8 trim capitalize
     is_same check_same is_different check_different
 );
 
 our %EXPORT_TAGS = (
     all    => \@EXPORT_OK,
-    array  => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes)],
+    array  => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
     string => [qw(as_utf8 trim capitalize)],
     is     => [qw(is_same is_different)],
     check  => [qw(check_same check_different)],
@@ -110,9 +110,13 @@ sub array_sum {
 
 sub array_includes {
     my ($arr, $val) = @_;
-    for (@$arr) {
-        return 1 if is_same($val, $_);
-    }
+    is_same($val, $_) && return 1 for @$arr;
+    0;
+}
+
+sub array_any {
+    my ($arr, $sub) = @_;
+    $sub->($_) && return 1 for @$arr;
     0;
 }
 

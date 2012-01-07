@@ -42,7 +42,6 @@ sub add {
         $self->tt->process($self->template_before, {}, $self->fh) if $self->template_before;
     }
     $self->tt->process($self->template, $data, $self->fh);
-    $data;
 }
 
 sub commit {
