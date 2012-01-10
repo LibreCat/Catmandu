@@ -26,14 +26,14 @@ sub bag {
     my $name = shift || $self->default_bag;
     $bag_instances{$self}{$name} ||= do {
         my $pkg = $self->bag_class;
-        my $fix;
-        if (exists $self->bags->{$name}{plugins}) {
-            $pkg = $pkg->with_plugins($self->bags->{$name}{plugins});
+        if (my $options = $self->bags->{$name}) {
+            $options = {%$options};
+            if (my $plugins = delete $options->{plugins}) {
+                $pkg = $pkg->with_plugins($plugins);
+            }
+            return $pkg->new(%$options, store => $self, name => $name);
         }
-        if (exists $self->bags->{$name}{fix}) {
-            $fix = $self->bags->{$name}{fix};
-        }
-        $pkg->new(store => $self, name => $name, fix => $fix);
+        $pkg->new(store => $self, name => $name);
     };
 }
 

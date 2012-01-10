@@ -58,6 +58,8 @@ with 'Catmandu::Bag';
 with 'Catmandu::Searchable';
 with 'Catmandu::Buffer';
 
+has cql_mapping => (is => 'ro');
+
 sub generator {
     my ($self) = @_;
     my $limit = $self->buffer_size;
@@ -193,7 +195,8 @@ sub searcher {
 }
 
 sub translate_cql_query {
-    CQL::ElasticSearch->parse($_[1]);
+    my ($self, $cql) = @_;
+    CQL::ElasticSearch->new(mapping => $self->cql_mapping)->parse($cql);
 }
 
 sub normalize_query {

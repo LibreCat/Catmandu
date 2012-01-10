@@ -9,7 +9,7 @@ requires 'add';
 with 'Catmandu::Fixable';
 
 before add => sub {
-    $_[1] = $_[0]->fix->fix($_[1]) if $_[0]->has_fix;
+    $_[1] = $_[0]->fix->fix($_[1]) if $_[0]->fix;
 };
 
 sub add_many {
