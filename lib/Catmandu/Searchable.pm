@@ -26,6 +26,8 @@ my $AROUND_SEARCH = sub {
     if ($args{start} < 0) {
         $args{start} = 0;
     }
+    $args{start}+=0;
+    $args{limit}+=0;
     if (my $cql = delete $args{cql_query}) {
         $args{query} = $self->translate_cql_query($cql);
     }

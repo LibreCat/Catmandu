@@ -71,12 +71,12 @@ sub fix {
         return $data;
     }
 
-    if (is_invocant($data)) {
-        return $data->map(sub {
-            my $d = $_[0];
+    if (is_array_ref($data)) {
+        return [map {
+            my $d = $_;
             $d = $_->fix($d) for @$fixes;
             $d;
-        });
+        } @$data];
     }
 
     if (is_code_ref($data)) {
@@ -86,6 +86,14 @@ sub fix {
             $d = $_->fix($d) for @$fixes;
             $d;
         };
+    }
+
+    if (is_invocant($data)) {
+        return $data->map(sub {
+            my $d = $_[0];
+            $d = $_->fix($d) for @$fixes;
+            $d;
+        });
     }
 
     return;
