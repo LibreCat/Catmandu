@@ -1,13 +1,14 @@
-package Dancer::Plugin::SRU;
+package Dancer::Plugin::Catmandu::SRU;
+
+our $VERSION = '0.1';
+
 use Catmandu::Sane;
 use Dancer::Plugin;
 use Dancer qw(:syntax);
-use Dancer::Plugin::Catmandu;
+use Catmandu;
 use Catmandu::Fix;
 use SRU::Request;
 use SRU::Response;
-
-our $VERSION = '0.1';
 
 my $setting = plugin_setting;
 
@@ -21,7 +22,7 @@ my $record_schemas = do {
         my $identifier = $schema->{identifier};
         my $short_name = $schema->{short_name};
         if (my $fix = $schema->{fix}) {
-            $schema->{fix} = Catmandu::Fix->new(@$fix);
+            $schema->{fix} = Catmandu::Fix->new(fixes => $fix);
         }
         $hash->{$identifier} = $schema;
         $hash->{$short_name} = $schema;
@@ -32,7 +33,7 @@ my $record_schemas = do {
 sub sru_provider {
     my ($path) = @_;
 
-    my $index = Catmandu::get_index($setting->{index});
+    my $bag = Catmandu::store($setting->{store})->bag($setting->{bag});
 
     get $path => sub {
         content_type 'xml';
@@ -53,6 +54,10 @@ sub sru_provider {
                 my $fix = $schema->{fix};
                 my $template = $schema->{template};
                 my $layout = $schema->{layout};
+                my $cql = $request->query;
+                if ($setting->{filter}) {
+                    $cql = "($setting->{filter}) AND ($cql)";
+                }
 
                 my $start = $request->startRecord || 0;
                 my $limit = $request->maximumRecords || 20;
@@ -60,15 +65,15 @@ sub sru_provider {
                     $limit = 1000;
                 }
 
-                my $hits = $index->cql_search($request->query, limit => $limit, start => $start);
+                my $hits = $bag->search(cql_query => $cql, limit => $limit, start => $start);
                 $hits->each(sub {
                     my $obj = $_[0];
                     if ($fix) {
                         $obj = $fix->fix($obj);
                     }
-                    my $rec = template $template, $obj, { layout => $layout }; 
+                    my $rec = template $template, $obj, {layout => $layout};
                     $response->addRecord(SRU::Response::Record->new(
-                        recordSchema => $identifier, 
+                        recordSchema => $identifier,
                         recordData   => $rec
                     ));
                 });

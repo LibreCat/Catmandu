@@ -1,9 +1,10 @@
 package Catmandu::Importer::OAI;
+
 use Catmandu::Sane;
-use Catmandu::Object url => 'r', set => 'r', record => 'r';
+use Moo;
 use Net::OAI::Harvester;
 
-my @oai_dc_elements = qw(
+my $OAI_DC_ELEMENTS = [qw(
     title
     creator
     subject
@@ -19,51 +20,40 @@ my @oai_dc_elements = qw(
     relation
     coverage
     rights
-);
+)];
 
-sub _rec_to_obj {
-    my ($self, $rec) = @_;
-    my $obj = { _id => $rec->header->identifier };
-    my $metadata = $rec->metadata;
-    foreach (@oai_dc_elements) {
-        $obj->{$_} = $metadata->{$_};
-    }
-    $obj;
+with 'Catmandu::Importer';
+
+has url => (is => 'ro', required => 1);
+has set => (is => 'ro');
+has oai => (is => 'ro', lazy => 1, builder => '_build_oai');
+
+sub _build_oai {
+    Net::OAI::Harvester->new(baseURL => $_[0]->url);
 }
 
-sub each {
-    my ($self, $sub) = @_;
+sub _map_record {
+    my ($self, $rec) = @_;
+    my $data = {_id => $rec->header->identifier};
+    for my $key (@$OAI_DC_ELEMENTS) {
+        my $val = $rec->metadata->{$key};
+        $data->{$key} = $val if @$val;
+    }
+    $data;
+}
 
-    my $oai = Net::OAI::Harvester->new(baseURL => $self->url);
-    my $res;
-
-    if ($self->record) {
-        $res = $oai->getRecord(identifier => $self->record, metadataPrefix => 'oai_dc');
-
-        if ($res->errorCode) {
-            return 0;
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $res = $self->set
+            ? $self->oai->listAllRecords(metadataPrefix => 'oai_dc', set => $self->set)
+            : $self->oai->listAllRecords(metadataPrefix => 'oai_dc');
+        return if $res->errorCode;
+        if (my $rec = $res->next) {
+            return $self->_map_record($rec);
         }
-
-        my $obj = $self->_rec_to_obj($res);
-        $sub->($obj);
-        return 1;
-    }
-
-    $res = $oai->listAllRecords(set => $self->set, metadataPrefix => 'oai_dc');
-
-    if ($res->errorCode) {
-        return 0;
-    }
-
-    my $n = 0;
-
-    while (my $rec = $res->next) {
-        my $obj = $self->_rec_to_obj($rec);
-        $sub->($obj);
-        $n++;
-    }
-
-    $n;
+        return;
+    };
 }
 
 1;

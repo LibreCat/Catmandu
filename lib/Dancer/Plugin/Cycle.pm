@@ -1,10 +1,11 @@
 package Dancer::Plugin::Cycle;
+
+our $VERSION = '0.1';
+
 use strict;
 use warnings;
 use Dancer qw(:syntax);
 use Dancer::Plugin;
-
-our $VERSION = '0.1';
 
 my $cycle = [];
 my $i = 0;
@@ -15,7 +16,9 @@ sub cycle {
         $i = 0;
         return;
     }
-    $i = 0 if $i == @$cycle;
+    if ($i == @$cycle) {
+        $i = 0;
+    }
     $cycle->[$i++];
 }
 

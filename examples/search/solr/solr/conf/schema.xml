@@ -453,7 +453,8 @@
        when adding a document.
    -->
 
-   <field name="_id" type="string" indexed="true" stored="true" required="true"/> 
+   <field name="_id" type="string" indexed="true" stored="true" required="true"/>
+   <field name="_bag" type="string" indexed="true" stored="true" required="true"/> 
    <field name="title" type="text" indexed="true" stored="true" multiValued="true"/>
    <field name="creator" type="text" indexed="true" stored="true" multiValued="true"/>
    <field name="subject" type="text" indexed="true" stored="true" multiValued="true"/>

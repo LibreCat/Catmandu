@@ -1,10 +1,11 @@
 package Catmandu::Fix::clone;
+
 use Catmandu::Sane;
-use Catmandu::Object;
-use Clone qw(clone);
+use Moo;
+use Clone;
 
 sub fix {
-    clone $_[1];
+    Clone::clone($_[1]);
 }
 
 1;

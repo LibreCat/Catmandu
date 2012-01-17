@@ -1,3 +1,4 @@
+[% WRAPPER layouts/screen.tt %]
 <p><span class="total">[% total %]</span> publications found</p>
 
 [% IF hits.size %]
@@ -47,4 +48,5 @@
     [%- END %]
 </ul>
 [% PROCESS prevnext %]
+[% END %]
 [% END %]

@@ -1,30 +1,30 @@
 package Example::App::Search;
+
 use Catmandu::Sane;
+use Catmandu qw(:all);
 use Dancer qw(:syntax);
-use Dancer::Plugin::Catmandu;
+
+my $bag = store('search')->bag('example');
 
 get '/opensearch.xml' => sub {
-    content_type 'application/xml';
+    content_type 'xml';
     template 'opensearch.xml', {}, {layout => 0};
 };
 
 get '/' => sub {
-    if (my $qs   = params->{qs}) {
-        my $limit = params->{limit} || 15;
-        my $start = params->{start} || 0;
-        $limit = 1000 if $limit > 1000;
-        $start = 0    if $start < 0;
+    if (my $qs = params->{qs}) {
 
-        my $res = get_index->search($qs, limit => $limit, start => $start);
+        my $hits = $bag->search(query => $qs, limit => $limit, start => $start);
 
         return template 'hits', {
-            qs => $qs,
-            start => $start,
-            limit => $limit,
-            total => $res->total,
-            hits => $res->hits,
+            qs    => $qs,
+            start => $hits->start,
+            limit => $hits->limit,
+            total => $hits->total,
+            hits  => $hits->hits,
         };
     }
+
     template 'index';
 };
 

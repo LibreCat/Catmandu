@@ -1,6 +1,6 @@
 package Catmandu::Index::Lucy;
 use Catmandu::Sane;
-use Catmandu::Util qw(quacks assert_id);
+use Catmandu::Util qw(is_able check_id);
 use Lucy::Plan::Schema;
 use Lucy::Plan::FullTextType;
 use Lucy::Analysis::PolyAnalyzer;
@@ -43,7 +43,7 @@ sub _build_searcher {
 
 sub _add {
     my ($self, $obj) = @_;
-    assert_id($obj);
+    check_id($obj);
     my $type   = $self->_ft_field_type;
     my $schema = $self->_schema;
     for my $name (keys %$obj) {
@@ -55,7 +55,7 @@ sub _add {
 
 sub add {
     my ($self, $obj) = @_;
-    if (quacks $obj, 'each') {
+    if (is_able $obj, 'each') {
         $obj->each(sub { $self->_add($_[0]) });
     } else {
         $self->_add($obj);
@@ -104,7 +104,7 @@ sub search {
 
 sub delete {
     my ($self, $id) = @_;
-    $self->_indexer->delete_by_term(field => '_id', term => assert_id($id));
+    $self->_indexer->delete_by_term(field => '_id', term => check_id($id));
     return;
 }
 

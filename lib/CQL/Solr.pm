@@ -3,10 +3,10 @@ use strict;
 use warnings;
 use CQL::Parser;
 
-my $any_field = qr/^(srw|cql)\.(serverChoice|anywhere)$/i;
-my $match_all = qr/^(srw|cql)\.allRecords$/i;
-my $distance_modifier = qr/\s*\/\s*distance\s*<\s*(\d+)/i;
-my $reserved = qr/[\+\-\&\|\!\(\)\{\}\[\]\^\"\~\*\?\:\\]/;
+my $any_field = qr'^(srw|cql)\.(serverChoice|anywhere)$'i;
+my $match_all = qr'^(srw|cql)\.allRecords$'i;
+my $distance_modifier = qr'\s*\/\s*distance\s*<\s*(\d+)'i;
+my $reserved = qr'[\+\-\&\|\!\(\)\{\}\[\]\^\"\~\*\?\:\\]';
 
 my $parser;
 
@@ -32,14 +32,14 @@ sub visit {
     my ($self, $node) = @_;
 
     if ($node->isa('CQL::TermNode')) {
-        my $qualifier = $node->getQualifier;
+        my $term = escape_term($node->getTerm);
 
-        if ($qualifier =~ $match_all) {
+        if ($term =~ $match_all) {
             return "*:*";
         }
 
+        my $qualifier = $node->getQualifier;
         my $relation  = $node->getRelation;
-        my $term      = escape_term($node->getTerm);
         my @modifiers = $relation->getModifiers;
         my $base      = lc $relation->getBase;
 
@@ -178,7 +178,7 @@ Converts the given L<CQL::Node> to a Solr query string.
 
 =head1 TODO
 
-support cql 1.2, more modifiers, sortBy, encloses
+support cql 1.2, more modifiers (esp. masked), sortBy, encloses
 
 =head1 SEE ALSO
 

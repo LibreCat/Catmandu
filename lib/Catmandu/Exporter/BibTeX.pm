@@ -1,10 +1,12 @@
 package Catmandu::Exporter::BibTeX;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io quacks);
-use Catmandu::Object file => { default => sub { *STDOUT } };
+use Moo;
 use LaTeX::Encode;
 
-my $tags = [qw(
+with 'Catmandu::Exporter';
+
+my $TAGS = [qw(
     abstract
     address
     author
@@ -36,7 +38,7 @@ my $tags = [qw(
     year
 )];
 
-my $join = {
+my $JOIN = {
     author   => ' and ',
     editor   => ' and ',
     language => ',',
@@ -44,40 +46,28 @@ my $join = {
 };
 
 sub add {
-    my ($self, $obj) = @_;
+    my ($self, $data) = @_;
+    my $fh = $self->fh;
 
-    my $file = io $self->file, 'w';
+    my $type = $data->{_type} || 'misc';
+    my $citekey = $data->{_citekey} || $data->{_id} || $self->count;
 
-    my $add = sub {
-        my $o = $_[0];
-
-        my $type    = $o->{_type} || 'misc';
-        my $citekey = $o->{_citekey};
-
-        for my $tag (keys %$join) {
-            my $val = $o->{$tag};
-            if ($val && ref($val) eq 'ARRAY') {
-                $o->{$tag} = join $join->{$tag}, @$val;
-            }
+    for my $tag (keys %$JOIN) {
+        my $val = $data->{$tag};
+        if ($val && ref($val) eq 'ARRAY') {
+            $data->{$tag} = join $JOIN->{$tag}, @$val;
         }
-
-        print $file "\@$type\{$citekey,\n";
-
-        for my $tag (@$tags) {
-            if (my $val = $o->{$tag}) {
-                printf $file "  %-12s = {%s},\n", $tag, latex_encode($val);
-            }
-        }
-
-        print $file "}\n\n";
-    };
-
-    if (quacks $obj, 'each') {
-        return $obj->each($add);
     }
 
-    $add->($obj);
-    1;
+    print $fh "\@$type\{$citekey,\n";
+
+    for my $tag (@$TAGS) {
+        if (my $val = $data->{$tag}) {
+            printf $fh "  %-12s = {%s},\n", $tag, latex_encode($val);
+        }
+    }
+
+    print $fh "}\n\n";
 }
 
 1;

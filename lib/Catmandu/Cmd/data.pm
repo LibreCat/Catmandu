@@ -1,111 +1,111 @@
 package Catmandu::Cmd::data;
+
 use Catmandu::Sane;
-use parent qw(Catmandu::Cmd);
+use parent 'Catmandu::Cmd';
 use Time::HiRes qw(gettimeofday tv_interval);
-use Catmandu::Iterator;
-use Catmandu::Searcher;
+use Catmandu qw(:all);
 use Catmandu::Fix;
-use Catmandu;
 
 sub command_opt_spec {
     (
-        ['from' => hidden => { required => 1, one_of => [
-            [ "from-store=s", "" ],
-            [ "from-index=s", "" ],
-            [ "from-importer=s", "" ],
-        ]}],
-        [ "from-arg=s@", "", { default => [] } ],
-        [ "from-opt=s%", "", { default => {} } ],
-        ['into' => hidden => { required => 1, one_of => [
-            [ "into-store=s", "" ],
-            [ "into-index=s", "" ],
-            [ "into-exporter=s", "" ],
-        ]}],
-        [ "into-arg=s@", "", { default => [] } ],
-        [ "into-opt=s%", "", { default => {} } ],
-        [ "start=i", "", { default => 0 } ],
+        [ "from-store=s", "",    { default => Catmandu::default_store } ],
+        [ "from-importer=s", "", { default => 'JSON' } ],
+        [ "from-bag=s", "" ],
+        [ "count", "" ],
+        [ "into-exporter=s", "", { default => 'JSON' } ],
+        [ "into-store=s", "",    { default => Catmandu::default_store } ],
+        [ "into-bag=s", "" ],
+        [ "start=i", "" ],
         [ "limit=i", "" ],
-        [ "verbose|v", "" ],
-        [ "fix=s@", "fix or fix file (repeatable)" ],
-        [ "reify", "" ],
+        [ "total=i", "" ],
+        [ "query=s", "" ],
+        [ "cql-query=s", "" ],
+        [ "fix=s@", "fix expression(s) or fix file(s)" ],
         [ "replace", "" ],
-        [ "query|q=s", "" ],
-        [ "pretty", "" ],
-        [ "from-file=s", "" ],
-        [ "from-url=s", "" ],
-        [ "from-collection=s", "" ],
-        [ "into-file=s", "" ],
-        [ "into-collection=s", "" ],
+        [ "verbose|v", "" ],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    if ($opts->from eq 'from_importer') {
-        $opts->from_opt->{file}   = $opts->from_file if $opts->from_file;
-        $opts->from_opt->{url}    = $opts->from_url  if $opts->from_url;
+    my $from_opts = {};
+    my $into_opts = {};
+    for (my $i = 0; $i < @$args; $i++) {
+        my $arg = $args->[$i];
+        if (my ($for, $key) = $arg =~ /^--(from|into)-([\w\-]+)$/) {
+            if (my $val = $args->[++$i]) {
+                $key =~ s/-/_/g;
+                ($for eq 'from' ? $from_opts : $into_opts)->{$key} = $val;
+            }
+        }
     }
-
-    if ($opts->into eq 'into_exporter') {
-        $opts->into_opt->{file}   = $opts->into_file if $opts->into_file;
-        $opts->into_opt->{pretty} = 1                if $opts->pretty;
-    }
-
-    my @from_args = (@{$opts->from_arg}, %{$opts->from_opt});
-    my @into_args = (@{$opts->into_arg}, %{$opts->into_opt});
 
     my $from;
-    given ($opts->from) {
-        when ('from_store')    { $from = Catmandu::new_store($opts->from_store, @from_args)->collection($opts->from_collection) }
-        when ('from_index')    { $from = Catmandu::Searcher->new(Catmandu::new_index($opts->from_index, @from_args), $opts->query, reify => $opts->reify) }
-        when ('from_importer') { $from = Catmandu::new_importer($opts->from_importer, @from_args) }
-    }
-
     my $into;
-    given ($opts->into) {
-        when ('into_store')    { $into = Catmandu::new_store($opts->into_store, @into_args)->collection($opts->into_collection) }
-        when ('into_index')    { $into = Catmandu::new_index($opts->into_index, @into_args) }
-        when ('into_exporter') { $into = Catmandu::new_exporter($opts->into_exporter, @into_args) }
+
+    if ($opts->from_bag) {
+        $from = store($opts->from_store, $from_opts)->bag($opts->from_bag)
+    } else {
+        $from = importer($opts->from_importer, $from_opts);
     }
 
-    my $v = $opts->verbose;
-    my $n = 0;
+    if ($opts->query || $opts->cql_query) {
+        $self->usage_error("Bag isn't searchable") unless $from->can('searcher');
+        $from = $from->searcher(
+            cql_query => $opts->cql_query,
+            query     => $opts->query,
+            limit     => $opts->limit,
+        );
+    }
 
-    if ($opts->limit // $opts->start) {
-        $from = Catmandu::Iterator->new($from) unless $from->isa('Catmandu::Iterator');
-        $from->slice($opts->start, $opts->limit);
+    if ($opts->start || defined $opts->total) {
+        $from = $from->slice($opts->start, $opts->total);
+    }
+
+    if ($opts->count) {
+        return say $from->count;
+    }
+
+    if ($opts->into_bag) {
+        $into = store($opts->into_store, $into_opts)->bag($opts->into_bag);
+    } else {
+        $into = exporter($opts->into_exporter, $into_opts);
     }
 
     if (my $fix = $opts->fix) {
-        $from = Catmandu::Fix->new(@$fix)->fix($from);
+        $from = Catmandu::Fix->new(fixes => $fix)->fix($from);
     }
 
     if ($opts->replace && $into->can('delete_all')) {
         $into->delete_all;
     }
 
-    $into->add(Catmandu::Iterator->new(sub {
-        my $sub = $_[0];
-        my $t   = [gettimeofday];
+    my $v = $opts->verbose;
+    my $n = 0;
 
-        $from->each(sub {
-            $sub->($_[0]);
-            $n++;
-            if ($v and $n % 100 == 0) {
-                printf STDERR "added %9d objects (%d/sec)\n", $n, $n/tv_interval($t);
+    if ($v) {
+        my $t = [gettimeofday];
+        $from = $from->tap(sub {
+            if (++$n % 100 == 0) {
+                printf STDERR "added %9d (%d/sec)\n", $n, $n/tv_interval($t);
             }
         });
-    }));
+    }
+
+    $n = $into->add_many($from);
 
     if ($into->can('commit')) {
-        $into->commit;
+        my ($ok, $errors) = $into->commit;
+        if ($errors) {
+            say STDERR @$errors;
+        }
     }
 
     if ($v) {
-        say STDERR $n > 1
-            ? "added $n objects"
-            : "added 1 object";
+        say STDERR $n == 1
+            ? "added 1 object"
+            : "added $n objects";
         say STDERR "done";
     }
 }

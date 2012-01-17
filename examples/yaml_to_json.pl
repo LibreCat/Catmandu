@@ -3,10 +3,10 @@
 use Catmandu::Importer::YAML;
 use Catmandu::Exporter::JSON;
 
-my $in  = shift;
-my $out = shift;
+my $in  = shift or die "usage: $PROGRAM_NAME yaml-file json-file";
+my $out = shift or die "usage: $PROGRAM_NAME yaml-file json-file";
 
 my $importer = Catmandu::Importer::YAML->new(file => $in);
-my $exporter = Catmandu::Exporter::JSON->new(file => $out, pretty => 1);
+my $exporter = Catmandu::Exporter::JSON->new(file => $out);
 
-$exporter->add($importer);
+$exporter->add_many($importer);

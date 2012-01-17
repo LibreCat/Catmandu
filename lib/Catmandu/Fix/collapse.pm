@@ -1,6 +1,7 @@
 package Catmandu::Fix::collapse;
+
 use Catmandu::Sane;
-use Catmandu::Object;
+use Moo;
 use CGI::Expand qw(collapse_hash);
 
 sub fix {

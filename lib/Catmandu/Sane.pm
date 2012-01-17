@@ -3,9 +3,8 @@ use strict;
 use warnings;
 use 5.010;
 use feature ();
-use utf8;
-use Scalar::Util ();
 use Carp ();
+use utf8;
 
 sub import {
     my $pkg = caller;
@@ -13,9 +12,8 @@ sub import {
     strict->import;
     warnings->import;
     feature->import(':5.10');
-    utf8->import;
-    Scalar::Util->export_to_level(1, $pkg, qw(blessed));
     Carp->export_to_level(1, $pkg, qw(confess));
+    utf8->import;
 }
 
 1;
@@ -34,9 +32,8 @@ Sensible package boilerplate equivalent to:
 
     use strict;
     use warnings;
-    use 5.010;
-    use utf8;
-    use Scalar::Util qw(blessed);
+    use 5.012;
     use Carp qw(confess);
+    use utf8;
 
 =cut

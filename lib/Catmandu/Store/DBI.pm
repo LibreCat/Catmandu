@@ -1,24 +1,25 @@
 package Catmandu::Store::DBI;
-use Catmandu::Sane;
-use parent qw(Catmandu::Store);
-use Catmandu::Util qw(opts);
-use DBI;
-use Catmandu::Object
-    dsn      => 'r',
-    username => { default => sub { '' } },
-    password => { default => sub { '' } },
-    dbh      => { default => '_build_dbh' };
 
-sub _build_args {
-    my ($self, $dsn, @args) = @_;
-    my $args = opts @args;
-    $args->{dsn} = $dsn;
-    $args;
-}
+use Catmandu::Sane;
+use Moo;
+use DBI;
+
+has data_source => (is => 'ro', required => 1);
+has username    => (is => 'ro', default => sub { '' });
+has password    => (is => 'ro', default => sub { '' });
+
+has dbh => (
+    is => 'ro',
+    init_arg => undef,
+    lazy => 1,
+    builder => '_build_dbh',
+);
 
 sub _build_dbh {
     my $self = $_[0];
-    DBI->connect($self->dsn, $self->username, $self->password, {
+    DBI->connect($self->data_source, {
+        Username => $self->username,
+        Password => $self->password,
         AutoCommit => 1,
         RaiseError => 1,
     });
@@ -29,7 +30,7 @@ sub transaction {
 
     my $dbh = $self->dbh;
 
-    if (! $dbh->{AutoCommit}) {
+    if (!$dbh->{AutoCommit}) {
         return $sub->();
     }
 
@@ -52,24 +53,23 @@ sub transaction {
     @res;
 }
 
-sub DESTROY {
+sub DEMOLISH {
     $_[0]->dbh->disconnect;
 }
 
-package Catmandu::Store::DBI::Collection;
-use Catmandu::Sane;
-use parent qw(Catmandu::Collection);
-use Catmandu::Util qw(get_id);
-use JSON;
-use Catmandu::Object
-    _sth_get    => { default => '_build_sth_get' },
-    _sth_each   => { default => '_build_sth_each' },
-    _sth_delete => { default => '_build_sth_delete' },
-    _dbh_add    => { default => '_build_dbh_add' };
+package Catmandu::Store::DBI::Bag;
 
-sub _build {
-    my ($self, $args) = @_;
-    $self->SUPER::_build($args);
+use Catmandu::Sane;
+use JSON qw(encode_json decode_json);
+use Moo;
+
+has _sth_get        => (is => 'ro', builder => '_build_sth_get');
+has _sth_delete     => (is => 'ro', builder => '_build_sth_delete');
+has _sth_delete_all => (is => 'ro', builder => '_build_sth_delete_all');
+has _sth_add        => (is => 'ro', builder => '_build_sth_add');
+
+sub BUILD {
+    my $self = $_[0];
     my $name = $self->name;
     $self->store->dbh->do("create table if not exists $name(id varchar(255) not null primary key, data text not null)");
 }
@@ -90,6 +90,12 @@ sub _build_sth_delete {
     my $self = $_[0];
     my $name = $self->name;
     $self->store->dbh->prepare("delete from $name where id = ?");
+}
+
+sub _build_sth_delete_all {
+    my $self = $_[0];
+    my $name = $self->name;
+    $self->store->dbh->prepare("delete from $name");
 }
 
 sub _build_dbh_add_sqlite {
@@ -130,34 +136,41 @@ sub _build_dbh_add {
     }
 }
 
-sub each {
-    my ($self, $sub) = @_;
-    my $sth = $self->_sth_each;
-    $sth->execute;
-    my $n = 0;
-    while (my $row = $sth->fetchrow_arrayref) {
-        $sub->(JSON::decode_json($row->[0]));
-        $n++;
-    }
-    $n;
-}
-
-sub _get {
+sub get {
     my ($self, $id) = @_;
     my $row = $self->store->dbh->selectrow_arrayref($self->_sth_get, {}, $id) || return;
-    JSON::decode_json($row->[0]);
+    decode_json($row->[0]);
 }
 
-sub _add {
-    my ($self, $obj) = @_;
-    $self->_dbh_add->($self, get_id($obj), JSON::encode_json($obj));
-    $obj;
+sub add {
+    my ($self, $data) = @_;
+    $self->_dbh_add->($self, $data->{_id}, encode_json($data));
 }
 
-sub _delete {
+sub delete {
     my ($self, $id) = @_;
     $self->_sth_delete->execute($id);
-    return;
+}
+
+sub delete_all {
+    my ($self) = @_;
+    $self->_sth_delete_all->execute;
+}
+
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $sth;
+        state $row;
+        unless ($sth) {
+            $sth = $self->_build_sth_each;
+            $sth->execute;
+        }
+        if ($row = $sth->fetchrow_arrayref) {
+            return decode_json($row->[0]);
+        }
+        return;
+    };
 }
 
 1;

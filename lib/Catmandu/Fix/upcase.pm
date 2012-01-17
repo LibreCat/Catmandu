@@ -1,33 +1,36 @@
 package Catmandu::Fix::upcase;
-use Catmandu::Sane;
-use Catmandu::Util qw(value);
-use Catmandu::Object;
 
-sub _build_args {
-    my ($self, $path, $key) = @_;
-    { path => $path,
-      key  => $key, };
-}
+use Catmandu::Sane;
+use Catmandu::Util qw(:is data_at as_utf8);
+use Moo;
+
+has path => (is => 'ro', required => 1);
+has key  => (is => 'ro', required => 1);
+
+around BUILDARGS => sub {
+    my ($orig, $class, $path) = @_;
+    $path = [split /\./, $path];
+    my $key = pop @$path;
+    $orig->($class, path => $path, key => $key);
+};
 
 sub fix {
-    my ($self, $obj) = @_;
+    my ($self, $data) = @_;
 
-    my $key = $self->{key};
-    my @values = $self->{path}->values($obj);
-
-    for my $o (@values) {
-        next if ref $o ne 'HASH';
-
-        my $val = $o->{$key};
-
-        if (ref $val eq 'ARRAY') {
-            $o->{$key} = [ map { value($_) ? uc($_) : $_ } @$val ];
-        } elsif (value $val) {
-            $o->{$key} = uc $val;
+    my $key = $self->key;
+    my @matches = grep ref, data_at($self->path, $data);
+    for my $match (@matches) {
+        if (is_array_ref($match)) {
+            is_integer($key) || next;
+            my $val = $match->[$key];
+            $match->[$key] = uc as_utf8 $val if is_string($val);
+        } else {
+            my $val = $match->{$key};
+            $match->{$key} = uc as_utf8 $val if is_string($val);
         }
     }
 
-    $obj;
+    $data;
 }
 
 1;
