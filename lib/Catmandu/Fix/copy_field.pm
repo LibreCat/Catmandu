@@ -1,7 +1,7 @@
 package Catmandu::Fix::copy_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is get_data_at);
+use Catmandu::Util qw(:is data_at);
 use Moo;
 
 has old_path => (is => 'ro', required => 1);
@@ -26,8 +26,8 @@ sub fix {
     my $old_key  = $self->old_key;
     my $new_path = $self->new_path;
     my $new_key  = $self->new_key;
-    my @old_matches = grep ref, get_data_at($self->old_path, $data);
-    my @new_matches = grep ref, get_data_at($self->new_path, $data);
+    my @old_matches = grep ref, data_at($self->old_path, $data);
+    my @new_matches = grep ref, data_at($self->new_path, $data);
     if (@old_matches == @new_matches) {
         for (my $i = 0; $i < @old_matches; $i++) {
             my $old_match = $old_matches[$i];

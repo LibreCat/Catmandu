@@ -1,7 +1,7 @@
 package Catmandu::Fix::rename_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is get_data_at);
+use Catmandu::Util qw(:is data_at);
 use Moo;
 
 has path    => (is => 'ro', required => 1);
@@ -20,7 +20,7 @@ sub fix {
 
     my $old_key = $self->old_key;
     my $new_key = $self->new_key;
-    for my $match (get_data_at($self->path, $data)) {
+    for my $match (data_at($self->path, $data)) {
         if (is_array_ref($match) && exists $match->{$old_key}) {
             $match->{$new_key} = delete $match->{$old_key};
         }

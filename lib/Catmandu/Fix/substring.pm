@@ -1,7 +1,7 @@
 package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is get_data_at);
+use Catmandu::Util qw(:is data_at);
 use Moo;
 
 has path => (is => 'ro', required => 1);
@@ -20,7 +20,7 @@ sub fix {
 
     my $key = $self->key;
     my $args = $self->args;
-    my @matches = grep ref, get_data_at($self->path, $data);
+    my @matches = grep ref, data_at($self->path, $data);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             is_integer($key) || next;

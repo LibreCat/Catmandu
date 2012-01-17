@@ -1,7 +1,7 @@
 package Catmandu::Fix::downcase;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is get_data_at as_utf8);
+use Catmandu::Util qw(:is data_at as_utf8);
 use Moo;
 
 has path => (is => 'ro', required => 1);
@@ -18,7 +18,7 @@ sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    my @matches = grep ref, get_data_at($self->path, $data);
+    my @matches = grep ref, data_at($self->path, $data);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             is_integer($key) || next;

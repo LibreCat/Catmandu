@@ -9,21 +9,19 @@ use Data::Compare ();
 use IO::File;
 use IO::String;
 
-our @EXPORT_OK = qw(
-    load_package io
-    get_data_at
-    array_group_by array_pluck array_to_sentence array_sum array_includes array_any
-    as_utf8 trim capitalize
-    is_same check_same is_different check_different
+our %EXPORT_TAGS = (
+    package => [qw(load_package)],
+    io      => [qw(io)],
+    data    => [qw(data_at)],
+    array   => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
+    string  => [qw(as_utf8 trim capitalize)],
+    is      => [qw(is_same is_different)],
+    check   => [qw(check_same check_different)],
 );
 
-our %EXPORT_TAGS = (
-    all    => \@EXPORT_OK,
-    array  => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
-    string => [qw(as_utf8 trim capitalize)],
-    is     => [qw(is_same is_different)],
-    check  => [qw(check_same check_different)],
-);
+our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
+
+$EXPORT_TAGS{all} = \@EXPORT_OK;
 
 sub load_package {
     my ($pkg, $prefix) = @_;
@@ -60,7 +58,7 @@ sub io {
     $io_obj;
 }
 
-sub get_data_at {
+sub data_at {
     my ($path, $data) = @_;
     if (ref $path) {
         $path = [@$path];
@@ -71,7 +69,7 @@ sub get_data_at {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
-                return map { get_data_at($path, $_) } @$data;
+                return map { data_at($path, $_) } @$data;
             } else {
                 is_natural($key) || return;
                 $data = $data->[$key];
@@ -105,7 +103,7 @@ sub array_to_sentence {
 }
 
 sub array_sum {
-    List::Util::sum(0, $_[0]);
+    List::Util::sum(0, @{$_[0]});
 }
 
 sub array_includes {
