@@ -203,8 +203,12 @@ sub _translate_sru_sortkey {
     $field || return;
     if (my $map = $self->cql_mapping) {
         $map = $map->{$field} || return;
-        $map = $map->{sort}   || return;
-        if (ref $map && $map->{field}) {
+        $map->{sort} || return;
+        if (ref $map->{sort} && $map->{sort}{field}) {
+            $field = $map->{sort}{field};
+        } elsif (ref $map->{field}) {
+            $field = $map->{field}->[0];
+        } elsif ($map->{field}) {
             $field = $map->{field};
         }
     }
