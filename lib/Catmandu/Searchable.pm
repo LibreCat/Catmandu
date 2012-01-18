@@ -3,6 +3,7 @@ package Catmandu::Searchable;
 use Catmandu::Sane;
 use Moo::Role;
 
+requires 'translate_sru_sortkeys';
 requires 'translate_cql_query';
 requires 'search';
 requires 'searcher';
@@ -28,8 +29,11 @@ my $AROUND_SEARCH = sub {
     }
     $args{start}+=0;
     $args{limit}+=0;
-    if (my $cql = delete $args{cql_query}) {
-        $args{query} = $self->translate_cql_query($cql);
+    if (my $sru_sortkeys = delete $args{sru_sortkeys}) {
+        $args{sort} = $self->translate_sru_sortkeys($sru_sortkeys);
+    }
+    if (my $cql_query = delete $args{cql_query}) {
+        $args{query} = $self->translate_cql_query($cql_query);
     }
     $args{query} = $self->normalize_query($args{query});
     $orig->($self, %args);

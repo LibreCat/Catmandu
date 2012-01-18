@@ -7,7 +7,7 @@ use Catmandu::Util qw(load_package);
 my $INIT = <<PERL;
 use Catmandu::Sane;
 use Catmandu qw(:all);
-use Dancer   qw(:syntax settings config);
+use Dancer   qw(:syntax config);
 PERL
 
 sub command_opt_spec {

@@ -138,19 +138,19 @@ sub capitalize {
 }
 
 sub is_same {
-    Data::Compare::Compare($_[0], $_[1]);
-}
-
-sub check_same {
-    is_same(@_) || confess('error: should be same');
+    goto &Data::Compare::Compare;
 }
 
 sub is_different {
     !is_same(@_);
 }
 
+sub check_same {
+    is_same(@_) || confess('error: should be same');
+}
+
 sub check_different {
-    !is_same(@_) || confess('error: should be different');
+    is_different(@_) || confess('error: should be different');
 }
 
 *is_invocant = \&Data::Util::is_invocant;

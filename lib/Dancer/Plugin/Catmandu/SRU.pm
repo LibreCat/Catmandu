@@ -65,7 +65,12 @@ sub sru_provider {
                     $limit = 1000;
                 }
 
-                my $hits = $bag->search(cql_query => $cql, limit => $limit, start => $start);
+                my $hits = $bag->search(
+                    cql_query => $cql,
+                    sru_sortkeys => $request->sortKeys,
+                    limit => $limit,
+                    start => $start,
+                );
                 $hits->each(sub {
                     my $obj = $_[0];
                     if ($fix) {

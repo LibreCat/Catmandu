@@ -147,14 +147,12 @@ sub commit { # TODO optimize
 sub search {
     my ($self, %args) = @_;
 
-    my $query = delete $args{query};
     my $start = delete $args{start};
     my $limit = delete $args{limit};
     my $bag   = delete $args{reify};
 
     my $res = $self->store->elastic_search->search({
         %args,
-        query => $query,
         type  => $self->name,
         from  => $start,
         size  => $limit,
@@ -194,9 +192,29 @@ sub searcher {
     Catmandu::Store::ElasticSearch::Searcher->new(%args, bag => $self);
 }
 
+sub translate_sru_sortkeys {
+    my ($self, $sortkeys) = @_;
+    [ grep { defined $_ } map { $self->_translate_sru_sortkey($_) } split /\s/, $sortkeys ];
+}
+
+sub _translate_sru_sortkey {
+    my ($self, $sortkey) = @_;
+    my ($field, $schema, $asc) = split /,/, $sortkey;
+    $field || return;
+    if (my $map = $self->cql_mapping) {
+        $map = $map->{$field} || return;
+        $map = $map->{sort}   || return;
+        if (ref $map && $map->{field}) {
+            $field = $map->{field};
+        }
+    }
+    $asc //= 1;
+    +{ $field => $asc ? 'asc' : 'desc' };
+}
+
 sub translate_cql_query {
-    my ($self, $cql) = @_;
-    CQL::ElasticSearch->new(mapping => $self->cql_mapping)->parse($cql);
+    my ($self, $query) = @_;
+    CQL::ElasticSearch->new(mapping => $self->cql_mapping)->parse($query);
 }
 
 sub normalize_query {

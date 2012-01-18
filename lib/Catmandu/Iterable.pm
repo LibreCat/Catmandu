@@ -1,7 +1,7 @@
 package Catmandu::Iterable;
 
 use Catmandu::Sane;
-use Data::Compare ();
+use Catmandu::Util;
 require Catmandu::Iterator;
 use Role::Tiny;
 
@@ -207,7 +207,35 @@ sub pluck {
 sub includes {
     my ($self, $data) = @_;
     $self->any(sub {
-        Data::Compare::Compare($data, $_[0]);
+        Catmandu::Util::is_same($data, $_[0]);
+    });
+}
+
+sub group {
+    my ($self, $size) = @_;
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $n = 0;
+            state $next = $self->generator;
+            state $done;
+
+            return if $done;
+
+            Catmandu::Iterator->new(sub {
+                sub {
+                    if ($n == $size) {
+                        $n = 0;
+                        return;
+                    }
+                    if (my $data = $next->()) {
+                        $n++;
+                        return $data;
+                    }
+                    $done = 1;
+                    return;
+                };
+            });
+        };
     });
 }
 

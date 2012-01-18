@@ -1,4 +1,4 @@
-package Catmandu::Store::Solr;
+package Catmandu::Store::Solr; # TODO translate_sru_sortkeys
 
 use Catmandu::Sane;
 use Moo;
