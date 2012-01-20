@@ -11,9 +11,7 @@ use Dancer   qw(:syntax config);
 PERL
 
 sub command_opt_spec {
-    (
-        [ "time", "show execution time" ],
-    );
+    ();
 }
 
 sub command {
@@ -22,7 +20,6 @@ sub command {
     my $repl = load_package('Devel::REPL')->new;
 
     $repl->load_plugin($_) for qw(LexEnv DDC Packages Commands MultiLine::PPI Colors);
-    $repl->load_plugin('Timing') if $opts->time;
     $repl->current_package('main');
     $repl->eval($INIT);
     $repl->run;

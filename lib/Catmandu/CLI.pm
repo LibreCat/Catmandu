@@ -12,8 +12,8 @@ sub plugin_search_path { 'Catmandu::Cmd' }
 
 sub global_opt_spec {
     (
-        ['environment=s', "application environment (default is development)"],
-        ['appdir=s', "application directory (default is cwd)"],
+        ['environment=s', "application environment"],
+        ['appdir=s', "application directory (default is ".$_[0]->default_appdir.")"],
         ['confdir=s', "application config directory (default is appdir)"],
     );
 }
@@ -41,7 +41,7 @@ sub run {
   $self->set_global_options($global_opts);
 
   my ($cmd, $opts, @args) = $self->prepare_command(@$argv);
-
+  
   $self->execute_command($cmd, $opts, @args);
 }
 

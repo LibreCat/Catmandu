@@ -1,7 +1,7 @@
 package Catmandu::Iterable;
 
 use Catmandu::Sane;
-use Catmandu::Util;
+use Catmandu::Util qw(:is :check);
 require Catmandu::Iterator;
 use Role::Tiny;
 
@@ -166,33 +166,52 @@ sub detect {
     return;
 }
 
-sub select {
-    my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub {
-        sub {
-            state $next = $self->generator;
-            state $data;
-            while ($data = $next->()) {
-                $sub->($data) && return $data;
-            }
-            return;
-        };
-    });
-}
+{
+    my $to_sub = sub {
+        if (is_string($_[0])) {
+            my $key = $_[0];
+            check_regex_ref(my $re = $_[1]);
+            return sub {
+                is_hash_ref($_[0]) || return;
+                my $val = $_[0]->{$key}; is_value($val) && $val =~ $re;
+            };
+        } elsif (is_regex_ref($_[0])) {
+            my $re = $_[0];
+            return sub {
+                is_value($_[0]) && $_[0] =~ $re;
+            };
+        }
+        check_code_ref($_[0]);
+    };
 
-sub reject {
-    my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub {
-        sub {
-            state $next = $self->generator;
-            state $data;
-            while ($data = $next->()) {
-                $sub->($data) || return $data;
-            }
-            return;
-        };
-    });
-}
+    sub select {
+        my $self = shift; my $sub = $to_sub->(@_);
+        Catmandu::Iterator->new(sub {
+            sub {
+                state $next = $self->generator;
+                state $data;
+                while ($data = $next->()) {
+                    $sub->($data) && return $data;
+                }
+                return;
+            };
+        });
+    }
+
+    sub reject {
+        my $self = shift; my $sub = $to_sub->(@_);
+        Catmandu::Iterator->new(sub {
+            sub {
+                state $next = $self->generator;
+                state $data;
+                while ($data = $next->()) {
+                    $sub->($data) || return $data;
+                }
+                return;
+            };
+        });
+    }
+};
 
 sub pluck {
     my ($self, $key) = @_;
@@ -207,7 +226,7 @@ sub pluck {
 sub includes {
     my ($self, $data) = @_;
     $self->any(sub {
-        Catmandu::Util::is_same($data, $_[0]);
+        is_same($data, $_[0]);
     });
 }
 
@@ -251,9 +270,10 @@ Catmandu::Iterable - provide collection methods to any package providing an C<ea
 
     use parent 'Catmandu::Iterable';
 
+    my $collection = [{foo => 'oof'}, {bar => 'rab'}, {baz => 'zab'}];
+
     sub each {
         my ($self, $sub) = @_;
-        my $collection = [{foo => 'oof'}, {bar => 'rab'}, {baz => 'zab'}];
         $sub->($_) for @$collection;
         scalar @$collection;
     }
