@@ -1,2 +1,5 @@
-Name: [% last %], [% first %]
-Job:  [% job %]
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+RECORD:
+  Name: [% last %], [% first %]
+  Job:  [% job %]
+

@@ -20,19 +20,27 @@ sub fix {
 
     my $key = $self->key;
     my $args = $self->args;
+    
     my @matches = grep ref, data_at($self->path, $data);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             is_integer($key) || next;
             my $val = $match->{$key};
-            $match->[$key] = substr($val, @$args) if is_string($val);
+            $match->[$key] = &mysubstr($val, @$args) if is_string($val);
         } else {
             my $val = $match->{$key};
-            $match->{$key} = substr($val, @$args) if is_string($val);
+            $match->{$key} = &mysubstr($val, @$args) if is_string($val);
         }
     }
 
     $data;
+}
+
+sub mysubstr {
+    if    (@_ == 2) { substr($_[0], $_[1]) }
+    elsif (@_ == 3) { substr($_[0], $_[1], $_[2]) }
+    elsif (@_ == 4) { substr($_[0], $_[1], $_[2], $_[3]) }
+    else { die }
 }
 
 1;

@@ -8,7 +8,7 @@ use Catmandu::Importer::OAI;
 use Catmandu::Importer::Atom;
 use Data::Dumper;
 
-# Importers are LibreCat classes to read data into an application.
+# Importers are Catmandu classes to read data into an application.
 # There are importers for JSON, YAML, CSV, Excel files but also
 # Atom and OAI-PMH endpoints on the Internet.
 

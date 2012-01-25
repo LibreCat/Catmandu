@@ -41,6 +41,12 @@ Catmandu::Importer::JSON - Package that imports JSON data
         # ...
     });
 
+    The JSON input file needs to include one record per line:
+
+    { "recordno": 1, "name": "Alpha" }
+    { "recordno": 2, "name": "Beta" }
+    { "recordno": 3, "name": "Gamma" }
+
 =head1 METHODS
 
 =head2 new([file => $filename])
