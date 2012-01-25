@@ -9,7 +9,7 @@ with 'Catmandu::Exporter';
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
-my $ADD_TT_EXT = sub { "$_[0].tt" if $_[0] !~ /\.tt$/ };
+my $ADD_TT_EXT = sub { $_[0] =~ /\.tt$/ ? $_[0] : "$_[0].tt" };
 
 has xml             => (is => 'ro');
 has template_before => (is => 'ro', coerce => $ADD_TT_EXT);
