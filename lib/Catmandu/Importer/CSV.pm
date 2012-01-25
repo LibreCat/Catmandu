@@ -73,11 +73,18 @@ Create a new CSV importer for $filename. Use STDIN when no filename is given. Th
 object fields are read from the CSV header line or given via the 'fields' parameter.
 Strings in CSV are quoted by 'quote_char' and fields are split by 'split_char'.
 
+=head2 count
+
 =head2 each(&callback)
 
-The each method imports the data and executes the callback function for
-each item imported. Returns the number of items imported or undef on 
-failure.
+=head2 ...
+
+Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
+Catmandu::Importer::CSV methods are not idempotent: CSV streams can only be read once.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>
 
 =cut
 

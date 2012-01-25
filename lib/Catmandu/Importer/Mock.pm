@@ -37,11 +37,17 @@ Catmandu::Importer::Mock - Mock importer used for testing purposes
 
 Create a new Mock importer. Optionally provide a size parameter.
 
+=head2 count
+
 =head2 each(&callback)
 
-The each method imports the data and executes the callback function for
-each item imported. Returns the number of items imported or undef on 
-failure.
+=head2 ...
+
+Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>
 
 =cut
 

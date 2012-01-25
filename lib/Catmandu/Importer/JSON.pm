@@ -47,11 +47,18 @@ Catmandu::Importer::JSON - Package that imports JSON data
 
 Create a new JSON importer for $filename. Use STDIN when no filename is given.
 
+=head2 count
+
 =head2 each(&callback)
 
-The each method imports the data and executes the callback function for
-each item imported. Returns the number of items imported or undef on 
-failure.
+=head2 ...
+
+Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
+Catmandu::Importer::JSON methods are not idempotent: JSON streams can only be read once.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>
 
 =cut
 

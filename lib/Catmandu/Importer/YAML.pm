@@ -59,39 +59,19 @@ Catmandu::Importer::YAML - Package that imports YAML data
 
 Create a new YAML importer for $filename. Use STDIN when no filename is given.
 
+=head2 count
+
 =head2 each(&callback)
 
-The each method imports the data and executes the callback function for
-each item imported. Returns the number of items imported or undef on 
-failure.
+=head2 ...
+
+Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
+Catmandu::Importer::YAML methods are not idempotent: YAML feeds can only be read once.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>
 
 =cut
 
 1;
-# package Catmandu::Importer::YAML;
-# 
-# use Catmandu::Sane;
-# use Moo;
-# use IO::YAML;
-# 
-# with 'Catmandu::Importer';
-# 
-# has yaml => (is => 'ro', lazy => 1, builder => '_build_yaml');
-# 
-# sub _build_yaml {
-#     IO::YAML->new($_[0]->fh, auto_load => 1);
-# }
-# 
-# sub generator {
-#     my ($self) = @_;
-#     sub {
-#         state $yaml = $self->yaml;
-#         state $data;
-#         if (defined($data = <$yaml>)) {
-#             return $data;
-#         }
-#         return;
-#     };
-# }
-# 
-# 1;

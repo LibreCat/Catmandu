@@ -56,4 +56,41 @@ sub generator {
     };
 }
 
+=head1 NAME
+
+Catmandu::Importer::OAI - Package that imports OAI-PMH feeds
+
+=head1 SYNOPSIS
+
+    use Catmandu::Importer::OAI;
+
+    my $importer = Catmandu::Importer::OAI->new(url => "...", set => "..." );
+
+    my $n = $importer->each(sub {
+        my $hashref = $_[0];
+        # ...
+    });
+
+=head1 METHODS
+
+=head2 new(url => URL,[set => [qw(...)])
+
+Create a new OAI-PMH importer for the URL. Optionally provide a set parameter with the
+OAI-PMH set you want to import.
+
+=head2 count
+
+=head2 each(&callback)
+
+=head2 ...
+
+Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
+Catmandu::Importer::OAI methods are not idempotent: OAI-PMH feeds can only be read once.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>
+
+=cut
+
 1;

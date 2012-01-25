@@ -57,4 +57,41 @@ sub generator {
     };
 }
 
+=head1 NAME
+
+Catmandu::Importer::Atom - Package that imports Atom feeds
+
+=head1 SYNOPSIS
+
+    use Catmandu::Importer::Atom;
+
+    my $importer = Catmandu::Importer::Atom->new(url => "...");
+
+    my $n = $importer->each(sub {
+        my $hashref = $_[0];
+        # ...
+    });
+
+=head1 METHODS
+
+=head2 new(url => URL,[entries => [qw(...)])
+
+Create a new Atom importer for the URL. Optionally provide a entries parameter with the
+feed items you want to import.
+
+=head2 count
+
+=head2 each(&callback)
+
+=head2 ...
+
+Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
+Catmandu::Importer::Atom methods are not idempotent: Atom feeds can only be read once.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>
+
+=cut
+
 1;
