@@ -1,13 +1,13 @@
 ---
-- first: Charly 
-  last: Parker
-  job: Artist
+first: Charly 
+last: Parker
+job: Artist
 ---
-- first: Albert
-  last: Einstein
-  job: Physicist
+first: Albert
+last: Einstein
+job: Physicist
 ---
-- first: Joseph
-  last: Ratzinger
-  job: Pope
+first: Joseph
+last: Ratzinger
+job: Pope
 ...
