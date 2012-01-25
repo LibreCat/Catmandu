@@ -27,9 +27,11 @@ sub tt {
         };
 
         if (is_invocant('Dancer')) {
-            $args->{INCLUDE_PATH} = Dancer::setting('views');
-            $args->{VARIABLES} = {
-                settings => Dancer::Config->settings,
+            eval {
+                $args->{INCLUDE_PATH} = Dancer::setting('views');
+                $args->{VARIABLES} = {
+                    settings => Dancer::Config->settings,
+                };
             };
         }
 
