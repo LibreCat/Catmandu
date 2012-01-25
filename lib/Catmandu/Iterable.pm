@@ -12,7 +12,7 @@ sub to_array {
     my $next = $self->generator;
     my @a;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         push @a, $data;
     }
     \@a;
@@ -38,7 +38,7 @@ sub slice {
             }
             state $next = $self->generator;
             state $data;
-            while ($data = $next->()) {
+            while (defined($data = $next->())) {
                 if ($start > 0) {
                     $start--;
                     next;
@@ -58,7 +58,7 @@ sub each {
     my $next = $self->generator;
     my $n = 0;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         $sub->($data);
         $n++;
     }
@@ -71,7 +71,7 @@ sub tap {
         sub {
             state $next = $self->generator;
             state $data;
-            if ($data = $next->()) {
+            if (defined($data = $next->())) {
                 $sub->($data);
                 return $data;
             }
@@ -84,7 +84,7 @@ sub any {
     my ($self, $sub) = @_;
     my $next = $self->generator;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         $sub->($data) && return 1;
     }
     return 0;
@@ -95,7 +95,7 @@ sub many {
     my $next = $self->generator;
     my $n = 0;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         $sub->($data) && ++$n > 1 && return 1;
     }
     return 0;
@@ -105,7 +105,7 @@ sub all {
     my ($self, $sub) = @_;
     my $next = $self->generator;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         $sub->($data) || return 0;
     }
     return 1;
@@ -116,7 +116,7 @@ sub map {
     Catmandu::Iterator->new(sub {
         sub {
             state $next = $self->generator;
-            $sub->($next->() || return);
+            $sub->($next->() // return);
         };
     });
 }
@@ -127,7 +127,7 @@ sub reduce {
     my $memo = pop;
     my $next = $self->generator;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         if (defined $memo) {
             $memo = $sub->($memo, $data);
         } else {
@@ -160,7 +160,7 @@ sub detect {
     my ($self, $sub) = @_;
     my $next = $self->generator;
     my $data;
-    while ($data = $next->()) {
+    while (defined($data = $next->())) {
         $sub->($data) && return $data;
     }
     return;
@@ -190,7 +190,7 @@ sub detect {
             sub {
                 state $next = $self->generator;
                 state $data;
-                while ($data = $next->()) {
+                while (defined($data = $next->())) {
                     $sub->($data) && return $data;
                 }
                 return;
@@ -204,7 +204,7 @@ sub detect {
             sub {
                 state $next = $self->generator;
                 state $data;
-                while ($data = $next->()) {
+                while (defined($data = $next->())) {
                     $sub->($data) || return $data;
                 }
                 return;
@@ -218,7 +218,7 @@ sub pluck {
     Catmandu::Iterator->new(sub {
         sub {
             state $next = $self->generator;
-            ($next->() || return)->{$key};
+            ($next->() // return)->{$key};
         };
     });
 }
@@ -234,25 +234,20 @@ sub group {
     my ($self, $size) = @_;
     Catmandu::Iterator->new(sub {
         sub {
-            state $n = 0;
             state $next = $self->generator;
-            state $done;
+            state $peek = $next->();
 
-            return if $done;
+            $peek // return;
 
             Catmandu::Iterator->new(sub {
-                sub {
-                    if ($n == $size) {
-                        $n = 0;
-                        return;
-                    }
-                    if (my $data = $next->()) {
-                        $n++;
-                        return $data;
-                    }
-                    $done = 1;
-                    return;
-                };
+                 my $n = $size;
+                 sub {
+                    $n || return;
+                    $n--;
+                    my $data = $peek;
+                    $peek = $next->();
+                    $data;
+                 };
             });
         };
     });
