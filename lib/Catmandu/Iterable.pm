@@ -326,6 +326,8 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
 		my ($prev,$this) = @_;
 		$prev + $this;
 		});
+	
+    my $it3 = $it->group(2)->invoke('to_array');
 
 =head1 DESCRIPTION
 
@@ -413,6 +415,10 @@ Returns a new Iterator containing for each item the result of the callback.
 For each item in the Iterator execute &callback($prev,$item) where $prev is the
 option START value or the result of the previous call to callback. Returns the
 final result of the callback function.
+
+=head2 invoke(NAME)
+
+This is a shortcut for $it->map(sub { $_[0]->NAME }).
 
 =head1 SEE ALSO
 
