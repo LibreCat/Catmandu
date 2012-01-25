@@ -1,5 +1,4 @@
 #!/usr/bin/env perl
-# Read in a YAML file and print the content
 $|++;
 
 use Catmandu::Importer::YAML;
@@ -9,7 +8,7 @@ use Catmandu::Importer::OAI;
 use Catmandu::Importer::Atom;
 use Data::Dumper;
 
-# Importers are LibreCat classses to read data into an application.
+# Importers are LibreCat classes to read data into an application.
 # There are importers for JSON, YAML, CSV, Excel files but also
 # Atom and OAI-PMH endpoints on the Internet.
 
