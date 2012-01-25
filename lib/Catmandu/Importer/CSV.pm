@@ -1,57 +1,53 @@
 package Catmandu::Importer::CSV;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io);
+use Moo;
 use Text::CSV;
-use Catmandu::Object
-    file => { default => sub { *STDIN } },
-    fields => 'r',
-    quote_char => { default => sub { '"' } },
-    split_char => { default => sub { ',' } };
 
-sub _build {
-    my ($self, $args) = @_;
-    $self->SUPER::_build($args);
-    if ($self->fields) {
-        $self->_set_fields($self->fields);
-    }
-}
+with 'Catmandu::Importer';
 
-sub _set_fields {
-    my ($self, $fields) = @_;
+has csv        => (is => 'ro', lazy => 1, builder => '_build_csv');
+has quote_char => (is => 'ro', default => sub { '"' });
+has split_char => (is => 'ro', default => sub { ',' });
+has header     => (is => 'ro', default => sub { 1 });
+has fields => (
+    is     => 'rw',
+    coerce => sub {
+        my $fields = $_[0];
+        given (ref $fields) {
+            when ('ARRAY') { return $fields }
+            when ('HASH')  { return [keys %$fields] }
+            default        { return [split ',', $fields] }
+        }
+    },
+);
 
-    if (!ref $fields) {
-        [ split $self->split_char, $fields ];
-    } elsif (ref $fields eq 'HASH') {
-        [ keys %$fields ];
-    } elsif (ref $fields eq 'ARRAY') {
-        $fields;
-    }
-}
-
-sub each {
-    my ($self, $sub) = @_;
-
-    my $file = io $self->file, 'r';
-
-    my $csv = Text::CSV->new({
+sub _build_csv {
+    my ($self) = @_;
+    Text::CSV->new({
         binary     => 1,
         quote_char => $self->quote_char,
         sep_char   => $self->split_char,
     });
+}
 
-    my $fields = $self->fields ||
-                 $self->_set_fields($csv->getline($file));
-
-    $csv->column_names($fields);
-
-    my $n = 0;
-
-    while (my $obj = $csv->getline_hr($file)) {
-        $sub->($obj);
-        $n++;
-    }
-
-    $n;
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $fh = $self->fh;
+        state $csv = do {
+            if ($self->header) {
+                if ($self->fields) {
+                    $self->csv->getline($fh);
+                } else {
+                    $self->fields($self->csv->getline($fh));
+                }
+            }
+            $self->csv->column_names($self->fields);
+            $self->csv;
+        };
+        $csv->getline_hr($fh);
+    };
 }
 
 =head1 NAME

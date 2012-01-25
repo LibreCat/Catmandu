@@ -1,10 +1,11 @@
 package Dancer::Plugin::LDAP;
+
+our $VERSION = '0.1';
+
 use strict;
 use warnings;
 use Dancer::Plugin;
 use Net::LDAP qw(LDAP_SUCCESS);
-
-our $VERSION = '0.1';
 
 my $setting = plugin_setting;
 my $search_setting = $setting->{search} || {};

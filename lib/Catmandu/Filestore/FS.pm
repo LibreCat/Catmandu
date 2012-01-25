@@ -1,6 +1,6 @@
 package Catmandu::Filestore::FS;
 use Catmandu::Sane;
-use Catmandu::Util qw(quacks io ensure_id assert_id opts);
+use Catmandu::Util qw(is_able io get_or_set_id check_id opts);
 use File::Path ();
 use File::Copy qw(copy);
 use File::Spec;
@@ -36,7 +36,7 @@ sub each {
 
 sub _add {
     my ($self, $obj) = @_;
-    my $id   = ensure_id($obj);
+    my $id   = get_or_set_id($obj);
     my $from = $obj->{_file} || confess("missing _file");
     my $path = $self->path_to($id);
     my $into = $obj->{_file} = File::Spec->catfile($path, $id);
@@ -48,7 +48,7 @@ sub _add {
 
 sub add {
     my ($self, $obj) = @_;
-    if (quacks $obj, 'each') {
+    if (is_able $obj, 'each') {
         $obj->each(sub { $self->_add($_[0]) });
     } else {
         $self->_add($obj);
@@ -63,7 +63,7 @@ sub delete {
 
 sub path_to {
     my ($self, $id) = @_;
-    assert_id($id);
+    check_id($id);
     $id =~ s/[^0-9a-zA-Z]//g;
     my @path = unpack("(A2)*", $id);
     File::Spec->catdir($self->path, @path);

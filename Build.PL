@@ -12,19 +12,20 @@ my $requires = {
     'App::Cmd' => '0.310',
     'CGI::Expand' => '2.02',
     'Clone' => '0.31',
-    'Dancer' => '1.3072',
+    'Dancer' => '1.3080',
+    'Data::Compare' => '1.22',
     'Data::UUID' => '1.217',
+    'Data::Util' => '0.59',
     'DateTime' => '0.70',
     'File::Path' => '2.07',
     'File::Slurp' => '9999.13',
     'IO::String' => '1.08',
-    'IO::YAML' => '0.08',
     'JSON' => '2.51',
-    'JSON::Path' => '0.100',
+    'Moo' => '0.009011',
     'Plack' => '0.9982',
     'Template' => '2.22',
     'Time::HiRes' => '1.9724',
-    'YAML' => '0.72',
+    'YAML::Any' => '0.77',
 };
 
 my $recommends = {
@@ -45,28 +46,28 @@ my $auto_features = {
             'MongoDB' => '0.42',
         },
     },
-    index_elasticsearch => {
-        description => "Index backed by ElasticSearch",
+    store_elasticsearch => {
+        description => "Searchable store backed by ElasticSearch",
         requires => {
-            'ElasticSearch' => '0.38',
+            'ElasticSearch' => '0.47',
         },
     },
-    index_lucy => {
-        description => "Index backed by Lucy",
+    store_lucy => {
+        description => "Searchable store backed by Lucy",
         requires => {
-            'Lucy' => '0.1.0',
+            'Lucy' => '0.2.2',
         },
     },
-    index_solr => {
-        description => "Index backed by Solr",
+    store_solr => {
+        description => "Searchable store backed by Solr",
         requires => {
-            'WebService::Solr' => '0.1.4',
+            'WebService::Solr' => '0.16',
         },
     },
     import_atom => {
         description => "Import objects from an Atom feed",
         requires => {
-            'XML::Atom::Client' => 0,
+            'XML::Atom' => '0.41',
         },
     },
     import_csv => {
@@ -79,12 +80,6 @@ my $auto_features = {
         description => "Import objects from an OAI harvestable respository",
         requires => {
             'Net::OAI::Harvester' => '1.13',
-        },
-    },
-    import_spreadsheet => {
-        description => "Import objects from a spreadsheet",
-        requires => {
-            'Spreadsheet::Read' => '0.41',
         },
     },
     export_bibtex => {
@@ -121,12 +116,6 @@ my $auto_features = {
         description => "use a Catmandu store as Plack session store",
         requires => {
             'Plack::Middleware::Session' => '0.14',
-        },
-    },
-    dancer_plugin_elasticsearch => {
-        description => "Dancer ElasticSearch plugin",
-        requires => {
-            'ElasticSearch' => '0.38',
         },
     },
     dancer_plugin_ldap => {
@@ -186,7 +175,9 @@ for my $feature (keys %$auto_features) {
     my $enable = $build->prompt("enable feature $feature?");
     if ($enable =~ /^y/i) {
         my $feature_requires = $auto_features->{$feature}{requires};
-        $build->requires({ %$requires, %$feature_requires });
+        for my $key (keys %$feature_requires) {
+            $build->requires->{$key} = $feature_requires->{$key};
+        }
         $build->feature($feature => 1);
     }
 }

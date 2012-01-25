@@ -1,55 +1,52 @@
 package Catmandu::Exporter::Template;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io quacks);
+use Catmandu::Util qw(is_invocant);
+use Moo;
 use Template;
-use Catmandu::Object
-    file => { default => sub { *STDOUT } },
-    view => 'r',
-    xml  => 'r';
+
+with 'Catmandu::Exporter';
+
+my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
+
+has xml             => (is => 'ro');
+has template_before => (is => 'ro');
+has template        => (is => 'ro', required => 1);
+has template_after  => (is => 'ro');
+has tt              => (is => 'ro', lazy => 1, builder => '_build_tt');
 
 $Template::Stash::PRIVATE = 0;
 
-sub template_name {
-    my $name = $_[0];
-    $name = "$name.tt" if $name !~ /\.tt$/;
-    $name;
-}
-
-sub add {
-    my ($self, $obj) = @_;
-
-    my $file = io($self->file, 'w');
-
-    my $view = template_name($self->view);
-
-    my $tmpl_opts = {
+sub _build_tt {
+    my $self = $_[0];
+    my $args = {
         ENCODING => 'utf8',
         ABSOLUTE => 1,
         ANYCASE  => 0,
     };
 
-    if ($ENV{DANCER_APPDIR}) {
-        require Dancer;
-        $tmpl_opts->{INCLUDE_PATH} = Dancer::setting('views');
-        $tmpl_opts->{VARIABLES} = {
+    if (is_invocant('Dancer')) {
+        $args->{INCLUDE_PATH} = Dancer::setting('views');
+        $args->{VARIABLES} = {
             settings => Dancer::Config->settings,
         };
     }
 
-    my $tmpl = Template->new($tmpl_opts);
+    Template->new($args);
+}
 
-    if ($self->xml) {
-        print $file qq(<?xml version="1.0" encoding="UTF-8"?>\n);
+sub add {
+    my ($self, $data) = @_;
+    if ($self->count == 0) {
+        $self->fh->print($XML_DECLARATION) if $self->xml;
+        $self->tt->process($self->template_before, {}, $self->fh) if $self->template_before;
     }
+    $self->tt->process($self->template, $data, $self->fh);
+}
 
-    if (quacks $obj, 'each') {
-        return $obj->each(sub {
-            $tmpl->process($view, $_[0], $file);
-        });
-    }
-
-    $tmpl->process($view, $obj, $file);
-    1;
+sub commit {
+    my ($self) = @_;
+    $self->tt->process($self->template_after, {}, $self->fh) if $self->template_after;
 }
 
 1;

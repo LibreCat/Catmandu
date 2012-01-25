@@ -1,37 +1,38 @@
 package Plack::Session::Store::Catmandu;
+
 our $VERSION = '0.01';
+
 use Catmandu::Sane;
 use Catmandu;
 use parent qw(Plack::Session::Store);
 
 sub new {
     my ($class, %opts) = @_;
-    my $store = $opts{store} || 'default';
-    my $collection = $opts{collection} || 'sessions';
+    my $store = $opts{store} || Catmandu::default_store;
+    my $bag = $opts{bag} || 'session';
     bless {
-        collection => Catmandu::get_store($store)->collection($collection),
+        bag => Catmandu::store($store)->bag($bag),
     }, $class;
 }
 
 sub fetch {
     my ($self, $id) = @_;
-    my $obj = $self->{collection}->get($id) || return;
+    my $obj = $self->{bag}->get($id) || return;
     delete $obj->{_id};
-    delete $obj->{_collection};
     $obj;
 }
 
 sub store {
     my ($self, $id, $obj) = @_;
     $obj->{_id} = $id;
-    $self->{collection}->add($obj);
+    $self->{bag}->add($obj);
     delete $obj->{_id};
     $obj;
 }
 
 sub remove {
     my ($self, $id) = @_;
-    $self->{collection}->delete($id);
+    $self->{bag}->delete($id);
 }
 
 1;

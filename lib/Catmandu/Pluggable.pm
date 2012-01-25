@@ -1,19 +1,24 @@
 package Catmandu::Pluggable;
+
 use Catmandu::Sane;
-use Catmandu::Object;
+use Moo::Role;
 
-sub _build {
-    my ($self, $args) = @_;
-    my $plugins = delete($args->{plugins}) || [];
-    $self->{plugins} = [ map { load_package($_, 'Catmandu::Plugin')->new($self) } @$plugins ];
-    $self->SUPER::_build($args);
-}
+sub plugin_namespace { 'Catmandu::Plugin' }
 
-sub plugins {
-    if (wantarray) {
-        return @{$_[0]->{plugins}};
-    }
-    $_[0]->{plugins};
+sub with_plugins {
+    my $class = shift;
+    $class = ref $class || $class;
+    my @plugins = ref $_[0] eq 'ARRAY' ? @{$_[0]} : @_;
+    @plugins = split /,/, join ',', @plugins;
+    @plugins || return $class;
+    my $ns = $class->plugin_namespace;
+    Moo::Role->create_class_with_roles($class, map {
+        my $pkg = $_;
+        if ($pkg !~ s/^\+// && $pkg !~ /^$ns/) {
+            $pkg = "${ns}::${pkg}";
+        }
+        $pkg;
+    } @plugins);
 }
 
 1;

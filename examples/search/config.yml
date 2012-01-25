@@ -2,11 +2,9 @@ app_name: Catmandu search example
 
 charset: UTF-8
 
-layout: screen
-
-index:
-  default:
-    - Solr
+store:
+  search:
+      package: Solr
 
 template: template_toolkit
 

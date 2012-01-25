@@ -1,6 +1,10 @@
 package Catmandu::Hits;
+
 use Catmandu::Sane;
-use parent qw(Catmandu::Iterable);
+use Role::Tiny ();
+use Role::Tiny::With;
+
+with 'Catmandu::Iterable';
 
 sub new {
     bless $_[1], $_[0];
@@ -19,14 +23,25 @@ sub limit {
 }
 
 sub size {
-    scalar @{ $_[0]->hits };
+    scalar @{ $_[0]->{hits} };
 }
 
 sub hits {
     $_[0]->{hits};
 }
 
-sub to_array { $_[0]->hits }
+sub to_array { goto &hits }
+
+sub count { goto &size }
+
+sub generator {
+    my ($self) = @_;
+    my $hits = $self->hits;
+    my $i = 0;
+    sub {
+        $hits->[$i++];
+    };
+}
 
 sub each {
     my ($self, $sub) = @_;
@@ -34,7 +49,7 @@ sub each {
     for my $hit (@$hits) {
         $sub->($hit);
     }
-    scalar @$hits;
+    $self->size;
 }
 
 1;

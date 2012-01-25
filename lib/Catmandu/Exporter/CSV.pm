@@ -1,69 +1,52 @@
 package Catmandu::Exporter::CSV;
+
 use Catmandu::Sane;
-use Catmandu::Util qw(io quacks);
+use Moo;
 use Text::CSV;
-use Catmandu::Object
-    file => { default => sub { *STDOUT } },
-    fields => 'r',
-    quote_char => { default => sub { '"' } },
-    split_char => { default => sub { ',' } };
 
-sub _set_fields {
-    my ($self, $fields) = @_;
+with 'Catmandu::Exporter';
 
-    if (!ref $fields) {
-        [ split $self->split_char, $fields ];
-    } elsif (ref $fields eq 'HASH') {
-        [ keys %$fields ];
-    } elsif (ref $fields eq 'ARRAY') {
-        $fields;
-    }
-}
+has csv        => (is => 'ro', lazy => 1, builder => '_build_csv');
+has quote_char => (is => 'ro', default => sub { '"' });
+has split_char => (is => 'ro', default => sub { ',' });
+has header     => (is => 'ro', default => sub { 1 });
+has fields => (
+    is     => 'rw',
+    coerce => sub {
+        my $fields = $_[0];
+        given (ref $fields) {
+            when ('ARRAY') { return $fields }
+            when ('HASH')  { return [keys %$fields] }
+            default        { return [split ',', $fields] }
+        }
+    },
+);
 
-sub _build {
-    my ($self, $args) = @_;
-    $self->SUPER::_build($args);
-    if ($self->{fields}) {
-        $self->{fields} = $self->_set_fields($self->{fields});
-    }
-}
-
-sub add {
-    my ($self, $obj) = @_;
-
-    my $file = io $self->file, 'w';
-
-    my $fields = $self->fields;
-
-    my $csv = Text::CSV->new({
+sub _build_csv {
+    my ($self) = @_;
+    Text::CSV->new({
         binary     => 1,
+        eol        => "\n",
         quote_char => $self->quote_char,
         sep_char   => $self->split_char,
     });
+}
 
-    if ($fields) {
-        $csv->print($file, $fields);
+sub add {
+    my ($self, $data) = @_;
+    my $fields = $self->fields || $self->fields($data);
+    my $row = [map {
+        my $val = $data->{$_} // "";
+        $val =~ s/\t/\\t/g;
+        $val =~ s/\n/\\n/g;
+        $val =~ s/\r/\\r/g;
+        $val;
+    } @$fields];
+    my $fh = $self->fh;
+    if ($self->count == 0 && $self->header) {
+        $self->csv->print($fh, $fields);
     }
-
-    my $add = sub {
-        my $o = $_[0];
-
-        if (! $fields) {
-            $fields = $self->_set_fields($o);
-            $csv->print($file, $fields);
-        }
-
-        print $file "\n";
-        my $row = [ map { $o->{$_} } @$fields ];
-        $csv->print($file, $row);
-    };
-
-    if (quacks $obj, 'each') {
-        return $obj->each($add);
-    }
-
-    $add->($obj);
-    1;
+    $self->csv->print($fh, $row);
 }
 
 1;
