@@ -49,10 +49,12 @@ sub _build_entries {
     } $feed->entries];
 }
 
+sub to_array { goto &entries }
+
 sub generator {
     my ($self) = @_;
+    my $n = 0;
     sub {
-        state $n = 0;
         $self->entries->[$n++];
     };
 }
