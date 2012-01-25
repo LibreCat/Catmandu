@@ -223,6 +223,16 @@ sub pluck {
     });
 }
 
+sub invoke {
+    my ($self, $sym) = @_;
+    Catmandu::Iterator->new(sub {
+        sub {
+            state $next = $self->generator;
+            ($next->() // return)->$sym;
+        };
+    });
+}
+
 sub includes {
     my ($self, $data) = @_;
     $self->any(sub {
