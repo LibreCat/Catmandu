@@ -9,30 +9,32 @@ with 'Catmandu::Exporter';
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
+my $ADD_TT_EXT = sub { "$_[0].tt" if $_[0] !~ /\.tt$/ };
+
 has xml             => (is => 'ro');
-has template_before => (is => 'ro');
-has template        => (is => 'ro', required => 1);
-has template_after  => (is => 'ro');
-has tt              => (is => 'ro', lazy => 1, builder => '_build_tt');
+has template_before => (is => 'ro', coerce => $ADD_TT_EXT);
+has template        => (is => 'ro', coerce => $ADD_TT_EXT, required => 1);
+has template_after  => (is => 'ro', coerce => $ADD_TT_EXT);
 
 $Template::Stash::PRIVATE = 0;
 
-sub _build_tt {
-    my $self = $_[0];
-    my $args = {
-        ENCODING => 'utf8',
-        ABSOLUTE => 1,
-        ANYCASE  => 0,
-    };
-
-    if (is_invocant('Dancer')) {
-        $args->{INCLUDE_PATH} = Dancer::setting('views');
-        $args->{VARIABLES} = {
-            settings => Dancer::Config->settings,
+sub tt {
+    state $tt = do {
+        my $args = {
+            ENCODING => 'utf8',
+            ABSOLUTE => 1,
+            ANYCASE  => 0,
         };
-    }
 
-    Template->new($args);
+        if (is_invocant('Dancer')) {
+            $args->{INCLUDE_PATH} = Dancer::setting('views');
+            $args->{VARIABLES} = {
+                settings => Dancer::Config->settings,
+            };
+        }
+
+        Template->new($args);
+    };
 }
 
 sub add {

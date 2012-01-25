@@ -6,9 +6,9 @@ use Catmandu::Sane;
 use Catmandu::Util qw(:is);
 use Catmandu;
 use Catmandu::Fix;
+use Catmandu::Exporter::Template;
 use Dancer::Plugin;
 use Dancer qw(:syntax);
-use Template;
 use DateTime;
 
 my $VERBS = {
@@ -217,9 +217,8 @@ $template_footer
 TT
 
 sub render {
-    state $renderer = Template->new;
     my $out = "";
-    $renderer->process(@_, \$out);
+    Catmandu::Exporter::Template->tt->process(@_, \$out);
     $out;
 }
 
@@ -326,9 +325,16 @@ sub oai_provider {
                 $vars->{datestamp} = _combined_utc_datestamp($rec->{$setting->{datestamp_field}});
                 $vars->{deleted} = $sub_deleted->($rec);
                 $vars->{setSpec} = $sub_set_specs_for->($rec);
-                $vars->{metadata} = Dancer::Template::Abstract->template($format->{template}, $format->{fix}
+                my $metadata = "";
+                my $exporter = Catmandu::Exporter::Template->new(
+                    template => $format->{template},
+                    file => \$metadata,
+                );
+                $exporter->add($format->{fix}
                     ? $format->{fix}->fix($rec)
-                    : $rec, {layout => $format->{layout}});
+                    : $rec);
+                $exporter->commit;
+                $vars->{metadata} = $metadata;
                 unless ($vars->{deleted} and $setting->{deletedRecord} eq 'no') {
                     return render(\$template_get_record, $vars);
                 }
@@ -413,9 +419,15 @@ sub oai_provider {
                     my $deleted = $sub_deleted->($rec);
                     my $metadata;
                     unless ($deleted) {
-                        $metadata = Dancer::Template::Abstract->template($format->{template}, $format->{fix}
+                        $metadata = "";
+                        my $exporter = Catmandu::Exporter::Template->new(
+                            template => $format->{template},
+                            file => \$metadata,
+                        );
+                        $exporter->add($format->{fix}
                             ? $format->{fix}->fix($rec)
-                            : $rec, {layout => $format->{layout}})
+                            : $rec);
+                        $exporter->commit;
                     }
                     {
                         id => $rec->{_id},
