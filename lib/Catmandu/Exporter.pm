@@ -13,7 +13,7 @@ has file => (
     default => sub { \*STDOUT },
 );
 
-has fh   => (
+has fh => (
     is      => 'ro',
     lazy    => 1,
     default => sub { io($_[0]->file, mode => 'w', encoding => $_[0]->encoding) },

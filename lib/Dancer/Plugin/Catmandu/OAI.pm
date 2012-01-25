@@ -329,10 +329,9 @@ sub oai_provider {
                 my $exporter = Catmandu::Exporter::Template->new(
                     template => $format->{template},
                     file => \$metadata,
+                    fix => $format->{fix},
                 );
-                $exporter->add($format->{fix}
-                    ? $format->{fix}->fix($rec)
-                    : $rec);
+                $exporter->add($rec);
                 $exporter->commit;
                 $vars->{metadata} = $metadata;
                 unless ($vars->{deleted} and $setting->{deletedRecord} eq 'no') {
@@ -423,10 +422,9 @@ sub oai_provider {
                         my $exporter = Catmandu::Exporter::Template->new(
                             template => $format->{template},
                             file => \$metadata,
+                            fix => $format->{fix},
                         );
-                        $exporter->add($format->{fix}
-                            ? $format->{fix}->fix($rec)
-                            : $rec);
+                        $exporter->add($rec);
                         $exporter->commit;
                     }
                     {

@@ -7,6 +7,7 @@ use Dancer::Plugin;
 use Dancer qw(:syntax);
 use Catmandu;
 use Catmandu::Fix;
+use Catmandu::Exporter::Template;
 use SRU::Request;
 use SRU::Response;
 
@@ -56,7 +57,7 @@ sub sru_provider {
                 my $layout = $schema->{layout};
                 my $cql = $request->query;
                 if ($setting->{filter}) {
-                    $cql = "($setting->{filter}) AND ($cql)";
+                    $cql = "($setting->{filter}) and ($cql)";
                 }
 
                 my $start = $request->startRecord || 0;
@@ -72,14 +73,18 @@ sub sru_provider {
                     start => $start,
                 );
                 $hits->each(sub {
-                    my $obj = $_[0];
-                    if ($fix) {
-                        $obj = $fix->fix($obj);
-                    }
-                    my $rec = template $template, $obj, {layout => $layout};
+                    my $data = $_[0];
+                    my $metadata = "";
+                    my $exporter = Catmandu::Exporter::Template->new(
+                        template => $template,
+                        file => \$metadata,
+                        fix => $fix,
+                    );
+                    $exporter->add($data);
+                    $exporter->commit;
                     $response->addRecord(SRU::Response::Record->new(
                         recordSchema => $identifier,
-                        recordData   => $rec
+                        recordData => $metadata,
                     ));
                 });
             }

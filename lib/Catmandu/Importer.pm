@@ -12,7 +12,7 @@ has file => (
     default => sub { \*STDIN },
 );
 
-has fh   => (
+has fh => (
     is      => 'ro',
     lazy    => 1,
     default => sub { io($_[0]->file, mode => 'r', encoding => $_[0]->encoding) },

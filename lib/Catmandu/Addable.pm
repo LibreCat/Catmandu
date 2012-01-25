@@ -8,8 +8,11 @@ requires 'add';
 
 with 'Catmandu::Fixable';
 
-before add => sub {
-    $_[1] = $_[0]->fix->fix($_[1]) if $_[0]->fix;
+around add => sub {
+    my ($orig, $self, $data) = @_;
+    $data = $self->fix->fix($data) if $self->fix;
+    $orig->($self, $data);
+    $data;
 };
 
 sub add_many {
