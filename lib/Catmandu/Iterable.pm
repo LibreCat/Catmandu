@@ -149,7 +149,7 @@ sub take {
     my ($self, $n) = @_;
     Catmandu::Iterator->new(sub {
         sub {
-            --$n > 0 || return;
+            $n-- > 0 || return;
             state $next = $self->generator;
             $next->();
         };
@@ -262,7 +262,7 @@ sub group {
 
 =head1 NAME
 
-Catmandu::Iterable - provide collection methods to any package providing an C<each> method
+Catmandu::Iterable - Base class for all iterable Catmandu classes
 
 =head1 SYNOPSIS
 
