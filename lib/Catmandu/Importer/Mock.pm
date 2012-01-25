@@ -5,18 +5,14 @@ use Moo;
 
 with 'Catmandu::Importer';
 
-has size => (is => 'rw' );
+has size => (is => 'ro');
 
 sub generator {
     my ($self) = @_;
+    my $n = 0;
     sub {
-	state $n  = 0;
-        while (1) {
-	   last if defined $self->size && $n == $self->size;
-	   return { n => $n++ }
-        }
-
-	return;
+	   return if defined $self->size && $n == $self->size;
+	   return { n => $n++ };
     };
 }
 
