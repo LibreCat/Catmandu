@@ -345,26 +345,35 @@ sub oai_provider {
             my $from  = $params->{from};
             my $until = $params->{until};
 
-            if ($from && $until && $from > $until) {
-                push @$errors, [badArgument => "from is more recent than until"];
-                return render(\$template_error, $vars);
-            }
-
             for my $datestamp (($from, $until)) {
                 $datestamp || next;
-                if ($datestamp !~ /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/) {
-                    push @$errors, [badArgument => "datestamps must have the format YYYY-MM-DDThh:mm:ssZ"];
+                if ($datestamp !~ /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}Z)?$/) {
+                    push @$errors, [badArgument => "datestamps must have the format YYYY-MM-DD or YYYY-MM-DDThh:mm:ssZ"];
                     return render(\$template_error, $vars);
                 };
             }
 
-            if ($from) {
+            if ($from && $until && length($from) != length($until)) {
+                push @$errors, [badArgument => "datestamps must have the same granularity"];
+                return render(\$template_error, $vars);                
+            }
+
+            if ($from && $until && $from gt $until) {
+                push @$errors, [badArgument => "from is more recent than until"];
+                return render(\$template_error, $vars);
+            }
+
+            if ($from && length($from) > 10) {
                 substr $from, 10, 1, " ";
                 substr $from, 19, 1, "";
+            } elsif ($from) {
+                $from = "$from 00:00:00";
             }
-            if ($until) {
+            if ($until && length($until) > 10) {
                 substr $until, 10, 1, " ";
                 substr $until, 19, 1, "";
+            } elsif ($until) {
+                $until = "$until 00:00:00";
             }
 
             my @cql;
