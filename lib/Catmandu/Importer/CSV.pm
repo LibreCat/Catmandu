@@ -54,4 +54,35 @@ sub each {
     $n;
 }
 
+=head1 NAME
+
+Catmandu::Importer::CSV - Package that imports CSV data
+
+=head1 SYNOPSIS
+
+    use Catmandu::Importer::CSV;
+
+    my $importer = Catmandu::Importer::CSV->new(file => "/foo/bar.csv");
+
+    my $n = $importer->each(sub {
+        my $hashref = $_[0];
+        # ...
+    });
+
+=head1 METHODS
+
+=head2 new(file => $filename, fields => \@fields, quote_char => "\"", split_char => ",")
+
+Create a new CSV importer for $filename. Use STDIN when no filename is given. The
+object fields are read from the CSV header line or given via the 'fields' parameter.
+Strings in CSV are quoted by 'quote_char' and fields are split by 'split_char'.
+
+=head2 each(&callback)
+
+The each method imports the data and executes the callback function for
+each item imported. Returns the number of items imported or undef on 
+failure.
+
+=cut
+
 1;

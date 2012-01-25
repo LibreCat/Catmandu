@@ -33,4 +33,34 @@ sub each {
     $n;
 }
 
+=head1 NAME
+
+Catmandu::Importer::Spreadsheet - Package that imports spreadsheets
+
+=head1 SYNOPSIS
+
+    use Catmandu::Importer::Spreadsheet;
+
+    my $importer = Catmandu::Importer::Spreadsheet->new(file => "/foo/bar.xslx");
+
+    my $n = $importer->each(sub {
+        my $hashref = $_[0];
+        # ...
+    });
+
+=head1 METHODS
+
+=head2 new([file => $filename])
+
+Create a new Spreadsheet importer for $filename. Use STDIN when no filename is given.
+This module supports Microsoft Excel and Open Office formats.
+
+=head2 each(&callback)
+
+The each method imports the data and executes the callback function for
+each item imported. Returns the number of items imported or undef on 
+failure.
+
+=cut
+
 1;
