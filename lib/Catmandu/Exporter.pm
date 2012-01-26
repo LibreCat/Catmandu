@@ -29,22 +29,51 @@ sub commit { 1 }
 
 =head1 NAME
 
-Catmandu::Exporter - Namespace for packages that can export a hashref or iterable object
+Catmandu::Exporter - Namespace for packages that can export a hashref or an iterable object
 
 =head1 SYNOPSIS
 
-    use Catmandu::Exporter::JSON;
+    use Catmandu::Exporter::YAML;
 
-    my $exporter = Catmandu::Exporter::JSON->new(file => "/foo/bar.json");
+    my $exporter = Catmandu::Exporter::YAML->new(fix => 'myfix.txt');
 
-    $exporter->add($object_with_each_method);
+    $exporter->add_many($arrayref);
+    $exporter->add_many($iterator);
+    $exporter->add_many(sub { });
+
     $exporter->add($hashref);
+
+    printf "exported %d objects\n" , $exporter->count;
 
 =head1 METHODS
 
-=head2 new
+=head2 new(file => PATH, fh => HANDLE, fix => STRING|ARRAY)
 
-=head2 add
+Create a new Catmandu::Exporter. When no options are given exported data is written to
+the stdout. Optionally provide a 'file' pathname or a 'fh' file handle to redirect the
+ouput. When a 'fix' is provided all the objects are first filtered through a Catmandu::Fix-er.
+
+=head2 add($hashref)
+
+Adds one object to be exported. Provide a HASH-ref or an Catmandu::Iterator to loop. 
+Returns a true value when the export was successful or undef on error.
+
+=head2 add_many($arrayref)
+
+=head2 add_many($iterator)
+
+=head2 add_many(sub {})
+
+Provide one or more objects to be exported. The exporter will use array references, iterators
+and generator routines to loop over all items. Returns the total number of items exported.
+
+=head2 count
+
+Returns the number of items exported by this Catmandu::Exporter.
+
+=head1 SEE ALSO
+
+L<Catmandu::Exporter::Fix>
 
 =cut
 

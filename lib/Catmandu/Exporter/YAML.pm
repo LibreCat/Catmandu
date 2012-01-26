@@ -16,4 +16,28 @@ sub add {
     $self->fh->print($yaml);
 }
 
+=head1 NAME
+
+Catmandu::Exporter::YAML - a YAML exporter
+
+=head1 SYNOPSIS
+
+    use Catmandu::Exporter::YAML;
+
+    my $exporter = Catmandu::Exporter::YAML->new(fix => 'myfix.txt');
+
+    $exporter->add_many($arrayref);
+    $exporter->add_many($iterator);
+    $exporter->add_many(sub { });
+
+    $exporter->add($hashref);
+
+    printf "exported %d objects\n" , $exporter->count;
+
+=head1 SEE ALSO
+
+L<Catmandu::Exporter>
+
+=cut
+
 1;

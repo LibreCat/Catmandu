@@ -53,4 +53,49 @@ sub commit {
     $self->tt->process($self->template_after, {}, $self->fh) if $self->template_after;
 }
 
+=head1 NAME
+
+Catmandu::Exporter::Template - a TT2 Template exporter
+
+=head1 SYNOPSIS
+
+    use Catmandu::Exporter::Template;
+
+    my $exporter = Catmandu::Exporter::YAML->new(
+				fix => 'myfix.txt'
+				xml => 1,
+				template_before => '<path>/header.xml' ,
+				template => '<path>/record.xml' ,
+				template_after => '<path>/footer.xml' ,
+		   );
+
+    $exporter->add_many($arrayref);
+    $exporter->add_many($iterator);
+    $exporter->add_many(sub { });
+
+    $exporter->add($hashref);
+
+    $exporter->commit; # trigger the template_after
+
+    printf "exported %d objects\n" , $exporter->count;
+
+=head1 METHODS
+
+=head2 new(xml => 0|1 , template_before => PATH, template => PATH , template_after => PATH)
+
+Catmandu::Exporter::Template can be used to export data objects using Template Toolkit. The only 
+required argument is 'template' which points to a file to render for each exported object. Set the
+'template_before' and 'template_before' to add output at the start and end of the export. Optionally
+provide an 'xml' indicator to include a XML header. 
+
+=head2 commit
+
+Commit all changes and execute the template_after if given.
+
+=head1 SEE ALSO
+
+L<Catmandu::Exporter>, L<Template>
+
+=cut
+
 1;
