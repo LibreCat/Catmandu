@@ -4,6 +4,8 @@ use Catmandu::Sane;
 use Moo;
 use DBI;
 
+with 'Catmandu::Store';
+
 has data_source => (is => 'ro', required => 1);
 has username    => (is => 'ro', default => sub { '' });
 has password    => (is => 'ro', default => sub { '' });
@@ -63,15 +65,18 @@ use Catmandu::Sane;
 use JSON qw(encode_json decode_json);
 use Moo;
 
+with 'Catmandu::Bag';
+
 has _sth_get        => (is => 'ro', builder => '_build_sth_get');
 has _sth_delete     => (is => 'ro', builder => '_build_sth_delete');
 has _sth_delete_all => (is => 'ro', builder => '_build_sth_delete_all');
-has _sth_add        => (is => 'ro', builder => '_build_sth_add');
+has _dbh_add        => (is => 'ro', builder => '_build_dbh_add');
 
 sub BUILD {
     my $self = $_[0];
     my $name = $self->name;
-    $self->store->dbh->do("create table if not exists $name(id varchar(255) not null primary key, data text not null)");
+    $self->store->dbh->do("create table if not exists $name(id varchar(255) not null primary key, data text not null)") or
+        confess $self->store->dbh->errstr;
 }
 
 sub _build_sth_get {
