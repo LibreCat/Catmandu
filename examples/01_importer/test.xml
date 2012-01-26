@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<marc:collection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd" xmlns:marc="http://www.loc.gov/MARC21/slim">
+  <marc:record>
+    <marc:leader>00755cam  22002414a 4500</marc:leader>
+<!--    <marc:controlfield tag="001">fol05731351 </marc:controlfield> -->
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000613133448.0</marc:controlfield>
+    <marc:controlfield tag="008">000107s2000    nyua          001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00020737 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">0471383147 (paper/cd-rom : alk. paper)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+      <marc:subfield code="d">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">M33 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Martinsson, Tobias,</marc:subfield>
+      <marc:subfield code="d">1976-</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">ActivePerl with ASP and ADO /</marc:subfield>
+      <marc:subfield code="c">Tobias Martinsson.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">New York :</marc:subfield>
+      <marc:subfield code="b">John Wiley &amp; Sons,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">xxi, 289 p. :</marc:subfield>
+      <marc:subfield code="b">ill. ;</marc:subfield>
+      <marc:subfield code="c">23 cm. +</marc:subfield>
+      <marc:subfield code="e">1 computer  laser disc (4 3/4 in.)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="500" ind1=" " ind2=" ">
+      <marc:subfield code="a">"Wiley Computer Publishing."</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="630" ind1="0" ind2="0">
+      <marc:subfield code="a">Active server pages.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="630" ind1="0" ind2="0">
+      <marc:subfield code="a">ActiveX.</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00647pam  2200241 a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05754809 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000601115601.0</marc:controlfield>
+    <marc:controlfield tag="008">000203s2000    mau           001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00022023 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">1565926994</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+      <marc:subfield code="d">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">D47 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.74</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Descartes, Alligator.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Programming the Perl DBI /</marc:subfield>
+      <marc:subfield code="c">Alligator Descartes and Tim Bunce.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Cmabridge, MA :</marc:subfield>
+      <marc:subfield code="b">O'Reilly,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="263" ind1=" " ind2=" ">
+      <marc:subfield code="a">1111</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">p. cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Database management.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="700" ind1="1" ind2=" ">
+      <marc:subfield code="a">Bunce, Tim.</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00605cam  22002054a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05843555 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000525142739.0</marc:controlfield>
+    <marc:controlfield tag="008">000318s1999    cau      b    001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00501349 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+      <marc:subfield code="d">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">B763 1999</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Brown, Martin C.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Perl :</marc:subfield>
+      <marc:subfield code="b">programmer's reference /</marc:subfield>
+      <marc:subfield code="c">Martin C. Brown.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Berkeley :</marc:subfield>
+      <marc:subfield code="b">Osborne/McGraw-Hill,</marc:subfield>
+      <marc:subfield code="c">c1999.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">xix, 380 p. ;</marc:subfield>
+      <marc:subfield code="c">22 cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="504" ind1=" " ind2=" ">
+      <marc:subfield code="a">Includes bibliographical references and index.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00579cam  22002054a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05843579 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000525142716.0</marc:controlfield>
+    <marc:controlfield tag="008">000318s1999    caua          001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00502116 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">0072120002</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+      <marc:subfield code="d">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">B762 1999</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Brown, Martin C.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Perl :</marc:subfield>
+      <marc:subfield code="b">the complete reference /</marc:subfield>
+      <marc:subfield code="c">Martin C. Brown.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Berkeley :</marc:subfield>
+      <marc:subfield code="b">Osborne/McGraw-Hill,</marc:subfield>
+      <marc:subfield code="c">c1999.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">xxxv, 1179 p. :</marc:subfield>
+      <marc:subfield code="b">ill. ;</marc:subfield>
+      <marc:subfield code="c">24 cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00801nam  22002778a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05848297 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000524125727.0</marc:controlfield>
+    <marc:controlfield tag="008">000518s2000    mau           001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00041664 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">1565924193</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">G84 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.2/762</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Guelich, Scott.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">CGI programming with Perl /</marc:subfield>
+      <marc:subfield code="c">Scott Guelich, Shishir Gundavaram &amp; Gunther Birznieks.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="250" ind1=" " ind2=" ">
+      <marc:subfield code="a">2nd ed., expanded &amp; updated</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Cambridge, Mass. :</marc:subfield>
+      <marc:subfield code="b">O'Reilly,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="263" ind1=" " ind2=" ">
+      <marc:subfield code="a">0006</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">p. cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">CGI (Computer network protocol)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Internet programming.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="700" ind1="1" ind2=" ">
+      <marc:subfield code="a">Gundavaram, Shishir.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="700" ind1="1" ind2=" ">
+      <marc:subfield code="a">Birznieks, Gunther.</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00665nam  22002298a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05865950 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000615103017.0</marc:controlfield>
+    <marc:controlfield tag="008">000612s2000    mau           100 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00055759 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">0596000138</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">P475 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="111" ind1="2" ind2=" ">
+      <marc:subfield code="a">Perl Conference 4.0</marc:subfield>
+      <marc:subfield code="d">(2000 :</marc:subfield>
+      <marc:subfield code="c">Monterey, Calif.)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Proceedings of the Perl Conference 4.0 :</marc:subfield>
+      <marc:subfield code="b">July 17-20, 2000, Monterey, California.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="250" ind1=" " ind2=" ">
+      <marc:subfield code="a">1st ed.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Cambridge, Mass. :</marc:subfield>
+      <marc:subfield code="b">O'Reilly,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="263" ind1=" " ind2=" ">
+      <marc:subfield code="a">0006</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">p. cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+      <marc:subfield code="v">Congresses.</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00579nam  22002178a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05865956 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000615102948.0</marc:controlfield>
+    <marc:controlfield tag="008">000612s2000    mau           000 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00055770 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">1565926099</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">B43 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Blank-Edelman, David N.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Perl for system administration /</marc:subfield>
+      <marc:subfield code="c">David N. Blank-Edelman.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Cambridge, Mass. :</marc:subfield>
+      <marc:subfield code="b">O'Reilly,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="263" ind1=" " ind2=" ">
+      <marc:subfield code="a">0006</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">p. cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00661nam  22002538a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05865967 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000615102611.0</marc:controlfield>
+    <marc:controlfield tag="008">000614s2000    mau           000 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00055799 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">0596000278</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">W35 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Wall, Larry.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Programming Perl /</marc:subfield>
+      <marc:subfield code="c">Larry Wall, Tom Christiansen &amp; Jon Orwant.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="250" ind1=" " ind2=" ">
+      <marc:subfield code="a">3rd ed.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Cambridge, Mass. :</marc:subfield>
+      <marc:subfield code="b">O'Reilly,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="263" ind1=" " ind2=" ">
+      <marc:subfield code="a">0007</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">p. cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="700" ind1="1" ind2=" ">
+      <marc:subfield code="a">Christiansen, Tom.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="700" ind1="1" ind2=" ">
+      <marc:subfield code="a">Orwant, Jon.</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00603cam  22002054a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05872355 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000706095105.0</marc:controlfield>
+    <marc:controlfield tag="008">000315s1999    njua          001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00500678 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">013020868X</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+      <marc:subfield code="d">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">L69 1999</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="1" ind2=" ">
+      <marc:subfield code="a">Lowe, Vincent</marc:subfield>
+      <marc:subfield code="q">(Vincent D.)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Perl programmer's interactive workbook /</marc:subfield>
+      <marc:subfield code="c">Vincent Lowe.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Upper Saddle River, NJ :</marc:subfield>
+      <marc:subfield code="b">Prentice Hall PTP,</marc:subfield>
+      <marc:subfield code="c">c1999.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">xx, 633 p. :</marc:subfield>
+      <marc:subfield code="b">ill. ;</marc:subfield>
+      <marc:subfield code="c">23 cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+  <marc:record>
+    <marc:leader>00696nam  22002538a 4500</marc:leader>
+    <marc:controlfield tag="001">fol05882032 </marc:controlfield>
+    <marc:controlfield tag="003">IMchF</marc:controlfield>
+    <marc:controlfield tag="005">20000707091904.0</marc:controlfield>
+    <marc:controlfield tag="008">000630s2000    cau           001 0 eng  </marc:controlfield>
+    <marc:datafield tag="010" ind1=" " ind2=" ">
+      <marc:subfield code="a">   00058174 </marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="020" ind1=" " ind2=" ">
+      <marc:subfield code="a">0764547291 (alk. paper)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="040" ind1=" " ind2=" ">
+      <marc:subfield code="a">DLC</marc:subfield>
+      <marc:subfield code="c">DLC</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="042" ind1=" " ind2=" ">
+      <marc:subfield code="a">pcc</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="050" ind1="0" ind2="0">
+      <marc:subfield code="a">QA76.73.P22</marc:subfield>
+      <marc:subfield code="b">F64 2000</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="082" ind1="0" ind2="0">
+      <marc:subfield code="a">005.13/3</marc:subfield>
+      <marc:subfield code="2">21</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="100" ind1="2" ind2=" ">
+      <marc:subfield code="a">Foster-Johnson, Eric.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="245" ind1="1" ind2="0">
+      <marc:subfield code="a">Cross-platform Perl /</marc:subfield>
+      <marc:subfield code="c">Eric F. Johnson.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="260" ind1=" " ind2=" ">
+      <marc:subfield code="a">Foster City, CA :</marc:subfield>
+      <marc:subfield code="b">IDG Books Worldwide,</marc:subfield>
+      <marc:subfield code="c">2000.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="263" ind1=" " ind2=" ">
+      <marc:subfield code="a">0009</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="300" ind1=" " ind2=" ">
+      <marc:subfield code="a">p. cm.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="500" ind1=" " ind2=" ">
+      <marc:subfield code="a">Includes index.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Perl (Computer program language)</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Web servers.</marc:subfield>
+    </marc:datafield>
+    <marc:datafield tag="650" ind1=" " ind2="0">
+      <marc:subfield code="a">Cross-platform software development.</marc:subfield>
+    </marc:datafield>
+  </marc:record>
+</marc:collection>

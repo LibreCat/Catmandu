@@ -6,6 +6,7 @@ use Catmandu::Importer::JSON;
 use Catmandu::Importer::CSV;
 use Catmandu::Importer::OAI;
 use Catmandu::Importer::Atom;
+use Catmandu::Importer::MARC;
 use Data::Dumper;
 
 # Importers are Catmandu classes to read data into an application.
@@ -42,6 +43,16 @@ my $count = $importer->each(sub {
 });
 
 print "Read: $count CSV items\n";
+
+# And MARC...
+my $importer = Catmandu::Importer::MARC->new(file => "./test.xml", type => 'XML');
+
+my $count = $importer->each(sub {
+                my $obj = shift;
+                print Dumper($obj);
+});
+
+print "Read: $count MARC items\n";
 
 # We can even import data from OAI-PMH servers...
 my $importer = Catmandu::Importer::OAI->new(url => 'http://arno.unimaas.nl/oai/dare.cgi');

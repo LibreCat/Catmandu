@@ -51,7 +51,11 @@ Catmandu::Exporter - Namespace for packages that can export a hashref or an iter
 
 Create a new Catmandu::Exporter. When no options are given exported data is written to
 the stdout. Optionally provide a 'file' pathname or a 'fh' file handle to redirect the
-ouput. When a 'fix' is provided all the objects are first filtered through a Catmandu::Fix-er.
+ouput.
+
+Every Catmandu::Exporter is a Catmandu::Fixable and thus provides a 'fix' method that
+can be set in the constructor. For every 'add' or for every item in 'add_many' an
+implicit 'fix' will be called. 
 
 =head2 add($hashref)
 
