@@ -10,7 +10,7 @@ has split_char => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $split_char) = @_;
-    $path = [split /\./, $path];
+    $path = [split /[\/\.]/, $path];
     my $key = pop @$path;
     $orig->($class, path => $path, key => $key, split_char => $split_char // qr'\s+');
 };
