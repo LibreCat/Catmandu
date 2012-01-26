@@ -14,7 +14,9 @@ first: Albert
 last: Einstein
 job: Physicist
 colors:
-   - Green
+   - 
+       - Light Green
+       - Dark Green
    - Blue
 ---
 first: Joseph

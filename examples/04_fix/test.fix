@@ -45,12 +45,13 @@ substring('my.deep.nested.0',0,2);
 
 add_field('test');
 add_field('income',0);
-add_field('my.deep.nested2',1);
+add_field('a.0.0.0',1);
 
 copy_field('first','init');
 copy_field('first','my.deep.nested2');
 substring('init',0,1);
 
-rename_field('colors','color');
+join_field('colors.0','/');
 
 apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = 0 });
+
