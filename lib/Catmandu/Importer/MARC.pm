@@ -55,13 +55,13 @@ sub marc_generator {
     my $file;
 
     given($self->type) {
-	when ($self->type eq 'USMARC') {
+	when ('USMARC') {
 	    $file =  MARC::File::USMARC->in($self->fh); 
 	}
-        when ($self->type eq 'MicroLIF') {
+        when ('MicroLIF') {
             $file = MARC::File::MicroLIF->in($self->fh);
         }
-        when  ($self->type eq 'XML') {
+        when ('XML') {
             $file = MARC::File::XML->in($self->fh);
         }
 	die "unknown";
@@ -97,14 +97,14 @@ sub generator {
     my ($self) = @_;
     my $type = $self->type;
 
-    if ($type eq 'USMARC' || $type eq 'MicroLIF' || $type eq 'XML') {
-       return $self->marc_generator;
-    }
-    elsif ($type eq 'ALEPHSEQ') {
-       return $self->aleph_generator;
-    }
-    else {
-       die "need USMARC, MicroLIF, XML or ALEPHSEQ" 
+    given ($type) {
+	when (/^USMARC|MicroLIF|XML$/) {
+           return $self->marc_generator;
+	}
+	when ('ALEPHSEQ') {
+           return $self->aleph_generator;
+	}
+        die "need USMARC, MicroLIF, XML or ALEPHSEQ";
     }
 }
 
