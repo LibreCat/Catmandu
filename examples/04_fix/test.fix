@@ -53,5 +53,7 @@ substring('init',0,1);
 
 join_field('colors.0','/');
 
-apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = 0 });
+apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = time });
 
+rename_field('fancy.tricks.for.hackers','budget');
+rename_field('colors.1','colors2.15');
