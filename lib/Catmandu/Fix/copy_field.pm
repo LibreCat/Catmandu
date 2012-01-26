@@ -27,7 +27,7 @@ sub fix {
     my $new_path = $self->new_path;
     my $new_key  = $self->new_key;
     my @old_matches = grep ref, data_at($self->old_path, $data);
-    my @new_matches = grep ref, data_at($self->new_path, $data);
+    my @new_matches = grep ref, data_at($self->new_path, $data, create=>1);
     if (@old_matches == @new_matches) {
         for (my $i = 0; $i < @old_matches; $i++) {
             my $old_match = $old_matches[$i];
@@ -53,5 +53,20 @@ sub fix {
 
     $data;
 }
+
+=head1 NAME
+
+Catmandu::Fix::copy_field - copy the value of one field to a new field
+
+=head1 SYNOPSIS
+
+   # Copy the values of foo.bar into bar.foo
+   copy_field('foo.bar','bar.foo');
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
 
 1;

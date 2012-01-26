@@ -39,4 +39,19 @@ sub fix {
     $data;
 }
 
+=head1 NAME
+
+Catmandu::Fix::rename_field - move a field to another place in the data structure
+
+=head1 SYNOPSIS
+
+   # Move 'foo.bar' to 'bar.foo'
+   rename_field('foo.bar','bar.foo');
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
+
 1;

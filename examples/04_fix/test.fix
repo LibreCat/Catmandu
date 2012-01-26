@@ -24,7 +24,11 @@
 #  capitalize('job')           : uppercase the first character of key 'job'
 #  add_field('test'[,value])   : add a new key 'test' to the data
 #  copy_field('job','job2')    : copy the value of key 'job' to 'job2'
+#  remove_field('job')         : remove the key 'job'
 #  rename_field('job','job2')  : rename the key 'job' to 'job2'
+#  retain('foo.bar')           : delete from 'foo' all the keys except 'bar'
+#  split_field('foo',':')      : split the string in 'foo' delimited by ':' into an array of tokens
+#  trim('job')                 : delete leading and ending spaces from 'job'
 #  
 # Advanced fixes
 #
@@ -54,6 +58,14 @@ substring('init',0,1);
 join_field('colors.0','/');
 
 apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = time });
+apply(sub { (shift)->{fancy}->{tricks2}->{for}->{hackers} = time });
 
 rename_field('fancy.tricks.for.hackers','budget');
 rename_field('colors.1','colors2.15');
+
+retain_field('fancy.tricks');
+
+trim('tokens.test');
+
+copy_field('test','brol.dol.hol');
+split_field('tokens.test',':');

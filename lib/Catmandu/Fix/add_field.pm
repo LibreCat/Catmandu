@@ -32,4 +32,25 @@ sub fix {
     $data;
 }
 
+=head1 NAME
+
+Catmandu::Fix::add_field - add or change the value of a HASH key
+
+=head1 SYNOPSIS
+
+   # Add a new field 'foo' with value '2'
+   add_field('foo','2');
+
+   # Change the value of 'foo' to 'bar 123'
+   add_field('foo','bar 123');
+
+   # Create a deeply nested key
+   add_field('my.deep.nested.key','hi');
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
+
 1;
