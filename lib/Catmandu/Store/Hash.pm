@@ -118,6 +118,13 @@ sub searcher {
 }
 
 sub delete_by_query {
+    my $self = shift;
+    my $hits = $self->search(@_);
+
+    $hits->each(sub {
+	my $item = shift;
+	$self->delete($item->{_id});	
+    });
 }
 
 1;

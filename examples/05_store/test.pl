@@ -77,6 +77,12 @@ printf "Found: %d hits\n" , $hits->total;
 
 $exporter->add_many($hits);
 
+# A Search can also delete data. Lets delete all 'Nicolas' from the
+# bag
+print "Deleting 'Nicolas' from the bag\n";
+$store->bag->delete_by_query(query => 'Nicolas');
+&show_all($store->bag);
+
 sub show_one {
   my $item = shift;
   $exporter->add($item);
