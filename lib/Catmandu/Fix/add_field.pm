@@ -20,7 +20,7 @@ sub fix {
 
     my $key = $self->key;
     my $val = $self->value;
-    my @matches = grep ref, data_at($self->path, $data);
+    my @matches = grep ref, data_at($self->path, $data, create => 1);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             $match->[$key] = $val if is_integer($key);

@@ -2,12 +2,27 @@
 first: Charly 
 last: Parker
 job: Artist
+my:
+  deep:
+    nested: 
+       - value
+colors:
+   - Red
+   - Blue
 ---
 first: Albert
 last: Einstein
 job: Physicist
+colors:
+   - 
+       - Light Green
+       - Dark Green
+   - Blue
 ---
 first: Joseph
 last: Ratzinger
 job: Pope
+colors:
+   - White
+   - Yellow
 ...

@@ -24,7 +24,7 @@ sub fix {
     for my $match (@matches) {
         if (is_array_ref($match)) {
             is_integer($key) || next;
-            my $val = $match->{$key};
+            my $val = $match->[$key];
             $match->[$key] = join $join_char, @$val if is_array_ref($val);
         } else {
             my $val = $match->{$key};

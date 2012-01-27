@@ -1,10 +1,57 @@
-# Comment
+# Example fix file
+#
+# All fixes contain as first argument a path name to the element in
+# the data object you want to 'fix'. These path names are expressed
+# in as slimmed down perl reference.
+#
+# E.g.
+#
+# Hashes or hashes of hashes can be refences by their key name:
+#
+# 'job'
+# 'job.title'
+# 'my.deep.hash.structure'
+#
+# Arrays can be referenced by the index
+#
+# 'colors.0'
+# 'employee.departments.2.code'
+#
+# Some example fixes
+#
+#  upcase('job')               : uppercase the value of key 'job'
+#  downcase('job')             : downcase the value of key 'job'
+#  capitalize('job')           : uppercase the first character of key 'job'
+#  add_field('test'[,value])   : add a new key 'test' to the data
+#  copy_field('job','job2')    : copy the value of key 'job' to 'job2'
+#  rename_field('job','job2')  : rename the key 'job' to 'job2'
+#  
+# Advanced fixes
+#
+#  apply('job', sub { ...})    : apply a Perl function to a path
+#  clone()                     : keep the original data, apply all fixes to a copy
+#  collapse()                  : converts your Perl hashes into a structure using TT2 dotted names
+#  expand()                    : expands TT2 dotted name structures into Perl hashes
+#  
 upcase('job');
 
 capitalize('first');
 capitalize('last');
+capitalize('my.deep.nested.0');
 
+upcase('my.deep.nested.0');
+downcase('my.deep.nested.0');
+substring('my.deep.nested.0',0,2);
+
+add_field('test');
 add_field('income',0);
+add_field('a.0.0.0',1);
 
 copy_field('first','init');
+copy_field('first','my.deep.nested2');
 substring('init',0,1);
+
+join_field('colors.0','/');
+
+apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = 0 });
+
