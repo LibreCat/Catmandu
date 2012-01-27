@@ -60,28 +60,27 @@ sub io {
 
 sub data_at {
     my ($path, $data, %opts) = @_;
-    if (ref $path) {
-        $path = [@$path];
-    } else {
-        $path = [split /[\/\.]/, $path];
-    }
-    while (my $key = shift @$path) {
+    $path = ref $path ? [@$path] : [split /[\/\.]/, $path];
+    while (is_string(my $key = shift @$path)) {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
                 return map { data_at($path, $_, %opts) } @$data;
             } else {
                 is_natural($key) || return;
-                if ($opts{create} && is_string($path->[0])) {
+                if ($opts{create} && @$path >= 1) {
                     $data = $data->[$key] ||= is_natural($path->[0]) ? [] : {};
                 } else {
                     $data = $data->[$key];
                 }
             }
-        } elsif ($opts{create} && is_string($path->[0])) {
+        } elsif ($opts{create} && @$path >= 1) {
             $data = $data->{$key} ||= is_natural($path->[0]) ? [] : {};
         } else {
             $data = $data->{$key};
+        }
+        if ($opts{create} && @$path == 1) {
+            last;
         }
     }
     $data;
