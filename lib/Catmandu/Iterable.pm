@@ -349,19 +349,73 @@ Splitting the Iterator into NUM parts and returning an Iterator for each part.
 =head2 tap(\&callback)
 
 Returns a copy of the Iterator and executing callback on each item. This method works
-like the Unix L<tee> command.
+like the Unix L<tee> command. Use this command to peek into an iterable while it is
+processing results. E.g. you are writing code to process an iterable and wrote
+something like:
+
+   $it->each(sub { 
+	  # Very complicated routine
+	  ....
+   });
+
+Now you would like to benchmark this piece of code (how fast are we processing).
+This can be done by tapping into the iterator and calling a 'benchmark' subroutine
+in your program that for instance counts the number of items divided by the
+execution time.
+
+   $it->tap(\&benchmark)->each(sub { 
+	  # Very complicated routine
+	  ....
+   });
+
+   sub benchmark {
+       my $item = shift;
+       $start ||= time;
+       $count++;
+
+       printf "%d recs/sec\n" , $count/(time - $start + 1) if $count % 100 == 0;
+   }
 
 =head2 detect(\&callback)
 
 Returns the first item for which callback returns a true value.
 
+=head2 detect(qr/..../)
+
+If the iterator contains STRING values, then return the first item which matches the
+regex.
+
+=head2 detect($key => qr/..../)
+
+If the iterator contains HASH values, then return the first item where the value of
+$key matches the regex.
+
 =head2 select(\&callback)
 
 Returns an Iterator for each item for which callback returns a true value.
 
+=head2 select(qr/..../)
+
+If the iterator contains STRING values, then return each item which matches the regex.
+
+=head2 select($key => qr/..../)
+
+If the iterator contains HASH values, then return each item where the value of $key
+matches the regex.
+
 =head2 reject(\&callback)
 
 Returns an Iterator for each item for which callback returns a false value.
+
+=head2 reject(qr/..../)
+
+If the iterator contains STRING values, then reject every item except those
+matching the regex.
+
+=head2 reject($key => qr/..../)
+
+If the iterator contains HASH values, then rejext every item for where the $key value
+matches regex.
 
 =head3 BOOLEAN FUNCTIONS
 

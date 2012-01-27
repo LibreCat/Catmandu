@@ -62,6 +62,7 @@ Catmandu::Searchable - Base class for all searchable Catmandu classes
 
     my $store = Catmandu::Store::Solr->new();
 
+    # Return one page of search results (page size = 1000)
     my $hits  = $store->bag->search(
 		   query => 'dna' ,
 	           start => 0 ,
@@ -69,13 +70,27 @@ Catmandu::Searchable - Base class for all searchable Catmandu classes
 		   sort  => 'title desc',
                 );
 
+    # Return all the search results as iterator
+    my $it    = $store->bag->searcher(query => 'dna');
+    $it->each(sub { ...});
+
     $store->bag->delete_by_query(query => 'dna');
 
 =head1 METHODS
 
-=head2 search(query => $query, start => $start, limit => $num, sort => $sort)
+=head2 search(query => $query, start => $start, limit => $num, sort => $sort, cql_query => $cql)
 
-Search the database and returns a Catmandu::Hits on success.
+Search the database and returns a Catmandu::Hits on success. The Hits represents one
+result page of at most $num results. The $query and $sort should implement the
+query and sort syntax of the underlying search engine. If the CQL language is supported
+by the Store, then optionally a $cql_query search can be excuted on the Searchable.
+
+=head2 searcher(query => $query, start => $start, limit => $num, sort => $sort, cql_query => $cql)
+
+Search the database and return a Catmandu::Iterable on success. This iterator can be
+used to loop over the complete result set. The $query and $sort should implement the
+query and sort syntax of the underlying search engine. If the CQL language is supported
+by the Store, then optionally a $cql_query search can be excuted on the Searchable.
 
 =head2 delete_by_query(query => $query)
 
@@ -85,4 +100,4 @@ Delete items from the database that match $query
 
 L<Catmandu::Hits>
 
-=cut;
+=cut

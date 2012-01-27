@@ -6,6 +6,7 @@ use Catmandu::Store::DBI;
 use Catmandu::Exporter::YAML;
 
 my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
+
 my $exporter = Catmandu::Exporter::YAML->new();
 
 $store->bag->add({
