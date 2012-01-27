@@ -1,0 +1,5 @@
+* Addable, Getable adds before_add and before_get, takes fixes or sub
+* remove Fixable
+* give Iterable fix method
+* give Iterable export, export_to_string methods ?
+* bag drop
