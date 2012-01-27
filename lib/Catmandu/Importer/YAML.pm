@@ -53,6 +53,18 @@ Catmandu::Importer::YAML - Package that imports YAML data
         # ...
     });
 
+    The YAML input file needs to be separated into records:
+
+    ---
+    - recordno: 1
+    - name: Alpha
+    ---
+    - recordno: 2
+    - name: Beta
+    ...
+
+    where '---' is the record separator and '...' the EOF indicator.
+
 =head1 METHODS
 
 =head2 new([file => $filename])

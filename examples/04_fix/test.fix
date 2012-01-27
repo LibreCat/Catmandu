@@ -1,0 +1,10 @@
+# Comment
+upcase('job');
+
+capitalize('first');
+capitalize('last');
+
+add_field('income',0);
+
+copy_field('first','init');
+substring('init',0,1);

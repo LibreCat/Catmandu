@@ -3,7 +3,7 @@
 use Catmandu::Importer::Mock;
 use Data::Dumper;
 
-# In the Perl script we are going to experiment a bit with the
+# In this Perl script we are going to experiment a bit with the
 # iterable features of Catmandu.
 
 # Mock is a test importer that generates hashes in memory.
@@ -16,10 +16,8 @@ print "[to_array]\n";
 print Dumper($ref);
 printf "Mock contains %d items\n" , int @$ref;
 
-# With count we can check the number of items in an importer. Beware, most
-# importers can only be used once.
+# With count we can check the number of items in an importer. 
 my $count = $importer->count;
-
 print "[count]\n";
 printf "Mock contains %d items\n" , $count;
 

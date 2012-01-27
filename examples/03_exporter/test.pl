@@ -37,7 +37,8 @@ $exporter->add($data->[2]);
 printf "Exported %d objects thus far\n" , $exporter->count;
 
 # One very nice exporter is the Template. You can give it a Template
-# Toolkit template and it will generate any output you like
+# Toolkit template and it will generate any output you like.
+# Rem: the template needs to have an absolute path 
 my $exporter = Catmandu::Exporter::Template->new(template => '/home/search/catmandu/examples/03_exporter/example.tt');
 $exporter->add_many($data);
 
