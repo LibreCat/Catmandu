@@ -67,15 +67,15 @@ sub data_at {
             if ($key eq '*') {
                 return map { data_at($path, $_, %opts) } @$data;
             } else {
-                is_natural($key) || return;
+                is_integer($key) || return;
                 if ($opts{create} && @$path >= 1) {
-                    $data = $data->[$key] ||= is_natural($path->[0]) ? [] : {};
+                    $data = $data->[$key] ||= is_integer($path->[0]) ? [] : {};
                 } else {
                     $data = $data->[$key];
                 }
             }
         } elsif ($opts{create} && @$path >= 1) {
-            $data = $data->{$key} ||= is_natural($path->[0]) ? [] : {};
+            $data = $data->{$key} ||= is_integer($path->[0]) ? [] : {};
         } else {
             $data = $data->{$key};
         }

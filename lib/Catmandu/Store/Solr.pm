@@ -1,4 +1,4 @@
-package Catmandu::Store::Solr; # TODO translate_sru_sortkeys
+package Catmandu::Store::Solr;
 
 use Catmandu::Sane;
 use Moo;
@@ -153,6 +153,10 @@ sub search {
 sub searcher {
     my ($self, %args) = @_;
     Catmandu::Store::Solr::Searcher->new(%args, bag => $self);
+}
+
+sub translate_sru_sortkeys {
+    confess 'TODO';
 }
 
 sub translate_cql_query {
