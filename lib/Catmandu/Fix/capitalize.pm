@@ -9,7 +9,7 @@ has key  => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
-    $path = [split /\./, $path];
+    $path = [split /[\/\.]/, $path];
     my $key = pop @$path;
     $orig->($class, path => $path, key => $key);
 };

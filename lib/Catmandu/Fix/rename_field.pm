@@ -10,7 +10,7 @@ has new_key => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $new_key) = @_;
-    $path = [split /\./, $path];
+    $path = [split /[\/\.]/, $path];
     my $old_key = pop @$path;
     $orig->($class, path => $path, old_key => $old_key, new_key => $new_key);
 };

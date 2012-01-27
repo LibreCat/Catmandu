@@ -11,8 +11,8 @@ has new_key  => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $old_path, $new_path) = @_;
-    $old_path = [split /\./, $old_path];
-    $new_path = [split /\./, $new_path];
+    $old_path = [split /[\/\.]/, $old_path];
+    $new_path = [split /[\/\.]/, $new_path];
     my $old_key = pop @$old_path;
     my $new_key = pop @$new_path;
     $orig->($class, old_path => $old_path, old_key => $old_key,

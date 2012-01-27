@@ -10,7 +10,7 @@ has join_char => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $join_char) = @_;
-    $path = [split /\./, $path];
+    $path = [split /[\/\.]/, $path];
     my $key = pop @$path;
     $orig->($class, path => $path, key => $key, join_char => $join_char // '');
 };
