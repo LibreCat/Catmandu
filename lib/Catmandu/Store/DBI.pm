@@ -70,7 +70,7 @@ with 'Catmandu::Bag';
 has _sth_get        => (is => 'ro', builder => '_build_sth_get');
 has _sth_delete     => (is => 'ro', builder => '_build_sth_delete');
 has _sth_delete_all => (is => 'ro', builder => '_build_sth_delete_all');
-has _sth_add        => (is => 'ro', builder => '_build_sth_add');
+has _dbh_add        => (is => 'ro', builder => '_build_dbh_add');
 
 sub BUILD {
     my $self = $_[0];
