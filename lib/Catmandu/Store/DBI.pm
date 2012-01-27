@@ -11,10 +11,10 @@ has username    => (is => 'ro', default => sub { '' });
 has password    => (is => 'ro', default => sub { '' });
 
 has dbh => (
-    is => 'ro',
+    is       => 'ro',
     init_arg => undef,
-    lazy => 1,
-    builder => '_build_dbh',
+    lazy     => 1,
+    builder  => '_build_dbh',
 );
 
 sub _build_dbh {
@@ -56,7 +56,7 @@ sub transaction {
 }
 
 sub DEMOLISH {
-    $_[0]->dbh->disconnect;
+    $_[0]->{dbh}->disconnect if $_[0]->{dbh};
 }
 
 package Catmandu::Store::DBI::Bag;

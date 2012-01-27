@@ -94,11 +94,11 @@ sub get {
 sub add {
     my ($self, $data) = @_;
 
-    $self->buffer_add({
+    $self->buffer_add({index => {
         type => $self->name,
-        id   => $data->{_id},
+        id => $data->{_id},
         data => $data,
-    });
+    }});
 
     if ($self->buffer_is_full) {
         $self->commit;
@@ -107,12 +107,16 @@ sub add {
 
 sub delete {
     my ($self, $id) = @_;
-    $self->store->elastic_search->delete(
+
+    $self->buffer_add({delete => {
         type => $self->name,
-        ignore_missing => 1,
         id => $id,
-        refresh => 1,
-    );
+        ignore_missing => 1,
+    }});
+
+    if ($self->buffer_is_full) {
+        $self->commit;
+    }
 }
 
 sub delete_all {
@@ -136,13 +140,7 @@ sub delete_by_query {
 sub commit { # TODO optimize
     my ($self) = @_;
     return 1 unless $self->buffer_used;
-    my $res = $self->store->elastic_search->bulk_index($self->buffer, {refresh => 1})->{results};
-    my $err;
-    for my $r (@$res) {
-        if (my $e = $r->{index}{error}) {
-            push @{$err ||= []}, $e;
-        }
-    }
+    my $err = $self->store->elastic_search->bulk($self->buffer, {refresh => 1})->{errors};
     $self->clear_buffer;
     return !defined $err, $err;
 }

@@ -94,13 +94,7 @@ sub command {
     }
 
     $n = $into->add_many($from);
-
-    if ($into->can('commit')) {
-        my ($ok, $errors) = $into->commit;
-        if ($errors) {
-            say STDERR @$errors;
-        }
-    }
+    $into->commit;
 
     if ($v) {
         say STDERR $n == 1
