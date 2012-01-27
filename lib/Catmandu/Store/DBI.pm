@@ -4,6 +4,8 @@ use Catmandu::Sane;
 use Moo;
 use DBI;
 
+with 'Catmandu::Store';
+
 has data_source => (is => 'ro', required => 1);
 has username    => (is => 'ro', default => sub { '' });
 has password    => (is => 'ro', default => sub { '' });
@@ -62,6 +64,8 @@ package Catmandu::Store::DBI::Bag;
 use Catmandu::Sane;
 use JSON qw(encode_json decode_json);
 use Moo;
+
+with 'Catmandu::Bag';
 
 has _sth_get        => (is => 'ro', builder => '_build_sth_get');
 has _sth_delete     => (is => 'ro', builder => '_build_sth_delete');
