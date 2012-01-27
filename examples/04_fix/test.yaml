@@ -2,6 +2,8 @@
 first: Charly 
 last: Parker
 job: Artist
+tokens: 
+  test: "    1:2:3:4:5"
 my:
   deep:
     nested: 
@@ -13,6 +15,8 @@ colors:
 first: Albert
 last: Einstein
 job: Physicist
+tokens:
+  test: "1:2:3:4:5    "
 colors:
    - 
        - Light Green
@@ -22,6 +26,8 @@ colors:
 first: Joseph
 last: Ratzinger
 job: Pope
+tokens:
+   test: " 1:2:3:4:5    "
 colors:
    - White
    - Yellow

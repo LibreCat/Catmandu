@@ -33,4 +33,19 @@ sub fix {
     $data;
 }
 
+=head1 NAME
+
+Catmandu::Fix::capitalize - capitalize the value of a key
+
+=head1 SYNOPSIS
+
+   # Capitalize the value of foo. E.g. foo => 'bar'
+   capitalize('foo');  # foo => 'Bar'
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
+
 1;

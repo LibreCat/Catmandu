@@ -33,4 +33,19 @@ sub fix {
     $data;
 }
 
+=head1 NAME
+
+Catmandu::Fix::trim - trim the value of a field from leading and ending spaces
+
+=head1 SYNOPSIS
+
+   # Trim 'foo'. E.g. foo => '   abc   ';
+   trim('foo'); # foo => 'abc';
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
+
 1;

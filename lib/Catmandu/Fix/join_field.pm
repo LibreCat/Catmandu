@@ -35,4 +35,19 @@ sub fix {
     $data;
 }
 
+=head1 NAME
+
+Catmandu::Fix::join_field - join the ARRAY values of a field into a string
+
+=head1 SYNOPSIS
+
+   # Join the array values of a field into a string. E.g. foo => [1,2,3]
+   join_field('foo','/'); # foo => "1/2/3"
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
+
 1;

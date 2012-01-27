@@ -30,4 +30,19 @@ sub fix {
     $data;
 }
 
+=head1 NAME
+
+Catmandu::Fix::remove_field - remove a field form the data
+
+=head1 SYNOPSIS
+
+   # Remove the foo.bar field
+   remove_field('foo.bar');
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
+
 1;
