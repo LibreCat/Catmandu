@@ -80,6 +80,14 @@ Read items from a Catmandu::Importer such as: YAML, JSON, CSV, MARC, OAI ...
 This option should be used in combination with a --from-store. Select from the Store
 only the items belonging to the bag BAG_NAME.
 
+=item --from-OPTION OPTION_VALUE
+
+To include configuration options to a Catmandu::Store or Catmandu::Importer an
+argument with prefix '--from-' can be used. E.g. to provide an 'url' to an Importer
+use:
+
+  --from-url http://my.url
+
 =item --into-exporter EXPORTER
 
 Add each item read into a Catmandu::Exporter such as: JSON, YAML, Template, XLS, ...
@@ -92,6 +100,14 @@ Add each item read into a Catmandu::Store such as: DBI, MongoDB, Solr, ElasticSe
 
 This option should be used in combination with a --into-store. Add each item into the
 Store with bag BAG_NAME.
+
+=item --into-OPTION OPTION_VALUE
+
+To include configuration options to a Catmandu::Store or Catmandu::Exporter an
+argument with prefix '--into-' can be used. E.g. to provide an 'url' to an Exporter
+use:
+
+  --into-url http://my.url
 
 =item --fix EXPRESSION
 
