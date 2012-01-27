@@ -38,3 +38,52 @@ sub bag {
 }
 
 1;
+
+=head1 NAME
+
+Catmandu::Store - Namespace for packages that can make data persistent
+
+=head1 SYNOPSIS
+
+    use Catmandu::Store::DBI;
+
+    my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
+
+    my $obj1 = $store->bag->add({ name => 'Patrick' });
+
+    printf "obj1 stored as %s\n" , $obj1->{_id};
+
+    # Force an id in the store
+    my $obj2 = $store->bag->add({ _id => 'test123' , name => 'Nicolas' });
+
+    my $obj3 = $store->bag->get('test123');
+
+    $store->bag->delete('test123');
+    
+    $store->bag->delete_all;
+
+    # Some stores can be searched
+    my $hits = $store->bag->search(query => 'name:Patrick');
+
+=head1 DESCRIPTION
+
+A Catmandu::Store is a stub for Perl packages that can store data into
+databases or search engines. The database as a whole is called a 'store'.
+Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
+Some stores can be searched using Catmandu::Searchable methods.
+
+=head1 METHODS
+
+=head2 new(%args)
+
+Create a new Catmandu::Store
+
+=head2 bag($name)
+
+Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+
+=head1 SEE ALSO
+
+L<Catmandu::Bag>, L<Catmandu::Searchable>
+
+=cut

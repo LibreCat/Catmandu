@@ -53,3 +53,36 @@ around delete_by_query => sub {
 };
 
 1;
+
+=head1 NAME
+
+Catmandu::Searchable - Base class for all searchable Catmandu classes 
+
+=head1 SYNOPSIS
+
+    my $store = Catmandu::Store::Solr->new();
+
+    my $hits  = $store->bag->search(
+		   query => 'dna' ,
+	           start => 0 ,
+		   limit => 100 ,
+		   sort  => 'title desc',
+                );
+
+    $store->bag->delete_by_query(query => 'dna');
+
+=head1 METHODS
+
+=head2 search(query => $query, start => $start, limit => $num, sort => $sort)
+
+Search the database and returns a Catmandu::Hits on success.
+
+=head2 delete_by_query(query => $query)
+
+Delete items from the database that match $query
+
+=head1 SEE ALSO
+
+L<Catmandu::Hits>
+
+=cut;

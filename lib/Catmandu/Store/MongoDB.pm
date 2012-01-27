@@ -103,3 +103,52 @@ sub delete_all {
 }
 
 1;
+
+=head1 NAME
+
+Catmandu::Store::MongoDB - A Catmandu::Store plugin for MongoDB databases
+
+=head1 SYNOPSIS
+
+    use Catmandu::Store::MongoDB;
+
+    my $store = Catmandu::Store::MongoDB->new(database_name => 'test');
+
+    my $obj1 = $store->bag->add({ name => 'Patrick' });
+
+    printf "obj1 stored as %s\n" , $obj1->{_id};
+
+    # Force an id in the store
+    my $obj2 = $store->bag->add({ _id => 'test123' , name => 'Nicolas' });
+
+    my $obj3 = $store->bag->get('test123');
+
+    $store->bag->delete('test123');
+    
+    $store->bag->delete_all;
+
+    # All bags are iterators
+    $store->bag->each(sub { ... });
+    $store->bag->take(10)->each(sub { ... });
+
+=head1 DESCRIPTION
+
+A Catmandu::Store::MongoDB is a Perl package that can store data into
+MongoDB databases. The database as a whole is called a 'store'.
+Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
+
+=head1 METHODS
+
+=head2 new(database_name => $name )
+
+Create a new Catmandu::Store::MongoDB store with name $name.
+
+=head2 bag($name)
+
+Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+
+=head1 SEE ALSO
+
+L<Catmandu::Bag>, L<Catmandu::Searchable>, L<DBI>
+
+=cut

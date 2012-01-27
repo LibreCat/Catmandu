@@ -57,3 +57,68 @@ sub to_hash {
 }
 
 1;
+
+=head1 NAME
+
+Catmandu::Bag - A Catmandu::Store comparment to persist data
+
+=head1 SYNOPSIS
+
+    my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
+    
+    # Use the default bag...
+    my $bag = $store->bag;
+
+    # Or a named bag...
+    my $bag = $store->bag('journals');
+
+    # Every bag is an iterator...
+    $bag->each(sub { ... });
+    $bag->take(10)->each(sub { ... });
+
+    $bag->add($hash);
+    $bag->add_many($iterator);
+    $bag->add_many([ $hash, $hash , ...]);
+
+    # Commit changes...
+    $bag->commit;
+
+    my $obj = $bag->get($id);
+    $bag->delete($id);
+
+    $bag->delete_all; 
+
+=head1 METHODS
+
+=head2 add($hash)
+
+Add one hash to the store or updates an existing hash by using its '_id' key. Returns
+the stored hash on success or undef on failure.
+
+=head2 add_many($array)
+
+=head2 add_many($iterator)
+
+Add or update one or more items to the store.
+
+=head2 get($id)
+
+Retrieves the item with identifier $id from the store.
+
+=head2 delete($id)
+
+Deletes the item with identifier $id from the store.
+
+=head2 delete_all
+
+Deletes all items from the store.
+
+=head2 commit
+
+Commit changes.
+
+=head1 SEE ALSO
+
+L<Catmandu::Iterable>, L<Catmandu::Searchable>
+
+=cut
