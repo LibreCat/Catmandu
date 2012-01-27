@@ -18,4 +18,28 @@ sub add {
     say $fh $self->json->encode($data);
 }
 
+=head1 NAME
+
+Catmandu::Exporter::JSON - a JSON exporter
+
+=head1 SYNOPSIS
+
+    use Catmandu::Exporter::JSON;
+
+    my $exporter = Catmandu::Exporter::JSON->new(fix => 'myfix.txt');
+
+    $exporter->add_many($arrayref);
+    $exporter->add_many($iterator);
+    $exporter->add_many(sub { });
+
+    $exporter->add($hashref);
+
+    printf "exported %d objects\n" , $exporter->count;
+
+=head1 SEE ALSO
+
+L<Catmandu::Exporter>
+
+=cut
+
 1;

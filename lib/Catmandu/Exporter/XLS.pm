@@ -57,4 +57,61 @@ sub commit {
     1;
 }
 
+=head1 NAME
+
+Catmandu::Exporter::XLS - a XLS exporter
+
+=head1 SYNOPSIS
+
+    use Catmandu::Exporter::XLS;
+
+    my $exporter = Catmandu::Exporter::XLS->new(
+				file => 'output.xls',
+				fix => 'myfix.txt'
+				quote_char => '"' ,
+				split_char => ',' ,
+				header => 1);
+
+    $exporter->fields("f1,f2,f3");
+
+    $exporter->add_many($arrayref);
+    $exporter->add_many($iterator);
+    $exporter->add_many(sub { });
+
+    $exporter->add($hashref);
+
+    $exporter->commit;
+
+    printf "exported %d objects\n" , $exporter->count;
+
+=head1 METHODS
+
+=head2 new(fields => ARRAY|HASH|STRING)
+
+Creates a new Catmandu::Exporter::XLS. If header is set to 1, then a header line with field 
+names will be included. Field names can be read from the first item exported or set by the 
+fields argument (see: fields).
+
+=head2 fields($arrayref)
+
+Set the field names by an ARRAY reference.
+
+=head2 fields($hashref)
+
+Set the field names by the keys of a HASH reference.
+
+=head2 fields($string)
+
+Set the fields by a comma delimited string.
+
+=head2 commit
+
+Commit the changes and close the XLS.
+
+=head1 SEE ALSO
+
+L<Catmandu::Exporter>
+
+=cut
+
 1;
