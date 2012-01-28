@@ -2,6 +2,7 @@ package Catmandu::Fix::copy_field;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is data_at);
+use Clone qw(clone);
 use Moo;
 
 has old_path => (is => 'ro', required => 1);
@@ -27,7 +28,7 @@ sub fix {
     my $new_path = $self->new_path;
     my $new_key  = $self->new_key;
     my @old_matches = grep ref, data_at($self->old_path, $data);
-    my @new_matches = grep ref, data_at($self->new_path, $data, create=>1);
+    my @new_matches = grep ref, data_at($self->new_path, $data, create => 1, key => $new_key);
     if (@old_matches == @new_matches) {
         for (my $i = 0; $i < @old_matches; $i++) {
             my $old_match = $old_matches[$i];
@@ -36,16 +37,16 @@ sub fix {
                 is_integer($new_key) || next;
                 if (is_array_ref($old_match)) {
                     next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->[$new_key] = $old_match->[$old_key];
+                    $new_match->[$new_key] = clone($old_match->[$old_key]);
                 } else {
-                    $new_match->[$new_key] = $old_match->{$old_key};
+                    $new_match->[$new_key] = clone($old_match->{$old_key});
                 }
             } else {
                 if (is_array_ref($old_match)) {
                     next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->{$new_key} = $old_match->[$old_key];
+                    $new_match->{$new_key} = clone($old_match->[$old_key]);
                 } else {
-                    $new_match->{$new_key} = $old_match->{$old_key};
+                    $new_match->{$new_key} = clone($old_match->{$old_key});
                 }
             }
         }

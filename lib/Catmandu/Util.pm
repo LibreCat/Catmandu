@@ -61,24 +61,39 @@ sub io {
 sub data_at {
     my ($path, $data, %opts) = @_;
     $path = ref $path ? [@$path] : [split /[\/\.]/, $path];
-    if ($opts{create} && @$path) {
+    if ($opts{create} && $opts{key} && @$path) {
         push @$path, $opts{key};
     }
-    while (is_string(my $key = shift @$path)) {
+    while (defined(my $key = shift @$path)) {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
                 return map { data_at($path, $_, create => $opts{create}) } @$data;
             } else {
+                given ($key) {
+                    when ('$first') {
+                        $key = 0;
+                    }
+                    when ('$last') {
+                        $key = -1;
+                    }
+                    when ('$prepend') {
+                        unshift @$data, undef;
+                        $key = 0;
+                    }
+                    when ('$append') {
+                        $key = @$data;
+                    }
+                }
                 is_integer($key) || return;
                 if ($opts{create} && @$path) {
-                    $data = $data->[$key] ||= is_integer($path->[0]) ? [] : {};
+                    $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
                 } else {
                     $data = $data->[$key];
                 }
             }
         } elsif ($opts{create} && @$path) {
-            $data = $data->{$key} ||= is_integer($path->[0]) ? [] : {};
+            $data = $data->{$key} ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
         } else {
             $data = $data->{$key};
         }

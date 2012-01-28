@@ -67,3 +67,10 @@ copy_field('test','brol.dol.hol');
 split_field('tokens.test',':');
 
 add_field('b.0.c.1.d.3.e.4',1);
+
+add_field('mods.titleInfo.$append.title', 'a title');
+add_field('mods.titleInfo.$append.title', 'another title');
+add_field('mods.titleInfo.$first.title', 'changed a title');
+add_field('mods.titleInfo.$last.title', 'changed another title');
+add_field('mods.titleInfo.$prepend.title', 'first title');
+add_field('mods.titleInfo.$append.title', 'last title');
