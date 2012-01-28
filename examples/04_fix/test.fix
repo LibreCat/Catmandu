@@ -32,7 +32,6 @@
 #  
 # Advanced fixes
 #
-#  apply('job', sub { ...})    : apply a Perl function to a path
 #  clone()                     : keep the original data, apply all fixes to a copy
 #  collapse()                  : converts your Perl hashes into a structure using TT2 dotted names
 #  expand()                    : expands TT2 dotted name structures into Perl hashes
@@ -56,9 +55,6 @@ copy_field('first','my.deep.nested2');
 substring('init',0,1);
 
 join_field('colors.0','/');
-
-apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = time });
-apply(sub { (shift)->{fancy}->{tricks2}->{for}->{hackers} = time });
 
 rename_field('fancy.tricks.for.hackers','budget');
 rename_field('colors.1','colors2.15');
