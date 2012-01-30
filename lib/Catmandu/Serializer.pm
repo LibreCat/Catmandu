@@ -12,16 +12,16 @@ sub default_serialization_format { 'json' }
 my $messagepack = Data::MessagePack->new->utf8;
 my $formats = {
     storable => {
-        serialize   => sub { MIME::Base64::encode(Storable::nfreeze($_[0])) },
-        deserialize => sub { Storable::thaw(MIME::Base64::decode($_[0])) },
+        serializer   => sub { MIME::Base64::encode(Storable::nfreeze($_[0])) },
+        deserializer => sub { Storable::thaw(MIME::Base64::decode($_[0])) },
     },
     messagepack => {
-        serialize   => sub { MIME::Base64::encode($messagepack->pack($_[0])) },
-        deserialize => sub { $messagepack->unpack(MIME::Base64::decode($_[0])) },
+        serializer   => sub { MIME::Base64::encode($messagepack->pack($_[0])) },
+        deserializer => sub { $messagepack->unpack(MIME::Base64::decode($_[0])) },
     },
     json => {
-        serialize   => sub { JSON::encode_json($_[0]) },
-        deserialize => sub { JSON::decode_json($_[0]) },
+        serializer   => sub { JSON::encode_json($_[0]) },
+        deserializer => sub { JSON::decode_json($_[0]) },
     },
 };
 

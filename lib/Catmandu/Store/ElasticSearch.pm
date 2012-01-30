@@ -111,6 +111,7 @@ sub delete {
         type => $self->name,
         ignore_missing => 1,
         id => $id,
+        refresh => 1,
     );
 }
 
@@ -118,7 +119,8 @@ sub delete_all {
     my ($self) = @_;
     $self->store->elastic_search->delete_by_query(
         query => {match_all => {}},
-        type  => $self->name,
+        type => $self->name,
+        refresh => 1,
     );
 }
 
@@ -126,14 +128,15 @@ sub delete_by_query {
     my ($self, %args) = @_;
     $self->store->elastic_search->delete_by_query(
         query => $args{query},
-        type  => $self->name,
+        type => $self->name,
+        refresh => 1,
     );
 }
 
 sub commit { # TODO optimize
     my ($self) = @_;
     return 1 unless $self->buffer_used;
-    my $res = $self->store->elastic_search->bulk_index($self->buffer)->{results};
+    my $res = $self->store->elastic_search->bulk_index($self->buffer, {refresh => 1})->{results};
     my $err;
     for my $r (@$res) {
         if (my $e = $r->{index}{error}) {
@@ -144,7 +147,7 @@ sub commit { # TODO optimize
     return !defined $err, $err;
 }
 
-sub search {
+sub search { # TODO $args{fields}
     my ($self, %args) = @_;
 
     my $start = delete $args{start};
