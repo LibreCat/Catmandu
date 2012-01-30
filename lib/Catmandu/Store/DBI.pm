@@ -19,12 +19,11 @@ has dbh => (
 
 sub _build_dbh {
     my $self = $_[0];
-    DBI->connect($self->data_source, {
-        Username => $self->username,
-        Password => $self->password,
+    my $opts = {
         AutoCommit => 1,
         RaiseError => 1,
-    });
+    };
+    DBI->connect($self->data_source, $self->username, $self->password, $opts);
 }
 
 sub transaction {
@@ -32,7 +31,7 @@ sub transaction {
 
     my $dbh = $self->dbh;
 
-    if (!$dbh->{AutoCommit}) {
+    unless ($dbh->{AutoCommit}) {
         return $sub->();
     }
 
@@ -44,12 +43,13 @@ sub transaction {
         @res = $sub->();
         $dbh->commit;
         $dbh->{AutoCommit} = 1;
-        1;
     } or do {
-        my $error = $@;
-        eval { $dbh->rollback };
+        my $err = $@;
+        eval {
+            $dbh->rollback;
+        };
         $dbh->{AutoCommit} = 1;
-        confess $error;
+        confess $err;
     };
 
     @res;
@@ -60,119 +60,138 @@ sub DEMOLISH {
 }
 
 package Catmandu::Store::DBI::Bag;
-
+# TODO address 64kb text limit;try create database;
 use Catmandu::Sane;
-use JSON qw(encode_json decode_json);
 use Moo;
 
 with 'Catmandu::Bag';
+with 'Catmandu::Serializer';
 
-has _sth_get        => (is => 'ro', lazy => 1, builder => '_build_sth_get');
-has _sth_delete     => (is => 'ro', lazy => 1, builder => '_build_sth_delete');
-has _sth_delete_all => (is => 'ro', lazy => 1, builder => '_build_sth_delete_all');
-has _dbh_add        => (is => 'ro', lazy => 1, builder => '_build_dbh_add');
+has _sql_get        => (is => 'ro', lazy => 1, builder => '_build_sql_get');
+has _sql_delete     => (is => 'ro', lazy => 1, builder => '_build_sql_delete');
+has _sql_delete_all => (is => 'ro', lazy => 1, builder => '_build_sql_delete_all');
+has _sql_generator  => (is => 'ro', lazy => 1, builder => '_build_sql_generator');
+has _add            => (is => 'ro', lazy => 1, builder => '_build_add');
 
 sub BUILD {
     my $self = $_[0];
     my $name = $self->name;
-    $self->store->dbh->do("create table if not exists $name(id varchar(255) not null primary key, data text not null)") or
-        confess $self->store->dbh->errstr;
+    my $dbh  = $self->store->dbh;
+    my $sql  = "create table if not exists $name(id varchar(255) not null primary key, data text not null)";
+    $dbh->do($sql) or confess $dbh->errstr;
 }
 
-sub _build_sth_get {
-    my $self = $_[0];
-    my $name = $self->name;
-    $self->store->dbh->prepare("select data from $name where id = ?");
+sub _build_sql_get {
+    my $name = $_[0]->name; "select data from $name where id=?";
 }
 
-sub _build_sth_each {
-    my $self = $_[0];
-    my $name = $self->name;
-    $self->store->dbh->prepare("select data from $name");
+sub _build_sql_delete {
+    my $name = $_[0]->name; "delete from $name where id=?";
 }
 
-sub _build_sth_delete {
-    my $self = $_[0];
-    my $name = $self->name;
-    $self->store->dbh->prepare("delete from $name where id = ?");
+sub _build_sql_delete_all {
+    my $name = $_[0]->name; "delete from $name";
 }
 
-sub _build_sth_delete_all {
-    my $self = $_[0];
-    my $name = $self->name;
-    $self->store->dbh->prepare("delete from $name");
+sub _build_sql_generator {
+    my $name = $_[0]->name; "select data from $name";
 }
 
-sub _build_dbh_add_sqlite {
+sub _build_add_sqlite {
     my $self = $_[0];
     my $name = $self->name;
-    my $sth  = $self->store->dbh->prepare("insert or replace into $name values(?,?)");
+    my $dbh  = $self->store->dbh;
+    my $sql  = "insert or replace into $name(id,data) values(?,?)";
     sub {
-        $sth->execute($_[1], $_[2]);
+        my $sth = $dbh->prepare_cached($sql) or confess $dbh->errstr;
+        $sth->execute($_[0], $_[1]) or confess $sth->errstr;
+        $sth->finish;
     };
 }
 
-sub _build_dbh_add_mysql {
+sub _build_add_mysql {
     my $self = $_[0];
     my $name = $self->name;
-    my $sth  = $self->store->dbh->prepare("insert into $name values(?,?) on duplicate key update data = ?");
+    my $dbh  = $self->store->dbh;
+    my $sql  = "insert into $name(id,data) values(?,?) on duplicate key update data = values(data)";
     sub {
-        $sth->execute($_[1], $_[2], $_[2]);
+        my $sth = $dbh->prepare_cached($sql) or confess $dbh->errstr;
+        $sth->execute($_[0], $_[1]) or confess $sth->errstr;
+        $sth->finish;
     };
 }
 
-sub _build_dbh_add_generic {
+sub _build_add_generic {
     my $self = $_[0];
     my $name = $self->name;
-    my $sth_update = $self->store->dbh->prepare("update $name set data = ? where id = ?");
-    my $sth_insert = $self->store->dbh->prepare("insert into $name values(?,?) where not exists (select 1 from $name where id = ?)");
+    my $dbh  = $self->store->dbh;
+    my $sql_update = "update $name set data=? where id=?";
+    my $sql_insert = "insert into $name values(?,?) where not exists (select 1 from $name where id=?)";
     sub {
-        $sth_update->execute($_[2], $_[1]);
-        $sth_insert->execute($_[1], $_[2], $_[1]) unless $sth_update->rows;
+        my $sth = $dbh->prepare_cached($sql_update) or confess $dbh->errstr;
+        $sth->execute($_[1], $_[0]) or confess $sth->errstr;
+        unless ($sth->rows) {
+            $sth->finish;
+            $sth = $dbh->prepare_cached($sql_insert) or confess $dbh->errstr;
+            $sth->execute($_[0], $_[1], $_[0]) or confess $sth->errstr;
+            $sth->finish;
+        }
     };
 }
 
-sub _build_dbh_add {
+sub _build_add {
     my $self = $_[0];
     given ($self->store->dbh->{Driver}{Name}) {
-        when (/sqlite/i) { return $self->_build_dbh_add_sqlite }
-        when (/mysql/i)  { return $self->_build_dbh_add_mysql }
-        default          { return $self->_build_dbh_add_generic }
+        when (/sqlite/i) { return $self->_build_add_sqlite }
+        when (/mysql/i)  { return $self->_build_add_mysql }
+        default          { return $self->_build_add_generic }
     }
 }
 
 sub get {
     my ($self, $id) = @_;
-    my $row = $self->store->dbh->selectrow_arrayref($self->_sth_get, {}, $id) || return;
-    decode_json($row->[0]);
+    my $dbh = $self->store->dbh;
+    my $sth = $dbh->prepare_cached($self->_sql_get) or confess $dbh->errstr;
+    $sth->execute($id) or confess $sth->errstr;
+    my $row = $sth->fetch;
+    $sth->finish;
+    $row || return;
+    $self->deserialize($row->[0]);
 }
 
 sub add {
     my ($self, $data) = @_;
-    $self->_dbh_add->($self, $data->{_id}, encode_json($data));
+    $self->_add->($data->{_id}, $self->serialize($data));
 }
 
 sub delete {
     my ($self, $id) = @_;
-    $self->_sth_delete->execute($id);
+    my $dbh = $self->store->dbh;
+    my $sth = $dbh->prepare_cached($self->_sql_delete) or confess $dbh->errstr;
+    $sth->execute($id) or confess $sth->errstr;
+    $sth->finish;
 }
 
 sub delete_all {
     my ($self) = @_;
-    $self->_sth_delete_all->execute;
+    my $dbh = $self->store->dbh;
+    my $sth = $dbh->prepare_cached($self->_sql_delete) or confess $dbh->errstr;
+    $sth->execute or confess $sth->errstr;
+    $sth->finish;
 }
 
 sub generator {
     my ($self) = @_;
+    my $dbh = $self->store->dbh;
     sub {
         state $sth;
         state $row;
         unless ($sth) {
-            $sth = $self->_build_sth_each;
+            $sth = $dbh->prepare($self->_sql_generator) or confess $dbh->errstr;
             $sth->execute;
         }
         if ($row = $sth->fetchrow_arrayref) {
-            return decode_json($row->[0]);
+            return $self->deserialize($row->[0]);
         }
         return;
     };

@@ -87,9 +87,8 @@ sub get {
     $self->collection->find_one({_id => $id});
 }
 
-sub add { # TODO remove find call if https://jira.mongodb.org/browse/PERL-157 is reolved
+sub add {
     my ($self, $data) = @_;
-    $self->collection->find_one({}, {});
     $self->collection->save($data);
 }
 

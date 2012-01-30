@@ -14,6 +14,7 @@ my $requires = {
     'Clone' => '0.31',
     'Dancer' => '1.3080',
     'Data::Compare' => '1.22',
+    'Data::MessagePack' => '0.39',
     'Data::UUID' => '1.217',
     'Data::Util' => '0.59',
     'DateTime' => '0.70',
