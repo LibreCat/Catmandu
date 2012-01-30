@@ -8,10 +8,12 @@ with 'Catmandu::Store';
 package Catmandu::Store::Hash::Bag;
 
 use Catmandu::Sane;
+use Catmandu::Hits;
 use Moo;
 use Clone qw(clone);
 
 with 'Catmandu::Bag';
+with 'Catmandu::Searchable';
 
 has _hash => (is => 'rw', init_arg => undef, default => sub { +{} });
 has _head => (is => 'rw', init_arg => undef, clearer => '_clear_head');
@@ -74,6 +76,48 @@ sub delete_all {
     $_[0]->_clear_head;
     $_[0]->_clear_tail;
     $_[0]->_hash({});
+}
+
+sub translate_sru_sortkeys {
+    confess "Not implemented";
+}
+
+sub translate_cql_query {
+    confess "Not implemented";
+}
+
+sub search {
+    my ($self, %args) = @_;
+    my $query = $args{query};
+
+    my @candidates = ();
+
+    use Data::Visitor::Callback;
+    my $match = 0;
+    my $visitor = Data::Visitor::Callback->new(
+	value => sub { $match = 1 if $_[1] =~ /$query/}
+    );
+
+    $self->each(sub {
+	my $item = shift;
+        $visitor->visit($item);
+	push(@candidates,$item) if $match;
+	$match = 0;
+    });
+
+    Catmandu::Hits->new({
+	limit => undef,
+	start => 0,
+	total => int(@candidates),
+	hits  => \@candidates 
+    });
+}
+
+sub searcher {
+    return $_[0];
+}
+
+sub delete_by_query {
 }
 
 1;

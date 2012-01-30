@@ -1,0 +1,132 @@
+#!/usr/bin/env perl
+#
+# A Catmandu command line interface
+#
+use Catmandu::CLI;
+Catmandu::CLI->run();
+
+=head1 NAME
+
+catmandu - LibreCat command line tools 
+
+=head1 SYNOPSIS
+
+ catmandu [COMMAND] [-?hqv] [long options...] [ARGS]
+
+ catmandu help data
+
+ catmandu help repl
+
+ catmandu data --from-importer YAML --into-exporter CSV < test.yaml
+
+=head1 COMMANDS
+
+=head2 data OPTIONS
+
+Data manipulation commands: import, export, store, search.
+
+=head2 repl
+
+A Perl REPL interface to the Catmandu classes.
+
+=head2 help COMMAND
+
+Documentation about command line options.
+
+=head1 OPTIONS
+
+=head2 Basic Startup Options
+
+=over 4
+
+=item -v 
+
+Verbose output.
+
+=item -h 
+
+=item -?
+
+Display the help screen.
+
+=item --environment STRING
+
+Set the application environment to STRING. This is used in Dancer applications (e.g. 'development','production').
+
+=item --appdir PATH
+
+Set the application directory to PATH. This is used in Dancer applications.
+
+=item --confdir PATH
+
+Set the application configuration directory. This is used in Dancer applications.
+
+=back
+
+=head2 Data Options
+
+=over 4
+
+=item --from-store STORE
+
+Read items from a Catmandu::Store such as: DBI, MongoDB, Solr, ElasticSearch, ...
+
+=item --from-importer IMPORTER
+
+Read items from a Catmandu::Importer such as: YAML, JSON, CSV, MARC, OAI ...
+
+=item --from-bag BAG_NAME
+
+This option should be used in combination with a --from-store. Select from the Store
+only the items belonging to the bag BAG_NAME.
+
+=item --into-exporter EXPORTER
+
+Add each item read into a Catmandu::Exporter such as: JSON, YAML, Template, XLS, ...
+
+=item --into-store STORE
+
+Add each item read into a Catmandu::Store such as: DBI, MongoDB, Solr, ElasticSearch, ...
+
+=item --into-bag BAG_NAME
+
+This option should be used in combination with a --into-store. Add each item into the
+Store with bag BAG_NAME.
+
+=item --fix EXPRESSION
+
+=item --fix FILE
+
+When exporting or storing apply a fix EXPRESSION or all the fixes in FILE on each
+item. This option is repeatable.
+
+=item --start NUM
+
+When exporting or storing data skip the first NUM items.
+
+=item --total NUM
+
+When exporting of storing data process only a total NUM of items.
+
+=item --replace
+
+When storing data first delete all the items in the Store or Bag.
+
+=item --query QUERY
+
+=item --cql-query QUERY | -q QUERY
+
+When a Store is searchable execute and return the results. Using the --cql-query or -q
+option the CQL query language can be used (if supported).
+
+=item --limit NUM
+
+Limit the number of results returned from the searchable results to NUM.
+
+=item --count
+
+Report the number of items processed.
+
+=back
+
+=cut
