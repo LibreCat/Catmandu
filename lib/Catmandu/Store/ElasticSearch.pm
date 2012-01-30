@@ -145,12 +145,16 @@ sub commit { # TODO optimize
     return !defined $err, $err;
 }
 
-sub search { # TODO $args{fields}
+sub search {
     my ($self, %args) = @_;
 
     my $start = delete $args{start};
     my $limit = delete $args{limit};
     my $bag   = delete $args{reify};
+
+    if ($bag) {
+        $args{fields} = [];
+    }
 
     my $res = $self->store->elastic_search->search({
         %args,
@@ -159,7 +163,7 @@ sub search { # TODO $args{fields}
         size  => $limit,
     });
 
-    my $set = $res->{hits}{hits};
+    my $docs = $res->{hits}{hits};
 
     my $hits = Catmandu::Hits->new({
         start => $start,
@@ -168,9 +172,11 @@ sub search { # TODO $args{fields}
     });
 
     if ($bag) {
-        $hits->{hits} = [ map { $bag->get($_->{_id}) } @$set ];
+        $hits->{hits} = [ map { $bag->get($_->{_id}) } @$docs ];
+    } elsif ($args{fields}) {
+        $hits->{hits} = [ map { $_->{fields} || {} } @$docs ];
     } else {
-        $hits->{hits} = [ map { $_->{_source} } @$set ];
+        $hits->{hits} = [ map { $_->{_source} } @$docs ];
     }
 
     if ($args{facets}) {
@@ -178,7 +184,7 @@ sub search { # TODO $args{fields}
     }
 
     if ($args{highlight}) {
-        for my $hit (@$set) {
+        for my $hit (@$docs) {
             if (my $hl = $hit->{highlight}) {
                 $hits->{highlight}{$hit->{_id}} = $hl;
             }
