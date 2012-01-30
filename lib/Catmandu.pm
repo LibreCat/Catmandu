@@ -11,6 +11,8 @@ our @EXPORT_OK = qw(
     store
     importer
     exporter
+    export
+    export_to_string
 );
 
 our %EXPORT_TAGS = (all => [@EXPORT_OK]);
@@ -65,6 +67,30 @@ sub exporter {
     } else {
         load_package($sym, 'Catmandu::Exporter')->new(@_);
     }
+}
+
+sub export {
+    my $data = shift;
+    my $exporter = exporter(@_);
+    is_hash_ref($data)
+        ? $exporter->add($data)
+        : $exporter->add_many($data);
+    $exporter->commit;
+    return;
+}
+
+sub export_to_string {
+    my $data = shift;
+    my $sym  = shift;
+    my %opts = is_hash_ref($_[0]) ? %{$_[0]} : @_;
+    my $str  = "";
+    $opts{file} = \$str;
+    my $exporter = exporter($sym, %opts);
+    is_hash_ref($data)
+        ? $exporter->add($data)
+        : $exporter->add_many($data);
+    $exporter->commit;
+    return $str;
 }
 
 1;
