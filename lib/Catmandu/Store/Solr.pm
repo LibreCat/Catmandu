@@ -229,3 +229,64 @@ sub count {
 }
 
 1;
+
+=head1 NAME
+
+Catmandu::Store::Solr - A Catmandu::Store plugin for Solr search engines
+
+=head1 SYNOPSIS
+
+    use Catmandu::Store::Solr;
+
+    my $store = Catmandu::Store::Solr->new(url => 'http://localhost:8983/solr' );
+
+    my $obj1 = $store->bag->add({ name => 'Patrick' });
+
+    printf "obj1 stored as %s\n" , $obj1->{_id};
+
+    # Force an id in the store
+    my $obj2 = $store->bag->add({ _id => 'test123' , name => 'Nicolas' });
+
+    # Commit all changes
+    $store->bag->commit;
+
+    my $obj3 = $store->bag->get('test123');
+
+    $store->bag->delete('test123');
+    
+    $store->bag->delete_all;
+
+    # All bags are iterators
+    $store->bag->each(sub { ... });
+    $store->bag->take(10)->each(sub { ... });
+
+    # Some stores can be searched
+    my $hits = $store->bag->search(query => 'name:Patrick');
+
+=head1 DESCRIPTION
+
+A Catmandu::Store::Solr is a Perl package that can index data into
+a Solr engine. The database as a whole is called a 'store'.
+Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
+The Catmandu::Store::Solr can be searched using Catmandu::Searchable methods.
+
+=head1 SUPPORT
+
+Solr schemas need to support '_id' and '_bag' record fields to be able to
+store Catmandu items.
+
+=head1 METHODS
+
+=head2 new(url => $solr_url)
+
+Create a new Catmandu::Store::Solr store. 
+
+=head2 bag($name)
+
+Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+
+=head1 SEE ALSO
+
+L<Catmandu::Bag>, L<Catmandu::Searchable>
+
+=cut

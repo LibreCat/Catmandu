@@ -56,45 +56,43 @@ sub each {
 
 =head1 NAME
 
-Catmandu::Hits - Iterable object that wraps L<Catmandu::Index> search hits
+Catmandu::Hits - Iterable object that wraps Catmandu::Store search hits
 
 =head1 SYNOPSIS
 
-    my $hits = $index->search("foo")
-    $hits->each(sub {
-        say $_[0]->{bar};
-    });
-    $hits->hits
-    => [{bar => 'baz'}, ...]
-    $hits->total
-    => 10043
+    my $store = Catmandu::Store::Solr->new();
 
-=head1 DESCRIPTION
+    my $hits  = $store->bag->search(
+		   query => 'dna' ,
+	           start => 0 ,
+		   limit => 100 ,
+		   sort  => 'title desc',
+                );
 
-Instances are normally created by a L<Catmandu::Index>.
+    # Every hits is an iterator...
+    $hits->each(sub { ... });
+
+    printf "Found %s $hits\n" , $hits->total;
+    
+    my $start = $hits->start;
+    my $limit = $hits->limit;
 
 =head1 METHODS
 
 =head2 total
 
+Returns the total number of hits matching the query.
+
 =head2 start
+
+Returns the start index for the search results.
 
 =head2 limit
 
-=head2 size
-
-=head2 hits
-
-=head2 each
-
-Passes each hit in turn to the subref and returns the number of hits passed
-
-    my $n = $hits->each(sub {
-        my $hashref = $_[0];
-    });
+Returns the maximum number of search results returned.
 
 =head1 SEE ALSO
 
-L<Catmandu::Index>.
+L<Catmandu::Iterable>, L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>
 
 =cut

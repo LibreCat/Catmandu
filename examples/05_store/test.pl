@@ -83,6 +83,12 @@ print "Deleting 'Nicolas' from the bag\n";
 $store->bag->delete_by_query(query => 'Nicolas');
 &show_all($store->bag);
 
+# Every bag is also an iterator...
+$store->bag->each(sub {
+   use Data::Dumper;
+   print Dumper($_[0]);
+});
+
 sub show_one {
   my $item = shift;
   $exporter->add($item);
