@@ -334,6 +334,9 @@ Catmandu::Store::ElasticSearch - A Catmandu::Store plugin for ElasticSearch engi
     # Some stores can be searched
     my $hits = $store->bag->search(query => 'name:Patrick');
 
+    # ElasticSearch supports CQL...
+    my $hits = $store->bag->search(cql_query => 'name any "Patrick"');
+
 =head1 DESCRIPTION
 
 A Catmandu::Store::ElasticSearch is a Perl package that can index data into
@@ -348,9 +351,50 @@ This ElasticSearch interface is based on elasticsearch-0.17.6.
 
 =head1 METHODS
 
-=head2 new(index_name => $name)
+=head2 new(index_name => $name, cql_mapping => \%mapping)
 
-Create a new Catmandu::Store::ElasticSearch store connected to index $name.
+Create a new Catmandu::Store::ElasticSearch store connected to index $name. The
+ElasticSearch supports CQL searches when a cql_mapping is provided. This hash
+contains a translation of CQL fields into ElasticSearch searchable fields.
+
+ # Example mapping
+ $cql_mapping = {
+      title => {
+        op => {
+          'any'   => 1 ,
+          'all'   => 1 ,
+          '='     => 1 ,
+          '<>'    => 1 ,
+	  'exact' => {field => [qw(mytitle.exact myalttitle.exact)]}
+        } ,
+        sort  => 1,
+        field => 'mytitle',
+        cb    => ['Biblio::Search', 'normalize_title']
+      }
+ }
+
+ The CQL mapping above will support for the 'title' field the CQL operators: any, all, =, <> and exact.
+
+ For all the operators the 'title' field will be mapping into the ElasticSearch field 'mytitle', except
+ for the 'exact' operator. In case of 'exact' we will search both the 'mytitle.exact' and 'myalttitle.exact'
+ fields.
+
+ The CQL mapping allows for sorting on the 'title' field. If, for instance, we would like to use a special
+ ElasticSearch field for sorting we could have written "sort => { field => 'mytitle.sort' }".
+
+ The CQL has an optional callback field 'cb' which contains a reference to subroutines to rewrite or
+ augment the search query. In this case, in the Biblio::Search package there is a normalize_title 
+ subroutine which returns a string or an ARRAY of string with augmented title(s). E.g.
+
+    package Biblio::Search;
+
+    sub normalize_title {
+       my ($self,$title) = @_;
+       my $new_title =~ s{[^A-Z0-9]+}{}g;
+       $new_title;
+    }
+
+    1;
 
 =head2 bag($name)
 

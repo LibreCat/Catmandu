@@ -74,9 +74,23 @@ Some stores can be searched using Catmandu::Searchable methods.
 
 =head1 METHODS
 
-=head2 new(%args)
+=head2 new(%store_args, bag_class => $class, bags => { $bagname => \%bag_args })
 
-Create a new Catmandu::Store
+Create a new Catmandu::Store. Optionally provide the class name of a sub-class of
+Catmandu::Bag. Startup parameters can be provided for each $bagname using the
+'bags' parameter. E.g.
+
+ my $store = Catmandu::Store::Hash->new(
+		bags => {myBag => {plugins => ['Datestamps']}});
+
+ # $store->bag('myBag') will now contain Datestamps
+ 
+ my $bag_class = "Catmandu::Store::Hash::Bag"
+ my $store = Catmandu::Store::Hash->new(
+		bag_class => $bag_class->with_plugins('Datestamps')
+	     );
+ 
+ # All $store->bag(...)'s will now contain Datestamps
 
 =head2 bag($name)
 

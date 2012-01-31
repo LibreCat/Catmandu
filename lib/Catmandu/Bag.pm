@@ -65,6 +65,12 @@ Catmandu::Bag - A Catmandu::Store comparment to persist data
 =head1 SYNOPSIS
 
     my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
+
+    my $store = Catmandu::Store::DBI->new(
+			data_source => 'DBI:mysql:database=test',
+			bags => { data => { fixes => [ ... ] } },
+			bag_class => Catmandu::Bag->with_plugins('Datestamps')
+	        );
     
     # Use the default bag...
     my $bag = $store->bag;
@@ -89,6 +95,10 @@ Catmandu::Bag - A Catmandu::Store comparment to persist data
     $bag->delete_all; 
 
 =head1 METHODS
+
+=head2 new(fixes => [...])
+
+Create a new Bag with optionally an array of fixes for each item.
 
 =head2 add($hash)
 
@@ -117,8 +127,19 @@ Deletes all items from the store.
 
 Commit changes.
 
+=head1 CLASS METHODS
+
+=head2 with_plugins($plugin)
+
+=head2 with_plugins(\@plugins)
+
+Plugins are a kind of fixes that should be available for each bag. E.g. the Datestamps plugin will 
+automatically store into each bag item the fields 'date_updated' and 'date_created'. The with_plugins
+accept one or an array of plugin classnames and returns a subclass of the Bag with the plugin 
+methods implemented.
+
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>, L<Catmandu::Searchable>
+L<Catmandu::Iterable>, L<Catmandu::Searchable>, L<Catmandu::Fix>, L<Catmandu::Pluggable>
 
 =cut
