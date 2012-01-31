@@ -164,19 +164,19 @@ sub add {
     $self->_add->($data->{_id}, $self->serialize($data));
 }
 
+sub delete_all {
+    my ($self) = @_;
+    my $dbh = $self->store->dbh;
+    my $sth = $dbh->prepare_cached($self->_sql_delete_all) or confess $dbh->errstr;
+    $sth->execute or confess $sth->errstr;
+    $sth->finish;
+}
+
 sub delete {
     my ($self, $id) = @_;
     my $dbh = $self->store->dbh;
     my $sth = $dbh->prepare_cached($self->_sql_delete) or confess $dbh->errstr;
     $sth->execute($id) or confess $sth->errstr;
-    $sth->finish;
-}
-
-sub delete_all {
-    my ($self) = @_;
-    my $dbh = $self->store->dbh;
-    my $sth = $dbh->prepare_cached($self->_sql_delete) or confess $dbh->errstr;
-    $sth->execute or confess $sth->errstr;
     $sth->finish;
 }
 
