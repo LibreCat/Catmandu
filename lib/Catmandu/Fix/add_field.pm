@@ -11,7 +11,7 @@ has value => (is => 'ro', required => 1);
 around BUILDARGS => sub {
     my ($orig, $class, $path, $value) = @_;
     $path = [split /[\/\.]/, $path];
-    my $key = $path->[-1];
+    my $key = pop @$path;
     $orig->($class, path => $path, key => $key, value => $value);
 };
 
@@ -20,10 +20,10 @@ sub fix {
 
     my $key = $self->key;
     my $val = $self->value;
-    my @matches = grep ref, data_at($self->path, $data, create => 1);
+    my @matches = grep ref, data_at($self->path, $data, create => 1, key => $key);
     for my $match (@matches) {
         if (is_array_ref($match)) {
-            $match->[$key] = $val if is_natural($key);
+            $match->[$key] = $val if is_integer($key);
         } else {
             $match->{$key} = $val;
         }
