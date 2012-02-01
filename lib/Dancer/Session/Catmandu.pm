@@ -7,11 +7,12 @@ use Catmandu;
 use parent qw(Dancer::Session::Abstract);
 use Dancer qw(:syntax config);
 
-my $bag;
+sub _bag {
+    state $bag = Catmandu::store(config->{session_store} || Catmandu::default_store)
+        ->bag(config->{session_bag} || 'session');
+}
 
 sub init {
-    $bag ||= Catmandu::store(config->{session_store} || Catmandu::default_store)
-        ->bag(config->{session_bag} || 'session');
     $_[0]->SUPER::init;
 }
 
@@ -20,7 +21,7 @@ sub create {
 }
 
 sub retrieve {
-    my $data = $bag->get($_[1]) || return;
+    my $data = _bag->get($_[1]) || return;
     $data->{id} = delete $data->{_id};
     bless $data, $_[0];
 }
@@ -29,12 +30,12 @@ sub flush {
     my $self = $_[0];
     my $data = {%$self};
     $data->{_id} = delete $data->{id};
-    $bag->add($data);
+    _bag->add($data);
     $self;
 }
 
 sub destroy {
-    $bag->delete($_[0]->{id});
+    _bag->delete($_[0]->{id});
 }
 
 1;

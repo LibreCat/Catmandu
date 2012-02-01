@@ -61,10 +61,10 @@ sub io {
 sub data_at {
     my ($path, $data, %opts) = @_;
     $path = ref $path ? [@$path] : [split /[\/\.]/, $path];
-    if ($opts{create} && @$path) {
+    if ($opts{create} && $opts{key} && @$path) {
         push @$path, $opts{key};
     }
-    while (is_string(my $key = shift @$path)) {
+    while (defined(my $key = shift @$path)) {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {

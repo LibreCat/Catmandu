@@ -153,10 +153,12 @@ sub get {
     my $dbh = $self->store->dbh;
     my $sth = $dbh->prepare_cached($self->_sql_get) or confess $dbh->errstr;
     $sth->execute($id) or confess $sth->errstr;
-    my $row = $sth->fetch;
+    my $data;
+    if (my $row = $sth->fetchrow_arrayref) {
+        $data = $self->deserialize($row->[0]);
+    }
     $sth->finish;
-    $row || return;
-    $self->deserialize($row->[0]);
+    $data;
 }
 
 sub add {
@@ -193,6 +195,7 @@ sub generator {
         if ($row = $sth->fetchrow_arrayref) {
             return $self->deserialize($row->[0]);
         }
+        $sth->finish;
         return;
     };
 }

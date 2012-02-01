@@ -2,6 +2,7 @@ package Catmandu::Fix::add_field;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is data_at);
+use Clone qw(clone);
 use Moo;
 
 has path  => (is => 'ro', required => 1);
@@ -23,9 +24,9 @@ sub fix {
     my @matches = grep ref, data_at($self->path, $data, create => 1, key => $key);
     for my $match (@matches) {
         if (is_array_ref($match)) {
-            $match->[$key] = $val if is_integer($key);
+            $match->[$key] = clone($val) if is_integer($key);
         } else {
-            $match->{$key} = $val;
+            $match->{$key} = clone($val);
         }
     }
 
