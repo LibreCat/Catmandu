@@ -32,7 +32,6 @@
 #  
 # Advanced fixes
 #
-#  apply('job', sub { ...})    : apply a Perl function to a path
 #  clone()                     : keep the original data, apply all fixes to a copy
 #  collapse()                  : converts your Perl hashes into a structure using TT2 dotted names
 #  expand()                    : expands TT2 dotted name structures into Perl hashes
@@ -57,9 +56,6 @@ substring('init',0,1);
 
 join_field('colors.0','/');
 
-apply(sub { (shift)->{fancy}->{tricks}->{for}->{hackers} = time });
-apply(sub { (shift)->{fancy}->{tricks2}->{for}->{hackers} = time });
-
 rename_field('fancy.tricks.for.hackers','budget');
 rename_field('colors.1','colors2.15');
 
@@ -71,3 +67,10 @@ copy_field('test','brol.dol.hol');
 split_field('tokens.test',':');
 
 add_field('b.0.c.1.d.3.e.4',1);
+
+add_field('mods.titleInfo.$append.title', 'a title');
+add_field('mods.titleInfo.$append.title', 'another title');
+add_field('mods.titleInfo.$first.title', 'changed a title');
+add_field('mods.titleInfo.$last.title', 'changed another title');
+add_field('mods.titleInfo.$prepend.title', 'first title');
+add_field('mods.titleInfo.$append.title', 'last title');
