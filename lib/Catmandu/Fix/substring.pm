@@ -40,7 +40,7 @@ sub mysubstr {
     if    (@_ == 2) { substr($_[0], $_[1]) }
     elsif (@_ == 3) { substr($_[0], $_[1], $_[2]) }
     elsif (@_ == 4) { substr($_[0], $_[1], $_[2], $_[3]) }
-    else { die }
+    else { confess "wrong number of arguments" }
 }
 
 =head1 NAME

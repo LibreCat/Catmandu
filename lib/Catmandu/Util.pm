@@ -192,6 +192,10 @@ sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;
 }
 
+sub is_positive {
+    is_integer($_[0]) && $_[0] >= 1;
+}
+
 sub is_ref {
     ref $_[0] ? 1 : 0;
 }
@@ -217,7 +221,7 @@ sub check_maybe_able {
 
 for my $sym (qw(able invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
-        value string number integer natural)) {
+        value string number integer natural positive)) {
     my $pkg = __PACKAGE__;
     push @EXPORT_OK, "is_$sym", "is_maybe_$sym", "check_$sym", "check_maybe_$sym";
     push @{$EXPORT_TAGS{is}}, "is_$sym", "is_maybe_$sym";
