@@ -12,7 +12,7 @@ use IO::String;
 our %EXPORT_TAGS = (
     package => [qw(load_package)],
     io      => [qw(io)],
-    data    => [qw(data_at)],
+    data    => [qw(parse_data_path data_at)],
     array   => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
@@ -58,48 +58,63 @@ sub io {
     $io_obj;
 }
 
+sub parse_data_path {
+    my ($path) = @_;
+    check_string($path);
+    $path = [split /[\/\.]/, $path];
+    my $key = pop @$path;
+    my $guard;
+    if ($key =~ /^([^=]+)=([^=]*)$/) {
+        $key   = $1;
+        $guard = $2;
+    }
+    return $path, $key, $guard;
+}
+
 sub data_at {
     my ($path, $data, %opts) = @_;
     $path = ref $path ? [@$path] : [split /[\/\.]/, $path];
-    if ($opts{create} && $opts{key} && @$path) {
-        push @$path, $opts{key};
+    my $create = $opts{create};
+    my $_key = $opts{_key} // $opts{key};
+    my $guard  = $opts{guard};
+    #if (defined $opts{key} && !defined $opts{guard} && $key =~ /^([^=]+)=([^=]*)$/) {
+        #$key   = $1;
+        #$guard = $2;
+    #}
+    if (defined $opts{key} && $create && @$path) {
+        push @$path, $_key;
     }
     while (defined(my $key = shift @$path)) {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
-                return map { data_at($path, $_, create => $opts{create}) } @$data;
+                return map { data_at($path, $_, create => $create, guard => $guard, _key => $_key) } @$data;
             } else {
                 given ($key) {
-                    when ('$first') {
-                        $key = 0;
-                    }
-                    when ('$last') {
-                        $key = -1;
-                    }
-                    when ('$prepend') {
-                        unshift @$data, undef;
-                        $key = 0;
-                    }
-                    when ('$append') {
-                        $key = @$data;
-                    }
+                    when ('$first')   { $key = 0 }
+                    when ('$last')    { $key = -1 }
+                    when ('$prepend') { unshift(@$data, undef); $key = 0 }
+                    when ('$append')  { $key = @$data }
                 }
                 is_integer($key) || return;
-                if ($opts{create} && @$path) {
+                if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
                 } else {
                     $data = $data->[$key];
                 }
             }
-        } elsif ($opts{create} && @$path) {
+        } elsif ($create && @$path) {
             $data = $data->{$key} ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
         } else {
             $data = $data->{$key};
         }
-        if ($opts{create} && @$path == 1) {
+        if ($create && @$path == 1) {
             last;
         }
+    }
+    if (defined $guard && defined $_key) {
+        my $val = is_array_ref($data) ? $data->[$_key] : $data->{$_key};
+        return unless is_value($val) && $val eq $guard;
     }
     $data;
 }

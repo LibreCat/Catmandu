@@ -5,5 +5,4 @@
 * bag drop
 * make CQL::Searchable ?
 * fix Store::Lucy
-* Plugin::Versions
 * load config, set lib path without Dancer

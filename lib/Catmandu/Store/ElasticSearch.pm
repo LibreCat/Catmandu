@@ -165,11 +165,11 @@ sub search {
 
     my $docs = $res->{hits}{hits};
 
-    my $hits = Catmandu::Hits->new({
+    my $hits = {
         start => $start,
         limit => $limit,
         total => $res->{hits}{total},
-    });
+    };
 
     if ($bag) {
         $hits->{hits} = [ map { $bag->get($_->{_id}) } @$docs ];
@@ -191,7 +191,7 @@ sub search {
         }
     }
 
-    $hits;
+    Catmandu::Hits->new($hits);
 }
 
 sub searcher {

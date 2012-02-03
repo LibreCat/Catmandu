@@ -222,7 +222,7 @@ Catmandu::Store::DBI - A Catmandu::Store plugin for DBI based interfaces
     my $obj3 = $store->bag->get('test123');
 
     $store->bag->delete('test123');
-    
+
     $store->bag->delete_all;
 
     # All bags are iterators

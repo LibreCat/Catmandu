@@ -1,6 +1,7 @@
 package Catmandu::Searchable;
 
 use Catmandu::Sane;
+use Catmandu::Util qw(:is);
 use Moo::Role;
 
 requires 'translate_sru_sortkeys';
@@ -29,6 +30,9 @@ my $AROUND_SEARCH = sub {
     }
     $args{start}+=0;
     $args{limit}+=0;
+    if (is_positive(my $page = delete $args{page})) {
+        $args{start} = (($page - 1) * $args{limit}) + 1;
+    }
     if (my $sru_sortkeys = delete $args{sru_sortkeys}) {
         $args{sort} = $self->translate_sru_sortkeys($sru_sortkeys);
     }

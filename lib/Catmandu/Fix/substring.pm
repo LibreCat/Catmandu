@@ -1,18 +1,18 @@
 package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is data_at);
+use Catmandu::Util qw(:is :data);
 use Moo;
 
-has path => (is => 'ro', required => 1);
-has key  => (is => 'ro', required => 1);
-has args => (is => 'ro', required => 1);
+has path  => (is => 'ro', required => 1);
+has key   => (is => 'ro', required => 1);
+has args  => (is => 'ro', required => 1);
+has guard => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, @args) = @_;
-    $path = [split /[\/\.]/, $path];
-    my $key = pop @$path;
-    $orig->($class, path => $path, key => $key, args => [@args]);
+    my ($p, $key, $guard) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, args => [@args], guard => $guard);
 };
 
 sub fix {
@@ -20,8 +20,8 @@ sub fix {
 
     my $key = $self->key;
     my $args = $self->args;
-    
-    my @matches = grep ref, data_at($self->path, $data);
+
+    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             is_integer($key) || next;
