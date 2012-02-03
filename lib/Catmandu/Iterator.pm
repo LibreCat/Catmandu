@@ -10,8 +10,7 @@ with 'Catmandu::Iterable';
 sub generator { goto &{$_[0]} }
 
 sub new {
-    my ($class, $sub) = @_;
-    bless sub { $sub }, $class;
+    bless $_[1], $_[0];
 }
 
 1;

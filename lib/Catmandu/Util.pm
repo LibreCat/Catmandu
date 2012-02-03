@@ -73,14 +73,10 @@ sub parse_data_path {
 
 sub data_at {
     my ($path, $data, %opts) = @_;
-    $path = ref $path ? [@$path] : [split /[\/\.]/, $path];
+    $path = [@$path];
     my $create = $opts{create};
     my $_key = $opts{_key} // $opts{key};
     my $guard  = $opts{guard};
-    #if (defined $opts{key} && !defined $opts{guard} && $key =~ /^([^=]+)=([^=]*)$/) {
-        #$key   = $1;
-        #$guard = $2;
-    #}
     if (defined $opts{key} && $create && @$path) {
         push @$path, $_key;
     }
@@ -191,17 +187,17 @@ sub check_different {
     is_different(@_) || confess('error: should be different');
 }
 
-*is_invocant = \&Data::Util::is_invocant;
-*is_scalar_ref = \&Data::Util::is_scalar_ref;
-*is_array_ref = \&Data::Util::is_array_ref;
-*is_hash_ref = \&Data::Util::is_hash_ref;
-*is_code_ref = \&Data::Util::is_code_ref;
-*is_regex_ref = \&Data::Util::is_rx;
-*is_glob_ref = \&Data::Util::is_glob_ref;
-*is_value = \&Data::Util::is_value;
-*is_string = \&Data::Util::is_string;
-*is_number = \&Data::Util::is_number;
-*is_integer = \&Data::Util::is_integer;
+sub is_invocant { goto &Data::Util::is_invocant }
+sub is_scalar_ref { goto &Data::Util::is_scalar_ref }
+sub is_array_ref { goto &Data::Util::is_array_ref }
+sub is_hash_ref { goto &Data::Util::is_hash_ref }
+sub is_code_ref { goto &Data::Util::is_code_ref }
+sub is_regex_ref { goto &Data::Util::is_rx }
+sub is_glob_ref { goto &Data::Util::is_glob_ref }
+sub is_value { goto &Data::Util::is_value }
+sub is_string { goto &Data::Util::is_string }
+sub is_number { goto &Data::Util::is_number }
+sub is_integer { goto &Data::Util::is_integer }
 
 sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;

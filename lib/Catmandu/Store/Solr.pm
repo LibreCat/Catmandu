@@ -23,7 +23,6 @@ package Catmandu::Store::Solr::Bag;
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Util qw(:is);
-use Catmandu::Iterator;
 use Catmandu::Hits;
 use CQL::Solr;
 

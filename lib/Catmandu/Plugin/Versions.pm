@@ -38,7 +38,7 @@ sub get_history {
 
 sub get_version {
     my ($self, $id, $version) = @_;
-    check_string($id)
+    check_string($id);
     check_positive($version);
     my $data = $self->versions_bag->get("$id.$version") || return;
     $data->{data};
