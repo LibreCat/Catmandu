@@ -18,13 +18,13 @@ has _pager => (
         last_page => 'last_page',
         next_page => 'next_page',
         previous_page => 'previous_page',
-        pages_per_set => 'pages_per_set',
-        pages_in_set => 'pages_in_set',
-        next_page_set => 'next_set',
-        previous_page_set => 'previous_set',
+        page_size => 'entries_on_this_page',
         first_on_page => 'first',
         last_on_page => 'last',
-        size => 'entries_on_this_page',
+        next_page_set => 'next_set',
+        previous_page_set => 'previous_set',
+        pages_per_set => 'pages_per_set',
+        pages_in_set => 'pages_in_set',
     },
 );
 

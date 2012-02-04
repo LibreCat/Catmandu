@@ -179,6 +179,8 @@ sub search {
         $hits->{hits} = [ map { $_->{_source} } @$docs ];
     }
 
+    $hits = Catmandu::Hits->new($hits);
+
     if ($args{facets}) {
         $hits->{facets} = $res->{facets};
     }
@@ -191,7 +193,7 @@ sub search {
         }
     }
 
-    Catmandu::Hits->new($hits);
+    $hits;
 }
 
 sub searcher {
