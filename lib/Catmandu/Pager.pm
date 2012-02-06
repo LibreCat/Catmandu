@@ -1,12 +1,14 @@
 package Catmandu::Pager;
 
 use Catmandu::Sane;
-use Data::Pageset;
+use Data::SpreadPagination;
 use Moo::Role;
 
 requires 'start';
 requires 'limit';
 requires 'total';
+
+has max_pages_in_spread => (is => 'rw', default => sub { 5 });
 
 has _pager => (
     is => 'ro',
@@ -14,37 +16,28 @@ has _pager => (
     lazy => 1,
     builder => '_build_pager',
     handles => {
+        page => 'current_page',
         first_page => 'first_page',
         last_page => 'last_page',
         next_page => 'next_page',
         previous_page => 'previous_page',
-        page_size => 'entries_on_this_page',
         first_on_page => 'first',
         last_on_page => 'last',
-        next_page_set => 'next_set',
-        previous_page_set => 'previous_set',
-        pages_per_set => 'pages_per_set',
-        pages_in_set => 'pages_in_set',
+        pages_in_spread => 'pages_in_spread',
+        page_ranges => 'page_ranges',
     },
 );
 
 sub _build_pager {
     my $self = $_[0];
-    Data::Pageset->new({
-        total_entries => $self->total,
-        entries_per_page => $self->limit,
-        current_page => $self->page,
-        pages_per_set => 5,
-        mode => 'slide',
+    Data::SpreadPagination->new({
+        totalEntries   => $self->total,
+        entriesPerPage => $self->limit,
+        startEntry     => $self->start+1,
+        maxPages       => $self->max_pages_in_spread,
     });
 }
 
-sub page {
-    $_[0]->{page} ||= int($_[0]->start / $_[0]->limit) + 1;
-}
-
-sub on_page {
-    [$_[0]->first_on_page .. $_[0]->last_on_page];
-}
+sub page_size { goto &limit }
 
 1;
