@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns:marc="http://www.loc.gov/MARC21/slim" xmlns:aleph="http://aleph.exlibris.com">
+<record>
+  <leader>00000nam a22      a 4500</leader>
+  <controlfield tag="001">000751260</controlfield>
+  <controlfield tag="003">rug01</controlfield>
+  <controlfield tag="005">20050826224536.0</controlfield>
+  <controlfield tag="008">030108s1999    xx      r     000 0 dut d</controlfield>
+  <datafield ind1=" " ind2=" " tag="020">
+   <subfield code="a">902841553X</subfield>
+  </datafield>
+  <datafield ind1=" " ind2=" " tag="040">
+   <subfield code="a">UGent</subfield>
+  </datafield>
+  <datafield ind1="1" ind2=" " tag="100">
+   <subfield code="a">Schopenhauer, Arthur,</subfield>
+   <subfield code="d">1788-1860</subfield>
+  </datafield>
+  <datafield ind1="1" ind2="3" tag="245">
+   <subfield code="a">De vrijheid van de wil. Over Schopenhauer /</subfield>
+   <subfield code="c">vert. en van verklarende noten voorzien door Hans Driessen.</subfield>
+  </datafield>
+  <datafield ind1=" " ind2=" " tag="250">
+   <subfield code="a">4e dr.</subfield>
+  </datafield>
+  <datafield ind1=" " ind2=" " tag="260">
+   <subfield code="a">Amsterdam :</subfield>
+   <subfield code="b">Wereldbibliotheek,</subfield>
+   <subfield code="c">1999.</subfield>
+  </datafield>
+  <datafield ind1=" " ind2=" " tag="300">
+   <subfield code="a">178 p.</subfield>
+  </datafield>
+  <datafield ind1="0" ind2=" " tag="505">
+   <subfield code="a">De vrijheid van de wil / Arthur Schopenhauer</subfield>
+  </datafield>
+  <datafield ind1="0" ind2=" " tag="505">
+   <subfield code="a">Over Schopenhauer / Thomas Mann</subfield>
+  </datafield>
+  <datafield ind1="1" ind2=" " tag="700">
+   <subfield code="a">Mann, Thomas,</subfield>
+   <subfield code="d">1875-1955.</subfield>
+  </datafield>
+  <datafield ind1="1" ind2=" " tag="700">
+   <subfield code="a">Driessen, Hans</subfield>
+  </datafield>
+  <datafield ind1="1" ind2="8" tag="765">
+   <subfield code="a">Über die Freiheit des Willens</subfield>
+  </datafield>
+  <datafield ind1="1" ind2="8" tag="765">
+   <subfield code="a">Schopenhauer</subfield>
+  </datafield>
+  <datafield ind1="4" ind2=" " tag="852">
+   <subfield code="x">LW</subfield>
+   <subfield code="b">LW01</subfield>
+   <subfield code="c">L27</subfield>
+   <subfield code="j">L27.1788V102</subfield>
+   <subfield code="p">000010037043</subfield>
+  </datafield>
+  <datafield ind1=" " ind2=" " tag="920">
+   <subfield code="a">book</subfield>
+  </datafield>
+  </record>
+</collection>

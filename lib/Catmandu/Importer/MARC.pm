@@ -72,6 +72,9 @@ sub marc_generator {
         return unless $record;
 
         my @result = ();
+
+        push @result , [ 'LDR' , undef, undef, '_' , $record->leader ];
+
         for my $field ($record->fields()) {
             my $tag  = $field->tag;
             my $ind1 = $field->indicator(1);
