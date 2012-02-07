@@ -1,24 +1,24 @@
 package Catmandu::Fix::downcase;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is data_at as_utf8);
+use Catmandu::Util qw(:is :data as_utf8);
 use Moo;
 
-has path => (is => 'ro', required => 1);
-has key  => (is => 'ro', required => 1);
+has path  => (is => 'ro', required => 1);
+has key   => (is => 'ro', required => 1);
+has guard => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
-    $path = [split /[\/\.]/, $path];
-    my $key = pop @$path;
-    $orig->($class, path => $path, key => $key);
+    my ($p, $key, $guard) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, guard => $guard);
 };
 
 sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    my @matches = grep ref, data_at($self->path, $data);
+    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             is_integer($key) || next;

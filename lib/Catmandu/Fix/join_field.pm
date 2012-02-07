@@ -1,7 +1,7 @@
 package Catmandu::Fix::join_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is data_at);
+use Catmandu::Util qw(:is :data);
 use Moo;
 
 has path      => (is => 'ro', required => 1);
@@ -10,9 +10,8 @@ has join_char => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $join_char) = @_;
-    $path = [split /[\/\.]/, $path];
-    my $key = pop @$path;
-    $orig->($class, path => $path, key => $key, join_char => $join_char // '');
+    my ($p, $key) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, join_char => $join_char // '');
 };
 
 sub fix {

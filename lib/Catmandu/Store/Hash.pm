@@ -95,21 +95,21 @@ sub search {
     use Data::Visitor::Callback;
     my $match = 0;
     my $visitor = Data::Visitor::Callback->new(
-	value => sub { $match = 1 if $_[1] =~ /$query/}
+        value => sub { $match = 1 if $_[1] =~ /$query/},
     );
 
     $self->each(sub {
-	my $item = shift;
+        my $item = shift;
         $visitor->visit($item);
-	push(@candidates,$item) if $match;
-	$match = 0;
+        push(@candidates,$item) if $match;
+        $match = 0;
     });
 
     Catmandu::Hits->new({
-	limit => undef,
-	start => 0,
-	total => int(@candidates),
-	hits  => \@candidates 
+        limit => undef,
+        start => 0,
+        total => int(@candidates),
+        hits  => \@candidates,
     });
 }
 
@@ -122,8 +122,8 @@ sub delete_by_query {
     my $hits = $self->search(@_);
 
     $hits->each(sub {
-	my $item = shift;
-	$self->delete($item->{_id});	
+        my $item = shift;
+        $self->delete($item->{_id});
     });
 }
 

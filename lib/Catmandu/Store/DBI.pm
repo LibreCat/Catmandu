@@ -60,7 +60,7 @@ sub DEMOLISH {
 }
 
 package Catmandu::Store::DBI::Bag;
-# TODO address 64kb text limit;try create database;
+
 use Catmandu::Sane;
 use Moo;
 
@@ -77,7 +77,7 @@ sub BUILD {
     my $self = $_[0];
     my $name = $self->name;
     my $dbh  = $self->store->dbh;
-    my $sql  = "create table if not exists $name(id varchar(255) not null primary key, data text not null)";
+    my $sql  = "create table if not exists $name(id varchar(255) not null primary key, data longblob not null)";
     $dbh->do($sql) or confess $dbh->errstr;
 }
 
@@ -113,7 +113,7 @@ sub _build_add_mysql {
     my $self = $_[0];
     my $name = $self->name;
     my $dbh  = $self->store->dbh;
-    my $sql  = "insert into $name(id,data) values(?,?) on duplicate key update data = values(data)";
+    my $sql  = "insert into $name(id,data) values(?,?) on duplicate key update data=values(data)";
     sub {
         my $sth = $dbh->prepare_cached($sql) or confess $dbh->errstr;
         $sth->execute($_[0], $_[1]) or confess $sth->errstr;
@@ -222,7 +222,7 @@ Catmandu::Store::DBI - A Catmandu::Store plugin for DBI based interfaces
     my $obj3 = $store->bag->get('test123');
 
     $store->bag->delete('test123');
-    
+
     $store->bag->delete_all;
 
     # All bags are iterators

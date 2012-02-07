@@ -1,4 +1,4 @@
-package Catmandu::Fix::add_field;
+package Catmandu::Fix::set_field;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :data);
@@ -21,7 +21,7 @@ sub fix {
 
     my $key = $self->key;
     my $val = $self->value;
-    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard, create => 1);
+    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
     for my $match (@matches) {
         if (is_array_ref($match)) {
             $match->[$key] = clone($val) if is_integer($key);
@@ -35,23 +35,20 @@ sub fix {
 
 =head1 NAME
 
-Catmandu::Fix::add_field - add or change the value of a HASH key or ARRAY index
+Catmandu::Fix::set_field - add or change the value of a HASH key or ARRAY index
 
 =head1 DESCRIPTION
 
-Contrary to C<set_field>, this will create the intermediate structures
+Contrary to C<add_field>, this will not create the intermediate structures
 if they are missing.
 
 =head1 SYNOPSIS
 
-   # Add a new field 'foo' with value '2'
-   add_field('foo','2');
-
    # Change the value of 'foo' to 'bar 123'
-   add_field('foo','bar 123');
+   set_field('foo','bar 123');
 
-   # Create a deeply nested key
-   add_field('my.deep.nested.key','hi');
+   # Change a deeply nested key
+   set_field('my.deep.nested.key','hi');
 
 =head1 SEE ALSO
 

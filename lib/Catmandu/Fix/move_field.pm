@@ -1,4 +1,4 @@
-package Catmandu::Fix::copy_field;
+package Catmandu::Fix::move_field;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :data);
@@ -37,17 +37,23 @@ sub fix {
                 is_integer($new_key) || next;
                 if (is_array_ref($old_match)) {
                     next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->[$new_key] = clone($old_match->[$old_key]);
+                    $new_match->[$new_key] = $old_match->[$old_key]; $old_match->[$old_key] = undef;
                 } else {
-                    $new_match->[$new_key] = clone($old_match->{$old_key});
+                    $new_match->[$new_key] = delete $old_match->{$old_key};
                 }
             } else {
                 if (is_array_ref($old_match)) {
                     next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->{$new_key} = clone($old_match->[$old_key]);
+                    $new_match->{$new_key} = $old_match->[$old_key]; $old_match->[$old_key] = undef;
                 } else {
-                    $new_match->{$new_key} = clone($old_match->{$old_key});
+                    $new_match->{$new_key} = delete $old_match->{$old_key};
                 }
+            }
+        }
+        for my $match (@old_matches) {
+            next unless is_array_ref($match);
+            for (my $i = @$match; $i >= 0; --$i) {
+                splice @$match, $i, 1 unless defined $match->[$i];
             }
         }
     }
@@ -57,12 +63,12 @@ sub fix {
 
 =head1 NAME
 
-Catmandu::Fix::copy_field - copy the value of one field to a new field
+Catmandu::Fix::move_field - move a field to another place in the data structure
 
 =head1 SYNOPSIS
 
-   # Copy the values of foo.bar into bar.foo
-   copy_field('foo.bar','bar.foo');
+   # Move 'foo.bar' to 'bar.foo'
+   move_field('foo.bar','bar.foo');
 
 =head1 SEE ALSO
 

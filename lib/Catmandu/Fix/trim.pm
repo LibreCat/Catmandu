@@ -1,7 +1,7 @@
 package Catmandu::Fix::trim;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is data_at trim);
+use Catmandu::Util qw(:is :data trim);
 use Moo;
 
 has path => (is => 'ro', required => 1);
@@ -9,9 +9,8 @@ has key  => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
-    $path = [split /[\/\.]/, $path];
-    my $key = pop @$path;
-    $orig->($class, path => $path, key => $key);
+    my ($p, $key) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key);
 };
 
 sub fix {

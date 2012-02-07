@@ -31,7 +31,7 @@ sub count {
 sub slice {
     my ($self, $start, $total) = @_;
     $start //= 0;
-    Catmandu::Iterator->new(sub {
+    Catmandu::Iterator->new(sub { sub {
         if (defined $total) {
             $total || return;
         }
@@ -48,7 +48,7 @@ sub slice {
             return $data;
         }
         return;
-    });
+    }});
 }
 
 sub each {
@@ -65,7 +65,7 @@ sub each {
 
 sub tap {
     my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub {
+    Catmandu::Iterator->new(sub { sub {
         state $next = $self->generator;
         state $data;
         if (defined($data = $next->())) {
@@ -73,7 +73,7 @@ sub tap {
             return $data;
         }
         return;
-    });
+    }});
 }
 
 sub any {
@@ -85,6 +85,8 @@ sub any {
     }
     return 0;
 }
+
+sub some { goto &any }
 
 sub many {
     my ($self, $sub) = @_;
@@ -109,23 +111,27 @@ sub all {
 
 sub map {
     my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub {
+    Catmandu::Iterator->new(sub { sub {
         state $next = $self->generator;
         $sub->($next->() // return);
-    });
+    }});
 }
+
+sub inject { goto &reduce }
 
 sub reduce {
     my $self = shift;
+    my $memo_set = @_ > 1;
     my $sub  = pop;
-    my $memo = pop;
+    my $memo = shift;
     my $next = $self->generator;
     my $data;
     while (defined($data = $next->())) {
-        if (defined $memo) {
+        if ($memo_set) {
             $memo = $sub->($memo, $data);
         } else {
             $memo = $data;
+            $memo_set = 1;
         }
     }
     $memo;
@@ -173,26 +179,26 @@ sub take {
 
     sub select {
         my $self = shift; my $sub = $to_sub->(@_);
-        Catmandu::Iterator->new(sub {
+        Catmandu::Iterator->new(sub { sub {
             state $next = $self->generator;
             state $data;
             while (defined($data = $next->())) {
                 $sub->($data) && return $data;
             }
             return;
-        });
+        }});
     }
 
     sub reject {
         my $self = shift; my $sub = $to_sub->(@_);
-        Catmandu::Iterator->new(sub {
+        Catmandu::Iterator->new(sub { sub {
             state $next = $self->generator;
             state $data;
             while (defined($data = $next->())) {
                 $sub->($data) || return $data;
             }
             return;
-        });
+        }});
     }
 };
 
@@ -210,6 +216,8 @@ sub invoke {
     });
 }
 
+sub contains { goto &includes }
+
 sub includes {
     my ($self, $data) = @_;
     $self->any(sub {
@@ -219,20 +227,40 @@ sub includes {
 
 sub group {
     my ($self, $size) = @_;
-    Catmandu::Iterator->new(sub {
+    Catmandu::Iterator->new(sub { sub {
         state $next = $self->generator;
         state $peek = $next->();
 
         $peek // return;
 
-        Catmandu::Iterator->new(sub {
+        Catmandu::Iterator->new(sub { sub {
             state $n = $size;
             $n || return;
             $n--;
             my $data = $peek;
             $peek = $next->();
             $data;
-        });
+        }});
+    }});
+}
+
+sub max {
+    $_[0]->reduce(sub {
+        my ($memo, $data) = @_;
+        return $data > $memo ? $data : $memo if is_number($memo) && is_number($data);
+        return $memo if is_number($memo);
+        return $data if is_number($data);
+        return;
+    });
+}
+
+sub min {
+    $_[0]->reduce(sub {
+        my ($memo, $data) = @_;
+        return $data < $memo ? $data : $memo if is_number($memo) && is_number($data);
+        return $memo if is_number($memo);
+        return $data if is_number($data);
+        return;
     });
 }
 
@@ -346,6 +374,14 @@ Returns an Iterator with the first NUM results.
 
 Splitting the Iterator into NUM parts and returning an Iterator for each part.
 
+=head2 contains($data)
+
+Alias for C<includes>.
+
+=head2 includes($data)
+
+return true if any member of the collection is deeply equal to C<$data>.
+
 =head2 tap(\&callback)
 
 Returns a copy of the Iterator and executing callback on each item. This method works
@@ -425,6 +461,10 @@ Returns true if at least one item generates a true value when executing callback
 
 =head2 many(\&callback)
 
+Alias for C<many>.
+
+=head2 many(\&callback)
+
 Returns true if at least two items generate a true value when executing callback.
 
 =head2 all(\&callback)
@@ -439,6 +479,10 @@ Returns a new Iterator containing for each item the result of the callback.
 
 =head2 reduce([START],\&callback)
 
+Alias for C<reduce>.
+
+=head2 reduce([START],\&callback)
+
 For each item in the Iterator execute &callback($prev,$item) where $prev is the
 option START value or the result of the previous call to callback. Returns the
 final result of the callback function.
@@ -446,6 +490,10 @@ final result of the callback function.
 =head2 invoke(NAME)
 
 This is a shortcut for $it->map(sub { $_[0]->NAME }).
+
+=head2 max()
+
+=head2 min()
 
 =head1 SEE ALSO
 

@@ -15,6 +15,7 @@ my $requires = {
     'Dancer' => '1.3080',
     'Data::Compare' => '1.22',
     'Data::MessagePack' => '0.39',
+    'Data::SpreadPagination' => '0.1.2',
     'Data::UUID' => '1.217',
     'Data::Util' => '0.59',
     'DateTime' => '0.70',
@@ -105,12 +106,6 @@ my $auto_features = {
         description => "Template filter to lookup the name for a ISO639-1 or ISO639-2 language code",
         requires => {
             'Locale::Codes::Language' => '3.18',
-        },
-    },
-    tt_spread_pagination => {
-        description => "Template spread pagination plugin",
-        requires => {
-            'Data::SpreadPagination' => '0.1.2',
         },
     },
     plack_session_catmandu => {

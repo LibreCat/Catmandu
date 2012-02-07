@@ -1,33 +1,18 @@
 package Catmandu::Hits;
 
 use Catmandu::Sane;
-use Role::Tiny ();
-use Role::Tiny::With;
+use Moo;
+
+has start  => (is => 'ro', required => 1);
+has limit  => (is => 'ro', required => 1);
+has total  => (is => 'ro', required => 1);
+has hits   => (is => 'ro', required => 1);
 
 with 'Catmandu::Iterable';
-
-sub new {
-    bless $_[1], $_[0];
-}
-
-sub total {
-    $_[0]->{total};
-}
-
-sub start {
-    $_[0]->{start};
-}
-
-sub limit {
-    $_[0]->{limit};
-}
+with 'Catmandu::Pager';
 
 sub size {
-    scalar @{ $_[0]->{hits} };
-}
-
-sub hits {
-    $_[0]->{hits};
+    scalar @{$_[0]->hits};
 }
 
 sub to_array { goto &hits }

@@ -20,11 +20,9 @@ before get => sub {
     check_string($_[1]);
 };
 
-around add => sub {
-    my ($orig, $self, $data) = @_;
+before add => sub {
+    my ($self, $data) = @_;
     check_hash_ref($data)->{_id} ||= $self->generate_id;
-    $orig->($self, $data);
-    $data;
 };
 
 before delete => sub {

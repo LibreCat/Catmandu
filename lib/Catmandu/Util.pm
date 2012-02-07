@@ -12,7 +12,7 @@ use IO::String;
 our %EXPORT_TAGS = (
     package => [qw(load_package)],
     io      => [qw(io)],
-    data    => [qw(data_at)],
+    data    => [qw(parse_data_path data_at)],
     array   => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
@@ -58,48 +58,59 @@ sub io {
     $io_obj;
 }
 
+sub parse_data_path {
+    my ($path) = @_;
+    check_string($path);
+    $path = [split /[\/\.]/, $path];
+    my $key = pop @$path;
+    my $guard;
+    if ($key =~ /^([^=]+)=([^=]*)$/) {
+        $key   = $1;
+        $guard = $2;
+    }
+    return $path, $key, $guard;
+}
+
 sub data_at {
     my ($path, $data, %opts) = @_;
-    $path = ref $path ? [@$path] : [split /[\/\.]/, $path];
-    if ($opts{create} && $opts{key} && @$path) {
-        push @$path, $opts{key};
+    $path = [@$path];
+    my $create = $opts{create};
+    my $_key = $opts{_key} // $opts{key};
+    my $guard  = $opts{guard};
+    if (defined $opts{key} && $create && @$path) {
+        push @$path, $_key;
     }
     while (defined(my $key = shift @$path)) {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
-                return map { data_at($path, $_, create => $opts{create}) } @$data;
+                return map { data_at($path, $_, create => $create, guard => $guard, _key => $_key) } @$data;
             } else {
                 given ($key) {
-                    when ('$first') {
-                        $key = 0;
-                    }
-                    when ('$last') {
-                        $key = -1;
-                    }
-                    when ('$prepend') {
-                        unshift @$data, undef;
-                        $key = 0;
-                    }
-                    when ('$append') {
-                        $key = @$data;
-                    }
+                    when ('$first')   { $key = 0 }
+                    when ('$last')    { $key = -1 }
+                    when ('$prepend') { unshift(@$data, undef); $key = 0 }
+                    when ('$append')  { $key = @$data }
                 }
                 is_integer($key) || return;
-                if ($opts{create} && @$path) {
+                if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
                 } else {
                     $data = $data->[$key];
                 }
             }
-        } elsif ($opts{create} && @$path) {
+        } elsif ($create && @$path) {
             $data = $data->{$key} ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
         } else {
             $data = $data->{$key};
         }
-        if ($opts{create} && @$path == 1) {
+        if ($create && @$path == 1) {
             last;
         }
+    }
+    if (defined $guard && defined $_key) {
+        my $val = is_array_ref($data) ? $data->[$_key] : $data->{$_key};
+        return unless is_value($val) && $val eq $guard;
     }
     $data;
 }
@@ -176,20 +187,24 @@ sub check_different {
     is_different(@_) || confess('error: should be different');
 }
 
-*is_invocant = \&Data::Util::is_invocant;
-*is_scalar_ref = \&Data::Util::is_scalar_ref;
-*is_array_ref = \&Data::Util::is_array_ref;
-*is_hash_ref = \&Data::Util::is_hash_ref;
-*is_code_ref = \&Data::Util::is_code_ref;
-*is_regex_ref = \&Data::Util::is_rx;
-*is_glob_ref = \&Data::Util::is_glob_ref;
-*is_value = \&Data::Util::is_value;
-*is_string = \&Data::Util::is_string;
-*is_number = \&Data::Util::is_number;
-*is_integer = \&Data::Util::is_integer;
+sub is_invocant { goto &Data::Util::is_invocant }
+sub is_scalar_ref { goto &Data::Util::is_scalar_ref }
+sub is_array_ref { goto &Data::Util::is_array_ref }
+sub is_hash_ref { goto &Data::Util::is_hash_ref }
+sub is_code_ref { goto &Data::Util::is_code_ref }
+sub is_regex_ref { goto &Data::Util::is_rx }
+sub is_glob_ref { goto &Data::Util::is_glob_ref }
+sub is_value { goto &Data::Util::is_value }
+sub is_string { goto &Data::Util::is_string }
+sub is_number { goto &Data::Util::is_number }
+sub is_integer { goto &Data::Util::is_integer }
 
 sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;
+}
+
+sub is_positive {
+    is_integer($_[0]) && $_[0] >= 1;
 }
 
 sub is_ref {
@@ -217,7 +232,7 @@ sub check_maybe_able {
 
 for my $sym (qw(able invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
-        value string number integer natural)) {
+        value string number integer natural positive)) {
     my $pkg = __PACKAGE__;
     push @EXPORT_OK, "is_$sym", "is_maybe_$sym", "check_$sym", "check_maybe_$sym";
     push @{$EXPORT_TAGS{is}}, "is_$sym", "is_maybe_$sym";

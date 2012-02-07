@@ -48,7 +48,6 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
-use Catmandu::Iterator;
 use Moo;
 
 has fixes => (

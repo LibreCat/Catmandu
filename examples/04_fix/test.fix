@@ -25,17 +25,17 @@
 #  add_field('test'[,value])   : add a new key 'test' to the data
 #  copy_field('job','job2')    : copy the value of key 'job' to 'job2'
 #  remove_field('job')         : remove the key 'job'
-#  rename_field('job','job2')  : rename the key 'job' to 'job2'
+#  move_field('job','job2')  : rename the key 'job' to 'job2'
 #  retain('foo.bar')           : delete from 'foo' all the keys except 'bar'
 #  split_field('foo',':')      : split the string in 'foo' delimited by ':' into an array of tokens
 #  trim('job')                 : delete leading and ending spaces from 'job'
-#  
+#
 # Advanced fixes
 #
 #  clone()                     : keep the original data, apply all fixes to a copy
 #  collapse()                  : converts your Perl hashes into a structure using TT2 dotted names
 #  expand()                    : expands TT2 dotted name structures into Perl hashes
-#  
+#
 upcase('job');
 
 capitalize('first');
@@ -56,8 +56,8 @@ substring('init',0,1);
 
 join_field('colors.0','/');
 
-rename_field('fancy.tricks.for.hackers','budget');
-rename_field('colors.1','colors2.15');
+move_field('fancy.tricks.for.hackers','budget');
+move_field('colors.1','colors2.15');
 
 retain_field('fancy.tricks');
 
@@ -74,3 +74,8 @@ add_field('mods.titleInfo.$first.title', 'changed a title');
 add_field('mods.titleInfo.$last.title', 'changed another title');
 add_field('mods.titleInfo.$prepend.title', 'first title');
 add_field('mods.titleInfo.$append.title', 'last title');
+
+add_field('with.guard', 'a guard');
+set_field('with.guard=a guard', 'ok');
+set_field('with.guard=wrong guard', 'not ok');
+
