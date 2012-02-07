@@ -93,26 +93,41 @@ sub create_path {
     $leaf;
 }
 
+# Parse a marc_path into parts
+#  245[1,2]abd  - field=245, ind1=1, ind2=2, subfields = a,d,d
+#  008/33-35    - field=008 from index 33 to 35
+sub parse_marc_path {
+    my $path = shift;
+
+    if ($path =~ /(\S{3})(\[(.)?,?(.)?\])?([_a-z0-9]+)?(\/(\d+)(-(\d+))?)?/) {
+        my $field    = $1;
+        my $ind1     = $3;
+        my $ind2     = $4;
+        my $subfield = $5 ? "[$5]" : "[a-z0-9]";
+        my $from     = $7;
+        my $to       = $9;
+        return { field => $field , ind1 => $ind1 , ind2 => $ind2 , subfield => $subfield , from => $from , to => $to };
+    }
+    else {
+        return {};
+    }
+}
+
 # Given an Catmandu::Importer::MARC item return all the field value
 # that match the MARC path $path
 # Usage: marc_value($data,'245[a]',-join=>' ');
 sub marc_value {
     my ($marc_item,$path,$opts) = @_;
-    my ($field_path,$subfield_path);
-
-    if ($path =~ /(\S{3})(\S+)?/) {
-       $field_path = $1;
-       $subfield_path = $2 || '';
-    }
+    my $marc_path = &parse_marc_path($path);
 
     my $join    = $opts->{-join} || ' ';
     my @results = ();
 
-    my $subfields = &marc_field($marc_item,$field_path);
+    my $subfields = &marc_field($marc_item,$marc_path->{field});
 
     for my $arr (@$subfields) {
       my $res;
-      my $matched = &marc_subfield($arr,$subfield_path);      
+      my $matched = &marc_subfield($arr,$marc_path->{subfield});      
       if (@$matched) {
          $res = join $join , @$matched;
       }
@@ -129,8 +144,8 @@ sub marc_value {
 # array of subfields
 # Usage: marc_field($data,'245');
 sub marc_field {
-    my ($marc_item,$mpath) = @_;
-    my $field = substr($mpath,0,3);
+    my ($marc_item,$path) = @_;
+    my $marc_path = &parse_marc_path($path);
     my @results = ();
 
     for (@$marc_item) {
@@ -138,7 +153,7 @@ sub marc_field {
       unless (index($tag,0) == 0 || $tag eq 'LDR') {
         splice(@subfields,0,2);
       }
-      push(@results,\@subfields) if $tag eq $field;
+      push(@results,\@subfields) if $tag eq $marc_path->{field};
     }
 
     return \@results;
@@ -148,10 +163,9 @@ sub marc_field {
 # the subfields that match the $subfield regex
 # Usage: marc_subfield($subfields,'[a]');
 sub marc_subfield {
-    my ($subfields,$mpath) = @_;
-    my $regex = substr($mpath,3);
-    $regex =~ s{/.*}{};
-    $regex = length $regex ? "[$regex]" : "[a-z0-9]";
+    my ($subfields,$path) = @_;
+    my $marc_path = &parse_marc_path($path);
+    my $regex = $marc_path->{subfield};
 
     my @results = ();
 
@@ -196,7 +210,7 @@ Catmandu::Fix::marc_map - copy marc values of one field to a new field
     # When 024 field exists create the my.has024 hash with value 'found'
     marc_map('024','my.has024', -value => 'found');
 
-    # Do the same exampels now with the marc fields in 'record2'
+    # Do the same examples now with the marc fields in 'record2'
     marc_map('245','my.title', -record => 'record2');
 
 =cut
