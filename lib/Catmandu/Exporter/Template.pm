@@ -61,7 +61,7 @@ Catmandu::Exporter::Template - a TT2 Template exporter
 
     use Catmandu::Exporter::Template;
 
-    my $exporter = Catmandu::Exporter::YAML->new(
+    my $exporter = Catmandu::Exporter::Template->new(
 				fix => 'myfix.txt'
 				xml => 1,
 				template_before => '<path>/header.xml' ,

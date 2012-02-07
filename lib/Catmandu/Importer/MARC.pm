@@ -16,7 +16,7 @@ sub aleph_generator {
     sub {
         state $fh = $self->fh;
         state $prev_id;
-	state $record = [];
+	    state $record = [];
 
         while(<$fh>) {
            chop;
@@ -27,25 +27,25 @@ sub aleph_generator {
            my @parts = ('_' , split(/\$\$(.)/, $data) );
 
            if (defined $prev_id && $prev_id != $sysid) {
-		my $result = { _id => $prev_id , record => [ @$record ] };
-		$record  = [[$tag, $ind1, $ind2, @parts]];
-           	$prev_id = $sysid;
-		return $result;
-	   }
+		       my $result = { _id => $prev_id , record => [ @$record ] };
+		       $record  = [[$tag, $ind1, $ind2, @parts]];
+           	   $prev_id = $sysid;
+		       return $result;
+	       }
 
            push @$record, [$tag, $ind1, $ind2, @parts];
 
            $prev_id = $sysid;
         }
 
-	if (@$record > 0) {
+	    if (@$record > 0) {
     	   my $result = { _id => $prev_id , record => [ @$record ] };
-	   $record = [];
-	   return $result;
+	       $record = [];
+	       return $result;
         }
-	else {
-	   return;
- 	}
+	    else {
+	       return;
+ 	    }
     };
 }
 
@@ -55,41 +55,41 @@ sub marc_generator {
     my $file;
 
     given($self->type) {
-	when ('USMARC') {
-	    $file =  MARC::File::USMARC->in($self->fh); 
-	}
+	    when ('USMARC') {
+	        $file =  MARC::File::USMARC->in($self->fh); 
+	    }
         when ('MicroLIF') {
             $file = MARC::File::MicroLIF->in($self->fh);
         }
         when ('XML') {
             $file = MARC::File::XML->in($self->fh);
         }
-	die "unknown";
+	    die "unknown";
     }
 
     sub {
-      my $record = $file->next();
-      return unless $record;
+        my $record = $file->next();
+        return unless $record;
 
-      my @result = ();
-      for my $field ($record->fields()) {
-          my $tag  = $field->tag;
-          my $ind1 = $field->indicator(1);
-          my $ind2 = $field->indicator(2);
+        my @result = ();
+        for my $field ($record->fields()) {
+            my $tag  = $field->tag;
+            my $ind1 = $field->indicator(1);
+            my $ind2 = $field->indicator(2);
 
-          my @sf = ();
+            my @sf = ();
 
-          for my $subfield ($field->subfields) {
-              push @sf , @$subfield;
-          }
+            for my $subfield ($field->subfields) {
+                push @sf , @$subfield;
+            }
 
-          push @sf , '_' , $field->data if $field->is_control_field;
+            push @sf , '_' , $field->data if $field->is_control_field;
 
-          push @result, [$tag,$ind1,$ind2,@sf];
-      }
+            push @result, [$tag,$ind1,$ind2,@sf];
+        }
 
-      my $sysid = $record->field('001') ? $record->field('001')->data : undef;
-      return { _id => $sysid , record => \@result };
+        my $sysid = $record->field('001') ? $record->field('001')->data : undef;
+        return { _id => $sysid , record => \@result };
     };
 }
 
@@ -98,12 +98,12 @@ sub generator {
     my $type = $self->type;
 
     given ($type) {
-	when (/^USMARC|MicroLIF|XML$/) {
+	    when (/^USMARC|MicroLIF|XML$/) {
            return $self->marc_generator;
-	}
-	when ('ALEPHSEQ') {
+	    }
+	    when ('ALEPHSEQ') {
            return $self->aleph_generator;
-	}
+	    }
         die "need USMARC, MicroLIF, XML or ALEPHSEQ";
     }
 }
