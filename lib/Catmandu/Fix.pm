@@ -137,6 +137,27 @@ A special case is when you want to point to all items in an array. In this case
 the wildcard '*' can be used. E.g. 'foo.*' points to all the items in the 'foo'
 array.
 
+For array values there are special wildcards available:
+
+ * $append   - Add a new item at the end of an array
+ * $prepend  - Add a new item at the start of an array
+ * $first    - Syntactic sugar for index '0' (the head of the array)
+ * $last     - Syntactic sugar for index '-1' (the tail of the array)
+
+E.g.
+
+ # Create { mods => { titleInfo => [ { 'title' => 'a title' }] } };
+ add_field('mods.titleInfo.$append.title', 'a title');
+
+ # Create { mods => { titleInfo => [ { 'title' => 'a title' } , { 'title' => 'another title' }] } };
+ add_field('mods.titleInfo.$append.title', 'another title');
+
+ # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'another title' }] } };
+ add_field('mods.titleInfo.$first.title', 'foo');
+
+ # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
+ add_field('mods.titleInfo.$last.title', 'bar');
+
 =head1 METHODS
 
 =head2 new(fixes => [ FIX , ...])

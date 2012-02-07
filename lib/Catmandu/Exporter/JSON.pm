@@ -6,6 +6,7 @@ use JSON ();
 
 with 'Catmandu::Exporter';
 
+has pretty => (is => 'ro' , default => sub { 0 });
 has json => (is => 'ro', lazy => 1, builder => '_build_json');
 
 sub _build_json {
@@ -15,7 +16,8 @@ sub _build_json {
 sub add {
     my ($self, $data) = @_;
     my $fh = $self->fh;
-    say $fh $self->json->encode($data);
+    my $pretty = $self->pretty;
+    say $fh $self->json->pretty($pretty)->encode($data);
 }
 
 =head1 NAME
