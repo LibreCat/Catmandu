@@ -104,14 +104,15 @@ sub delete_by_query {
     $self->store->solr->delete_by_query("_bag:$name AND ($args{query})");
 }
 
-sub commit {
+sub commit { # TODO better error handling
     my ($self) = @_;
     my $solr = $self->store->solr;
     my $err;
     if ($self->buffer_used) {
         eval { $solr->add($self->buffer) } or push @{$err ||= []}, $@;
+        eval { $solr->commit } or push @{$err ||= []}, $@;
+        $self->clear_buffer;
     }
-    eval { $solr->commit } or push @{$err ||= []}, $@;
     !defined $err, $err;
 }
 
