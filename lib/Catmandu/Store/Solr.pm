@@ -35,7 +35,7 @@ sub generator {
     my $store = $self->store;
     my $name  = $self->name;
     my $limit = $self->buffer_size;
-    my $query = "_bag:$name";
+    my $query = qq/_bag:"$name"/;
     sub {
         state $start = 0;
         state $hits;
@@ -52,14 +52,14 @@ sub generator {
 sub count {
     my ($self) = @_;
     my $name = $self->name;
-    my $res  = $self->store->solr->search("_bag:$name", {rows => 0});
+    my $res  = $self->store->solr->search(qq/_bag:"$name"/, {rows => 0});
     $res->content->{response}{numFound};
 }
 
 sub get {
     my ($self, $id) = @_;
     my $name = $self->name;
-    my $res  = $self->store->solr->search("_bag:$name AND _id:$id", {rows => 1});
+    my $res  = $self->store->solr->search(qq/_bag:"$name" and _id:"$id"/, {rows => 1});
     my $hit  = $res->content->{response}{docs}->[0] || return;
     delete $hit->{_bag};
     $hit;
@@ -89,19 +89,19 @@ sub add {
 sub delete {
     my ($self, $id) = @_;
     my $name = $self->name;
-    $self->store->solr->delete_by_query("_bag:$name AND _id:$id");
+    $self->store->solr->delete_by_query(qq/_bag:"$name" and _id:"$id"/);
 }
 
 sub delete_all {
     my ($self) = @_;
     my $name = $self->name;
-    $self->store->solr->delete_by_query("_bag:$name");
+    $self->store->solr->delete_by_query(qq/_bag:"$name"/);
 }
 
 sub delete_by_query {
     my ($self, %args) = @_;
     my $name = $self->name;
-    $self->store->solr->delete_by_query("_bag:$name AND ($args{query})");
+    $self->store->solr->delete_by_query(qq/_bag:"$name" and ($args{query})/);
 }
 
 sub commit { # TODO better error handling
@@ -127,9 +127,9 @@ sub search {
     my $name = $self->name;
 
     if ($args{fq}) {
-        $args{fq} = "_bag:$name AND ($args{fq})";
+        $args{fq} = qq/_bag:"$name" and ($args{fq})/;
     } else {
-        $args{fq} = "_bag:$name";
+        $args{fq} = qq/_bag:"$name"/;
     }
 
     my $res = $self->store->solr->search($query, {%args, start => $start, rows => $limit});
@@ -186,7 +186,7 @@ sub generator {
     my $name  = $self->bag->name;
     my $limit = $self->limit;
     my $query = $self->query;
-    my $fq    = "_bag:$name";
+    my $fq    = qq/_bag:"$name"/;
     sub {
         state $start = $self->start;
         state $total = $self->total;
@@ -224,7 +224,7 @@ sub slice { # TODO constrain total
 sub count {
     my ($self) = @_;
     my $name = $self->bag->name;
-    my $res  = $self->bag->store->solr->search($self->query, {rows => 0, fq => "_bag:$name"});
+    my $res  = $self->bag->store->solr->search($self->query, {rows => 0, fq => qq/_bag:"$name"/});
     $res->content->{response}{numFound};
 }
 
