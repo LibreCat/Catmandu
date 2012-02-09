@@ -28,7 +28,7 @@ my $AROUND_SEARCH = sub {
         $args{limit} = $self->max_limit;
     }
     if (is_positive(my $page = delete $args{page})) {
-        $args{start} = (($page - 1) * $args{limit}) + 1;
+        $args{start} = ($page - 1) * $args{limit};
     }
     if (my $sru_sortkeys = delete $args{sru_sortkeys}) {
         $args{sort} = $self->translate_sru_sortkeys($sru_sortkeys);

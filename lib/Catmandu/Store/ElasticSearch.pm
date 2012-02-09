@@ -121,23 +121,25 @@ sub delete {
 
 sub delete_all {
     my ($self) = @_;
-    $self->store->elastic_search->delete_by_query(
+    my $es = $self->store->elastic_search;
+    $es->delete_by_query(
         query => {match_all => {}},
-        type => $self->name,
-        refresh => 1,
+        type  => $self->name,
     );
+    $es->refresh_index;
 }
 
 sub delete_by_query {
     my ($self, %args) = @_;
-    $self->store->elastic_search->delete_by_query(
+    my $es = $self->store->elastic_search;
+    $es->delete_by_query(
         query => $args{query},
-        type => $self->name,
-        refresh => 1,
+        type  => $self->name,
     );
+    $es->refresh_index;
 }
 
-sub commit { # TODO optimize
+sub commit { # TODO optimize, better error handling
     my ($self) = @_;
     return 1 unless $self->buffer_used;
     my $err = $self->store->elastic_search->bulk($self->buffer, {refresh => 1})->{errors};
