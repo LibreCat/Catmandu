@@ -79,3 +79,6 @@ add_field('with.guard', 'a guard');
 set_field('with.guard=a guard', 'ok');
 set_field('with.guard=wrong guard', 'not ok');
 
+add_field('_source', 'the source');
+copy_field('_source','fulltext.$append');
+
