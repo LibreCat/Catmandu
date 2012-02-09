@@ -33,22 +33,7 @@ sub fix {
         for (my $i = 0; $i < @old_matches; $i++) {
             my $old_match = $old_matches[$i];
             my $new_match = $new_matches[$i];
-            if (is_array_ref($new_match)) {
-                is_integer($new_key) || next;
-                if (is_array_ref($old_match)) {
-                    next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->[$new_key] = clone($old_match->[$old_key]);
-                } else {
-                    $new_match->[$new_key] = clone($old_match->{$old_key});
-                }
-            } else {
-                if (is_array_ref($old_match)) {
-                    next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->{$new_key} = clone($old_match->[$old_key]);
-                } else {
-                    $new_match->{$new_key} = clone($old_match->{$old_key});
-                }
-            }
+            set_data($new_match, $new_key, clone(get_data($old_match, $old_key)));
         }
     }
 

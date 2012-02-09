@@ -12,7 +12,7 @@ use IO::String;
 our %EXPORT_TAGS = (
     package => [qw(load_package)],
     io      => [qw(io)],
-    data    => [qw(parse_data_path data_at)],
+    data    => [qw(parse_data_path get_data set_data data_at)],
     array   => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
@@ -71,6 +71,36 @@ sub parse_data_path {
     return $path, $key, $guard;
 }
 
+sub get_data {
+    my ($data, $key) = @_;
+    if (is_array_ref($data)) {
+        given ($key) {
+            when ('$first')   { $key = 0 }
+            when ('$last')    { $key = -1 }
+        }
+        is_integer($key) || return;
+        $data->[$key];
+    } elsif (is_hash_ref($data)) {
+        $data->{$key};
+    }
+}
+
+sub set_data {
+    my ($data, $key, $val) = @_;
+    if (is_array_ref($data)) {
+        given ($key) {
+            when ('$first')   { $key = 0 }
+            when ('$last')    { $key = -1 }
+            when ('$prepend') { unshift @$data, undef; $key = 0 }
+            when ('$append')  { $key = @$data }
+        }
+        is_integer($key) || return;
+        $data->[$key] = $val;
+    } elsif (is_hash_ref($data)) {
+        $data->{$key} = $val;
+    }
+}
+
 sub data_at {
     my ($path, $data, %opts) = @_;
     $path = [@$path];
@@ -89,7 +119,7 @@ sub data_at {
                 given ($key) {
                     when ('$first')   { $key = 0 }
                     when ('$last')    { $key = -1 }
-                    when ('$prepend') { unshift(@$data, undef); $key = 0 }
+                    when ('$prepend') { unshift @$data, undef; $key = 0 }
                     when ('$append')  { $key = @$data }
                 }
                 is_integer($key) || return;
