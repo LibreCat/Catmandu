@@ -1,9 +1,9 @@
 #marc_in_json();
-#marc_map('100','my.authors.$append');
-#marc_map('710','my.authors.$append');
-#marc_map('600x','my.subjects.$append', -in => 'genre.text');
-#marc_map('008_/35-37','my.language');
-#marc_map('600','my.stringy', -join => "; ");
-#marc_map('199','my.condition', -value => 'ok');
+marc_map('100','my.authors.$append');
+marc_map('710','my.authors.$append');
+marc_map('600x','my.subjects.$append', -in => 'genre.text');
+marc_map('008_/35-37','my.language');
+marc_map('600','my.stringy', -join => "; ");
+marc_map('199','my.condition', -value => 'ok');
 
-#remove_field('record');
+remove_field('record');
