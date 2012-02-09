@@ -42,6 +42,10 @@ an external source (a file, the network, ...).
 
 =head1 METHODS
 
+=head2 new(file => $file , encoding => $encoding )
+
+=head2 new(fh => $fh)
+
 =head2 count
 
 =head2 each(&callback)

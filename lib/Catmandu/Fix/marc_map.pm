@@ -103,7 +103,7 @@ sub parse_marc_path {
         my $field    = $1;
         my $ind1     = $3;
         my $ind2     = $4;
-        my $subfield = $5 ? "[$5]" : "[a-z0-9]";
+        my $subfield = $5 ? "[$5]" : "[a-z0-9_]";
         my $from     = $7;
         my $to       = $9;
         return { field => $field , ind1 => $ind1 , ind2 => $ind2 , subfield => $subfield , from => $from , to => $to };
@@ -148,12 +148,15 @@ sub marc_field {
     my $marc_path = &parse_marc_path($path);
     my @results = ();
 
+    my $field = $marc_path->{field};
+    $field =~ s/\*/./g;
+
     for (@$marc_item) {
       my ($tag,$ind1,$ind2,@subfields) = @$_;
       unless (index($tag,0) == 0 || $tag eq 'LDR') {
         splice(@subfields,0,2);
       }
-      push(@results,\@subfields) if $tag eq $marc_path->{field};
+      push(@results,\@subfields) if $tag =~ /$field/;
     }
 
     return \@results;
