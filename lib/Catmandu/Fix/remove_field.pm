@@ -18,13 +18,8 @@ sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
-    for my $match (@matches) {
-        if (is_array_ref($match)) {
-            splice @$match, $key, 1 if is_integer($key) && $key < @$match;
-        } else {
-            delete $match->{$key};
-        }
+    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+        delete_data($match, $key);
     }
 
     $data;

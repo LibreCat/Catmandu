@@ -21,12 +21,13 @@ sub fix {
 
     my $key = $self->key;
     my $val = $self->value;
-    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
-    for my $match (@matches) {
-        if (is_array_ref($match)) {
-            $match->[$key] = clone($val) if is_integer($key);
+    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+        if ($key eq '*' && is_array_ref($match)) {
+            for (my $i = 0; $i < @$match; $i++) {
+                $match->[$i] = clone($val);
+            }
         } else {
-            $match->{$key} = clone($val);
+            set_data($match, $key, clone($val));
         }
     }
 

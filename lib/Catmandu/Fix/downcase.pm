@@ -18,16 +18,10 @@ sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
-    for my $match (@matches) {
-        if (is_array_ref($match)) {
-            is_integer($key) || next;
-            my $val = $match->[$key];
-            $match->[$key] = lc as_utf8 $val if is_string($val);
-        } else {
-            my $val = $match->{$key};
-            $match->{$key} = lc as_utf8 $val if is_string($val);
-        }
+    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+        set_data($match, $key,
+            map { is_string($_) ? lc(as_utf8($_)) : $_ }
+                get_data($match, $key));
     }
 
     $data;

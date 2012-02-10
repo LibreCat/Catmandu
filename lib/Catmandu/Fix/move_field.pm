@@ -31,31 +31,10 @@ sub fix {
     my @new_matches = grep ref, data_at($self->new_path, $data, key => $new_key, create => 1);
     if (@old_matches == @new_matches) {
         for (my $i = 0; $i < @old_matches; $i++) {
-            my $old_match = $old_matches[$i];
-            my $new_match = $new_matches[$i];
-            if (is_array_ref($new_match)) {
-                is_integer($new_key) || next;
-                if (is_array_ref($old_match)) {
-                    next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->[$new_key] = $old_match->[$old_key]; $old_match->[$old_key] = undef;
-                } else {
-                    $new_match->[$new_key] = delete $old_match->{$old_key};
-                }
-            } else {
-                if (is_array_ref($old_match)) {
-                    next unless is_integer($old_key) && $old_key < @$old_match;
-                    $new_match->{$new_key} = $old_match->[$old_key]; $old_match->[$old_key] = undef;
-                } else {
-                    $new_match->{$new_key} = delete $old_match->{$old_key};
-                }
-            }
+            set_data($new_matches[$i], $new_key,
+                delete_data($old_matches[$i], $old_key));
         }
-        for my $match (@old_matches) {
-            next unless is_array_ref($match);
-            for (my $i = @$match; $i >= 0; --$i) {
-                splice @$match, $i, 1 unless defined $match->[$i];
-            }
-        }
+
     }
 
     $data;

@@ -19,16 +19,10 @@ sub fix {
 
     my $key = $self->key;
     my $join_char = $self->join_char;
-    my @matches = grep ref, data_at($self->path, $data);
-    for my $match (@matches) {
-        if (is_array_ref($match)) {
-            is_integer($key) || next;
-            my $val = $match->[$key];
-            $match->[$key] = join $join_char, @$val if is_array_ref($val);
-        } else {
-            my $val = $match->{$key};
-            $match->{$key} = join $join_char, @$val if is_array_ref($val);
-        }
+    for my $match (grep ref, data_at($self->path, $data)) {
+        set_data($match, $key,
+            map { is_array_ref($_) ? join($join_char, @$_) : $_ }
+                get_data($match, $key));
     }
 
     $data;

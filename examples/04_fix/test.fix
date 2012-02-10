@@ -59,7 +59,14 @@ join_field('colors.0','/');
 move_field('fancy.tricks.for.hackers','budget');
 move_field('colors.1','colors2.15');
 
+add_field('fancy.doh', 'not so booja');
+add_field('fancy.tricks', 'booja');
 retain_field('fancy.tricks');
+
+add_field('fancylist.0', 'not so booja');
+add_field('fancylist.1', 'booja');
+retain_field('fancylist.0=booja');
+retain_field('fancylist.$last');
 
 trim('tokens.test');
 
@@ -81,4 +88,10 @@ set_field('with.guard=wrong guard', 'not ok');
 
 add_field('_source', 'the source');
 copy_field('_source','fulltext.$append');
+
+add_field('faculty.0', 'a');
+add_field('faculty.1', 'b');
+add_field('faculty.2', 'c');
+capitalize('faculty.*');
+downcase('faculty.$last');
 

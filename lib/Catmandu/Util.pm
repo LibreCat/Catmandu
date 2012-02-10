@@ -12,7 +12,7 @@ use IO::String;
 our %EXPORT_TAGS = (
     package => [qw(load_package)],
     io      => [qw(io)],
-    data    => [qw(parse_data_path get_data set_data data_at)],
+    data    => [qw(parse_data_path get_data set_data delete_data data_at)],
     array   => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
@@ -60,8 +60,7 @@ sub io {
 
 sub parse_data_path {
     my ($path) = @_;
-    check_string($path);
-    $path = [split /[\/\.]/, $path];
+    $path = [ split /[\/\.]/, check_string($path) ];
     my $key = pop @$path;
     my $guard;
     if ($key =~ /^([^=]+)=([^=]*)$/) {
@@ -74,31 +73,49 @@ sub parse_data_path {
 sub get_data {
     my ($data, $key) = @_;
     if (is_array_ref($data)) {
+        return $data->[$key] if is_natural($key) && $key < @$data;
         given ($key) {
-            when ('$first')   { $key = 0 }
-            when ('$last')    { $key = -1 }
+            when ('$first') { @$data || return; return $data->[0] }
+            when ('$last')  { @$data || return; return $data->[-1] }
+            when ('*')      { return @$data }
         }
-        is_integer($key) || return;
-        $data->[$key];
-    } elsif (is_hash_ref($data)) {
-        $data->{$key};
+    } elsif (is_hash_ref($data) && exists $data->{$key}) {
+        return $data->{$key};
     }
+    return;
 }
 
 sub set_data {
-    my ($data, $key, $val) = @_;
+    my ($data, $key, @vals) = @_;
     if (is_array_ref($data)) {
+        return $data->[$key] = $vals[0] if is_natural($key);
         given ($key) {
-            when ('$first')   { $key = 0 }
-            when ('$last')    { $key = -1 }
-            when ('$prepend') { unshift @$data, undef; $key = 0 }
-            when ('$append')  { $key = @$data }
+            when ('$first')   { @$data || return; return $data->[0]  = $vals[0] }
+            when ('$last')    { @$data || return; return $data->[-1] = $vals[0] }
+            when ('$prepend') { unshift @$data, $vals[0]; return $vals[0] }
+            when ('$append')  { push    @$data, $vals[0]; return $vals[0] }
+            when ('*')        { return splice @$data, 0, @$data, @vals }
         }
-        is_integer($key) || return;
-        $data->[$key] = $val;
     } elsif (is_hash_ref($data)) {
-        $data->{$key} = $val;
+        return $data->{$key} = $vals[0];
     }
+    return;
+}
+
+sub delete_data {
+    my ($data, $key) = @_;
+    if (is_array_ref($data)) {
+        return splice @$data, $key, 1 if is_natural($key) && $key < @$data;
+        given ($key) {
+            when ('$first') { @$data || return; return shift @$data }
+            when ('$last')  { @$data || return; return pop   @$data }
+            when ('*')      { splice @$data; return }
+        }
+    } elsif (is_hash_ref($data)) {
+        return delete $data->{$key};
+    }
+
+    return;
 }
 
 sub data_at {

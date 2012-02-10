@@ -4,29 +4,24 @@ use Catmandu::Sane;
 use Catmandu::Util qw(:is :data trim);
 use Moo;
 
-has path => (is => 'ro', required => 1);
-has key  => (is => 'ro', required => 1);
+has path  => (is => 'ro', required => 1);
+has key   => (is => 'ro', required => 1);
+has guard => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
-    my ($p, $key) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key);
+    my ($p, $key, $guard) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, guard => $guard);
 };
 
 sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    my @matches = grep ref, data_at($self->path, $data);
-    for my $match (@matches) {
-        if (is_array_ref($match)) {
-            is_integer($key) || next;
-            my $val = $match->{$key};
-            $match->[$key] = trim($val) if is_string($val);
-        } else {
-            my $val = $match->{$key};
-            $match->{$key} = trim($val) if is_string($val);
-        }
+    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+        set_data($match, $key,
+            map { is_string($_) ? trim($_) : $_ }
+                get_data($match, $key));
     }
 
     $data;

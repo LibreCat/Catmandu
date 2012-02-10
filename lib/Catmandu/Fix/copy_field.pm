@@ -29,11 +29,12 @@ sub fix {
     my $new_key  = $self->new_key;
     my @old_matches = grep ref, data_at($self->old_path, $data, key => $old_key, guard  => $self->guard);
     my @new_matches = grep ref, data_at($self->new_path, $data, key => $new_key, create => 1);
+
     if (@old_matches == @new_matches) {
         for (my $i = 0; $i < @old_matches; $i++) {
-            my $old_match = $old_matches[$i];
-            my $new_match = $new_matches[$i];
-            set_data($new_match, $new_key, clone(get_data($old_match, $old_key)));
+            set_data($new_matches[$i], $new_key,
+                map { clone($_) }
+                    get_data($old_matches[$i], $old_key));
         }
     }
 

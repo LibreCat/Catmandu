@@ -2,10 +2,10 @@ package Catmandu::Fix::clone;
 
 use Catmandu::Sane;
 use Moo;
-use Clone;
+use Clone qw(clone);
 
 sub fix {
-    Clone::clone($_[1]);
+    clone($_[1]);
 }
 
 =head1 NAME

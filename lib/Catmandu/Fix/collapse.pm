@@ -5,7 +5,7 @@ use Moo;
 use CGI::Expand qw(collapse_hash);
 
 sub fix {
-    collapse_hash $_[1];
+    collapse_hash($_[1]);
 }
 
 =head1 NAME
