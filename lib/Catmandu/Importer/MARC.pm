@@ -25,6 +25,8 @@ sub aleph_generator {
            my ($sysid,$s1,$tag,$ind1,$ind2,$s2,$char,$s3,$data) = unpack("A9A1A3A1A1A1A1A1U0A*",$_);
            utf8::decode($data);
            my @parts = ('_' , split(/\$\$(.)/, $data) );
+           # If we have an empty subfield at the end, then we need to add a implicit empty value
+           push(@parts,'') unless int(@parts) % 2 == 0;
 
            if (defined $prev_id && $prev_id != $sysid) {
 		       my $result = { _id => $prev_id , record => [ @$record ] };
