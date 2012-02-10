@@ -63,9 +63,17 @@ sub parse_data_path {
     $path = [ split /[\/\.]/, check_string($path) ];
     my $key = pop @$path;
     my $guard;
-    if ($key =~ /^([^=]+)=([^=]*)$/) {
-        $key   = $1;
-        $guard = $2;
+    if (my ($k, $type, $g) = $key =~ /^(.+)(==|!=|=~|!~)(.*)$/) {
+        $key = $k;
+        if ($type eq '=~' || $type eq '!~') {
+            $g = qr/$g/;
+        }
+        given ($type) {
+            when ('==') { $guard = sub { my $v = $_[0]; is_value($v) && $v eq $g } }
+            when ('!=') { $guard = sub { my $v = $_[0]; is_value($v) && $v ne $g } }
+            when ('=~') { $guard = sub { my $v = $_[0]; is_value($v) && $v =~ $g } }
+            when ('!~') { $guard = sub { my $v = $_[0]; is_value($v) && $v !~ $g } }
+        }
     }
     return $path, $key, $guard;
 }
@@ -156,8 +164,7 @@ sub data_at {
         }
     }
     if (defined $guard && defined $_key) {
-        my $val = is_array_ref($data) ? $data->[$_key] : $data->{$_key};
-        return unless is_value($val) && $val eq $guard;
+        return unless $guard->(is_array_ref($data) ? $data->[$_key] : $data->{$_key});
     }
     $data;
 }

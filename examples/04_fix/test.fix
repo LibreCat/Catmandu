@@ -65,7 +65,7 @@ retain_field('fancy.tricks');
 
 add_field('fancylist.0', 'not so booja');
 add_field('fancylist.1', 'booja');
-retain_field('fancylist.0=booja');
+retain_field('fancylist.0==booja');
 retain_field('fancylist.$last');
 
 trim('tokens.test');
@@ -83,8 +83,11 @@ add_field('mods.titleInfo.$prepend.title', 'first title');
 add_field('mods.titleInfo.$append.title', 'last title');
 
 add_field('with.guard', 'a guard');
-set_field('with.guard=a guard', 'ok');
-set_field('with.guard=wrong guard', 'not ok');
+set_field('with.guard==a guard', 'ok');
+set_field('with.guard==wrong guard', 'not ok');
+set_field('with.guard', 'a guard');
+set_field('with.guard=~a guar', 'regex ok');
+set_field('with.guard!~guard', 'neg regex ok');
 
 add_field('_source', 'the source');
 copy_field('_source','fulltext.$append');
