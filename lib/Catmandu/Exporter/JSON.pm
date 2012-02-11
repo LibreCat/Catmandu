@@ -15,7 +15,8 @@ sub _build_json {
 
 sub add {
     my ($self, $data) = @_;
-    $self->fh->say($self->json->encode($data));
+    my $fh = $self->fh;
+    say $fh $self->json->encode($data);
 }
 
 =head1 NAME
