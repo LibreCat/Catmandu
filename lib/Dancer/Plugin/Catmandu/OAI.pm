@@ -456,8 +456,12 @@ sub oai_provider {
 
 sub _combined_utc_datestamp {
     my $date = $_[0];
-    substr $date, 10, 1, "T";
-    substr $date, 19, 1, "Z";
+    if ($date) {
+        $date = "${date}T00:00:00" unless length($date) > 10;
+        $date = "${date}:00"       unless length($date) > 16;
+        substr $date, 10, 1, "T";
+        substr $date, 19, 1, "Z";
+    }
     $date;
 }
 
