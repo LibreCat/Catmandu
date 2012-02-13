@@ -391,7 +391,7 @@ sub oai_provider {
                 push @cql, "(cql.allRecords)";
             }
 
-            my $search = $bag->search(cql_query => join(' AND ', @cql), limit => $limit, start => 0);
+            my $search = $bag->search(cql_query => join(' AND ', @cql), limit => $limit, start => $start);
             unless ($search->total) {
                 push @$errors, [noRecordsMatch => "no records found"];
                 return render(\$template_error, $vars);
@@ -439,7 +439,6 @@ sub oai_provider {
             }
 
         } elsif ($verb eq 'ListMetadataFormats') {
-            
             if (my $id = $params->{identifier}) {
                 $id =~ s/^$ns//;
                 unless ($bag->get($id)) {
