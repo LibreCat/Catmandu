@@ -397,7 +397,7 @@ sub oai_provider {
                 return render(\$template_error, $vars);
             }
             if ($start + $limit < $search->total) {
-                $vars->{token} = join '!', $params->{set} || '', $from || '', $until || '', $params->{metadataPrefix}, $start;
+                $vars->{token} = join '!', $params->{set} || '', $from || '', $until || '', $params->{metadataPrefix}, $start + $limit;
             }
             $vars->{total} = $search->total;
 
