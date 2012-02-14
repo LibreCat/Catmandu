@@ -20,7 +20,7 @@ sub to_array { goto &hits }
 sub count { goto &size }
 
 sub generator {
-    my ($self) = @_;
+    my $self = $_[0];
     my $hits = $self->hits;
     my $i = 0;
     sub {
@@ -35,6 +35,11 @@ sub each {
         $sub->($hit);
     }
     $self->size;
+}
+
+sub more {
+    my $self = $_[0];
+    $self->start + $self->limit < $self->total;
 }
 
 1;
@@ -58,9 +63,12 @@ Catmandu::Hits - Iterable object that wraps Catmandu::Store search hits
     $hits->each(sub { ... });
 
     printf "Found %s $hits\n" , $hits->total;
-    
+
     my $start = $hits->start;
     my $limit = $hits->limit;
+
+    my $prev = $hits->previous_page;
+    my $next = $hits->next_page;
 
 =head1 METHODS
 
@@ -76,8 +84,12 @@ Returns the start index for the search results.
 
 Returns the maximum number of search results returned.
 
+=head2 more
+
+Return true if there are more search results.
+
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>, L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>
+L<Catmandu::Iterable>, L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>, L<Catmandu::Pager>
 
 =cut

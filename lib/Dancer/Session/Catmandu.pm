@@ -8,8 +8,11 @@ use parent qw(Dancer::Session::Abstract);
 use Dancer qw(:syntax config);
 
 sub _bag {
-    state $bag = Catmandu::store(config->{session_store} || Catmandu::default_store)
-        ->bag(config->{session_bag} || 'session');
+    state $bag = do {
+        my $s = config->{session_store} || Catmandu::default_store;
+        my $b = config->{session_bag}   || 'session';
+        Catmandu::store($s)->bag($b);
+    };
 }
 
 sub init {
@@ -17,11 +20,12 @@ sub init {
 }
 
 sub create {
-    $_[0]->new->flush;
+    $_[0]->new;
 }
 
 sub retrieve {
-    my $data = _bag->get($_[1]) || return;
+    my $data = _bag->get($_[1])
+        or return bless {id => $_[1]}, $_[0];
     $data->{id} = delete $data->{_id};
     bless $data, $_[0];
 }

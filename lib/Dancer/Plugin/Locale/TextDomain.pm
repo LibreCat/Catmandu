@@ -46,11 +46,10 @@ sub td__p   { textdomain->td__p(@_) }
 sub td__pn  { textdomain->td__pn(@_) }
 sub td__pnx { textdomain->td__pnx(@_) }
 
-# TODO TT arg fix
-# substr($which, -1) eq 'x' && ref($_[-1]) eq 'HASH' && push(@_, %{pop(@_)});
-before_template sub {
+# TODO TT arg fix: substr($which, -1) eq 'x' && ref($_[-1]) eq 'HASH' && push(@_, %{pop(@_)})
+hook before_template => sub {
     my $vars = $_[0];
-    $Template::Stash::PRIVATE = undef;
+    $Template::Stash::PRIVATE = 0;
     $vars->{__}    = \&td__;
     $vars->{__x}   = \&td__x;
     $vars->{__n}   = \&td__n;

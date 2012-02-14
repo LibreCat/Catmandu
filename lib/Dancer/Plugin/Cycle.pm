@@ -22,7 +22,7 @@ sub cycle {
     $cycle->[$i++];
 }
 
-before_template sub {
+hook before_template => sub {
     $_[0]->{cycle} = \&cycle;
 };
 

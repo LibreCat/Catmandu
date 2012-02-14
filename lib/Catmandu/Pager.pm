@@ -38,6 +38,8 @@ sub _build_pager {
     });
 }
 
-sub page_size { goto &limit }
+sub page_size {
+    goto &limit;
+}
 
 1;
