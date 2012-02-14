@@ -58,11 +58,13 @@ sub io {
     $io_obj;
 }
 
+my $pass = sub { 1 };
+
 sub parse_data_path {
     my ($path) = @_;
     $path = [ split /[\/\.]/, check_string($path) ];
-    my $key = pop @$path;
-    my $guard;
+    my $key   = pop @$path;
+    my $guard = $pass;
     if (my ($k, $type, $g) = $key =~ /^(.+)(==|!=|=~|!~)(.*)$/) {
         $key = $k;
         if ($type eq '=~' || $type eq '!~') {
@@ -79,15 +81,18 @@ sub parse_data_path {
 }
 
 sub get_data {
-    my ($data, $key) = @_;
+    my ($data, $key, $guard) = @_;
+    $guard ||= $pass;
     if (is_array_ref($data)) {
-        return $data->[$key] if is_natural($key) && $key < @$data;
         given ($key) {
-            when ('$first') { @$data || return; return $data->[0] }
-            when ('$last')  { @$data || return; return $data->[-1] }
-            when ('*')      { return @$data }
+            when ('$first') { return unless @$data; $key = 0 }
+            when ('$last')  { return unless @$data; $key = -1 }
+            when ('*')      { return grep { $guard->($_) } @$data }
         }
-    } elsif (is_hash_ref($data) && exists $data->{$key}) {
+        if (is_natural($key) && $key < @$data && $guard->($data->[$key])) {
+            return $data->[$key];
+        }
+    } elsif (is_hash_ref($data) && exists $data->{$key} && $guard->($data->{$key})) {
         return $data->{$key};
     }
     return;
@@ -96,14 +101,14 @@ sub get_data {
 sub set_data {
     my ($data, $key, @vals) = @_;
     if (is_array_ref($data)) {
-        return $data->[$key] = $vals[0] if is_natural($key);
         given ($key) {
-            when ('$first')   { @$data || return; return $data->[0]  = $vals[0] }
-            when ('$last')    { @$data || return; return $data->[-1] = $vals[0] }
+            when ('$first')   { return unless @$data; $key = 0 }
+            when ('$last')    { return unless @$data; $key = -1 }
             when ('$prepend') { unshift @$data, $vals[0]; return $vals[0] }
             when ('$append')  { push    @$data, $vals[0]; return $vals[0] }
             when ('*')        { return splice @$data, 0, @$data, @vals }
         }
+        return $data->[$key] = $vals[0] if is_natural($key);
     } elsif (is_hash_ref($data)) {
         return $data->{$key} = $vals[0];
     }
@@ -111,15 +116,18 @@ sub set_data {
 }
 
 sub delete_data {
-    my ($data, $key) = @_;
+    my ($data, $key, $guard) = @_;
+    $guard ||= $pass;
     if (is_array_ref($data)) {
-        return splice @$data, $key, 1 if is_natural($key) && $key < @$data;
         given ($key) {
-            when ('$first') { @$data || return; return shift @$data }
-            when ('$last')  { @$data || return; return pop   @$data }
-            when ('*')      { splice @$data; return }
+            when ('$first') { return unless @$data; $key = 0 }
+            when ('$last')  { return unless @$data; $key = -1 }
+            when ('*')      { return splice @$data, 0, @$data, grep { !$guard->($_) } @$data }
         }
-    } elsif (is_hash_ref($data)) {
+        if (is_natural($key) && $key < @$data && $guard->($data->[$key])) {
+            return splice @$data, $key, 1;
+        }
+    } elsif (is_hash_ref($data) && exists $data->{$key} && $guard->($data->{$key})) {
         return delete $data->{$key};
     }
 
@@ -135,6 +143,7 @@ sub data_at {
     if (defined $opts{key} && $create && @$path) {
         push @$path, $_key;
     }
+    my $key;
     while (defined(my $key = shift @$path)) {
         ref $data || return;
         if (is_array_ref($data)) {

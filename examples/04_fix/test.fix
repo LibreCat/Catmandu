@@ -65,8 +65,8 @@ retain_field('fancy.tricks');
 
 add_field('fancylist.0', 'not so booja');
 add_field('fancylist.1', 'booja');
-retain_field('fancylist.0==booja');
-retain_field('fancylist.$last');
+retain_field('fancylist.*!~not');
+#retain_field('fancylist.$last');
 
 trim('tokens.test');
 
@@ -95,6 +95,6 @@ copy_field('_source','fulltext.$append');
 add_field('faculty.0', 'a');
 add_field('faculty.1', 'b');
 add_field('faculty.2', 'c');
-capitalize('faculty.*');
+capitalize('faculty.*==a');
 downcase('faculty.$last');
 

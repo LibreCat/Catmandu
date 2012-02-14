@@ -18,12 +18,13 @@ sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+    my $guard = $self->guard;
+    for my $match (grep ref, data_at($self->path, $data)) {
         if (is_array_ref($match)) {
-            splice @$match, 0, @$match, get_data($match, $key);
+            splice @$match, 0, @$match, grep { $guard->($_) } get_data($match, $key);
         } else {
             for (keys %$match) {
-                delete $match->{$_} if $_ ne $key;
+                delete $match->{$_} unless $_ eq $key && $guard->($match->{$_});
             }
         }
     }

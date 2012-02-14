@@ -27,12 +27,13 @@ sub fix {
     my $old_key  = $self->old_key;
     my $new_path = $self->new_path;
     my $new_key  = $self->new_key;
-    my @old_matches = grep ref, data_at($self->old_path, $data, key => $old_key, guard  => $self->guard);
+    my $guard = $self->guard;
+    my @old_matches = grep ref, data_at($self->old_path, $data);
     my @new_matches = grep ref, data_at($self->new_path, $data, key => $new_key, create => 1);
     if (@old_matches == @new_matches) {
         for (my $i = 0; $i < @old_matches; $i++) {
             set_data($new_matches[$i], $new_key,
-                delete_data($old_matches[$i], $old_key));
+                delete_data($old_matches[$i], $old_key, $guard));
         }
 
     }

@@ -21,7 +21,8 @@ sub fix {
 
     my $key = $self->key;
     my $val = $self->value;
-    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard, create => 1)) {
+    my $guard = $self->guard;
+    for my $match (grep ref, data_at($self->path, $data, key => $key, create => 1)) {
         if ($key eq '*' && is_array_ref($match)) {
             for (my $i = 0; $i < @$match; $i++) {
                 $match->[$i] = clone($val);

@@ -18,9 +18,10 @@ sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+    my $guard = $self->guard;
+    for my $match (grep ref, data_at($self->path, $data)) {
         set_data($match, $key,
-            map { is_string($_) ? ucfirst(lc(as_utf8($_))) : $_ }
+            map { $guard->($_) && is_string($_) ? ucfirst(lc(as_utf8($_))) : $_ }
                 get_data($match, $key));
     }
 

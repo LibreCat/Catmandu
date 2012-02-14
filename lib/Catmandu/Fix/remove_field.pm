@@ -18,8 +18,9 @@ sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
-        delete_data($match, $key);
+    my $guard = $self->guard;
+    for my $match (grep ref, data_at($self->path, $data)) {
+        delete_data($match, $key, $guard);
     }
 
     $data;
