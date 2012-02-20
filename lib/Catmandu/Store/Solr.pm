@@ -110,9 +110,9 @@ sub commit { # TODO better error handling
     my $err;
     if ($self->buffer_used) {
         eval { $solr->add($self->buffer) } or push @{$err ||= []}, $@;
-        eval { $solr->commit } or push @{$err ||= []}, $@;
         $self->clear_buffer;
     }
+    eval { $solr->commit } or push @{$err ||= []}, $@;
     !defined $err, $err;
 }
 
@@ -253,7 +253,7 @@ Catmandu::Store::Solr - A Catmandu::Store plugin for Solr search engines
     my $obj3 = $store->bag->get('test123');
 
     $store->bag->delete('test123');
-    
+
     $store->bag->delete_all;
 
     # All bags are iterators
