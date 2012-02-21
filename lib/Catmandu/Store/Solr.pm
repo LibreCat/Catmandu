@@ -59,7 +59,7 @@ sub count {
 sub get {
     my ($self, $id) = @_;
     my $name = $self->name;
-    my $res  = $self->store->solr->search(qq/_bag:"$name" and _id:"$id"/, {rows => 1});
+    my $res  = $self->store->solr->search(qq/_bag:"$name" AND _id:"$id"/, {rows => 1});
     my $hit  = $res->content->{response}{docs}->[0] || return;
     delete $hit->{_bag};
     $hit;
@@ -89,7 +89,7 @@ sub add {
 sub delete {
     my ($self, $id) = @_;
     my $name = $self->name;
-    $self->store->solr->delete_by_query(qq/_bag:"$name" and _id:"$id"/);
+    $self->store->solr->delete_by_query(qq/_bag:"$name" AND _id:"$id"/);
 }
 
 sub delete_all {
@@ -101,7 +101,7 @@ sub delete_all {
 sub delete_by_query {
     my ($self, %args) = @_;
     my $name = $self->name;
-    $self->store->solr->delete_by_query(qq/_bag:"$name" and ($args{query})/);
+    $self->store->solr->delete_by_query(qq/_bag:"$name" AND ($args{query})/);
 }
 
 sub commit { # TODO better error handling
@@ -127,7 +127,7 @@ sub search {
     my $name = $self->name;
 
     if ($args{fq}) {
-        $args{fq} = qq/_bag:"$name" and ($args{fq})/;
+        $args{fq} = qq/_bag:"$name" AND ($args{fq})/;
     } else {
         $args{fq} = qq/_bag:"$name"/;
     }
