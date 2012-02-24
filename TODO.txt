@@ -5,4 +5,7 @@
 * bag drop
 * make CQL::Searchable ?
 * fix Store::Lucy
-* load config, set lib path without Dancer
+* load config, set env, set lib path without Dancer
+* FUSE support
+* (better) error handling
+* Searchable optimize

@@ -111,7 +111,6 @@ sub delete {
     $self->buffer_add({delete => {
         type => $self->name,
         id => $id,
-        ignore_missing => 1,
     }});
 
     if ($self->buffer_is_full) {
