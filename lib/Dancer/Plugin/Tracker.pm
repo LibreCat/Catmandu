@@ -12,7 +12,7 @@ my $tracker = $setting->{tracker} || 'ga';
 my $tracker_js;
 
 if ($tracker eq 'ga') {
-    my $tracker_js = <<JS;
+    $tracker_js = <<JS;
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', '$setting->{account_id}']);
 _gaq.push(['_trackPageview']);
