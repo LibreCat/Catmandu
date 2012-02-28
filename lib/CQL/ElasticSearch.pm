@@ -35,15 +35,23 @@ sub visit {
         my $base      = lc $relation->getBase;
 
         if ($base eq 'scr') {
-            $base = '=';
+            if ($self->mapping and my $rel = $self->mapping->{default_relation}) {
+                $base = $rel;
+            } else {
+                $base = '=';
+            }
         }
 
         if ($qualifier =~ $any_field) {
-            $qualifier = '_all';
+            if ($self->mapping and my $idx = $self->mapping->{default_index}) {
+                $qualifier = $idx;
+            } else {
+                $qualifier = '_all';
+            }
         }
 
-        if ($self->mapping) {
-            if (my $mapping = $self->mapping->{$qualifier}) {
+        if ($self->mapping and my $indexes = $self->mapping->{indexes}) {
+            if (my $mapping = $indexes->{$qualifier}) {
                 $mapping->{op}{$base} or die "operator $base not allowed";
                 my $op = $mapping->{op}{$base};
                 if (ref $op && $op->{field}) {
@@ -241,14 +249,17 @@ sub visit {
 
 sub _text_node {
     my ($qualifier, $term, @modifiers) = @_;
-    if ($term =~ /^\^./) { # TODO mapping
-        return { text_phrase_prefix => { $qualifier => { query => substr($term, 1), max_expansions => 10 } } };
-    } elsif ($term =~ /[^\\][*?]/) { # TODO mapping
+    #if ($term =~ /^\^./) { # TODO mapping
+        #return { prefix => { $qualifier => substr($term, 1) } };
+    #} elsif ($term =~ /[^\\][*?]/) { # TODO mapping
+        #return { wildcard => { $qualifier => $term } };
+    #}
+    if ($term =~ /[^\\][\*\?]/ && $term !~ /\s/) { # TODO only works for single terms, mapping
         return { wildcard => { $qualifier => $term } };
     }
     for my $m (@modifiers) {
-        if ($m->[1] eq 'fuzzy') { # TODO mapping
-            return { text_phrase => { $qualifier => { query => $term, fuzziness => 0.5 } } };
+        if ($m->[1] eq 'fuzzy' && $term !~ /\s/) { # TODO only works for single terms, mapping fuzzy_factor
+            return { fuzzy => { $qualifier => { value => $term, max_expansions => 10, min_similarity => 0.75 } } };
         }
     }
     { text_phrase => { $qualifier => { query => $term } } };
