@@ -71,6 +71,7 @@ has _sql_get        => (is => 'ro', lazy => 1, builder => '_build_sql_get');
 has _sql_delete     => (is => 'ro', lazy => 1, builder => '_build_sql_delete');
 has _sql_delete_all => (is => 'ro', lazy => 1, builder => '_build_sql_delete_all');
 has _sql_generator  => (is => 'ro', lazy => 1, builder => '_build_sql_generator');
+has _sql_count      => (is => 'ro', lazy => 1, builder => '_build_sql_count');
 has _add            => (is => 'ro', lazy => 1, builder => '_build_add');
 
 sub BUILD {
@@ -95,6 +96,10 @@ sub _build_sql_delete_all {
 
 sub _build_sql_generator {
     my $name = $_[0]->name; "select data from $name";
+}
+
+sub _build_sql_count {
+    my $name = $_[0]->name; "select count(*) from $name";
 }
 
 sub _build_add_sqlite {
@@ -198,6 +203,16 @@ sub generator {
         $sth->finish;
         return;
     };
+}
+
+sub count {
+    my ($self) = @_;
+    my $dbh = $self->store->dbh;
+    my $sth = $dbh->prepare_cached($self->_sql_count) or confess $dbh->errstr;
+    $sth->execute or confess $sth->errstr;
+    my ($n) = $sth->fetchrow_array;
+    $sth->finish;
+    $n;
 }
 
 1;
