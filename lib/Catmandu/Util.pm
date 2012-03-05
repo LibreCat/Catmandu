@@ -62,7 +62,7 @@ my $pass = sub { 1 };
 
 sub parse_data_path {
     my ($path) = @_;
-    check_string($path)
+    check_string($path);
     $path = [ split /[\/\.]/, $path ];
     my $key = pop @$path;
     my $guard = $pass;
