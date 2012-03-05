@@ -3,7 +3,7 @@ package Catmandu::Exporter::YAML;
 use Catmandu::Sane;
 use Moo;
 use YAML::Any ();
-use YAML::XS;
+use YAML::XS; # TODO
 
 with 'Catmandu::Exporter';
 

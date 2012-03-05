@@ -28,7 +28,7 @@ sub generator {
         $data = $node->[1];
         $node = $node->[2];
         $data;
-    }
+    };
 }
 
 sub get {
@@ -79,11 +79,11 @@ sub delete_all {
 }
 
 sub translate_sru_sortkeys {
-    confess "Not implemented";
+    confess "TODO";
 }
 
 sub translate_cql_query {
-    confess "Not implemented";
+    confess "TODO";
 }
 
 sub search {

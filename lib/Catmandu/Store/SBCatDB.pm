@@ -1,67 +1,65 @@
 package Catmandu::Store::SBCatDB;
+
 use Catmandu::Sane;
+use Moo;
 use SBCatDB;
-use Catmandu::Util qw(opts);
-use parent qw(Catmandu::Store);
-use Catmandu::Object
-    db => { default => '_build_db' },
-    config_file => { default => sub { '' } },
-    db_name  => { default =>  sub { 'luur' } },
-    sbcat_collection => { default => sub { 'publicationItem' } },
-    host     => { default =>  sub { '127.0.0.1'} },
-    username => { default =>  sub { 'lur' } },
-    password => { default => sub { '' } };
-    ;
+
+with 'Catmandu::Store';
+
+has db => (is => 'ro', builder => '_build_db');
+has config_file => (is => 'ro', default => sub { '' });
+has db_name  => (default =>  sub { 'luur' });
+has sbcat_collection => (default => sub { 'publicationItem' });
+has host     => (default => sub { '127.0.0.1' });
+has username => (default => sub { 'lur' });
+has password => (default => sub { '' });
 
 sub _build_db {
     my $self = $_[0];
     SBCatDB->new({
         config_file => $self->config_file,
         db_name     => $self->db_name,
-        username    => $self->username,
         host        => $self->host,
+        username    => $self->username,
         password    => $self->password,
-        collection  => $self->sbcat_collection, 
-        });
+        collection  => $self->sbcat_collection,
+    });
 }
 
+package Catmandu::Store::SBCatDB::Bag;
 
-sub _build_args {
-    my ($self, @args) = @_;
-    my $args = opts @args;
-    $args;
-}
-
-package Catmandu::Store::SBCatDB::Collection;
 use Catmandu::Sane;
-use parent qw(Catmandu::Collection);
+use Moo;
 
-sub each {
-    my ($self, $sub) = @_;
-    my $results = $self->store->db->find; 
-    my $n = 0;
-    while (my $obj = $results->next) {
-        $sub->($obj);
-        $n++;
-    }
-    $n;
+with 'Catmandu::Bag';
+
+sub generator {
+    my $self = $_[0];
+    sub {
+        state $results = $self->store->db->find;
+        $results->next;
+    };
 }
 
-sub _get {
+sub get {
     my ($self, $id) = @_;
     $self->store->db->get($id);
 }
 
-sub _add {
-    my ($self, $obj) = @_;
-    $self->store->db->save($obj);
-    $obj;
+sub add {
+    my ($self, $data) = @_;
+    $self->store->db->save($data);
+    $data;
 }
 
 sub delete {
     my ($self, $id) = @_;
     $self->store->db->remove($id);
-    return;
+}
+
+sub delete_all {
+    confess "TODO";
 }
 
 1;
+
