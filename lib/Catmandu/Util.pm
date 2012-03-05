@@ -13,7 +13,7 @@ our %EXPORT_TAGS = (
     package => [qw(load_package)],
     io      => [qw(io)],
     data    => [qw(parse_data_path get_data set_data delete_data data_at)],
-    array   => [qw(array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
+    array   => [qw(array_exists array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
     check   => [qw(check_same check_different)],
@@ -62,8 +62,9 @@ my $pass = sub { 1 };
 
 sub parse_data_path {
     my ($path) = @_;
-    $path = [ split /[\/\.]/, check_string($path) ];
-    my $key   = pop @$path;
+    check_string($path)
+    $path = [ split /[\/\.]/, $path ];
+    my $key = pop @$path;
     my $guard = $pass;
     if (my ($k, $type, $g) = $key =~ /^(.+)(==|!=|=~|!~)(.*)$/) {
         $key = $k;
@@ -86,13 +87,16 @@ sub get_data {
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first') { return unless @$data; $key = 0 }
-            when ('$last')  { return unless @$data; $key = -1 }
+            when ('$last')  { return unless @$data; $key = @$data - 1 }
             when ('*')      { return grep { $guard->($_) } @$data }
         }
-        if (is_natural($key) && $key < @$data && $guard->($data->[$key])) {
+        if (array_exists($array, $key) && $guard->($data->[$key])) {
             return $data->[$key];
         }
-    } elsif (is_hash_ref($data) && exists $data->{$key} && $guard->($data->{$key})) {
+        return;
+    }
+    if (is_hash_ref($data) && exists $data->{$key}
+            && $guard->($data->{$key})) {
         return $data->{$key};
     }
     return;
@@ -103,13 +107,15 @@ sub set_data {
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first')   { return unless @$data; $key = 0 }
-            when ('$last')    { return unless @$data; $key = -1 }
+            when ('$last')    { return unless @$data; $key = @$data - 1 }
             when ('$prepend') { unshift @$data, $vals[0]; return $vals[0] }
             when ('$append')  { push    @$data, $vals[0]; return $vals[0] }
             when ('*')        { return splice @$data, 0, @$data, @vals }
         }
         return $data->[$key] = $vals[0] if is_natural($key);
-    } elsif (is_hash_ref($data)) {
+        return;
+    }
+    if (is_hash_ref($data)) {
         return $data->{$key} = $vals[0];
     }
     return;
@@ -121,13 +127,16 @@ sub delete_data {
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first') { return unless @$data; $key = 0 }
-            when ('$last')  { return unless @$data; $key = -1 }
+            when ('$last')  { return unless @$data; $key = @$data - 1 }
             when ('*')      { return splice @$data, 0, @$data, grep { !$guard->($_) } @$data }
         }
-        if (is_natural($key) && $key < @$data && $guard->($data->[$key])) {
+        if (array_exists($data, $key) && $guard->($data->[$key])) {
             return splice @$data, $key, 1;
         }
-    } elsif (is_hash_ref($data) && exists $data->{$key} && $guard->($data->{$key})) {
+        return;
+    }
+    if (is_hash_ref($data) && exists $data->{$key}
+            && $guard->($data->{$key})) {
         return delete $data->{$key};
     }
 
@@ -173,9 +182,14 @@ sub data_at {
         }
     }
     if (defined $guard && defined $_key) {
-        return unless $guard->(is_array_ref($data) ? $data->[$_key] : $data->{$_key});
+        return get_data($data, $_key, $guard);
     }
     $data;
+}
+
+sub array_exists {
+    my ($arr, $i) = @_;
+    is_natural($i) && $i < @$arr;
 }
 
 sub array_group_by {
