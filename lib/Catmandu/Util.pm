@@ -58,14 +58,14 @@ sub io {
     $io_obj;
 }
 
-my $pass = sub { 1 };
+my $pass_guard = sub { 1 };
 
 sub parse_data_path {
     my ($path) = @_;
     check_string($path);
     $path = [ split /[\/\.]/, $path ];
     my $key = pop @$path;
-    my $guard = $pass;
+    my $guard = $pass_guard;
     if (my ($k, $type, $g) = $key =~ /^(.+)(==|!=|=~|!~)(.*)$/) {
         $key = $k;
         if ($type eq '=~' || $type eq '!~') {
@@ -83,14 +83,14 @@ sub parse_data_path {
 
 sub get_data {
     my ($data, $key, $guard) = @_;
-    $guard ||= $pass;
+    $guard ||= $pass_guard;
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first') { return unless @$data; $key = 0 }
             when ('$last')  { return unless @$data; $key = @$data - 1 }
             when ('*')      { return grep { $guard->($_) } @$data }
         }
-        if (array_exists($array, $key) && $guard->($data->[$key])) {
+        if (array_exists($data, $key) && $guard->($data->[$key])) {
             return $data->[$key];
         }
         return;
@@ -123,7 +123,7 @@ sub set_data {
 
 sub delete_data {
     my ($data, $key, $guard) = @_;
-    $guard ||= $pass;
+    $guard ||= $pass_guard;
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first') { return unless @$data; $key = 0 }
