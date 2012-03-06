@@ -84,13 +84,12 @@ sub export_to_string {
     my $sym  = shift;
     my %opts = is_hash_ref($_[0]) ? %{$_[0]} : @_;
     my $str  = "";
-    $opts{file} = \$str;
-    my $exporter = exporter($sym, %opts);
+    my $exporter = exporter($sym, %opts, file => \$str);
     is_hash_ref($data)
         ? $exporter->add($data)
         : $exporter->add_many($data);
     $exporter->commit;
-    return $str;
+    $str;
 }
 
 1;
