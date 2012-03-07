@@ -248,9 +248,7 @@ sub capitalize {
     ucfirst lc as_utf8 $_[0];
 }
 
-sub is_same {
-    goto &Data::Compare::Compare;
-}
+sub is_same { goto &Data::Compare::Compare }
 
 sub is_different {
     !is_same(@_);
@@ -261,7 +259,7 @@ sub check_same {
 }
 
 sub check_different {
-    is_different(@_) || confess('error: should be different');
+    !is_same(@_) || confess('error: should be different');
 }
 
 sub is_invocant { goto &Data::Util::is_invocant }

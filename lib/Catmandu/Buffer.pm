@@ -3,16 +3,8 @@ package Catmandu::Buffer;
 use Catmandu::Sane;
 use Moo::Role;
 
-has buffer_size => (
-    is => 'ro',
-    builder => 'default_buffer_size',
-);
-
-has buffer => (
-    is => 'ro',
-    lazy => 1,
-    default => sub { [] },
-);
+has buffer_size => (is => 'ro', builder => 'default_buffer_size');
+has buffer => (is => 'ro', lazy => 1, default => sub { [] });
 
 sub default_buffer_size { 100 }
 
@@ -21,7 +13,7 @@ sub clear_buffer {
 }
 
 sub buffer_used {
-    scalar @{ $_[0]->buffer };
+    scalar @{$_[0]->buffer};
 }
 
 sub buffer_is_full {
