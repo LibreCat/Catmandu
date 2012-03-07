@@ -8,13 +8,12 @@ use Moo;
 has path  => (is => 'ro', required => 1);
 has key   => (is => 'ro', required => 1);
 has mpath => (is => 'ro', required => 1);
-has guard => (is => 'ro');
 has opts  => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $mpath, $path, %opts) = @_;
-    my ($p,$key,$guard) = parse_data_path($path) if defined $path && length $path;
-    $orig->($class, path => $p, key => $key, guard => $guard, mpath => $mpath, opts => \%opts);
+    my ($p,$key) = parse_data_path($path) if defined $path && length $path;
+    $orig->($class, path => $p, key => $key, mpath => $mpath, opts => \%opts);
 };
 
 sub fix {
@@ -23,7 +22,6 @@ sub fix {
     my $path  = $self->path;
     my $key   = $self->key;
     my $mpath = $self->mpath;
-    my $guard = $self->guard;
     my $opts  = $self->opts || {};
     $opts->{-join} = '' unless $opts->{-join};
     
@@ -32,7 +30,7 @@ sub fix {
 
     my $fields = &marc_field($marc,$mpath);
 
-    my $match = [ grep ref, data_at($path, $data, key => $key, guard => $guard, create => 1)]->[0];
+    my $match = [ grep ref, data_at($path, $data, key => $key, create => 1)]->[0];
 
     for my $field (@$fields) {
        my $field_value = &marc_subfield($field,$mpath);
