@@ -91,8 +91,9 @@ sub xml_escape {
 Catmandu::Fix::marc_xml - transform a Catmandu MARC record into MARCXML
 
 =head1 SYNOPSIS
-
-   marc_xml();
+   
+   # Transforms the 'record' key into an MARCXML string
+   marc_xml('record');
 
 =head1 SEE ALSO
 
