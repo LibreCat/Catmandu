@@ -78,7 +78,7 @@ sub marc_footer {
 
 sub xml_escape {
     local $_ = $_[0];
-    s/&/\&amp/g;
+    s/&/\&amp;/g;
     s/</\&lt;/g;
     s/>/\&gt;/g;
     s/'/\&apos;/g;
