@@ -13,7 +13,7 @@ my $param = exists $setting->{param} ? $setting->{param} : 'locale';
 my $parse_http_accept = exists $setting->{parse_http_accept} ? $setting->{parse_http_accept} : 1;
 
 if ($param || $parse_http_accept) {
-    before sub {
+    hook before => sub {
         if ($param and my $loc = params->{$param}) {
             Locale::Util::web_set_locale([$loc]);
         } elsif ($parse_http_accept) {

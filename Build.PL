@@ -4,6 +4,7 @@ use Module::Build;
 
 my $build_requires = {
     'Software::License' => 0,
+    'Test::Exception' => '0.31',
 };
 
 my $requires = {
@@ -67,37 +68,43 @@ my $auto_features = {
         },
     },
     import_atom => {
-        description => "Import objects from an Atom feed",
+        description => "Import data from an Atom feed",
         requires => {
             'XML::Atom' => '0.41',
         },
     },
     import_csv => {
-        description => "Import objects from a CSV file",
+        description => "Import data from a CSV file",
         requires => {
             'Text::CSV' => '1.21',
         },
     },
     import_oai => {
-        description => "Import objects from an OAI harvestable respository",
+        description => "Import data from an OAI harvestable respository",
         requires => {
             'Net::OAI::Harvester' => '1.13',
         },
     },
+    import_marc => {
+        description => "Import data from MARC",
+        requires => {
+            'MARC::Record' => '2.0.3',
+        },
+    },
     export_bibtex => {
-        description => "Export objects to BibTeX",
+        description => "Export data to BibTeX",
         requires => {
             'LaTeX::Encode' => '0.03',
         },
     },
     export_csv => {
-        description => "Export objects to CSV",
+        description => "Export data to CSV",
         requires => {
             'Text::CSV' => '1.21',
         },
     },
     export_xls => {
-        description => "Export objects to Excel (.xls)",
+        description => "Export data to Excel (.xls)",
         requires => {
             'Spreadsheet::WriteExcel' => '2.37',
         },
@@ -175,6 +182,8 @@ for my $feature (keys %$auto_features) {
             $build->requires->{$key} = $feature_requires->{$key};
         }
         $build->feature($feature => 1);
+    } else {
+        $build->feature($feature => 0);
     }
 }
 

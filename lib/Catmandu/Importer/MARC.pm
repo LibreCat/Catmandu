@@ -21,7 +21,7 @@ sub aleph_generator {
         while(<$fh>) {
            chop;
            next unless (length $_ >= 18);
-          
+
            my ($sysid,$s1,$tag,$ind1,$ind2,$s2,$char,$s3,$data) = unpack("A9A1A3A1A1A1A1A1U0A*",$_);
            utf8::decode($data);
            my @parts = ('_' , split(/\$\$(.)/, $data) );
