@@ -6,13 +6,13 @@ use SBCatDB;
 
 with 'Catmandu::Store';
 
-has db => (is => 'ro', builder => '_build_db');
-has config_file => (is => 'ro', default => sub { '' });
-has db_name  => (default =>  sub { 'luur' });
-has sbcat_collection => (default => sub { 'publicationItem' });
-has host     => (default => sub { '127.0.0.1' });
-has username => (default => sub { 'lur' });
-has password => (default => sub { '' });
+has db => (is => 'ro', lazy => 1, builder => '_build_db');
+has config_file => (is => 'ro', default => sub {''} );
+has db_name  => (is => 'ro', default => sub {'luur' });
+has sbcat_collection => (is => 'ro', default => sub {'publicationItem'} );
+has host     => (is => 'ro', default => sub {'127.0.0.1' });
+has username => (is => 'ro', default => sub {'lur'} );
+has password => (is => 'ro', default =>  sub {'' });
 
 sub _build_db {
     my $self = $_[0];
