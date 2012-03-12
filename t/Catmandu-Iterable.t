@@ -17,7 +17,7 @@ BEGIN {
 require_ok $pkg;
 
 {
-    package T::Iterable;
+    package Mock::Iterable;
 
     use Moo;
 
@@ -34,13 +34,29 @@ require_ok $pkg;
             return;
         };
     }
+
+    package Mock::CountArgs;
+
+    use Moo;
+
+    sub count_args { @_ - 1 }
+
 }
 
-my $iter = T::Iterable->new(data => [1,2,3]);
+my $iter = Mock::Iterable->new(data => [1,2,3]);
 
 is_deeply $iter->to_array, [1,2,3];
-is $iter->all(sub { $_[0] > 0 }), 1;
-is $iter->all(sub { $_[0] > 1 }), 0;
+
+is $iter->count, 3;
+
+{
+    my $d = [];
+    my $n = $iter->each(sub { push @$d, $_[0] });
+    is_deeply $d, $iter->to_array;
+    is $n, 3;
+}
+
+is_deeply $iter->tap(sub { $_[0] })->to_array, $iter->to_array;
 
 is $iter->any(sub { $_[0] < 3 }), 1;
 is $iter->any(sub { $_[0] > 3 }), 0;
@@ -48,7 +64,21 @@ is $iter->any(sub { $_[0] > 3 }), 0;
 is $iter->many(sub { $_[0] < 3 }), 1;
 is $iter->many(sub { $_[0] < 2 }), 0;
 
+is $iter->all(sub { $_[0] > 0 }), 1;
+is $iter->all(sub { $_[0] > 1 }), 0;
+
 is_deeply $iter->map(sub { $_[0] + 1 })->to_array, [2,3,4];
+
+is $iter->reduce(sub { my ($memo, $num) = @_; $memo + $num; }), 6;
+is $iter->reduce(1, sub { my ($memo, $num) = @_; $memo + $num; }), 7;
+is_deeply $iter->reduce({}, sub { my ($memo, $num) = @_; $memo->{$num} = $num + 1; $memo; }), {1=>2,2=>3,3=>4};
+
+is $iter->first, 1;
+
+is_deeply $iter->rest->to_array, [2,3];
+
+is_deeply $iter->take(1)->to_array, [1];
+is_deeply $iter->take(2)->to_array, [1,2];
 
 is $iter->detect(sub { $_[0] == 3 }), 3;
 is $iter->detect(sub { $_[0] == 4 }), undef;
@@ -59,17 +89,47 @@ is_deeply $iter->select(sub { $_[0] > 1 })->to_array, [2,3];
 is_deeply $iter->reject(sub { $_[0] < 2 })->to_array, [2,3];
 is_deeply $iter->reject(sub { $_[0] > 0 })->to_array, [];
 
-is $iter->reduce(sub { my ($memo, $num) = @_; $memo + $num; }), 6;
-is $iter->reduce(1, sub { my ($memo, $num) = @_; $memo + $num; }), 7;
-is_deeply $iter->reduce({}, sub { my ($memo, $num) = @_; $memo->{$num} = $num + 1; $memo; }), {1=>2,2=>3,3=>4};
-
-is $iter->first, 1;
-
-is_deeply $iter->take(1)->to_array, [1];
-is_deeply $iter->take(2)->to_array, [1,2];
+is $iter->detect(qr'[12]'), 1;
+is_deeply $iter->select(qr'[12]')->to_array, [1,2];
+is_deeply $iter->reject(qr'[12]')->to_array, [3];
 
 $iter->data([{num=>1},{num=>2},{num=>3}]);
+
+is_deeply $iter->detect(num => qr'[12]'), {num=>1};
+is_deeply $iter->select(num => qr'[12]')->to_array, [{num=>1},{num=>2}];
+is_deeply $iter->reject(num => qr'[12]')->to_array, [{num=>3}];
+
 is_deeply $iter->pluck('num')->to_array, $iter->map(sub { $_[0]->{num} })->to_array;
 
-done_testing 23;
+$iter->data([Mock::CountArgs->new]);
+is_deeply $iter->invoke('count_args')->to_array, [0];
+is_deeply $iter->invoke('count_args','arg1','arg2')->to_array, [2];
+
+$iter->data([{a=>{b =>'c'}},'d',{c=>{b=>'a'}}]);
+is $iter->includes({c => {a => 'b'}}), 0;
+is $iter->contains({c => {a => 'b'}}), 0;
+is $iter->includes({c => {b => 'a'}}), 1;
+is $iter->contains({c => {b => 'a'}}), 1;
+
+$iter->data([1 .. 10]);
+is_deeply $iter->group(3)->invoke('to_array')->to_array,
+    [[1,2,3],[4,5,6],[7,8,9],[10]];
+
+$iter->data([2,1,'10foo','foo10',-1,-2]);
+is $iter->min, -2;
+is $iter->max,  2;
+
+$iter->data([]);
+is $iter->min, undef;
+is $iter->max, undef;
+
+$iter->data(['foo']);
+is $iter->min, undef;
+is $iter->max, undef;
+
+$iter->data(['foo', 'oof']);
+is $iter->min, undef;
+is $iter->max, undef;
+
+done_testing 49;
 

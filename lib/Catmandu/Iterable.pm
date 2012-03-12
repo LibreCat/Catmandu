@@ -86,8 +86,6 @@ sub any {
     return 0;
 }
 
-sub some { goto &any }
-
 sub many {
     my ($self, $sub) = @_;
     my $next = $self->generator;
@@ -116,8 +114,6 @@ sub map {
         $sub->($next->() // return);
     }});
 }
-
-sub inject { goto &reduce }
 
 sub reduce {
     my $self = shift;
@@ -210,9 +206,9 @@ sub pluck {
 }
 
 sub invoke {
-    my ($self, $method) = @_;
+    my ($self, $method, @args) = @_;
     $self->map(sub {
-        $_[0]->$method;
+        $_[0]->$method(@args);
     });
 }
 
@@ -245,7 +241,7 @@ sub group {
 }
 
 sub max {
-    $_[0]->reduce(sub {
+    $_[0]->reduce(undef, sub {
         my ($memo, $data) = @_;
         return $data > $memo ? $data : $memo if is_number($memo) && is_number($data);
         return $memo if is_number($memo);
@@ -255,7 +251,7 @@ sub max {
 }
 
 sub min {
-    $_[0]->reduce(sub {
+    $_[0]->reduce(undef, sub {
         my ($memo, $data) = @_;
         return $data < $memo ? $data : $memo if is_number($memo) && is_number($data);
         return $memo if is_number($memo);
