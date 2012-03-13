@@ -17,7 +17,7 @@ BEGIN {
 require_ok $pkg;
 
 {
-    package Mock::Iterable;
+    package T::Iterable;
 
     use Moo;
 
@@ -35,7 +35,7 @@ require_ok $pkg;
         };
     }
 
-    package Mock::CountArgs;
+    package T::CountArgs;
 
     use Moo;
 
@@ -43,7 +43,7 @@ require_ok $pkg;
 
 }
 
-my $iter = Mock::Iterable->new(data => [1,2,3]);
+my $iter = T::Iterable->new(data => [1,2,3]);
 
 is_deeply $iter->to_array, [1,2,3];
 
@@ -101,7 +101,7 @@ is_deeply $iter->reject(num => qr'[12]')->to_array, [{num=>3}];
 
 is_deeply $iter->pluck('num')->to_array, $iter->map(sub { $_[0]->{num} })->to_array;
 
-$iter->data([Mock::CountArgs->new]);
+$iter->data([T::CountArgs->new]);
 is_deeply $iter->invoke('count_args')->to_array, [0];
 is_deeply $iter->invoke('count_args','arg1','arg2')->to_array, [2];
 

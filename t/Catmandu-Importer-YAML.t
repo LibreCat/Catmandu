@@ -16,5 +16,26 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+my $data = [
+   {name=>'Patrick',age=>'39'},
+   {name=>'Nicolas',age=>'34'},
+];
+
+my $yaml = <<EOF;
+---
+name: Patrick
+age: 39
+---
+name: Nicolas
+age: 34
+
+EOF
+
+my $importer = $pkg->new(file => \$yaml);
+
+isa_ok $importer, $pkg;
+
+is_deeply $importer->to_array, $data;
+
+done_testing 4;
 
