@@ -37,6 +37,12 @@ my $recommends = {
 };
 
 my $auto_features = {
+    cmd_fuse => {
+        description => "expose stores a FUSE filesystem",
+        requires => {
+            'Fuse' => '0.14',
+        },
+    },
     cmd_repl => {
         description => "REPL",
         requires => {
@@ -95,6 +101,7 @@ my $auto_features = {
         description => "Import data from MARC",
         requires => {
             'MARC::Record' => '2.0.3',
+            'MARC::File::XML' => '0.93',
         },
     },
     export_bibtex => {
