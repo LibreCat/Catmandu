@@ -18,10 +18,8 @@ require_ok $pkg;
 
 {
     package T::Counter;
-
     use Moo;
-
-    with 'Catmandu::Counter';
+    with $pkg;
 }
 
 my $c = T::Counter->new;

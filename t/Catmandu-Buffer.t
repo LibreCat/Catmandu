@@ -18,10 +18,8 @@ require_ok $pkg;
 
 {
     package T::Buffer;
-
     use Moo;
-
-    with 'Catmandu::Buffer';
+    with $pkg;
 }
 
 my $b = T::Buffer->new;

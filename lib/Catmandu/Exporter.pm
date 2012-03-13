@@ -25,7 +25,7 @@ after add => sub {
 
 sub encoding { ':utf8' }
 
-sub commit { 1 }
+sub commit {}
 
 =head1 NAME
 

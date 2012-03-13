@@ -17,11 +17,12 @@ BEGIN {
 require_ok $pkg;
 
 {
-    package T::Iterable;
-
+    package T::IterableWithoutGenerator;
     use Moo;
 
-    with 'Catmandu::Iterable';
+    package T::Iterable;
+    use Moo;
+    with $pkg;
 
     has data => (is => 'rw');
 
@@ -36,12 +37,13 @@ require_ok $pkg;
     }
 
     package T::CountArgs;
-
     use Moo;
 
     sub count_args { @_ - 1 }
 
 }
+
+dies_ok { Role::Tiny->apply_role_to_package('T::IterableWithoutGenerator', $pkg) };
 
 my $iter = T::Iterable->new(data => [1,2,3]);
 
@@ -131,5 +133,5 @@ $iter->data(['foo', 'oof']);
 is $iter->min, undef;
 is $iter->max, undef;
 
-done_testing 49;
+done_testing 50;
 

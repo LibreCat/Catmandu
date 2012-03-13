@@ -5,6 +5,7 @@ use warnings;
 use Catmandu::ConfigData;
 use Test::More;
 use Test::Exception;
+use Role::Tiny;
 
 my $pkg;
 BEGIN {
@@ -16,5 +17,32 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+{
+    package T::ExporterWithoutAdd;
+    use Moo;
+
+    package T::Exporter;
+    use Moo;
+    with $pkg;
+
+    sub add {}
+
+}
+
+dies_ok { Role::Tiny->apply_role_to_package('T::ExporterWithoutAdd', $pkg) };
+
+my $e = T::Exporter->new;
+ok $e->does('Catmandu::Addable');
+ok $e->does('Catmandu::Counter');
+can_ok $e, 'encoding';
+can_ok $e, 'commit';
+
+is $e->encoding ':utf8';
+
+$e->add(1);
+is $e->count, 1;
+$e->add_many([2,3,4]);
+is $e->count, 4;
+
+done_testing 9;
 

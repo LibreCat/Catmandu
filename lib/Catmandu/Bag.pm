@@ -17,27 +17,28 @@ has store => (is => 'ro', required => 1);
 has name  => (is => 'ro', required => 1);
 
 before get => sub {
-    check_string($_[1]);
+    check_value($_[1]);
 };
 
 before add => sub {
     my ($self, $data) = @_;
-    check_hash_ref($data)->{_id} ||= $self->generate_id;
+    check_hash_ref($data);
+    check_value($data->{_id} //= $self->generate_id);
 };
 
 before delete => sub {
-    check_string($_[1]);
+    check_value($_[1]);
 };
 
 sub generate_id {
     Data::UUID->new->create_str;
 }
 
-sub commit { 1 }
+sub commit {}
 
 sub get_or_add {
     my ($self, $id, $data) = @_;
-    check_string($id);
+    check_value($id);
     check_hash_ref($data);
     $self->get($id) || do {
         $data->{_id} = $id;

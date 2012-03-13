@@ -16,5 +16,16 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+{
+    package T::Importer;
+    use Moo;
+    with $pkg;
+
+    sub generator { sub {} }
+}
+
+my $i = T::Importer->new;
+ok $i->does('Catmandu::Iterable');
+
+done_testing 3;
 
