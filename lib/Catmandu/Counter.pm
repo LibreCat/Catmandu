@@ -10,11 +10,7 @@ sub inc_count {
 }
 
 sub dec_count {
-    my $self = $_[0];
-    if ($self->{count}) {
-        return --$self->{count};
-    }
-    0;
+    my $self = $_[0]; $self->{count} ? --$self->{count} : 0;
 }
 
 sub reset_count {

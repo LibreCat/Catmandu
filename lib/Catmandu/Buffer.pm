@@ -18,7 +18,7 @@ sub buffer_used {
 
 sub buffer_is_full {
     my $self = $_[0];
-    $self->buffer_used >= $self->buffer_size;
+    $self->buffer_used >= $self->buffer_size ? 1 : 0;
 }
 
 sub buffer_add {

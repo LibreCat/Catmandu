@@ -8,9 +8,9 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    #unless (Catmandu::ConfigData->feature('')) {
-    #    plan skip_all => 'feature disabled';
-    #}
+    unless (Catmandu::ConfigData->feature('cmd_repl')) {
+        plan skip_all => 'feature disabled';
+    }
     $pkg = 'Catmandu::Cmd::repl';
     use_ok $pkg;
 }

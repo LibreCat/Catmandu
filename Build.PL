@@ -37,6 +37,12 @@ my $recommends = {
 };
 
 my $auto_features = {
+    cmd_repl => {
+        description => "REPL",
+        requires => {
+            'Devel::REPL' => '1.003012',
+        },
+    },
     store_dbi => {
         description => "Store backed by DBI",
         requires => {
