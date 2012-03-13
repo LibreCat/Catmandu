@@ -29,7 +29,7 @@ require_ok $pkg;
 
 }
 
-dies_ok { Role::Tiny->apply_role_to_package('T::ExporterWithoutAdd', $pkg) };
+throws_ok { Role::Tiny->apply_role_to_package('T::ExporterWithoutAdd', $pkg) } qr/missing add/;
 
 my $e = T::Exporter->new;
 ok $e->does('Catmandu::Addable');
@@ -37,12 +37,12 @@ ok $e->does('Catmandu::Counter');
 can_ok $e, 'encoding';
 can_ok $e, 'commit';
 
-is $e->encoding ':utf8';
+is $e->encoding, ':utf8';
 
 $e->add(1);
 is $e->count, 1;
 $e->add_many([2,3,4]);
 is $e->count, 4;
 
-done_testing 9;
+done_testing 10;
 

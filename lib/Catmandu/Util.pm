@@ -309,6 +309,8 @@ for my $sym (qw(able invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
         value string number integer natural positive)) {
     my $pkg = __PACKAGE__;
+    my $err_name = $sym;
+    $err_name =~ s/_/ /;
     push @EXPORT_OK, "is_$sym", "is_maybe_$sym", "check_$sym", "check_maybe_$sym";
     push @{$EXPORT_TAGS{is}}, "is_$sym", "is_maybe_$sym";
     push @{$EXPORT_TAGS{check}}, "check_$sym", "check_maybe_$sym";
@@ -316,10 +318,10 @@ for my $sym (qw(able invocant ref
         "!defined(\$_[0]) || ${pkg}::is_$sym(\@_)")
             unless Data::Util::get_code_ref($pkg, "is_maybe_$sym");
     Sub::Quote::quote_sub("${pkg}::check_$sym",
-        "${pkg}::is_$sym(\@_) || ${pkg}::confess('type error: should be $sym'); \$_[0]")
+        "${pkg}::is_$sym(\@_) || ${pkg}::confess('type error: should be $err_name'); \$_[0]")
             unless Data::Util::get_code_ref($pkg, "check_$sym");
     Sub::Quote::quote_sub("${pkg}::check_maybe_$sym",
-        "${pkg}::is_maybe_$sym(\@_) || ${pkg}::confess('type error: should be undef or $sym'); \$_[0]")
+        "${pkg}::is_maybe_$sym(\@_) || ${pkg}::confess('type error: should be undef or $err_name'); \$_[0]")
             unless Data::Util::get_code_ref($pkg, "check_maybe_$sym");
 }
 

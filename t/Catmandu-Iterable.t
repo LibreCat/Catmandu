@@ -43,7 +43,7 @@ require_ok $pkg;
 
 }
 
-dies_ok { Role::Tiny->apply_role_to_package('T::IterableWithoutGenerator', $pkg) };
+throws_ok { Role::Tiny->apply_role_to_package('T::IterableWithoutGenerator', $pkg) } qr/missing generator/;
 
 my $iter = T::Iterable->new(data => [1,2,3]);
 

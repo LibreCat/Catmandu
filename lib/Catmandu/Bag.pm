@@ -5,7 +5,7 @@ use Catmandu::Util qw(:check);
 use Moo::Role;
 use Data::UUID;
 
-with 'Catmandu::Pluggable';
+with 'Catmandu::Pluggable'; # TODO
 with 'Catmandu::Iterable';
 with 'Catmandu::Addable';
 
@@ -13,8 +13,8 @@ requires 'get';
 requires 'delete';
 requires 'delete_all';
 
-has store => (is => 'ro', required => 1);
-has name  => (is => 'ro', required => 1);
+has store => (is => 'ro'); # TODO
+has name  => (is => 'ro'); # TODO
 
 before get => sub {
     check_value($_[1]);
