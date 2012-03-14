@@ -1,12 +1,12 @@
 package Catmandu::Addable;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(:is :check);
 use Moo::Role;
 
 requires 'add';
 
-with 'Catmandu::Fixable';
+with 'Catmandu::Fixable'; # TODO
 
 around add => sub {
     my ($orig, $self, $data) = @_;
@@ -18,19 +18,20 @@ around add => sub {
 sub add_many {
     my ($self, $many) = @_;
 
-    my $data;
-
     if (is_array_ref($many)) {
-        for $data (@$many) {
-            $self->add($data);
-        }
-        return scalar(@$many);
+        $self->add($_) for @$many;
+        return scalar @$many;
     }
 
-    $many = $many->generator if is_invocant($many);
+    if (is_invocant($many)) {
+        $many = check_able($many, 'generator')->generator;
+    }
 
+    check_code_ref($many);
+
+    my $data;
     my $n = 0;
-    while ($data = $many->()) {
+    while (defined($data = $many->())) {
         $self->add($data);
         $n++;
     }
