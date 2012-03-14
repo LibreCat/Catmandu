@@ -45,6 +45,7 @@ can_ok $a, 'add_many';
 
 is_deeply $a->add({a=>'pony'}), {a=>'pony'}, 'add returns data added';
 
+lives_ok { $a->add_many({}) } 'add_many takes a single hash ref';
 lives_ok { $a->add_many([]) } 'add_many takes an array ref';
 lives_ok { $a->add_many(sub {}) } 'add_many takes a generator code ref';
 lives_ok { $a->add_many(T::WithGenerator->new) } 'add_many takes an object with a generator method';
@@ -54,5 +55,5 @@ $data = [];
 is $a->add_many([1,2,3]), 3, 'add_many returns count of data added';
 is_deeply $data, [1,2,3], 'add_many passes all data to add';
 
-done_testing 11;
+done_testing 12;
 

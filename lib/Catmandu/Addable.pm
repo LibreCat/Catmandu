@@ -18,6 +18,11 @@ around add => sub {
 sub add_many {
     my ($self, $many) = @_;
 
+    if (is_hash_ref($many)) {
+        $self->add($many);
+        return 1;
+    }
+
     if (is_array_ref($many)) {
         $self->add($_) for @$many;
         return scalar @$many;
