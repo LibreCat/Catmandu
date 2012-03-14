@@ -64,7 +64,7 @@ my $auto_features = {
     store_elasticsearch => {
         description => "Searchable store backed by ElasticSearch",
         requires => {
-            'ElasticSearch' => '0.47',
+            'ElasticSearch' => '0.50',
         },
     },
     store_lucy => {
