@@ -141,7 +141,7 @@ sub delete_by_query {
 sub commit { # TODO optimize, better error handling
     my ($self) = @_;
     return 1 unless $self->buffer_used;
-    my $err = $self->store->elastic_search->bulk($self->buffer, {refresh => 1})->{errors};
+    my $err = $self->store->elastic_search->bulk(actions => $self->buffer, refresh => 1)->{errors};
     $self->clear_buffer;
     return !defined $err, $err;
 }
