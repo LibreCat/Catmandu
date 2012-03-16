@@ -59,7 +59,20 @@ sub visit {
                 } elsif ($mapping->{field}) {
                     $qualifier = $mapping->{field};
                 }
-                my $cb;
+
+                my $filters;
+                if (ref $op && $op->{filter}) {
+                    $filters = $op->{filter};
+                } elsif ($mapping->{filter}) {
+                    $filters = $mapping->{filter};
+                }
+                if ($filters) {
+                    for my $filter (@$filters) {
+                        given ($filter) {
+                            when ('lowercase') { $term = lc $term }
+                        }
+                    }
+                }
                 if (ref $op && $op->{cb}) {
                     my ($pkg, $sub) = @{$op->{cb}};
                     $term = load_package($pkg)->$sub($term);
@@ -72,20 +85,35 @@ sub visit {
             }
         }
 
+        my $q;
         if ($base eq '=') {
             if (ref $qualifier) {
                 return { bool => { should => [ map {
-                    my $q = $_;
+                    $q = $_;
                     if (ref $term) {
-                        map { _text_node($q, $_, @modifiers) } @$term;
+                        if ($q eq '_id') {
+                            { ids => { values => $term } };
+                        } else {
+                            map { _text_node($q, $_, @modifiers) } @$term;
+                        }
                     } else {
-                        _text_node($q, $term, @modifiers);
+                        if ($q eq '_id') {
+                            { ids => { values => [$term] } };
+                        } else {
+                            _text_node($q, $term, @modifiers);
+                        }
                     }
                 } @$qualifier ] } };
             } else {
                 if (ref $term) {
+                    if ($qualifier eq '_id') {
+                        return { ids => { values => $term } };
+                    }
                     return { bool => { should => [ map { _text_node($qualifier, $_, @modifiers) } @$term ] } };
                 } else {
+                    if ($qualifier eq '_id') {
+                        return { ids => { values => [$term] } };
+                    }
                     return _text_node($qualifier, $term, @modifiers);
                 }
             }
@@ -116,34 +144,62 @@ sub visit {
         } elsif ($base eq '<>') {
             if (ref $qualifier) {
                 return { bool => { must_not => [ map {
-                    my $q = $_;
+                    $q = $_;
                     if (ref $term) {
-                        map { { text_phrase => { $q => { query => $_ } } } } @$term;
+                        if ($q eq '_id') {
+                            { ids => { values => $term } };
+                        } else {
+                            map { { text_phrase => { $q => { query => $_ } } } } @$term;
+                        }
                     } else {
-                        { text_phrase => { $q => { query => $term } } };
+                        if ($q eq '_id') {
+                            { ids => { values => [$term] } };
+                        } else {
+                            { text_phrase => { $q => { query => $term } } };
+                        }
                     }
                 } @$qualifier ] } };
             } else {
                 if (ref $term) {
+                    if ($qualifier eq '_id') {
+                        return { bool => { must_not => [ { ids => { values => $term } } ] } };
+                    }
                     return { bool => { must_not => [ map { { text_phrase => { $qualifier => { query => $_ } } } } @$term ] } };
                 } else {
+                    if ($qualifier eq '_id') {
+                        return { bool => { must_not => [ { ids => { values => [$term] } } ] } };
+                    }
                     return { bool => { must_not => [ { text_phrase => { $qualifier => { query => $term } } } ] } };
                 }
             }
         } elsif ($base eq 'exact') {
             if (ref $qualifier) {
                 return { bool => { should => [ map {
-                    my $q = $_;
+                    $q = $_;
                     if (ref $term) {
-                        map { { text_phrase => { $q => { query => $_ } } } } @$term;
+                        if ($q eq '_id') {
+                            { ids => { values => $term } };
+                        } else {
+                            map { { text_phrase => { $q => { query => $_ } } } } @$term;
+                        }
                     } else {
-                        { text_phrase => { $q => { query => $term } } };
+                        if ($q eq '_id') {
+                            { ids => { values => [$term] } };
+                        } else {
+                            { text_phrase => { $q => { query => $term } } };
+                        }
                     }
                 } @$qualifier ] } };
             } else {
                 if (ref $term) {
+                    if ($qualifier eq '_id') {
+                        return { ids => { values => $term } };
+                    }
                     return { bool => { should => [map { { text_phrase => { $qualifier => { query => $_ } } } } @$term] } };
                 } else {
+                    if ($qualifier eq '_id') {
+                        return { ids => { values => [$term] } };
+                    }
                     return { text_phrase => { $qualifier => { query => $term } } };
                 }
             }
@@ -151,7 +207,7 @@ sub visit {
             if (ref $qualifier) {
                 if (ref $term) {
                     return { bool => { should => [ map {
-                        my $q = $_;
+                        $q = $_;
                         if (ref $term) {
                             map { { text => { $q => { query => $_ } } } } @$term;
                         } else {
@@ -171,7 +227,7 @@ sub visit {
         } elsif ($base eq 'all') {
             if (ref $qualifier) {
                 return { bool => { should => [ map {
-                    my $q = $_;
+                    $q = $_;
                     if (ref $term) {
                         map { { text => { $q => { query => $_, operator => 'and' } } } } @$term;
                     } else {
@@ -203,7 +259,7 @@ sub visit {
 
         if (ref $qualifier) {
             return { bool => { should => [ map {
-                my $q = $_;
+                $q = $_;
                 if (ref $term) {
                     map { _text_node($q, $_, @modifiers) } @$term;
                 } else {
@@ -254,11 +310,11 @@ sub _text_node {
     #} elsif ($term =~ /[^\\][*?]/) { # TODO mapping
         #return { wildcard => { $qualifier => $term } };
     #}
-    if ($term =~ /[^\\][\*\?]/ && $term !~ /\s/) { # TODO only works for single terms, mapping
-        return { wildcard => { $qualifier => $term } };
+    if ($term =~ /[^\\][\*\?]/) { # TODO only works for single terms, mapping
+        return { wildcard => { $qualifier => { value => $term } } };
     }
     for my $m (@modifiers) {
-        if ($m->[1] eq 'fuzzy' && $term !~ /\s/) { # TODO only works for single terms, mapping fuzzy_factor
+        if ($m->[1] eq 'fuzzy') { # TODO only works for single terms, mapping fuzzy_factor
             return { fuzzy => { $qualifier => { value => $term, max_expansions => 10, min_similarity => 0.75 } } };
         }
     }

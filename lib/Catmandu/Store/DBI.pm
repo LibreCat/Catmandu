@@ -22,6 +22,7 @@ sub _build_dbh {
     my $opts = {
         AutoCommit => 1,
         RaiseError => 1,
+        mysql_auto_reconnect => 1,
     };
     DBI->connect($self->data_source, $self->username, $self->password, $opts);
 }
@@ -31,24 +32,22 @@ sub transaction {
 
     my $dbh = $self->dbh;
 
-    unless ($dbh->{AutoCommit}) {
+    if ($self->{_tx}) {
         return $sub->();
     }
 
     my @res;
 
     eval {
-        $dbh->{AutoCommit} = 0;
+        $self->{_tx} = 1;
         $dbh->begin_work;
         @res = $sub->();
         $dbh->commit;
-        $dbh->{AutoCommit} = 1;
+        $self->{_tx} = 0;
     } or do {
         my $err = $@;
-        eval {
-            $dbh->rollback;
-        };
-        $dbh->{AutoCommit} = 1;
+        eval { $dbh->rollback };
+        $self->{_tx} = 0;
         confess $err;
     };
 
