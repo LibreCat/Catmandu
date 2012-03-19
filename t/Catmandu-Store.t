@@ -50,8 +50,10 @@ $b = $s->bag('foo');
 is $b->name, 'foo';
 $s->bags->{foo}{prop} = 'another val';
 $s->bags->{bar}{prop} = 'val';
+$s->bags->{bar}{name} = 'baz';
 isnt $s->bag('foo')->prop, 'another val';
 is $s->bag('bar')->prop, 'val';
+isnt $s->bag('bar')->name, 'baz';
 
-done_testing 16;
+done_testing 17;
 
