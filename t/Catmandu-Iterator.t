@@ -19,8 +19,7 @@ require_ok $pkg;
 my $g = sub { sub {} };
 
 my $i = $pkg->new($g);
-is $i->generator, $g;
 ok $i->does('Catmandu::Iterable');
 
-done_testing 4;
+done_testing 3;
 
