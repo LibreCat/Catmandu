@@ -72,6 +72,7 @@ sub sru_provider {
                     limit => $limit,
                     start => $start,
                 );
+                $response->numberOfRecords($hits->total);
                 $hits->each(sub {
                     my $data = $_[0];
                     my $metadata = "";

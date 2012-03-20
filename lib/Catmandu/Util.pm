@@ -13,7 +13,8 @@ our %EXPORT_TAGS = (
     package => [qw(load_package)],
     io      => [qw(io)],
     data    => [qw(parse_data_path get_data set_data delete_data data_at)],
-    array   => [qw(array_exists array_group_by array_pluck array_to_sentence array_sum array_includes array_any)],
+    array   => [qw(array_exists array_group_by array_pluck array_to_sentence
+        array_sum array_includes array_any array_rest)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
     check   => [qw(check_same check_different)],
@@ -227,6 +228,11 @@ sub array_any {
     my ($arr, $sub) = @_;
     $sub->($_) && return 1 for @$arr;
     0;
+}
+
+sub array_rest {
+    my ($arr) = @_;
+    @$arr < 2 ? [] : [@$arr[1..(@$arr-1)]];
 }
 
 sub as_utf8 {
