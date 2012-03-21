@@ -60,17 +60,17 @@ sub sru_provider {
                     $cql = "($setting->{filter}) and ($cql)";
                 }
 
-                my $start = $request->startRecord || 0;
+                my $start = $request->startRecord || 1;
                 my $limit = $request->maximumRecords || 20;
                 if ($limit > 1000) {
                     $limit = 1000;
                 }
 
                 my $hits = $bag->search(
-                    cql_query => $cql,
+                    cql_query    => $cql,
                     sru_sortkeys => $request->sortKeys,
-                    limit => $limit,
-                    start => $start,
+                    limit        => $limit,
+                    start        => $start - 1,
                 );
                 $response->numberOfRecords($hits->total);
                 $hits->each(sub {
@@ -78,14 +78,14 @@ sub sru_provider {
                     my $metadata = "";
                     my $exporter = Catmandu::Exporter::Template->new(
                         template => $template,
-                        file => \$metadata,
-                        fix => $fix,
+                        file     => \$metadata,
+                        fix      => $fix,
                     );
                     $exporter->add($data);
                     $exporter->commit;
                     $response->addRecord(SRU::Response::Record->new(
                         recordSchema => $identifier,
-                        recordData => $metadata,
+                        recordData   => $metadata,
                     ));
                 });
             }
