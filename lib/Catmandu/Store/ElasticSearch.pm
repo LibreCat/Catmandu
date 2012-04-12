@@ -212,7 +212,8 @@ sub _translate_sru_sortkey {
     my ($field, $schema, $asc) = split /,/, $sortkey;
     $field || return;
     if (my $map = $self->cql_mapping) {
-        $map = $map->{$field} || return;
+        $map = $map->{indexes} || return;
+        $map = $map->{$field}  || return;
         $map->{sort} || return;
         if (ref $map->{sort} && $map->{sort}{field}) {
             $field = $map->{sort}{field};
