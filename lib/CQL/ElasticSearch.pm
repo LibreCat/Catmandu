@@ -1,7 +1,7 @@
 package CQL::ElasticSearch; # TODO deal with multiple terms for ops other than any, all, exact!!!
 
 use Catmandu::Sane;
-use Catmandu::Util qw(load_package);
+use Catmandu::Util qw(load_package trim);
 use CQL::Parser;
 use Moo;
 
@@ -204,42 +204,24 @@ sub visit {
                 }
             }
         } elsif ($base eq 'any') {
-            if (ref $qualifier) {
-                if (ref $term) {
-                    return { bool => { should => [ map {
-                        $q = $_;
-                        if (ref $term) {
-                            map { { text => { $q => { query => $_ } } } } @$term;
-                        } else {
-                            { text => { $q => { query => $term } } };
-                        }
-                    } @$qualifier ] } };
-                } else {
-                    return { bool => { should => [ map { { text => { $_ => { query => $term } } } } @$qualifier ] } };
-                }
-            } else {
-                if (ref $term) {
-                    return { bool => { should => [map { { text => { $qualifier => { query => $_ } } } } @$term] } };
-                } else {
-                    return { text => { $qualifier => { query => $term } } };
-                }
-            }
-        } elsif ($base eq 'all') {
+            $term = [split /\s+/, trim($term)] unless ref $term;
             if (ref $qualifier) {
                 return { bool => { should => [ map {
                     $q = $_;
-                    if (ref $term) {
-                        map { { text => { $q => { query => $_, operator => 'and' } } } } @$term;
-                    } else {
-                        { text => { $q => { query => $term, operator => 'and' } } };
-                    }
+                    map { _text_node($q, $_) } @$term;
                 } @$qualifier ] } };
             } else {
-                if (ref $term) {
-                    return { bool => { should => [map { { text => { $qualifier => { query => $_, operator => 'and' } } } } @$term] } };
-                } else {
-                    return { text => { $qualifier => { query => $term, operator => 'and' } } };
-                }
+                return { bool => { should => [map { _text_node($qualifier, $_) } @$term] } };
+            }
+        } elsif ($base eq 'all') {
+            $term = [split /\s+/, trim($term)] unless ref $term;
+            if (ref $qualifier) {
+                return { bool => { should => [ map {
+                    $q = $_;
+                    { bool => { must => [map { _text_node($q, $_) } @$term] } };
+                } @$qualifier ] } };
+            } else {
+                return { bool => { must => [map { _text_node($qualifier, $_) } @$term] } };
             }
         } elsif ($base eq 'within') {
             my @range = split /\s+/, $term;
@@ -318,7 +300,10 @@ sub _text_node {
             return { fuzzy => { $qualifier => { value => $term, max_expansions => 10, min_similarity => 0.75 } } };
         }
     }
-    { text_phrase => { $qualifier => { query => $term } } };
+    if ($term =~ /\s/) {
+        return { text_phrase => { $qualifier => { query => $term } } };
+    }
+    { text => { $qualifier => { query => $term } } };
 }
 
 1;
