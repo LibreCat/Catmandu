@@ -51,6 +51,8 @@ sub visit {
         }
 
         if ($self->mapping and my $indexes = $self->mapping->{indexes}) {
+            $qualifier = lc $qualifier;
+            $qualifier =~ s/([^_])_/$1/g;
             if (my $mapping = $indexes->{$qualifier}) {
                 $mapping->{op}{$base} or die "operator $base not allowed";
                 my $op = $mapping->{op}{$base};
@@ -287,11 +289,6 @@ sub visit {
 
 sub _text_node {
     my ($qualifier, $term, @modifiers) = @_;
-    #if ($term =~ /^\^./) { # TODO mapping
-        #return { prefix => { $qualifier => substr($term, 1) } };
-    #} elsif ($term =~ /[^\\][*?]/) { # TODO mapping
-        #return { wildcard => { $qualifier => $term } };
-    #}
     if ($term =~ /[^\\][\*\?]/) { # TODO only works for single terms, mapping
         return { wildcard => { $qualifier => { value => $term } } };
     }
