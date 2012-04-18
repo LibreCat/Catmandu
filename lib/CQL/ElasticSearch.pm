@@ -276,13 +276,25 @@ sub visit {
     if ($node->isa('CQL::BooleanNode')) {
         my $op = lc $node->op;
         my $bool;
-        if ($op eq 'and') { $bool = 'must' }
-        elsif ($op eq 'or') { $bool = 'should' }
-        else { $bool = 'must_not' }
+        if ($op eq 'and') {
+            return { bool => { must => [
+                $self->visit($node->left),
+                $self->visit($node->right)
+            ] } };
+        }
 
-        return { bool => { $bool => [
+        if ($op eq 'or') {
+            return { bool => { should => [
+                $self->visit($node->left),
+                $self->visit($node->right)
+            ] } };
+        }
+
+        { bool => { must => [
             $self->visit($node->left),
-            $self->visit($node->right)
+            { bool => { must_not => [
+                $self->visit($node->right)
+            ] } }
         ] } };
     }
 }
