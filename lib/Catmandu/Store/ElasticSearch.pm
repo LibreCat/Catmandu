@@ -138,21 +138,12 @@ sub delete_by_query {
     $es->refresh_index;
 }
 
-sub commit { # TODO optimize
+sub commit { # TODO optimize, better error handling
     my ($self) = @_;
-    return unless $self->buffer_used;
-    my $res = $self->store->elastic_search->bulk(actions => $self->buffer, refresh => 1)->{results};
-    for my $r (@$res) {
-        my $action = $r->{index} ? 'add' : 'delete';
-        $r = $r->{index} || $r->{delete};
-        if (my $e = $r->{error}) {
-            $self->log_error("$action $r->{id} $e");
-        } else {
-            $self->log_debug("$action $r->{_id}");
-        }
-    }
+    return 1 unless $self->buffer_used;
+    my $err = $self->store->elastic_search->bulk(actions => $self->buffer, refresh => 1)->{errors};
     $self->clear_buffer;
-    return;
+    return !defined $err, $err;
 }
 
 sub search {
