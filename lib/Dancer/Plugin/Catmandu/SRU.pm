@@ -42,14 +42,8 @@ sub sru_provider {
         my $request = SRU::Request->newFromURI(request->uri);
         my $response = SRU::Response->newFromRequest($request);
 
-        given ($response->type) {
-            when ('explain') {
-                confess "TODO";
-            }
-            when ('scan') {
-                confess "TODO";
-            }
-            default {
+        given (param('operation')) {
+            when ('searchRetrieve') {
                 my $schema = $record_schemas->{$request->recordSchema || $default_record_schema};
                 my $identifier = $schema->{identifier};
                 my $fix = $schema->{fix};
@@ -65,13 +59,22 @@ sub sru_provider {
                 if ($limit > 1000) {
                     $limit = 1000;
                 }
+                my $hits = eval {
+                    $bag->search(
+                        cql_query    => $cql,
+                        sru_sortkeys => $request->sortKeys,
+                        limit        => $limit,
+                        start        => $start - 1,
+                    );
+                } or do {
+                    my $e = $@;
+                    if ($e =~ /^cql error/) {
+                        $response->addDiagnostic(SRU::Response::Diagnostic->newFromCode(10));
+                        return $response->asXML;
+                    }
+                    die $e;
+                };
 
-                my $hits = $bag->search(
-                    cql_query    => $cql,
-                    sru_sortkeys => $request->sortKeys,
-                    limit        => $limit,
-                    start        => $start - 1,
-                );
                 $response->numberOfRecords($hits->total);
                 $hits->each(sub {
                     my $data = $_[0];
@@ -88,11 +91,15 @@ sub sru_provider {
                         recordData   => $metadata,
                     ));
                 });
+                return $response->asXML;
+            }
+            default {
+                $response->addDiagnostic(SRU::Response::Diagnostic->newFromCode(4));
+                return $response->asXML;
             }
         }
-        return $response->asXML;
     };
-};
+}
 
 register sru_provider => \&sru_provider;
 

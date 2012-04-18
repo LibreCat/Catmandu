@@ -1,4 +1,4 @@
-package CQL::ElasticSearch; # TODO deal with multiple terms for ops other than any, all, exact!!!
+package CQL::ElasticSearch;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(load_package trim);
@@ -16,7 +16,14 @@ my $parser;
 sub parse {
     my ($self, $query) = @_;
     $parser ||= CQL::Parser->new;
-    $self->visit($parser->parse($query));
+    my $node;
+    eval {
+        $node = $parser->parse($query);
+    } or do {
+        my $e = $@;
+        die "cql error: $e";
+    };
+    $self->visit($node);
 }
 
 sub visit {
@@ -53,37 +60,34 @@ sub visit {
         if ($self->mapping and my $indexes = $self->mapping->{indexes}) {
             $qualifier = lc $qualifier;
             $qualifier =~ s/(?<=[^_])_(?=[^_])//g if $self->mapping->{strip_separating_underscores};
-            if (my $mapping = $indexes->{$qualifier}) {
-                $mapping->{op}{$base} or die "operator $base not allowed";
-                my $op = $mapping->{op}{$base};
-                if (ref $op && $op->{field}) {
-                    $qualifier = $op->{field};
-                } elsif ($mapping->{field}) {
-                    $qualifier = $mapping->{field};
-                }
+            my $mapping = $indexes->{$qualifier} or confess "cql error: unknown index $qualifier";
+            $mapping->{op}{$base} or confess "cql error: relation $base not allowed";
+            my $op = $mapping->{op}{$base};
+            if (ref $op && $op->{field}) {
+                $qualifier = $op->{field};
+            } elsif ($mapping->{field}) {
+                $qualifier = $mapping->{field};
+            }
 
-                my $filters;
-                if (ref $op && $op->{filter}) {
-                    $filters = $op->{filter};
-                } elsif ($mapping->{filter}) {
-                    $filters = $mapping->{filter};
-                }
-                if ($filters) {
-                    for my $filter (@$filters) {
-                        given ($filter) {
-                            when ('lowercase') { $term = lc $term }
-                        }
+            my $filters;
+            if (ref $op && $op->{filter}) {
+                $filters = $op->{filter};
+            } elsif ($mapping->{filter}) {
+                $filters = $mapping->{filter};
+            }
+            if ($filters) {
+                for my $filter (@$filters) {
+                    given ($filter) {
+                        when ('lowercase') { $term = lc $term }
                     }
                 }
-                if (ref $op && $op->{cb}) {
-                    my ($pkg, $sub) = @{$op->{cb}};
-                    $term = load_package($pkg)->$sub($term);
-                } elsif ($mapping->{cb}) {
-                    my ($pkg, $sub) = @{$mapping->{cb}};
-                    $term = load_package($pkg)->$sub($term);
-                }
-            } else {
-                die "field $qualifier not allowed";
+            }
+            if (ref $op && $op->{cb}) {
+                my ($pkg, $sub) = @{$op->{cb}};
+                $term = load_package($pkg)->$sub($term);
+            } elsif ($mapping->{cb}) {
+                my ($pkg, $sub) = @{$mapping->{cb}};
+                $term = load_package($pkg)->$sub($term);
             }
         }
 
