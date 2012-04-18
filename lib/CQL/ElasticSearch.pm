@@ -52,7 +52,7 @@ sub visit {
 
         if ($self->mapping and my $indexes = $self->mapping->{indexes}) {
             $qualifier = lc $qualifier;
-            $qualifier =~ s/([^_])_/$1/g;
+            $qualifier =~ s/(?<=[^_])_(?=[^_])//g if $self->mapping->{strip_separating_underscores};
             if (my $mapping = $indexes->{$qualifier}) {
                 $mapping->{op}{$base} or die "operator $base not allowed";
                 my $op = $mapping->{op}{$base};
