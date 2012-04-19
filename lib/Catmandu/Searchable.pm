@@ -10,11 +10,11 @@ requires 'search';
 requires 'searcher';
 requires 'delete_by_query';
 
-has default_limit => (is => 'ro', builder => '_build_default_limit');
-has max_limit => (is => 'ro', builder => '_build_max_limit');
+has default_limit => (is => 'ro', builder => 'default_default_limit');
+has maximum_limit => (is => 'ro', builder => 'default_maximum_limit');
 
-sub _build_default_limit { 10 }
-sub _build_max_limit { 1000 }
+sub default_default_limit { 10 }
+sub default_maximum_limit { 1000 }
 
 sub normalize_query { $_[1] }
 
@@ -24,8 +24,8 @@ my $AROUND_SEARCH = sub {
     $args{start} = 0                    unless is_natural($args{start});
     $args{start}+=0;
     $args{limit}+=0;
-    if ($args{limit} > $self->max_limit) {
-        $args{limit} = $self->max_limit;
+    if ($args{limit} > $self->maximum_limit) {
+        $args{limit} = $self->maximum_limit;
     }
     if (is_positive(my $page = delete $args{page})) {
         $args{start} = ($page - 1) * $args{limit};

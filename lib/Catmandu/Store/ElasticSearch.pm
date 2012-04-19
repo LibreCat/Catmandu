@@ -58,7 +58,7 @@ with 'Catmandu::Bag';
 with 'Catmandu::Searchable';
 with 'Catmandu::Buffer';
 
-has cql_mapping => (is => 'ro');
+has cql_mapping => (is => 'ro'); # TODO move to Searchable
 
 sub generator {
     my ($self) = @_;
