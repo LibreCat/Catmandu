@@ -6,6 +6,7 @@ use Catmandu::Sane;
 use Dancer::Plugin;
 use Dancer qw(:syntax);
 use Catmandu;
+use Catmandu::Util qw(:all);
 use Catmandu::Fix;
 use Catmandu::Exporter::Template;
 use SRU::Request;
@@ -104,7 +105,7 @@ XML
                 my $fix = $schema->{fix};
                 my $template = $schema->{template};
                 my $layout = $schema->{layout};
-                my $cql = $request->query;
+                my $cql = param('query'); # $request->query mangles utf8
                 if ($setting->{cql_filter}) {
                     $cql = "($setting->{cql_filter}) and ($cql)";
                 }

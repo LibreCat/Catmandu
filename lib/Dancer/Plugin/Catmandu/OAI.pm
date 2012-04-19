@@ -383,8 +383,8 @@ sub oai_provider {
 
             my @cql;
 
-            push @cql, "($setting->{filter})"                    if $setting->{filter};
-            push @cql, "($set->{cql})"                           if $set && $set->{cql};
+            push @cql, "($setting->{filter})"                        if $setting->{filter};
+            push @cql, "($set->{cql})"                               if $set && $set->{cql};
             push @cql, "($setting->{datestamp_field} >= \"$from\")"  if $from;
             push @cql, "($setting->{datestamp_field} <= \"$until\")" if $until;
             unless (@cql) {
