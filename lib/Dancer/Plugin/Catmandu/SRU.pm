@@ -72,11 +72,13 @@ sub sru_provider {
     get $path => sub {
         content_type 'xml';
 
-        my $request = SRU::Request->newFromURI(request->uri);
-        my $response = SRU::Response->newFromRequest($request);
+        my $params = params('query');
 
-        given (param('operation')) {
+        given ($params->{operation} // 'explain') {
             when ('explain') {
+                my $request  = SRU::Request::Explain->new(%$params);
+                my $response = SRU::Response->newFromRequest($request);
+
                 my $transport   = request->scheme;
                 my $database    = substr request->path, 1;
                 my $host        = request->host; $host =~ s/:.+//;
@@ -100,12 +102,15 @@ XML
                 return $response->asXML;
             }
             when ('searchRetrieve') {
+                my $request  = SRU::Request::SearchRetrieve->new(%$params);
+                my $response = SRU::Response->newFromRequest($request);
+
                 my $schema = $record_schema_map->{$request->recordSchema || $default_record_schema};
                 my $identifier = $schema->{identifier};
                 my $fix = $schema->{fix};
                 my $template = $schema->{template};
                 my $layout = $schema->{layout};
-                my $cql = param('query'); # $request->query mangles utf8
+                my $cql = $params->{query};
                 if ($setting->{cql_filter}) {
                     $cql = "($setting->{cql_filter}) and ($cql)";
                 }
@@ -147,7 +152,9 @@ XML
                 return $response->asXML;
             }
             default {
-                $response->addDiagnostic(SRU::Response::Diagnostic->newFromCode(4));
+                my $request  = SRU::Request::Explain->new(%$params);
+                my $response = SRU::Response->newFromRequest($request);
+                $response->addDiagnostic(SRU::Response::Diagnostic->newFromCode(6));
                 return $response->asXML;
             }
         }
