@@ -1,0 +1,283 @@
+=head1 NAME
+
+Catmandu::Introduction - An introduction to Catmandu
+
+=head1 INTRODUCTION
+
+Importing, transforming, storing and indexing data should be easy
+
+Catmandu provides a suite of Perl modules to ease the import, storage, retrieval, export
+and transformation of metadata records. Combine Catmandu modules with web application frameworks
+such as PSGI/Plack, document stores such as MongoDB and full text indexes as Solr to create
+a rapid development environment for digital library services such as institutional repositories and search engines.
+
+=head1 WHERE DO WE USE IT?
+
+In the LibreCat project it is our goal to provide in open source a set of programming components
+to build up digital libraries services suited to your local needs.
+Here is an example of the projects we are working on:
+
+LibreCat-Catalog : a next generation institutional repository (in development).
+LibreCat-Citation : a CSL based citation list (in development)
+LibreCat-Search : an ElasticSearch based front-end for institutional repositories.
+LibreCat-Grim : a Solr/IIPImage based image database.
+LibreCat-Archive : a Fedora Commons based digital repository (in development).
+LibreCat-Images : a MediaMosa based digitization workflow engine (in development).
+
+=head1 WHY DO WE USE IT?
+
+=head2 Extract, Transform and Load
+
+                 +--<--+               +--<--+
+                 | Fix |               | Fix |
+  +----------+   +-->--+   +-------+   +-->--+   +----------+
+  | Importer |------------>| Store |------------>| Exporter |
+  +----------+             +-------+             +----------+
+
+To create a search engine, one of your first tasks will to import data from various sources,
+map the fields to a common data model and post it to a full-text search engine.
+Perl modules such as WebService::Solr or ElasticSearch provide easy access to your favorite document stores,
+but you keep writing a lot of boilerplate code to create the connections,
+massaging the incoming data into the correct format, validating and uploading and indexing
+the data in the database. Next morning you are asked to provide a fast dump of records into an Excel worksheet.
+After some fixes are applied you are asked to upload it into your database. Again you hit Emacs or Vi and
+provide an ad-hoc script. In our LibreCat group we saw this workflow over and over.
+We tried to abstract this problem to a set of Perl tools which can work with library data such as MARC,
+Dublin Core, EndNote protocols such as OAI-PMH, SRU and repositories such as DSpace and Fedora.
+In data warehouses these processes are called ETL, Extract, Transform, Load.
+Many tools currenty exist for ETL processing but none adress typical library data models and services.
+
+=head2 Copy and Paste
+
+As programmers, we would like to reuse our code and algorithms as easy as possible.
+In fast application development you typically want to copy and paste parts of existing code in a new project.
+In Catmandu we use a functional style of programming to keep our code tight and clean and suitable for copy and pasting.
+When working with library data models we use native Perl hashes and arrays to pass data around.
+In this way adhere to the rationale of Alan J. Perlis: "It is better to have 100 functions
+operate on one data structure than to have 10 functions operate on 10 data structures."
+Our functions are all based on a few primary data structures on which we define many
+functions (map, count, each, first, take, ...)
+
+=head2 Schemaless databases
+
+Working with native Perl hashes and arrays we would like to use an easy mechanism to store and index
+this data in a database of choice.
+In the past it was a nuisance to create database schemas and indexes to store and search your data.
+Certainly in institutional repositories this can be a ongoing job for a programmer because the metadata schemas
+are not fixed in time. Any new report will require you to add new data fields and new relations
+for which you need to change your database schema.
+With the introduction of schemaless databases the storage of complex records is really easy.
+Create a Perl hash excute the function 'add' and your record is stored into the database.
+Execute 'get' to load a Perl hash from the database in memory.
+With our ElasticSearch plugin we even can provide you a CQL style query language for retrieval.
+
+  my $obj = { name => { last => 'Bond' , full => 'James Bond' } , occupation => 'Secret Agent' };
+  $store->bag->add($obj);
+
+  $store->bag->search(cql_query => 'name.last = Bond')->each(sub {
+    my $obj = shift;
+    printf "%s\n", $obj->{name}->{full};
+  });
+
+=head1 GETTING STARTED
+
+To get Catmandu running on your system you need to clone the code from github.com and build and install it.
+
+  git clone git@github.com:LibreCat/Catmandu.git
+  cd Catmandu
+  perl Build.PL
+  ./Build installdeps
+  sudo ./Build install
+
+
+=head1 Importer
+
+Importers are Catmandu packages to read data into an application.
+We provide importers for MARC, JSON, YAML, CSV, Excel but also Atom and OAI-PMH endpoints.
+As an example, lets create a Perl script to read a YAML file containing an array of values.
+We use the each function to loop through all the items
+
+  #!/usr/bin/env perl
+
+  use Catmandu::Importer::YAML;
+
+  my $importer = Catmandu::Importer::YAML->new(file => "./test.yaml");
+
+  my $count = $importer->each(sub {
+     my $obj = shift;
+     # .. your code ..
+  });
+
+  say "Read: $count YAML items";
+
+Running this script using this test.yaml file you should see as output:
+
+  Read: 3 YAML items
+
+Here is an example script to read 10 records from an OAI-PMH endpoint into an application:
+
+  #!/usr/bin/env perl
+
+  use Catmandu::Importer::OAI;
+
+  my $importer = Catmandu::Importer::OAI->new(url => 'http://biblio.ugent.be/oai');
+
+  my $count = $importer->take(10)->each(sub {
+     my $obj = shift;
+     # .. your code ..
+  });
+
+  say "Read sample of $count OAI items";
+
+=head1 Iterable
+
+The Iterable package provides many list methods to process large streams of records.
+Most of the methods are lazy if the underlying datastream supports it.
+While all of the data in Catmandu are native Perl hashes and arrays it can be impratical
+to load a result set of thousands of records into memory.
+Most Catmandu packages such as Importer, Exporter and Store provide therefor an Iterable implementation.
+
+Using a Mock importer we can generate some Perl hashes on-the-fly and show the functionality provided by Iterable:
+
+  use Catmandu::Importer::Mock;
+  my $it = Catmandu::Importer::Mock->new(size => 10);
+
+  With each you can loop over all the items in an iterator:
+
+  $it->each(sub {
+     printf "My n is %d\n" , shift->{n};
+  });
+
+Using any, many, all you can test for the existence of items in an Iterator:
+
+  my $answer = $it->any(sub { shift->{n} > 4});
+  printf "Iterator contains n > 4 = %s\n" , $answer ? 'TRUE' : 'FALSE';
+
+  my $answer = $it->many(sub { shift->{n} > 8});
+  printf "Iterator contains n > 8 = %s\n" , $answer ? 'TRUE' : 'FALSE';
+
+  my $answer = $it->all(sub { shift->{n} =~ /^\d+$/});
+  printf "Iterator contains only digits = %s\n" , $answer ? 'TRUE' : 'FALSE';
+
+Map and reduce are functions that evaluate a function on all the items in an iterator
+to procude a new iterator or a summary of the results:
+
+  # $it contains: [ { n => 1 } , { n => 2 } , ... ];
+  my $ret = $it->map(sub {
+       my $hash = shift;
+       { n => $hash->{n} * 2 }
+  });
+
+  # $ret contains : [ { n => 2 } , { n => 4 } , ... ];
+
+  my $result = $it->reduce(0,sub {
+       my $prev = shift;
+       my $this = shift->{n} * 2;
+       $prev + $this;
+  });
+  printf "SUM [ Iterator * 2] = %d\n" , $result
+
+The Iterable package provides many more functions such as: to_array, count, each, first, slice,
+take, group, tap, detect, select, reject, any, many, all, map, reduce and invoke.
+
+=head1 Exporter
+
+Exporters are Catmandu packages to export data from an application.
+As input they can get native Perl hashes or arrays but also Iterators to stream huge data sets.
+
+Here is an example using our Mock importer to stream 1 million Perl hashes through an Exporter:
+
+  use Catmandu::Exporter::YAML
+
+  my $exporter = Catmandu::Exporter::YAML->new();
+  $exporter->add_many(Catmandu::Importer::Mock->new(size => 1000000));
+
+Catmandu provides exporters for BibTeX, CSV, JSON, RIS, XLS and YAML.
+If you need a special exporter for your own format you could use the Template exporter which uses Template Toolkit.
+
+As an example lets create an exporter for an Perl array of hashes $data using a template:
+
+  use Catmandu::Exporter::Template;
+
+  my $data = [
+   { name => { first => 'James' , last => 'Bond' } , occupation => 'Secret Agent' } ,
+   { name => { first => 'Ernst' , last => 'Blofeld' } , occupation => 'Supervillain' } ,
+  ];
+  my $exporter = Catmandu::Exporter::Template->new(template => '/home/phochste/example.tt');
+  $exporter->add_many($data);
+
+The template example.tt will be rendered for every hash in the array $data (or for every item in an Iterable $data).
+
+  <character>
+   <name>[% name.last %], [% name.first %]</name>
+   <occupation>[% occupation %]</occupation>
+  </character>
+
+=head1 Fix
+
+Fixes can be used for easy data manipulation by non programmers.
+Using a small Perl DSL language librarians can use Fix routines to manipulate data objects.
+A plain text file of fixes can be created to specify all the data manipulations
+that need to be executed to 'massage' the data in the desired format.
+
+As an example we will import data from a MARC file and
+change some metadata fields using Fix routines. Here is the code to run the example:
+
+  use Catmandu::Fix;
+  use Catmandu::Importer::MARC;
+  use Data::Dumper;
+
+  my $fixer = Catmandu::Fix->new(fixes => ['marc.fix']);
+  my $it    = Catmandu::Importer::MARC->new(file => 'marc.txt', type => 'ALEPHSEQ');
+
+  $fixer->fix($it)->each(sub {
+     my $obj = shift;
+     print Dumper($obj);
+  });
+
+The output of this script should generate something like this:
+
+  $VAR1 = {
+            '_id' => '000000043',
+            'my' => {
+                      'authors' => [
+                                     'Patrick Hochstenbachhttp://ok',
+                                     'Patrick Hochstenbach2My bMy eMy codeGhent1971',
+                                     'Patrick Hochstenbach3',
+                                     'Stichting Ons Erfdeel'
+                                   ],
+                      'language' => 'dut',
+                      'subjects' => [
+                                      'MyTopic1',
+                                      'MyTopic2',
+                                      'MyTopic3',
+                                      'MyTopic4'
+                                    ],
+                      'stringy' => 'MyTopic1; MyGenre1; MyTopic2; MyGenre2; MyTopic3; MyTopic4; MyGenre4'
+                    }
+          };
+
+We need two files as input: marc.txt is a file containing MARC records
+and marc.fix contains the fixes that need to be applied to each MARC record.
+Lets take a look at the contents of this marc.fix file:
+
+  marc_map('100','my.authors.$append');
+  marc_map('710','my.authors.$append');
+  marc_map('600x','my.subjects.$append');
+  marc_map('008_/35-37','my.language');
+  marc_map('600','my.stringy', -join => "; ");
+  marc_map('199','my.condition', -value => 'ok');
+
+  remove_field('record');
+
+The fixes in this file are specialized in MARC processing.
+In line 1 we map the contents of the MARC-100 field into a deeply neested Perl hash with key 'authors'.
+In line 3 we map the contents of the MARC-600 x-subfield into the 'subjects' field.
+In Line 4 we read characters 35 to 37 from the MARC-008 control field into the 'language' key.
+
+A Catmandu Fix provides also many functions to manipulate Perl hashes.
+The remove_field, as shown above in the fix file, will remove a key from a Perl hash.
+Other fix function are: add_field, capitalize, clone, collapse, copy_field, downcase,
+expand, join_field, move_fild, remove_field, replace_all, retain_field,
+set_field, split_field, substring, trim and upcase.
+
