@@ -212,6 +212,8 @@ sub _translate_sru_sortkey {
     my ($field, $schema, $asc) = split /,/, $sortkey;
     $field || return;
     if (my $map = $self->cql_mapping) {
+        $field = lc $field;
+        $field =~ s/(?<=[^_])_(?=[^_])//g if $map->{strip_separating_underscores};
         $map = $map->{indexes} || return;
         $map = $map->{$field}  || return;
         $map->{sort} || return;
