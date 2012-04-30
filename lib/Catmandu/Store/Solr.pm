@@ -142,12 +142,18 @@ sub search {
         delete $_->{_bag} for @$set;
     }
 
-    Catmandu::Hits->new({
+    my $hits = Catmandu::Hits->new({
         limit => $limit,
         start => $start,
         total => $res->content->{response}{numFound},
         hits  => $set,
     });
+
+    if ($res->facet_counts) {
+        $hits->{facets} = $res->facet_counts;
+    }
+
+    $hits;
 }
 
 sub searcher {
