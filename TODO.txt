@@ -1,11 +1,23 @@
-* Addable, Getable adds before_add and before_get, takes fixes or sub
-* remove Fixable
-* give Iterable fix method
-* give Iterable export, export_to_string methods ?
-* bag drop
-* make CQL::Searchable ?
-* fix Store::Lucy
-* load config, set env, set lib path without Dancer
+BEFORE CPAN RELEASE
+
 * (better) error handling
-* Searchable optimize
+* remove Index and FileStore folders
+* add contributors guide
+* decouple Dancer: load config, set env, set lib path without Dancer
+* split into separate modules:
+  * Catmandu::Store::Lucy (and fix)
+  * Catmandu::Cmd::fuse.pm
+
+LATER
+
+* remove Fixable, add before_add and before_get, takes fixes or sub
+* give Iterable fix method
+* give Iterable export, export_to_string methods
+* bag drop
+* split Searchable into Searchable and CQL Searchable
+* Searchable handle index optimize
+
+MAYBE
+
 * generator should guard with a magic ref, not undef
+
