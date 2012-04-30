@@ -18,10 +18,15 @@ to build up digital libraries services suited to your local needs.
 Here is an example of the projects we are working on:
 
 LibreCat-Catalog : a next generation institutional repository (in development).
+
 LibreCat-Citation : a CSL based citation list (in development)
+
 LibreCat-Search : an ElasticSearch based front-end for institutional repositories.
+
 LibreCat-Grim : a Solr/IIPImage based image database.
+
 LibreCat-Archive : a Fedora Commons based digital repository (in development).
+
 LibreCat-Images : a MediaMosa based digitization workflow engine (in development).
 
 =head1 WHY DO WE USE IT?
@@ -36,7 +41,7 @@ LibreCat-Images : a MediaMosa based digitization workflow engine (in development
 
 To create a search engine, one of your first tasks will to import data from various sources,
 map the fields to a common data model and post it to a full-text search engine.
-Perl modules such as WebService::Solr or ElasticSearch provide easy access to your favorite document stores,
+Perl modules such as L<WebService::Solr> or L<ElasticSearch> provide easy access to your favorite document stores,
 but you keep writing a lot of boilerplate code to create the connections,
 massaging the incoming data into the correct format, validating and uploading and indexing
 the data in the database. Next morning you are asked to provide a fast dump of records into an Excel worksheet.
@@ -67,8 +72,8 @@ Certainly in institutional repositories this can be a ongoing job for a programm
 are not fixed in time. Any new report will require you to add new data fields and new relations
 for which you need to change your database schema.
 With the introduction of schemaless databases the storage of complex records is really easy.
-Create a Perl hash excute the function 'add' and your record is stored into the database.
-Execute 'get' to load a Perl hash from the database in memory.
+Create a Perl hash excute the function C<add> and your record is stored into the database.
+Execute C<get> to load a Perl hash from the database in memory.
 With our ElasticSearch plugin we even can provide you a CQL style query language for retrieval.
 
   my $obj = { name => { last => 'Bond' , full => 'James Bond' } , occupation => 'Secret Agent' };
@@ -110,9 +115,7 @@ We use the each function to loop through all the items
 
   say "Read: $count YAML items";
 
-Running this script using this test.yaml file you should see as output:
-
-  Read: 3 YAML items
+Running this script using this test.yaml file you should see as output: C<Read: 3 YAML items>
 
 Here is an example script to read 10 records from an OAI-PMH endpoint into an application:
 
@@ -177,8 +180,8 @@ to procude a new iterator or a summary of the results:
   });
   printf "SUM [ Iterator * 2] = %d\n" , $result
 
-The Iterable package provides many more functions such as: to_array, count, each, first, slice,
-take, group, tap, detect, select, reject, any, many, all, map, reduce and invoke.
+The Iterable package provides many more functions such as: C<to_array>, C<count>, C<each>, C<first>, C<slice>,
+C<take>, C<group>, C<tap>, C<detect>, C<select>, C<reject>, C<any>, C<many>, C<all>, C<map>, C<reduce> and C<invoke>.
 
 =head1 Exporter
 
