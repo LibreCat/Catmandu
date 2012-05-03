@@ -6,10 +6,13 @@ use Text::CSV;
 
 with 'Catmandu::Importer';
 
-has csv        => (is => 'ro', lazy => 1, builder => '_build_csv');
+has csv => (is => 'ro', lazy => 1, builder => '_build_csv');
+has sep_char => (is => 'ro', default => sub { ',' });
 has quote_char => (is => 'ro', default => sub { '"' });
-has split_char => (is => 'ro', default => sub { ',' });
-has header     => (is => 'ro', default => sub { 1 });
+has escape_char => (is => 'ro', default => sub { '"' });
+has allow_loose_quotes => (is => 'ro', default => sub { 0 });
+has allow_loose_escapes => (is => 'ro', default => sub { 0 });
+has header => (is => 'ro', default => sub { 1 });
 has fields => (
     is     => 'rw',
     coerce => sub {
@@ -25,9 +28,12 @@ has fields => (
 sub _build_csv {
     my ($self) = @_;
     Text::CSV->new({
-        binary     => 1,
-        quote_char => $self->quote_char,
-        sep_char   => $self->split_char,
+        binary => 1,
+        sep_char => $self->sep_char,
+        quote_char => $self->quote_char ? $self->quote_char : undef,
+        escape_char => $self->escape_char ? $self->escape_char : undef,
+        allow_loose_quotes => $self->allow_loose_quotes,
+        allow_loose_escapes => $self->allow_loose_escapes,
     });
 }
 
@@ -67,11 +73,11 @@ Catmandu::Importer::CSV - Package that imports CSV data
 
 =head1 METHODS
 
-=head2 new(file => $filename, fields => \@fields, quote_char => "\"", split_char => ",")
+=head2 new(file => $filename, fields => \@fields, quote_char => "\"", sep_char => ",")
 
 Create a new CSV importer for $filename. Use STDIN when no filename is given. The
 object fields are read from the CSV header line or given via the 'fields' parameter.
-Strings in CSV are quoted by 'quote_char' and fields are split by 'split_char'.
+Strings in CSV are quoted by 'quote_char' and fields are separated by 'sep_char'.
 
 =head2 count
 

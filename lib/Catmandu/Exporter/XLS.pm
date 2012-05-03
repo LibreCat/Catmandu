@@ -54,7 +54,6 @@ sub add {
 
 sub commit {
     $_[0]->xls->close;
-    1;
 }
 
 =head1 NAME
@@ -68,8 +67,6 @@ Catmandu::Exporter::XLS - a XLS exporter
     my $exporter = Catmandu::Exporter::XLS->new(
 				file => 'output.xls',
 				fix => 'myfix.txt'
-				quote_char => '"' ,
-				split_char => ',' ,
 				header => 1);
 
     $exporter->fields("f1,f2,f3");
