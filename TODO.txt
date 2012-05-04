@@ -4,13 +4,16 @@ BEFORE CPAN RELEASE
 * logger
 * add contributors guide
 * split into separate modules:
+  * Catmandu::Exporter::BibTeX
+  * Catmandu::Exporter::CSL (and make it work with Bielefeld's api)
+  * Catmandu::Exporter::XLS
+  * Catmandu::Importer::Atom
+  * Catmandu::Importer::Marc
+  * Catmandu::Importer::OAI
   * Catmandu::Store::Lucy (and fix)
   * Catmandu::Store::ElasticSearch
   * Catmandu::Store::Solr
-  * Catmandu::Store::MongoDB
   * Catmandu::Store::DBI (?)
-  * Catmandu::Cmd::fuse.pm
-  * Catmandu::Cmd::repl.pm
   * Dancer::Plugin::
   * Dancer::Session::
 * remove Dancer from Catmandu::Exporter::Template

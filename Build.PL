@@ -24,6 +24,7 @@ my $requires = {
     'Plack' => '0.9982',
     'Sub::Exporter' => '0.982',
     'Template' => '2.22',
+    'Text::CSV' => '1.21',
     'YAML::Any' => '0.77',
 };
 
@@ -37,12 +38,6 @@ my $auto_features = {
         description => "Store backed by DBI",
         requires => {
             'DBI' => '1.616',
-        },
-    },
-    store_mongodb => {
-        description => "Store backed by MongoDB",
-        requires => {
-            'MongoDB' => '0.42',
         },
     },
     store_elasticsearch => {
@@ -69,12 +64,6 @@ my $auto_features = {
             'XML::Atom' => '0.41',
         },
     },
-    import_csv => {
-        description => "Import data from a CSV file",
-        requires => {
-            'Text::CSV' => '1.21',
-        },
-    },
     import_oai => {
         description => "Import data from an OAI harvestable respository",
         requires => {
@@ -92,12 +81,6 @@ my $auto_features = {
         description => "Export data to BibTeX",
         requires => {
             'LaTeX::Encode' => '0.03',
-        },
-    },
-    export_csv => {
-        description => "Export data to CSV",
-        requires => {
-            'Text::CSV' => '1.21',
         },
     },
     export_xls => {
