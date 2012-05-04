@@ -1,7 +1,7 @@
 package CQL::ElasticSearch;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(load_package trim);
+use Catmandu::Util qw(require_package trim);
 use CQL::Parser;
 use Moo;
 
@@ -84,10 +84,10 @@ sub visit {
             }
             if (ref $op && $op->{cb}) {
                 my ($pkg, $sub) = @{$op->{cb}};
-                $term = load_package($pkg)->$sub($term);
+                $term = require_package($pkg)->$sub($term);
             } elsif ($mapping->{cb}) {
                 my ($pkg, $sub) = @{$mapping->{cb}};
-                $term = load_package($pkg)->$sub($term);
+                $term = require_package($pkg)->$sub($term);
             }
         }
 

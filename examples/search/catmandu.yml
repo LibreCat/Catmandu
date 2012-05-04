@@ -1,0 +1,4 @@
+store:
+  search:
+      package: Solr
+

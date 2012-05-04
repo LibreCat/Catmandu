@@ -8,10 +8,13 @@ use List::Util;
 use Data::Compare ();
 use IO::File;
 use IO::String;
+use YAML::Any ();
+use JSON ();
 
 our %EXPORT_TAGS = (
-    package => [qw(load_package)],
+    load    => [qw(require_package use_lib)],
     io      => [qw(io)],
+    read    => [qw(read_file read_yaml read_json)],
     data    => [qw(parse_data_path get_data set_data delete_data data_at)],
     array   => [qw(array_exists array_group_by array_pluck array_to_sentence
         array_sum array_includes array_any array_rest)],
@@ -24,15 +27,25 @@ our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
 
 $EXPORT_TAGS{all} = \@EXPORT_OK;
 
-sub load_package {
-    my ($pkg, $prefix) = @_;
+sub use_lib {
+    my (@dirs) = @_;
+    use lib;
+    local $@;
+    lib->import(@dirs);
+    confess $@ if $@;
+    return;
+}
 
-    if ($prefix) {
-        unless ($pkg =~ s/^\+// || $pkg =~ /^$prefix/) {
-            $pkg = "${prefix}::${pkg}";
+sub require_package {
+    my ($pkg, $ns) = @_;
+
+    if ($ns) {
+        unless ($pkg =~ s/^\+// || $pkg =~ /^$ns/) {
+            $pkg = "${ns}::$pkg";
         }
     }
 
+    local $@;
     eval "require $pkg" or confess $@;
 
     $pkg;
@@ -57,6 +70,22 @@ sub io {
     binmode $io_obj, $opts{encoding};
 
     $io_obj;
+}
+
+sub read_file {
+    local $/;
+    open FH, check_string($_[0]) or confess "can't read file '$_[0]'";
+    my $str = <FH>;
+    close FH;
+    $str;
+}
+
+sub read_yaml {
+    YAML::Any::LoadFile($_[0]);
+}
+
+sub read_json {
+    JSON::decode_json(read_file($_[0]));
 }
 
 my $pass_guard = sub { 1 };

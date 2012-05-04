@@ -25,8 +25,8 @@ require_ok $pkg;
     use Catmandu::Util qw(:is);
     package T::ImportCheck;
     use Catmandu::Util qw(:check);
-    package T::ImportPackage;
-    use Catmandu::Util qw(:package);
+    package T::ImportLoad;
+    use Catmandu::Util qw(:load);
     package T::ImportIo;
     use Catmandu::Util qw(:io);
     package T::ImportData;
@@ -73,11 +73,11 @@ for my $sym (qw(able invocant ref
     ok !T::ImportIs->can("check_$sym");
     ok !T::ImportIs->can("check_maybe_$sym");
 }
-for my $sym (qw(load_package)) {
+for my $sym (qw(require_package use_lib)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
     can_ok 'T::ImportAll', $sym;
-    can_ok 'T::ImportPackage', $sym;
+    can_ok 'T::ImportLoad', $sym;
 }
 for my $sym (qw(io)) {
     can_ok $pkg, $sym;
@@ -104,5 +104,5 @@ for my $sym (qw(as_utf8 trim capitalize)) {
     can_ok 'T::ImportString', $sym;
 }
 
-done_testing 390;
+done_testing 394;
 

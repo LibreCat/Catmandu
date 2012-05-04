@@ -3,15 +3,15 @@ package Plack::Session::Store::Catmandu;
 our $VERSION = '0.01';
 
 use Catmandu::Sane;
-use Catmandu;
 use parent qw(Plack::Session::Store);
+use Catmandu;
 
 sub new {
     my ($class, %opts) = @_;
-    my $store = $opts{store} || Catmandu::default_store;
+    my $store = $opts{store} || Catmandu->default_store;
     my $bag = $opts{bag} || 'session';
     bless {
-        bag => Catmandu::store($store)->bag($bag),
+        bag => Catmandu->store($store)->bag($bag),
     }, $class;
 }
 

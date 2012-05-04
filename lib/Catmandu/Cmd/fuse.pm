@@ -2,8 +2,8 @@ package Catmandu::Cmd::fuse;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
+use Catmandu::Util qw(:load);
 use Catmandu qw(:all);
-use Dancer qw(:syntax config);
 use POSIX qw(ENOENT EISDIR);
 use JSON ();
 
@@ -15,7 +15,7 @@ sub command_opt_spec {
 
 sub command {
     my ($self, $opts, $args) = @_;
-    load_package('Fuse');
+    require_package('Fuse');
     Fuse::main(
         mountpoint => $opts->mountpoint,
         getattr    => __PACKAGE__.'::fs_getattr',

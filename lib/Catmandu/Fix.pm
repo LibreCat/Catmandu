@@ -1,8 +1,7 @@
 package Catmandu::Fix::Loader;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is load_package);
-use File::Slurp;
+use Catmandu::Util qw(:is :load read_file);
 
 my $fixes;
 
@@ -23,7 +22,7 @@ sub load_fixes {
 
 sub add_fix {
     my ($fix, @args) = @_;
-    $fix = load_package($fix, 'Catmandu::Fix');
+    $fix = require_package($fix, 'Catmandu::Fix');
     push @$fixes, $fix->new(@args);
 }
 

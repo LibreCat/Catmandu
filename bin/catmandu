@@ -1,9 +1,11 @@
 #!/usr/bin/env perl
-#
-# A Catmandu command line interface
-#
-use Catmandu::CLI;
-Catmandu::CLI->run();
+
+use Catmandu ();
+use Catmandu::CLI ();
+use Cwd ();
+
+Catmandu->default_load_path(Cwd::getcwd);
+Catmandu::CLI->run;
 
 =head1 NAME
 
@@ -25,10 +27,6 @@ catmandu - LibreCat command line tools
 
 Data manipulation commands: import, export, store, search.
 
-=head2 repl
-
-A Perl REPL interface to the Catmandu classes.
-
 =head2 help COMMAND
 
 Documentation about command line options.
@@ -39,27 +37,22 @@ Documentation about command line options.
 
 =over 4
 
-=item -v 
+=item -v
 
 Verbose output.
 
-=item -h 
+=item -h
 
 =item -?
 
 Display the help screen.
 
-=item --environment STRING
+=item --load-path PATH
 
-Set the application environment to STRING. This is used in Dancer applications (e.g. 'development','production').
+=item -L PATH
 
-=item --appdir PATH
-
-Set the application directory to PATH. This is used in Dancer applications.
-
-=item --confdir PATH
-
-Set the application configuration directory. This is used in Dancer applications.
+Search upwards from this path for configuration files and lib directories.
+This option is repeatable.
 
 =back
 

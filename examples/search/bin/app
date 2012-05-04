@@ -1,4 +1,4 @@
 #!/usr/bin/env perl
 use Dancer;
-use all qw(Example::App::);
+use Example::App::Search;
 dance;

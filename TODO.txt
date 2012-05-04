@@ -1,23 +1,32 @@
 BEFORE CPAN RELEASE
 
 * (better) error handling
-* remove Index and FileStore folders
+* logger
 * add contributors guide
-* decouple Dancer: load config, set env, set lib path without Dancer
 * split into separate modules:
   * Catmandu::Store::Lucy (and fix)
+  * Catmandu::Store::ElasticSearch
+  * Catmandu::Store::Solr
+  * Catmandu::Store::MongoDB
+  * Catmandu::Store::DBI (?)
   * Catmandu::Cmd::fuse.pm
+  * Catmandu::Cmd::repl.pm
+  * Dancer::Plugin::
+  * Dancer::Session::
+* modify Catmandu::Exporter::CSV to match Catmandu::Importer::CSV
+* remove Dancer from Catmandu::Exporter::Template
 
 LATER
 
+* validation
 * remove Fixable, add before_add and before_get, takes fixes or sub
 * give Iterable fix method
 * give Iterable export, export_to_string methods
 * bag drop
-* split Searchable into Searchable and CQL Searchable
 * Searchable handle index optimize
 
 MAYBE
 
+* split Searchable into Searchable and CQL Searchable
 * generator should guard with a magic ref, not undef
 

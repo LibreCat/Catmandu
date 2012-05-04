@@ -33,7 +33,7 @@ sub sru_provider {
         $record_schema_map->{$name} = $schema;
     }
 
-    my $bag = Catmandu::store($setting->{store})->bag($setting->{bag});
+    my $bag = Catmandu->store($setting->{store})->bag($setting->{bag});
 
     my $default_limit = $bag->default_limit;
     my $maximum_limit = $bag->maximum_limit;

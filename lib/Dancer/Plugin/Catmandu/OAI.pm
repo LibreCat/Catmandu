@@ -228,7 +228,7 @@ sub oai_provider {
     my $sub_deleted = $opts{deleted} || sub { 0 };
     my $sub_set_specs_for = $opts{set_specs_for} || sub { [] };
 
-    my $bag = Catmandu::store($opts{store} || $setting->{store})->bag($opts{bag} || $setting->{bag});
+    my $bag = Catmandu->store($opts{store} || $setting->{store})->bag($opts{bag} || $setting->{bag});
 
     get $path => sub {
         my $response_date = DateTime->now->iso8601.'Z';

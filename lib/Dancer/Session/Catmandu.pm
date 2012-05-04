@@ -9,9 +9,9 @@ use Dancer qw(:syntax config);
 
 sub _bag {
     state $bag = do {
-        my $s = config->{session_store} || Catmandu::default_store;
+        my $s = config->{session_store} || Catmandu->default_store;
         my $b = config->{session_bag}   || 'session';
-        Catmandu::store($s)->bag($b);
+        Catmandu->store($s)->bag($b);
     };
 }
 
