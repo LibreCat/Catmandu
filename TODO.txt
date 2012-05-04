@@ -13,7 +13,6 @@ BEFORE CPAN RELEASE
   * Catmandu::Cmd::repl.pm
   * Dancer::Plugin::
   * Dancer::Session::
-* modify Catmandu::Exporter::CSV to match Catmandu::Importer::CSV
 * remove Dancer from Catmandu::Exporter::Template
 
 LATER

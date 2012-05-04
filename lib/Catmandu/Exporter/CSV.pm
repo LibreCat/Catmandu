@@ -7,8 +7,9 @@ use Text::CSV;
 with 'Catmandu::Exporter';
 
 has csv        => (is => 'ro', lazy => 1, builder => '_build_csv');
+has sep_char => (is => 'ro', default => sub { ',' });
 has quote_char => (is => 'ro', default => sub { '"' });
-has split_char => (is => 'ro', default => sub { ',' });
+has escape_char => (is => 'ro', default => sub { '"' });
 has header     => (is => 'ro', default => sub { 1 });
 has fields => (
     is     => 'rw',
@@ -25,10 +26,11 @@ has fields => (
 sub _build_csv {
     my ($self) = @_;
     Text::CSV->new({
-        binary     => 1,
-        eol        => "\n",
-        quote_char => $self->quote_char,
-        sep_char   => $self->split_char,
+        binary => 1,
+        eol => "\n",
+        sep_char => $self->sep_char,
+        quote_char => $self->quote_char ? $self->quote_char : undef,
+        escape_char => $self->escape_char ? $self->escape_char : undef,
     });
 }
 
