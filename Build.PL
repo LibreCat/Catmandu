@@ -33,12 +33,6 @@ my $recommends = {
 };
 
 my $auto_features = {
-    cmd_fuse => {
-        description => "expose stores a FUSE filesystem",
-        requires => {
-            'Fuse' => '0.14',
-        },
-    },
     store_dbi => {
         description => "Store backed by DBI",
         requires => {
