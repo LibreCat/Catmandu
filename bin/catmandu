@@ -17,7 +17,7 @@ catmandu - LibreCat command line tools
 
  catmandu help data
 
- catmandu help repl
+ catmandu help config
 
  catmandu data --from-importer YAML --into-exporter CSV < test.yaml
 
