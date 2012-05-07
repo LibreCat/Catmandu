@@ -5,5 +5,8 @@
 _build
 blib
 Build
+Makefile.PL
 MANIFEST*
+META.*
 MYMETA.*
+Catmandu-*

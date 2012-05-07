@@ -46,6 +46,9 @@ my $build = Module::Build->new(
         'JSON::XS' => '2.3',
         'YAML::XS' => '0.34',
     },
+    add_to_cleanup => [qw(
+        Catmandu-*
+    )],
     create_makefile_pl => 'traditional',
     create_license => 1,
 );
