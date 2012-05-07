@@ -64,19 +64,6 @@ my $auto_features = {
             'XML::Atom' => '0.41',
         },
     },
-    import_oai => {
-        description => "Import data from an OAI harvestable respository",
-        requires => {
-            'Net::OAI::Harvester' => '1.13',
-        },
-    },
-    import_marc => {
-        description => "Import data from MARC",
-        requires => {
-            'MARC::Record' => '2.0.3',
-            'MARC::File::XML' => '0.93',
-        },
-    },
     export_bibtex => {
         description => "Export data to BibTeX",
         requires => {

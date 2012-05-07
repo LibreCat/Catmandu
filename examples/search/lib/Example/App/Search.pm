@@ -4,6 +4,8 @@ use Catmandu::Sane;
 use Catmandu qw(store);
 use Dancer qw(:syntax);
 
+BEGIN { Catmandu->load }
+
 my $bag = store('search')->bag('example');
 
 get '/opensearch.xml' => sub {
