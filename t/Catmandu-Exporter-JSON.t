@@ -2,16 +2,12 @@
 
 use strict;
 use warnings;
-use Catmandu::ConfigData;
 use Test::More;
 use Test::Exception;
 use JSON ();
 
 my $pkg;
 BEGIN {
-    #unless (Catmandu::ConfigData->feature('')) {
-    #    plan skip_all => 'feature disabled';
-    #}
     $pkg = 'Catmandu::Exporter::JSON';
     use_ok $pkg;
 }

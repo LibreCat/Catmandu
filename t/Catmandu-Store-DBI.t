@@ -2,15 +2,11 @@
 
 use strict;
 use warnings;
-use Catmandu::ConfigData;
 use Test::More;
 use Test::Exception;
 
 my $pkg;
 BEGIN {
-    unless (Catmandu::ConfigData->feature('store_dbi')) {
-        plan skip_all => 'feature disabled';
-    }
     $pkg = 'Catmandu::Store::DBI';
     use_ok $pkg;
 }

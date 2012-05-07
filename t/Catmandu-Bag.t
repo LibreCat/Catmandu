@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use Catmandu::ConfigData;
 use Test::More;
 use Test::Exception;
 use Role::Tiny;
@@ -10,9 +9,6 @@ use Data::Util;
 
 my $pkg;
 BEGIN {
-    #unless (Catmandu::ConfigData->feature('')) {
-    #    plan skip_all => 'feature disabled';
-    #}
     $pkg = 'Catmandu::Bag';
     use_ok $pkg;
 }

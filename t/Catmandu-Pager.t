@@ -2,15 +2,11 @@
 
 use strict;
 use warnings;
-use Catmandu::ConfigData;
 use Test::More;
 use Test::Exception;
 
 my $pkg;
 BEGIN {
-    #unless (Catmandu::ConfigData->feature('')) {
-    #    plan skip_all => 'feature disabled';
-    #}
     $pkg = 'Catmandu::Pager';
     use_ok $pkg;
 }
