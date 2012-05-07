@@ -1,7 +1,7 @@
 package Catmandu::Fix::Loader;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :load read_file);
+use Catmandu::Util qw(:is require_package read_file);
 
 my $fixes;
 

@@ -21,8 +21,8 @@ require_ok $pkg;
     use Catmandu::Util qw(:is);
     package T::ImportCheck;
     use Catmandu::Util qw(:check);
-    package T::ImportLoad;
-    use Catmandu::Util qw(:load);
+    package T::ImportMisc;
+    use Catmandu::Util qw(:misc);
     package T::ImportIo;
     use Catmandu::Util qw(:io);
     package T::ImportData;
@@ -73,9 +73,9 @@ for my $sym (qw(require_package use_lib)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
     can_ok 'T::ImportAll', $sym;
-    can_ok 'T::ImportLoad', $sym;
+    can_ok 'T::ImportMisc', $sym;
 }
-for my $sym (qw(io)) {
+for my $sym (qw(io read_file read_yaml read_json)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
     can_ok 'T::ImportAll', $sym;
@@ -100,5 +100,5 @@ for my $sym (qw(as_utf8 trim capitalize)) {
     can_ok 'T::ImportString', $sym;
 }
 
-done_testing 394;
+done_testing 406;
 

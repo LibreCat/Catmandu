@@ -1,10 +1,84 @@
 package Catmandu;
 
+use Catmandu::Sane;
+use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
+use File::Spec;
+
+=head1 NAME
+
+Catmandu - a data toolkit
+
+=head1 VERSION
+
+Version 0.1
+
+=cut
+
 our $VERSION = '0.1';
 
-use Catmandu::Sane;
-use Catmandu::Util qw(:load :read :is :check);
-use File::Spec;
+=head1 SYNOPSIS
+
+    use Catmandu;
+
+    Catmandu->load;
+    Catmandu->load('/config/path', '/another/config/path');
+
+    Catmandu->store->bag('projects')->count;
+
+    Catmandu->config;
+    Catmandu->config->{foo} = 'bar';
+
+    use Catmandu -all;
+    use Catmandu qw(config store);
+    use Catmandu -load;
+    use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
+
+=head1 EXPORTS
+
+=over
+
+=item config
+
+Same as C<< Catmandu->config >>.
+
+=item store
+
+Same as C<< Catmandu->store >>.
+
+=item importer
+
+Same as C<< Catmandu->importer >>.
+
+=item exporter
+
+Same as C<< Catmandu->exporter >>.
+
+=item export
+
+Same as C<< Catmandu->export >>.
+
+=item export_to_string
+
+Same as C<< Catmandu->export_to_string >>.
+
+=item -all/:all
+
+Import everything.
+
+=item -load/:load
+
+    use Catmandu -load;
+    use Catmandu -load => [];
+    # is the same as
+    Catmandu->load;
+
+    use Catmandu -load => ['/config/path'];
+    # is the same as
+    Catmandu->load('/config/path');
+
+=back
+
+=cut
 
 use Sub::Exporter::Util qw(curry_method);
 use Sub::Exporter -setup => {
@@ -14,7 +88,28 @@ use Sub::Exporter -setup => {
                 exporter => curry_method,
                 export   => curry_method,
                 export_to_string => curry_method],
+    collectors => {
+        '-load' => \'_import_load',
+        ':load' => \'_import_load',
+    },
 };
+
+sub _import_load {
+    my ($self, $value, $data) = @_;
+    if (is_array_ref $value) {
+        $self->load(@$value);
+    } else {
+        $self->load;
+    }
+    1;
+}
+
+=head1 METHODS
+
+=head2 default_load_path
+=head2 default_load_path('/default/path')
+
+=cut
 
 sub default_load_path {
     my ($class, @paths) = @_;
@@ -26,6 +121,11 @@ sub default_load_path {
         $script_path;
     }
 }
+
+=head2 load
+=head2 load('/path', '/another/path')
+
+=cut
 
 sub load {
     my ($self, @paths) = @_;
@@ -78,13 +178,25 @@ sub load {
     }
 }
 
+=head2 config
+
+=cut
+
 sub config {
     state $config = {};
 }
 
 my $stores = {};
 
+=head2 default_store
+
+=cut
+
 sub default_store { 'default' }
+
+=head2 store
+
+=cut
 
 sub store {
     my $self = shift;
@@ -105,6 +217,10 @@ sub store {
     };
 }
 
+=head2 importer
+
+=cut
+
 sub importer {
     my $self = shift;
     my $sym = check_string(shift);
@@ -120,6 +236,10 @@ sub importer {
         require_package($sym, 'Catmandu::Importer')->new(@_);
     }
 }
+
+=head2 exporter
+
+=cut
 
 sub exporter {
     my $self = shift;
@@ -137,6 +257,10 @@ sub exporter {
     }
 }
 
+=head2 export
+
+=cut
+
 sub export {
     my $self = shift;
     my $data = shift;
@@ -147,6 +271,10 @@ sub export {
     $exporter->commit;
     return;
 }
+
+=head2 export_to_string
+
+=cut
 
 sub export_to_string {
     my $self = shift;
@@ -162,10 +290,20 @@ sub export_to_string {
     $str;
 }
 
-1;
+=head1 AUTHOR
 
-=head1 NAME
+Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
 
-Catmandu - a data toolkit
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2012 Ghent University Library
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of either: the GNU General Public License as published
+by the Free Software Foundation; or the Artistic License.
+
+See http://dev.perl.org/licenses/ for more information.
 
 =cut
+
+1;

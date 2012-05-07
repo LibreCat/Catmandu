@@ -12,9 +12,8 @@ use YAML::Any ();
 use JSON ();
 
 our %EXPORT_TAGS = (
-    load    => [qw(require_package use_lib)],
-    io      => [qw(io)],
-    read    => [qw(read_file read_yaml read_json)],
+    misc    => [qw(require_package use_lib)],
+    io      => [qw(io read_file read_yaml read_json)],
     data    => [qw(parse_data_path get_data set_data delete_data data_at)],
     array   => [qw(array_exists array_group_by array_pluck array_to_sentence
         array_sum array_includes array_any array_rest)],
@@ -29,11 +28,12 @@ $EXPORT_TAGS{all} = \@EXPORT_OK;
 
 sub use_lib {
     my (@dirs) = @_;
+
     use lib;
-    local $@;
     lib->import(@dirs);
     confess $@ if $@;
-    return;
+
+    1;
 }
 
 sub require_package {
@@ -45,8 +45,8 @@ sub require_package {
         }
     }
 
-    local $@;
-    eval "require $pkg" or confess $@;
+    eval "require $pkg";
+    confess $@ if $@;
 
     $pkg;
 }

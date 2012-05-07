@@ -1,10 +1,8 @@
 package Example::App::Search;
 
 use Catmandu::Sane;
-use Catmandu qw(store);
+use Catmandu qw(:load store);
 use Dancer qw(:syntax);
-
-BEGIN { Catmandu->load }
 
 my $bag = store('search')->bag('example');
 
