@@ -8,9 +8,6 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    unless (Catmandu::ConfigData->feature('import_csv')) {
-        plan skip_all => 'feature disabled';
-    }
     $pkg = 'Catmandu::Importer::CSV';
     use_ok $pkg;
 }
