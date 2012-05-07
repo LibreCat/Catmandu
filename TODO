@@ -3,6 +3,7 @@ TODO
 * (better) error handling
 * logger
 * contributors guide
+* add catmandu-examples as tests
 * split into separate modules:
   * Catmandu::Exporter::BibTeX
   * Catmandu::Exporter::XLS
