@@ -35,7 +35,6 @@ my $build = Module::Build->new(
         'Locale::TextDomain' => '1.20', # Dancer::Plugin::Locale::TextDomain
         'Locale::Util' => 0, # Dancer::Plugin::Locale::Detect
         'Moo' => '0.009011',
-        'Net::LDAP' => '0.43', # Dancer::Plugin::LDAP
         'Plack' => '0.9982',
         'Plack::Middleware::Session' => '0.14', # Dancer::Session::Catmandu
         'Spreadsheet::WriteExcel' => '2.37', # Catmandu::Exporter::XLS
