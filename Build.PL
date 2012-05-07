@@ -30,7 +30,6 @@ my $build = Module::Build->new(
         'IO::String' => '1.08',
         'JSON' => '2.51',
         'LaTeX::Encode' => '0.03', # Catmandu::Exporter::BibTeX
-        'Locale::Codes::Language' => '3.18', # Template::Plugin::LanguageName
         'Moo' => '0.009011',
         'Plack' => '0.9982',
         'Plack::Middleware::Session' => '0.14', # Plack::Session::Store::Catmandu
