@@ -1,3 +1,0 @@
-[% WRAPPER layouts/screen.tt %]
-<h1>[% settings.app_name %]</h1>
-[% END %]

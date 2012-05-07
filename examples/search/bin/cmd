@@ -1,3 +1,0 @@
-#!/usr/bin/env perl
-use Catmandu::CLI;
-Catmandu::CLI->run;

@@ -1,4 +1,0 @@
-#!/usr/bin/env perl
-use Dancer;
-use Example::App::Search;
-dance;
