@@ -1,34 +1,24 @@
-BEFORE CPAN RELEASE
+TODO
 
 * (better) error handling
 * logger
-* add contributors guide
+* contributors guide
 * split into separate modules:
   * Catmandu::Exporter::BibTeX
-  * Catmandu::Exporter::CSL (and make it work with Bielefeld's api)
   * Catmandu::Exporter::XLS
   * Catmandu::Importer::Atom
-  * Catmandu::Importer::Marc
-  * Catmandu::Importer::OAI
-  * Catmandu::Store::Lucy (and fix)
   * Catmandu::Store::ElasticSearch
   * Catmandu::Store::Solr
   * Catmandu::Store::DBI (?)
-  * Dancer::Plugin::
   * Dancer::Session::
 * remove Dancer from Catmandu::Exporter::Template
-
-LATER
-
+* turn Dancer::Plugin::Catmandu::* into Plack::App::* (?)
 * validation
 * remove Fixable, add before_add and before_get, takes fixes or sub
 * give Iterable fix method
 * give Iterable export, export_to_string methods
 * bag drop
 * Searchable handle index optimize
-
-MAYBE
-
-* split Searchable into Searchable and CQL Searchable
-* generator should guard with a magic ref, not undef
+* split Searchable into Searchable and CQL Searchable (?)
+* generator should guard with a magic ref, not undef (?)
 
