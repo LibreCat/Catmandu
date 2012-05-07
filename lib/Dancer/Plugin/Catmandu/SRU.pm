@@ -1,6 +1,6 @@
 package Dancer::Plugin::Catmandu::SRU;
 
-our $VERSION = '0.1';
+our $VERSION = '0.01';
 
 use Catmandu::Sane;
 use Dancer::Plugin;

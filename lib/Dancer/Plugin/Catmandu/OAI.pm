@@ -1,6 +1,6 @@
 package Dancer::Plugin::Catmandu::OAI; # TODO deletedRecord=persistent, hierarchical sets, setDescription
 
-our $VERSION = '0.1';
+our $VERSION = '0.01';
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is);
