@@ -8,12 +8,12 @@ use Catmandu::Fix;
 
 sub command_opt_spec {
     (
-        [ "from-store=s", "",    { default => Catmandu::default_store } ],
+        [ "from-store=s", "",    { default => Catmandu->default_store } ],
         [ "from-importer=s", "", { default => 'JSON' } ],
         [ "from-bag=s", "" ],
         [ "count", "" ],
         [ "into-exporter=s", "", { default => 'JSON' } ],
-        [ "into-store=s", "",    { default => Catmandu::default_store } ],
+        [ "into-store=s", "",    { default => Catmandu->default_store } ],
         [ "into-bag=s", "" ],
         [ "start=i", "" ],
         [ "limit=i", "" ],

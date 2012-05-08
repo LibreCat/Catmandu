@@ -13,7 +13,7 @@ sub _build_versions_bag {
 
 before add => sub {
     my ($self, $data) = @_;
-    my $id = $data->{_id} ||= $self->generate_id;
+    my $id = $data->{_id} //= $self->generate_id($data);
     my $version = 1;
     if (my $d = $self->get($id)) {
         $version = $d->{_version} ||= 1;

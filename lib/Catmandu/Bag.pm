@@ -23,7 +23,7 @@ before get => sub {
 before add => sub {
     my ($self, $data) = @_;
     check_hash_ref($data);
-    check_value($data->{_id} //= $self->generate_id);
+    check_value($data->{_id} //= $self->generate_id($data));
 };
 
 before delete => sub {
