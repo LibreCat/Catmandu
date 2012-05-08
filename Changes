@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
-0.1    2012-05-05
-       - initial release
+0.0101  2012-05-08
+  - fix dependencies
+
+0.01    2012-05-05
+  - initial release
 
