@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.0102  2012-05-09
+  - pass data to generate_id
+  - fix YAML loading
+
 0.0101  2012-05-08
   - fix dependencies
 
