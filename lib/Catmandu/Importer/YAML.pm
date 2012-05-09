@@ -2,14 +2,12 @@ package Catmandu::Importer::YAML;
 
 use Catmandu::Sane;
 use Moo;
-use YAML::Any ();
+use YAML::Any qw(Load);
 
 with 'Catmandu::Importer';
 
 my $RE_EOF = qr'^\.\.\.$';
 my $RE_SEP = qr'^---';
-
-*load_yaml = do { no strict 'refs'; \&{YAML::Any->implementation . '::Load'} };
 
 sub generator {
     my ($self) = @_;
@@ -23,20 +21,22 @@ sub generator {
                 last;
             }
             if ($line =~ $RE_SEP && $yaml) {
-                $data = load_yaml($yaml);
+                $data = Load($yaml);
                 $yaml = $line;
                 return $data;
             }
             $yaml .= $line;
         }
         if ($yaml) {
-            $data = load_yaml($yaml);
+            $data = Load($yaml);
             $yaml = "";
             return $data;
         }
         return;
     };
 }
+
+no YAML::Any;
 
 =head1 NAME
 

@@ -41,7 +41,7 @@ my $build = Module::Build->new(
         'Text::CSV' => '1.21',
         'WebService::Solr' => '0.16', # Catmandu::Store::Solr
         'XML::Atom' => '0.41', # Catmandu::Importer::Atom
-        'YAML::Any' => '0.77',
+        'YAML::Any' => '0.81',
     },
     recommends => {
         'JSON::XS' => '2.3',
