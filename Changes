@@ -1,7 +1,8 @@
 Revision history for Catmandu
 
 0.0102  2012-05-09
-  - pass data to generate_id
+  - pass data to Bag::generate_id
+   -fix typo in Cmd::data
   - fix YAML loading
 
 0.0101  2012-05-08
