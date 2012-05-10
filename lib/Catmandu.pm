@@ -107,6 +107,7 @@ sub _import_load {
 =head1 METHODS
 
 =head2 default_load_path
+
 =head2 default_load_path('/default/path')
 
 =cut
@@ -123,6 +124,7 @@ sub default_load_path {
 }
 
 =head2 load
+
 =head2 load('/path', '/another/path')
 
 =cut
@@ -290,9 +292,14 @@ sub export_to_string {
     $str;
 }
 
+
 =head1 AUTHOR
 
 Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
+
+=head1 SEE ALSO
+
+L<Catmandu::Introduction>
 
 =head1 LICENSE AND COPYRIGHT
 
