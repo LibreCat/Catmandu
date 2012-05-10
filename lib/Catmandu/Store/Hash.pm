@@ -128,3 +128,50 @@ sub delete_by_query {
 }
 
 1;
+
+=head1 NAME
+
+Catmandu::Store::Hash - A Catmandu::Store plugin for in memory HASH-es
+
+=head1 SYNOPSIS
+
+   use Catmandu::Store::Hash;
+
+   my $store = Catmandu::Store::Hash->new();
+
+   my $obj1 = $store->bag->add({ name => 'Patrick' });
+
+   printf "obj1 stored as %s\n" , $obj1->{_id};
+
+   # Force an id in the store
+   my $obj2 = $store->bag->add({ _id => 'test123' , name => 'Nicolas' });
+
+   my $obj3 = $store->bag->get('test123');
+
+   $store->bag->delete('test123');
+
+   $store->bag->delete_all;
+
+   # All bags are iterators
+   $store->bag->each(sub { ... });
+   $store->bag->take(10)->each(sub { ... });
+
+=head1 DESCRIPTION
+
+A Catmandu::Store::Hash is a Perl package that can store data into memory hashes.
+
+=head1 METHODS
+
+=head2 new()
+
+Create a new Catmandu::Store::Hash 
+
+=head2 bag($name)
+
+Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+
+=head1 SEE ALSO
+
+L<Catmandu::Bag>, L<Catmandu::Searchable>
+
+=cut
