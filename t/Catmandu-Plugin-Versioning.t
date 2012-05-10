@@ -7,7 +7,7 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Plugin::Versions';
+    $pkg = 'Catmandu::Plugin::Versioning';
     use_ok $pkg;
 }
 require_ok $pkg;
