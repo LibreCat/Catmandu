@@ -14,7 +14,7 @@ my $build = Module::Build->new(
         'Test::Exception'   => '0.31',
     },
     requires => {
-        'perl' => '5.10.0',
+        'perl' => '5.10.1',
         'App::Cmd' => '0.310',
         'CGI::Expand' => '2.02',
         'Clone' => '0.31',
