@@ -22,7 +22,7 @@ isa_ok $exporter, $pkg;
 
 $exporter->add($_) for @$data;
 $exporter->commit;
-is_deeply $data, [ map { JSON::decode_json($_) } split /\n/, $file ];
+is_deeply $data, [ map { JSON::decode_json($_) } split /[\r\n]+/, $file ];
 
 done_testing 4;
 
