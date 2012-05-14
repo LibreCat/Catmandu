@@ -1,8 +1,14 @@
 Revision history for Catmandu
 
+0.0103  2012-05-14
+  - improve Versioning
+  - more docs
+  - fix split on \r in tests
+  - fix dependencies: parent.pm is only bundled with perl >= 5.10.1
+
 0.0102  2012-05-09
   - pass data to Bag::generate_id
-   -fix typo in Cmd::data
+  - fix typo in Cmd::data
   - fix YAML loading
 
 0.0101  2012-05-08
