@@ -11,6 +11,7 @@ use Catmandu::Sane;
 use Catmandu::Hits;
 use Moo;
 use Clone qw(clone);
+use Data::Visitor::Callback;
 
 with 'Catmandu::Bag';
 with 'Catmandu::Searchable';
@@ -92,7 +93,6 @@ sub search {
 
     my @candidates = ();
 
-    use Data::Visitor::Callback;
     my $match = 0;
     my $visitor = Data::Visitor::Callback->new(
         value => sub { $match = 1 if $_[1] =~ /$query/},
@@ -131,7 +131,7 @@ sub delete_by_query {
 
 =head1 NAME
 
-Catmandu::Store::Hash - A Catmandu::Store plugin for in memory HASH-es
+Catmandu::Store::Hash - An in-memory Catmandu::Store
 
 =head1 SYNOPSIS
 
@@ -158,13 +158,14 @@ Catmandu::Store::Hash - A Catmandu::Store plugin for in memory HASH-es
 
 =head1 DESCRIPTION
 
-A Catmandu::Store::Hash is a Perl package that can store data into memory hashes.
+A Catmandu::Store::Hash is an in-memory L<Catmandu::Store> backed by a hash
+for fast retrieval combined with a doubly linked list for fast traversal.
 
 =head1 METHODS
 
 =head2 new()
 
-Create a new Catmandu::Store::Hash 
+Create a new Catmandu::Store::Hash
 
 =head2 bag($name)
 
