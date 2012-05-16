@@ -25,11 +25,11 @@ Read an in depth introduction into Catmandu programming in L<Catmandu::Introduct
 
 =head1 VERSION
 
-Version 0.0103
+Version 0.0104
 
 =cut
 
-our $VERSION = '0.0103';
+our $VERSION = '0.0104';
 
 =head1 SYNOPSIS
 
