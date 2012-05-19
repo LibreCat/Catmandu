@@ -254,9 +254,9 @@ The NAME is set in the configuration file. E.g.
 
 In your program:
 
- Catmandu->store->each(sub {  ... }); # This will use ElasticSearch
+ Catmandu->store->bag->each(sub {  ... }); # This will use ElasticSearch
 
- Catmandu->store('test')->search(...); # This will use Mock
+ Catmandu->store('test')->bag->search(...); # This will use Mock
 
 =cut
 
