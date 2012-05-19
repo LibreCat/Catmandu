@@ -19,7 +19,17 @@ catmandu - LibreCat command line tools
 
  catmandu help config
 
- catmandu data --from-importer YAML --into-exporter CSV < test.yaml
+ # Import a JSON file into the default store (set in catmandu.yml)
+ catmandu data --into-bag data < test.json
+
+ # Import a YAML file into the default store
+ catmandu data --from-importer YAML --into-bag data < test.yaml
+
+ # Export a JSON file from the default store
+ catmandu data --from-bag data > test.json
+
+ # Export a YAML file from the default store
+ catmandu data --from-bag data --into-exporter YAML > test.yaml
 
 =head1 COMMANDS
 
