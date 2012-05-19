@@ -48,6 +48,22 @@ our $VERSION = '0.0104';
     use Catmandu -load;
     use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
 
+=head1 CONFIG
+
+Catmandu configuration options can be stored in a file in the root directory of your programming project. The
+syntax of the file follows the Dancer YAML syntax and is named 'catmandu.yml'. In this file you can 
+set the default Catmandu stores and exporters to be used. Here is an example of a catmandu.yml file:
+
+    store:
+     default:
+      package: ElasticSearch
+       options:
+        index_name: myrepository
+
+    exporter:
+     default:
+      package: YAML
+
 =head1 EXPORTS
 
 =over
@@ -123,7 +139,11 @@ sub _import_load {
 
 =head2 default_load_path
 
+Return the path where Catmandu will (optionally) search for a catmandu.yml configuration file.
+
 =head2 default_load_path('/default/path')
+
+Set the location of the default configuration file to a new path.
 
 =cut
 
@@ -140,7 +160,11 @@ sub default_load_path {
 
 =head2 load
 
+Load all the configuration options in the catmanu.yml configuraton file.
+
 =head2 load('/path', '/another/path')
+
+Load all the configuration options stored at alternative paths.
 
 =cut
 
@@ -197,6 +221,8 @@ sub load {
 
 =head2 config
 
+Return a HASH representation of the current configuration file.
+
 =cut
 
 sub config {
@@ -207,11 +233,30 @@ my $stores = {};
 
 =head2 default_store
 
+Return the name of the default store.
+
 =cut
 
 sub default_store { 'default' }
 
-=head2 store
+=head2 store([NAME])
+
+Return an instance of a store with name NAME or use the default store when no name is provided.
+The NAME is set in the configuration file. E.g.
+
+ store:
+  default:
+   package: ElasticSearch
+   options:
+     index_name: blog
+  test:
+   package: Mock
+
+In your program:
+
+ Catmandu->store->each(sub {  ... }); # This will use ElasticSearch
+
+ Catmandu->store('test')->search(...); # This will use Mock
 
 =cut
 
@@ -234,7 +279,25 @@ sub store {
     };
 }
 
-=head2 importer
+=head2 importer(NAME)
+
+Return an instance of a Catmandu::Importer with name NAME (or the default 'JSON' when no name is given).
+The NAME is set in the configuration file. E.g.
+
+ importer:
+  oai:
+   package: OAI
+    options:
+     url: http://www.instute.org/oai/
+  feed:
+   package: Atom
+    options:
+     url: http://www.mysite.org/blog/atom
+
+In your program:
+
+Catmandu->importer('oai')->each(sub { ... } );
+Catmandu->importer('feed')->each(sub { ... } );
 
 =cut
 
@@ -254,7 +317,10 @@ sub importer {
     }
 }
 
-=head2 exporter
+=head2 exporter([NAME])
+
+Return an instance of Catmandu::Exporter with name NAME (or the default 'JSON' when no name is given).
+The NAME is set in the configuration file (see 'importer').
 
 =cut
 
@@ -274,7 +340,14 @@ sub exporter {
     }
 }
 
-=head2 export
+=head2 export($data,[NAME])
+
+Export data using a default or named exporter. E.g.
+
+ Catmandu->export({ foo=>'bar'});
+
+ my $importer = Catmandu::Importer::Mock->new();
+ Catmandu->export($importer,'my_exporter');
 
 =cut
 
