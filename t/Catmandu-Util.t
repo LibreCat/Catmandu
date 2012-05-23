@@ -87,7 +87,8 @@ for my $sym (qw(parse_data_path get_data set_data delete_data data_at)) {
     can_ok 'T::ImportAll', $sym;
     can_ok 'T::ImportData', $sym;
 }
-for my $sym (qw(array_exists array_group_by array_pluck array_to_sentence array_sum array_includes array_any)) {
+for my $sym (qw(array_exists array_group_by array_pluck array_to_sentence
+        array_sum array_includes array_any array_uniq)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
     can_ok 'T::ImportAll', $sym;
@@ -100,5 +101,5 @@ for my $sym (qw(as_utf8 trim capitalize)) {
     can_ok 'T::ImportString', $sym;
 }
 
-done_testing 406;
+done_testing 410;
 

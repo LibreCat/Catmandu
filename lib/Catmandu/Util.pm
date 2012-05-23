@@ -16,7 +16,7 @@ our %EXPORT_TAGS = (
     io      => [qw(io read_file read_yaml read_json)],
     data    => [qw(parse_data_path get_data set_data delete_data data_at)],
     array   => [qw(array_exists array_group_by array_pluck array_to_sentence
-        array_sum array_includes array_any array_rest)],
+        array_sum array_includes array_any array_rest array_uniq)],
     string  => [qw(as_utf8 trim capitalize)],
     is      => [qw(is_same is_different)],
     check   => [qw(check_same check_different)],
@@ -262,6 +262,12 @@ sub array_any {
 sub array_rest {
     my ($arr) = @_;
     @$arr < 2 ? [] : [@$arr[1..(@$arr-1)]];
+}
+
+sub array_uniq {
+    my ($arr) = @_;
+    my %seen = ();
+    [grep { not $seen{$_}++ } @$arr];
 }
 
 sub as_utf8 {
