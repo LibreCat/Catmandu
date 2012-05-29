@@ -30,12 +30,11 @@ sub _build_dbh {
 sub transaction {
     my ($self, $sub) = @_;
 
-    my $dbh = $self->dbh;
-
     if ($self->{_tx}) {
         return $sub->();
     }
 
+    my $dbh = $self->dbh;
     my @res;
 
     eval {
@@ -44,6 +43,7 @@ sub transaction {
         @res = $sub->();
         $dbh->commit;
         $self->{_tx} = 0;
+        1;
     } or do {
         my $err = $@;
         eval { $dbh->rollback };
