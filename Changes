@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.0106  2012-05-29
+  - fix Store::DBI transaction
+
 0.0105  2012-05-21
   - more docs
 
