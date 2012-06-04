@@ -1,7 +1,7 @@
 package Catmandu::Exporter::Template;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(is_invocant);
+use Catmandu;
 use Moo;
 use Template;
 
@@ -22,22 +22,17 @@ $Template::Stash::PRIVATE = 0;
 
 sub tt {
     state $tt = do {
-        my $args = {
-            ENCODING => 'utf8',
-            ABSOLUTE => 1,
-            ANYCASE  => 0,
-        };
-
-        if (is_invocant('Dancer')) {
-            eval {
-                $args->{INCLUDE_PATH} = Dancer::setting('views');
-                $args->{VARIABLES} = {
-                    settings => Dancer::Config->settings,
-                };
-            };
-        }
-
-        Template->new($args);
+        local $Template::Stash::PRIVATE = 0;
+        Template->new({
+            ENCODING     => 'utf8',
+            ABSOLUTE     => 1,
+            ANYCASE      => 0,
+            INCLUDE_PATH => Catmandu->root_paths,
+            VARIABLES    => {
+                _root_paths => Catmandu->root_paths,
+                _config     => Catmandu->config,
+            },
+        });
     };
 }
 
