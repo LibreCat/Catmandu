@@ -2,7 +2,7 @@ package Catmandu::Plugin::Versioning;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(is_value check_string check_positive);
-use Data::Compare ();
+use Data::Compare;
 use Moo::Role;
 
 has version_bag => (
@@ -16,10 +16,21 @@ has version_compare_ignore => (
     lazy    => 1,
     default => sub { [qw(_version)] },
     coerce  => sub {
-        my $ignore = $_[0];
-        $ignore = [split /,/, $ignore] if is_value $ignore;
-        push @$ignore, '_version';
-        $ignore;
+        my $keys = $_[0];
+        $keys = [split /,/, $keys] if is_value $keys;
+        push @$keys, '_version';
+        $keys;
+    },
+);
+
+has version_transfer => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub { [] },
+    coerce  => sub {
+        my $keys = $_[0];
+        $keys = [split /,/, $keys] if is_value $keys;
+        $keys;
     },
 );
 
@@ -29,11 +40,14 @@ sub _build_version_bag {
 
 around add => sub {
     my ($sub, $self, $data) = @_;
-    my $id = $data->{_id} //= $self->generate_id($data);
-    if (my $d = $self->get($id)) {
+    if (defined $data->{_id} and my $d = $self->get($data->{_id})) {
         $data->{_version} = $d->{_version} ||= 1;
+        for my $key (@{$self->version_transfer}) {
+            next if exists $data->{$key} || !exists $d->{$key};
+            $data->{$key} = $d->{$key};
+        }
         return $data
-            if Data::Compare::Compare($data, $d, {ignore_hash_keys => $self->version_compare_ignore});
+            if Compare($data, $d, {ignore_hash_keys => $self->version_compare_ignore});
         $self->version_bag->add({_id => "$data->{_id}.$data->{_version}", data => $d});
         $data->{_version}++;
     } else {
@@ -57,7 +71,7 @@ sub get_history {
 
 sub get_version {
     my ($self, $id, $version) = @_;
-    check_string($id);
+    check_value($id);
     check_positive($version);
     my $data = $self->version_bag->get("$id.$version") || return;
     $data->{data};
@@ -89,5 +103,7 @@ sub restore_previous_version {
     }
     return;
 }
+
+no Data::Compare;
 
 1;
