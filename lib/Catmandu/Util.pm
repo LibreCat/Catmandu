@@ -74,9 +74,9 @@ sub io {
 
 sub read_file {
     local $/;
-    open FH, check_string($_[0]) or confess "can't read file '$_[0]'";
-    my $str = <FH>;
-    close FH;
+    open(my $fh, check_string($_[0])) or confess "can't read file '$_[0]'";
+    my $str = <$fh>;
+    close($fh);
     $str;
 }
 
