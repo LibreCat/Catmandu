@@ -208,12 +208,14 @@ sub load {
                         readdir $dh;
             for my $file (@files) {
                 if (my ($keys, $ext) = $file =~ /^catmandu(.*)\.(pl|yaml|yml|json)$/) {
+                    $keys = substr $keys, 1 if $keys; # remove leading dot
+
                     $file = File::Spec->catfile($path, $file);
 
                     my $config = $self->config;
                     my $c;
 
-                    $config = $config->{$_} ||= {} for split '.', $keys;
+                    $config = $config->{$_} ||= {} for split /\./, $keys;
 
                     given ($ext) {
                         when ('pl')    { $c = do $file }
