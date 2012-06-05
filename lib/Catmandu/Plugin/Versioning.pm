@@ -1,7 +1,7 @@
 package Catmandu::Plugin::Versioning;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(is_value check_string check_positive);
+use Catmandu::Util qw(is_value check_value check_positive);
 use Data::Compare;
 use Moo::Role;
 

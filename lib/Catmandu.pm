@@ -227,7 +227,7 @@ sub load {
             }
 
             if (@files) {
-                unshift @{$self->root_paths}, $path;
+                unshift @{$self->roots}, $path;
 
                 my $lib_path = File::Spec->catdir($path, 'lib');
                 if (-d -r $lib_path) {
@@ -240,15 +240,26 @@ sub load {
     }
 }
 
-=head2 root_paths
+=head2 roots
 
 Returns an ARRAYREF of paths where configuration was found. Note that this list
 is empty before C<load>.
 
 =cut
 
-sub root_paths {
-    state $root_paths = [];
+sub roots {
+    state $roots = [];
+}
+
+=head2 root
+
+Returns the first path where configuration was found. Note that this is
+C<undef> before C<load>.
+
+=cut
+
+sub root {
+    $_[0]->roots->[0];
 }
 
 =head2 config

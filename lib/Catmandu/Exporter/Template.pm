@@ -27,11 +27,10 @@ sub tt {
             ENCODING     => 'utf8',
             ABSOLUTE     => 1,
             ANYCASE      => 0,
-            INCLUDE_PATH => Catmandu->root_paths,
-            VARIABLES    => {
-                _root_paths => Catmandu->root_paths,
-                _config     => Catmandu->config,
-            },
+            INCLUDE_PATH => Catmandu->roots,
+            VARIABLES    => { _roots  => Catmandu->roots,
+                              _root   => Catmandu->root,
+                              _config => Catmandu->config, },
         });
     };
 }
