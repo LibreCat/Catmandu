@@ -57,6 +57,8 @@ sub visit {
             }
         }
 
+        my $nested;
+
         if ($self->mapping and my $indexes = $self->mapping->{indexes}) {
             $qualifier = lc $qualifier;
             $qualifier =~ s/(?<=[^_])_(?=[^_])//g if $self->mapping->{strip_separating_underscores};
@@ -89,121 +91,26 @@ sub visit {
                 my ($pkg, $sub) = @{$mapping->{cb}};
                 $term = require_package($pkg)->$sub($term);
             }
+
+            $nested = $mapping->{nested};
         }
 
-        my $q;
-        if ($base eq '=') {
-            if (ref $qualifier) {
-                return { bool => { should => [ map {
-                    if ($_ eq '_id') {
-                        { ids => { values => [$term] } };
-                    } else {
-                        _text_node($_, $term, @modifiers);
-                    }
-                } @$qualifier ] } };
-            } else {
-                if ($qualifier eq '_id') {
-                    return { ids => { values => [$term] } };
-                }
-                return _text_node($qualifier, $term, @modifiers);
+        my $query = _term_node($base, $qualifier, $term, @modifiers);
+
+        if ($nested) {
+            if ($nested->{query}) {
+                $query = { bool => { must => [
+                    $nested->{query},
+                    $query,
+                ] } };
             }
-        } elsif ($base eq '<') {
-            if (ref $qualifier) {
-                return { bool => { should => [ map { { range => { $_ => { lt => $term } } } } @$qualifier ] } };
-            } else {
-                return { range => { $qualifier => { lt => $term } } };
-            }
-        } elsif ($base eq '>') {
-            if (ref $qualifier) {
-                return { bool => { should => [ map { { range => { $_ => { gt => $term } } } } @$qualifier ] } };
-            } else {
-                return { range => { $qualifier => { gt => $term } } };
-            }
-        } elsif ($base eq '<=') {
-            if (ref $qualifier) {
-                return { bool => { should => [ map { { range => { $_ => { lte => $term } } } } @$qualifier ] } };
-            } else {
-                return { range => { $qualifier => { lte => $term } } };
-            }
-        } elsif ($base eq '>=') {
-            if (ref $qualifier) {
-                return { bool => { should => [ map { { range => { $_ => { gte => $term } } } } @$qualifier ] } };
-            } else {
-                return { range => { $qualifier => { gte => $term } } };
-            }
-        } elsif ($base eq '<>') {
-            if (ref $qualifier) {
-                return { bool => { must_not => [ map {
-                    if ($_ eq '_id') {
-                        { ids => { values => [$term] } };
-                    } else {
-                        { text_phrase => { $_ => { query => $term } } };
-                    }
-                } @$qualifier ] } };
-            } else {
-                if ($qualifier eq '_id') {
-                    return { bool => { must_not => [ { ids => { values => [$term] } } ] } };
-                }
-                return { bool => { must_not => [ { text_phrase => { $qualifier => { query => $term } } } ] } };
-            }
-        } elsif ($base eq 'exact') {
-            if (ref $qualifier) {
-                return { bool => { should => [ map {
-                    if ($_ eq '_id') {
-                        { ids => { values => [$term] } };
-                    } else {
-                        { text_phrase => { $_ => { query => $term } } };
-                    }
-                } @$qualifier ] } };
-            } else {
-                if ($qualifier eq '_id') {
-                    return { ids => { values => [$term] } };
-                }
-                return { text_phrase => { $qualifier => { query => $term } } };
-            }
-        } elsif ($base eq 'any') {
-            $term = [split /\s+/, trim($term)];
-            if (ref $qualifier) {
-                return { bool => { should => [ map {
-                    $q = $_;
-                    map { _text_node($q, $_) } @$term;
-                } @$qualifier ] } };
-            } else {
-                return { bool => { should => [map { _text_node($qualifier, $_) } @$term] } };
-            }
-        } elsif ($base eq 'all') {
-            $term = [split /\s+/, trim($term)];
-            if (ref $qualifier) {
-                return { bool => { should => [ map {
-                    $q = $_;
-                    { bool => { must => [map { _text_node($q, $_) } @$term] } };
-                } @$qualifier ] } };
-            } else {
-                return { bool => { must => [map { _text_node($qualifier, $_) } @$term] } };
-            }
-        } elsif ($base eq 'within') {
-            my @range = split /\s+/, $term;
-            if (@range == 1) {
-                if (ref $qualifier) {
-                    return { bool => { should => [ map { { text => { $_ => { query => $term } } } } @$qualifier ] } };
-                } else {
-                    return { text => { $qualifier => { query => $term } } };
-                }
-            }
-            if (ref $qualifier) {
-                return { bool => { should => [ map { { range => { $_ => { lte => $range[0], gte => $range[1] } } } } @$qualifier ] } };
-            } else {
-                return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
-            }
+            $query = { nested => {
+                path  => $nested->{path},
+                query => $query,
+            } };
         }
 
-        if (ref $qualifier) {
-            return { bool => { should => [ map {
-                _text_node($_, $term, @modifiers);
-            } @$qualifier ] } };
-        } else {
-            return _text_node($qualifier, $term, @modifiers);
-        }
+        return $query;
     }
 
     if ($node->isa('CQL::ProxNode')) { # TODO mapping
@@ -243,6 +150,123 @@ sub visit {
                 $self->visit($node->right)
             ] } }
         ] } };
+    }
+}
+
+sub _term_node {
+    my ($base, $qualifier, $term, @modifiers) = @_;
+    my $q;
+    if ($base eq '=') {
+        if (ref $qualifier) {
+            return { bool => { should => [ map {
+                if ($_ eq '_id') {
+                    { ids => { values => [$term] } };
+                } else {
+                    _text_node($_, $term, @modifiers);
+                }
+            } @$qualifier ] } };
+        } else {
+            if ($qualifier eq '_id') {
+                return { ids => { values => [$term] } };
+            }
+            return _text_node($qualifier, $term, @modifiers);
+        }
+    } elsif ($base eq '<') {
+        if (ref $qualifier) {
+            return { bool => { should => [ map { { range => { $_ => { lt => $term } } } } @$qualifier ] } };
+        } else {
+            return { range => { $qualifier => { lt => $term } } };
+        }
+    } elsif ($base eq '>') {
+        if (ref $qualifier) {
+            return { bool => { should => [ map { { range => { $_ => { gt => $term } } } } @$qualifier ] } };
+        } else {
+            return { range => { $qualifier => { gt => $term } } };
+        }
+    } elsif ($base eq '<=') {
+        if (ref $qualifier) {
+            return { bool => { should => [ map { { range => { $_ => { lte => $term } } } } @$qualifier ] } };
+        } else {
+            return { range => { $qualifier => { lte => $term } } };
+        }
+    } elsif ($base eq '>=') {
+        if (ref $qualifier) {
+            return { bool => { should => [ map { { range => { $_ => { gte => $term } } } } @$qualifier ] } };
+        } else {
+            return { range => { $qualifier => { gte => $term } } };
+        }
+    } elsif ($base eq '<>') {
+        if (ref $qualifier) {
+            return { bool => { must_not => [ map {
+                if ($_ eq '_id') {
+                    { ids => { values => [$term] } };
+                } else {
+                    { text_phrase => { $_ => { query => $term } } };
+                }
+            } @$qualifier ] } };
+        } else {
+            if ($qualifier eq '_id') {
+                return { bool => { must_not => [ { ids => { values => [$term] } } ] } };
+            }
+            return { bool => { must_not => [ { text_phrase => { $qualifier => { query => $term } } } ] } };
+        }
+    } elsif ($base eq 'exact') {
+        if (ref $qualifier) {
+            return { bool => { should => [ map {
+                if ($_ eq '_id') {
+                    { ids => { values => [$term] } };
+                } else {
+                    { text_phrase => { $_ => { query => $term } } };
+                }
+            } @$qualifier ] } };
+        } else {
+            if ($qualifier eq '_id') {
+                return { ids => { values => [$term] } };
+            }
+            return { text_phrase => { $qualifier => { query => $term } } };
+        }
+    } elsif ($base eq 'any') {
+        $term = [split /\s+/, trim($term)];
+        if (ref $qualifier) {
+            return { bool => { should => [ map {
+                $q = $_;
+                map { _text_node($q, $_) } @$term;
+            } @$qualifier ] } };
+        } else {
+            return { bool => { should => [map { _text_node($qualifier, $_) } @$term] } };
+        }
+    } elsif ($base eq 'all') {
+        $term = [split /\s+/, trim($term)];
+        if (ref $qualifier) {
+            return { bool => { should => [ map {
+                $q = $_;
+                { bool => { must => [map { _text_node($q, $_) } @$term] } };
+            } @$qualifier ] } };
+        } else {
+            return { bool => { must => [map { _text_node($qualifier, $_) } @$term] } };
+        }
+    } elsif ($base eq 'within') {
+        my @range = split /\s+/, $term;
+        if (@range == 1) {
+            if (ref $qualifier) {
+                return { bool => { should => [ map { { text => { $_ => { query => $term } } } } @$qualifier ] } };
+            } else {
+                return { text => { $qualifier => { query => $term } } };
+            }
+        }
+        if (ref $qualifier) {
+            return { bool => { should => [ map { { range => { $_ => { lte => $range[0], gte => $range[1] } } } } @$qualifier ] } };
+        } else {
+            return { range => { $qualifier => { lte => $range[0], gte => $range[1] } } };
+        }
+    }
+
+    if (ref $qualifier) {
+        return { bool => { should => [ map {
+            _text_node($_, $term, @modifiers);
+        } @$qualifier ] } };
+    } else {
+        return _text_node($qualifier, $term, @modifiers);
     }
 }
 
