@@ -88,45 +88,28 @@ sub read_json {
     JSON::decode_json(read_file($_[0]));
 }
 
-my $pass_guard = sub { 1 };
-
 sub parse_data_path {
     my ($path) = @_;
     check_string($path);
     $path = [ split /[\/\.]/, $path ];
     my $key = pop @$path;
-    my $guard = $pass_guard;
-    if (my ($k, $type, $g) = $key =~ /^(.+)(==|!=|=~|!~)(.*)$/) {
-        $key = $k;
-        if ($type eq '=~' || $type eq '!~') {
-            $g = qr/$g/;
-        }
-        given ($type) {
-            when ('==') { $guard = sub { my $v = $_[0]; is_value($v) && $v eq $g } }
-            when ('!=') { $guard = sub { my $v = $_[0]; is_value($v) && $v ne $g } }
-            when ('=~') { $guard = sub { my $v = $_[0]; is_value($v) && $v =~ $g } }
-            when ('!~') { $guard = sub { my $v = $_[0]; is_value($v) && $v !~ $g } }
-        }
-    }
-    return $path, $key, $guard;
+    return $path, $key;
 }
 
 sub get_data {
-    my ($data, $key, $guard) = @_;
-    $guard ||= $pass_guard;
+    my ($data, $key) = @_;
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first') { return unless @$data; $key = 0 }
             when ('$last')  { return unless @$data; $key = @$data - 1 }
-            when ('*')      { return grep { $guard->($_) } @$data }
+            when ('*')      { return @$data }
         }
-        if (array_exists($data, $key) && $guard->($data->[$key])) {
+        if (array_exists($data, $key)) {
             return $data->[$key];
         }
         return;
     }
-    if (is_hash_ref($data) && exists $data->{$key}
-            && $guard->($data->{$key})) {
+    if (is_hash_ref($data) && exists $data->{$key}) {
         return $data->{$key};
     }
     return;
@@ -152,21 +135,19 @@ sub set_data {
 }
 
 sub delete_data {
-    my ($data, $key, $guard) = @_;
-    $guard ||= $pass_guard;
+    my ($data, $key) = @_;
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first') { return unless @$data; $key = 0 }
             when ('$last')  { return unless @$data; $key = @$data - 1 }
-            when ('*')      { return splice @$data, 0, @$data, grep { !$guard->($_) } @$data }
+            when ('*')      { return splice @$data, 0, @$data }
         }
-        if (array_exists($data, $key) && $guard->($data->[$key])) {
+        if (array_exists($data, $key)) {
             return splice @$data, $key, 1;
         }
         return;
     }
-    if (is_hash_ref($data) && exists $data->{$key}
-            && $guard->($data->{$key})) {
+    if (is_hash_ref($data) && exists $data->{$key}) {
         return delete $data->{$key};
     }
 
@@ -178,7 +159,6 @@ sub data_at {
     $path = [@$path];
     my $create = $opts{create};
     my $_key = $opts{_key} // $opts{key};
-    my $guard  = $opts{guard};
     if (defined $opts{key} && $create && @$path) {
         push @$path, $_key;
     }
@@ -187,7 +167,7 @@ sub data_at {
         ref $data || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
-                return map { data_at($path, $_, create => $create, guard => $guard, _key => $_key) } @$data;
+                return map { data_at($path, $_, create => $create, _key => $_key) } @$data;
             } else {
                 given ($key) {
                     when ('$first')   { $key = 0 }
@@ -210,9 +190,6 @@ sub data_at {
         if ($create && @$path == 1) {
             last;
         }
-    }
-    if (defined $guard && defined $_key) {
-        return get_data($data, $_key, $guard);
     }
     $data;
 }

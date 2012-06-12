@@ -5,16 +5,15 @@ use Catmandu::Util qw(:is :data);
 use Data::Dumper;
 use Moo;
 
-has path  => (is => 'ro', required => 1);
-has key   => (is => 'ro', required => 1);
+has path    => (is => 'ro', required => 1);
+has key     => (is => 'ro', required => 1);
 has search  => (is => 'ro', required => 1);
 has replace => (is => 'ro', required => 1);
-has guard   => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $search, $replace) = @_;
-    my ($p, $key, $guard) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key, search => $search, replace => $replace, guard => $guard);
+    my ($p, $key) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, search => $search, replace => $replace);
 };
 
 sub fix {
@@ -24,7 +23,7 @@ sub fix {
     my $search  = $self->search;
     my $replace = $self->replace; 
 
-    my @matches = grep ref, data_at($self->path, $data, key => $key, guard => $self->guard);
+    my @matches = grep ref, data_at($self->path, $data, key => $key);
 
     for my $match (@matches) {
         if (is_array_ref($match)) {

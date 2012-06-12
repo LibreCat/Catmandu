@@ -7,23 +7,21 @@ use Moo;
 has path       => (is => 'ro', required => 1);
 has key        => (is => 'ro', required => 1);
 has split_char => (is => 'ro', required => 1);
-has guard      => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $split_char) = @_;
-    my ($p, $key, $guard) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key, split_char => $split_char // qr'\s+', guard => $guard);
+    my ($p, $key) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, split_char => $split_char // qr'\s+');
 };
 
 sub fix {
     my ($self, $data) = @_;
 
     my $key = $self->key;
-    my $guard = $self->guard;
     my $split_char = $self->split_char;
     for my $match (grep ref, data_at($self->path, $data)) {
         set_data($match, $key,
-            map { $guard->($_) && is_value($_) ? [split $split_char, $_] : $_ }
+            map { is_value($_) ? [split $split_char, $_] : $_ }
                 get_data($match, $key));
     }
 

@@ -8,12 +8,11 @@ use Moo;
 has path  => (is => 'ro', required => 1);
 has key   => (is => 'ro', required => 1);
 has value => (is => 'ro', required => 1);
-has guard => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $value) = @_;
-    my ($p, $key, $guard) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key, value => $value, guard => $guard);
+    my ($p, $key) = parse_data_path($path);
+    $orig->($class, path => $p, key => $key, value => $value);
 };
 
 sub fix {
@@ -21,7 +20,7 @@ sub fix {
 
     my $key = $self->key;
     my $val = $self->value;
-    for my $match (grep ref, data_at($self->path, $data, key => $key, guard => $self->guard)) {
+    for my $match (grep ref, data_at($self->path, $data, key => $key)) {
         if ($key eq '*' && is_array_ref($match)) {
             for (my $i = 0; $i < @$match; $i++) {
                 $match->[$i] = clone($val);
