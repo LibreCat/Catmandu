@@ -1,7 +1,15 @@
 Revision history for Catmandu
 
+0.02    2012-06-12
+  - remove guard feature from fixes
+  - load split config files
+  - Catmandu roots method
+  - support for nested object queries in CQL::ElasticSearch
+  - improve Plugin::Versioning
+  - more docs
+
 0.0106  2012-05-29
-  - fix Store::DBI transaction
+  - fix Store::DBI transaction method
 
 0.0105  2012-05-21
   - more docs
@@ -10,7 +18,7 @@ Revision history for Catmandu
   - more docs
 
 0.0103  2012-05-14
-  - improve Versioning
+  - improve Plugin::Versioning
   - more docs
   - fix split on \r in tests
   - fix dependencies: parent.pm is only bundled with perl >= 5.10.1
