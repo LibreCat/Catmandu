@@ -342,6 +342,7 @@ The NAME is set in the configuration file. E.g.
 In your program:
 
 Catmandu->importer('oai')->each(sub { ... } );
+Catmandu->importer('oai', url => 'http://override')->each(sub { ... } );
 Catmandu->importer('feed')->each(sub { ... } );
 
 =cut
@@ -394,6 +395,7 @@ Export data using a default or named exporter.
     my $importer = Catmandu::Importer::Mock->new;
     Catmandu->export($importer, 'YAML', file => '/my/file');
     Catmandu->export($importer, 'my_exporter');
+    Catmandu->export($importer, 'my_exporter', foo => $bar);
 
 =cut
 
