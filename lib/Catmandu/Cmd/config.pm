@@ -13,7 +13,15 @@ sub command_opt_spec {
 
 sub command {
     my ($self, $opts, $args) = @_;
-    print JSON->new->pretty($opts->pretty)->encode(Catmandu->config); 
+    my $config = Catmandu->config;
+    if ($args->[0]) {
+        for my $key (split /\./, $args->[0]) {
+            $config = $config->{$key};
+        }
+    }
+    print JSON->new
+        ->pretty($opts->pretty)
+        ->encode($config);
 }
 
 1;
