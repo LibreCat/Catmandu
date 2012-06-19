@@ -133,7 +133,6 @@ XML
                     die $e;
                 };
 
-                $response->numberOfRecords($hits->total);
                 $hits->each(sub {
                     my $data = $_[0];
                     my $metadata = "";
@@ -149,6 +148,7 @@ XML
                         recordData   => $metadata,
                     ));
                 });
+                $response->numberOfRecords($hits->total);
                 return $response->asXML;
             }
             default {
