@@ -147,20 +147,24 @@ sub take {
 
 {
     my $to_sub = sub {
-        if (is_string($_[0])) {
-            my $key = $_[0];
-            check_regex_ref(my $re = $_[1]);
+        my ($arg1, $arg2) = @_;
+        if (is_string($arg1)) {
+            if (is_regex_ref($arg2)) {
+                return sub {
+                    is_hash_ref($_[0]) || return;
+                    my $val = $_[0]->{$arg1}; is_value($val) && $val =~ $arg2;
+                };
+            }
             return sub {
                 is_hash_ref($_[0]) || return;
-                my $val = $_[0]->{$key}; is_value($val) && $val =~ $re;
+                my $val = $_[0]->{$arg1}; is_value($val) && $val eq $arg2;
             };
-        } elsif (is_regex_ref($_[0])) {
-            my $re = $_[0];
+        } elsif (is_regex_ref($arg1)) {
             return sub {
-                is_value($_[0]) && $_[0] =~ $re;
+                my $val = $_[0]; is_value($val) && $val =~ $arg1;
             };
         }
-        check_code_ref($_[0]);
+        $arg1;
     };
 
     sub detect {
