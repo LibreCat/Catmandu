@@ -2,12 +2,15 @@ package Catmandu::Plugin::Datestamps;
 
 use Catmandu::Sane;
 use Role::Tiny;
-use DateTime;
+use POSIX qw(strftime);
 
 before add => sub {
     my ($self, $data) = @_;
-    $data->{date_updated} = DateTime->now->iso8601.'Z';
-    $data->{date_created} ||= $data->{date_updated};
+    my $now = strftime("%Y-%m-%dT%H:%M:%SZ", gmtime(time));
+    $data->{date_created} ||= $now;
+    $data->{date_updated} = $now;
 };
+
+no POSIX;
 
 1;
