@@ -148,22 +148,36 @@ sub take {
 {
     my $to_sub = sub {
         my ($arg1, $arg2) = @_;
+
         if (is_string($arg1)) {
             if (is_regex_ref($arg2)) {
                 return sub {
-                    is_hash_ref($_[0]) || return;
+                    is_hash_ref($_[0]) || return 0;
                     my $val = $_[0]->{$arg1}; is_value($val) && $val =~ $arg2;
                 };
             }
+            if (is_array_ref($arg2)) {
+                return sub {
+                    is_hash_ref($_[0]) || return 0;
+                    is_value(my $val = $_[0]->{$arg1}) || return 0;
+                    for my $v (@$arg2) {
+                        return 1 if $val eq $v;
+                    }
+                    0;
+                };
+            }
             return sub {
-                is_hash_ref($_[0]) || return;
+                is_hash_ref($_[0]) || return 0;
                 my $val = $_[0]->{$arg1}; is_value($val) && $val eq $arg2;
             };
-        } elsif (is_regex_ref($arg1)) {
+        }
+
+        if (is_regex_ref($arg1)) {
             return sub {
                 my $val = $_[0]; is_value($val) && $val =~ $arg1;
             };
         }
+
         $arg1;
     };
 
@@ -241,6 +255,27 @@ sub group {
             $peek = $next->();
             $data;
         }});
+    }});
+}
+
+sub interleave {
+    my @iterators = @_;
+    Catmandu::Iterator->new(sub { sub {
+        state @generators;
+        state $n = @iterators;
+        state $i = 0;
+        while ($n) {
+            $i = 0 if $i == $n;
+            my $next = $generators[$i] ||= $iterators[$i]->generator;
+            if (defined(my $data = $next->())) {
+                $i++;
+                return $data;
+            } else {
+                splice @generators, $i, 1;
+                $n--;
+            }
+        }
+        return;
     }});
 }
 
@@ -374,13 +409,18 @@ Returns an Iterator with the first NUM results.
 
 Splitting the Iterator into NUM parts and returning an Iterator for each part.
 
+=head2 interleave(@iterators)
+
+Returns an Iterator which returns the first item of each iterator then the
+second of each and so on.
+
 =head2 contains($data)
 
 Alias for C<includes>.
 
 =head2 includes($data)
 
-return true if any member of the collection is deeply equal to C<$data>.
+return true if any item in the collection is deeply equal to C<$data>.
 
 =head2 tap(\&callback)
 
@@ -421,10 +461,20 @@ Returns the first item for which callback returns a true value.
 If the iterator contains STRING values, then return the first item which matches the
 regex.
 
+=head2 detect($key => $val)
+
+If the iterator contains HASH values, then return the first item where the value of
+$key is equal to val.
+
 =head2 detect($key => qr/..../)
 
 If the iterator contains HASH values, then return the first item where the value of
 $key matches the regex.
+
+=head2 detect($key => [$val, ...])
+
+If the iterator contains HASH values, then return the first item where the value of
+$key is equal to any of the vals given.
 
 =head2 select(\&callback)
 
@@ -434,10 +484,20 @@ Returns an Iterator for each item for which callback returns a true value.
 
 If the iterator contains STRING values, then return each item which matches the regex.
 
+=head2 select($key => $val)
+
+If the iterator contains HASH values, then return each item where the value of
+$key is equal to val.
+
 =head2 select($key => qr/..../)
 
 If the iterator contains HASH values, then return each item where the value of $key
 matches the regex.
+
+=head2 select($key => [$val, ...])
+
+If the iterator contains HASH values, then return each item where the value of
+$key is equal to any of the vals given.
 
 =head2 reject(\&callback)
 
@@ -450,8 +510,18 @@ matching the regex.
 
 =head2 reject($key => qr/..../)
 
-If the iterator contains HASH values, then rejext every item for where the $key value
-matches regex.
+If the iterator contains HASH values, then reject every item for where the value of $key
+DOESN'T match the regex.
+
+=head2 reject($key => $val)
+
+If the iterator contains HASH values, then return each item where the value of
+$key is NOT equal to val.
+
+=head2 reject($key => [$val, ...])
+
+If the iterator contains HASH values, then return each item where the value of
+$key is NOT equal to any of the vals given.
 
 =head3 BOOLEAN FUNCTIONS
 

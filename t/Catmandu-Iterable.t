@@ -113,6 +113,20 @@ $iter->data([1 .. 10]);
 is_deeply $iter->group(3)->invoke('to_array')->to_array,
     [[1,2,3],[4,5,6],[7,8,9],[10]];
 
+$iter->data([1,2,3]);
+is_deeply $iter->interleave->to_array, $iter->data;
+is_deeply $iter->interleave(
+        T::Iterable->new(data => [4,5,6]),
+        T::Iterable->new(data => [7,8,9]))->to_array,
+    [1,4,7,2,5,8,3,6,9];
+is_deeply $iter->interleave(
+        T::Iterable->new(data => [4,5]))->to_array,
+    [1,4,2,5,3];
+$iter->data([1,2]);
+is_deeply $iter->interleave(
+        T::Iterable->new(data => [4,5,6]))->to_array,
+    [1,4,2,5,6];
+
 $iter->data([2,1,'10foo','foo10',-1,-2]);
 is $iter->min, -2;
 is $iter->max,  2;
@@ -129,5 +143,5 @@ $iter->data(['foo', 'oof']);
 is $iter->min, undef;
 is $iter->max, undef;
 
-done_testing 50;
+done_testing 54;
 

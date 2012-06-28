@@ -15,7 +15,12 @@ sub size {
     scalar @{$_[0]->hits};
 }
 
-sub to_array { goto &hits }
+sub more {
+    my $self = $_[0];
+    $self->start + $self->limit < $self->total;
+}
+
+sub to_array { [@{$_[0]->hits}] }
 
 sub count { goto &size }
 
@@ -37,9 +42,8 @@ sub each {
     $self->size;
 }
 
-sub more {
-    my $self = $_[0];
-    $self->start + $self->limit < $self->total;
+sub first {
+    $_[0]->hits->[0];
 }
 
 1;

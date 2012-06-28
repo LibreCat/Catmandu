@@ -3,12 +3,12 @@ use Catmandu::Sane;
 use parent qw(App::Cmd::Command);
 
 sub opt_spec {
-    my ($cmd_class, $cmd) = @_;
+    my ($class, $cli) = @_;
     (
         ['help|h|?', "this usage screen"],
-        $cmd->global_opt_spec,
+        $cli->global_opt_spec,
         [],
-        $cmd_class->command_opt_spec($cmd),
+        $class->command_opt_spec($cli),
     );
 }
 
