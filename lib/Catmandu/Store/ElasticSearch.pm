@@ -257,6 +257,7 @@ has query => (is => 'ro', required => 1);
 has start => (is => 'ro', required => 1);
 has limit => (is => 'ro', required => 1);
 has total => (is => 'ro');
+has sort  => (is => 'ro');
 
 sub generator {
     my ($self) = @_;
@@ -266,12 +267,16 @@ sub generator {
         if (defined $total) {
             return unless $total;
         }
-        state $scroller = $self->bag->store->elastic_search->scrolled_search({
-            search_type => 'scan',
-            query => $self->query,
-            type  => $self->bag->name,
-            from  => $self->start,
-        });
+        state $scroller = do {
+            my $args = {
+                search_type => 'scan',
+                query => $self->query,
+                type  => $self->bag->name,
+                from  => $self->start,
+            };
+            $args->{sort} = $self->sort if $self->sort;
+            $self->bag->store->elastic_search->scrolled_search($args);
+        };
         state @hits;
         unless (@hits) {
             if ($total && $limit > $total) {
@@ -294,6 +299,7 @@ sub slice { # TODO constrain total
         query => $self->query,
         start => $self->start + $start,
         total => $total,
+        sort  => $self->sort,
     );
 }
 
