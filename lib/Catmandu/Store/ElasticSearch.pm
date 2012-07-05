@@ -269,12 +269,16 @@ sub generator {
         }
         state $scroller = do {
             my $args = {
-                search_type => 'scan',
                 query => $self->query,
                 type  => $self->bag->name,
                 from  => $self->start,
             };
-            $args->{sort} = $self->sort if $self->sort;
+            if ($self->sort) {
+                $args->{search_type} = 'query_then_fetch';
+                $args->{sort} = $self->sort;
+            } else {
+                $args->{search_type} = 'scan';
+            }
             $self->bag->store->elastic_search->scrolled_search($args);
         };
         state @hits;
