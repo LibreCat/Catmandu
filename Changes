@@ -1,5 +1,15 @@
 Revision history for Catmandu
 
+0.03    2012-07-06
+  - iterative version of CQL::ElasticSearch
+  - Store::ElasticSearch searcher supports sort
+  - faster Datestamps
+  - Iterable interleave
+  - Iterable detect/select/reject(key => ['val', ...])
+  - Iterable detect/select/reject(key => 'val')
+  - fix Dancer::Plugin::Catmandu::SRU recordPosition
+  - Cmd::config can take a key to show only a subset
+
 0.02    2012-06-12
   - remove guard feature from fixes
   - load split config files
