@@ -31,66 +31,44 @@ sub parse {
 sub parse_node {
     my ($self, $node) = @_;
 
+    my $query = {};
+
     unless ($node->isa('CQL::BooleanNode')) {
-        return $node->isa('CQL::TermNode')
-            ? $self->_parse_term_node($node)
-            : $self->_parse_prox_node($node);
+        $node->isa('CQL::TermNode')
+            ? $self->_parse_term_node($node, $query)
+            : $self->_parse_prox_node($node, $query);
+        return $query;
     }
 
     my @stack = ($node);
-    my @query = ({bool => $node->op});
-    my @bools = @query;
-    my $left  = 1;
+    my @query_stack = (my $q = $query);
 
-    $node = $node->left;
+    while (@stack) {
+        $node  = shift @stack;
+        $q     = shift @query_stack;
 
-    RIGHT: {
-        while ($node->isa('CQL::BooleanNode')) {
-            push @bools, my $q = {bool => $node->op};
-            $query[-1]->{$left ? 'l' : 'r'} = $q;
-            push @query, $q;
-            push @stack, $node;
-            $left = 1;
-            $node = $node->left;
-        }
-
-        while ($node) {
-            if ($node->isa('CQL::BooleanNode')) {
-                $left = 0;
-                $node = $node->right;
-                redo RIGHT;
+        if ($node->isa('CQL::BooleanNode')) {
+            push @stack, $node->left, $node->right;
+            push @query_stack, my $left = {}, my $right = {};
+            if ($node->op eq 'and') {
+                $q->{bool} = { must => [$left, $right] };
+            } elsif ($node->op eq 'or') {
+                $q->{bool} = { should => [$left, $right] };
+            } else {
+                $q->{bool} = { must => [ $left, { bool => { must_not => [$right] } } ] };
             }
-
-            $query[-1]->{$left ? 'l' : 'r'} = $node->isa('CQL::TermNode')
-                ? $self->_parse_term_node($node)
-                : $self->_parse_prox_node($node);
-
-            if (@query > 1 && $query[-1]->{l} && $query[-1]->{r}) {
-                pop @query;
-            }
-
-            $node = pop @stack;
-        }
-    }
-
-    for my $q (@bools) {
-        my $bool = $q->{bool};
-        my $l    = delete $q->{l};
-        my $r    = delete $q->{r};
-        if ($bool eq 'and') {
-            $q->{bool} = { must => [$l, $r] };
-        } elsif ($bool eq 'or') {
-            $q->{bool} = { should => [$l, $r] };
+        } elsif ($node->isa('CQL::TermNode')) {
+            $self->_parse_term_node($node, $q);
         } else {
-            $q->{bool} = { must => [ $l, { bool => { must_not => [$r] } } ] };
+            $self->_parse_prox_node($node, $q);
         }
     }
 
-    $query[0];
+    $query;
 }
 
 sub _parse_term_node {
-    my ($self, $node) = @_;
+    my ($self, $node, $query) = @_;
 
     my $term = $node->getTerm;
 
@@ -157,6 +135,7 @@ sub _parse_term_node {
         $nested = $mapping->{nested};
     }
 
+    # TODO just pass query around
     my $es_node = _term_node($base, $qualifier, $term, @modifiers);
 
     if ($nested) {
@@ -172,11 +151,15 @@ sub _parse_term_node {
         } };
     }
 
-    $es_node;
+    for my $key (keys %$es_node) {
+        $query->{$key} = $es_node->{$key};
+    }
+
+    $query;
 }
 
 sub _parse_prox_node {
-    my ($self, $node) = @_;
+    my ($self, $node, $query) = @_;
 
     my $slop = 0;
     my $qualifier = $node->left->getQualifier;
@@ -188,7 +171,7 @@ sub _parse_prox_node {
         $qualifier = '_all';
     }
 
-    { text_phrase => { $qualifier => { query => $term, slop => $slop } } };
+    $query->{text_phrase} = { $qualifier => { query => $term, slop => $slop } };
 }
 
 sub _term_node {
