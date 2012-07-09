@@ -172,7 +172,7 @@ sub default_load_path {
     $default_path = $path if defined $path;
     $default_path //= do {
         my $script = File::Spec->rel2abs($0);
-        my ($script_vol, $script_path, $script_name) = File::Spec->splitpath($0);
+        my ($script_vol, $script_path, $script_name) = File::Spec->splitpath($script);
         $script_path;
     }
 }
