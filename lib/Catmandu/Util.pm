@@ -45,8 +45,12 @@ sub require_package {
         }
     }
 
-    eval "require $pkg";
-    confess $@ if $@;
+    return $pkg if is_invocant($pkg);
+
+    eval "require $pkg;1;" or do {
+        my $err = $@;
+        confess $err;
+    };
 
     $pkg;
 }

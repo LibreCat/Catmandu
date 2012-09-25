@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.0302  2012-09-25
+  - fix POST support in Dancer::Plugin::Catmandu::OAI
+  - optimize Util::require_package
+
 0.0301  2012-07-09
   - fix typo in Catmandu->load
 

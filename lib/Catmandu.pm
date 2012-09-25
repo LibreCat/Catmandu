@@ -28,11 +28,11 @@ L<Catmandu::Introduction>.
 
 =head1 VERSION
 
-Version 0.0301
+Version 0.0302
 
 =cut
 
-our $VERSION = '0.0301';
+our $VERSION = '0.0302';
 
 =head1 SYNOPSIS
 

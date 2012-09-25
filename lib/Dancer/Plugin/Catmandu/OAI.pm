@@ -1,6 +1,6 @@
 package Dancer::Plugin::Catmandu::OAI; # TODO deletedRecord=persistent, hierarchical sets, setDescription
 
-our $VERSION = '0.01';
+our $VERSION = '0.0101';
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is);
@@ -230,9 +230,9 @@ sub oai_provider {
 
     my $bag = Catmandu->store($opts{store} || $setting->{store})->bag($opts{bag} || $setting->{bag});
 
-    get $path => sub {
+    any ['get', 'post'] => $path => sub {
         my $response_date = DateTime->now->iso8601.'Z';
-        my $params = params('query');
+        my $params = request->is_get ? params('query') : params('body');
         my $errors = [];
         my $format;
         my $set;
