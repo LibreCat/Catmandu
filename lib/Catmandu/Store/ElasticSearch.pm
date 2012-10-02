@@ -295,13 +295,14 @@ sub generator {
     };
 }
 
-sub slice { # TODO constrain total
+sub slice { # TODO constrain total?
     my ($self, $start, $total) = @_;
     $start //= 0;
     $self->new(
         bag   => $self->bag,
         query => $self->query,
         start => $self->start + $start,
+        limit => $limit,
         total => $total,
         sort  => $self->sort,
     );
