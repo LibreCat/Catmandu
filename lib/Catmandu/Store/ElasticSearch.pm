@@ -302,7 +302,7 @@ sub slice { # TODO constrain total?
         bag   => $self->bag,
         query => $self->query,
         start => $self->start + $start,
-        limit => $limit,
+        limit => $self->limit,
         total => $total,
         sort  => $self->sort,
     );
