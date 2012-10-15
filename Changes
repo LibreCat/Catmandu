@@ -1,5 +1,11 @@
 Revision history for Catmandu
 
+0.0303  2012-10-15
+  - pass limit option in Store::ElasticSearch::Searcher and
+    Store::Solr::Searcher
+  - fix Exporter::CSV docs
+  - custom header labels in Exporter::CSV and Exporter::XLS
+
 0.0302  2012-09-25
   - fix POST support in Dancer::Plugin::Catmandu::OAI
   - optimize Util::require_package
