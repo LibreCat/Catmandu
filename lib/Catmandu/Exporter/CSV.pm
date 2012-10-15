@@ -6,11 +6,11 @@ use Text::CSV;
 
 with 'Catmandu::Exporter';
 
-has csv        => (is => 'ro', lazy => 1, builder => '_build_csv');
-has sep_char => (is => 'ro', default => sub { ',' });
-has quote_char => (is => 'ro', default => sub { '"' });
+has csv         => (is => 'ro', lazy => 1, builder => '_build_csv');
+has sep_char    => (is => 'ro', default => sub { ',' });
+has quote_char  => (is => 'ro', default => sub { '"' });
 has escape_char => (is => 'ro', default => sub { '"' });
-has header     => (is => 'ro', default => sub { 1 });
+has header      => (is => 'ro', default => sub { 1 });
 has fields => (
     is     => 'rw',
     coerce => sub {
@@ -62,7 +62,7 @@ Catmandu::Exporter::CSV - a CSV exporter
     my $exporter = Catmandu::Exporter::CSV->new(
 				fix => 'myfix.txt'
 				quote_char => '"' ,
-				split_char => ',' ,
+				sep_char => ',' ,
 				header => 1);
 
     $exporter->fields("f1,f2,f3");
@@ -77,10 +77,10 @@ Catmandu::Exporter::CSV - a CSV exporter
 
 =head1 METHODS
 
-=head2 new(quote_char => STRING, split_char => STRING, header => 0|1, fields => ARRAY|HASH|STRING)
+=head2 new(quote_char => STRING, sep_char => STRING, header => 0|1, fields => ARRAY|HASH|STRING)
 
 Creates a new Catmandu::Exporter::CSV. Optionally set the field and column boundaries with quote_char and
-split_char. If header is set to 1, then a header line with field names will be included. Field names 
+sep_char. If header is set to 1, then a header line with field names will be included. Field names 
 can be read from the first item exported or set by the fields argument (see: fields).
 
 =head2 fields($arrayref)
