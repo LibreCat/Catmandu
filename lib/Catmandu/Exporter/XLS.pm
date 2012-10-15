@@ -42,7 +42,9 @@ sub add {
     if ($header) {
         if ($n == 0) {
             for (my $i = 0; $i < @$fields; $i++) {
-                $worksheet->write_string($n, $i, $fields->[$i]);
+                my $field = $fields->[$i];
+                $field = $header->{$field} if ref $header && defined $header->{$field};
+                $worksheet->write_string($n, $i, $field);
             }
         }
         $n++;
@@ -71,6 +73,9 @@ Catmandu::Exporter::XLS - a XLS exporter
 
     $exporter->fields("f1,f2,f3");
 
+    # add custom header labels
+    $exporter->header({f2 => 'field two'});
+
     $exporter->add_many($arrayref);
     $exporter->add_many($iterator);
     $exporter->add_many(sub { });
@@ -83,11 +88,11 @@ Catmandu::Exporter::XLS - a XLS exporter
 
 =head1 METHODS
 
-=head2 new(fields => ARRAY|HASH|STRING)
+=head2 new(header => 0|1|HASH, fields => ARRAY|HASH|STRING)
 
-Creates a new Catmandu::Exporter::XLS. If header is set to 1, then a header line with field 
-names will be included. Field names can be read from the first item exported or set by the 
-fields argument (see: fields).
+Creates a new Catmandu::Exporter::XLS. A header line with field names will be
+included if C<header> is set. Field names can be read from the first item
+exported or set by the fields argument (see: C<fields>).
 
 =head2 fields($arrayref)
 
@@ -100,6 +105,14 @@ Set the field names by the keys of a HASH reference.
 =head2 fields($string)
 
 Set the fields by a comma delimited string.
+
+=head2 header(1)
+
+Include a header line with the field names
+
+=head2 header($hashref)
+
+Include a header line with custom field names
 
 =head2 commit
 

@@ -10,7 +10,7 @@ has csv         => (is => 'ro', lazy => 1, builder => '_build_csv');
 has sep_char    => (is => 'ro', default => sub { ',' });
 has quote_char  => (is => 'ro', default => sub { '"' });
 has escape_char => (is => 'ro', default => sub { '"' });
-has header      => (is => 'ro', default => sub { 1 });
+has header      => (is => 'rw', default => sub { 1 });
 has fields => (
     is     => 'rw',
     coerce => sub {
@@ -46,7 +46,9 @@ sub add {
     } @$fields];
     my $fh = $self->fh;
     if ($self->count == 0 && $self->header) {
-        $self->csv->print($fh, $fields);
+        $self->csv->print($fh, ref $self->header
+            ? [map { $self->header->{$_} // $_ } @$fields]
+            : $fields);
     }
     $self->csv->print($fh, $row);
 }
@@ -66,6 +68,10 @@ Catmandu::Exporter::CSV - a CSV exporter
 				header => 1);
 
     $exporter->fields("f1,f2,f3");
+    $exporter->fields([qw(f1 f2 f3)]);
+
+    # add custom header labels
+    $exporter->header({f2 => 'field two'});
 
     $exporter->add_many($arrayref);
     $exporter->add_many($iterator);
@@ -77,11 +83,12 @@ Catmandu::Exporter::CSV - a CSV exporter
 
 =head1 METHODS
 
-=head2 new(quote_char => STRING, sep_char => STRING, header => 0|1, fields => ARRAY|HASH|STRING)
+=head2 new(quote_char => STRING, sep_char => STRING, header => 0|1|HASH, fields => ARRAY|HASH|STRING)
 
-Creates a new Catmandu::Exporter::CSV. Optionally set the field and column boundaries with quote_char and
-sep_char. If header is set to 1, then a header line with field names will be included. Field names 
-can be read from the first item exported or set by the fields argument (see: fields).
+Creates a new Catmandu::Exporter::CSV. Optionally set the field and column
+boundaries with quote_char and sep_char. A header line with field names will be
+included if C<header> is set. Field names can be read from the first item
+exported or set by the fields argument (see: C<fields>).
 
 =head2 fields($arrayref)
 
@@ -94,6 +101,14 @@ Set the field names by the keys of a HASH reference.
 =head2 fields($string)
 
 Set the fields by a comma delimited string.
+
+=head2 header(1)
+
+Include a header line with the field names
+
+=head2 header($hashref)
+
+Include a header line with custom field names
 
 =head1 SEE ALSO
 
