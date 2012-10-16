@@ -8,7 +8,7 @@ requires 'start';
 requires 'limit';
 requires 'total';
 
-has max_pages_in_spread => (is => 'rw', default => sub { 5 });
+has max_pages_in_spread => (is => 'rw', lazy => 1, default => sub { 5 });
 
 has _pager => (
     is => 'ro',
