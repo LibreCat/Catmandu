@@ -204,7 +204,7 @@ sub searcher {
 
 sub translate_sru_sortkeys {
     my ($self, $sortkeys) = @_;
-    [ grep { defined $_ } map { $self->_translate_sru_sortkey($_) } split /\s/, $sortkeys ];
+    [ grep { defined $_ } map { $self->_translate_sru_sortkey($_) } split /\s+/, $sortkeys ];
 }
 
 sub _translate_sru_sortkey {
