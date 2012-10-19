@@ -12,19 +12,70 @@ use YAML::Any ();
 use JSON ();
 
 our %EXPORT_TAGS = (
-    misc    => [qw(require_package use_lib)],
-    io      => [qw(io read_file read_yaml read_json)],
-    data    => [qw(parse_data_path get_data set_data delete_data data_at)],
-    array   => [qw(array_exists array_group_by array_pluck array_to_sentence
+    misc   => [qw(require_package use_lib)],
+    io     => [qw(io read_file read_yaml read_json)],
+    data   => [qw(parse_data_path get_data set_data delete_data data_at)],
+    array  => [qw(array_exists array_group_by array_pluck array_to_sentence
         array_sum array_includes array_any array_rest array_uniq)],
-    string  => [qw(as_utf8 trim capitalize)],
-    is      => [qw(is_same is_different)],
-    check   => [qw(check_same check_different)],
+    string => [qw(as_utf8 trim capitalize)],
+    is     => [qw(is_same is_different)],
+    check  => [qw(check_same check_different)],
+    human  => [qw(human_number human_content_type human_byte_size)],
 );
 
 our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
 
 $EXPORT_TAGS{all} = \@EXPORT_OK;
+
+my $CONTENT_TYPES = {
+    # txt
+    'text/plain' => 'Text',
+    'application/txt' => 'Text',
+    # pdf
+    'application/pdf' => 'PDF',
+    'application/x-pdf' => 'PDF',
+    'application/acrobat' => 'PDF',
+    'applications/vnd.pdf' => 'PDF',
+    'text/pdf' => 'PDF',
+    'text/x-pdf' => 'PDF',
+    # doc
+    'application/doc' => 'Word',
+    'application/vnd.msword' => 'Word',
+    'application/vnd.ms-word' => 'Word',
+    'application/winword' => 'Word',
+    'application/word' => 'Word',
+    'application/x-msw6' => 'Word',
+    'application/x-msword' => 'Word',
+    # docx
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
+    # xls
+    'application/vnd.ms-excel' => 'Excel',
+    'application/msexcel' => 'Excel',
+    'application/x-msexcel' => 'Excel',
+    'application/x-ms-excel' => 'Excel',
+    'application/vnd.ms-excel' => 'Excel',
+    'application/x-excel' => 'Excel',
+    'application/x-dos_ms_excel' => 'Excel',
+    'application/xls' => 'Excel',
+    # xlsx
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
+    # ppt
+    'application/vnd.ms-powerpoint' => 'PowerPoint',
+    'application/mspowerpoint' => 'PowerPoint',
+    'application/ms-powerpoint' => 'PowerPoint',
+    'application/mspowerpnt' => 'PowerPoint',
+    'application/vnd-mspowerpoint' => 'PowerPoint',
+    'application/powerpoint' => 'PowerPoint',
+    'application/x-powerpoint' => 'PowerPoint',
+    # pptx
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'PowerPoint',
+    # csv
+    'text/comma-separated-values' => 'CSV',
+    'text/csv' => 'CSV',
+    'application/csv' => 'CSV',
+    # zip
+    'application/zip' => 'ZIP archive',
+};
 
 sub use_lib {
     my (@dirs) = @_;
@@ -248,7 +299,8 @@ sub array_rest {
 sub array_uniq {
     my ($arr) = @_;
     my %seen = ();
-    [grep { not $seen{$_}++ } @$arr];
+    my @vals = grep { not $seen{$_}++ } @$arr;
+    \@vals;
 }
 
 sub as_utf8 {
@@ -270,7 +322,7 @@ sub capitalize {
     ucfirst lc as_utf8 $_[0];
 }
 
-sub is_same { goto &Data::Compare::Compare }
+*is_same = \&Data::Compare::Compare;
 
 sub is_different {
     !is_same(@_);
@@ -284,17 +336,17 @@ sub check_different {
     !is_same(@_) || confess('error: should be different');
 }
 
-sub is_invocant { goto &Data::Util::is_invocant }
-sub is_scalar_ref { goto &Data::Util::is_scalar_ref }
-sub is_array_ref { goto &Data::Util::is_array_ref }
-sub is_hash_ref { goto &Data::Util::is_hash_ref }
-sub is_code_ref { goto &Data::Util::is_code_ref }
-sub is_regex_ref { goto &Data::Util::is_rx }
-sub is_glob_ref { goto &Data::Util::is_glob_ref }
-sub is_value { goto &Data::Util::is_value }
-sub is_string { goto &Data::Util::is_string }
-sub is_number { goto &Data::Util::is_number }
-sub is_integer { goto &Data::Util::is_integer }
+*is_invocant = \&Data::Util::is_invocant;
+*is_scalar_ref = \&Data::Util::is_scalar_ref;
+*is_array_ref = \&Data::Util::is_array_ref;
+*is_hash_ref = \&Data::Util::is_hash_ref;
+*is_code_ref = \&Data::Util::is_code_ref;
+*is_regex_ref = \&Data::Util::is_rx;
+*is_glob_ref = \&Data::Util::is_glob_ref;
+*is_value = \&Data::Util::is_value;
+*is_string = \&Data::Util::is_string;
+*is_number = \&Data::Util::is_number;
+*is_integer = \&Data::Util::is_integer;
 
 sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;
@@ -347,4 +399,34 @@ for my $sym (qw(able invocant ref
             unless Data::Util::get_code_ref($pkg, "check_maybe_$sym");
 }
 
+sub human_number { # taken from Number::Format
+    my $num = $_[0];
+    # add leading 0's so length($num) is divisible by 3
+    $num = '0'x(3 - (length($num) % 3)).$num;
+    # split $num into groups of 3 characters and insert commas
+    $num = join ',', grep { $_ ne '' } split /(...)/, $num;
+    # strip off leading zeroes and/or comma
+    $num =~ s/^0+,?//;
+    length $num ? $num : '0';
+}
+
+sub human_byte_size {
+    my ($size) = @_;
+    if ($size > 1000000000) {
+        return sprintf("%.2f GB", $size / 1000000000);
+    } elsif ($size > 1000000) {
+        return sprintf("%.2f MB", $size / 1000000);
+    } elsif ($size > 1000) {
+        return sprintf("%.2f KB", $size / 1000);
+    }
+    "$size bytes";
+}
+
+sub human_content_type {
+    my ($content_type, $default) = @_;
+    my ($key) = $content_type =~ /^([^;]+)/;
+    $CONTENT_TYPES->{$key} // $default // $content_type;
+}
+
 1;
+

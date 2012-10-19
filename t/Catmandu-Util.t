@@ -31,6 +31,8 @@ require_ok $pkg;
     use Catmandu::Util qw(:array);
     package T::ImportString;
     use Catmandu::Util qw(:string);
+    package T::ImportHuman;
+    use Catmandu::Util qw(:human);
 }
 
 for my $sym (qw(same different)) {
@@ -100,6 +102,12 @@ for my $sym (qw(as_utf8 trim capitalize)) {
     can_ok 'T::ImportAll', $sym;
     can_ok 'T::ImportString', $sym;
 }
+for my $sym (qw(human_number human_content_type human_byte_size)) {
+    can_ok $pkg, $sym;
+    ok !T::ImportNothing->can($sym);
+    can_ok 'T::ImportAll', $sym;
+    can_ok 'T::ImportHuman', $sym;
+}
 
-done_testing 410;
+done_testing 422;
 
