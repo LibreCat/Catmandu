@@ -322,7 +322,9 @@ sub trim {
 }
 
 sub capitalize {
-    ucfirst lc as_utf8 $_[0];
+    my $str = $_[0];
+    utf8::upgrade($str);
+    ucfirst lc $str;
 }
 
 *is_same = \&Data::Compare::Compare;
@@ -542,6 +544,26 @@ with C<is_same()>.
 
 =back
 
+=head2 String functions
+
+    use Catmandu::Util qw(:string);
+
+=over 4
+
+=item as_utf8($str)
+
+Returns a copy of C<$str> flagged as UTF-8.
+
+=item trim($str)
+
+Returns a copy of C<$str> with leading and trailing whitespace removed.
+
+=item capitalize($str)
+
+Equivalent to C<< ucfirst lc as_utf8 $str >>.
+
+=back
+
 =head2 Is functions
 
     use Catmandu::Util qw(:is);
@@ -555,9 +577,9 @@ with C<is_same()>.
     is_maybe_hash_ref([]);
     # => 0
 
-A collection of predicate functions that test the type of argument C<$val>.
-Each function also has a I<maybe> variant that also tests true if C<$val> is
-undefined.
+A collection of predicate functions that test the type or value of argument
+C<$val>.  Each function (except C<is_same()> and C<is_different>) also has a
+I<maybe> variant that also tests true if C<$val> is undefined.
 
 Returns C<1> or C<0>.
 
@@ -657,6 +679,14 @@ Equivalent to C<< is_integer($val) && $val >= 0 >>.
 
 Tests if C<$val> is a positive integer.
 Equivalent to C<< is_integer($val) && $val >= 1 >>.
+
+=item is_same($val, $other_val)
+
+Tests if C<$val> is deeply equal to C<$other_val>.
+
+=item is_different($val, $other_val)
+
+The opposite of C<is_same()>.
 
 =back
 
