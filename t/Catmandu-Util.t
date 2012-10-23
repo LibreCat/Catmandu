@@ -33,6 +33,8 @@ require_ok $pkg;
     use Catmandu::Util qw(:string);
     package T::ImportHuman;
     use Catmandu::Util qw(:human);
+    package T::ImportXML;
+    use Catmandu::Util qw(:xml);
 }
 
 for my $sym (qw(same different)) {
@@ -108,6 +110,12 @@ for my $sym (qw(human_number human_content_type human_byte_size)) {
     can_ok 'T::ImportAll', $sym;
     can_ok 'T::ImportHuman', $sym;
 }
+for my $sym (qw(xml_declaration xml_escape)) {
+    can_ok $pkg, $sym;
+    ok !T::ImportNothing->can($sym);
+    can_ok 'T::ImportAll', $sym;
+    can_ok 'T::ImportXML', $sym;
+}
 
-done_testing 422;
+done_testing 430;
 

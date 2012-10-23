@@ -12,7 +12,6 @@ use YAML::Any ();
 use JSON ();
 
 our %EXPORT_TAGS = (
-    misc   => [qw(require_package use_lib)],
     io     => [qw(io read_file read_yaml read_json)],
     data   => [qw(parse_data_path get_data set_data delete_data data_at)],
     array  => [qw(array_exists array_group_by array_pluck array_to_sentence
@@ -21,13 +20,15 @@ our %EXPORT_TAGS = (
     is     => [qw(is_same is_different)],
     check  => [qw(check_same check_different)],
     human  => [qw(human_number human_content_type human_byte_size)],
+    xml    => [qw(xml_declaration xml_escape)],
+    misc   => [qw(require_package use_lib)],
 );
 
 our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
 
 $EXPORT_TAGS{all} = \@EXPORT_OK;
 
-my $CONTENT_TYPES = {
+my $HUMAN_CONTENT_TYPES = {
     # txt
     'text/plain' => 'Text',
     'application/txt' => 'Text',
@@ -76,6 +77,8 @@ my $CONTENT_TYPES = {
     # zip
     'application/zip' => 'ZIP archive',
 };
+
+my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
 sub use_lib {
     my (@dirs) = @_;
@@ -266,13 +269,13 @@ sub array_pluck {
 }
 
 sub array_to_sentence {
-    my ($arr, $join_char, $join_last_char) = @_;
-    $join_char //= ', ';
-    $join_last_char //= ' and ';
+    my ($arr, $join, $join_last) = @_;
+    $join //= ', ';
+    $join_last //= ' and ';
     my $size = scalar @$arr;
     $size > 2
-        ? join($join_last_char, join($join_char, @$arr[0..$size-1]), $arr->[-1])
-        : join($join_last_char, @$arr);
+        ? join($join_last, join($join, @$arr[0..$size-1]), $arr->[-1])
+        : join($join_last, @$arr);
 }
 
 sub array_sum {
@@ -425,8 +428,241 @@ sub human_byte_size {
 sub human_content_type {
     my ($content_type, $default) = @_;
     my ($key) = $content_type =~ /^([^;]+)/;
-    $CONTENT_TYPES->{$key} // $default // $content_type;
+    $HUMAN_CONTENT_TYPES->{$key} // $default // $content_type;
+}
+
+sub xml_declaration {
+    $XML_DECLARATION;
+}
+
+sub xml_escape {
+    my ($str) = @_;
+    utf8::upgrade($str);
+
+    $str =~ s/&/&amp;/go;
+    $str =~ s/</&lt;/go;
+    $str =~ s/>/&gt;/go;
+    $str =~ s/"/&quot;/go;
+    $str =~ s/'/&apos;/go;
+    # remove control chars
+    $str =~ s/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//go;
+
+    $str;
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Catmandu::Util - A collection of utility functions
+
+=head1 SYNOPSIS
+
+    use Catmandu::Util qw(:string);
+
+    $str = trim($str);
+
+=head1 FUNCTIONS
+
+=head2 Array functions
+
+    use Catmandu::Util qw(:array);
+
+A collection of functions that operate on array references.
+
+=over 4
+
+=item array_exists($array, $index)
+
+Returns C<1> if C<$index> is in the bounds of C<$array>
+
+    array_exists(["a", "b"], 2);
+    # => 0
+    array_exists(["a", "b"], 1);
+    # => 1
+
+=item array_group_by($array, $key)
+
+    my $list = [{color => 'black', id => 1},
+                {color => 'white', id => 2},
+                {id => 3},
+                {color => 'black', id => 4}];
+    array_group_by($list, 'color');
+    # => {black => [{color => 'black', id => 1}, {color => 'black', id => 4}],
+    #     white => [{color => 'white', id => 2}]}
+
+=item array_pluck($array, $key)
+
+    my $list = [{id => 1}, {}, {id => 3}];
+    array_pluck($list, 'id');
+    # => [1, undef, 3]
+
+=item array_to_sentence($array, [$join, $join_last])
+
+    array_to_sentence([1,2,3]);
+    # => "1, 2 and 3"
+    array_to_sentence([1,2,3], ",", " & ");
+    # => "1,2 & 3"
+
+=item array_sum($array)
+
+    array_sum([1,2,3]);
+    # => 6
+
+=item array_includes($array, $val)
+
+Returns 1 if C<$array> includes a value that is deeply equal to C<$val>, 0
+otherwise. Comparison is done with C<is_same()>.
+
+    array_includes([{color => 'black'}], {color => 'white'});
+    # => 0
+    array_includes([{color => 'black'}], {color => 'black'});
+    # => 1
+
+=item array_any($array, \&sub)
+
+    array_any(["green", "blue"], sub { my $color = $_[0]; $color eq "blue" });
+    # => 1
+
+=item array_rest($array)
+
+Returns a copy of C<$array> without the head.
+
+    array_rest([1,2,3,4]);
+    # => [2,3,4]
+    array_rest([1]);
+    # => []
+
+=item array_uniq($array)
+
+Returns a copy of C<$array> with all duplicates removed. Comparison is done
+with C<is_same()>.
+
+=back
+
+=head2 Is functions
+
+    use Catmandu::Util qw(:is);
+
+    is_number(42) ? "it's numeric" : "it's not numeric";
+
+    is_maybe_hash_ref({});
+    # => 1
+    is_maybe_hash_ref(undef);
+    # => 1
+    is_maybe_hash_ref([]);
+    # => 0
+
+A collection of predicate functions that test the type of argument C<$val>.
+Each function also has a I<maybe> variant that also tests true if C<$val> is
+undefined.
+
+Returns C<1> or C<0>.
+
+=over 4
+
+=item is_invocant($val)
+
+=item is_maybe_invocant($val)
+
+Tests if C<$val> is callable (is an existing package or blessed object).
+
+=item is_able($val, @method_names)
+
+=item is_maybe_able($val, @method_names)
+
+Tests if C<$val> is callable and has all methods in C<@method_names>.
+
+=item is_ref($val)
+
+=item is_maybe_ref($val)
+
+Tests if C<$val> is a reference. Equivalent to C<< ref $val ? 1 : 0 >>.
+
+=item is_scalar_ref($val)
+
+=item is_maybe_scalar_ref($val)
+
+Tests if C<$val> is a scalar reference.
+
+=item is_array_ref($val)
+
+=item is_maybe_array_ref($val)
+
+Tests if C<$val> is an array reference.
+
+=item is_hash_ref($val)
+
+=item is_maybe_hash_ref($val)
+
+Tests if C<$val> is a hash reference.
+
+=item is_code_ref($val)
+
+=item is_maybe_code_ref($val)
+
+Tests if C<$val> is a subroutine reference.
+
+=item is_regex_ref($val)
+
+=item is_maybe_regex_ref($val)
+
+Tests if C<$val> is a regular expression reference generated by the C<qr//>
+operator.
+
+=item is_glob_ref($val)
+
+=item is_maybe_glob_ref($val)
+
+Tests if C<$val> is a glob reference.
+
+=item is_value($val)
+
+=item is_maybe_value($val)
+
+Tests if C<$val> is a real value (defined, not a reference and not a
+glob.
+
+=item is_string($val)
+
+=item is_maybe_string($val)
+
+Tests if C<$val> is a non-empty string.
+Equivalent to C<< is_value($val) && length($val) > 0 >>.
+
+=item is_number($val)
+
+=item is_maybe_number($val)
+
+Tests if C<$val> is a number.
+
+=item is_integer($val)
+
+=item is_maybe_integer($val)
+
+Tests if C<$val> is an integer.
+
+=item is_natural($val)
+
+=item is_maybe_natural($val)
+
+Tests if C<$val> is an non-negative integer.
+Equivalent to C<< is_integer($val) && $val >= 0 >>.
+
+=item is_positive($val)
+
+=item is_maybe_positive($val)
+
+Tests if C<$val> is a positive integer.
+Equivalent to C<< is_integer($val) && $val >= 1 >>.
+
+=back
+
+=head1 SEE ALSO
+
+L<Data::Util>.
+
+=cut
 
