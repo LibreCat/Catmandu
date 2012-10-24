@@ -1,6 +1,10 @@
 Revision history for Catmandu
 
-0.04  2012-10-24
+0.0401  2012-10-24
+  - split off Store::SBCatDB
+  - more Util docs
+
+0.04    2012-10-24
   - Util human output functions
   - Util xml functions
   - Util docs
