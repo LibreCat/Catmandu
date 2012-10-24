@@ -1,5 +1,10 @@
 Revision history for Catmandu
 
+0.04  2012-10-24
+  - Util human output functions
+  - Util xml functions
+  - Util docs
+
 0.0303  2012-10-15
   - pass limit option in Store::ElasticSearch::Searcher and
     Store::Solr::Searcher
