@@ -80,35 +80,6 @@ my $HUMAN_CONTENT_TYPES = {
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
-sub use_lib {
-    my (@dirs) = @_;
-
-    use lib;
-    lib->import(@dirs);
-    confess $@ if $@;
-
-    1;
-}
-
-sub require_package {
-    my ($pkg, $ns) = @_;
-
-    if ($ns) {
-        unless ($pkg =~ s/^\+// || $pkg =~ /^$ns/) {
-            $pkg = "${ns}::$pkg";
-        }
-    }
-
-    return $pkg if is_invocant($pkg);
-
-    eval "require $pkg;1;" or do {
-        my $err = $@;
-        confess $err;
-    };
-
-    $pkg;
-}
-
 sub io {
     my ($io, %opts) = @_;
     $opts{encoding} ||= ':utf8';
@@ -452,6 +423,35 @@ sub xml_escape {
     $str;
 }
 
+sub use_lib {
+    my (@dirs) = @_;
+
+    use lib;
+    lib->import(@dirs);
+    confess $@ if $@;
+
+    1;
+}
+
+sub require_package {
+    my ($pkg, $ns) = @_;
+
+    if ($ns) {
+        unless ($pkg =~ s/^\+// || $pkg =~ /^$ns/) {
+            $pkg = "${ns}::$pkg";
+        }
+    }
+
+    return $pkg if is_invocant($pkg);
+
+    eval "require $pkg;1;" or do {
+        my $err = $@;
+        confess $err;
+    };
+
+    $pkg;
+}
+
 1;
 
 __END__
@@ -467,6 +467,57 @@ Catmandu::Util - A collection of utility functions
     $str = trim($str);
 
 =head1 FUNCTIONS
+
+=head2 IO functions
+
+    use Catmandu::Util qw(:io);
+
+=over 4
+
+=item io($io, %opts)
+
+Takes a file path, glob, glob reference, scalar reference or L<IO::Handle>
+object and returns an opened L<IO::Handle> object.
+
+    my $fh = io '/path/to/file';
+
+    my $fh = io *STDIN;
+
+    my $fh = io \*STDOUT, mode => 'w', encoding => ':crlf';
+
+    my $scalar = "";
+    my $fh = io \$scalar, mode => 'w';
+    $fh->print("some text");
+
+Options are:
+
+=over 12
+
+=item mode
+
+Default is C<"r">.
+
+=item encoding
+
+Default is C<":utf8">.
+
+=back
+
+=item read_file($path);
+
+Slurps the file at C<$path> into a string.
+
+    my $str = read_file('/path/to/file.txt');
+
+=item read_yaml($path);
+
+    my $cfg = read_yaml('config.yaml');
+
+=item read_json($path);
+
+    my $cfg = read_json('config.json');
+
+=back
 
 =head2 Array functions
 
@@ -501,10 +552,16 @@ Returns C<1> if C<$index> is in the bounds of C<$array>
     array_pluck($list, 'id');
     # => [1, undef, 3]
 
-=item array_to_sentence($array, [$join, $join_last])
+=item array_to_sentence($array)
+
+=item array_to_sentence($array, $join)
+
+=item array_to_sentence($array, $join, $join_last)
 
     array_to_sentence([1,2,3]);
     # => "1, 2 and 3"
+    array_to_sentence([1,2,3], ",");
+    # => "1,2 and 3"
     array_to_sentence([1,2,3], ",", " & ");
     # => "1,2 & 3"
 
@@ -687,6 +744,82 @@ Tests if C<$val> is deeply equal to C<$other_val>.
 =item is_different($val, $other_val)
 
 The opposite of C<is_same()>.
+
+=back
+
+=head2 Human output functions
+
+    use Catmandu::Util qw(:human);
+
+=over 4
+
+=item human_number($num)
+
+Insert a comma a 3-digit intervals to make C<$num> more readable. Only works
+with I<integers> for now.
+
+    human_number(64354);
+    # => "64,354"
+
+=item human_byte_size($size)
+
+    human_byte_size(64);
+    # => "64 bytes"
+    human_byte_size(10005000);
+    # => "10.01 MB"
+
+=item human_content_type($content_type)
+
+=item human_content_type($content_type, $default)
+
+    human_content_type('application/x-dos_ms_excel');
+    # => "Excel"
+    human_content_type('application/zip');
+    # => "ZIP archive"
+    human_content_type('foo/x-unknown');
+    # => "foo/x-unknown"
+    human_content_type('foo/x-unknown', 'Unknown');
+    # => "Unknown"
+
+=back
+
+=head2 XML functions
+
+    use Catmandu::Util qw(:xml);
+
+=over 4
+
+=item xml_declaration()
+
+Returns C<< qq(<?xml version="1.0" encoding="UTF-8"?>\n) >>.
+
+=item xml_escape($str)
+
+Returns an XML escaped copy of C<$str>.
+
+=back
+
+=head2 Miscellaneous functions
+
+=over 4
+
+=item require_package($pkg)
+
+=item require_package($pkg, $namespace)
+
+Load package C<$pkg> at runtime with C<require> and return it's full name.
+
+    my $pkg = require_package('File::Spec');
+    my $dir = $pkg->tmpdir();
+
+    require_package('Util', 'Catmandu');
+    # => "Catmandu::Util"
+    require_package('Catmandu::Util', 'Catmandu');
+    # => "Catmandu::Util"
+
+=item use_lib(@dirs)
+
+Add directories to C<@INC> at runtime.
 
 =back
 
