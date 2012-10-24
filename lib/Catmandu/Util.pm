@@ -637,7 +637,6 @@ Equivalent to C<< ucfirst lc as_utf8 $str >>.
 A collection of predicate functions that test the type or value of argument
 C<$val>.  Each function (except C<is_same()> and C<is_different>) also has a
 I<maybe> variant that also tests true if C<$val> is undefined.
-
 Returns C<1> or C<0>.
 
 =over 4
@@ -727,7 +726,7 @@ Tests if C<$val> is an integer.
 
 =item is_maybe_natural($val)
 
-Tests if C<$val> is an non-negative integer.
+Tests if C<$val> is a non-negative integer.
 Equivalent to C<< is_integer($val) && $val >= 0 >>.
 
 =item is_positive($val)
@@ -744,6 +743,86 @@ Tests if C<$val> is deeply equal to C<$other_val>.
 =item is_different($val, $other_val)
 
 The opposite of C<is_same()>.
+
+=back
+
+=head2 Check functions
+
+    use Catmandu::Util qw(:check);
+
+    check_hash_ref({color => 'red'});
+    # => {color => 'red'}
+    check_hash_ref([]);
+    # dies
+
+A group of assert functions similar to the C<:is> group, but instead of
+returning true or false they return their argument or die.
+
+=over 4
+
+=item check_invocant($val)
+
+=item check_maybe_invocant($val)
+
+=item check_able($val, @method_names)
+
+=item check_maybe_able($val, @method_names)
+
+=item check_ref($val)
+
+=item check_maybe_ref($val)
+
+=item check_scalar_ref($val)
+
+=item check_maybe_scalar_ref($val)
+
+=item check_array_ref($val)
+
+=item check_maybe_array_ref($val)
+
+=item check_hash_ref($val)
+
+=item check_maybe_hash_ref($val)
+
+=item check_code_ref($val)
+
+=item check_maybe_code_ref($val)
+
+=item check_regex_ref($val)
+
+=item check_maybe_regex_ref($val)
+
+=item check_glob_ref($val)
+
+=item check_maybe_glob_ref($val)
+
+=item check_value($val)
+
+=item check_maybe_value($val)
+
+=item check_string($val)
+
+=item check_maybe_string($val)
+
+=item check_number($val)
+
+=item check_maybe_number($val)
+
+=item check_integer($val)
+
+=item check_maybe_integer($val)
+
+=item check_natural($val)
+
+=item check_maybe_natural($val)
+
+=item check_positive($val)
+
+=item check_maybe_positive($val)
+
+=item check_same($val, $other_val)
+
+=item check_different($val, $other_val)
 
 =back
 
