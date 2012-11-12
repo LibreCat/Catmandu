@@ -15,7 +15,7 @@ has file => (
 has fh => (
     is      => 'ro',
     lazy    => 1,
-    default => sub { io($_[0]->file, mode => 'r', encoding => $_[0]->encoding) },
+    default => sub { io($_[0]->file, mode => 'r', binmode => $_[0]->encoding) },
 );
 
 sub encoding { ':utf8' }

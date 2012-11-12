@@ -1,7 +1,7 @@
 package Catmandu::CLI;
 use Catmandu::Sane;
 use App::Cmd::Setup -app;
-use Catmandu ();
+use Catmandu;
 
 sub plugin_search_path { 'Catmandu::Cmd' }
 

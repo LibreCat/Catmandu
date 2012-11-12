@@ -8,11 +8,13 @@ use List::Util;
 use Data::Compare ();
 use IO::File;
 use IO::String;
+use File::Spec;
 use YAML::Any ();
 use JSON ();
 
 our %EXPORT_TAGS = (
-    io     => [qw(io read_file read_yaml read_json)],
+    io     => [qw(io read_file write_file read_yaml read_json join_path
+        normalize_path segmented_path)],
     data   => [qw(parse_data_path get_data set_data delete_data data_at)],
     array  => [qw(array_exists array_group_by array_pluck array_to_sentence
         array_sum array_includes array_any array_rest array_uniq)],
@@ -82,31 +84,39 @@ my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
 sub io {
     my ($io, %opts) = @_;
-    $opts{encoding} ||= ':utf8';
-    $opts{mode} ||= 'r';
-
-    my $io_obj;
+    my $binmode = $opts{binmode} || $opts{encoding} || ':utf8';
+    my $mode = $opts{mode} || 'r';
+    my $fh;
 
     if (is_scalar_ref($io)) {
-        $io_obj = IO::String->new($$io);
+        $fh = IO::String->new($$io);
     } elsif (is_glob_ref(\$io) || ref $io) {
-        $io_obj = IO::Handle->new_from_fd($io, $opts{mode});
+        $fh = IO::Handle->new_from_fd($io, $mode);
     } else {
-        $io_obj = IO::File->new;
-        $io_obj->open($io, $opts{mode});
+        $fh = IO::File->new;
+        $fh->open($io, $mode);
     }
 
-    binmode $io_obj, $opts{encoding};
+    binmode $fh, $binmode;
 
-    $io_obj;
+    $fh;
 }
 
 sub read_file {
+    my ($path) = @_;
     local $/;
-    open(my $fh, check_string($_[0])) or confess "can't read file '$_[0]'";
+    open my $fh, "<", $path or confess qq(can't open "$path" for reading);
     my $str = <$fh>;
-    close($fh);
+    close $fh;
     $str;
+}
+
+sub write_file {
+    my ($path, $str) = @_;
+    open my $fh, ">", $path or confess qq(can't open "$path" for writing);
+    print $fh $str;
+    close $fh;
+    $path;
 }
 
 sub read_yaml {
@@ -115,6 +125,29 @@ sub read_yaml {
 
 sub read_json {
     JSON::decode_json(read_file($_[0]));
+}
+
+sub join_path {
+    my $path = File::Spec->catfile(@_);
+    normalize_path($path);
+}
+
+sub normalize_path { # taken from Dancer::FileUtils
+    my ($path) = @_;
+    $path =~ s{/\./}{/}g;
+    while ($path =~ s{[^/]*/\.\./}{}) {}
+    $path;
+}
+
+sub segmented_path {
+    my ($id, %opts) = @_;
+    my $segment_size = $opts{segment_size} || 3;
+    my $base_path = $opts{base_path};
+    $id =~ s/[^0-9a-zA-Z]+//g;
+    my @path = unpack "(A$segment_size)*", $id;
+    defined $base_path
+        ? File::Spec->catdir($base_path, @path)
+        : File::Spec->catdir(@path);
 }
 
 sub parse_data_path {
@@ -483,7 +516,7 @@ object and returns an opened L<IO::Handle> object.
 
     my $fh = io *STDIN;
 
-    my $fh = io \*STDOUT, mode => 'w', encoding => ':crlf';
+    my $fh = io \*STDOUT, mode => 'w', binmode => ':crlf';
 
     my $scalar = "";
     my $fh = io \$scalar, mode => 'w';
@@ -497,17 +530,27 @@ Options are:
 
 Default is C<"r">.
 
-=item encoding
+=item binmode
 
 Default is C<":utf8">.
+
+=item encoding
+
+Alias for C<binmode>.
 
 =back
 
 =item read_file($path);
 
-Slurps the file at C<$path> into a string.
+Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
+
+=item write_file($path, $str);
+
+Writes the string C<$str> to a file at C<$path>.
+
+    write_file('/path/to/file.txt', "contents");
 
 =item read_yaml($path);
 
@@ -516,6 +559,24 @@ Slurps the file at C<$path> into a string.
 =item read_json($path);
 
     my $cfg = read_json('config.json');
+
+=item join_path(@path);
+
+    join_path('/path/..', './to', 'file.txt');
+    # => "/to/file.txt"
+
+=item normalize_path($path);
+
+    normalize_path('/path/../to/./file.txt');
+    # => "/to/file.txt"
+
+=item segmented_path($path);
+
+    my $id = "FB41144C-F0ED-11E1-A9DE-61C894A0A6B4";
+    segmented_path($id, segment_size => 4);
+    # => "FB41/144C/F0ED/11E1/A9DE/61C8/94A0/A6B4"
+    segmented_path($id, segment_size => 2, base_path => "/files");
+    # => "/files/FB/41/14/4C/F0/ED/11/E1/A9/DE/61/C8/94/A0/A6/B4"
 
 =back
 
