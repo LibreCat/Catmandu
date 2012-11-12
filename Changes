@@ -1,5 +1,12 @@
 Revision history for Catmandu
 
+0.0402  2012-11-12
+  - Store::Hash is no longer Searchable
+  - remove dependency on Data::Visitor::Callback
+  - bump required version of Moo to 1.0
+  - Util write_file, join_path, normalize_path, segmented_path functions
+  - Util prefer io(binmode => ...) to io(encoding => ...)
+
 0.0401  2012-10-24
   - split off Store::SBCatDB
   - more Util docs
