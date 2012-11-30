@@ -1,34 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
+  <meta charset="utf-8" />
 
-	<meta charset="utf-8">
-	<title>Catmandu Documentation</title>
-	<meta name="description" content="">
-	<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
 
-	<link rel="stylesheet" href="stylesheets/base.css">
-	<link rel="stylesheet" href="stylesheets/skeleton.css">
-	<link rel="stylesheet" href="stylesheets/layout.css">
-	<link href="google-code-prettify/prettify.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+  <title>LibreCat/Catmandu</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="../stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="../stylesheets/app.css">
+  <link rel="stylesheet" href="../stylesheets/pygment_trac.css">
+  <link rel="stylesheet" href="../stylesheets/style.css">
+
+
+  <script src="../javascripts/modernizr.foundation.js"></script>
 </head>
-<body onload="prettyPrint()">
-<div class="container">
-      <header>
-       <hgroup>
-           <div class="column">
-	   <h1 class="remove-bottom" style="margin-top:40px"><img src="images/logo.png" alt="" style="float:right; margin-top:7px;">Catmandu Software Development &nbsp;&nbsp;&nbsp;&nbsp;</h1>
-	   <h4>Documentation</h4>
-	</div>
-       </hgroup>
-      </header>
-
-      <section>
-       <article>
-	<div class="column">
+<body>
+  
+  <div class="row">    
+    
+    <!-- Main Content Section -->
+    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
+    <div class="nine columns">
+      
+      <h3>LibreCat/Catmandu</h3>
+     
     <p>
     The following tutorials are available on Catmandu coding:
     <ul>
@@ -36,19 +44,207 @@
             <li><a href="dancer.html">Dancer</a> - Creating web applications with Catmandu and Dancer</li>
             <li><a href="https://github.com/wouterw/Catmandu-Dancer">Catmandu-Dancer</a> - A Gentle introduction to Dancer</li>
     </ul>
-    </p>
+    </p> 
+           
+      <h3>Available Tools</h3>
+      <table>
+       <tr>
+        <th>Module</th>
+        <th>Description</th>
+       </tr>
+       <tr>
+        <td><a href="https://github.com/LibreCat/Catmandu">Catmandu</a></td>
+        <td>
+            Importers for: Atom, CSV, JSON and YAML<br>
+            Exporters for: BibTex, CSV, JSON, RIS, TemplateToolkit, XLS, YAML<br>
+            Stores for: DBI, ElasticSearch, Solr and Hash<br>
+            an much much more
+        </td>
+       </tr>
+       <tr>
+        <td><a href="https://github.com/LibreCat/Catmandu-Z3950">Catmandu-Z3950</a></td>
+        <td>Importers for Z39.50</td>
+       </tr>
+       <tr>
+        <td><a href="https://github.com/LibreCat/Catmandu-SRU">Catmandu-SRU</a></td>
+        <td>Importers for SRU</td>
+       </tr>
+       <tr>
+        <td><a href="https://github.com/LibreCat/Catmandu-PubMed">Catmandu-PubMed</a></td>
+        <td>Importers for PubMed</td>
+       </tr>
+       <tr>
+        <td><a href="https://github.com/LibreCat/Catmandu-PLoS">Catmandu-PLoS</a></td>
+        <td>Importer for PLoS</td>
+       </tr>
+       <tr>
+        <td><a href="https://github.com/LibreCat/Catmandu-DOI">Catmandu-DOI</a></td>
+        <td>Importer for DOI</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-ArXiv">Catmandu-ArXiv</a></td>
+       <td>Importer for ArXiv</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-LDAP">Catmandu-LDAP</a></td>
+       <td>Importer for LDAP</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-OAI">Catmandu-OAI</a></td>
+       <td>Importer for OAI</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-Inspire">Catmandu-Inspire</a></td>
+       <td>Importer for Inspire</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-MARC">Catmandu-MARC</a></td>
+       <td>Importer for MARC</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/jorol/Catmandu-MAB">Catmandu-MAB</a></td>
+       <td>Importer for MAB</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-Store-Lucy">Catmandu-Store-Lucy</a></td>
+       <td>Lucy backed Store</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Catmandu-Store-MongoDB">Catmandu-Store-MongoDB</a></td>
+       <td>MongoDB backed Store</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/CiteProc-PUB">CiteProc-PUB</a></td>
+       <td>Example CSL citation engine</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/repecHub">repecHub</a></td>
+       <td>RePEc hub: exports data from an arbitrary SRU interface to RePEc</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Blog">Blog</a></td>
+       <td>Example Blog application</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/cerif">Cerif</a></td>
+       <td>Example JSON -> CERIF converter</td>
+       </tr>
+       <tr>
+       <td><a href="https://github.com/LibreCat/Imaging">Imaging</a></td>
+       <td>Example digitization workflow application</td>
+       </tr>
+      </table> 
+    </div>
 
-    <h3>Modules built with Catmandu</h3>
-    </article>
-      </section>
 
-</div>
+  <!-- Header and Nav -->
+  
+    <div class="three columns">
+      <h1><img src="http://librecat.org/images/logo.png" /></h1>
+    </div>
+    <div class="three columns">
+      <ul class="four side-nav">
+        <li><a href="#">Rationals</a></li>
+        <li class="active"><a href="documentation">Documentation</a></li>
+        <li><a href="https://github.com/LibreCat/Catmandu/wiki">Wiki</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Events</a></li>
+      </ul>
+      <h3><small>an Open Collaboration of</small></h3>
+        <p><a href="http://www.lub.lu.se/"><img src="http://www.lu.se/profiles/lu/themes/lu_theme/logo.png"></a></p>
+        <p><a href="http://lib.ugent.be/"><img src="http://www.ugent.be/universiteit_gent.gif"></a></p>
+        <p><a href="http://www.ub.uni-bielefeld.de/"><img src="http://www.uni-bielefeld.de/images/template_2009/logo.jpg"></a></p>
+    </div>
+  </div>
+  
+  <!-- End Header and Nav -->
+  
+  
+  
+    
+    <!-- Nav Sidebar -->
+    <!-- This is source ordered to be pulled to the left on larger screens -->
+    <div class="three columns pull-nine">
+        
+      <ul class="side-nav">
+        <li><a href="#">Section 1</a></li>
+        <li><a href="#">Section 2</a></li>
+        <li><a href="#">Section 3</a></li>
+        <li><a href="#">Section 4</a></li>
+        <li><a href="#">Section 5</a></li>
+        <li><a href="#">Section 6</a></li>
+      </ul>
+      
+      <p><img src="http://placehold.it/320x240&text=Ad" /></p>
+        
+    </div>
+    
+  </div>
+    
+  
+  <!-- Footer -->
+  
+  <footer class="row">
+    <div class="twelve columns">
+      <hr />
+      <div class="row">
+        <div class="six columns">
+          <p>&copy; Copyright no one at all. Go to town.</p>
+        </div>
+        <div class="six columns">
+          <ul class="link-list right">
+            <li><a href="#">Section 1</a></li>
+            <li><a href="#">Section 2</a></li>
+            <li><a href="#">Section 3</a></li>
+            <li><a href="#">Section 4</a></li>
+          </ul>
+        </div>
+      </div>
+    </div> 
+  </footer>
 
-
-
-<a href="https://github.com/LibreCat/Catmandu"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a>
-
-<script src="javascripts/jquery-1.6.4.min.js"></script>
-<script src="javascripts/tabs.js"></script>
+  <!-- Included JS Files (Uncompressed) -->
+  <!--
+  
+  <script src="javascripts/jquery.js"></script>
+  
+  <script src="javascripts/jquery.foundation.mediaQueryToggle.js"></script>
+  
+  <script src="javascripts/jquery.foundation.forms.js"></script>
+  
+  <script src="javascripts/jquery.foundation.reveal.js"></script>
+  
+  <script src="javascripts/jquery.foundation.orbit.js"></script>
+  
+  <script src="javascripts/jquery.foundation.navigation.js"></script>
+  
+  <script src="javascripts/jquery.foundation.buttons.js"></script>
+  
+  <script src="javascripts/jquery.foundation.tabs.js"></script>
+  
+  <script src="javascripts/jquery.foundation.tooltips.js"></script>
+  
+  <script src="javascripts/jquery.foundation.accordion.js"></script>
+  
+  <script src="javascripts/jquery.placeholder.js"></script>
+  
+  <script src="javascripts/jquery.foundation.alerts.js"></script>
+  
+  <script src="javascripts/jquery.foundation.topbar.js"></script>
+  
+  <script src="javascripts/jquery.foundation.joyride.js"></script>
+  
+  <script src="javascripts/jquery.foundation.clearing.js"></script>
+  
+  <script src="javascripts/jquery.foundation.magellan.js"></script>
+  
+  -->
+  
+  <!-- Included JS Files (Compressed) -->
+  <script src="javascripts/jquery.js"></script>
+  <script src="javascripts/foundation.min.js"></script>
+  
+  <!-- Initialize JS Plugins -->
+  <script src="javascripts/app.js"></script>
 </body>
 </html>
