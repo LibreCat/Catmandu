@@ -1,0 +1,6 @@
+<!-- In this template you have access to all the fields in the Hash items provided
+     by the <tt>$data</tt> Array (or Iterable) -->
+<foo>
+ <name>[% name.last %], [% name.first %]</name>
+ <occupation>[% occupation %]</occupation>
+</foo>

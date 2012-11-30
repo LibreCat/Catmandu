@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<schema name="core zero" version="1.1">
+    <types>
+        <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+
+        <fieldType name="ltext" class="solr.TextField" positionIncrementGap="100">
+                <analyzer>
+                    <tokenizer class="solr.LowerCaseTokenizerFactory"/>
+                </analyzer>
+        </fieldType>
+
+        <fieldType name="utf8text" class="solr.TextField" positionIncrementGap="100">
+                <analyzer type="index">
+                    <tokenizer class="solr.PatternTokenizerFactory" pattern="[^\p{L}\p{N}]+"/>
+                    <filter class="solr.LowerCaseFilterFactory"/>
+                    <filter class="solr.ASCIIFoldingFilterFactory"/>
+                </analyzer>
+                <analyzer type="query">
+                    <tokenizer class="solr.PatternTokenizerFactory" pattern="[^\p{L}\p{N}]+"/>
+                    <filter class="solr.LowerCaseFilterFactory"/>
+                    <filter class="solr.ASCIIFoldingFilterFactory"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" format="solr" ignoreCase="false" expand="true" tokenizerFactory="solr.WhitespaceTokenizerFactory"/>
+                </analyzer>
+            </fieldType>
+
+            <fieldType name="isxn" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+                <analyzer>
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.PatternReplaceFilterFactory" pattern="-" replacement="" replace="all"/>
+                </analyzer>
+            </fieldType>
+    </types>
+
+    <fields>
+       <field name="_id" type="string" indexed="true" stored="false" multiValued="false"/>
+       <field name="_bag" type="string" indexed="true" stored="false" multiValued="false"/>
+       <field name="all" type="utf8text" indexed="true" stored="false" multiValued="true"/>
+       <field name="content" type="utf8text" indexed="true" stored="false" multiValued="false"/>
+       <field name="author" type="utf8text" indexed="true" stored="true" multiValued="true"/>
+       <field name="period" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="cid" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="collection" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="created" type="string" indexed="true" stored="true" multiValued="true"/>
+       <field name="department" type="ltext" indexed="true" stored="true" multiValued="true"/>
+       <field name="faculty" type="ltext" indexed="true" stored="true" multiValued="true"/>
+       <field name="fDATE" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="fXML" type="string" indexed="false" stored="true" multiValued="false"/>
+       <field name="fSYS" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="fulltext" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="holding" type="string" indexed="true" stored="true" multiValued="true"/>
+       <field name="holding_txt" type="string" indexed="true" stored="true" multiValued="true"/>
+       <field name="impact" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="issn" type="isxn" indexed="true" stored="true" multiValued="true"/>
+       <field name="isbn" type="isxn" indexed="true" stored="true" multiValued="true"/>
+       <field name="isxn" type="isxn" indexed="true" stored="true" multiValued="true"/>
+       <field name="lang" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="library" type="ltext" indexed="true" stored="true" multiValued="true"/>
+       <field name="location" type="utf8text" indexed="true" stored="true" multiValued="true"/>
+       <field name="region" type="string" indexed="true" stored="true" multiValued="true"/>
+       <field name="perm" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="source" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="title" type="utf8text" indexed="true" stored="true" multiValued="false"/>
+       <field name="title_sort" type="string" indexed="true" stored="false" multiValued="false"/>
+       <field name="type" type="string" indexed="true" stored="true" multiValued="false"/>
+       <field name="year" type="string" indexed="true" stored="true" multiValued="false"/>
+    
+       <dynamicField name="*01" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*02" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*03" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*04" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*05" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*06" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*07" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*08" type="string" indexed="true" stored="false" multiValued="false"/>
+       <dynamicField name="*09" type="string" indexed="true" stored="false" multiValued="false"/>
+
+       <dynamicField name="ignored_*" type="string" indexed="true" stored="true" multiValued="false"/>
+    </fields>
+    
+    <uniqueKey>_id</uniqueKey>
+    <defaultSearchField>all</defaultSearchField>
+    <solrQueryParser defaultOperator="AND"/>
+</schema>
