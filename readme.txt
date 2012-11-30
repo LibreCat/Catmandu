@@ -42,3 +42,8 @@ This way you let git know you have new contente you want to put in version contr
  $ git push
 
 After a few minutes the updated website should be online.
+
+Style Guides
+-=-=-=-=-=-=
+
+See: http://foundation.zurb.com/
