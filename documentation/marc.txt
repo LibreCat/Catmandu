@@ -1,0 +1,42 @@
+000000043 FMT   L SE
+000000043 LDR   L 00000nas^a22^^^^^^a^4500
+000000043 001   L 000000043
+000000043 003   L rug01
+000000043 005   L 20060511100145.0
+000000043 008   L 980907n^^^^^^^^xx^a^^^^^^^^^^^^^^^^dut^d
+000000043 022   L $$a0251-2408
+000000043 035   L $$ac:lvd:113491
+000000043 040   L $$aUGent
+000000043 050   L $$aDC611.N821
+000000043 0820  L $$a949.3
+000000043 100   L $$aPatrick Hochstenbach$$0http://ok
+000000043 100   L $$aPatrick Hochstenbach2$$bMy b$$eMy e$$4My code$$uGhent$$d1971
+000000043 100   L $$aPatrick Hochstenbach3
+000000043 110   L $$aGhent University$$d1971
+000000043 210   L $$aTest 210$$b210-sub title$$2test
+000000043 210   L $$aTest 210$$b210-sub title
+000000043 24503 L $$aDe Franse Nederlanden :$$bjaarboek.$$cMy resp
+000000043 2462  L $$aLes Pays-Bas français$$bannales
+000000043 260   L $$aRekkem :$$bStichting Ons Erfdeel,$$cn.d.
+000000043 505   L $$aMy toc...
+000000043 520   L $$aMy abstract...
+000000043 600   L $$xMyTopic1$$vMyGenre1
+000000043 600   L $$xMyTopic2$$vMyGenre2
+000000043 600   L $$xMyTopic3
+000000043 600   L $$xMyTopic4$$vMyGenre4
+000000043 690   L $$aArchitectuurfocus
+000000043 651 0 L $$aNord (France : Dept.)$$vPeriodicals.
+000000043 7102  L $$aStichting Ons Erfdeel
+000000043 852   L $$xWE$$bWE64$$cWE64$$jWE64.E3.021$$a#1976
+000000043 852   L $$xLW$$bLW06$$cL17$$jL17.XVII028$$a1976-1984 ; 1986-1997 ; 1999 -
+000000043 852   L $$xLW$$bLW03$$cL09$$jL09$$a1(1976) -$$zONTBREEKT: 4-9 ; 11-12 ; 16 ; 18 ; 21-23
+000000043 852   L $$xLW$$bLW06$$cL14B$$jL14B$$a#25(2000)
+000000043 852   L $$xPS$$bPS01$$cPS01$$jPS01.A.1800$$a#29(2004)
+000000043 852   L $$xTW$$bTW01$$cTW01$$jTW01.TS.BEKAERT.348$$a#(1992) ; (1994)
+000000043 852   L $$xUB$$bCA20$$cBIB$$jBIB.P.014892$$a1(1976) - ; laatste jaargang(en) in BTSL.0874$$dBTSL.0874$$zONTBREEKT: (1981)
+000000043 852   L $$xLW$$bLW07$$cL30$$jL30.NL.T.313$$a#1976 - 1989
+000000043 852   L $$xWE$$bWE12$$cWE12$$jWE12$$a#29(2004)
+000000043 920   L $$aperiodical
+000000043 921   L $$aalfa
+000000043 921   L $$abeta
+000000043 009   L ser01

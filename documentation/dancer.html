@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8">
+	<title>Dancer &amp; Catmandu</title>
+	<meta name="description" content="">
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+	<link href="google-code-prettify/prettify.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+</head>
+<body onload="prettyPrint()">
+<div class="container">
+      <header>
+       <hgroup>
+           <div class="column">
+	   <h1 class="remove-bottom" style="margin-top:40px"><img src="images/logo.png" alt="" style="float:right; margin-top:7px;">Catmandu Software Development &nbsp;&nbsp;&nbsp;&nbsp;</h1>
+	   <h4>Dancer &amp; Catmandu</h4>
+	</div>
+       </hgroup>
+      </header>
+
+      <section>
+       <article>
+	<div class="column">
+    <p>
+    Catmandu integrates very well with Perl frameworks such as <a href="http://www.perldancer.org/">Dancer</a> for <i>easy and fun webapp development</i>. In the text below we will use our Catmandu tools to create small demo application: a web search engine that can be fed with CSV files.
+	</p>
+    <p>
+    Dancer provides an intuitive and minimalistic approach to create web applications. The software package can be easily installed if you have <a href="http://search.cpan.org/dist/App-cpanminus/lib/App/cpanminus.pm">cpanminus</a> on your server:
+
+<pre class="prettyprint">
+  cpanm Dancer
+</pre>
+    </p>
+
+    <p>
+    Creating a web application is as easy as running the command line <tt>dancer</tt> command.
+<pre class="prettyprint">
+  dancer -a DemoApp
+</pre>
+    </p>
+
+    <p>
+    Change your working directory to <tt>DemoApp</tt> and boot up the build-in web server.
+<pre class="prettyprint">
+  cd DemoApp
+  perl bin/app.pl
+</pre>
+Now you should have a running server on <a href="http://0.0.0.0:3000">http://0.0.0.0:3000</a>.
+    </p>
+
+    <p>
+    In the following section we are going to create a web form to upload a CSV file to the webserver. Open your editor and load the file 'lib/DemoApp.pm' which contains all the controller code of your application.
+
+<pre class="prettyprint">
+package DemoApp;
+use Dancer ':syntax';
+
+our $VERSION = '0.1';
+
+get '/' => sub {
+    template 'index';
+};
+
+true;
+</pre>
+    </p>
+
+    <p>
+    We add a new route '/upload' to the application which will display the content of the <tt>views/upload.tt</tt> template using the following code snippet.
+
+<pre class="prettyprint">
+get '/upload' => sub {
+    template 'upload';
+};
+</pre>
+   
+    For this route to work we need to add a new template file <tt>views/upload.tt</tt>:
+<pre class="prettyprint">
+&lt;form action="/upload" method="post" enctype="multipart/form-data"&gt;
+ &lt;p&gt; 
+  &lt;input type="file" name="file"&gt;
+ &lt;/p&gt;
+ &lt;button type="submit" class="btn btn-large"&gt;
+   Upload
+ &lt;/button&gt;
+&lt;/form&gt;
+</pre>
+    </p>
+    <p>
+    Restart your webapplication (<tt>perl bin/app.pl</tt>) and view your web form at <a href="http://localhost:3000/upload">http://localhost:3000/upload</a>.
+    </p>
+    <p>
+    When you click on the submit button a file of your choice will be uploaded via a HTTP POST to the webserver. The contents of this file can be easily displayed by adding the following code to the <tt>DemoApp.pm</tt> controller:
+
+<pre class="prettyprint">
+  post '/upload' => sub {
+     my $file = request->upload('file');
+
+     $file->content;   
+  };
+</pre>
+
+    </p>
+
+    <p>
+    Restart your webapplication (<tt>perl bin/app.pl</tt>) and try it out. Your complete code should look now like this:
+<pre class="prettyprint">
+package DemoApp;
+use Dancer ':syntax';
+
+our $VERSION = '0.1';
+
+get '/' => sub {
+    template 'index';
+};
+
+get '/upload' => sub {
+    template 'upload';
+};
+
+post '/upload' => sub {
+    my $file = request->upload('file');
+
+    $file->content;
+};
+
+true;
+</pre>
+    </p>
+
+    <p>
+    Now that we are able to upload a file to the webserver we can add Catmandu code to parse this data and send it to a Solr search engine. We first create a file <tt>catmandu.yml</tt> in the home directory of the DemoApp which contains the location of our Solr engine and the parameters for the Catmandu importer we are going to use to parse the data (CSV-files in our case):
+
+<pre class="prettyprint">
+store:
+    default:
+        package: "Solr"
+        options:
+            url: "http://localhost:8983/solr"
+    
+importer:
+    default:
+        package: CSV
+        options:
+            sep_char: ";"
+</pre>
+    </p>
+
+    <p>
+    Reading from a CSV importer and indexing into a Solr Store can be easily added to the DemoApp.pm controller by adding the following lines at the top of the DemoApp.pm module:
+
+<pre class="prettyprint">
+use Catmandu -load;
+use Catmandu::Sane;
+
+sub store {
+    state $bag = Catmandu->store('default')->bag;
+}
+
+sub importer {
+    my $file = $_[0];
+    
+    Catmandu->importer('default', file => $file);
+}
+</pre>
+    </p>
+
+    <p>
+    It is now very easy to parse CSV data. We change our POST <tt>/upload</tt> route into:
+<pre class="prettyprint">
+post '/upload' => sub {
+    my $file = request->upload('file');
+
+    to_dumper( importer($file->tempname)->to_array );
+};
+</pre>
+If you restart the web server and upload a <a href="test.csv">CSV</a> file you should see a Data::Dumper output of all the fields. What we did in the code was to send the path of the uploaded file (<tt>$file->tempname</tt>) to a CSV importer configured in the <tt>catmandu.yml</tt> file. Every importer has a <tt>to_array</tt> method to read all the data into a Perl array. This array is then converted to a Data::Dumper string by the <tt>to_dumper</tt> call.
+    </p>
+
+    <p>
+    Indexing all the fields in the CSV file into a Solr index is straight forward (read your Solr manual how to setup a Solr search engine with your own indexable fields [hint: <a href="schema.xml">schema.xml</a> file]). All we need is to send the importer to a Solr Catmandu Store with the <tt>add_many</tt> command and commit the results.
+
+<pre class="prettyprint">
+post '/upload' => sub {
+    my $file = request->upload('file');
+
+    store->delete_all;
+
+    store->add_many( importer($file->tempname) );
+
+    store->commit;
+
+    redirect '/';
+};
+</pre>
+    </p>
+
+    <p>
+    Add this stage you'll have a basic website where you can upload a CSV-file into a Solr search engine. Next we are going to add a <tt>/search</tt> route to query the Solr index.
+    </p>
+
+    <p>
+    We start by creating a GET route <tt>/search</tt> in <tt>DemoApp.pm</tt> and provide it with a template to display a search box:
+
+<pre class="prettyprint">
+get '/search' => sub {
+    template 'search';
+};
+</pre>
+
+   Here is the <tt>views/search.tt</tt> template it will read:
+<pre class="prettyprint">
+&lt;form method="GET" action="/results"&gt;
+ &lt;input type="text" name="q"&gt;
+ &lt;button type="submit" class="btn btn-large"&gt;
+   Search
+ &lt;/button&gt;
+&lt;/form&gt;
+</pre>
+    </p>
+
+    <p>
+    Next we are going to provide a GET route <tt>/results</tt> which will query the Solr index and display all the results:
+
+<pre class="prettyprint">
+get '/results' => sub {
+     my $q     = param "q";
+     my $start = param "start" // 0;
+     my $limit = 10;
+
+     my $results = [];
+
+     if ($q) {
+        $results = store->search(query => $q, start => $start, limit => $limit)->to_array;
+     }
+
+     template 'results' , { results => $results };
+};
+</pre>
+In the first lines we read the query parameters from the request. In case we have a query string we execute a Solr query and read all the results into a Catmandu::Hits iterator which will be converted into an array. We use the <tt>views/results.tt</tt> template to display all the results:
+
+<pre class="prettyprint">
+&lt;%FOREACH hit IN results%&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;Title&lt;/dt&gt;
+    &lt;dd&gt;&lt;% hit.title %&gt;&lt;/dd&gt;
+   &lt;/dl&gt;
+&lt;%END%&gt;
+</pre>
+To run this code we need a little change in the Dancer configuration file <tt>config.yml</tt> to activate the Template Toolkit language for all template files:
+
+<pre class="prettyprint">
+   template: "template_toolkit"
+</pre>
+    </p>
+
+    <p>
+    Restart the webserver and browse to <a href="http://0.0.0.0:3000/search">http://0.0.0.0:3000/search</a> to view the search box. When you execute the query <tt>*:*</tt> you should see a list of all your documents: <br>
+    <img src="DemoApp.jpg"/>
+    </p>
+
+    <p>
+    This concludes our very short introduction into Catmandu and Dancer. We hope we have provided you with enough material and inspiration for new and exciting projects ;). Please find in the included <a href="DemoApp.zip">DemoApp.zip</a> ZIP file an elaborate example of the code used in this tutorial.
+    </p>
+       </article>
+      </section>
+</div>
+
+
+
+<a href="https://github.com/LibreCat/Catmandu"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a>
+
+<script src="javascripts/jquery-1.6.4.min.js"></script>
+<script src="javascripts/tabs.js"></script>
+</body>
+</html>
