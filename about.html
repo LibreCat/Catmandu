@@ -45,39 +45,15 @@
 <i>Catmandu provides the building blocks on which we code.</i>
 </div>
 
+<h5>About</h5>
 <p>
-
+Do you need more information on our LibreCat project? Please feel free to contact us at:
 </p>
-
-<h4>Importing, transforming, storing and indexing library and research data should be easy</h4>
-
-<p>
-The code below indexes all metadata form an Instutional Repository into ElasticSearch:
-</p>
-<pre class="prettyprint">
-use Catmandu::Importer::OAI;
-use Catmandu::Store::ElasticSearch;
-
-my $importer = Catmandu::Importer::OAI->new(url => 'http://biblio.ugent.be/oai');
-my $store    = Catmandu::Store::ElasticSearch->new(index_name => 'demo');
- 
-$store->bag->add_many($importer);
-
-$store->bag->commit;
-</pre>
-
-<p style="margin-top: 20px;">
-We want to provide you the easy tools to process library and research data into Solr, ElasticSearch, MongoDB and CouchDB so that you can spend all your time on your domain expertise: creating exciting new applications to support library automation, research administration and digital humanities.
-</p>
-
-<h4>Build, Test &amp; Install</h4>
-<p>
-<img src="images/legos.jpg">In stead of supporting 10 different systems we want to provide you the rapid developement tools to implement them all with one software stack saving time and thus money. Catmandu provides you the building blocks and LibreCat the example applications you can adapt to your local needs.
-</p>
-      
-<p>
-Join other universities such as Lund University, Ghent University and Bielefeld University who use these tools to build application like institutional repositories, search engines, digitization workflows, digital archives and more. We give away the code, you build the applications.
-</p>
+<ul class="square">
+<li><strong>Patrick Hochstenbach, Ghent</strong> <br/>patrick.hochstenbach (at) ugent.be</li>
+<li><strong>Najko Jahn, Bielefeld</strong> <br/>najko.jahn (at) uni-bielefeld.de</li>
+<li><strong>Jörgen Eriksson, Lund</strong> <br/>jorgen.eriksson (at) lub.lu.se</li>
+</ul>
     </div>
 
 
@@ -91,7 +67,7 @@ Join other universities such as Lund University, Ghent University and Bielefeld 
         <li><a href="rationals.html">Rationals</a></li>
         <li><a href="documentation.html">Documentation</a></li>
         <li><a href="https://github.com/LibreCat/Catmandu/wiki">Wiki</a></li>
-        <li><a href="about.html">About</a></li>
+        <li class="active"><a href="about.html">About</a></li>
         <li><a href="events.html">Events</a></li>
       </ul>
       <h3><small>an Open Collaboration of</small></h3>

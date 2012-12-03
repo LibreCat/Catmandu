@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>LibreCat/Catmandu</title>
+  <title>LibreCat/Catmandu - Rationals</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -45,39 +45,44 @@
 <i>Catmandu provides the building blocks on which we code.</i>
 </div>
 
-<p>
+<h4>Rationals</h4>
 
-</p>
+            <p>Institutional repositories and academic bibliographies have traditionally been thought of as integrated systems with cataloging workflows, file management, user management and a powerful search engine frontend for end-users.</p>
+            <p>This integration provided users with one common look and feel, but system implementers often ended up with monolithic systems capable only of very specialized tasks. Libraries often find themselves creating and installing separate cataloging projects with some of the same workflows as institutional repositories, but with different end results.</p>
+            <p>As an example: Lund University has a publication-publishing platform providing an open access repository to researchers. Within the same environment, they need to manage students' papers with different data input concerns. Each of these systems has its own notion of cataloging of publication metadata, providing a search interface and providing record import and export. They differ in user base, metadata storage, indexing and editing rules.</p>
+            <p>At Ghent University, the management of scanned books and articles requires the same metadata and file upload concerns as for the institutional repository, but the databases here also differ in workflows, access management, and user management.</p>
+            <p>Bielefeld, Lund and Ghent University each have lively development communities where many library-related services are created with common toolsets. The institutions share the basic toolsets to provide database interactions, creating web applications and file storage. It should be observed, however, that these tools all work on very low-level services: storage of data and writing web applications. Library applications also have higher-level code or building blocks, in addition to low-level functionality, that can be reused/shared in different applications. Examples are: </p>
 
-<h4>Importing, transforming, storing and indexing library and research data should be easy</h4>
+            <ul class="square">
+            <li>User management (Authentication/Authorization) </li>
+            <li>Import/Export tools (Data cleaning tools, Import data sources) </li>
+            <li>Metadata management (Cataloging tools, indexes, lookup lists) </li>
+            <li>File management (Storage, Versioning, Fixation,..) </li>
+            </ul>
 
-<p>
-The code below indexes all metadata form an Instutional Repository into ElasticSearch:
-</p>
-<pre class="prettyprint">
-use Catmandu::Importer::OAI;
-use Catmandu::Store::ElasticSearch;
+            <p>In 2010, the decision was taken to make a major redesign of the existing software platform and to make it open source. The aim of the redesign is to enhance the flexibility of the software, and to add new functionalities as plug-ins to a core framework. This redesign has been broken down into two sub-projects:</p>
+            <ol>
+            <li> To create a high-level system of building blocks that can be reused when creating repository-like applications: Project Catmandu; </li>
+            <li> To create a next-generation repository service based on these building blocks: Project LibreCat.</li>
+            </ol>
+            <p>As a first step Lund, Ghent and Bielefeld will provide the source code of the Catmandu project under an open license, as this will form the basis of future development.</p>
 
-my $importer = Catmandu::Importer::OAI->new(url => 'http://biblio.ugent.be/oai');
-my $store    = Catmandu::Store::ElasticSearch->new(index_name => 'demo');
- 
-$store->bag->add_many($importer);
+            <h5>License</h5>
+            <p>
+            LibreCat is an open collaboration. Currently the three Universites of Lund, Gent and Bielefeld provide freely available tools for library and research services. We believe that LibreCat is a valuable set of applications and we would like to ensure its continued development for future innovations in the field of digital libraries and research services. 
+            </p>
 
-$store->bag->commit;
-</pre>
+            <p>
+             The applications should be perceived as supplementary tools to serve your unique local need without loosing interoperability and standardisation already achieved. 
+             </p>
+             
+             <p>
+              LibreCat invites academic institutions with own development expertise to reuse and contribute. If you want to take an active part in LibreCat, please feel free to contact LibreCat Management. 
+             </p>
 
-<p style="margin-top: 20px;">
-We want to provide you the easy tools to process library and research data into Solr, ElasticSearch, MongoDB and CouchDB so that you can spend all your time on your domain expertise: creating exciting new applications to support library automation, research administration and digital humanities.
-</p>
-
-<h4>Build, Test &amp; Install</h4>
-<p>
-<img src="images/legos.jpg">In stead of supporting 10 different systems we want to provide you the rapid developement tools to implement them all with one software stack saving time and thus money. Catmandu provides you the building blocks and LibreCat the example applications you can adapt to your local needs.
-</p>
-      
-<p>
-Join other universities such as Lund University, Ghent University and Bielefeld University who use these tools to build application like institutional repositories, search engines, digitization workflows, digital archives and more. We give away the code, you build the applications.
-</p>
+             <p>
+             LibreCat software published at <a href="https://github.com/LibreCat">https://github.com/LibreCat</a> is free software without warranty, liabilities or support; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either  version 2 or any later version. Every contributor is free to state her/his copyright.
+            </p>
     </div>
 
 
@@ -88,10 +93,10 @@ Join other universities such as Lund University, Ghent University and Bielefeld 
     </div>
     <div class="three columns">
       <ul class="four side-nav">
-        <li><a href="rationals.html">Rationals</a></li>
+        <li class="active"><a href="rationals.html">Rationals</a></li>
         <li><a href="documentation.html">Documentation</a></li>
         <li><a href="https://github.com/LibreCat/Catmandu/wiki">Wiki</a></li>
-        <li><a href="about.html">About</a></li>
+        <li class="active"><a href="about.html">About</a></li>
         <li><a href="events.html">Events</a></li>
       </ul>
       <h3><small>an Open Collaboration of</small></h3>

@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>LibreCat/Catmandu</title>
+  <title>LibreCat/Catmandu - Events</title>
   
   <!-- Included CSS Files (Uncompressed) -->
   <!--
@@ -45,40 +45,9 @@
 <i>Catmandu provides the building blocks on which we code.</i>
 </div>
 
-<p>
+<h4>Events</h4>
 
-</p>
-
-<h4>Importing, transforming, storing and indexing library and research data should be easy</h4>
-
-<p>
-The code below indexes all metadata form an Instutional Repository into ElasticSearch:
-</p>
-<pre class="prettyprint">
-use Catmandu::Importer::OAI;
-use Catmandu::Store::ElasticSearch;
-
-my $importer = Catmandu::Importer::OAI->new(url => 'http://biblio.ugent.be/oai');
-my $store    = Catmandu::Store::ElasticSearch->new(index_name => 'demo');
- 
-$store->bag->add_many($importer);
-
-$store->bag->commit;
-</pre>
-
-<p style="margin-top: 20px;">
-We want to provide you the easy tools to process library and research data into Solr, ElasticSearch, MongoDB and CouchDB so that you can spend all your time on your domain expertise: creating exciting new applications to support library automation, research administration and digital humanities.
-</p>
-
-<h4>Build, Test &amp; Install</h4>
-<p>
-<img src="images/legos.jpg">In stead of supporting 10 different systems we want to provide you the rapid developement tools to implement them all with one software stack saving time and thus money. Catmandu provides you the building blocks and LibreCat the example applications you can adapt to your local needs.
-</p>
-      
-<p>
-Join other universities such as Lund University, Ghent University and Bielefeld University who use these tools to build application like institutional repositories, search engines, digitization workflows, digital archives and more. We give away the code, you build the applications.
-</p>
-    </div>
+</div>
 
 
   <!-- Header and Nav -->
@@ -92,7 +61,7 @@ Join other universities such as Lund University, Ghent University and Bielefeld 
         <li><a href="documentation.html">Documentation</a></li>
         <li><a href="https://github.com/LibreCat/Catmandu/wiki">Wiki</a></li>
         <li><a href="about.html">About</a></li>
-        <li><a href="events.html">Events</a></li>
+        <li class="active"><a href="events.html">Events</a></li>
       </ul>
       <h3><small>an Open Collaboration of</small></h3>
         <p><a href="http://www.lub.lu.se/"><img src="http://www.lu.se/profiles/lu/themes/lu_theme/logo.png"></a></p>
