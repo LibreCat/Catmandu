@@ -20,7 +20,7 @@ has template_after  => (is => 'ro', coerce => $ADD_TT_EXT);
 
 $Template::Stash::PRIVATE = 0;
 
-sub tt {
+sub _tt {
     state $tt = do {
         local $Template::Stash::PRIVATE = 0;
         Template->new({
@@ -35,18 +35,23 @@ sub tt {
     };
 }
 
+sub _process {
+    my ($self, $tmpl, $data) = @_;
+    $self->_tt->process($tmpl, $data || {}, $self->fh) || die Template->error;
+}
+
 sub add {
     my ($self, $data) = @_;
     if ($self->count == 0) {
         $self->fh->print($XML_DECLARATION) if $self->xml;
-        $self->tt->process($self->template_before, {}, $self->fh) if $self->template_before;
+        $self->_process($self->template_before) if $self->template_before;
     }
-    $self->tt->process($self->template, $data, $self->fh);
+    $self->_process($self->template, $data);
 }
 
 sub commit {
     my ($self) = @_;
-    $self->tt->process($self->template_after, {}, $self->fh) if $self->template_after;
+    $self->_process($self->template_after) if $self->template_after;
 }
 
 =head1 NAME
