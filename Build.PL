@@ -26,7 +26,6 @@ my $build = Module::Build->new(
         'Data::Util' => '0.59',
         'DateTime' => '0.70',
         'DBI' => '1.616', # Catmandu::Store::DBI
-        'ElasticSearch' => '0.50', # Catmandu::Store::ElasticSearch
         'IO::String' => '1.08',
         'JSON' => '2.51',
         'LaTeX::Encode' => '0.03', # Catmandu::Exporter::BibTeX
@@ -38,7 +37,6 @@ my $build = Module::Build->new(
         'Sub::Exporter' => '0.982',
         'Template' => '2.22',
         'Text::CSV' => '1.21',
-        'WebService::Solr' => '0.16', # Catmandu::Store::Solr
         'XML::Atom' => '0.41', # Catmandu::Importer::Atom
         'YAML::Any' => '0.81',
     },
