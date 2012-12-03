@@ -134,8 +134,8 @@ sub join_path {
 
 sub normalize_path { # taken from Dancer::FileUtils
     my ($path) = @_;
-    $path =~ s{/\./}{/}g;
-    while ($path =~ s{[^/]*/\.\./}{}) {}
+    $path =~ s!/\./!/!g;
+    while ($path =~ s![^/]*/\.\./!!) {}
     $path;
 }
 
@@ -179,6 +179,7 @@ sub get_data {
 
 sub set_data {
     my ($data, $key, @vals) = @_;
+    return unless @vals;
     if (is_array_ref($data)) {
         given ($key) {
             when ('$first')   { return unless @$data; $key = 0 }
