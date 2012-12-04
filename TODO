@@ -12,8 +12,6 @@ TODO
   * Catmandu::Store::Solr
   * Catmandu::Store::DBI (?)
   * Dancer::Session::
-* remove Dancer from Catmandu::Exporter::Template
-* turn Dancer::Plugin::Catmandu::* into Plack::App::* (?)
 * validation
 * remove Fixable, add before_add and before_get, takes fixes or sub
 * give Iterable fix method
