@@ -8,10 +8,7 @@ TODO
   * Catmandu::Exporter::BibTeX
   * Catmandu::Exporter::XLS
   * Catmandu::Importer::Atom
-  * Catmandu::Store::ElasticSearch
-  * Catmandu::Store::Solr
   * Catmandu::Store::DBI (?)
-  * Dancer::Session::
 * validation
 * remove Fixable, add before_add and before_get, takes fixes or sub
 * give Iterable fix method
@@ -20,4 +17,4 @@ TODO
 * Searchable handle index optimize
 * split Searchable into Searchable and CQL Searchable (?)
 * generator should guard with a magic ref, not undef (?)
-
+* make serializers pluggable and split off MessagePack serializer

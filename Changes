@@ -1,10 +1,23 @@
 Revision history for Catmandu
 
+0.05    2012-12-04
+  - split off Catmandu::Store::ElasticSearch
+  - split off Catmandu::Store::Solr
+  - split off Plack::Session::Store::Catmandu
+  - split off Dancer::Plugin::Catmandu::OAI
+  - split off Dancer::Plugin::Catmandu::SRU
+  - split off Dancer::Session::Catmandu
+  - Exporter::Template dies if template isn't found
+  - fix accidental creation of non-existing keys in Util::set_data()
+
 0.0402  2012-11-12
   - Store::Hash is no longer Searchable
   - remove dependency on Data::Visitor::Callback
   - bump required version of Moo to 1.0
-  - Util write_file, join_path, normalize_path, segmented_path functions
+  - Util::write_file()
+  - Util::join_path()
+  - Util::normalize_path()
+  - Util::segmented_path()
   - Util prefer io(binmode => ...) to io(encoding => ...)
 
 0.0401  2012-10-24
@@ -33,16 +46,16 @@ Revision history for Catmandu
   - iterative version of CQL::ElasticSearch
   - Store::ElasticSearch searcher supports sort
   - faster Datestamps
-  - Iterable interleave
-  - Iterable detect/select/reject(key => ['val', ...])
-  - Iterable detect/select/reject(key => 'val')
+  - Iterable->interleave()
+  - Iterable->detect/select/reject(key => ['val', ...])
+  - Iterable->detect/select/reject(key => 'val')
   - fix Dancer::Plugin::Catmandu::SRU recordPosition
   - Cmd::config can take a key to show only a subset
 
 0.02    2012-06-12
   - remove guard feature from fixes
   - load split config files
-  - Catmandu roots method
+  - Catmandu->roots()
   - support for nested object queries in CQL::ElasticSearch
   - improve Plugin::Versioning
   - more docs
@@ -63,7 +76,7 @@ Revision history for Catmandu
   - fix dependencies: parent.pm is only bundled with perl >= 5.10.1
 
 0.0102  2012-05-09
-  - pass data to Bag::generate_id
+  - pass data to Bag->generate_id()
   - fix typo in Cmd::data
   - fix YAML loading
 

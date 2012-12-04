@@ -1,8 +1,9 @@
 package Catmandu::Exporter::Template;
 
 use Catmandu::Sane;
-use Catmandu;
 use Moo;
+use Catmandu::Util qw(is_string);
+use Catmandu;
 use Template;
 
 with 'Catmandu::Exporter';
@@ -10,7 +11,8 @@ with 'Catmandu::Exporter';
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
 my $ADD_TT_EXT = sub {
-    $_[0] =~ /\.tt$/ ? $_[0] : "$_[0].tt";
+    my $tmpl = $_[0];
+    is_string($tmpl) && $tmpl !~ /\.tt$/ ? "$tmpl.tt" : $tmpl;
 };
 
 has xml             => (is => 'ro');
