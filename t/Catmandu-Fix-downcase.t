@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Catmandu::Fix;
 
 my $pkg;
 BEGIN {
@@ -12,5 +13,15 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+my ($fixer, $fixed_hash);
+
+$fixer = Catmandu::Fix->new(fixes => ['add_field("job","Author")', 'downcase("job")']);
+$fixed_hash = $fixer->fix({});
+is_deeply $fixed_hash, { 'job' => 'author' }, "downcasing works";
+
+$fixer = Catmandu::Fix->new(fixes => ['add_field("job","Author")', 'downcase("occupation")']);
+$fixed_hash = $fixer->fix({});
+is_deeply $fixed_hash, { 'job' => 'Author' }, "no changes if key not found";
+
+done_testing 4;
 
