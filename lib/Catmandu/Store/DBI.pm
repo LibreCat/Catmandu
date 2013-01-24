@@ -224,7 +224,11 @@ Catmandu::Store::DBI - A Catmandu::Store plugin for DBI based interfaces
 
     use Catmandu::Store::DBI;
 
-    my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
+    my $store = Catmandu::Store::DBI->new(
+        data_source => 'DBI:mysql:database=test',
+        username => '',
+        password => '',
+    );
 
     my $obj1 = $store->bag->add({ name => 'Patrick' });
 
