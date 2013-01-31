@@ -25,14 +25,16 @@ my $build = Module::Build->new(
         'Data::Util' => '0.59',
         'DateTime' => '0.70',
         'DBI' => '1.616', # Catmandu::Store::DBI
-        'IO::String' => '1.08',
+        'IO::Handle::Util' => '0.01',
         'JSON' => '2.51',
         'LaTeX::Encode' => '0.03', # Catmandu::Exporter::BibTeX
         'Moo' => '1.0',
         'Spreadsheet::WriteExcel' => '2.37', # Catmandu::Exporter::XLS
         'Sub::Exporter' => '0.982',
+        'Sub::Quote' => 0,
         'Template' => '2.22',
         'Text::CSV' => '1.21',
+        'Time::HiRes' => 0, # not always installed on redhat
         'XML::Atom' => '0.41', # Catmandu::Importer::Atom
         'YAML::Any' => '0.81',
     },

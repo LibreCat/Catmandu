@@ -3,11 +3,12 @@ package Catmandu::Util;
 use Catmandu::Sane;
 use Exporter qw(import);
 use Sub::Quote ();
-use Data::Util;
-use List::Util;
+use Scalar::Util ();
+use Data::Util ();
+use List::Util ();
 use Data::Compare ();
 use IO::File;
-use IO::String;
+use IO::Handle::Util ();
 use File::Spec;
 use YAML::Any ();
 use JSON ();
@@ -81,25 +82,35 @@ my $HUMAN_CONTENT_TYPES = {
 };
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
+sub TIESCALAR { };
 
 sub io {
-    my ($io, %opts) = @_;
+    my ($arg, %opts) = @_;
     my $binmode = $opts{binmode} || $opts{encoding} || ':utf8';
     my $mode = $opts{mode} || 'r';
-    my $fh;
+    my $io;
 
-    if (is_scalar_ref($io)) {
-        $fh = IO::String->new($$io);
-    } elsif (is_glob_ref(\$io) || ref $io) {
-        $fh = IO::Handle->new_from_fd($io, $mode);
+    if (is_scalar_ref($arg)) {
+        $io = IO::Handle::Util::io_from_scalar_ref($arg);
+        binmode $io, $binmode;
+    } elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
+        $io = IO::Handle->new_from_fd($arg, $mode);
+        binmode $io, $binmode;
+    } elsif (is_string($arg)) {
+        $io = IO::File->new($arg, $mode);
+        binmode $io, $binmode;
+    } elsif (is_code_ref($arg) && $mode eq 'r') {
+        $io = IO::Handle::Util::io_from_getline($arg);
+    } elsif (is_code_ref($arg) && $mode eq 'w') {
+        $io = IO::Handle::Util::io_from_write_cb($arg);
+    } elsif (is_instance($arg, 'IO::Handle')) {
+        $io = $arg;
+        binmode $io, $binmode;
     } else {
-        $fh = IO::File->new;
-        $fh->open($io, $mode);
+        confess "can't make io from argument";
     }
 
-    binmode $fh, $binmode;
-
-    $fh;
+    $io;
 }
 
 sub read_file {
@@ -389,7 +400,26 @@ sub check_maybe_able {
     confess('type error: should be undef or able to '.array_to_sentence(\@_));
 }
 
-for my $sym (qw(able invocant ref
+sub is_instance {
+    my $obj = shift;
+    Scalar::Util::blessed($obj) || return 0;
+    $obj->can($_)               || return 0 for @_;
+    1;
+}
+
+sub check_instance {
+    my $obj = shift;
+    return $obj if is_able($obj, @_);
+    confess('type error: should be instance of '.array_to_sentence(\@_));
+}
+
+sub check_maybe_instance {
+    my $obj = shift;
+    return $obj if is_maybe_able($obj, @_);
+    confess('type error: should be undef or instance of '.array_to_sentence(\@_));
+}
+
+for my $sym (qw(able instance invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
         value string number integer natural positive)) {
     my $pkg = __PACKAGE__;
@@ -518,6 +548,10 @@ object and returns an opened L<IO::Handle> object.
     my $fh = io *STDIN;
 
     my $fh = io \*STDOUT, mode => 'w', binmode => ':crlf';
+
+    my $write_cb = sub { my $str = $_[0]; ... };
+
+    my $fh = io $write_cb, mode => 'w';
 
     my $scalar = "";
     my $fh = io \$scalar, mode => 'w';

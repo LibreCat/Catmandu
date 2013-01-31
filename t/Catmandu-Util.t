@@ -49,7 +49,7 @@ for my $sym (qw(same different)) {
     can_ok 'T::ImportCheck', "check_$sym";
     ok !T::ImportIs->can("check_$sym");
 }
-for my $sym (qw(able invocant ref
+for my $sym (qw(able instance invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
         value string number integer natural positive)) {
     can_ok $pkg, "is_$sym";
@@ -117,5 +117,5 @@ for my $sym (qw(xml_declaration xml_escape)) {
     can_ok 'T::ImportXML', $sym;
 }
 
-done_testing 430;
+done_testing 450;
 
