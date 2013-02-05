@@ -134,6 +134,7 @@ use Sub::Exporter::Util qw(curry_method);
 use Sub::Exporter -setup => {
     exports => [config   => curry_method,
                 store    => curry_method,
+                fixer    => curry_method,
                 importer => curry_method,
                 exporter => curry_method,
                 export   => curry_method,
