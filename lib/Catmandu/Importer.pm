@@ -5,6 +5,16 @@ use Catmandu::Util qw(io);
 use Moo::Role;
 
 with 'Catmandu::Iterable';
+with 'Catmandu::Fixable';
+
+around generator => sub {
+    my ($orig, $self) = @_;
+    my $generator = $orig->($self);
+    if (my $fixer = $self->_fixer) {
+        return $fixer->fix($generator);
+    }
+    $generator;
+};
 
 has file => (
     is      => 'ro',
@@ -39,6 +49,10 @@ Catmandu::Importer - Namespace for packages that can import
 
 A Catmandu::Importer is a stub for Perl packages that can import data from 
 an external source (a file, the network, ...). 
+
+Every Catmandu::Importer is a Catmandu::Fixable and thus provides a 'fix' parameter that
+can be set in the constructor. For every item returned by the generator the given fixes
+will be applied first.
 
 =head1 METHODS
 

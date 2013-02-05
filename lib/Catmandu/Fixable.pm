@@ -1,16 +1,15 @@
 package Catmandu::Fixable;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is);
-use Catmandu::Fix;
 use Moo::Role;
+use Catmandu::Util qw(is_instance);
+use Catmandu;
 
-has fix => (
+has _fixer => (
     is => 'ro',
+    init_arg => 'fix',
     coerce => sub {
-        is_array_ref($_[0])
-            ? Catmandu::Fix->new(fixes => $_[0])
-            : $_[0];
+        is_instance($_[0]) ? $_[0] : Catmandu->fixer($_[0]);
     },
 );
 

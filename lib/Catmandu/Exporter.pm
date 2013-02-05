@@ -53,9 +53,9 @@ Create a new Catmandu::Exporter. When no options are given exported data is writ
 the stdout. Optionally provide a 'file' pathname or a 'fh' file handle to redirect the
 ouput.
 
-Every Catmandu::Exporter is a Catmandu::Fixable and thus provides a 'fix' method that
-can be set in the constructor. For every 'add' or for every item in 'add_many' an
-implicit 'fix' will be called. 
+Every Catmandu::Exporter is a Catmandu::Fixable and thus provides a 'fix' parameter that
+can be set in the constructor. For every 'add' or for every item in 'add_many' the given
+fixes will be applied first.
 
 =head2 add($hashref)
 

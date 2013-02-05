@@ -2,6 +2,7 @@ package Catmandu;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
+use Catmandu::Fix;
 use File::Spec;
 
 =head1 NAME
@@ -272,8 +273,6 @@ sub config {
     state $config = {};
 }
 
-my $stores = {};
-
 =head2 default_store
 
 Return the name of the default store.
@@ -304,86 +303,178 @@ In your program:
     Catmandu->store('test')->bag->search(...);
 
 =cut
-
 sub store {
     my $self = shift;
-    my $sym = check_string(shift || $self->default_store);
+    my $name = shift;
 
-    $stores->{$sym} || do {
-        if (my $cfg = $self->config->{store}{$sym}) {
-            check_hash_ref($cfg);
-            check_string(my $pkg = $cfg->{package});
-            check_hash_ref(my $opts = $cfg->{options} || {});
-            $opts = is_hash_ref($_[0])
-                ? {%$opts, %{$_[0]}}
-                : {%$opts, @_};
-            $stores->{$sym} = require_package($pkg, 'Catmandu::Store')->new($opts);
-        } else {
-            require_package($sym, 'Catmandu::Store')->new(@_);
+    state $stores = {};
+
+    my $key = $name || $self->default_store;
+
+    $stores->{$key} || do {
+        if (my $c = $self->config->{store}{$key}) {
+            check_hash_ref($c);
+            check_string(my $package = $c->{package});
+            my $opts = $c->{options} || {};
+            if (@_ > 1) {
+                $opts = {%$opts, @_};
+            } elsif (@_ == 1) {
+                $opts = {%$opts, %{$_[0]}};
+            }
+            return $stores->{$key} = require_package($package, 'Catmandu::Store')->new($opts);
         }
-    };
+        if ($name) {
+            return require_package($name, 'Catmandu::Store')->new(@_);
+        }
+        confess "unknown store ".$self->default_store;
+    }
 }
 
-=head2 importer(NAME)
+=head2 default_fixer
 
-Return an instance of a Catmandu::Importer with name NAME (or the default 'JSON' when no name is given).
-The NAME is set in the configuration file. E.g.
+Return the name of the default fixer.
 
- importer:
-  oai:
-   package: OAI
-    options:
-     url: http://www.instute.org/oai/
-  feed:
-   package: Atom
-    options:
-     url: http://www.mysite.org/blog/atom
+=cut
+
+sub default_fixer { 'default' }
+
+=head2 fixer(NAME)
+
+Return an instance of Catmandu::Fix with name NAME (or 'default' when no name is given).
+The NAME is set in the config. E.g.
+
+ fixer:
+  default:
+    - do_this()
+    - do_that()
 
 In your program:
 
-Catmandu->importer('oai')->each(sub { ... } );
-Catmandu->importer('oai', url => 'http://override')->each(sub { ... } );
-Catmandu->importer('feed')->each(sub { ... } );
+    my $clean_data = Catmandu->fixer('cleanup')->fix($data);
+    # or inline
+    my $clean_data = Catmandu->fixer('do_this()', 'do_that()')->fix($data);
+    my $clean_data = Catmandu->fixer(['do_this()', 'do_that()'])->fix($data);
+
+=cut
+
+sub fixer {
+    my $self = shift;
+    if (ref $_[0]) {
+        return Catmandu::Fix->new(fixes => $_[0]);
+    }
+
+    my $key = $_[0] || $self->default_fixer;
+
+    state $fixers = {};
+
+    $fixers->{$key} || do {
+        if (my $fixes = $self->config->{fixer}{$key}) {
+            return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
+        }
+        return Catmandu::Fix->new(fixes => \@_);
+    }
+}
+
+=head2 default_importer
+
+Return the name of the default importer.
+
+=cut
+
+sub default_importer { 'default' }
+
+=head2 default_importer_package
+
+Return the name of the default importer package if no
+package name is given in the config or as a param.
+
+=cut
+
+sub default_importer_package { 'JSON' }
+
+=head2 importer(NAME)
+
+Return an instance of a Catmandu::Importer with name NAME
+(or the default when no name is given).
+The NAME is set in the configuration file. E.g.
+
+  importer:
+    oai:
+      package: OAI
+      options:
+        url: http://www.instute.org/oai/
+    feed:
+      package: Atom
+      options:
+        url: http://www.mysite.org/blog/atom
+
+In your program:
+
+    Catmandu->importer('oai')->each(sub { ... } );
+    Catmandu->importer('oai', url => 'http://override')->each(sub { ... } );
+    Catmandu->importer('feed')->each(sub { ... } );
 
 =cut
 
 sub importer {
     my $self = shift;
-    my $sym = check_string(shift);
-    if (my $cfg = $self->config->{importer}{$sym}) {
-        check_hash_ref($cfg);
-        check_string(my $pkg = $cfg->{package});
-        check_hash_ref(my $opts = $cfg->{options} || {});
-        $opts = is_hash_ref($_[0])
-            ? {%$opts, %{$_[0]}}
-            : {%$opts, @_};
-        require_package($pkg, 'Catmandu::Importer')->new($opts);
-    } else {
-        require_package($sym, 'Catmandu::Importer')->new(@_);
+    my $name = shift;
+    if (my $c = $self->config->{importer}{$name || $self->default_importer}) {
+        check_hash_ref($c);
+        my $package = $c->{package} || $self->default_importer_package;
+        my $opts    = $c->{options} || {};
+        if (@_ > 1) {
+            $opts = {%$opts, @_};
+        } elsif (@_ == 1) {
+            $opts = {%$opts, %{$_[0]}};
+        }
+        return require_package($package, 'Catmandu::Importer')->new($opts);
     }
+    require_package($name ||
+        $self->default_importer_package, 'Catmandu::Importer')->new(@_);
 }
+
+=head2 default_exporter
+
+Return the name of the default exporter.
+
+=cut
+
+sub default_exporter { 'default' }
+
+=head2 default_exporter_package
+
+Return the name of the default exporter package if no
+package name is given in the config or as a param.
+
+=cut
+
+sub default_exporter_package { 'JSON' }
 
 =head2 exporter([NAME])
 
-Return an instance of Catmandu::Exporter with name NAME (or the default 'JSON' when no name is given).
+Return an instance of Catmandu::Exporter with name NAME
+(or the default when no name is given).
 The NAME is set in the configuration file (see 'importer').
 
 =cut
 
 sub exporter {
     my $self = shift;
-    my $sym = check_string(shift);
-    if (my $cfg = $self->config->{exporter}{$sym}) {
-        check_hash_ref($cfg);
-        check_string(my $pkg = $cfg->{package});
-        check_hash_ref(my $opts = $cfg->{options} || {});
-        $opts = is_hash_ref($_[0])
-            ? {%$opts, %{$_[0]}}
-            : {%$opts, @_};
-        require_package($pkg, 'Catmandu::Exporter')->new($opts);
-    } else {
-        require_package($sym, 'Catmandu::Exporter')->new(@_);
+    my $name = shift;
+    if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {
+        check_hash_ref($c);
+        my $package = $c->{package} || $self->default_exporter_package;
+        my $opts    = $c->{options} || {};
+        if (@_ > 1) {
+            $opts = {%$opts, @_};
+        } elsif (@_ == 1) {
+            $opts = {%$opts, %{$_[0]}};
+        }
+        return require_package($package, 'Catmandu::Exporter')->new($opts);
     }
+    require_package($name ||
+        $self->default_exporter_package, 'Catmandu::Exporter')->new(@_);
 }
 
 =head2 export($data,[NAME])
@@ -425,10 +516,11 @@ Export data using a default or named exporter to a string.
 sub export_to_string {
     my $self = shift;
     my $data = shift;
-    my $sym  = shift;
-    my %opts = is_hash_ref($_[0]) ? %{$_[0]} : @_;
-    my $str  = "";
-    my $exporter = $self->exporter($sym, %opts, file => \$str);
+    my $name = shift;
+    my %opts = ref $_[0] ? %{$_[0]} : @_;
+
+    my $str = "";
+    my $exporter = $self->exporter($name, %opts, file => \$str);
     is_hash_ref($data)
         ? $exporter->add($data)
         : $exporter->add_many($data);

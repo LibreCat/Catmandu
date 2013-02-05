@@ -18,4 +18,3 @@ TODO
 * split Searchable into Searchable and CQL Searchable (?)
 * generator should guard with a magic ref, not undef (?)
 * make serializers pluggable and split off MessagePack serializer
-* add clone, IO::Handle::Util methods to Sane (?)

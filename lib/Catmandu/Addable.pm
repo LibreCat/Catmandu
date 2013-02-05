@@ -6,11 +6,11 @@ use Moo::Role;
 
 requires 'add';
 
-with 'Catmandu::Fixable'; # TODO
+with 'Catmandu::Fixable';
 
 around add => sub {
     my ($orig, $self, $data) = @_;
-    $data = $self->fix->fix($data) if $self->fix;
+    $data = $self->_fixer->fix($data) if $self->_fixer;
     $orig->($self, $data);
     $data;
 };
