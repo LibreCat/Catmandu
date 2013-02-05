@@ -1,5 +1,10 @@
 Revision history for Catmandu
 
+0.06    2013-02-05
+  - Util::io() can now take a callback to read to or write from
+  - fixer method enables named fixers in config
+  - default fixers, importers, exporters equivalent to default store
+
 0.05    2012-12-04
   - split off Catmandu::Store::ElasticSearch
   - split off Catmandu::Store::Solr
