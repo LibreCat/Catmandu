@@ -23,17 +23,10 @@ sub fix {
     my $search  = $self->search;
     my $replace = $self->replace; 
 
-    my @matches = grep ref, data_at($self->path, $data, key => $key);
-
-    for my $match (@matches) {
-        if (is_array_ref($match)) {
-            is_integer($key) || next;
-            my $val = $match->[$key];
-            $match->[$key] =~ s{$search}{$replace}g if is_string($val);
-        } else {
-            my $val = $match->{$key};
-            $match->{$key} =~ s{$search}{$replace}g if is_string($val);
-        }
+    for my $match (grep ref, data_at($self->path, $data)) {
+        set_data($match, $key,
+            map { is_value($_) && s{$search}{$replace}g; $_ }
+                get_data($match, $key));
     }
 
     $data;

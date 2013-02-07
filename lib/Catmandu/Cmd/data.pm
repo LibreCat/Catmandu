@@ -9,10 +9,10 @@ use Catmandu::Fix;
 sub command_opt_spec {
     (
         [ "from-store=s", "",    { default => Catmandu->default_store } ],
-        [ "from-importer=s", "", { default => 'JSON' } ],
+        [ "from-importer=s", "", { default => Catmandu->default_importer } ],
         [ "from-bag=s", "" ],
         [ "count", "" ],
-        [ "into-exporter=s", "", { default => 'JSON' } ],
+        [ "into-exporter=s", "", { default => Catmandu->default_exporter } ],
         [ "into-store=s", "",    { default => Catmandu->default_store } ],
         [ "into-bag=s", "" ],
         [ "start=i", "" ],
