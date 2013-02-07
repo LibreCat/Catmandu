@@ -2,6 +2,7 @@ Revision history for Catmandu
 
 0.07    2013-02-07
   - conditionals in fixes
+  - append, prepend fixes
 
 0.06    2013-02-05
   - Util::io() can now take a callback to read to or write from
