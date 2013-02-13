@@ -34,6 +34,7 @@ my $TAGS = [qw(
     title
     type
     url
+    doi
     volume
     year
 )];
@@ -135,6 +136,7 @@ Two special fields can be set in the Perl hash:
     title
     type
     url
+    doi
     volume
     year
 

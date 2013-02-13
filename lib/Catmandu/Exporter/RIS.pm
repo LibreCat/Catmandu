@@ -20,7 +20,7 @@ sub add {
         if (my $vals = $data->{$tag}) {
             $vals = [$vals] unless ref $vals;
             for my $val (@$vals) {
-                $val = substr($val, 255) if length($val) > 255 && $val =~ $SMALL_TAG;
+                $val = substr($val, 255) if length($val) > 255 && $tag =~ $SMALL_TAG;
                 $val = encode_utf8($val);
                 print $fh "$tag  - $val\r\n";
             }
