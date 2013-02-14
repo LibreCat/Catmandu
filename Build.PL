@@ -29,6 +29,7 @@ my $build = Module::Build->new(
         'JSON' => '2.51',
         'LaTeX::Encode' => '0.03', # Catmandu::Exporter::BibTeX
         'Moo' => '1.0',
+        'Perl::Tidy' => 0,
         'Spreadsheet::WriteExcel' => '2.37', # Catmandu::Exporter::XLS
         'Sub::Exporter' => '0.982',
         'Sub::Quote' => 0,

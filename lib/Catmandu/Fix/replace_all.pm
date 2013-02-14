@@ -32,6 +32,25 @@ sub fix {
     $data;
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+    my $search = $self->search;
+    my $replace = $self->replace;
+
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            "if (is_value(${var})) {"
+                ."utf8::upgrade(${var});"
+                ."${var} =~ s{$search}{$replace}g;"
+                ."}";
+        });
+    });
+}
+
 =head1 NAME
 
 Catmandu::Fix::replace_all - search and replace using regex expressions

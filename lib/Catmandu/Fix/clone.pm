@@ -8,6 +8,11 @@ sub fix {
     clone($_[1]);
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    $fixer->emit_clone($fixer->var);
+}
+
 =head1 NAME
 
 Catmandu::Fix::clone - create a clone of the data object

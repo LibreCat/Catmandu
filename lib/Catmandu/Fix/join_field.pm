@@ -28,6 +28,21 @@ sub fix {
     $data;
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+    my $join_char = $fixer->emit_string($self->join_char);
+
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            "${var} = join(${join_char}, \@{${var}}) if is_array_ref(${var});";
+        });
+    });
+}
+
 =head1 NAME
 
 Catmandu::Fix::join_field - join the ARRAY values of a field into a string

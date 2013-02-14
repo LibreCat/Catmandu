@@ -24,6 +24,20 @@ sub is_fixable {
     0;
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        if ($key =~ /^\d+$/) {
+            return "is_hash_ref(${var}) && exists(${var}->{\"${key}\"}) || is_array_ref(${var}) && \@{${var}} > ${key}";
+        }
+        $key = $fixer->emit_string($key);
+        "is_hash_ref(${var}) && exists(${var}->{${key}})";
+    });
+}
+
 =head1 NAME
 
 Catmandu::FixCondition::exists - only execute fixes if the path exists

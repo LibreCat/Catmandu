@@ -28,6 +28,21 @@ sub fix {
     $data;
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+    my $split_char = $fixer->emit_string($self->split_char);
+
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            "${var} = [split ${split_char}, ${var}] if is_value(${var});";
+        });
+    });
+}
+
 =head1 NAME
 
 Catmandu::Fix::split_field - split a string value in a field into an ARRAY

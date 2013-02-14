@@ -35,6 +35,29 @@ sub mysubstr {
     else { confess "wrong number of arguments" }
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+    my $args = $self->args;
+    my $str_args = @$args > 1 ? join(", ", @$args[0, 1]) : $args->[0];
+
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            if (@$args < 3) {
+                return "${var} = substr(as_utf8(${var}), ${str_args}) if is_value(${var});";
+            }
+            my $replace = $fixer->emit_string($args->[2]);
+            "if (is_value(${var})) {"
+                ."utf8::upgrade(${var});"
+                ."substr(${var}, ${str_args}) = ${replace};"
+                ."}";
+        });
+    });
+}
+
 =head1 NAME
 
 Catmandu::Fix::substring - extract a substring out of the value of a field

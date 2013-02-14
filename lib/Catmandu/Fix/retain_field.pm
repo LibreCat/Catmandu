@@ -30,6 +30,17 @@ sub fix {
     $data;
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        $fixer->emit_retain_key($var, $key);
+    });
+}
+
 =head1 NAME
 
 Catmandu::Fix::retain_field - delete everything from a field except 

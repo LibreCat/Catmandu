@@ -3,8 +3,6 @@ package Catmandu::FixCondition;
 use Catmandu::Sane;
 use Moo::Role;
 
-requires 'is_fixable';
-
 has fixes  => (is => 'ro', default => sub { [] });
 has invert => (is => 'rw');
 

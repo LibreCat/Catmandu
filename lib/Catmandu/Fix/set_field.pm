@@ -33,6 +33,18 @@ sub fix {
     $data;
 }
 
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path_to_key = $self->path;
+    my $key = $self->key;
+    my $val = $fixer->emit_value($self->value);
+
+    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+        my $var = shift;
+        $fixer->emit_set_key($var, $key, $val);
+    });
+}
+
 =head1 NAME
 
 Catmandu::Fix::set_field - add or change the value of a HASH key or ARRAY index
