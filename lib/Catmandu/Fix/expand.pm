@@ -2,10 +2,10 @@ package Catmandu::Fix::expand;
 
 use Catmandu::Sane;
 use Moo;
-use CGI::Expand qw(expand_hash);
+use CGI::Expand ();
 
 sub fix {
-    expand_hash($_[1]);
+    CGI::Expand->expand_hash($_[1]);
 }
 
 =head1 NAME
@@ -14,7 +14,9 @@ Catmandu::Fix::expand - convert a flat hash into nested data using the TT2 dot c
 
 =head1 SYNOPSIS
 
-   # Collapse the data into a flat hash
+   # collapse the data into a flat hash
+   collapse();
+   # expand again to the nested original
    expand();
 
 =head1 SEE ALSO

@@ -1,40 +1,25 @@
 package Catmandu::Fix::split_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :data);
 use Moo;
 
+with 'Catmandu::Fix::Base';
+
 has path       => (is => 'ro', required => 1);
-has key        => (is => 'ro', required => 1);
 has split_char => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $split_char) = @_;
-    my ($p, $key) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key, split_char => $split_char // qr'\s+');
+    $orig->($class, path => $path, split_char => $split_char // qr'\s+');
 };
-
-sub fix {
-    my ($self, $data) = @_;
-
-    my $key = $self->key;
-    my $split_char = $self->split_char;
-    for my $match (grep ref, data_at($self->path, $data)) {
-        set_data($match, $key,
-            map { is_value($_) ? [split $split_char, $_] : $_ }
-                get_data($match, $key));
-    }
-
-    $data;
-}
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path_to_key = $self->path;
-    my $key = $self->key;
+    my $path = $fixer->split_path($self->path);
+    my $key = pop @$path;
     my $split_char = $fixer->emit_string($self->split_char);
 
-    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+    $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;

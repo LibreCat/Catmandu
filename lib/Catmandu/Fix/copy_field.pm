@@ -1,42 +1,43 @@
 package Catmandu::Fix::copy_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :data);
-use Clone qw(clone);
 use Moo;
 
+with 'Catmandu::Fix::Base';
+
 has old_path => (is => 'ro', required => 1);
-has old_key  => (is => 'ro', required => 1);
 has new_path => (is => 'ro', required => 1);
-has new_key  => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $old_path, $new_path) = @_;
-    my ($old_p, $old_key) = parse_data_path($old_path);
-    my ($new_p, $new_key) = parse_data_path($new_path);
-    $orig->($class, old_path => $old_p, old_key => $old_key,
-                    new_path => $new_p, new_key => $new_key);
+    $orig->($class, old_path => $old_path,
+                    new_path => $new_path);
 };
 
-sub fix {
-    my ($self, $data) = @_;
+sub emit {
+    my ($self, $fixer) = @_;
+    my $old_path = $fixer->split_path($self->old_path);
+    my $old_key = pop @$old_path;
+    my $new_path = $fixer->split_path($self->new_path);
 
-    my $old_path = $self->old_path;
-    my $old_key  = $self->old_key;
-    my $new_path = $self->new_path;
-    my $new_key  = $self->new_key;
-    my @old_matches = grep ref, data_at($self->old_path, $data, key => $old_key);
-    my @new_matches = grep ref, data_at($self->new_path, $data, key => $new_key, create => 1);
+    my $vals = $fixer->generate_var;
+    my $perl = $fixer->emit_declare_vars($vals, '[]');
 
-    if (@old_matches == @new_matches) {
-        for (my $i = 0; $i < @old_matches; $i++) {
-            set_data($new_matches[$i], $new_key,
-                map { clone($_) }
-                    get_data($old_matches[$i], $old_key));
-        }
-    }
+    $perl .= $fixer->emit_walk_path($fixer->var, $old_path, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $old_key, sub {
+            my $var = shift;
+            "push(\@{${vals}}, ${var});";
+        });
+    });
+    $perl .= $fixer->emit_create_path($fixer->var, $new_path, sub {
+        my $var = shift;
+        "if (\@{${vals}}) {".
+            "${var} = clone(shift(\@{${vals}}));".
+        "}";
+    });
 
-    $data;
+    $perl;
 }
 
 =head1 NAME

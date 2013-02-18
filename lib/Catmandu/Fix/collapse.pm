@@ -2,10 +2,10 @@ package Catmandu::Fix::collapse;
 
 use Catmandu::Sane;
 use Moo;
-use CGI::Expand qw(collapse_hash);
+use CGI::Expand ();
 
 sub fix {
-    collapse_hash($_[1]);
+    CGI::Expand->collapse_hash($_[1]);
 }
 
 =head1 NAME

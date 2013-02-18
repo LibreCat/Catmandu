@@ -1,35 +1,23 @@
 package Catmandu::Fix::remove_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :data);
 use Moo;
 
+with 'Catmandu::Fix::Base';
+
 has path => (is => 'ro', required => 1);
-has key  => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
-    my ($p, $key) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key);
+    $orig->($class, path => $path);
 };
-
-sub fix {
-    my ($self, $data) = @_;
-
-    my $key = $self->key;
-    for my $match (grep ref, data_at($self->path, $data)) {
-        delete_data($match, $key);
-    }
-
-    $data;
-}
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path_to_key = $self->path;
-    my $key = $self->key;
+    my $path = $fixer->split_path($self->path);
+    my $key = pop @$path;
 
-    $fixer->emit_walk_path($fixer->var, $path_to_key, sub {
+    $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
         $fixer->emit_delete_key($var, $key);
     });
