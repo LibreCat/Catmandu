@@ -10,7 +10,20 @@ BEGIN {
     $pkg = 'Catmandu::Fix::split_field';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('splitme', ',')->fix({splitme => "a,b,c"}),
+    {splitme => ["a", "b", "c"]},
+    "split value";
 
+is_deeply
+    $pkg->new('many.*.splitme', ',')->fix({many => [{splitme => "a,b,c"}, {splitme => "a,b,c"}]}),
+    {many => [{splitme => ["a", "b", "c"]}, {splitme => ["a", "b", "c"]}]},
+    "split wildcard values";
+
+is_deeply
+    $pkg->new('splitme', ',')->fix({splitme => ["a", "b", "c"]}),
+    {splitme => ["a", "b", "c"]},
+    "only split values";
+
+done_testing 4;

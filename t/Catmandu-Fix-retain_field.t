@@ -10,7 +10,14 @@ BEGIN {
     $pkg = 'Catmandu::Fix::retain_field';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('keep')->fix({remove => 'me', also => 'me', keep => 'me'}),
+    {keep => 'me'};
+
+is_deeply
+    $pkg->new('unknown')->fix({remove => 'me', also => 'me'}),
+    {};
+
+done_testing 3;
 

@@ -23,7 +23,9 @@ sub emit {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
-            "${var} = join(${join_char}, \@{${var}}) if is_array_ref(${var});";
+            "if (is_array_ref(${var})) {".
+                "${var} = join(${join_char}, grep { is_value(\$_) } \@{${var}});".
+            "}";
         });
     });
 }
