@@ -10,7 +10,11 @@ BEGIN {
     $pkg = 'Catmandu::Fix::clone';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+my $data = {foo => 'bar'};
+my $cloned = $pkg->new()->fix($data);
 
+is_deeply $data, $cloned, "cloned data is equal";
+isnt $data, $cloned, "cloned data is another object";
+
+done_testing 3;

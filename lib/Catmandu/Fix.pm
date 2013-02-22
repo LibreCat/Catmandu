@@ -200,10 +200,10 @@ sub _emit_walk_path {
     if ($key =~ /^\d+$/) {
         $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "${var} = ${var}->{${str_key}};";
-        $perl .= $self->_emit_walk_path($var, $keys, $cb);
+        $perl .= $self->_emit_walk_path($var, [@$keys], $cb);
         $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
         $perl .= "${var} = ${var}->[${key}];";
-        $perl .= $self->_emit_walk_path($var, $keys, $cb);
+        $perl .= $self->_emit_walk_path($var, [@$keys], $cb);
         $perl .= "}";
     }
     elsif ($key eq '*') {
@@ -253,10 +253,10 @@ sub _emit_create_path {
         my $v2 = $self->generate_var;
         $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "my ${v1} = ${var};";
-        $perl .= $self->_emit_create_path("${v1}->{${str_key}}", $keys, $cb);
+        $perl .= $self->_emit_create_path("${v1}->{${str_key}}", [@$keys], $cb);
         $perl .= "} elsif (is_maybe_array_ref(${var})) {";
         $perl .= "my ${v2} = ${var} //= [];";
-        $perl .= $self->_emit_create_path("${v2}->[${key}]", $keys, $cb);
+        $perl .= $self->_emit_create_path("${v2}->[${key}]", [@$keys], $cb);
         $perl .= "}";
     }
     elsif ($key eq '*') {
@@ -280,9 +280,9 @@ sub _emit_create_path {
                 }
                 when ('$last') {
                     $perl .= "if (\@${v}) {";
-                    $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]", $keys, $cb);
+                    $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]", [@$keys], $cb);
                     $perl .= "} else {";
-                    $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
+                    $perl .= $self->_emit_create_path("${v}->[0]", [@$keys], $cb);
                     $perl .= "}";
                 }
                 when ('$prepend') {

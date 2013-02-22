@@ -10,7 +10,15 @@ BEGIN {
     $pkg = 'Catmandu::Fix::remove_field';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('remove')->fix({remove => 'me', keep => 'me'}),
+    {keep => 'me'},
+    "remove field at root";
 
+is_deeply
+    $pkg->new('many.*.remove')->fix({many => [{remove => 'me', keep => 'me'}, {remove => 'me', keep => 'me'}]}),
+    {many => [{keep => 'me'}, {keep => 'me'}]},
+    "remove nested field with wildcard";
+
+done_testing 3;
