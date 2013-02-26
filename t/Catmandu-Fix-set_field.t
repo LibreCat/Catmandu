@@ -10,7 +10,25 @@ BEGIN {
     $pkg = 'Catmandu::Fix::set_field';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('job', 'fixer')->fix({}),
+    {job => "fixer"},
+    "set field at root";
 
+is_deeply
+    $pkg->new('deeply.nested.$append.job', 'fixer')->fix({}),
+    {},
+    "set field doesn't create intermediate path";
+
+is_deeply
+    $pkg->new('deeply.nested.*.job', 'fixer')->fix({deeply => {nested => [undef, {}]}}),
+    {deeply => {nested => [undef, {job => "fixer"}]}},
+    "set deeply nested field";
+
+is_deeply
+    $pkg->new('deeply.nested.$append.job', 'fixer')->fix({deeply => {nested => {}}}),
+    {deeply => {nested => {}}},
+    "only set field if the path matches";
+
+done_testing 5;

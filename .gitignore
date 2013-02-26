@@ -11,3 +11,4 @@ MANIFEST*
 META.*
 MYMETA.*
 Catmandu-*
+!*.t

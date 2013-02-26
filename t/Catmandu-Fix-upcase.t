@@ -16,7 +16,6 @@ is_deeply
     {name => "JOE"},
     "upcase value";
 
-
 is_deeply
     $pkg->new('names.*.name')->fix({names => [{name => 'joe'}, {name => 'rick'}]}),
     {names => [{name => 'JOE'}, {name => 'RICK'}]},
