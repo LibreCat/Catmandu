@@ -10,7 +10,15 @@ BEGIN {
     $pkg = 'Catmandu::Fix::upcase';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('name')->fix({name => 'joe'}),
+    {name => "JOE"},
+    "upcase value";
 
+is_deeply
+    $pkg->new('names.*.name')->fix({names => [{name => 'joe'}, {name => 'rick'}]}),
+    {names => [{name => 'JOE'}, {name => 'RICK'}]},
+    "upcase wildcard values";
+
+done_testing 3;

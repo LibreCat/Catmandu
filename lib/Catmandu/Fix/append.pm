@@ -1,31 +1,31 @@
 package Catmandu::Fix::append;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :data);
 use Moo;
 
-has path => (is => 'ro', required => 1);
-has key  => (is => 'ro', required => 1);
-has val  => (is => 'ro', required => 1);
+with 'Catmandu::Fix::Base';
+
+has path  => (is => 'ro', required => 1);
+has value => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
-    my ($orig, $class, $path, $val) = @_;
-    my ($p, $key) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key, val => $val);
+    my ($orig, $class, $path, $value) = @_;
+    $orig->($class, path => $path, value => $value);
 };
 
-sub fix {
-    my ($self, $data) = @_;
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path = $fixer->split_path($self->path);
+    my $key = pop @$path;
+    my $value = $fixer->emit_string($self->value);
 
-    my $key = $self->key;
-    my $val = $self->val;
-    for my $match (grep ref, data_at($self->path, $data)) {
-        set_data($match, $key,
-            map { is_value($_) ? "$_$val" : $_ }
-                get_data($match, $key));
-    }
-
-    $data;
+    $fixer->emit_walk_path($fixer->var, $path, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            "${var} = join('', ${var}, $value) if is_value(${var});";
+        });
+    });
 }
 
 =head1 NAME

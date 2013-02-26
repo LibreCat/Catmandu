@@ -1,127 +1,501 @@
-package Catmandu::Fix::Loader;
-
-use Catmandu::Sane;
-use Catmandu::Util qw(:is require_package read_file);
-
-my @fixes;
-my @stack;
-
-sub load_fixes {
-    @fixes = ();
-    @stack = ();
-    for my $fix (@{$_[0]}) {
-        if (is_able($fix, 'fix')) {
-            push @fixes, $fix;
-        } elsif (is_string($fix)) {
-            if (-r $fix) {
-                $fix = read_file($fix);
-            }
-            eval "package Catmandu::Fix::Loader::Env;$fix;1" or confess $@;
-        }
-    }
-    confess "if without end" if @stack;
-    [@fixes];
-}
-
-sub _add_fix {
-    my ($fix, @args) = @_;
-
-    if ($fix eq 'end') {
-        $fix = pop @stack || confess "end without if";
-        if (@stack) {
-            push @{$stack[-1]->fixes}, $fix;
-        } else {
-            push @fixes, $fix;
-        }
-    }
-    elsif ($fix =~ s/^if_//) {
-        $fix = require_package($fix, 'Catmandu::FixCondition')->new(@args);
-        push @stack, $fix;
-    }
-    elsif ($fix =~ s/^unless_//) {
-        $fix = require_package($fix, 'Catmandu::FixCondition')->new(@args);
-        $fix->invert(1);
-        push @stack, $fix;
-    }
-    else {
-        $fix = require_package($fix, 'Catmandu::Fix')->new(@args);
-        if (@stack) {
-            push @{$stack[-1]->fixes}, $fix;
-        } else {
-            push @fixes, $fix;
-        }
-    }
-}
-
-package Catmandu::Fix::Loader::Env;
-
-use strict;
-use warnings;
-
-sub AUTOLOAD {
-    my ($fix) = our $AUTOLOAD =~ /::(\w+)$/;
-
-    my $sub = sub { Catmandu::Fix::Loader::_add_fix($fix, @_); return };
-
-    { no strict 'refs'; *$AUTOLOAD = $sub };
-
-    $sub->(@_);
-}
-
-sub DESTROY {}
-
 package Catmandu::Fix;
 
-use Catmandu::Sane;
-use Catmandu::Util qw(:is :check);
-use Moo;
+use strict;
+use warnings FATAL => 'all';
+use 5.010;
+use utf8;
+use Carp qw(confess);
+use Catmandu::Util qw(:is :string);
+use Clone qw(clone);
 
-has fixes => (
-    is => 'ro',
-    required => 1,
-    coerce => sub {
-        Catmandu::Fix::Loader::load_fixes(check_array_ref($_[0]));
-    },
-);
+sub _eval_emit { eval $_[0] }
+
+use Moo;
+use Catmandu::Fix::Loader;
+use Perl::Tidy ();
+use B ();
+
+has tidy        => (is => 'ro');
+has fixer       => (is => 'ro', lazy => 1, init_arg => undef, builder => 1);
+has _num_labels => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
+has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
+has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
+has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
+has fixes       => (is => 'ro', required => 1, trigger => 1);
+
+sub _trigger_fixes {
+    my ($self) = @_;
+    my $fixes = $self->fixes;
+    my $loaded_fixes = Catmandu::Fix::Loader::load_fixes($fixes);
+    splice(@$fixes, 0, @$fixes, @$loaded_fixes);
+}
+
+sub _build_fixer {
+    my ($self) = @_;
+    local $@;
+    _eval_emit($self->emit, $self->_captures) or die $@;
+}
 
 sub fix {
     my ($self, $data) = @_;
 
-    my $fixes = $self->fixes;
+    my $fixer = $self->fixer;
 
     if (is_hash_ref($data)) {
-        for my $fix (@$fixes) {
-            $data = $fix->fix($data);
-        }
-        return $data;
+        return $fixer->($data);
     }
-
-    if (is_array_ref($data)) {
-        return [map {
-            my $d = $_;
-            $d = $_->fix($d) for @$fixes;
-            $d;
-        } @$data];
+    if (is_instance($data)) {
+        return $data->map(sub { $fixer->($_[0]) });
     }
-
     if (is_code_ref($data)) {
-        return sub {
-            my $d = $data->();
-            defined($d) || return;
-            $d = $_->fix($d) for @$fixes;
-            $d;
-        };
+        return sub { $fixer->($data->() // return) };
+    }
+    if (is_array_ref($data)) {
+        return [ map { $fixer->($_) } @$data ];
     }
 
-    if (is_invocant($data)) {
-        return $data->map(sub {
-            my $d = $_[0];
-            $d = $_->fix($d) for @$fixes;
-            $d;
+    confess "must be hashref, arrayref, coderef or iterable object";
+}
+
+sub generate_var {
+    my ($self) = @_;
+    my $n = $self->_num_vars;
+    $self->_num_vars($n + 1);
+    "\$__$n";
+}
+
+sub emit {
+    my ($self) = @_;
+    my $var = $self->var;
+    my $captures = $self->_captures;
+    my $perl = "";
+
+    $perl .= "sub {";
+    $perl .= $self->emit_declare_vars($var, '$_[0]');
+    for my $fix (@{$self->fixes}) {
+        $perl .= $self->emit_fix($fix);
+    }
+    $perl .= "return $var;";
+    $perl .= "};";
+
+    if (%$captures) {
+        my @captured_vars = map {
+            $self->emit_declare_vars($_, '$_[1]->{'.$self->emit_string($_).'}');
+        } keys %$captures;
+        $perl = join '', @captured_vars, $perl;
+    }
+
+    return $perl unless $self->tidy;
+
+    my $tidy_perl = "";
+    my $err = "";
+    my $log = "";
+
+    my $has_err = Perl::Tidy::perltidy(
+        argv        => "-se",
+        source      => \$perl,
+        destination => \$tidy_perl,
+        stderr      => \$err,
+        logfile     => \$log,
+    );
+    if ($has_err) {
+        confess $err;
+    }
+
+    $tidy_perl;
+}
+
+sub emit_fix {
+    my ($self, $fix) = @_;
+
+    if ($fix->can('emit')) {
+        my $n = $self->_num_labels;
+        $self->_num_labels($n + 1);
+        my $label = "__FIX__${n}";
+        my $perl = "${label}: {";
+        $perl .= $fix->emit($self, $label);
+        $perl .= "};";
+        $perl;
+    } else {
+        my $var = $self->var;
+        my $ref = $self->generate_var;
+        $self->_captures->{$ref} = $fix;
+        "${var} = ${ref}->fix(${var});";
+    }
+}
+
+sub emit_value {
+    my ($self, $val) = @_;
+    is_number($val) ? $val : $self->emit_string($val);
+}
+
+sub emit_string {
+    my ($self, $str) = @_;
+    B::perlstring($str);
+}
+
+sub emit_declare_vars {
+    my ($self, $var, $val) = @_;
+    $var = "(".join(", ", @$var).")" if ref $var;
+    $val = "(".join(", ", @$val).")" if ref $val;
+    if (defined $val) {
+        return "my ${var} = ${val};";
+    }
+    "my ${var};";
+}
+
+sub emit_new_scope {
+    "{";
+}
+
+sub emit_end_scope {
+    "};";
+}
+
+sub emit_foreach {
+    my ($self, $var, $cb) = @_;
+    my $perl = "";
+    my $v = $self->generate_var;
+    $perl .= "foreach (\@{${var}}) {";
+    $perl .= $self->emit_declare_vars($v, '$_');
+    $perl .= $cb->($v);
+    $perl .= "}";
+    $perl;
+}
+
+sub emit_foreach_key {
+    my ($self, $var, $cb) = @_;
+    my $perl = "";
+    my $v = $self->generate_var;
+    $perl .= "foreach (keys(\%{${var}})) {";
+    $perl .= $self->emit_declare_vars($v, '$_');
+    $perl .= $cb->($v);
+    $perl .= "}";
+    $perl;
+}
+
+sub emit_walk_path {
+    my ($self, $var, $keys, $cb) = @_;
+
+    $keys = [@$keys]; # protect keys
+
+    if (@$keys) { # protect $var
+        my $v = $self->generate_var;
+        $self->emit_declare_vars($v, $var)
+            . $self->_emit_walk_path($v, $keys, $cb);
+    } else {
+        $cb->($var);
+    }
+}
+
+sub _emit_walk_path {
+    my ($self, $var, $keys, $cb) = @_;
+
+    @$keys || return $cb->($var);
+
+    my $key = shift @$keys;
+    my $str_key = $self->emit_string($key);
+    my $perl = "";
+
+    if ($key =~ /^\d+$/) {
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= "${var} = ${var}->{${str_key}};";
+        $perl .= $self->_emit_walk_path($var, [@$keys], $cb);
+        $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
+        $perl .= "${var} = ${var}->[${key}];";
+        $perl .= $self->_emit_walk_path($var, [@$keys], $cb);
+        $perl .= "}";
+    }
+    elsif ($key eq '*') {
+        my $v = $self->generate_var;
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= $self->emit_foreach($var, sub {
+            return $self->_emit_walk_path(shift, $keys, $cb);
         });
+        $perl .= "}";
+    }
+    else {
+        if ($key eq '$first') {
+            $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
+            $perl .= "${var} = ${var}->[0];";
+        }
+        elsif ($key eq '$last') {
+            $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
+            $perl .= "${var} = ${var}->[\@{${var}} - 1];";
+        }
+        else {
+            $perl .= "if (is_hash_ref(${var})) {";
+            $perl .= "${var} = ${var}->{${str_key}};";
+        }
+        $perl .= $self->_emit_walk_path($var, $keys, $cb);
+        $perl .= "}";
     }
 
-    return;
+    $perl;
+}
+
+sub emit_create_path {
+    my ($self, $var, $keys, $cb) = @_;
+    $self->_emit_create_path($var, [@$keys], $cb);
+}
+
+sub _emit_create_path {
+    my ($self, $var, $keys, $cb) = @_;
+
+    @$keys || return $cb->($var);
+
+    my $key = shift @$keys;
+    my $str_key = $self->emit_string($key);
+    my $perl = "";
+
+    if ($key =~ /^\d+$/) {
+        my $v1 = $self->generate_var;
+        my $v2 = $self->generate_var;
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= "my ${v1} = ${var};";
+        $perl .= $self->_emit_create_path("${v1}->{${str_key}}", [@$keys], $cb);
+        $perl .= "} elsif (is_maybe_array_ref(${var})) {";
+        $perl .= "my ${v2} = ${var} //= [];";
+        $perl .= $self->_emit_create_path("${v2}->[${key}]", [@$keys], $cb);
+        $perl .= "}";
+    }
+    elsif ($key eq '*') {
+        my $v1 = $self->generate_var;
+        my $v2 = $self->generate_var;
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "my ${v1} = ${var};";
+        $perl .= "for (my ${v2} = 0; ${v2} < \@{${v1}}; ${v2}++) {";
+        $perl .= $self->_emit_create_path("${v1}->[${v2}]", $keys, $cb);
+        $perl .= "}";
+        $perl .= "}";
+    }
+    else {
+        my $v = $self->generate_var;
+        if ($key eq '$first' || $key eq '$last' || $key eq '$prepend' || $key eq '$append') {
+            $perl .= "if (is_maybe_array_ref(${var})) {";
+            $perl .= "my ${v} = ${var} //= [];";
+            given ($key) {
+                when ('$first') {
+                        $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
+                }
+                when ('$last') {
+                    $perl .= "if (\@${v}) {";
+                    $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]", [@$keys], $cb);
+                    $perl .= "} else {";
+                    $perl .= $self->_emit_create_path("${v}->[0]", [@$keys], $cb);
+                    $perl .= "}";
+                }
+                when ('$prepend') {
+                    $perl .= "if (\@${v}) {";
+                    $perl .= "unshift(\@${v}, undef);";
+                    $perl .= "}";
+                    $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
+                }
+                when ('$append') {
+                    $perl .= $self->_emit_create_path("${v}->[\@${v}]", $keys, $cb);
+                }
+            }
+            $perl .= "}";
+        }
+        else {
+            $perl .= "if (is_maybe_hash_ref(${var})) {";
+            $perl .= "my ${v} = ${var} //= {};";
+            $perl .= $self->_emit_create_path("${v}->{${str_key}}", $keys, $cb);
+            $perl .= "}";
+        }
+    }
+
+    $perl;
+}
+
+sub emit_get_key {
+    my ($self, $var, $key, $cb) = @_;
+
+    my $str_key = $self->emit_string($key);
+    my $perl = "";
+
+    if ($key =~ /^\d+$/) {
+        $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
+        $perl .= $cb->("${var}->{${str_key}}");
+        $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
+        $perl .= $cb->("${var}->[${key}]");
+        $perl .= "}";
+    }
+    elsif ($key eq '$first') {
+        $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
+        $perl .= $cb->("${var}->[0]");
+        $perl .= "}";
+    }
+    elsif ($key eq '$last') {
+        $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
+        $perl .= $cb->("${var}->[\@{${var}} - 1]");
+        $perl .= "}";
+    }
+    elsif ($key eq '*') {
+        my $v = $self->generate_var;
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "for (my ${v} = 0; ${v} < \@{${var}}; ${v}++) {";
+        $perl .= $cb->("${var}->[${v}]");
+        $perl .= "}}";
+    }
+    else {
+        $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
+        $perl .= $cb->("${var}->{${str_key}}");
+        $perl .= "}";
+    }
+
+    $perl;
+}
+
+sub emit_set_key {
+    my ($self, $var, $key, $val) = @_;
+    my $perl = "";
+    my $str_key = $self->emit_string($key);
+
+    if ($key =~ /^\d+$/) {
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= "${var}->{${str_key}} = $val;";
+        $perl .= "} elsif (is_array_ref(${var})) {";
+        $perl .= "${var}->[${key}] = $val;";
+        $perl .= "}";
+    }
+    elsif ($key eq '$first') {
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "${var}->[0] = $val;";
+        $perl .= "}";
+    }
+    elsif ($key eq '$last') {
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "${var}->[\@{${var}} - 1] = $val;";
+        $perl .= "}";
+    }
+    elsif ($key eq '$prepend') {
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "unshift(\@{${var}}, $val);";
+        $perl .= "}";
+    }
+    elsif ($key eq '$append') {
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "push(\@{${var}}, $val);";
+        $perl .= "}";
+    }
+    elsif ($key eq '*') {
+        my $i = $self->generate_var;
+        $perl .= "if (is_array_ref(${var})) {";
+        $perl .= "for (my ${i} = 0; ${i} < \@{${var}}; ${i}++) {";
+        $perl .= "${var}->[${i}] = $val;";
+        $perl .= "}}";
+    }
+    else {
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= "${var}->{${str_key}} = $val;";
+        $perl .= "}";
+    }
+
+    $perl;
+}
+
+sub emit_delete_key {
+    my ($self, $var, $key, $cb) = @_;
+
+    my $str_key = $self->emit_string($key);
+    my $perl = "";
+    my $vals;
+    if ($cb) {
+        $vals = $self->generate_var;
+        $perl = $self->emit_declare_vars($vals, '[]');
+    }
+
+    if ($key =~ /^\d+$/) {
+        $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
+        $perl .= "push(\@{${vals}}, "                     if $cb;
+        $perl .= "delete(${var}->{${str_key}})";
+        $perl .= ")"                                      if $cb;
+        $perl .= ";";
+        $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
+        $perl .= "push(\@{${vals}}, "                     if $cb;
+        $perl .= "splice(\@{${var}}, ${key}, 1)";
+        $perl .= ")"                                      if $cb;
+    }
+    elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
+        $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
+        $perl .= "push(\@{${vals}}, "                     if $cb;
+        $perl .= "splice(\@{${var}}, 0, 1)"               if $key eq '$first';
+        $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)"  if $key eq '$last';
+        $perl .= "splice(\@{${var}}, 0, \@{${var}})"      if $key eq '*';
+        $perl .= ")"                                      if $cb;
+    }
+    else {
+        $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
+        $perl .= "push(\@{${vals}}, "                    if $cb;
+        $perl .= "delete(${var}->{${str_key}})";
+        $perl .= ")"                                     if $cb;
+    }
+    $perl .= ";";
+    $perl .= "}";
+    if ($cb) {
+        $perl .= $cb->($vals);
+    }
+
+    $perl;
+}
+
+sub emit_retain_key {
+    my ($self, $var, $key) = @_;
+
+    my $perl = "";
+
+    if ($key =~ /^\d+$/) {
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= $self->emit_foreach_key($var, sub {
+            my $v = shift;
+            "delete(${var}->{${v}}) if ${v} ne ${key};";
+        });
+        $perl .= "} elsif (is_array_ref(${var})) {";
+        $perl .= "if (\@{${var}} > ${key}) {";
+        $perl .= "splice(\@{${var}}, 0, ${key});" if $key > 0;
+        $perl .= "splice(\@{${var}}, 1, \@{${var}} - 1);";
+        $perl .= "} else {";
+        $perl .= "splice(\@{${var}}, 0, \@{${var}});";
+        $perl .= "}";
+        $perl .= "}";
+    }
+    elsif ($key eq '$first') {
+        $perl .= "if (is_array_ref(${var}) && \@{${var}} > 1) {";
+        $perl .= "splice(\@{${var}}, 1, \@{${var}} - 1);";
+        $perl .= "}";
+    }
+    elsif ($key eq '$last') {
+        $perl .= "if (is_array_ref(${var}) && \@{${var}} > 1) {";
+        $perl .= "splice(\@{${var}}, 0, \@{${var}} - 1);";
+        $perl .= "}";
+    }
+    elsif ($key eq '*') {
+        # retain everything
+    }
+    else {
+        $key = $self->emit_string($key);
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= $self->emit_foreach_key($var, sub {
+            my $v = shift;
+            "if ($v ne ${key}) {".
+            "delete(${var}->{${v}});".
+            "}";
+        });
+        $perl .= "}";
+    }
+
+    $perl;
+}
+
+sub emit_clone {
+    my ($self, $var) = @_;
+    "${var} = clone(${var});";
+}
+
+sub split_path {
+    my ($self, $path) = @_;
+    return [ split /[\/\.]/, $path ];
 }
 
 =head1 NAME

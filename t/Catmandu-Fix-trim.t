@@ -10,7 +10,15 @@ BEGIN {
     $pkg = 'Catmandu::Fix::trim';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('name')->fix({name => "\tjoe  "}),
+    {name => "joe"},
+    "trim value";
 
+is_deeply
+    $pkg->new('names.*.name')->fix({names => [{name => "\tjoe  "}, {name => "  rick  "}]}),
+    {names => [{name => "joe"}, {name => "rick"}]},
+    "trim wildcard values";
+
+done_testing 4;

@@ -1,29 +1,29 @@
 package Catmandu::Fix::trim;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :data trim);
 use Moo;
 
+with 'Catmandu::Fix::Base';
+
 has path => (is => 'ro', required => 1);
-has key  => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
-    my ($p, $key) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key);
+    $orig->($class, path => $path);
 };
 
-sub fix {
-    my ($self, $data) = @_;
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path = $fixer->split_path($self->path);
+    my $key = pop @$path;
 
-    my $key = $self->key;
-    for my $match (grep ref, data_at($self->path, $data)) {
-        set_data($match, $key,
-            map { is_string($_) ? trim($_) : $_ }
-                get_data($match, $key));
-    }
-
-    $data;
+    $fixer->emit_walk_path($fixer->var, $path, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            "${var} = trim(${var}) if is_string(${var});";
+        });
+    });
 }
 
 =head1 NAME

@@ -1,36 +1,27 @@
 package Catmandu::Fix::add_field;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :data);
-use Clone qw(clone);
 use Moo;
 
+with 'Catmandu::Fix::Base';
+
 has path  => (is => 'ro', required => 1);
-has key   => (is => 'ro', required => 1);
 has value => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $value) = @_;
-    my ($p, $key) = parse_data_path($path);
-    $orig->($class, path => $p, key => $key, value => $value);
+    $orig->($class, path => $path, value => $value);
 };
 
-sub fix {
-    my ($self, $data) = @_;
+sub emit {
+    my ($self, $fixer) = @_;
+    my $path = $fixer->split_path($self->path);
+    my $value = $fixer->emit_value($self->value);
 
-    my $key = $self->key;
-    my $val = $self->value;
-    for my $match (grep ref, data_at($self->path, $data, key => $key, create => 1)) {
-        if ($key eq '*' && is_array_ref($match)) {
-            for (my $i = 0; $i < @$match; $i++) {
-                $match->[$i] = clone($val);
-            }
-        } else {
-            set_data($match, $key, clone($val));
-        }
-    }
-
-    $data;
+    $fixer->emit_create_path($fixer->var, $path, sub {
+        my $var = shift;
+        "${var} = ${value};";
+    });
 }
 
 =head1 NAME
