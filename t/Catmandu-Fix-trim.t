@@ -21,4 +21,4 @@ is_deeply
     {names => [{name => "joe"}, {name => "rick"}]},
     "trim wildcard values";
 
-done_testing 4;
+done_testing 3;

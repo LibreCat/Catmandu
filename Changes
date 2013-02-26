@@ -1,5 +1,11 @@
 Revision history for Catmandu
 
+0.08    2013-02-26
+  - compile fixes to perl closure
+  - tests for all fixes
+  - fix typo in Importer::RIS
+  - add doi field to Exporter::BibTeX
+
 0.07    2013-02-07
   - conditionals in fixes
   - append, prepend fixes

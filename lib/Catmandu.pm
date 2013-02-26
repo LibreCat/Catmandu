@@ -29,11 +29,11 @@ L<Catmandu::Introduction>.
 
 =head1 VERSION
 
-Version 0.07
+Version 0.08
 
 =cut
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 =head1 SYNOPSIS
 
@@ -541,7 +541,9 @@ Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
 
 Patrick Hochstenbach, C<< <patrick.hochstenbach at ugent.be> >>
 
-Christian Pietsch
+Vitali Peil, C<< vitali.peil at uni-bielefeld.de >>
+
+Christian Pietsch, C<< christian.pietsch at uni-bielefeld.de >>
 
 =head1 LICENSE AND COPYRIGHT
 
