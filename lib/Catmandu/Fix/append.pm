@@ -34,8 +34,8 @@ Catmandu::Fix::append - add a suffix to the value of a field
 
 =head1 SYNOPSIS
 
-   # append the value of 'foo'. E.g. foo => 'bar'
-   append('foo', 'foo'); # foo => 'foobar'
+   # append to a value. e.g. {name => 'joe'}
+   append('name', 'y'); # {name => 'joey'}
 
 =head1 SEE ALSO
 

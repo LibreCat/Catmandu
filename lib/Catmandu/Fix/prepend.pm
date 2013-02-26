@@ -34,8 +34,8 @@ Catmandu::Fix::prepend - add a prefix to the value of a field
 
 =head1 SYNOPSIS
 
-   # prepend the value of 'foo'. E.g. foo => 'bar'
-   prepend('foo', 'foo'); # foo => 'foobar'
+   # prepend to a value. e.g. {name => 'smith'}
+   prepend('name', 'mr. '); # {name => 'mr. smith'}
 
 =head1 SEE ALSO
 
