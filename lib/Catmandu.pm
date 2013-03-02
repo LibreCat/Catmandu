@@ -16,9 +16,9 @@ Importing, transforming, storing and indexing data should be easy.
 Catmandu provides a suite of Perl modules to ease the import, storage,
 retrieval, export and transformation of metadata records. Combine Catmandu
 modules with web application frameworks such as PSGI/Plack, document stores
-such as MongoDB and full text indexes as Solr to create a rapid development
-environment for digital library services such as institutional repositories and
-search engines.
+such as MongoDB and full text indexes such as Solr to create a rapid
+development environment for digital library services such as institutional
+repositories and search engines.
 
 In the LibreCat project it is our goal to provide in open source a set of
 programming components to build up digital libraries services suited to your
