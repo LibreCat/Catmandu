@@ -26,16 +26,23 @@ has author      => (is => 'ro', isa => sub {
 has contributor => (is => 'ro', isa => sub {
                     die "Contributor needs to be an array hash" unless ! defined $_[0] || ref $_[0] eq 'ARRAY';
                  });
+has category    => (is => 'ro', isa => sub {
+                    die "Category needs to be an array hash" unless ! defined $_[0] || ref $_[0] eq 'ARRAY';
+                 });
                  
 has atom        => (is => 'ro', lazy => 1, builder => '_build_atom');
 has extra       => (is => 'ro', default => sub { undef });
 
 sub BUILDARGS {
-   my ( $class, %args ) = @_;
+   my ( $class, @args ) = @_;
+   my %args = ();
    
-   for (keys %args) {
+   if (@args > 0 && @args % 2 == 0) { 
+    (%args) = (@args);
+    for (keys %args) {
        next unless /^[^:]+:/;
        $args{extra}->{$_} = $args{$_};
+    }
    }
    
    return \%args;
@@ -52,7 +59,7 @@ sub _build_atom {
     $atom->generator($self->generator) if defined $self->generator;
     $atom->rights($self->rights) if defined $self->rights;
     
-    my $updated = strftime("%y-%m-%dT%H:%M:%S" , $self->updated ? gmtime($self->updated) : gmtime(time));
+    my $updated = $self->updated  ? $self->updated  : strftime("%y-%m-%dT%H:%M:%S",gmtime(time));
     $atom->updated($updated);
     
     if (defined $self->link) {
@@ -92,6 +99,16 @@ sub _build_atom {
         }
     }
     
+    if (defined $self->category) {
+        for (@{$self->category}) {
+             my $category = XML::Atom::Category->new;
+             $category->term($_->{term}) if defined $_->{term};
+             $category->label($_->{label}) if defined $_->{label};
+             $category->scheme($_->{scheme}) if defined $_->{scheme};
+             $atom->add_category($category, 'test');
+        }
+    }
+    
     if (defined $self->ns) {
         for my $key (keys %{$self->extra}) {
             next unless $key =~ /^([^:]+):(\S+)/;
@@ -117,11 +134,18 @@ sub add {
     $entry->summary($data->{summary}) if defined $data->{summary};
     $entry->rights($data->{rights}) if defined $data->{rights};
 
-    my $published = strftime("%Y-%m-%dT%H:%M:%S" , $data->{published} ? gmtime($data->{published}) : gmtime(time));
+    my $published = $data->{published} ? $data->{published} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
     $entry->published($published);
         
-    my $updated = strftime("%Y-%m-%dT%H:%M:%S" , $data->{updated} ? gmtime($data->{updated}) : gmtime(time));
+    my $updated = $data->{updated} ? $data->{updated} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
     $entry->updated($updated);
+    
+    if (defined $data->{content}) {
+        my $content = XML::Atom::Content->new;
+        $content->mode($data->{content}->{mode} ? $data->{content}->{mode} : "xml");
+        $content->body($data->{content}->{body});
+        $entry->content($content);
+    }
     
     if (defined $data->{author}->{name} || defined $data->{author}->{email}) {
         my $author = XML::Atom::Person->new;
@@ -160,7 +184,7 @@ sub add {
         for (@{$data->{category}}) {
             my $category = XML::Atom::Category->new;
             $category->term($_->{term}) if defined $_->{term};
-            $category->rel($_->{rel}) if defined $_->{rel};
+            $category->label($_->{label}) if defined $_->{label};
             $category->scheme($_->{scheme}) if defined $_->{scheme};
             $entry->add_category($category);
         }

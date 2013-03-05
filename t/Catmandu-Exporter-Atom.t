@@ -17,7 +17,7 @@ my $data = [
     { 
         'title'    => 'My Little Pony' ,
         'subtitle' => 'Data testing for you and me' ,
-        'content'  => "\007sdsadas" ,
+        'content'  => { body => "sdsadas" } ,
         'summary'  => 'Brol 123' ,
         'id'       => '1291821827128172817' ,
         'author' => {
@@ -82,6 +82,13 @@ my $exporter = $pkg->new(file => \$file ,
                               'email' => 'bunny@toons.be'
                                     }
                          ],
+                         category => [
+                                    {
+                               'term' => 'animal' ,
+                               'scheme' => 'http://example.org/categories/animal' ,
+                               'label' => 'Animal'
+                                    }
+                         ] ,
                          ns => {
                              'dc' => 'http://purl.org/dc/elements/1.1/',
                          },
@@ -92,6 +99,8 @@ isa_ok $exporter, $pkg;
 
 $exporter->add($_) for @$data;
 $exporter->commit;
+
+print $file;
 
 done_testing 3;
 
