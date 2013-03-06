@@ -60,7 +60,13 @@ sub _build_entries {
                 $link_data;
             } @links];
         }
-
+        for my $node ($entry->elem->childNodes) {
+            my $uri = $node->namespaceURI;
+            next if (! $uri || $uri eq 'http://purl.org/atom/ns#');
+            my $name  = $node->nodeName;
+            my $value = $node->textContent;
+            $entry_data->{$name} = $value;
+        }
         $entry_data;
     } $feed->entries];
 }
