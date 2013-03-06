@@ -61,6 +61,7 @@ my $exporter = $pkg->new(file => \$file ,
                          title => "My Blog" , 
                          subtitle => "testing 1.2.3" ,
                          icon => "http://icons.org/test.jpg" ,
+                         logo => "http://icons.org/logo.jpg" ,
                          generator => "Catmandu::Exporter::Atom" ,
                          rights => "Beer license",
                          link => [

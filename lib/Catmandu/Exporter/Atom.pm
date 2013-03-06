@@ -12,6 +12,7 @@ has title       => (is => 'ro', default => sub { undef });
 has subtitle    => (is => 'ro', default => sub { undef });
 has id          => (is => 'ro', default => sub { undef });
 has icon        => (is => 'ro', default => sub { undef });
+has logo        => (is => 'ro', default => sub { undef });
 has generator   => (is => 'ro', default => sub { undef });
 has updated     => (is => 'ro', default => sub { undef });
 has rights      => (is => 'ro', default => sub { undef });
@@ -51,16 +52,44 @@ sub BUILDARGS {
 sub _build_atom {
     my ($self) = @_;
     my $atom = XML::Atom::Feed->new;
-     
-    $atom->title($self->title) if defined $self->title;
-    $atom->subtitle($self->subtitle) if defined $self->subtitle;
-    $atom->id($self->id) if defined $self->id;
-    $atom->icon($self->icon) if defined $self->icon;
-    $atom->generator($self->generator) if defined $self->generator;
-    $atom->rights($self->rights) if defined $self->rights;
     
-    my $updated = $self->updated  ? $self->updated  : strftime("%y-%m-%dT%H:%M:%S",gmtime(time));
-    $atom->updated($updated);
+    if (defined $self->author) {
+        for (@{$self->author}) {
+             my $author = XML::Atom::Person->new;
+             $author->name($_->{name}) if defined $_->{name};
+             $author->email($_->{email}) if defined $_->{email};
+             $author->uri($_->{uri}) if defined $_->{uri};
+             $author->url($_->{url}) if defined $_->{url};
+             $author->homepage($_->{homepage}) if defined $_->{homepage};
+             $atom->author($author);
+        }
+    }
+    
+    if (defined $self->category) {
+        for (@{$self->category}) {
+             my $category = XML::Atom::Category->new;
+             $category->term($_->{term}) if defined $_->{term};
+             $category->label($_->{label}) if defined $_->{label};
+             $category->scheme($_->{scheme}) if defined $_->{scheme};
+             $atom->add_category($category, 'test');
+        }
+    }
+    
+    if (defined $self->contributor) {
+        for (@{$self->contributor}) {
+             my $contributor = XML::Atom::Person->new;
+             $contributor->name($_->{name}) if defined $_->{name};
+             $contributor->email($_->{email}) if defined $_->{email};
+             $contributor->uri($_->{uri}) if defined $_->{uri};
+             $contributor->url($_->{url}) if defined $_->{url};
+             $contributor->homepage($_->{homepage}) if defined $_->{homepage};
+             $atom->contributor($contributor);
+        }
+    }
+    
+    $atom->generator($self->generator) if defined $self->generator;
+    $atom->icon($self->icon) if defined $self->icon;
+    $atom->id($self->id) if defined $self->id; 
     
     if (defined $self->link) {
         for (@{$self->link}) {
@@ -74,40 +103,14 @@ sub _build_atom {
              $atom->add_link($link);
         }
     }
-
-    if (defined $self->author) {
-        for (@{$self->author}) {
-             my $author = XML::Atom::Person->new;
-             $author->name($_->{name}) if defined $_->{name};
-             $author->email($_->{email}) if defined $_->{email};
-             $author->uri($_->{uri}) if defined $_->{uri};
-             $author->url($_->{url}) if defined $_->{url};
-             $author->homepage($_->{homepage}) if defined $_->{homepage};
-             $atom->author($author);
-        }
-    }
-        
-    if (defined $self->contributor) {
-        for (@{$self->contributor}) {
-             my $contributor = XML::Atom::Person->new;
-             $contributor->name($_->{name}) if defined $_->{name};
-             $contributor->email($_->{email}) if defined $_->{email};
-             $contributor->uri($_->{uri}) if defined $_->{uri};
-             $contributor->url($_->{url}) if defined $_->{url};
-             $contributor->homepage($_->{homepage}) if defined $_->{homepage};
-             $atom->contributor($contributor);
-        }
-    }
     
-    if (defined $self->category) {
-        for (@{$self->category}) {
-             my $category = XML::Atom::Category->new;
-             $category->term($_->{term}) if defined $_->{term};
-             $category->label($_->{label}) if defined $_->{label};
-             $category->scheme($_->{scheme}) if defined $_->{scheme};
-             $atom->add_category($category, 'test');
-        }
-    }
+    $atom->logo($self->logo) if defined $self->logo;
+    $atom->rights($self->rights) if defined $self->rights;
+    $atom->subtitle($self->subtitle) if defined $self->subtitle;    
+    $atom->title($self->title) if defined $self->title;
+
+    my $updated = $self->updated  ? $self->updated  : strftime("%y-%m-%dT%H:%M:%S",gmtime(time));
+    $atom->updated($updated);
     
     if (defined $self->ns) {
         for my $key (keys %{$self->extra}) {
@@ -128,25 +131,6 @@ sub add {
     my ($self, $data) = @_;
     my $entry = XML::Atom::Entry->new;
  
-    $entry->id($data->{id}) if defined $data->{id}; 
-    $entry->title($data->{title}) if defined $data->{title}; 
-    $entry->content($data->{content}) if defined $data->{content};
-    $entry->summary($data->{summary}) if defined $data->{summary};
-    $entry->rights($data->{rights}) if defined $data->{rights};
-
-    my $published = $data->{published} ? $data->{published} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
-    $entry->published($published);
-        
-    my $updated = $data->{updated} ? $data->{updated} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
-    $entry->updated($updated);
-    
-    if (defined $data->{content}) {
-        my $content = XML::Atom::Content->new;
-        $content->mode($data->{content}->{mode} ? $data->{content}->{mode} : "xml");
-        $content->body($data->{content}->{body});
-        $entry->content($content);
-    }
-    
     if (defined $data->{author}->{name} || defined $data->{author}->{email}) {
         my $author = XML::Atom::Person->new;
         $author->name($data->{author}->{name}) if defined $data->{author}->{name};
@@ -155,6 +139,23 @@ sub add {
         $author->url($data->{author}->{url}) if defined $data->{author}->{url};
         $author->homepage($data->{author}->{homepage}) if defined $data->{author}->{homepage};
         $entry->author($author);
+    }
+    
+    if (defined $data->{category}) {
+        for (@{$data->{category}}) {
+            my $category = XML::Atom::Category->new;
+            $category->term($_->{term}) if defined $_->{term};
+            $category->label($_->{label}) if defined $_->{label};
+            $category->scheme($_->{scheme}) if defined $_->{scheme};
+            $entry->add_category($category);
+        }
+    }
+    
+    if (defined $data->{content}) {
+        my $content = XML::Atom::Content->new;
+        $content->mode($data->{content}->{mode} ? $data->{content}->{mode} : "xml");
+        $content->body($data->{content}->{body});
+        $entry->content($content);
     }
     
     if (defined $data->{contributor}->{name} || defined $data->{contributor}->{email}) {
@@ -166,6 +167,8 @@ sub add {
            $contributor->homepage($data->{contributor}->{homepage}) if defined $data->{contributor}->{homepage};
            $entry->contributor($contributor);
     }
+    
+    $entry->id($data->{id}) if defined $data->{id}; 
     
     if (defined $data->{link}) {
         for (@{$data->{link}}) {
@@ -180,15 +183,16 @@ sub add {
         }
     }
     
-    if (defined $data->{category}) {
-        for (@{$data->{category}}) {
-            my $category = XML::Atom::Category->new;
-            $category->term($_->{term}) if defined $_->{term};
-            $category->label($_->{label}) if defined $_->{label};
-            $category->scheme($_->{scheme}) if defined $_->{scheme};
-            $entry->add_category($category);
-        }
-    }
+    my $published = $data->{published} ? $data->{published} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
+    $entry->published($published);
+    
+    $entry->rights($data->{rights}) if defined $data->{rights};
+    $entry->source($data->{source}) if defined $data->{source};
+    $entry->summary($data->{summary}) if defined $data->{summary};
+    $entry->title($data->{title}) if defined $data->{title}; 
+   
+    my $updated = $data->{updated} ? $data->{updated} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
+    $entry->updated($updated);
     
     # Other metadata can be in a namespace
     if (defined $self->ns) {
