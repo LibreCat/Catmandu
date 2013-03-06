@@ -109,7 +109,7 @@ sub _build_atom {
     $atom->subtitle($self->subtitle) if defined $self->subtitle;    
     $atom->title($self->title) if defined $self->title;
 
-    my $updated = $self->updated  ? $self->updated  : strftime("%y-%m-%dT%H:%M:%S",gmtime(time));
+    my $updated = $self->updated  ? $self->updated  : strftime("%Y-%m-%dT%H:%M:%SZ",gmtime(time));
     $atom->updated($updated);
     
     if (defined $self->ns) {
@@ -183,7 +183,7 @@ sub add {
         }
     }
     
-    my $published = $data->{published} ? $data->{published} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
+    my $published = $data->{published} ? $data->{published} : strftime("%Y-%m-%dT%H:%M:%SZ", gmtime(time));
     $entry->published($published);
     
     $entry->rights($data->{rights}) if defined $data->{rights};
@@ -191,7 +191,7 @@ sub add {
     $entry->summary($data->{summary}) if defined $data->{summary};
     $entry->title($data->{title}) if defined $data->{title}; 
    
-    my $updated = $data->{updated} ? $data->{updated} : strftime("%Y-%m-%dT%H:%M:%S", gmtime(time));
+    my $updated = $data->{updated} ? $data->{updated} : strftime("%Y-%m-%dT%H:%M:%SZ", gmtime(time));
     $entry->updated($updated);
     
     # Other metadata can be in a namespace
