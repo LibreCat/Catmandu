@@ -16,9 +16,9 @@ Importing, transforming, storing and indexing data should be easy.
 Catmandu provides a suite of Perl modules to ease the import, storage,
 retrieval, export and transformation of metadata records. Combine Catmandu
 modules with web application frameworks such as PSGI/Plack, document stores
-such as MongoDB and full text indexes as Solr to create a rapid development
-environment for digital library services such as institutional repositories and
-search engines.
+such as MongoDB and full text indexes such as Solr to create a rapid
+development environment for digital library services such as institutional
+repositories and search engines.
 
 In the LibreCat project it is our goal to provide in open source a set of
 programming components to build up digital libraries services suited to your
@@ -72,15 +72,15 @@ C<catmandu.yml> file:
 
 =head2 Split config
 
-For large configs it's more convenient to split the config in several files.
+For large configs it's more convenient to split the config into several files.
 You can do so by including the config hash key in the file name.
 
     catmandu.yaml
     catmandu.store.yaml
     catmandu.foo.bar.json
 
-Config files are processed in alfabetical order. To keep things simple values
-are not merged.  So the contents of C<catmandu.store.yml> will overwrite
+Config files are processed in alphabetical order. To keep things simple, values
+are not merged.  The contents of C<catmandu.store.yml> will overwrite
 C<< Catmandu->config->{store} >> if it already exists.
 
 =head1 EXPORTS
@@ -551,7 +551,7 @@ This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
 by the Free Software Foundation; or the Artistic License.
 
-See http://dev.perl.org/licenses/ for more information.
+See L<http://dev.perl.org/licenses/> for more information.
 
 =cut
 
