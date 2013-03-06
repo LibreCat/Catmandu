@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.09    2013-03-06
+  - Exporter::Atom
+  - fix pod
+
 0.08    2013-02-26
   - compile fixes to perl closure
   - tests for all fixes
