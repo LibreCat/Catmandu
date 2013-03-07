@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.0901  2013-03-07
+  - fix makefile
+
 0.09    2013-03-06
   - Exporter::Atom
   - fix pod
