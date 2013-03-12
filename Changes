@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.0902  2013-03-12
+  - Fix::substring doesn't die on substr outside of string
+
 0.0901  2013-03-07
   - fix makefile
 
