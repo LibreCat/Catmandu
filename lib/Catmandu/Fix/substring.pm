@@ -25,12 +25,12 @@ sub emit {
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
             if (@$args < 3) {
-                return "${var} = substr(as_utf8(${var}), ${str_args}) if is_value(${var});";
+                return "eval { ${var} = substr(as_utf8(${var}), ${str_args}) } if is_value(${var});";
             }
             my $replace = $fixer->emit_string($args->[2]);
             "if (is_value(${var})) {"
                 ."utf8::upgrade(${var});"
-                ."substr(${var}, ${str_args}) = ${replace};"
+                ."eval { substr(${var}, ${str_args}) = ${replace} };"
                 ."}";
         });
     });
