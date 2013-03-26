@@ -1,7 +1,20 @@
 Revision history for Catmandu
 
-0.0902  2013-03-12
-  - Fix::substring doesn't die on substr outside of string
+0.1     2013-03-26
+  - logging with MooX::Log::Any
+  - error hierarchy
+  - Store forwards all Bag methods to the default Bag
+  - make Perl::Tidy optional
+  - namespace::clean
+  - Sane exports Try::Tiny::ByClass
+  - Sane no longer exports confess, use the Error classes
+  - a new Env class takes care of loading the config and other
+    environment related tasks
+  - Buffer and Counter have better encapsulation
+  - Iterable has a new benchmark method
+  - Exporter::RIS AR tag
+  - Exporter::BibTeX articleno field
+  - rename Pager to Paged
 
 0.0901  2013-03-07
   - fix makefile

@@ -29,11 +29,11 @@ L<Catmandu::Introduction>.
 
 =head1 VERSION
 
-Version 0.0902
+Version 0.1
 
 =cut
 
-our $VERSION = '0.0902';
+our $VERSION = '0.1';
 
 =head1 SYNOPSIS
 
@@ -193,7 +193,7 @@ sub default_load_path {
 
 =head2 load
 
-Load all the configuration options in the catmanu.yml configuration file.
+Load all the configuration options in the catmandu.yml configuration file.
 
 =head2 load('/path', '/another/path')
 

@@ -22,7 +22,7 @@ sub _build_dbh {
     my $self = $_[0];
     my $opts = {
         AutoCommit => 1,
-        RaiseErroror => 1,
+        RaiseError => 1,
         mysql_auto_reconnect => 1,
     };
     DBI->connect($self->data_source, $self->username, $self->password, $opts);
