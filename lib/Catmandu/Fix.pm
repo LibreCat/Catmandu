@@ -1,19 +1,19 @@
 package Catmandu::Fix;
 
-use strict;
-use warnings FATAL => 'all';
-use 5.010;
-use utf8;
-use Carp qw(confess);
+use Catmandu::Sane;
 use Catmandu::Util qw(:is :string);
 use Clone qw(clone);
 
-sub _eval_emit { eval $_[0] }
+sub _eval_emit {
+    use warnings FATAL => 'all';
+    eval $_[0];
+}
 
 use Moo;
 use Catmandu::Fix::Loader;
-use Perl::Tidy ();
 use B ();
+
+with 'MooX::Log::Any';
 
 has tidy        => (is => 'ro');
 has fixer       => (is => 'ro', lazy => 1, init_arg => undef, builder => 1);
@@ -33,7 +33,7 @@ sub _trigger_fixes {
 sub _build_fixer {
     my ($self) = @_;
     local $@;
-    _eval_emit($self->emit, $self->_captures) or die $@;
+    _eval_emit($self->emit, $self->_captures) or Catmandu::Error->throw($@);
 }
 
 sub fix {
@@ -54,7 +54,7 @@ sub fix {
         return [ map { $fixer->($_) } @$data ];
     }
 
-    confess "must be hashref, arrayref, coderef or iterable object";
+    Catmandu::BadArg->throw("must be hashref, arrayref, coderef or iterable object");
 }
 
 sub generate_var {
@@ -85,24 +85,28 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    return $perl unless $self->tidy;
+    if ($self->tidy) {
+        require Perl::Tidy;
 
-    my $tidy_perl = "";
-    my $err = "";
-    my $log = "";
+        my $tidy_perl = "";
+        my $err = "";
+        my $log = "";
 
-    my $has_err = Perl::Tidy::perltidy(
-        argv        => "-se",
-        source      => \$perl,
-        destination => \$tidy_perl,
-        stderr      => \$err,
-        logfile     => \$log,
-    );
-    if ($has_err) {
-        confess $err;
+        my $has_err = Perl::Tidy::perltidy(
+            argv        => "-se",
+            source      => \$perl,
+            destination => \$tidy_perl,
+            logfile     => \$log,
+            stderr      => \$err,
+        );
+        if ($has_err) {
+            Catmandu::Error->throw($err);
+        }
+
+        return $tidy_perl;
     }
 
-    $tidy_perl;
+    $perl;
 }
 
 sub emit_fix {
@@ -582,6 +586,10 @@ on all the fixes.
 =head2 fix(sub {})
 
 Executes all the fixes on a generator function. Returns a new generator with fixed data.
+
+=head2 log
+
+Return the current logger.
 
 =head1 SEE ALSO
 

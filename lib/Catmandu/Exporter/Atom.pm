@@ -1,10 +1,11 @@
 package Catmandu::Exporter::Atom;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use XML::Atom::Feed;
 use XML::Atom::Entry;
 use POSIX qw(strftime);
+use Moo;
 
 with 'Catmandu::Exporter';
 
@@ -19,18 +20,22 @@ has rights      => (is => 'ro', default => sub { undef });
 has ns          => (is => 'ro', default => sub { undef });
 
 has link        => (is => 'ro', isa => sub {
-                    die "Link needs to be an array hash" unless ! defined $_[0] || ref $_[0] eq 'ARRAY';
+                    Catmandu::BadArg->throw("Link needs to be an array hash")
+                        unless !defined $_[0] || ref $_[0] eq 'ARRAY';
                  });
 has author      => (is => 'ro', isa => sub {
-                    die "Author needs to be an array hash" unless ! defined $_[0] || ref $_[0] eq 'ARRAY';
+                    Catmandu::BadArg->throw("Author needs to be an array hash")
+                        unless !defined $_[0] || ref $_[0] eq 'ARRAY';
                  });
 has contributor => (is => 'ro', isa => sub {
-                    die "Contributor needs to be an array hash" unless ! defined $_[0] || ref $_[0] eq 'ARRAY';
+                    Catmandu::BadArg->throw("Contributor needs to be an array hash")
+                        unless !defined $_[0] || ref $_[0] eq 'ARRAY';
                  });
 has category    => (is => 'ro', isa => sub {
-                    die "Category needs to be an array hash" unless ! defined $_[0] || ref $_[0] eq 'ARRAY';
+                    Catmandu::BadArg->throw("Category needs to be an array hash")
+                        unless !defined $_[0] || ref $_[0] eq 'ARRAY';
                  });
-                 
+
 has atom        => (is => 'ro', lazy => 1, builder => '_build_atom');
 has extra       => (is => 'ro', default => sub { undef });
 

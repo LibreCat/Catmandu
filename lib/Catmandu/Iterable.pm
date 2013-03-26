@@ -1,7 +1,9 @@
 package Catmandu::Iterable;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
+use Time::HiRes qw(gettimeofday tv_interval);
 require Catmandu::Iterator;
 use Role::Tiny;
 
@@ -296,6 +298,17 @@ sub min {
         return $memo if is_number($memo);
         return $data if is_number($data);
         return;
+    });
+}
+
+sub benchmark {
+    my ($self) = @_;
+    $self->tap(sub {
+        state $n = 0;
+        state $t = [gettimeofday];
+        if (++$n % 100 == 0) {
+            printf STDERR "added %9d (%d/sec)\n", $n, $n/tv_interval($t);
+        }
     });
 }
 

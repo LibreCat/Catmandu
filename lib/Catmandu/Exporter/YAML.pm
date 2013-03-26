@@ -1,8 +1,9 @@
 package Catmandu::Exporter::YAML;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use YAML::Any qw(Dump);
+use Moo;
 
 with 'Catmandu::Exporter';
 
@@ -12,8 +13,6 @@ sub add {
     utf8::decode($yaml);
     $self->fh->print($yaml);
 }
-
-no YAML::Any;
 
 =head1 NAME
 

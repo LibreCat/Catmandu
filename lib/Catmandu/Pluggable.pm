@@ -1,7 +1,8 @@
 package Catmandu::Pluggable;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo::Role;
+use Role::Tiny;
 
 sub plugin_namespace { 'Catmandu::Plugin' }
 

@@ -1,5 +1,6 @@
 package Catmandu::Importer::Mock;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 

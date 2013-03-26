@@ -107,7 +107,7 @@ sub io {
         $io = $arg;
         binmode $io, $binmode;
     } else {
-        confess "can't make io from argument";
+        Catmandu::BadArg->throw("can't make io from argument");
     }
 
     $io;
@@ -116,7 +116,7 @@ sub io {
 sub read_file {
     my ($path) = @_;
     local $/;
-    open my $fh, "<", $path or confess qq(can't open "$path" for reading);
+    open my $fh, "<", $path or Catmandu::Error->throw(qq(can't open "$path" for reading));
     my $str = <$fh>;
     close $fh;
     $str;
@@ -124,7 +124,7 @@ sub read_file {
 
 sub write_file {
     my ($path, $str) = @_;
-    open my $fh, ">", $path or confess qq(can't open "$path" for writing);
+    open my $fh, ">", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
     print $fh $str;
     close $fh;
     $path;
@@ -350,11 +350,13 @@ sub is_different {
 }
 
 sub check_same {
-    is_same(@_) || confess('error: should be same');
+    is_same(@_) || Catmandu::BadVal->throw('should be same');
+    $_[0];
 }
 
 sub check_different {
-    !is_same(@_) || confess('error: should be different');
+    is_same(@_) && Catmandu::BadVal->throw('should be different');
+    $_[0];
 }
 
 *is_invocant = \&Data::Util::is_invocant;
@@ -391,13 +393,13 @@ sub is_able {
 sub check_able {
     my $obj = shift;
     return $obj if is_able($obj, @_);
-    confess('type error: should be able to '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw('should be able to '.array_to_sentence(\@_));
 }
 
 sub check_maybe_able {
     my $obj = shift;
     return $obj if is_maybe_able($obj, @_);
-    confess('type error: should be undef or able to '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw('should be undef or able to '.array_to_sentence(\@_));
 }
 
 sub is_instance {
@@ -410,13 +412,13 @@ sub is_instance {
 sub check_instance {
     my $obj = shift;
     return $obj if is_able($obj, @_);
-    confess('type error: should be instance of '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw('should be instance of '.array_to_sentence(\@_));
 }
 
 sub check_maybe_instance {
     my $obj = shift;
     return $obj if is_maybe_able($obj, @_);
-    confess('type error: should be undef or instance of '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw('should be undef or instance of '.array_to_sentence(\@_));
 }
 
 for my $sym (qw(able instance invocant ref
@@ -432,10 +434,10 @@ for my $sym (qw(able instance invocant ref
         "!defined(\$_[0]) || ${pkg}::is_$sym(\@_)")
             unless Data::Util::get_code_ref($pkg, "is_maybe_$sym");
     Sub::Quote::quote_sub("${pkg}::check_$sym",
-        "${pkg}::is_$sym(\@_) || ${pkg}::confess('type error: should be $err_name'); \$_[0]")
+        "${pkg}::is_$sym(\@_) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]")
             unless Data::Util::get_code_ref($pkg, "check_$sym");
     Sub::Quote::quote_sub("${pkg}::check_maybe_$sym",
-        "${pkg}::is_maybe_$sym(\@_) || ${pkg}::confess('type error: should be undef or $err_name'); \$_[0]")
+        "${pkg}::is_maybe_$sym(\@_) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]")
             unless Data::Util::get_code_ref($pkg, "check_maybe_$sym");
 }
 
@@ -491,8 +493,9 @@ sub use_lib {
     my (@dirs) = @_;
 
     use lib;
+    local $@;
     lib->import(@dirs);
-    confess $@ if $@;
+    Catmandu::Error->throw($@) if $@;
 
     1;
 }
@@ -508,10 +511,9 @@ sub require_package {
 
     return $pkg if is_invocant($pkg);
 
-    eval "require $pkg;1;" or do {
-        my $err = $@;
-        confess $err;
-    };
+    local $@;
+    eval "require $pkg;1;"
+        or Catmandu::Error->throw($@);
 
     $pkg;
 }

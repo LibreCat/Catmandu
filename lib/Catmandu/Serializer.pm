@@ -1,11 +1,12 @@
 package Catmandu::Serializer;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo::Role;
 use Storable ();
 use Data::MessagePack;
 use JSON ();
 use MIME::Base64 ();
+use Moo::Role;
 
 sub default_serialization_format { 'json' }
 
@@ -32,14 +33,14 @@ has deserializer         => (is => 'ro', lazy => 1, builder => '_build_deseriali
 sub _build_serializer {
     my $self = $_[0];
     my $format = $formats->{$self->serialization_format || $self->default_serialization_format}
-        or confess "unknown serialization format";
+        or Catmandu::BadArg->throw("unknown serialization format");
     $format->{serializer};
 }
 
 sub _build_deserializer {
     my $self = $_[0];
     my $format = $formats->{$self->serialization_format || $self->default_serialization_format}
-        or confess "unknown serialization format";
+        or Catmandu::BadArg->throw("unknown serialization format");
     $format->{deserializer};
 }
 

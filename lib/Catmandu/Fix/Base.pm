@@ -1,8 +1,10 @@
 package Catmandu::Fix::Base;
 
 use Catmandu::Sane;
-use Moo::Role;
 use Catmandu::Fix;
+use Moo::Role;
+
+with 'MooX::Log::Any';
 
 requires 'emit';
 

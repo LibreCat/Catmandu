@@ -29,19 +29,31 @@ my $build = Module::Build->new(
         'JSON' => '2.51',
         'LaTeX::Encode' => '0.03', # Catmandu::Exporter::BibTeX
         'Moo' => '1.000008',
-        'Perl::Tidy' => 0,
+        'MooX::Log::Any' => 0,
+        'Module::Info' => '0.33',
+        'namespace::clean' => '0.24',
         'Spreadsheet::WriteExcel' => '2.37', # Catmandu::Exporter::XLS
         'Sub::Exporter' => '0.982',
         'Sub::Quote' => 0,
         'Template' => '2.22',
         'Text::CSV' => '1.21',
         'Time::HiRes' => 0, # not always installed on redhat
-        'XML::Atom' => '0.41', # Catmandu::Importer::Atom
+        'Throwable' => 0,
+        'Try::Tiny::ByClass' => '0.01',
+        'XML::Atom' => '0.41', # Catmandu::Importer::Atom, Catmandu::Exporter::Atom
         'YAML::Any' => '0.81',
     },
     recommends => {
         'JSON::XS' => '2.3',
         'YAML::XS' => '0.34',
+    },
+    auto_features => {
+        tidy => {
+            description => "Support pretty printing compiled fix code",
+            requires    => {
+                'Perl::Tidy' => 0,
+            },
+        },
     },
     add_to_cleanup => [qw(
         Catmandu-*

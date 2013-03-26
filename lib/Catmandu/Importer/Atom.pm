@@ -1,9 +1,10 @@
 package Catmandu::Importer::Atom;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(trim);
-use Moo;
 use XML::Atom::Client;
+use Moo;
 
 with 'Catmandu::Importer';
 

@@ -1,9 +1,11 @@
 package Catmandu::Exporter;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(io);
 use Moo::Role;
 
+with 'MooX::Log::Any';
 with 'Catmandu::Addable';
 with 'Catmandu::Counter';
 
@@ -24,8 +26,6 @@ after add => sub {
 };
 
 sub encoding { ':utf8' }
-
-sub commit {}
 
 =head1 NAME
 
@@ -74,6 +74,10 @@ and generator routines to loop over all items. Returns the total number of items
 =head2 count
 
 Returns the number of items exported by this Catmandu::Exporter.
+
+=head2 log
+
+Return the current logger.
 
 =head1 SEE ALSO
 

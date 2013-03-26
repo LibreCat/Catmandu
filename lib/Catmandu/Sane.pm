@@ -1,26 +1,26 @@
 package Catmandu::Sane;
+
 use strict;
 use warnings;
-use 5.010;
 use feature ();
-use Carp ();
 use utf8;
+use Try::Tiny::ByClass;
+use Catmandu::Error;
 
 sub import {
     my $pkg = caller;
-
     strict->import;
     warnings->import;
-    feature->import(':5.10');
-    Carp->export_to_level(1, $pkg, qw(confess));
+    feature->import(qw(:5.10));
     utf8->import;
+    Try::Tiny::ByClass->export_to_level(1, $pkg);
 }
 
 1;
 
 =head1 NAME
 
-Catmandu::Sane - Sensible package boilerplate
+Catmandu::Sane - Package boilerplate
 
 =head1 SYNOPSIS
 
@@ -28,12 +28,13 @@ Catmandu::Sane - Sensible package boilerplate
 
 =head1 DESCRIPTION
 
-Sensible package boilerplate equivalent to:
+Package boilerplate equivalent to:
 
     use strict;
     use warnings;
-    use 5.012;
-    use Carp qw(confess);
+    use feature qw(:5.10);
     use utf8;
+    use Try::Tiny::ByClass;
+    use Catmandu::Error;
 
 =cut

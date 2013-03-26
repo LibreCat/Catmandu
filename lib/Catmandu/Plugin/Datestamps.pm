@@ -1,5 +1,6 @@
 package Catmandu::Plugin::Datestamps;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Role::Tiny;
 use POSIX qw(strftime);

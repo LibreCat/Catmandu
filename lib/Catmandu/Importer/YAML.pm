@@ -1,8 +1,9 @@
 package Catmandu::Importer::YAML;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use YAML::Any qw(Load);
+use Moo;
 
 with 'Catmandu::Importer';
 

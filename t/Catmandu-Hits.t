@@ -24,7 +24,7 @@ throws_ok { Catmandu::Hits->new(start => 0, total => 100, hits => $data) } qr/mi
 throws_ok { Catmandu::Hits->new(start => 0, limit => 10, hits => $data) } qr/missing required arguments: total/i;
 throws_ok { Catmandu::Hits->new(start => 0, limit => 10, total => 100) } qr/missing required arguments: hits/i;
 ok $h->does('Catmandu::Iterable');
-ok $h->does('Catmandu::Pager');
+ok $h->does('Catmandu::Paged');
 
 is_deeply $h->hits, $data;
 is $h->size, 3;

@@ -1,5 +1,6 @@
 package Catmandu::Iterator;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Role::Tiny::With;
 

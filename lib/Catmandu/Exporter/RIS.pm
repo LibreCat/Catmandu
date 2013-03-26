@@ -1,16 +1,17 @@
 package Catmandu::Exporter::RIS;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use Encode qw(encode_utf8);
+use Moo;
 
 with 'Catmandu::Exporter';
 
-my $TAGS = [qw(TY ID T1 TI CT T2 BT T3 A1 AU A2 ED A3 Y1 PY Y2 N1 AB N2 KW RP
-               JF JO JA J1 J2 VL IS CP SP EP CY PB SN AD AV M1 M2 M3 U1 U2 U3 U4 U5
-               UR L1 L2 L3 L4)];
+my $TAGS = [qw(A1 A2 A3 AB AD AR AU AV BT CP CT CY ED EP ID IS J1 J2 JA JF JO KW
+               L1 L2 L3 L4 LA M1 M2 M3 N1 N2 PB PY RP SN SP T1 T2 T3 TI TY U1 U2
+               U3 U4 U5 UR VL Y1 Y2)];
 
-my $SMALL_TAG = qr/AU|A2|ED|KW|SP|EP|PB|SN/;
+my $SMALL_TAG = qr/A2|AU|ED|EP|KW|PB|SP/;
 
 sub add {
     my ($self, $data) = @_;
