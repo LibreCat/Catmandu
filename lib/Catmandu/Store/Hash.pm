@@ -1,5 +1,6 @@
 package Catmandu::Store::Hash;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 

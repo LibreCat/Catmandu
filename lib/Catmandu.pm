@@ -1,8 +1,8 @@
 package Catmandu;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
-use Catmandu::Fix;
+use Catmandu::Env;
+use Catmandu::Util qw(:is);
 use File::Spec;
 
 =head1 NAME
@@ -29,11 +29,11 @@ L<Catmandu::Introduction>.
 
 =head1 VERSION
 
-Version 0.0902
+Version 0.1
 
 =cut
 
-our $VERSION = '0.0902';
+our $VERSION = '0.1';
 
 =head1 SYNOPSIS
 
@@ -133,6 +133,7 @@ Import everything.
 use Sub::Exporter::Util qw(curry_method);
 use Sub::Exporter -setup => {
     exports => [config   => curry_method,
+                log      => curry_method,
                 store    => curry_method,
                 fixer    => curry_method,
                 importer => curry_method,
@@ -155,12 +156,23 @@ sub _import_load {
     1;
 }
 
+sub _env {
+    my ($class, $env) = @_;
+    state $loaded_env;
+    $loaded_env = $env if defined $env;
+    $loaded_env ||= Catmandu::Env->new(load_paths => $class->default_load_path);
+}
+
 =head1 METHODS
 
-=head2 default_load_path
+=head2 log
 
-Return the path where Catmandu will (optionally) start searching for a
-catmandu.yml configuration file.
+Return the current logger (the L<Log::Any::Adapter> for category
+C<Catmandu::Env>).
+
+=cut
+
+sub log { $_[0]->_env->log }
 
 =head2 default_load_path('/default/path')
 
@@ -181,7 +193,7 @@ sub default_load_path {
 
 =head2 load
 
-Load all the configuration options in the catmanu.yml configuraton file.
+Load all the configuration options in the catmandu.yml configuration file.
 
 =head2 load('/path', '/another/path')
 
@@ -190,56 +202,11 @@ Load all the configuration options stored at alternative paths.
 =cut
 
 sub load {
-    my ($self, @load_paths) = @_;
-
-    push @load_paths, $self->default_load_path unless @load_paths;
-
-    @load_paths = map { File::Spec->rel2abs($_) } split /,/, join ',', @load_paths;
-
-    for my $load_path (@load_paths) {
-        my @dirs = grep length, File::Spec->splitdir($load_path);
-
-        for (;@dirs;pop @dirs) {
-            my $path = File::Spec->catdir(File::Spec->rootdir, @dirs);
-
-            opendir my $dh, $path or last;
-
-            my @files = sort
-                        grep { -f -r File::Spec->catfile($path, $_) }
-                        grep { /^catmandu\./ }
-                        readdir $dh;
-            for my $file (@files) {
-                if (my ($keys, $ext) = $file =~ /^catmandu(.*)\.(pl|yaml|yml|json)$/) {
-                    $keys = substr $keys, 1 if $keys; # remove leading dot
-
-                    $file = File::Spec->catfile($path, $file);
-
-                    my $config = $self->config;
-                    my $c;
-
-                    $config = $config->{$_} ||= {} for split /\./, $keys;
-
-                    given ($ext) {
-                        when ('pl')    { $c = do $file }
-                        when (/ya?ml/) { $c = read_yaml($file) }
-                        when ('json')  { $c = read_json($file) }
-                    }
-                    $config->{$_} = $c->{$_} for keys %$c;
-                }
-            }
-
-            if (@files) {
-                unshift @{$self->roots}, $path;
-
-                my $lib_path = File::Spec->catdir($path, 'lib');
-                if (-d -r $lib_path) {
-                    use_lib $lib_path;
-                }
-
-                last;
-            }
-        }
-    }
+    my $class = shift;
+    my $paths = [@_ ? @_ : $class->default_load_path];
+    my $env = Catmandu::Env->new(load_paths => $paths);
+    $class->_env($env);
+    $class;
 }
 
 =head2 roots
@@ -250,7 +217,7 @@ is empty before C<load>.
 =cut
 
 sub roots {
-    state $roots = [];
+    $_[0]->_env->roots;
 }
 
 =head2 root
@@ -261,7 +228,7 @@ C<undef> before C<load>.
 =cut
 
 sub root {
-    $_[0]->roots->[0];
+    $_[0]->_env->root;
 }
 
 =head2 config
@@ -271,7 +238,7 @@ Returns the current configuration as a HASHREF.
 =cut
 
 sub config {
-    state $config = {};
+    $_[0]->_env->config;
 }
 
 =head2 default_store
@@ -280,7 +247,7 @@ Return the name of the default store.
 
 =cut
 
-sub default_store { 'default' }
+sub default_store { $_[0]->_env->default_store }
 
 =head2 store([NAME])
 
@@ -305,30 +272,8 @@ In your program:
 
 =cut
 sub store {
-    my $self = shift;
-    my $name = shift;
-
-    state $stores = {};
-
-    my $key = $name || $self->default_store;
-
-    $stores->{$key} || do {
-        if (my $c = $self->config->{store}{$key}) {
-            check_hash_ref($c);
-            check_string(my $package = $c->{package});
-            my $opts = $c->{options} || {};
-            if (@_ > 1) {
-                $opts = {%$opts, @_};
-            } elsif (@_ == 1) {
-                $opts = {%$opts, %{$_[0]}};
-            }
-            return $stores->{$key} = require_package($package, 'Catmandu::Store')->new($opts);
-        }
-        if ($name) {
-            return require_package($name, 'Catmandu::Store')->new(@_);
-        }
-        confess "unknown store ".$self->default_store;
-    }
+    my $class = shift;
+    $class->_env->store(@_);
 }
 
 =head2 default_fixer
@@ -337,7 +282,7 @@ Return the name of the default fixer.
 
 =cut
 
-sub default_fixer { 'default' }
+sub default_fixer { $_[0]->_env->default_fixer }
 
 =head2 fixer(NAME)
 
@@ -359,21 +304,8 @@ In your program:
 =cut
 
 sub fixer {
-    my $self = shift;
-    if (ref $_[0]) {
-        return Catmandu::Fix->new(fixes => $_[0]);
-    }
-
-    my $key = $_[0] || $self->default_fixer;
-
-    state $fixers = {};
-
-    $fixers->{$key} || do {
-        if (my $fixes = $self->config->{fixer}{$key}) {
-            return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
-        }
-        return Catmandu::Fix->new(fixes => \@_);
-    }
+    my $class = shift;
+    $class->_env->fixer(@_);
 }
 
 =head2 default_importer
@@ -382,7 +314,7 @@ Return the name of the default importer.
 
 =cut
 
-sub default_importer { 'default' }
+sub default_importer { $_[0]->_env->default_importer }
 
 =head2 default_importer_package
 
@@ -391,7 +323,7 @@ package name is given in the config or as a param.
 
 =cut
 
-sub default_importer_package { 'JSON' }
+sub default_importer_package { $_[0]->_env->default_importer_package }
 
 =head2 importer(NAME)
 
@@ -418,21 +350,8 @@ In your program:
 =cut
 
 sub importer {
-    my $self = shift;
-    my $name = shift;
-    if (my $c = $self->config->{importer}{$name || $self->default_importer}) {
-        check_hash_ref($c);
-        my $package = $c->{package} || $self->default_importer_package;
-        my $opts    = $c->{options} || {};
-        if (@_ > 1) {
-            $opts = {%$opts, @_};
-        } elsif (@_ == 1) {
-            $opts = {%$opts, %{$_[0]}};
-        }
-        return require_package($package, 'Catmandu::Importer')->new($opts);
-    }
-    require_package($name ||
-        $self->default_importer_package, 'Catmandu::Importer')->new(@_);
+    my $class = shift;
+    $class->_env->importer(@_);
 }
 
 =head2 default_exporter
@@ -441,7 +360,7 @@ Return the name of the default exporter.
 
 =cut
 
-sub default_exporter { 'default' }
+sub default_exporter { $_[0]->_env->default_exporter }
 
 =head2 default_exporter_package
 
@@ -450,7 +369,7 @@ package name is given in the config or as a param.
 
 =cut
 
-sub default_exporter_package { 'JSON' }
+sub default_exporter_package { $_[0]->_env->default_exporter_package }
 
 =head2 exporter([NAME])
 
@@ -461,21 +380,8 @@ The NAME is set in the configuration file (see 'importer').
 =cut
 
 sub exporter {
-    my $self = shift;
-    my $name = shift;
-    if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {
-        check_hash_ref($c);
-        my $package = $c->{package} || $self->default_exporter_package;
-        my $opts    = $c->{options} || {};
-        if (@_ > 1) {
-            $opts = {%$opts, @_};
-        } elsif (@_ == 1) {
-            $opts = {%$opts, %{$_[0]}};
-        }
-        return require_package($package, 'Catmandu::Exporter')->new($opts);
-    }
-    require_package($name ||
-        $self->default_exporter_package, 'Catmandu::Exporter')->new(@_);
+    my $class = shift;
+    $class->_env->exporter(@_);
 }
 
 =head2 export($data,[NAME])
@@ -492,9 +398,9 @@ Export data using a default or named exporter.
 =cut
 
 sub export {
-    my $self = shift;
+    my $class = shift;
     my $data = shift;
-    my $exporter = $self->exporter(@_);
+    my $exporter = $class->_env->exporter(@_);
     is_hash_ref($data)
         ? $exporter->add($data)
         : $exporter->add_many($data);
@@ -515,13 +421,12 @@ Export data using a default or named exporter to a string.
 =cut
 
 sub export_to_string {
-    my $self = shift;
+    my $class = shift;
     my $data = shift;
     my $name = shift;
     my %opts = ref $_[0] ? %{$_[0]} : @_;
-
     my $str = "";
-    my $exporter = $self->exporter($name, %opts, file => \$str);
+    my $exporter = $class->_env->exporter($name, %opts, file => \$str);
     is_hash_ref($data)
         ? $exporter->add($data)
         : $exporter->add_many($data);

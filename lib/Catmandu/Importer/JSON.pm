@@ -1,8 +1,9 @@
 package Catmandu::Importer::JSON;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use JSON ();
+use Moo;
 
 my $RE_OBJ = qr'^[^{]+';
 

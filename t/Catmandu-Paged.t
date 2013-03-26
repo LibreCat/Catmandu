@@ -7,7 +7,7 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Pager';
+    $pkg = 'Catmandu::Paged';
     use_ok $pkg;
 }
 require_ok $pkg;

@@ -1,10 +1,11 @@
 package Catmandu::Exporter::Template;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use Catmandu::Util qw(is_string);
 use Catmandu;
 use Template;
+use Moo;
 
 with 'Catmandu::Exporter';
 
@@ -20,26 +21,24 @@ has template_before => (is => 'ro', coerce => $ADD_TT_EXT);
 has template        => (is => 'ro', coerce => $ADD_TT_EXT, required => 1);
 has template_after  => (is => 'ro', coerce => $ADD_TT_EXT);
 
-$Template::Stash::PRIVATE = 0;
+local $Template::Stash::PRIVATE = 0;
 
 sub _tt {
-    state $tt = do {
-        local $Template::Stash::PRIVATE = 0;
-        Template->new({
-            ENCODING     => 'utf8',
-            ABSOLUTE     => 1,
-            ANYCASE      => 0,
-            INCLUDE_PATH => Catmandu->roots,
-            VARIABLES    => { _roots  => Catmandu->roots,
-                              _root   => Catmandu->root,
-                              _config => Catmandu->config, },
-        });
-    };
+    state $tt = Template->new({
+        ENCODING     => 'utf8',
+        ABSOLUTE     => 1,
+        ANYCASE      => 0,
+        INCLUDE_PATH => Catmandu->roots,
+        VARIABLES    => { _roots  => Catmandu->roots,
+                          _root   => Catmandu->root,
+                          _config => Catmandu->config, },
+    });
 }
 
 sub _process {
     my ($self, $tmpl, $data) = @_;
-    $self->_tt->process($tmpl, $data || {}, $self->fh) || die Template->error;
+    $self->_tt->process($tmpl, $data || {}, $self->fh)
+        || Catmandu::Error->throw(Template->error);
 }
 
 sub add {

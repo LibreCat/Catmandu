@@ -33,10 +33,10 @@ sub load_fixes {
             if (-r $fix) {
                 $fix = read_file($fix);
             }
-            eval "package Catmandu::Fix::Loader::Env;$fix;1" or confess $@;
+            eval "package Catmandu::Fix::Loader::Env;$fix;1" or Catmandu::BadArg->throw($@);
         }
     }
-    confess "if without end" if @stack;
+    Catmandu::BadArg->throw("if without end") if @stack;
     [@fixes];
 }
 
@@ -44,7 +44,7 @@ sub _add_fix {
     my ($fix, @args) = @_;
 
     if ($fix eq 'end') {
-        $fix = pop @stack || confess "end without if";
+        $fix = pop @stack || Catmandu::BadArg->throw("end without if");
         if (@stack) {
             push @{$stack[-1]->fixes}, $fix;
         } else {
@@ -69,7 +69,7 @@ sub _add_fix {
         }
     }
     else {
-        confess "invalid fix name";
+        Catmandu::BadArg->throw("invalid fix name");
     }
 }
 

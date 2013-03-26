@@ -1,8 +1,9 @@
 package Catmandu::Store::DBI;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use DBI;
+use Moo;
 
 with 'Catmandu::Store';
 
@@ -48,7 +49,7 @@ sub transaction {
         my $err = $@;
         eval { $dbh->rollback };
         $self->{_tx} = 0;
-        confess $err;
+        die $err;
     };
 
     @res;
@@ -78,7 +79,7 @@ sub BUILD {
     my $name = $self->name;
     my $dbh  = $self->store->dbh;
     my $sql  = "create table if not exists $name(id varchar(255) not null primary key, data longblob not null)";
-    $dbh->do($sql) or confess $dbh->errstr;
+    $dbh->do($sql) or Catmandu::Error->throw($dbh->errstr);
 }
 
 sub _build_sql_get {
@@ -107,8 +108,8 @@ sub _build_add_sqlite {
     my $dbh  = $self->store->dbh;
     my $sql  = "insert or replace into $name(id,data) values(?,?)";
     sub {
-        my $sth = $dbh->prepare_cached($sql) or confess $dbh->errstr;
-        $sth->execute($_[0], $_[1]) or confess $sth->errstr;
+        my $sth = $dbh->prepare_cached($sql) or Catmandu::Error->throw($dbh->errstr);
+        $sth->execute($_[0], $_[1]) or Catmandu::Error->throw($sth->errstr);
         $sth->finish;
     };
 }
@@ -119,8 +120,8 @@ sub _build_add_mysql {
     my $dbh  = $self->store->dbh;
     my $sql  = "insert into $name(id,data) values(?,?) on duplicate key update data=values(data)";
     sub {
-        my $sth = $dbh->prepare_cached($sql) or confess $dbh->errstr;
-        $sth->execute($_[0], $_[1]) or confess $sth->errstr;
+        my $sth = $dbh->prepare_cached($sql) or Catmandu::Error->throw($dbh->errstr);
+        $sth->execute($_[0], $_[1]) or Catmandu::Error->throw($sth->errstr);
         $sth->finish;
     };
 }
@@ -132,12 +133,12 @@ sub _build_add_generic {
     my $sql_update = "update $name set data=? where id=?";
     my $sql_insert = "insert into $name values(?,?) where not exists (select 1 from $name where id=?)";
     sub {
-        my $sth = $dbh->prepare_cached($sql_update) or confess $dbh->errstr;
-        $sth->execute($_[1], $_[0]) or confess $sth->errstr;
+        my $sth = $dbh->prepare_cached($sql_update) or Catmandu::Error->throw($dbh->errstr);
+        $sth->execute($_[1], $_[0]) or Catmandu::Error->throw($sth->errstr);
         unless ($sth->rows) {
             $sth->finish;
-            $sth = $dbh->prepare_cached($sql_insert) or confess $dbh->errstr;
-            $sth->execute($_[0], $_[1], $_[0]) or confess $sth->errstr;
+            $sth = $dbh->prepare_cached($sql_insert) or Catmandu::Error->throw($dbh->errstr);
+            $sth->execute($_[0], $_[1], $_[0]) or Catmandu::Error->throw($sth->errstr);
             $sth->finish;
         }
     };
@@ -155,8 +156,8 @@ sub _build_add {
 sub get {
     my ($self, $id) = @_;
     my $dbh = $self->store->dbh;
-    my $sth = $dbh->prepare_cached($self->_sql_get) or confess $dbh->errstr;
-    $sth->execute($id) or confess $sth->errstr;
+    my $sth = $dbh->prepare_cached($self->_sql_get) or Catmandu::Error->throw($dbh->errstr);
+    $sth->execute($id) or Catmandu::Error->throw($sth->errstr);
     my $data;
     if (my $row = $sth->fetchrow_arrayref) {
         $data = $self->deserialize($row->[0]);
@@ -173,16 +174,16 @@ sub add {
 sub delete_all {
     my ($self) = @_;
     my $dbh = $self->store->dbh;
-    my $sth = $dbh->prepare_cached($self->_sql_delete_all) or confess $dbh->errstr;
-    $sth->execute or confess $sth->errstr;
+    my $sth = $dbh->prepare_cached($self->_sql_delete_all) or Catmandu::Error->throw($dbh->errstr);
+    $sth->execute or Catmandu::Error->throw($sth->errstr);
     $sth->finish;
 }
 
 sub delete {
     my ($self, $id) = @_;
     my $dbh = $self->store->dbh;
-    my $sth = $dbh->prepare_cached($self->_sql_delete) or confess $dbh->errstr;
-    $sth->execute($id) or confess $sth->errstr;
+    my $sth = $dbh->prepare_cached($self->_sql_delete) or Catmandu::Error->throw($dbh->errstr);
+    $sth->execute($id) or Catmandu::Error->throw($sth->errstr);
     $sth->finish;
 }
 
@@ -193,7 +194,7 @@ sub generator {
         state $sth;
         state $row;
         unless ($sth) {
-            $sth = $dbh->prepare($self->_sql_generator) or confess $dbh->errstr;
+            $sth = $dbh->prepare($self->_sql_generator) or Catmandu::Error->throw($dbh->errstr);
             $sth->execute;
         }
         if ($row = $sth->fetchrow_arrayref) {
@@ -207,8 +208,8 @@ sub generator {
 sub count {
     my ($self) = @_;
     my $dbh = $self->store->dbh;
-    my $sth = $dbh->prepare_cached($self->_sql_count) or confess $dbh->errstr;
-    $sth->execute or confess $sth->errstr;
+    my $sth = $dbh->prepare_cached($self->_sql_count) or Catmandu::Error->throw($dbh->errstr);
+    $sth->execute or Catmandu::Error->throw($sth->errstr);
     my ($n) = $sth->fetchrow_array;
     $sth->finish;
     $n;

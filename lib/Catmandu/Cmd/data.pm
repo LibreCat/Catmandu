@@ -2,7 +2,6 @@ package Catmandu::Cmd::data;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Time::HiRes qw(gettimeofday tv_interval);
 use Catmandu qw(:all);
 use Catmandu::Fix;
 
@@ -81,22 +80,14 @@ sub command {
         $into->delete_all;
     }
 
-    my $v = $opts->verbose;
-    my $n = 0;
-
-    if ($v) {
-        my $t = [gettimeofday];
-        $from = $from->tap(sub {
-            if (++$n % 100 == 0) {
-                printf STDERR "added %9d (%d/sec)\n", $n, $n/tv_interval($t);
-            }
-        });
+    if ($opts->verbose) {
+        $from = $from->benchmark;
     }
 
-    $n = $into->add_many($from);
+    my $n = $into->add_many($from);
     $into->commit;
 
-    if ($v) {
+    if ($opts->verbose) {
         say STDERR $n == 1
             ? "added 1 object"
             : "added $n objects";

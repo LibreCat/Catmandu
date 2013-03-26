@@ -1,5 +1,6 @@
 package Catmandu::Hits;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 
@@ -9,7 +10,7 @@ has total  => (is => 'ro', required => 1);
 has hits   => (is => 'ro', required => 1);
 
 with 'Catmandu::Iterable';
-with 'Catmandu::Pager';
+with 'Catmandu::Paged';
 
 sub size {
     scalar @{$_[0]->hits};
@@ -94,6 +95,6 @@ Return true if there are more search results.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>, L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>, L<Catmandu::Pager>
+L<Catmandu::Iterable>, L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>, L<Catmandu::Paged>
 
 =cut

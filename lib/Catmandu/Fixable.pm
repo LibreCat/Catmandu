@@ -1,9 +1,10 @@
 package Catmandu::Fixable;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo::Role;
 use Catmandu::Util qw(is_instance);
 use Catmandu;
+use Moo::Role;
 
 has _fixer => (
     is => 'ro',

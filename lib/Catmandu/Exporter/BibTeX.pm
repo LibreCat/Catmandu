@@ -1,14 +1,16 @@
 package Catmandu::Exporter::BibTeX;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use LaTeX::Encode;
+use Moo;
 
 with 'Catmandu::Exporter';
 
 my $TAGS = [qw(
     abstract
     address
+    articleno
     author
     booktitle
     chapter

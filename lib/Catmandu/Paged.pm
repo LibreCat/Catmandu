@@ -1,5 +1,6 @@
-package Catmandu::Pager;
+package Catmandu::Paged;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Data::SpreadPagination;
 use Moo::Role;

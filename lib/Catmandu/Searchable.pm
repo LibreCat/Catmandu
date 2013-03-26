@@ -1,5 +1,6 @@
 package Catmandu::Searchable;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is);
 use Moo::Role;

@@ -1,4 +1,5 @@
 package Catmandu::CLI;
+
 use Catmandu::Sane;
 use App::Cmd::Setup -app;
 use Catmandu;

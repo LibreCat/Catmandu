@@ -1,9 +1,11 @@
 package Catmandu::Importer;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(io);
 use Moo::Role;
 
+with 'MooX::Log::Any';
 with 'Catmandu::Iterable';
 with 'Catmandu::Fixable';
 
@@ -67,6 +69,10 @@ will be applied first.
 =head2 ...
 
 Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited.
+
+=head2 log
+
+Return the current logger.
 
 =head1 SEE ALSO
 

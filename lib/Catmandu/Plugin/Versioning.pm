@@ -1,5 +1,6 @@
 package Catmandu::Plugin::Versioning;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(is_value check_value check_positive);
 use Data::Compare;

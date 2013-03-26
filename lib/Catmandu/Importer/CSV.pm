@@ -1,8 +1,9 @@
 package Catmandu::Importer::CSV;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use Text::CSV;
+use Moo;
 
 with 'Catmandu::Importer';
 

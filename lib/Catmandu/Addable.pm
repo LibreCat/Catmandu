@@ -1,12 +1,13 @@
 package Catmandu::Addable;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Moo::Role;
 
-requires 'add';
-
 with 'Catmandu::Fixable';
+
+requires 'add';
 
 around add => sub {
     my ($orig, $self, $data) = @_;
@@ -42,5 +43,7 @@ sub add_many {
     }
     $n;
 }
+
+sub commit {}
 
 1;

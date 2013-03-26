@@ -1,10 +1,12 @@
 package Catmandu::Bag;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:check);
 use Moo::Role;
 use Data::UUID;
 
+with 'MooX::Log::Any';
 with 'Catmandu::Pluggable'; # TODO
 with 'Catmandu::Iterable';
 with 'Catmandu::Addable';
@@ -33,8 +35,6 @@ before delete => sub {
 sub generate_id {
     Data::UUID->new->create_str;
 }
-
-sub commit {}
 
 sub get_or_add {
     my ($self, $id, $data) = @_;
@@ -66,10 +66,10 @@ Catmandu::Bag - A Catmandu::Store comparment to persist data
     my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
 
     my $store = Catmandu::Store::DBI->new(
-			data_source => 'DBI:mysql:database=test',
-			bags => { data => { fixes => [ ... ] } },
-			bag_class => Catmandu::Bag->with_plugins('Datestamps')
-	        );
+            data_source => 'DBI:mysql:database=test',
+            bags => { data => { fixes => [ ... ] } },
+            bag_class => Catmandu::Bag->with_plugins('Datestamps')
+            );
     
     # Use the default bag...
     my $bag = $store->bag;
@@ -125,6 +125,10 @@ Deletes all items from the store.
 =head2 commit
 
 Commit changes.
+
+=head2 log
+
+Return the current logger.
 
 =head1 CLASS METHODS
 

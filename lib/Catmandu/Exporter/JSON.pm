@@ -1,8 +1,9 @@
 package Catmandu::Exporter::JSON;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use JSON ();
+use Moo;
 
 with 'Catmandu::Exporter';
 

@@ -1,8 +1,13 @@
 package Catmandu::Store;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo::Role;
 use Hash::Util::FieldHash ();
+use Sub::Quote qw(quote_sub);
+use Module::Info;
+use Moo::Role;
+
+with 'MooX::Log::Any';
 
 has bag_class => (
     is => 'ro',
@@ -36,6 +41,27 @@ has bags => (
             }
             $pkg->new(store => $self, name => $name);
         };
+    }
+}
+
+# forward methods to default bag
+{
+    my $pkg = __PACKAGE__;
+    my $it_pkg = 'Catmandu::Iterable';
+    my $it_pkg_info = Module::Info->new_from_module($it_pkg);
+    my %it_subs = $it_pkg_info->subroutines;
+    my @delegate = (
+        # Catmandu::Iterable methods
+        (map { s/^${it_pkg}:://; $_ } keys %it_subs),
+        # Catmandu::Addable methods
+        qw(add add_many commit),
+        # Catmandu::Bag methods
+        qw(get delete delete_all get_or_add to_hash),
+    );
+
+    for my $sub (@delegate) {
+        quote_sub("${pkg}::${sub}",
+            "my \$self = shift; \$self->bag->${sub}(\@_)");
     }
 }
 
@@ -97,6 +123,10 @@ Catmandu::Bag. Startup parameters can be provided for each $bagname using the
 =head2 bag($name)
 
 Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+
+=head2 log
+
+Return the current logger.
 
 =head1 SEE ALSO
 

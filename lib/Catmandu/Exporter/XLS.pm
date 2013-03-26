@@ -1,8 +1,9 @@
 package Catmandu::Exporter::XLS;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 use Spreadsheet::WriteExcel;
+use Moo;
 
 with 'Catmandu::Exporter';
 
