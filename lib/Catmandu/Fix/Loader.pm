@@ -33,7 +33,7 @@ sub load_fixes {
             if (-r $fix) {
                 $fix = read_file($fix);
             }
-            eval "package Catmandu::Fix::Loader::Env;$fix;1" or Catmandu::BadArg->throw($@);
+            eval "package Catmandu::Fix::Loader::Env;$fix;1" or Catmandu::BadArg->throw("can't load fix $fix: $@");
         }
     }
     Catmandu::BadArg->throw("if without end") if @stack;

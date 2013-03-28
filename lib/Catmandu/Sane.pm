@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use feature ();
 use utf8;
+use IO::File ();
+use IO::Handle ();
 use Try::Tiny::ByClass;
 use Catmandu::Error;
 
@@ -34,6 +36,8 @@ Package boilerplate equivalent to:
     use warnings;
     use feature qw(:5.10);
     use utf8;
+    use IO::File ();
+    use IO::Handle ();
     use Try::Tiny::ByClass;
     use Catmandu::Error;
 
