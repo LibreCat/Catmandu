@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.1001  2013-03-28
+  - don't throw empty messages
+  - bump required version of Throwable
+
 0.1     2013-03-26
   - logging with MooX::Log::Any
   - error hierarchy
