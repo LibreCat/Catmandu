@@ -25,6 +25,7 @@ has roots => (
 
 has config => (is => 'ro', default => sub { +{} });
 has stores => (is => 'ro', default => sub { +{} });
+has fixers => (is => 'ro', default => sub { +{} });
 
 has default_store => (is => 'ro', default => sub { 'default' });
 has default_fixer => (is => 'ro', default => sub { 'default' });

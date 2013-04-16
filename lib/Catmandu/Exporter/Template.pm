@@ -21,9 +21,8 @@ has template_before => (is => 'ro', coerce => $ADD_TT_EXT);
 has template        => (is => 'ro', coerce => $ADD_TT_EXT, required => 1);
 has template_after  => (is => 'ro', coerce => $ADD_TT_EXT);
 
-local $Template::Stash::PRIVATE = 0;
-
 sub _tt {
+    local $Template::Stash::PRIVATE = 0;
     state $tt = Template->new({
         ENCODING     => 'utf8',
         ABSOLUTE     => 1,
@@ -38,7 +37,7 @@ sub _tt {
 sub _process {
     my ($self, $tmpl, $data) = @_;
     $self->_tt->process($tmpl, $data || {}, $self->fh)
-        || Catmandu::Error->throw(Template->error);
+        || Catmandu::Error->throw(Template->error || "Template error");
 }
 
 sub add {
