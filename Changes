@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.1003  2013-04-16
+  - fix Exporter::Template dynamic scope
+
 0.1002  2013-04-02
   - missing Env::fixers
 
