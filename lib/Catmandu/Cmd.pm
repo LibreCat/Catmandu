@@ -7,7 +7,6 @@ sub opt_spec {
     (
         ['help|h|?', "this usage screen"],
         $cli->global_opt_spec,
-        [],
         $class->command_opt_spec($cli),
     );
 }

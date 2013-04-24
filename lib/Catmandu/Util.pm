@@ -230,7 +230,11 @@ sub delete_data {
 
 sub data_at {
     my ($path, $data, %opts) = @_;
-    $path = [@$path];
+    if (ref $path) {
+        $path = [map { split /[\/\.]/ } @$path];
+    } else {
+        $path = [split /[\/\.]/, $path]
+    }
     my $create = $opts{create};
     my $_key = $opts{_key} // $opts{key};
     if (defined $opts{key} && $create && @$path) {

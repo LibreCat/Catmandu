@@ -44,7 +44,7 @@ sub BUILD {
     for my $load_path (@{$self->load_paths}) {
         my @dirs = grep length, File::Spec->splitdir($load_path);
 
-        for (;@dirs;pop @dirs) {
+        for (; @dirs; pop @dirs) {
             my $path = File::Spec->catdir(File::Spec->rootdir, @dirs);
 
             opendir my $dh, $path or last;
