@@ -321,7 +321,7 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
 =head1 SYNOPSIS
 
     # Create an example Iterable using the Catmandu::Importer::Mock class
-    my $it = Catmandu::Importer::Mock->new(size => 10); 
+    my $it = Catmandu::Importer::Mock->new(size => 10);
 
     my $array_ref = $it->to_array;
     my $num       = $it->count;
@@ -371,11 +371,11 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
     # Modify and summary
     my $it2 = $it->map(sub { shift->{n} * 2 });
 
-    my $sum = $it2->reduce(0,sub { 
+    my $sum = $it2->reduce(0,sub {
 		my ($prev,$this) = @_;
 		$prev + $this;
 		});
-	
+
     my $it3 = $it->group(2)->invoke('to_array');
 
 =head1 DESCRIPTION
@@ -442,7 +442,7 @@ like the Unix L<tee> command. Use this command to peek into an iterable while it
 processing results. E.g. you are writing code to process an iterable and wrote
 something like:
 
-   $it->each(sub { 
+   $it->each(sub {
 	  # Very complicated routine
 	  ....
    });
@@ -452,7 +452,7 @@ This can be done by tapping into the iterator and calling a 'benchmark' subrouti
 in your program that for instance counts the number of items divided by the
 execution time.
 
-   $it->tap(\&benchmark)->each(sub { 
+   $it->tap(\&benchmark)->each(sub {
 	  # Very complicated routine
 	  ....
    });
