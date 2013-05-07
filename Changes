@@ -1,5 +1,10 @@
 Revision history for Catmandu
 
+0.2001  2013-05-07
+  - ArrayIterator
+  - fix Util::is_instance()
+  - avoid using IO::String
+
 0.2     2013-04-24
   - better config command
   - convert command
