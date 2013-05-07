@@ -21,10 +21,6 @@ sub more {
     $self->start + $self->limit < $self->total;
 }
 
-sub to_array { [@{$_[0]->hits}] }
-
-sub count { goto &size }
-
 sub generator {
     my $self = $_[0];
     my $hits = $self->hits;
@@ -34,13 +30,21 @@ sub generator {
     };
 }
 
+sub to_array {
+    [@{$_[0]->hits}];
+}
+
+sub count {
+    scalar @{$_[0]->hits};
+}
+
 sub each {
-    my ($self, $sub) = @_;
+    my ($self, $cb) = @_;
     my $hits = $self->hits;
     for my $hit (@$hits) {
-        $sub->($hit);
+        $cb->($hit);
     }
-    $self->size;
+    $self->count;
 }
 
 sub first {

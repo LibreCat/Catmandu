@@ -59,7 +59,7 @@ sub to_hash {
 
 =head1 NAME
 
-Catmandu::Bag - A Catmandu::Store comparment to persist data
+Catmandu::Bag - A Catmandu::Store compartment to persist data
 
 =head1 SYNOPSIS
 
@@ -70,7 +70,7 @@ Catmandu::Bag - A Catmandu::Store comparment to persist data
             bags => { data => { fixes => [ ... ] } },
             bag_class => Catmandu::Bag->with_plugins('Datestamps')
             );
-    
+
     # Use the default bag...
     my $bag = $store->bag;
 
@@ -91,7 +91,7 @@ Catmandu::Bag - A Catmandu::Store comparment to persist data
     my $obj = $bag->get($id);
     $bag->delete($id);
 
-    $bag->delete_all; 
+    $bag->delete_all;
 
 =head1 METHODS
 
@@ -136,9 +136,9 @@ Return the current logger.
 
 =head2 with_plugins(\@plugins)
 
-Plugins are a kind of fixes that should be available for each bag. E.g. the Datestamps plugin will 
+Plugins are a kind of fixes that should be available for each bag. E.g. the Datestamps plugin will
 automatically store into each bag item the fields 'date_updated' and 'date_created'. The with_plugins
-accept one or an array of plugin classnames and returns a subclass of the Bag with the plugin 
+accept one or an array of plugin classnames and returns a subclass of the Bag with the plugin
 methods implemented.
 
 =head1 SEE ALSO

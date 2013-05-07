@@ -82,7 +82,8 @@ my $HUMAN_CONTENT_TYPES = {
 };
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
-sub TIESCALAR { };
+
+sub TIESCALAR {};
 
 sub io {
     my ($arg, %opts) = @_;
@@ -91,7 +92,16 @@ sub io {
     my $io;
 
     if (is_scalar_ref($arg)) {
-        $io = IO::Handle::Util::io_from_scalar_ref($arg);
+        $io = IO::File->new;
+        given ($mode) {
+            when ('r')  { $mode = '<' }
+            when ('r+') { $mode = '+<' }
+            when ('w')  { $mode = '>' }
+            when ('w+') { $mode = '+>' }
+            when ('a')  { $mode = '>>' }
+            when ('a+') { $mode = '+>>' }
+        }
+        open $io, $mode, $arg; # open in-memory file
         binmode $io, $binmode;
     } elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
         $io = IO::Handle->new_from_fd($arg, $mode);
@@ -409,19 +419,19 @@ sub check_maybe_able {
 sub is_instance {
     my $obj = shift;
     Scalar::Util::blessed($obj) || return 0;
-    $obj->can($_)               || return 0 for @_;
+    $obj->isa($_)               || return 0 for @_;
     1;
 }
 
 sub check_instance {
     my $obj = shift;
-    return $obj if is_able($obj, @_);
+    return $obj if is_instance($obj, @_);
     Catmandu::BadVal->throw('should be instance of '.array_to_sentence(\@_));
 }
 
 sub check_maybe_instance {
     my $obj = shift;
-    return $obj if is_maybe_able($obj, @_);
+    return $obj if is_maybe_instance($obj, @_);
     Catmandu::BadVal->throw('should be undef or instance of '.array_to_sentence(\@_));
 }
 
@@ -754,6 +764,13 @@ Tests if C<$val> is callable (is an existing package or blessed object).
 
 Tests if C<$val> is callable and has all methods in C<@method_names>.
 
+=item is_instance($val, @class_names)
+
+=item is_maybe_instance($val, @class_names)
+
+Tests if C<$val> is a blessed object and an instance of all the classes
+in C<@class_names>.
+
 =item is_ref($val)
 
 =item is_maybe_ref($val)
@@ -868,6 +885,10 @@ returning true or false they return their argument or die.
 =item check_able($val, @method_names)
 
 =item check_maybe_able($val, @method_names)
+
+=item check_instance($val, @class_names)
+
+=item check_maybe_instance($val, @class_names)
 
 =item check_ref($val)
 

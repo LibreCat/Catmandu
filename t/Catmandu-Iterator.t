@@ -18,4 +18,3 @@ my $i = $pkg->new($g);
 ok $i->does('Catmandu::Iterable');
 
 done_testing 3;
-
