@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.2002  2013-05-08
+  - revert to IO::String because open with scalar ref has
+    binmode bugs
+
 0.2001  2013-05-07
   - ArrayIterator
   - fix Util::is_instance()

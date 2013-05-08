@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use Catmandu ();
-use Catmandu::CLI ();
+use Catmandu;
+use Catmandu::CLI;
 use Cwd ();
 
 Catmandu->default_load_path(Cwd::getcwd);
@@ -9,7 +9,7 @@ Catmandu::CLI->run;
 
 =head1 NAME
 
-catmandu - LibreCat command line tools 
+catmandu - LibreCat command line tools
 
 =head1 SYNOPSIS
 

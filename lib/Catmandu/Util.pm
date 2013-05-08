@@ -92,16 +92,7 @@ sub io {
     my $io;
 
     if (is_scalar_ref($arg)) {
-        $io = IO::File->new;
-        given ($mode) {
-            when ('r')  { $mode = '<' }
-            when ('r+') { $mode = '+<' }
-            when ('w')  { $mode = '>' }
-            when ('w+') { $mode = '+>' }
-            when ('a')  { $mode = '>>' }
-            when ('a+') { $mode = '+>>' }
-        }
-        open $io, $mode, $arg; # open in-memory file
+        $io = IO::Handle::Util::io_from_scalar_ref($arg);
         binmode $io, $binmode;
     } elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
         $io = IO::Handle->new_from_fd($arg, $mode);
