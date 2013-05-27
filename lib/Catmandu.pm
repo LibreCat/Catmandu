@@ -29,11 +29,11 @@ L<Catmandu::Introduction>.
 
 =head1 VERSION
 
-Version 0.2002
+Version 0.2003
 
 =cut
 
-our $VERSION = '0.2002';
+our $VERSION = '0.2003';
 
 =head1 SYNOPSIS
 

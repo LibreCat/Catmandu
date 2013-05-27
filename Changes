@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.2003  2013-05-27
+  - remove given/when statements (experimental since perl 5.16)
+  - fix endless loop if iterators returned by Iterable::group() are not consumed
+
 0.2002  2013-05-08
   - revert to IO::String because open with scalar ref has
     binmode bugs
