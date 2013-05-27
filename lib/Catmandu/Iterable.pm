@@ -5,6 +5,7 @@ use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
 require Catmandu::Iterator;
+require Catmandu::ArrayIterator;
 use Role::Tiny;
 
 requires 'generator';
@@ -245,18 +246,18 @@ sub group {
     my ($self, $size) = @_;
     Catmandu::Iterator->new(sub { sub {
         state $next = $self->generator;
-        state $peek = $next->();
 
-        $peek // return;
+        my $group = [];
 
-        Catmandu::Iterator->new(sub { sub {
-            state $n = $size;
-            $n || return;
-            $n--;
-            my $data = $peek;
-            $peek = $next->();
-            $data;
-        }});
+        for (my $i = 0; $i < $size; $i++) {
+            push @$group, $next->() // last;
+        }
+
+        unless (@$group) {
+            return;
+        }
+
+        Catmandu::ArrayIterator->new($group);
     }});
 }
 

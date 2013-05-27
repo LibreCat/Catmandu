@@ -112,6 +112,11 @@ is $iter->contains({c => {b => 'a'}}), 1;
 $iter->data([1 .. 10]);
 is_deeply $iter->group(3)->invoke('to_array')->to_array,
     [[1,2,3],[4,5,6],[7,8,9],[10]];
+is_deeply $iter->group(1)->invoke('to_array')->to_array,
+    [[1],[2],[3],[4],[5],[6],[7],[8],[9],[10]];
+$iter->data([]);
+is_deeply $iter->group(3)->invoke('to_array')->to_array,
+    [];
 
 $iter->data([1,2,3]);
 is_deeply $iter->interleave->to_array, $iter->data;
@@ -143,5 +148,5 @@ $iter->data(['foo', 'oof']);
 is $iter->min, undef;
 is $iter->max, undef;
 
-done_testing 54;
+done_testing 56;
 
