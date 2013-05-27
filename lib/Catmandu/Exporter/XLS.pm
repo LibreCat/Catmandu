@@ -14,11 +14,9 @@ has fields => (
     is     => 'rw',
     coerce => sub {
         my $fields = $_[0];
-        given (ref $fields) {
-            when ('ARRAY') { return $fields }
-            when ('HASH')  { return [keys %$fields] }
-            default        { return [split ',', $fields] }
-        }
+        if (ref $fields eq 'ARRAY') { return $fields }
+        if (ref $fields eq 'HASH')  { return [keys %$fields] }
+        return [split ',', $fields];
     },
 );
 

@@ -173,11 +173,9 @@ sub parse_data_path {
 sub get_data {
     my ($data, $key) = @_;
     if (is_array_ref($data)) {
-        given ($key) {
-            when ('$first') { return unless @$data; $key = 0 }
-            when ('$last')  { return unless @$data; $key = @$data - 1 }
-            when ('*')      { return @$data }
-        }
+        if ($key eq '$first') { return unless @$data; $key = 0 }
+        elsif ($key eq '$last') { return unless @$data; $key = @$data - 1 }
+        elsif ($key eq '*') { return @$data }
         if (array_exists($data, $key)) {
             return $data->[$key];
         }
@@ -193,13 +191,11 @@ sub set_data {
     my ($data, $key, @vals) = @_;
     return unless @vals;
     if (is_array_ref($data)) {
-        given ($key) {
-            when ('$first')   { return unless @$data; $key = 0 }
-            when ('$last')    { return unless @$data; $key = @$data - 1 }
-            when ('$prepend') { unshift @$data, $vals[0]; return $vals[0] }
-            when ('$append')  { push    @$data, $vals[0]; return $vals[0] }
-            when ('*')        { return splice @$data, 0, @$data, @vals }
-        }
+        if ($key eq '$first') { return unless @$data; $key = 0 }
+        elsif ($key eq '$last') { return unless @$data; $key = @$data - 1 }
+        elsif ($key eq '$prepend') { unshift @$data, $vals[0]; return $vals[0] }
+        elsif ($key eq '$append') { push    @$data, $vals[0]; return $vals[0] }
+        elsif ($key eq '*') { return splice @$data, 0, @$data, @vals }
         return $data->[$key] = $vals[0] if is_natural($key);
         return;
     }
@@ -212,11 +208,9 @@ sub set_data {
 sub delete_data {
     my ($data, $key) = @_;
     if (is_array_ref($data)) {
-        given ($key) {
-            when ('$first') { return unless @$data; $key = 0 }
-            when ('$last')  { return unless @$data; $key = @$data - 1 }
-            when ('*')      { return splice @$data, 0, @$data }
-        }
+        if ($key eq '$first') { return unless @$data; $key = 0 }
+        elsif ($key eq '$last') { return unless @$data; $key = @$data - 1 }
+        elsif ($key eq '*') { return splice @$data, 0, @$data }
         if (array_exists($data, $key)) {
             return splice @$data, $key, 1;
         }
@@ -248,12 +242,10 @@ sub data_at {
             if ($key eq '*') {
                 return map { data_at($path, $_, create => $create, _key => $_key) } @$data;
             } else {
-                given ($key) {
-                    when ('$first')   { $key = 0 }
-                    when ('$last')    { $key = -1 }
-                    when ('$prepend') { unshift @$data, undef; $key = 0 }
-                    when ('$append')  { $key = @$data }
-                }
+                if ($key eq '$first') { $key = 0 }
+                elsif ($key eq '$last') { $key = -1 }
+                elsif ($key eq '$prepend') { unshift @$data, undef; $key = 0 }
+                elsif ($key eq '$append') { $key = @$data }
                 is_integer($key) || return;
                 if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};

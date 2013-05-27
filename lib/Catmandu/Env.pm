@@ -64,11 +64,10 @@ sub BUILD {
 
                     $config = $config->{$_} ||= {} for split /\./, $keys;
 
-                    given ($ext) {
-                        when ('pl')    { $c = do $file }
-                        when (/ya?ml/) { $c = read_yaml($file) }
-                        when ('json')  { $c = read_json($file) }
-                    }
+                    if ($ext eq 'pl')    { $c = do $file }
+                    if ($ext =~ /ya?ml/) { $c = read_yaml($file) }
+                    if ($ext eq 'json')  { $c = read_json($file) }
+
                     $config->{$_} = $c->{$_} for keys %$c;
                 }
             }

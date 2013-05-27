@@ -278,26 +278,24 @@ sub _emit_create_path {
         if ($key eq '$first' || $key eq '$last' || $key eq '$prepend' || $key eq '$append') {
             $perl .= "if (is_maybe_array_ref(${var})) {";
             $perl .= "my ${v} = ${var} //= [];";
-            given ($key) {
-                when ('$first') {
-                        $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
-                }
-                when ('$last') {
-                    $perl .= "if (\@${v}) {";
-                    $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]", [@$keys], $cb);
-                    $perl .= "} else {";
-                    $perl .= $self->_emit_create_path("${v}->[0]", [@$keys], $cb);
-                    $perl .= "}";
-                }
-                when ('$prepend') {
-                    $perl .= "if (\@${v}) {";
-                    $perl .= "unshift(\@${v}, undef);";
-                    $perl .= "}";
+            if ($key eq '$first') {
                     $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
-                }
-                when ('$append') {
-                    $perl .= $self->_emit_create_path("${v}->[\@${v}]", $keys, $cb);
-                }
+            }
+            elsif ($key eq '$last') {
+                $perl .= "if (\@${v}) {";
+                $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]", [@$keys], $cb);
+                $perl .= "} else {";
+                $perl .= $self->_emit_create_path("${v}->[0]", [@$keys], $cb);
+                $perl .= "}";
+            }
+            elsif ($key eq '$prepend') {
+                $perl .= "if (\@${v}) {";
+                $perl .= "unshift(\@${v}, undef);";
+                $perl .= "}";
+                $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
+            }
+            elsif ($key eq '$append') {
+                $perl .= $self->_emit_create_path("${v}->[\@${v}]", $keys, $cb);
             }
             $perl .= "}";
         }

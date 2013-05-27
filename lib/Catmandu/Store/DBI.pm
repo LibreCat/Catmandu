@@ -146,11 +146,10 @@ sub _build_add_generic {
 
 sub _build_add {
     my $self = $_[0];
-    given ($self->store->dbh->{Driver}{Name}) {
-        when (/sqlite/i) { return $self->_build_add_sqlite }
-        when (/mysql/i)  { return $self->_build_add_mysql }
-        default          { return $self->_build_add_generic }
-    }
+    my $driver_name = $self->store->dbh->{Driver}{Name} // "";
+    if ($driver_name =~ /sqlite/i) { return $self->_build_add_sqlite }
+    if ($driver_name =~ /mysql/i)  { return $self->_build_add_mysql }
+    return $self->_build_add_generic;
 }
 
 sub get {
