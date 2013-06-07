@@ -38,6 +38,12 @@ Catmandu::Exporter::JSON - a JSON exporter
 
     printf "exported %d objects\n" , $exporter->count;
 
+=head1 METHODS
+
+=head2 new(file => PATH, fh => HANDLE, fix => STRING|ARRAY, pretty => 1)
+
+Create a new JSON exporter optionally providing a file path, a file handle, a fix file or array and a pretty printing option.
+
 =head1 SEE ALSO
 
 L<Catmandu::Exporter>
