@@ -4,11 +4,6 @@ TODO
 * logger
 * contributors guide
 * add catmandu-examples as tests
-* split into separate modules:
-  * Catmandu::Exporter::BibTeX
-  * Catmandu::Exporter::XLS
-  * Catmandu::Importer::Atom
-  * Catmandu::Store::DBI (?)
 * validation
 * remove Fixable, add before_add and before_get, takes fixes or sub
 * give Iterable fix method
