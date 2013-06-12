@@ -1,7 +1,7 @@
 Revision history for Catmandu
 
-0.3 2013-06-xx
-  - removed Store::DBI, Exporter::{Atom, BibTeX, XLS}, Importer::Atom (now separated modules)
+0.3 2013-06-12
+  - removed Store::DBI, Exporter::{Atom, BibTeX, XLS}, Importer::Atom (now separate modules)
 
 
 0.2003  2013-05-27
