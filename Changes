@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.3 2013-06-12
+  - removed Store::DBI, Exporter::{Atom, BibTeX, XLS}, Importer::Atom (now separate modules)
+
+
 0.2003  2013-05-27
   - remove given/when statements (experimental since perl 5.16)
   - fix endless loop if iterators returned by Iterable::group() are not consumed

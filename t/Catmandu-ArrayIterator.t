@@ -22,4 +22,8 @@ is $it->count, 3;
 
 is_deeply $it->first, $arr->[0];
 
-done_testing 5;
+is ( $it->contains({n=>2}),1);
+
+is ($it->contains(10),0);
+
+done_testing 7;
