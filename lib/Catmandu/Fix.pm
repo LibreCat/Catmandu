@@ -64,6 +64,13 @@ sub generate_var {
     "\$__$n";
 }
 
+sub capture {
+    my ($self, $capture) = @_;
+    my $var = $self->generate_var;
+    $self->_captures->{$var} = $capture;
+    $var;
+}
+
 sub emit {
     my ($self) = @_;
     my $var = $self->var;

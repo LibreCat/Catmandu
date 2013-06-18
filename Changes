@@ -1,8 +1,12 @@
 Revision history for Catmandu
 
+0.3     2013-06-18
+  - Exporter::JSON pod
+  - lookup fix
+
 0.2003  2013-05-27
   - remove given/when statements (experimental since perl 5.16)
-  - fix endless loop if iterators returned by Iterable::group() are not consumed
+  - fix endless loop if iterators returned by Iterable group method are not consumed
 
 0.2002  2013-05-08
   - revert to IO::String because open with scalar ref has
