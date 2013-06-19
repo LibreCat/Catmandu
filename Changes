@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.4     2013-06-19
+  - to_json fix
+  - from_json fix
+
 0.3     2013-06-18
   - Exporter::JSON pod
   - lookup fix
