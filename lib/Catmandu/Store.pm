@@ -4,7 +4,6 @@ use namespace::clean;
 use Catmandu::Sane;
 use Hash::Util::FieldHash ();
 use Sub::Quote qw(quote_sub);
-use Module::Info;
 use Moo::Role;
 
 with 'MooX::Log::Any';
@@ -47,12 +46,9 @@ has bags => (
 # forward methods to default bag
 {
     my $pkg = __PACKAGE__;
-    my $it_pkg = 'Catmandu::Iterable';
-    my $it_pkg_info = Module::Info->new_from_module($it_pkg);
-    my %it_subs = $it_pkg_info->subroutines;
     my @delegate = (
         # Catmandu::Iterable methods
-        (map { s/^${it_pkg}:://; $_ } keys %it_subs),
+        qw(to_array count slice each tap any many all map reduce first rest take pluck invoke contains includes group interleave max min benchmark),
         # Catmandu::Addable methods
         qw(add add_many commit),
         # Catmandu::Bag methods

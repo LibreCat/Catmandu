@@ -29,7 +29,6 @@ my $build = Module::Build->new(
         'JSON' => '2.51',
         'Moo' => '1.000008',
         'MooX::Log::Any' => 0,
-        'Module::Info' => '0.33',
         'namespace::clean' => '0.24',
         'Sub::Exporter' => '0.982',
         'Sub::Quote' => 0,
