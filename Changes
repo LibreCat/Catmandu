@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.4001  2013-06-20
+  - lookup fix tests, -defautl, -delete options
+
 0.4     2013-06-19
   - to_json fix
   - from_json fix

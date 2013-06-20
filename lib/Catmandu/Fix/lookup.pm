@@ -19,6 +19,8 @@ around BUILDARGS => sub {
 sub _build_dictionary {
     my ($self) = @_;
     my %opts = %{$self->opts};
+    delete $opts{'-delete'};
+    delete $opts{'-default'};
     for my $key (keys %opts) {
         my $val = delete $opts{$key};
         $key =~ s/^-//;
@@ -41,16 +43,28 @@ sub emit {
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
     my $dict_var = $fixer->capture($self->dictionary);
+    my $delete = $self->opts->{'-delete'};
+    my $default = $self->opts->{'-default'};
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
-            my $var = shift;
-            my $val_var = $fixer->generate_var;
-            "my ${val_var} = ${dict_var}->{${var}};" .
-            "if (is_string(${var}) && is_string(${val_var})) {" .
-                "${var} = ${val_var};" .
+            my $val_var = shift;
+            my $dict_val_var = $fixer->generate_var;
+            my $perl = "my ${dict_val_var} = ${dict_var}->{${val_var}};" .
+            "if (is_value(${val_var}) && is_value(${dict_val_var})) {" .
+                "${val_var} = ${dict_val_var};" .
             "}";
+            if ($delete) {
+                $perl .= "else {" .
+                    $fixer->emit_delete_key($var, $key) .
+                "}";
+            } elsif (defined $default) {
+                $perl .= "else {" .
+                    $fixer->emit_set_key($var, $key, $fixer->emit_value($default)) .
+                "}";
+            }
+            $perl;
         });
     });
 }
@@ -63,6 +77,10 @@ Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by looking
 
    lookup('foo.bar', 'dictionary.csv');
    lookup('foo.bar', 'dictionary.csv', '-sep_char', '|');
+   # delete value if the lookup fails:
+   lookup('foo.bar', 'dictionary.csv', '-delete', 1);
+   # use a default value if the lookup fails:
+   lookup('foo.bar', 'dictionary.csv', '-default', 'default value');
 
 =head1 SEE ALSO
 
