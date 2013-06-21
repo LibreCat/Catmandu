@@ -48,7 +48,8 @@ has bags => (
     my $pkg = __PACKAGE__;
     my @delegate = (
         # Catmandu::Iterable methods
-        qw(to_array count slice each tap any many all map reduce first rest take pluck invoke contains includes group interleave max min benchmark),
+        qw(to_array count slice each tap any many all map reduce first rest take
+           pluck invoke contains includes group interleave max min benchmark),
         # Catmandu::Addable methods
         qw(add add_many commit),
         # Catmandu::Bag methods
