@@ -8,10 +8,11 @@ my $build = Module::Build->new(
     dist_author => [
         'Nicolas Steenlant <nicolas.steenlant@ugent.be>',
         'Patrick Hochstenbach <patrick.hochstenbach@ugent.be>',
+        'Vitali Peil <vitali.peil@uni-bielefeld.de>',
     ],
     build_requires => {
-        'Software::License' => 0,
-        'Test::Exception'   => '0.31',
+        'Test::Exception' => 0,
+        'Test::More' => 0,
     },
     requires => {
         'perl' => '5.10.1',
@@ -24,23 +25,18 @@ my $build = Module::Build->new(
         'Data::UUID' => '1.217',
         'Data::Util' => '0.59',
         'DateTime' => '0.70',
-        'DBI' => '1.616', # Catmandu::Store::DBI
         'IO::Handle::Util' => '0.01',
         'JSON' => '2.51',
-        'LaTeX::Encode' => '0.03', # Catmandu::Exporter::BibTeX
         'Moo' => '1.000008',
         'MooX::Log::Any' => 0,
-        'Module::Info' => '0.33',
         'namespace::clean' => '0.24',
-        'Spreadsheet::WriteExcel' => '2.37', # Catmandu::Exporter::XLS
         'Sub::Exporter' => '0.982',
         'Sub::Quote' => 0,
         'Template' => '2.22',
         'Text::CSV' => '1.21',
-        'Time::HiRes' => 0, # not always installed on redhat
+        'Time::HiRes' => 0, # not always installed
         'Throwable' => '0.200004',
         'Try::Tiny::ByClass' => '0.01',
-        'XML::Atom' => '0.41', # Catmandu::Importer::Atom, Catmandu::Exporter::Atom
         'YAML::Any' => '0.81',
     },
     recommends => {
@@ -59,7 +55,6 @@ my $build = Module::Build->new(
         Catmandu-*
     )],
     create_makefile_pl => 'traditional',
-    create_license => 1,
 );
 
 $build->create_build_script;
