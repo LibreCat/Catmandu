@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.5001  2013-06-25
+  - trim fix nonword option
+
 0.5     2013-06-12
   - ArrayIterator pod
   - split off Store::DBI,
@@ -7,7 +10,7 @@ Revision history for Catmandu
   - split off Exporter::Atom
   - split off Exporter::BibTeX
   - split off Exporter::XLS
-  - remove dependency omn Module::Info
+  - remove dependency on Module::Info
 
 0.4001  2013-06-20
   - lookup fix tests, -default, -delete options
