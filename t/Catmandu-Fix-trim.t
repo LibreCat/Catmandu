@@ -14,11 +14,21 @@ BEGIN {
 is_deeply
     $pkg->new('name')->fix({name => "\tjoe  "}),
     {name => "joe"},
-    "trim value";
+    "trim whitespace";
+
+is_deeply
+    $pkg->new('name', 'whitespace')->fix({name => "\t / joe  "}),
+    {name => "/ joe"},
+    "trim whitespace";
+
+is_deeply
+    $pkg->new('name', 'nonword')->fix({name => "/\tjoe  .  "}),
+    {name => "joe"},
+    "trim nonword characters";
 
 is_deeply
     $pkg->new('names.*.name')->fix({names => [{name => "\tjoe  "}, {name => "  rick  "}]}),
     {names => [{name => "joe"}, {name => "rick"}]},
     "trim wildcard values";
 
-done_testing 3;
+done_testing 5;
