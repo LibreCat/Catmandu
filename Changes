@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.5002  2013-06-26
+  - count fix
+  - nothing fix
+
 0.5001  2013-06-25
   - trim fix nonword option
 
