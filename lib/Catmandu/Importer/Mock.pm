@@ -12,8 +12,8 @@ sub generator {
     my ($self) = @_;
     my $n = 0;
     sub {
-	   return if defined $self->size && $n == $self->size;
-	   return { n => $n++ };
+        return if defined $self->size && $n == $self->size;
+        return { n => $n++ };
     };
 }
 
