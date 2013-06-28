@@ -8,8 +8,8 @@ with 'Catmandu::Fix::Base';
 
 has path => (is => 'ro', required => 1);
 has file => (is => 'ro', required => 1);
-has opts => (is => 'ro', default => sub { +{} });
-has dictionary => (is => 'ro', lazy => 1, builder => '_build_dictionary');
+has opts => (is => 'ro');
+has dictionary => (is => 'ro', lazy => 1, builder => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, $file, %opts) = @_;
@@ -24,6 +24,7 @@ sub _build_dictionary {
     for my $key (keys %opts) {
         my $val = delete $opts{$key};
         $key =~ s/^-//;
+        $key =~ s/-/_/g;
         $opts{$key} = $val;
     }
     Catmandu::Importer::CSV->new(
@@ -51,8 +52,7 @@ sub emit {
         $fixer->emit_get_key($var, $key, sub {
             my $val_var = shift;
             my $dict_val_var = $fixer->generate_var;
-            my $perl = "my ${dict_val_var} = ${dict_var}->{${val_var}};" .
-            "if (is_value(${val_var}) && is_value(${dict_val_var})) {" .
+            my $perl = "if (is_value(${val_var}) && defined(my ${dict_val_var} = ${dict_var}->{${val_var}})) {" .
                 "${val_var} = ${dict_val_var};" .
             "}";
             if ($delete) {

@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.5003  2013-06-28
+  - lookup_in_store fix
+
 0.5002  2013-06-26
   - count fix
   - nothing fix
