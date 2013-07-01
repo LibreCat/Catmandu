@@ -24,7 +24,11 @@ is_deeply
     {};
 
 is_deeply
+    $pkg->new('planets.*', 't/planets.csv', '-delete', 1)->fix({planets => ['Bartledan', 'Earth']}),
+    {planets => ['Terra']};
+
+is_deeply
     $pkg->new('planet', 't/planets.csv', '-default', 'Mars')->fix({planet => 'Bartledan'}),
     {planet => 'Mars'};
 
-done_testing 5;
+done_testing 6;

@@ -51,14 +51,19 @@ sub emit {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
             my $val_var = shift;
+            my $val_index = shift;
             my $dict_val_var = $fixer->generate_var;
             my $perl = "if (is_value(${val_var}) && defined(my ${dict_val_var} = ${dict_var}->{${val_var}})) {" .
                 "${val_var} = ${dict_val_var};" .
             "}";
             if ($delete) {
-                $perl .= "else {" .
-                    $fixer->emit_delete_key($var, $key) .
-                "}";
+                $perl .= "else {";
+                if (defined $val_index) { # wildcard: only delete the value where the lookup failed
+                    $perl .= "splice(\@{${var}}, ${val_index}--, 1);";
+                } else {
+                    $perl .= $fixer->emit_delete_key($var, $key);
+                }
+                $perl .= "}";
             } elsif (defined $default) {
                 $perl .= "else {" .
                     $fixer->emit_set_key($var, $key, $fixer->emit_value($default)) .

@@ -341,10 +341,10 @@ sub emit_get_key {
         $perl .= "}";
     }
     elsif ($key eq '*') {
-        my $v = $self->generate_var;
+        my $i = $self->generate_var;
         $perl .= "if (is_array_ref(${var})) {";
-        $perl .= "for (my ${v} = 0; ${v} < \@{${var}}; ${v}++) {";
-        $perl .= $cb->("${var}->[${v}]");
+        $perl .= "for (my ${i} = 0; ${i} < \@{${var}}; ${i}++) {";
+        $perl .= $cb->("${var}->[${i}]", $i);
         $perl .= "}}";
     }
     else {
