@@ -3,38 +3,19 @@ package Catmandu::Fix::Condition::all_match;
 use Catmandu::Sane;
 use Moo;
 
-with 'Catmandu::Fix::Condition';
+with 'Catmandu::Fix::Condition::SimpleAllTest';
 
-has path   => (is => 'ro', required => 1);
-has search => (is => 'ro', required => 1);
+has pattern => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
-    my ($orig, $class, $path, $search) = @_;
-    $orig->($class, path => $path, search => $search);
+    my ($orig, $class, $path, $pattern) = @_;
+    $orig->($class, path => $path, pattern => $pattern);
 };
 
-sub emit {
-    my ($self, $fixer, $label) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
-    my $str_key = $fixer->emit_string($key);
-    my $search = $self->search;
-
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $var  = shift;
-            my $perl = $self->invert ? "if (" : "unless (";
-            $perl .= "${var} =~ /${search}/";
-            $perl .= ") {";
-            $perl .= "last $label;";
-            $perl .= "}";
-            for my $fix (@{$self->fixes}) {
-                $perl .= $fixer->emit_fix($fix);
-            }
-            $perl;
-        });
-    });
+sub emit_test {
+    my ($self, $var) = @_;
+    my $pattern = $self->pattern;
+    "${var} =~ /${pattern}/";
 }
 
 =head1 NAME
