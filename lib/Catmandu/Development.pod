@@ -71,7 +71,7 @@ detailed guidelines, see "Coding Guidelines" below.
 Catmandu should be able to install for all Perl versions since 5.10.1, on any
 platform for which Perl exists. We focus mainly on GNU/Linux (any distribution).
 
-We should avoid regressions as much as possible and keep backwards
+You should avoid regressions as much as possible and keep backwards
 compatibility in mind when refactoring. Stable releases should not break
 functionality and new releases should provide an upgrade path and upgrade tips
 such as warning the user about deprecated functionality.
