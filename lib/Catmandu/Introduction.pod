@@ -9,7 +9,7 @@ Importing, transforming, storing and indexing data should be easy
 Catmandu provides a suite of Perl modules to ease the import, storage,
 retrieval, export and transformation of metadata records. Combine Catmandu
 modules with web application frameworks such as PSGI/Plack, document stores such
-as MongoDB and full text indexes as Solr to create a rapid development
+as MongoDB or CouchDB and full text indexes as ElasticSearch or Solr to create a rapid development
 environment for digital library services such as institutional repositories and
 search engines.
 
@@ -41,20 +41,20 @@ LibreCat-Images : a MediaMosa based digitization workflow engine (in development
   | Importer |------------>| Store |------------>| Exporter |
   +----------+             +-------+             +----------+
 
-To create a search engine, one of your first tasks will to import data from
+To create a search engine, one of your first tasks will be to import data from
 various sources, map the fields to a common data model and post it to a
 full-text search engine.  Perl modules such as L<WebService::Solr> or
 L<ElasticSearch> provide easy access to your favorite document stores, but you
-keep writing a lot of boilerplate code to create the connections, massaging the
+keep writing a lot of boilerplate code to create the connections, transform the
 incoming data into the correct format, validating and uploading and indexing the
 data in the database. Next morning you are asked to provide a fast dump of
 records into an Excel worksheet.  After some fixes are applied you are asked to
 upload it into your database. Again you hit Emacs or Vi and provide an ad-hoc
 script. In our LibreCat group we saw this workflow over and over.  We tried to
 abstract this problem to a set of Perl tools which can work with library data
-such as MARC, Dublin Core, EndNote protocols such as OAI-PMH, SRU and
+such as MARC, Dublin Core, RIS, protocols such as OAI-PMH, SRU and
 repositories such as DSpace and Fedora.  In data warehouses these processes are
-called ETL, Extract, Transform, Load.  Many tools currenty exist for ETL
+called B<ETL>, B<E>xtract, B<T>ransform, B<L>oad.  Many tools currenty exist for ETL
 processing but none adress typical library data models and services.
 
 =head2 Copy and Paste
@@ -75,11 +75,11 @@ each, first, take, ...)
 Working with native Perl hashes and arrays we would like to use an easy
 mechanism to store and index this data in a database of choice.  In the past it
 was a nuisance to create database schemas and indexes to store and search your
-data.  Certainly in institutional repositories this can be a ongoing job for a
+data.  Certainly in institutional repositories this can be an ongoing job for a
 programmer because the metadata schemas are not fixed in time. Any new report
 will require you to add new data fields and new relations for which you need to
 change your database schema.  With the introduction of schemaless databases the
-storage of complex records is really easy.  Create a Perl hash excute the
+storage of complex records is really easy.  Create a Perl hash execute the
 function C<add> and your record is stored into the database.  Execute C<get> to
 load a Perl hash from the database in memory. With our ElasticSearch plugin we
 even can provide you a CQL style query language for retrieval.
@@ -97,19 +97,19 @@ even can provide you a CQL style query language for retrieval.
 To get Catmandu running on your system you need to clone the code from
 github.com and build and install it.
 
-  git clone git@github.com:LibreCat/Catmandu.git
-  cd Catmandu
-  perl Build.PL
-  ./Build installdeps
-  sudo ./Build install
-
+  $ git clone git@github.com:LibreCat/Catmandu.git
+  $ cd Catmandu
+  $ perl Build.PL
+  $ ./Build
+  $ ./Build test
+  $ ./Build install
 
 =head1 Importer
 
 Importers are Catmandu packages to read data into an application.  We provide
-importers for MARC, JSON, YAML, CSV, Excel but also Atom and OAI-PMH endpoints.
+importers for MARC, JSON, YAML, BibTeX, CSV, Excel but also Atom and OAI-PMH endpoints.
 As an example, lets create a Perl script to read a YAML file containing an array
-of values.  We use the each function to loop through all the items
+of values.  We use the C<each> function to loop through all the items
 
   #!/usr/bin/env perl
 
@@ -124,8 +124,19 @@ of values.  We use the each function to loop through all the items
 
   say "Read: $count YAML items";
 
-Running this script using this test.yaml file you should see as output:
-C<Read: 3 YAML items>
+Running this script using this test.yaml file
+
+  first: Albert
+  last: Einstein
+  job: Physicist
+  ---
+  first: Super
+  last: Mario
+  job: Action hero
+  ...
+
+you should see as output:
+C<Read: 2 YAML items>
 
 Here is an example script to read 10 records from an OAI-PMH endpoint into an
 application:
@@ -149,7 +160,7 @@ The Iterable package provides many list methods to process large streams of
 records.  Most of the methods are lazy if the underlying datastream supports it.
 While all of the data in Catmandu are native Perl hashes and arrays it can be impratical
 to load a result set of thousands of records into memory.
-Most Catmandu packages such as Importer, Exporter and Store provide therefor an
+Most Catmandu packages such as Importer, Exporter and Store provide therefore an
 Iterable implementation.
 
 Using a Mock importer we can generate some Perl hashes on-the-fly and show the
@@ -215,7 +226,7 @@ Catmandu provides exporters for BibTeX, CSV, JSON, RIS, XLS and YAML.  If you
 need a special exporter for your own format you could use the Template exporter
 which uses Template Toolkit.
 
-As an example lets create an exporter for an Perl array of hashes $data using a
+As an example lets create an exporter for a Perl array of hashes $data using a
 template:
 
   use Catmandu::Exporter::Template;
@@ -224,7 +235,7 @@ template:
    { name => { first => 'James' , last => 'Bond' } , occupation => 'Secret Agent' } ,
    { name => { first => 'Ernst' , last => 'Blofeld' } , occupation => 'Supervillain' } ,
   ];
-  my $exporter = Catmandu::Exporter::Template->new(template => '/home/phochste/example.tt');
+  my $exporter = Catmandu::Exporter::Template->new(template => '/home/me/example.tt');
   $exporter->add_many($data);
 
 The template example.tt will be rendered for every hash in the array $data (or
@@ -240,7 +251,7 @@ for every item in an Iterable $data).
 Fixes can be used for easy data manipulation by non programmers.  Using a small
 Perl DSL language librarians can use Fix routines to manipulate data objects.  A
 plain text file of fixes can be created to specify all the data manipulations
-that need to be executed to 'massage' the data in the desired format.
+that need to be executed to transform the data in the desired format.
 
 As an example we will import data from a MARC file and change some metadata
 fields using Fix routines. Here is the code to run the example:
@@ -440,3 +451,4 @@ Funny Valentine">. The beauty of ElasticSearch is that it is completely
 painless to setup and requires no schema: indexing data is simply done by using
 JSON over HTTP. All your fields are indexed automatically.
 
+=cut
