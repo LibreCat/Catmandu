@@ -38,7 +38,7 @@ Subscribing to the mailing list and providing assistance to new users is incredi
 
 =item *
 
-Mailing list: L<...> to
+Mailing list: L<librecat-dev@listservice.lub.lu.se> to
 subscribe or view archives
 
 =back
@@ -279,7 +279,7 @@ L<http://librecat.org/>
 =head2 Mailing Lists
 
 A mailing list is available here:
-L<...>
+L<librecat-dev@listservice.lub.lu.se>
 
 =head2 Repositories
 
