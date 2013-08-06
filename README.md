@@ -1,7 +1,7 @@
 Catmandu
 ========
 
-[![Build Status](https://travis-ci.org/[vpeil]/[Catmandu].png)](https://travis-ci.org/[vpeil]/[Catmandu])
+[![Build Status](https://travis-ci.org/vpeil/Catmandu.png)](https://travis-ci.org/vpeil/Catmandu)
 
 ## INSTALLATION
 
