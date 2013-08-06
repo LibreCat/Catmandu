@@ -106,10 +106,11 @@ github.com and build and install it.
 
 =head1 Importer
 
-Importers are Catmandu packages to read data into an application.  We provide
-importers for MARC, JSON, YAML, CSV, Excel but also Atom and OAI-PMH endpoints.
-As an example, lets create a Perl script to read a YAML file containing an array
-of values.  We use the each function to loop through all the items
+L<Importers|Catmandu::Importer> are Catmandu packages to read data into an
+application.  We provide importers for MARC, JSON, YAML, CSV, Excel but also
+Atom and OAI-PMH endpoints.  As an example, lets create a Perl script to read a
+YAML file containing an array of values.  We use the each function to loop
+through all the items
 
   #!/usr/bin/env perl
 
@@ -145,12 +146,12 @@ application:
 
 =head1 Iterable
 
-The Iterable package provides many list methods to process large streams of
-records.  Most of the methods are lazy if the underlying datastream supports it.
-While all of the data in Catmandu are native Perl hashes and arrays it can be impratical
-to load a result set of thousands of records into memory.
-Most Catmandu packages such as Importer, Exporter and Store provide therefor an
-Iterable implementation.
+The L<Catmandu::Iterable> package provides many list methods to process large
+streams of records.  Most of the methods are lazy if the underlying datastream
+supports it.  While all of the data in Catmandu are native Perl hashes and
+arrays it can be impratical to load a result set of thousands of records into
+memory.  Most Catmandu packages such as Importer, Exporter and Store provide
+therefor an Iterable implementation.
 
 Using a Mock importer we can generate some Perl hashes on-the-fly and show the
 functionality provided by Iterable:
@@ -158,7 +159,7 @@ functionality provided by Iterable:
   use Catmandu::Importer::Mock;
   my $it = Catmandu::Importer::Mock->new(size => 10);
 
-  With each you can loop over all the items in an iterator:
+  # With each you can loop over all the items in an iterator:
 
   $it->each(sub {
      printf "My n is %d\n" , shift->{n};
@@ -199,9 +200,9 @@ C<select>, C<reject>, C<any>, C<many>, C<all>, C<map>, C<reduce> and C<invoke>.
 
 =head1 Exporter
 
-Exporters are Catmandu packages to export data from an application.  As input
-they can get native Perl hashes or arrays but also Iterators to stream huge data
-sets.
+L<Exporters|Catmandu::Exporter> are Catmandu packages to export data from an
+application.  As input they can get native Perl hashes or arrays but also
+Iterators to stream huge data sets.
 
 Here is an example using our Mock importer to stream 1 million Perl hashes
 through an Exporter:
@@ -237,10 +238,11 @@ for every item in an Iterable $data).
 
 =head1 Fix
 
-Fixes can be used for easy data manipulation by non programmers.  Using a small
-Perl DSL language librarians can use Fix routines to manipulate data objects.  A
-plain text file of fixes can be created to specify all the data manipulations
-that need to be executed to 'massage' the data in the desired format.
+L<Fixes|Catmandu::Fix> can be used for easy data manipulation by non
+programmers.  Using a small Perl DSL language librarians can use Fix routines
+to manipulate data objects.  A plain text file of fixes can be created to
+specify all the data manipulations that need to be executed to 'massage' the
+data in the desired format.
 
 As an example we will import data from a MARC file and change some metadata
 fields using Fix routines. Here is the code to run the example:
@@ -314,7 +316,7 @@ using to store data.
 
 As example lets create the most simple storage mechanism possible, an in memory
 hash. We use this mock 'database' to show some of the features that any
-C<Catmandu::Store> has. First we will create a YAML importer as shown above to
+L<Catmandu::Store> has. First we will create a YAML importer as shown above to
 import records into an in memory hash store:
 
   use Catmandu::Importer::YAML;
@@ -336,7 +338,7 @@ import records into an in memory hash store:
   # Commit all changes
   $store->bag->commit;
 
-Each C<Catmandu::Store> has one or more compartments (e.g. tables) to store data
+Each L<Catmandu::Store> has one or more compartments (e.g. tables) to store data
 called bag. We use the function C<add_many> to store each item in the importer
 Iterable into the Store. We can also store an array of Perl hashes with the same
 command. Or store a single hash with the C<add> method.
@@ -349,7 +351,7 @@ methods shown above to read data from a bag.
     #.. your code
   });
 
-When you store a perl Hash into a C<Catmandu::Store> then an identifier field '_id'
+When you store a perl Hash into a L<Catmandu::Store> then an identifier field '_id'
 gets added to your perl Hash that can be used to retrieve the item at a later
 stage. Lets take a look at the identifier and how it can be used.
 
@@ -362,7 +364,7 @@ stage. Lets take a look at the identifier and how it can be used.
   # Now you can use this identifier to retrieve the object from the store
   my $item2 = $store->bag->get('414003DC-9AD0-11E1-A3AD-D6BEE5345D14');
 
-And that is how it works. C<Catmandu::Store> has some more functionality to delete
+And that is how it works. L<Catmandu::Store> has some more functionality to delete
 items and query the store (if the backend supports it), but this is how you can
 store very complex Perl structures in memory or on disk with just a few lines of
 code. As a complete example we can show how easy it is to store data in a

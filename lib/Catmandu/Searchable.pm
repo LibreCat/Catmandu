@@ -82,14 +82,14 @@ Catmandu::Searchable - Base class for all searchable Catmandu classes
 
 =head2 search(query => $query, start => $start, limit => $num, sort => $sort, cql_query => $cql)
 
-Search the database and returns a Catmandu::Hits on success. The Hits represents one
+Search the database and returns a L<Catmandu::Hits> on success. The Hits represents one
 result page of at most $num results. The $query and $sort should implement the
 query and sort syntax of the underlying search engine. If the CQL language is supported
 by the Store, then optionally a $cql_query search can be excuted on the Searchable.
 
 =head2 searcher(query => $query, start => $start, limit => $num, sort => $sort, cql_query => $cql)
 
-Search the database and return a Catmandu::Iterable on success. This iterator can be
+Search the database and return a L<Catmandu::Iterable> on success. This iterator can be
 used to loop over the complete result set. The $query and $sort should implement the
 query and sort syntax of the underlying search engine. If the CQL language is supported
 by the Store, then optionally a $cql_query search can be excuted on the Searchable.
