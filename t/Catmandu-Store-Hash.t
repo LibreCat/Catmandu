@@ -18,7 +18,7 @@ my $data = [
 ];
 
 my $bag = $pkg->new()->bag;
-my @method = qw(to_array each tak add add_many count slice first rest any many all tap map reduce take);
+my @method = qw(to_array each take add add_many count slice first rest any many all tap map reduce take);
 can_ok $bag, $_ for @method;
 
 $bag->add_many($data);
