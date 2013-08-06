@@ -94,15 +94,15 @@ Catmandu::Store - Namespace for packages that can make data persistent
 
 A Catmandu::Store is a stub for Perl packages that can store data into
 databases or search engines. The database as a whole is called a 'store'.
-Databases also have compartments (e.g. tables) called Catmandu::Bag-s.
-Some stores can be searched using Catmandu::Searchable methods.
+Databases also have compartments (e.g. tables) called L<Catmandu::Bag>-s.
+Some stores can be searched using L<Catmandu::Searchable> methods.
 
 =head1 METHODS
 
 =head2 new(%store_args, bag_class => $class, bags => { $bagname => \%bag_args })
 
 Create a new Catmandu::Store. Optionally provide the class name of a sub-class of
-Catmandu::Bag. Startup parameters can be provided for each $bagname using the
+L<Catmandu::Bag>. Startup parameters can be provided for each $bagname using the
 'bags' parameter. E.g.
 
  my $store = Catmandu::Store::Hash->new(
@@ -119,7 +119,7 @@ Catmandu::Bag. Startup parameters can be provided for each $bagname using the
 
 =head2 bag($name)
 
-Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
 
 =head2 log
 

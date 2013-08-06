@@ -52,9 +52,9 @@ Catmandu::Importer - Namespace for packages that can import
 A Catmandu::Importer is a stub for Perl packages that can import data from
 an external source (a file, the network, ...).
 
-Every Catmandu::Importer is a Catmandu::Fixable and thus provides a 'fix' parameter that
-can be set in the constructor. For every item returned by the generator the given fixes
-will be applied first.
+Every Catmandu::Importer is a L<Catmandu::Fixable> and thus provides a 'fix'
+parameter that can be set in the constructor. For every item returned by the
+generator the given fixes will be applied first.
 
 =head1 METHODS
 
@@ -68,7 +68,7 @@ will be applied first.
 
 =head2 ...
 
-Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited.
+Every Catmandu::Importer is a L<Catmandu::Iterable> all its methods are inherited.
 
 =head2 log
 

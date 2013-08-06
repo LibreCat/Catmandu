@@ -44,7 +44,8 @@ Create a new Mock importer. Optionally provide a size parameter.
 
 =head2 ...
 
-Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited.
+Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
+inherited.
 
 =head1 SEE ALSO
 

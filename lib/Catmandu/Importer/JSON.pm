@@ -60,8 +60,9 @@ Create a new JSON importer for $filename. Use STDIN when no filename is given.
 
 =head2 ...
 
-Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
-Catmandu::Importer::JSON methods are not idempotent: JSON streams can only be read once.
+Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
+inherited. The Catmandu::Importer::JSON methods are not idempotent: JSON
+streams can only be read once.
 
 =head1 SEE ALSO
 

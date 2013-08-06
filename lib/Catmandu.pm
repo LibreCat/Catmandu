@@ -168,7 +168,7 @@ sub _env {
 =head2 log
 
 Return the current logger (the L<Log::Any::Adapter> for category
-C<Catmandu::Env>).
+L<Catmandu::Env>).
 
 =cut
 
@@ -286,8 +286,8 @@ sub default_fixer { $_[0]->_env->default_fixer }
 
 =head2 fixer(NAME)
 
-Return an instance of Catmandu::Fix with name NAME (or 'default' when no name is given).
-The NAME is set in the config. E.g.
+Return an instance of L<Catmandu::Fix> with name NAME (or 'default' when no
+name is given).  The NAME is set in the config. E.g.
 
  fixer:
   default:
@@ -327,7 +327,7 @@ sub default_importer_package { $_[0]->_env->default_importer_package }
 
 =head2 importer(NAME)
 
-Return an instance of a Catmandu::Importer with name NAME
+Return an instance of a L<Catmandu::Importer> with name NAME
 (or the default when no name is given).
 The NAME is set in the configuration file. E.g.
 
@@ -373,9 +373,8 @@ sub default_exporter_package { $_[0]->_env->default_exporter_package }
 
 =head2 exporter([NAME])
 
-Return an instance of Catmandu::Exporter with name NAME
-(or the default when no name is given).
-The NAME is set in the configuration file (see 'importer').
+Return an instance of L<Catmandu::Exporter> with name NAME (or the default when
+no name is given).  The NAME is set in the configuration file (see 'importer').
 
 =cut
 

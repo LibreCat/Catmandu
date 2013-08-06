@@ -585,8 +585,8 @@ Execute all the fixes on every element in the ARRAY. Returns an ARRAY of fixes.
 
 =head2 fix(Catmandu::Iterator)
 
-Execute all the fixes on every item in an Catmandu::Iterator. Returns a (lazy) iterator
-on all the fixes.
+Execute all the fixes on every item in an L<Catmandu::Iterator>. Returns a
+(lazy) iterator on all the fixes.
 
 =head2 fix(sub {})
 
