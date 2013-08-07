@@ -14,12 +14,12 @@ BEGIN {
 is_deeply
     $pkg->new('name')->fix({name => "\tjoe  "}),
     {name => "joe"},
-    "trim whitespace";
+    "trim horizontal whitespace";
 
 is_deeply
-    $pkg->new('name', 'whitespace')->fix({name => "\t / joe  "}),
+    $pkg->new('name', 'whitespace')->fix({name => "\cK / joe  "}),
     {name => "/ joe"},
-    "trim whitespace";
+    "trim vertical whitespace";
 
 is_deeply
     $pkg->new('name', 'nonword')->fix({name => "/\tjoe  .  "}),
