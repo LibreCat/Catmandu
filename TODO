@@ -2,7 +2,6 @@ TODO
 
 * (better) error handling
 * logger
-* contributors guide
 * add catmandu-examples as tests
 * validation
 * remove Fixable, add before_add and before_get, takes fixes or sub
