@@ -328,8 +328,8 @@ sub as_utf8 {
 sub trim {
     my $str = $_[0];
     if ($str) {
-        $str =~ s/^\s+//s;
-        $str =~ s/\s+$//s;
+        $str =~ s/^[\h\v]+//s;
+        $str =~ s/[\h\v]+$//s;
     }
     $str;
 }
