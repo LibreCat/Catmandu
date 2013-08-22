@@ -84,10 +84,11 @@ Catmandu::Exporter::Template - a TT2 Template exporter
 
 =head2 new(xml => 0|1 , template_before => PATH, template => PATH , template_after => PATH)
 
-Catmandu::Exporter::Template can be used to export data objects using Template Toolkit. The only 
-required argument is 'template' which points to a file to render for each exported object. Set the
-'template_before' and 'template_before' to add output at the start and end of the export. Optionally
-provide an 'xml' indicator to include a XML header. 
+Catmandu::Exporter::Template can be used to export data objects using
+L<Template Toolkit|Template::Manual>. The only required argument is 'template'
+which points to a file to render for each exported object. Set the
+'template_before' and 'template_before' to add output at the start and end of
+the export.  Optionally provide an 'xml' indicator to include a XML header. 
 
 =head2 commit
 

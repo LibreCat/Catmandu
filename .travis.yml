@@ -1,0 +1,17 @@
+language: perl
+perl:
+  - "5.19"
+  - "5.18"
+  - "5.16"
+  - "5.14"
+  - "5.12"
+  - "5.10"
+install: 
+  - cpanm --quiet --notest --force --skip-satisfied .
+  - cpanm --quiet --notest --skip-satisfied Devel::Cover
+script:
+  - perl Build.PL && cover -test
+after_success:
+  - cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Coveralls
+  - cover -report coveralls
+env: RELEASE_TESTING=1 AUTOMATED_TESTING=1

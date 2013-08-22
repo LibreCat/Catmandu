@@ -84,8 +84,9 @@ Strings in CSV are quoted by 'quote_char' and fields are separated by 'sep_char'
 
 =head2 ...
 
-Every Catmandu::Importer is a Catmandu::Iterable all its methods are inherited. The
-Catmandu::Importer::CSV methods are not idempotent: CSV streams can only be read once.
+Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
+inherited. The Catmandu::Importer::CSV methods are not idempotent: CSV streams
+can only be read once.
 
 =head1 SEE ALSO
 
