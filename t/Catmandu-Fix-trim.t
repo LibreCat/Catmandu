@@ -27,7 +27,7 @@ is_deeply
     "trim nonword characters";
 
 is_deeply
-    $pkg->new('name', 'whitespace')->fix({id => " 0423985325   "}),
+    $pkg->new('id', 'whitespace')->fix({id => " 0423985325   "}),
     {id => "0423985325"},
     "trim digit string";
 
