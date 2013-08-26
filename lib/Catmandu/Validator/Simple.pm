@@ -9,7 +9,7 @@ has validation_handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
-        die "validation_hanlder should be a CODE reference" unless ref $_[0] eq 'CODE',
+        die "validation_handler should be a CODE reference" unless ref $_[0] eq 'CODE',
     },
 );
 
