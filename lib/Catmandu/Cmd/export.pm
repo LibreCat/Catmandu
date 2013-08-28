@@ -38,7 +38,11 @@ sub command {
             $o = $into_opts;
         } elsif ($arg =~ s/^-+//) {
             $arg =~ s/-/_/g;
-            $o->{$arg} = $args->[++$i];
+            if ($arg eq 'fix') {
+                push @{$o->{$arg} ||= []}, $args->[++$i];
+            } else {
+                $o->{$arg} = $args->[++$i];
+            }
         } else {
             push @$a, $arg;
         }
