@@ -9,7 +9,7 @@ has validation_handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
-        die "validation_handler should be a CODE reference" unless ref $_[0] eq 'CODE',
+        Catmandu::BadArg->throw( "validation_handler should be a CODE reference") unless ref $_[0] eq 'CODE',
     },
 );
 
@@ -18,16 +18,7 @@ sub validate_hash  {
     my ($self, $data) = @_;
 
     my $error_messages = &{$self->validation_handler}($data);
-    $error_messages = [$error_messages]
-        if $error_messages && ref $error_messages ne 'ARRAY';
-    return (
-        $error_messages
-                     ?  [map {
-                            ref $_ ? $_ : { message => $_}}
-                            @$error_messages
-                        ]
-                     :  undef
-    );
+    return $error_messages;
 }
 
 
