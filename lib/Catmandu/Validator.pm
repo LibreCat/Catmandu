@@ -28,7 +28,6 @@ has ['count_valid', 'count_invalid'] => (
     default => sub {0},
 );
 
-
 sub validate {
     my ($self, $data, $options) = @_;
     
@@ -80,17 +79,6 @@ sub validate_many {
     Catmandu::BadArg->throw('Cannot validate data of this type'); 
 }
 
-
-#returns error messages as an arrayref
-sub error_messages {
-    my $self = shift;
-    my $errors = $self->errors
-        or return;
-    [map { $_->{messages} } @{ $errors }];
-}
-
-
-
 sub _process_record {
     my $self = shift;
     my ($data)  = @_;
@@ -115,7 +103,7 @@ sub _process_record {
     }
     
     if ( $self->after_handler ) {
-        return &{$self->after_handler}($data, $errors);
+        return &{$self->after_handler}($data,$errors);
     }
 
     return if $errors;
@@ -223,12 +211,6 @@ errors()
 
 Returns arrayref of errors from the record that was last validated if that record failed validation
 or undef if there were no errors.
-
-error_messages()
-
-Returns arrayref of error messages from the record that was last validated if that record failed validation
-or undef if there were no errors. Note that these are also also accessible from the error hashrefs returned
-from the error method {message}.
 
 count_valid()
 
