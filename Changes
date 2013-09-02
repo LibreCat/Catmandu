@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.7     2013-09-02
+  - JSON Exporter array option
+
 0.6     2013-09-02
   - Util::trim also removes vertical whitespace
   - updated introduction, developers guide
