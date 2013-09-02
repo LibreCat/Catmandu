@@ -1,5 +1,13 @@
 Revision history for Catmandu
 
+0.6     2013-09-02
+  - Util::trim also removes vertical whitespace
+  - updated introduction, developers guide
+  - more tests
+  - sum fix
+  - travis
+  - pod links
+
 0.5004  2013-07-01
   - lookup, lookup_in_store fixes handle -delete option with wildcard correctly
 
