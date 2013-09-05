@@ -84,7 +84,7 @@ L<http://github.com/LibreCat/Catmandu/issues>.
 =head2 Reporting Bugs
 
 We prefer to have all our bug reports on GitHub, in the issues section:
-L<http://github.com/PerlDancer/Catmandu/issues>.
+L<http://github.com/LibreCat/Catmandu/issues>.
 
 Please make sure the bug you're reporting does not yet exist.
 
@@ -93,11 +93,11 @@ Please make sure the bug you're reporting does not yet exist.
 =head2 Set up a development environment
 
 If you want to submit a patch for Catmandu, you need git and very likely also 
-L<Dist::Zilla>. We also recommend perlbrew (see below) to test and develop Catmandu on a recent version of perl. We also
+L<Module::Build>. We also recommend perlbrew (see below) to test and develop Catmandu on a recent version of perl. We also
 suggest L<App::cpanminus>) to quickly and comfortably install perl modules under perlbrew.
 
 In the following sections we provide tips for the installation of some of these 
-tools together with Dancer. Please also see the documentation that comes with 
+tools together with Catmandu. Please also see the documentation that comes with 
 these tools for more info.
 
 =head3 Perlbrew tips (Optional)
@@ -151,7 +151,7 @@ Install Module::Build
 
 =head2 Get Catmandu sources
 
-Get the Dancer sources from github (for a more complete git workflow see 
+Get the Catmandu sources from github (for a more complete git workflow see 
 below):
 
 Clone your fork to have a local copy using the following command:
@@ -185,7 +185,7 @@ Here is the workflow for submitting a patch:
 
 =item *
 
-Fork the repository L<http://github.com/PerlDancer/Catmandu> (click "Fork")
+Fork the repository L<http://github.com/LibreCat/Catmandu> (click "Fork")
 
 =item *
 
@@ -284,7 +284,7 @@ Official developers have write access to this repository, contributors are
 invited to fork it if they want to submit patches, as explained in the
 I<Patch submission> section.
 
-=head1 Disclaimer
+=head1 Acknowledgement
 
 This guide is heavily based on L<Dancer2::Development>.
 
