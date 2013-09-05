@@ -50,12 +50,6 @@ If you find a typo or an error in the documentation please do let us know -
 ideally by submitting a patch (pull request) with your fix or suggestion 
 (see "Patch Submission").
 
-=head2 Contribute to CPAN Testers
-
-If you have access to perl on rare operating systems, please
-consider contributing tests. See
-L<http://wiki.cpantesters.org/wiki/TestDuringInstall> for more information.
-
 =head2 Code
 
 You can write extensions (plugins) for Catmandu extending core functionality or
@@ -180,10 +174,10 @@ applying them much, much easier. This gives your contribution a much better
 chance of being integrated into Catmandu quickly!
 
 To help us achieve high-quality, stable releases, git-flow workflow is used to
-handle pull-requests, that means contributors must work on their C<devel> branch
+handle pull-requests, that means contributors must work on their C<dev> branch
 rather than on their C<master>.  (Master should be touched only by the core dev
 team when preparing a release to CPAN; all ongoing development happens in
-branches which are merged to the C<devel> branch.)
+branches which are merged to the C<dev> branch.)
 
 Here is the workflow for submitting a patch:
 
@@ -197,19 +191,19 @@ Fork the repository L<http://github.com/PerlDancer/Catmandu> (click "Fork")
 
 Clone your fork to have a local copy using the following command:
 
-    $ git clone git://github.com/myname/Catmandu.git
+    $ git clone git://github.com/$myname/Catmandu.git
 
 =item *
 
-As a contributor, you should B<always> work on the C<devel> branch of
+As a contributor, you should B<always> work on the C<dev> branch of
 your clone (C<master> is used only for building releases).
 
     $ git remote add upstream https://github.com/LibreCat/Catmandu.git
     $ git fetch upstream
-    $ git checkout -b devel upstream/devel
+    $ git checkout -b dev upstream/dev
 
-This will create a local branch in your clone named C<devel> and that
-will track the official C<devel> branch. That way, if you have more or
+This will create a local branch in your clone named C<dev> and that
+will track the official C<dev> branch. That way, if you have more or
 less commits than the upstream repo, you'll be immediately notified by git.
 
 =item *
@@ -220,7 +214,7 @@ on your clone without worrying about different commits mixing together.
 
 To do that, first create a local branch to build your pull request:
 
-    # you should be in devel here
+    # you should be in dev branch here
     git checkout -b pr/$name
 
 Now you have created a local branch named I<pr/$name> where I<$name> is the
@@ -247,23 +241,23 @@ mailing list (see below), in order to make sure the team is aware of it.
 =item *
 
 When the core team reviews your pull request, it will either accept (and
-then merge into I<devel>) or refuse your request.
+then merge into I<dev>) or refuse your request.
 
 If it's refused, try to understand the reasons explained by the team for
 the denial. Most of the time, communicating with the core team is enough to
 understand what the mistake was. Above all, please don't be offended.
 
-If your pull-request is merged into I<devel>, then all you have to do is to
+If your pull-request is merged into I<dev>, then all you have to do is to
 remove your local and remote I<pr/$name> branch:
 
-    git checkout devel
+    git checkout dev
     git branch -D pr/$name
     git push origin :pr/$name
 
-And then, of course, you need to sync your local devel branch with the upstream:
+And then, of course, you need to sync your local dev branch with the upstream:
 
-    git pull upstream devel
-    git push origin devel
+    git pull upstream dev
+    git push origin dev
 
 You're now ready to start working on a new pull request!
 
