@@ -281,7 +281,7 @@ librecat-dev@mail.librecat.org
 =head2 Repositories
 
 The official repository is hosted on GitHub at the following location:
-http://github.com:LibreCat/Catmandu>
+http://github.com:LibreCat/Catmandu
 
 Official developers have write access to this repository, contributors are
 invited to fork it if they want to submit patches, as explained in the
