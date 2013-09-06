@@ -38,8 +38,11 @@ Subscribing to the mailing list and providing assistance to new users is incredi
 
 =item *
 
-Mailing list: L<librecat-dev@listservice.lub.lu.se> to
-subscribe or view archives
+Mailing list: librecat-dev@mail.librecat.org
+
+=item *
+
+Subscribe or view archives here: L<http://mail.librecat.org/mailman/listinfo/librecat-dev>
 
 =back
 
@@ -142,7 +145,7 @@ Install cpanm on your brewed version of perl.
   perlbrew install-cpanm
 
 
-=head2 Install various dependencies (required)
+=head2 Install dependencies (required)
 
 Install Module::Build
 
@@ -273,12 +276,12 @@ L<http://librecat.org/>
 =head2 Mailing Lists
 
 A mailing list is available here:
-L<librecat-dev@listservice.lub.lu.se>
+librecat-dev@mail.librecat.org
 
 =head2 Repositories
 
 The official repository is hosted on GitHub at the following location:
-L<git@github.com:LibreCat/Catmandu>
+http://github.com:LibreCat/Catmandu>
 
 Official developers have write access to this repository, contributors are
 invited to fork it if they want to submit patches, as explained in the
