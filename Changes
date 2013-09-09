@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.7001  2013-09-09
+  - fix bug in data command with option values evaling to false
+
 0.7     2013-09-02
   - JSON Exporter array option
 
