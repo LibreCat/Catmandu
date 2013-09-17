@@ -36,7 +36,9 @@ sub load_fixes {
             eval "package Catmandu::Fix::Loader::Env;$fix;1" or Catmandu::BadArg->throw("can't load fix $fix: $@");
         }
     }
-    Catmandu::BadArg->throw("if without end") if @stack;
+    if (@stack) {
+        Catmandu::BadArg->throw("if without end");
+    }
     [@fixes];
 }
 
@@ -46,9 +48,20 @@ sub _add_fix {
     if ($fix eq 'end') {
         $fix = pop @stack || Catmandu::BadArg->throw("end without if");
         if (@stack) {
-            push @{$stack[-1]->fixes}, $fix;
+            $stack[-1]->add_fix($fix);
         } else {
             push @fixes, $fix;
+        }
+    }
+    elsif ($fix eq 'otherwise') {
+        if (@stack) {
+            my $cond = $stack[-1];
+            if (!$cond->does('Catmandu::Fix::Condition') || $cond->in_otherwise_block) {
+                Catmandu::BadArg->throw("otherwise without if");
+            }
+            $cond->in_otherwise_block(1);
+        } else {
+            Catmandu::BadArg->throw("otherwise without if");
         }
     }
     elsif ($fix =~ s/^if_//) {
@@ -57,13 +70,13 @@ sub _add_fix {
     }
     elsif ($fix =~ s/^unless_//) {
         $fix = require_package($fix, 'Catmandu::Fix::Condition')->new(@args);
-        $fix->invert(1);
+        $fix->in_otherwise_block(1);
         push @stack, $fix;
     }
     elsif ($fix =~ /^[a-z]/) {
         $fix = require_package($fix, 'Catmandu::Fix')->new(@args);
         if (@stack) {
-            push @{$stack[-1]->fixes}, $fix;
+            $stack[-1]->add_fix($fix);
         } else {
             push @fixes, $fix;
         }

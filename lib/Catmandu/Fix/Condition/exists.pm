@@ -13,28 +13,32 @@ around BUILDARGS => sub {
 };
 
 sub emit {
-    my ($self, $fixer) = @_;
+    my ($self, $fixer, $label) = @_;
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
     my $str_key = $fixer->emit_string($key);
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
+    my $perl = $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var  = shift;
-        my $cond = $self->invert ? "unless (" : "if (";
-        my $perl = "";
+        my $perl = "if (";
         if ($key =~ /^\d+$/) {
-            $cond .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
+            $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
         } else {
-            $cond .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
+            $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
         }
-        $cond .= ") {";
-        $perl .= $cond;
+        $perl .= ") {";
         for my $fix (@{$self->fixes}) {
             $perl .= $fixer->emit_fix($fix);
         }
+        $perl .= "last $label;";
         $perl .= "}";
         $perl;
     });
+
+    for my $fix (@{$self->otherwise_fixes}) {
+        $perl .= $fixer->emit_fix($fix);
+    }
+    $perl;
 }
 
 =head1 NAME

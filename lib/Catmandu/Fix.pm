@@ -120,19 +120,27 @@ sub emit_fix {
     my ($self, $fix) = @_;
 
     if ($fix->can('emit')) {
-        my $n = $self->_num_labels;
-        $self->_num_labels($n + 1);
-        my $label = "__FIX__${n}";
-        my $perl = "${label}: {";
-        $perl .= $fix->emit($self, $label);
-        $perl .= "};";
-        $perl;
+        $self->emit_block(sub {
+            my ($label) = @_;
+            $fix->emit($self, $label);
+        });
     } else {
         my $var = $self->var;
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
         "${var} = ${ref}->fix(${var});";
     }
+}
+
+sub emit_block {
+    my ($self, $cb) = @_;
+    my $n = $self->_num_labels;
+    $self->_num_labels($n + 1);
+    my $label = "__FIX__${n}";
+    my $perl = "${label}: {";
+    $perl .= $cb->($label);
+    $perl .= "};";
+    $perl;
 }
 
 sub emit_value {
