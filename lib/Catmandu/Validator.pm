@@ -12,12 +12,18 @@ has 'errors' => (
       init_arg => undef,
 );
 
-has 'after_handler' => (
+has 'after_callback' => (
     is => 'rw',
     clearer => 1,
 );
 
-has 'error_info_field' => (
+has 'error_callback' => (
+    is => 'rw',
+    clearer => 1,
+);
+
+
+has 'error_field' => (
     is => 'rw',
     clearer => 1,
 );
@@ -27,6 +33,12 @@ has ['count_valid', 'count_invalid'] => (
     init_arg => undef,
     default => sub {0},
 );
+
+
+sub is_valid {
+    shift->validate(@_) ? 1 : 0;
+}
+
 
 sub validate {
     my ($self, $data, $options) = @_;
@@ -55,7 +67,7 @@ sub validate_many {
 
     # Update options if passed
     
-    for ( qw(after_handler error_info_field) ) {
+    for ( qw(after_callback error_callback error_field) ) {
         $self->$_( $options->{$_} ) if exists $options->{$_}
     }
 
@@ -83,10 +95,10 @@ sub _process_record {
     my $self = shift;
     my ($data)  = @_;
 
-    my $error_info_field = 
-        ($self->error_info_field||0) eq '1'
+    my $error_field = 
+        ($self->error_field||0) eq '1'
         ? '_validation_errors'
-        : $self->error_info_field;
+        : $self->error_field;
  
     $self->_clear_errors;
     my $errors =  $self->validate_hash($data);
@@ -97,13 +109,17 @@ sub _process_record {
     } else {
         $self->_set_count_valid(1+$self->count_valid);
     }
-                
-    if ( $errors && $error_info_field ) {
-        $data->{$error_info_field} = $errors;
+
+    if ( $errors && $error_field ) {
+        $data->{$error_field} = $errors;
     }
     
-    if ( $self->after_handler ) {
-        return &{$self->after_handler}($data,$errors);
+    if ( $self->after_callback ) {
+        return &{$self->after_callback}($data,$errors);
+    }
+    
+    if ( $errors && $self->error_callback ) {
+        &{$self->error_callback}($data,$errors);
     }
 
     return if $errors;
@@ -151,7 +167,7 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
     #together with iterators:
     
     $validator->validate_many($iterator, {
-        after_handler => sub {
+        after_callback => sub {
             my ($record, $errors) = @_;
             if ($errors) {
                 add_to_failure_report($rec, $errors);
@@ -177,14 +193,14 @@ new()
 
 Create a new Catmandu::Validator.
 
-new(after_handler => \&callback)
+new(after_callback => \&callback)
 
-Used when validating multiple records after_handler validating each record.
+Used when validating multiple records after_callback validating each record.
 Reference to callback function that will takes $hashref to each data record, and  $arrayref to list of validation errors
 for the record as arguments.
 
 
-new(error_info_field => $field_name)
+new(error_field => $field_name)
 
 If this parameter is set, then during validaiton each record that
 fails validation will get an extra field added containing an
@@ -205,7 +221,7 @@ validate_many( \@array,   \%options )
 
 Validates multiple records in an iterator or an array. Returns validated records in the same type of
 container. The default behaviour is to return the records that passed validation unchanged and omit the invalid records.
-This behaviour can be changed by setting the after_handler callback or the error_info field in the options or in the constructor.
+This behaviour can be changed by setting the after_callback callback or the error_info field in the options or in the constructor.
 
 errors()
 
