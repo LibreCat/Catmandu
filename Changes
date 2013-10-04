@@ -1,5 +1,22 @@
 Revision history for Catmandu
 
+0.7002  2013-09-12
+  - sort keys extracted from a hash in Exporter::CSV and Importer::CSV
+
+0.7001  2013-09-09
+  - fix bug in data command with option values evaling to false
+
+0.7     2013-09-02
+  - JSON Exporter array option
+
+0.6     2013-09-02
+  - Util::trim also removes vertical whitespace
+  - updated introduction, developers guide
+  - more tests
+  - sum fix
+  - travis
+  - pod links
+
 0.5004  2013-07-01
   - lookup, lookup_in_store fixes handle -delete option with wildcard correctly
 

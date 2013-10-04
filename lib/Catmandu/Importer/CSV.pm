@@ -19,7 +19,7 @@ has fields => (
     coerce => sub {
         my $fields = $_[0];
         if (ref $fields eq 'ARRAY') { return $fields }
-        if (ref $fields eq 'HASH')  { return [keys %$fields] }
+        if (ref $fields eq 'HASH')  { return [sort keys %$fields] }
         return [split ',', $fields];
     },
 );

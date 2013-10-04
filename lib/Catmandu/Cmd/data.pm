@@ -33,7 +33,7 @@ sub command {
     for (my $i = 0; $i < @$args; $i++) {
         my $arg = $args->[$i];
         if (my ($for, $key) = $arg =~ /^--(from|into)-([\w\-]+)$/) {
-            if (my $val = $args->[++$i]) {
+            if (defined(my $val = $args->[++$i])) {
                 $key =~ s/-/_/g;
                 ($for eq 'from' ? $from_opts : $into_opts)->{$key} = $val;
             }

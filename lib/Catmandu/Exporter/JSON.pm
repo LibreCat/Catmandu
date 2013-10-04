@@ -8,16 +8,41 @@ use Moo;
 with 'Catmandu::Exporter';
 
 has pretty => (is => 'ro', default => sub { 0 });
+has array  => (is => 'ro', default => sub { 0 });
 has json   => (is => 'ro', lazy => 1, builder => '_build_json');
 
 sub _build_json {
-     JSON->new->utf8(0)->pretty($_[0]->pretty);
+    my ($self) = @_;
+    JSON->new->utf8(0)->pretty($self->pretty);
 }
 
 sub add {
     my ($self, $data) = @_;
     my $fh = $self->fh;
-    say $fh $self->json->encode($data);
+    my $json = $self->json->encode($data);
+    if ($self->pretty) {
+        chomp $json;
+    }
+    if ($self->array) {
+        if ($self->count) {
+            print $fh ",";
+            print $fh "\n" if $self->pretty;
+        } else {
+            print $fh "[";
+        }
+        print $fh $json;
+    } else {
+        print $fh $json;
+        print $fh "\n";
+    }
+}
+
+sub commit {
+    my ($self, $data) = @_;
+    if ($self->array) {
+        my $fh = $self->fh;
+        print $fh "]\n";
+    }
 }
 
 =head1 NAME
@@ -40,7 +65,7 @@ Catmandu::Exporter::JSON - a JSON exporter
 
 =head1 METHODS
 
-=head2 new(file => PATH, fh => HANDLE, fix => STRING|ARRAY, pretty => 1)
+=head2 new(file => PATH, fh => HANDLE, fix => STRING|ARRAY, pretty => 0|1, array => 0|1)
 
 Create a new JSON exporter optionally providing a file path, a file handle, a fix file or array and a pretty printing option.
 
