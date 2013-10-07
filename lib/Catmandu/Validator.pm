@@ -6,9 +6,9 @@ use Moo::Role;
 
 requires 'validate_hash';
 
-has 'errors' => (
+has 'last_errors' => (
       is     => 'rwp',
-      clearer => '_clear_errors',
+      clearer => '_clear_last_errors',
       init_arg => undef,
 );
 
@@ -43,13 +43,13 @@ sub is_valid {
 sub validate {
     my ($self, $data, $options) = @_;
     
-    $self->_clear_errors;
+    $self->_clear_last_errors;
     $self->_set_count_valid(0);
     $self->_set_count_invalid(0);
 
     my $errors = $self->validate_hash($data, $options);
     if ($errors) {
-        $self->_set_errors($errors);
+        $self->_set_last_errors($errors);
         $self->_set_count_invalid(1);
     } else {
         $self->_set_count_valid(1);
@@ -100,9 +100,9 @@ sub _process_record {
         ? '_validation_errors'
         : $self->error_field;
  
-    $self->_clear_errors;
+    $self->_clear_last_errors;
     my $errors =  $self->validate_hash($data);
-    $self->_set_errors($errors);
+    $self->_set_last_errors($errors);
     
     if ($errors) {
         $self->_set_count_invalid(1+$self->count_invalid);
@@ -148,21 +148,19 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
     if ( $validator->validate($hashref) ) {
         save_record_in_database($hashref);
     } else {
-        reject_form($validator->error_messages);
+        reject_form($validator->last_errors);
     }
     
         
     my $new_options = {
-        error_handler => sub {
+        error_callback => sub {
             my ($data, $errors) = @_;
-            if ($errors) {
-                print "Validation Errors for record $data->{_id}:\n";
-                print "Error message: $_->{message}\n" for @{$errors};
-            }
+            print "Validation Errors for record $data->{_id}:\n";
+            print "Error message: $_->{message}\n" for @{$errors};
         }
     };
     
-    my $validated_arrayref = $validator->validate_many($arrayref, $new_options);    
+    my $validated_arrayref = $validator->validate_many($arrayref, $new_options);
 
     #together with iterators:
     
