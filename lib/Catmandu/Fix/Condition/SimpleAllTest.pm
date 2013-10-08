@@ -13,9 +13,10 @@ sub emit {
     my ($self, $fixer, $label) = @_;
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
-    my $fixes = $self->fixes;
-    my $otherwise_fixes = $self->otherwise_fixes;
 
+    my $fixes = $self->fixes;
+
+    my $otherwise_fixes = $self->otherwise_fixes;
     my $otherwise_label;
     my $otherwise_block = $fixer->emit_block(sub {
         $otherwise_label = shift;
@@ -46,14 +47,12 @@ sub emit {
         });
     });
 
-    if (@$fixes) {
-        $perl .= "if (${has_match_var}) {";
-        for my $fix (@$fixes) {
-            $perl .= $fixer->emit_fix($fix);
-        }
-        $perl .= "last ${label};";
-        $perl .= "}";
+    $perl .= "if (${has_match_var}) {";
+    for my $fix (@$fixes) {
+        $perl .= $fixer->emit_fix($fix);
     }
+    $perl .= "last ${label};";
+    $perl .= "}";
 
     if (@$otherwise_fixes) {
         $perl .= $otherwise_block;

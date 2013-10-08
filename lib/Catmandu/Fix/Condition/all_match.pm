@@ -15,7 +15,7 @@ around BUILDARGS => sub {
 sub emit_test {
     my ($self, $var) = @_;
     my $pattern = $self->pattern;
-    "${var} =~ /${pattern}/";
+    "is_value(${var}) && ${var} =~ /${pattern}/";
 }
 
 =head1 NAME
