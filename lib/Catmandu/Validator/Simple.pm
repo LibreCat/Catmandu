@@ -9,7 +9,7 @@ has validation_handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
-        Catmandu::BadArg->throw( "validation_handler should be a CODE reference") unless ref $_[0] eq 'CODE',
+        Catmandu::BadArg->throw( "Validation_handler should be a CODE reference") unless ref $_[0] eq 'CODE',
     },
 );
 
@@ -18,6 +18,7 @@ sub validate_hash  {
     my ($self, $data) = @_;
 
     my $error_messages = &{$self->validation_handler}($data);
+    $error_messages = [$error_messages] unless !$error_messages || ref $error_messages eq 'ARRAY'; 
     return $error_messages;
 }
 
@@ -46,10 +47,14 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
 
     my $new_options = {
         error_handler => sub {
+            
+            
+             sub { Catmandu->log() }
+            
             my ($data, $errors) = @_;
             if ($errors) {
                 print "Validation Errors for record $data->{_id}:\n";
-                print "Error message: $_->{message}\n" for @{$errors};
+                print "Error message: $_\n" for @{$errors};
             }
         }
     };
@@ -79,10 +84,7 @@ validate(...)
 
 validate_many(...)
 
-errors(...)
-
-error_messages(...)
-
+last_errors(...)
 
 These are methods inherited from Catmandu::Validator.
 

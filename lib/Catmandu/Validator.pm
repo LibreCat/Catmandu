@@ -43,14 +43,20 @@ sub is_valid {
 sub validate {
     my ($self, $data, $options) = @_;
     
+    if (! is_hash_ref($data) ) {
+        Catmandu::BadArg->throw('Cannot validate data of this type');
+    }
+    
     $self->_clear_last_errors;
     $self->_set_count_valid(0);
     $self->_set_count_invalid(0);
 
     my $errors = $self->validate_hash($data, $options);
+
     if ($errors) {
         $self->_set_last_errors($errors);
         $self->_set_count_invalid(1);
+        return;
     } else {
         $self->_set_count_valid(1);
     }
@@ -111,7 +117,10 @@ sub _process_record {
     }
 
     if ( $errors && $error_field ) {
+#        warn "ho: $error_field, $data->{field}";
         $data->{$error_field} = $errors;
+    } else {
+#         warn "hi: $data->{field}";
     }
     
     if ( $self->after_callback ) {
@@ -120,9 +129,10 @@ sub _process_record {
     
     if ( $errors && $self->error_callback ) {
         &{$self->error_callback}($data,$errors);
+        return;
     }
-
-    return if $errors;
+    
+    return if $errors && !$error_field;
   
     $data;
 } 
