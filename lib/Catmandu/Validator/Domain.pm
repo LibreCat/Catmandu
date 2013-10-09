@@ -9,7 +9,7 @@ with  'Catmandu::Validator';
 
 has 'domain' => (
     required => 1,
-    is   => 'rw',
+    is       => 'rw',
 );
 
 
@@ -35,8 +35,8 @@ sub validate_hash {
 
 sub select_domain {
     my ($self, $data) = @_;
-    
-    return $self->domain unless defined $self->which_domain;    
+
+    return $self->domain unless defined $self->which_domain;
     return  $self->domain->{ &{$self->which_domain}($data) };
 } 
 
