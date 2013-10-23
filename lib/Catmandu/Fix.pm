@@ -11,6 +11,7 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Loader;
+use Data::Dumper ();
 use B ();
 
 with 'MooX::Log::Any';
@@ -74,14 +75,22 @@ sub capture {
 sub emit {
     my ($self) = @_;
     my $var = $self->var;
+    my $err = $self->generate_var;
     my $captures = $self->_captures;
     my $perl = "";
 
     $perl .= "sub {";
     $perl .= $self->emit_declare_vars($var, '$_[0]');
+    $perl .= "eval {";
     for my $fix (@{$self->fixes}) {
         $perl .= $self->emit_fix($fix);
     }
+    $perl .= "1;";
+    $perl .= "} or do {";
+    $perl .= $self->emit_declare_vars($err, '$@');
+    # TODO throw Catmandu::Error
+    $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
+    $perl .= "};";
     $perl .= "return $var;";
     $perl .= "};";
 
