@@ -7,8 +7,8 @@ use Moo;
 
 with 'Catmandu::Exporter';
 
-my $TAGS = [qw(A1 A2 A3 AB AD AR AU AV BT CP CT CY ED EP ID IS J1 J2 JA JF JO KW
-               L1 L2 L3 L4 LA M1 M2 M3 N1 N2 PB PY RP SN SP T1 T2 T3 TI TY U1 U2
+my $TAGS = [qw(TY A1 A2 A3 AB AD AR AU AV BT CP CT CY ED EP ID IS J1 J2 JA JF JO
+               KW L1 L2 L3 L4 LA M1 M2 M3 N1 N2 PB PY RP SN SP T1 T2 T3 TI U1 U2
                U3 U4 U5 UR VL Y1 Y2)];
 
 my $SMALL_TAG = qr/A2|AU|ED|EP|KW|PB|SP/;

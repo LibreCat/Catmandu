@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.7003  2013-11-14
+  - TY RIS tag needs to come first for some exporters
+
 0.7002  2013-09-12
   - sort keys extracted from a hash in Exporter::CSV and Importer::CSV
 
