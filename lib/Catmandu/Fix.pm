@@ -534,16 +534,16 @@ Catmandu::Fix - a Catmandu class used for data crunching
 
     my $fixer = Catmandu::Fix->new(fixes => ['upcase("job")','remove_field("test")']);
 
-    or 
+    or
 
     my $fixer = Catmandu::Fix->new(fixes => ['fix_file.txt']);
 
     my $arr  = $fixer->fix([ ... ]);
     my $hash = $fixer->fix({ ... });
-  
+
     my $it = Catmandu::Importer::YAML(file => '...');
     $fixer->fix($it)->each(sub {
-	...
+        ...
     });
 
 =head1 DESCRIPTION
@@ -612,10 +612,6 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 =head2 log
 
 Return the current logger.
-
-=head1 SEE ALSO
-
-L<Catmandu::Fix::add_field>
 
 =cut
 
