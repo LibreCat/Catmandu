@@ -5,7 +5,7 @@ use parent qw(App::Cmd::Command);
 sub opt_spec {
     my ($class, $cli) = @_;
     (
-        ['help|h|?', "this usage screen"],
+        ['help|h|?', "print this usage screen"],
         $cli->global_opt_spec,
         $class->command_opt_spec($cli),
     );
@@ -14,6 +14,10 @@ sub opt_spec {
 sub execute {
     my ($self, $opts, $args) = @_;
 
+    if ($opts->{version}) {
+        print $Catmandu::VERSION;
+        exit;
+    }
     if ($opts->{help}) {
         print $self->usage->text;
         exit;

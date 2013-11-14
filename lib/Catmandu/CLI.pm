@@ -4,6 +4,10 @@ use Catmandu::Sane;
 use App::Cmd::Setup -app;
 use Catmandu;
 
+sub VERSION {
+    $Catmandu::VERSION;
+}
+
 sub plugin_search_path { 'Catmandu::Cmd' }
 
 sub global_opt_spec {

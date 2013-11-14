@@ -1,9 +1,10 @@
 Revision history for Catmandu
 
 0.8     2013-11-14
-  - otherwise with Fix::Condition
-  - Fix::Condition bugfixes
+  - Fix::Condition now supports otherwise clause
+  - Fix, Fix::Condition bugfixes
   - TY RIS tag needs to come first for some exporters
+  - fix version command
 
 0.7002  2013-09-12
   - sort keys extracted from a hash in Exporter::CSV and Importer::CSV
