@@ -28,7 +28,7 @@ sub emit {
         });
     });
 
-    for my $fix (@{$self->otherwise_fixes}) {
+    for my $fix (@{$self->else_fixes}) {
         $perl .= $fixer->emit_fix($fix);
     }
 

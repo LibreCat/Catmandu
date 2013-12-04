@@ -10,7 +10,7 @@ sub _eval_emit {
 }
 
 use Moo;
-use Catmandu::Fix::Loader;
+use Catmandu::Fix::Parser;
 use Data::Dumper ();
 use B ();
 
@@ -27,8 +27,8 @@ has fixes       => (is => 'ro', required => 1, trigger => 1);
 sub _trigger_fixes {
     my ($self) = @_;
     my $fixes = $self->fixes;
-    my $loaded_fixes = Catmandu::Fix::Loader::load_fixes($fixes);
-    splice(@$fixes, 0, @$fixes, @$loaded_fixes);
+    my $parsed_fixes = Catmandu::Fix::Parser->new->parse($fixes);
+    splice(@$fixes, 0, @$fixes, @$parsed_fixes);
 }
 
 sub _build_fixer {
