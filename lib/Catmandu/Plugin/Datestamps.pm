@@ -12,6 +12,4 @@ before add => sub {
     $data->{date_updated} = $now;
 };
 
-no POSIX;
-
 1;

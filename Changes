@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.8002  2013-12-09
+  - fix pod
+
 0.8001  2013-11-19
   - add one step install to pod
 

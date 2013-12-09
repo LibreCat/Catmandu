@@ -37,11 +37,11 @@ To install all Catmandu components in one easy step:
 
 =head1 VERSION
 
-Version 0.8001
+Version 0.8002
 
 =cut
 
-our $VERSION = '0.8001';
+our $VERSION = '0.8002';
 
 =head1 SYNOPSIS
 
@@ -90,51 +90,6 @@ You can do so by including the config hash key in the file name.
 Config files are processed in alphabetical order. To keep things simple, values
 are not merged.  The contents of C<catmandu.store.yml> will overwrite
 C<< Catmandu->config->{store} >> if it already exists.
-
-=head1 EXPORTS
-
-=over
-
-=item config
-
-Same as C<< Catmandu->config >>.
-
-=item store
-
-Same as C<< Catmandu->store >>.
-
-=item importer
-
-Same as C<< Catmandu->importer >>.
-
-=item exporter
-
-Same as C<< Catmandu->exporter >>.
-
-=item export
-
-Same as C<< Catmandu->export >>.
-
-=item export_to_string
-
-Same as C<< Catmandu->export_to_string >>.
-
-=item -all/:all
-
-Import everything.
-
-=item -load/:load
-
-    use Catmandu -load;
-    use Catmandu -load => [];
-    # is the same as
-    Catmandu->load;
-
-    use Catmandu -load => ['/config/path'];
-    # is the same as
-    Catmandu->load('/config/path');
-
-=back
 
 =cut
 
@@ -440,6 +395,51 @@ sub export_to_string {
     $exporter->commit;
     $str;
 }
+
+=head1 EXPORTS
+
+=over
+
+=item config
+
+Same as C<< Catmandu->config >>.
+
+=item store
+
+Same as C<< Catmandu->store >>.
+
+=item importer
+
+Same as C<< Catmandu->importer >>.
+
+=item exporter
+
+Same as C<< Catmandu->exporter >>.
+
+=item export
+
+Same as C<< Catmandu->export >>.
+
+=item export_to_string
+
+Same as C<< Catmandu->export_to_string >>.
+
+=item -all/:all
+
+Import everything.
+
+=item -load/:load
+
+    use Catmandu -load;
+    use Catmandu -load => [];
+    # is the same as
+    Catmandu->load;
+
+    use Catmandu -load => ['/config/path'];
+    # is the same as
+    Catmandu->load('/config/path');
+
+=back
 
 =head1 SEE ALSO
 
