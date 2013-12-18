@@ -28,7 +28,7 @@ has bags => (
 
     sub bag {
         my $self = shift;
-        my $name = shift || $self->default_bag;
+        my $name = shift // $self->default_bag;
         $bag_instances{$self}{$name} ||= do {
             my $pkg = $self->bag_class;
             if (my $options = $self->bags->{$name}) {
@@ -36,9 +36,10 @@ has bags => (
                 if (my $plugins = delete $options->{plugins}) {
                     $pkg = $pkg->with_plugins($plugins);
                 }
-                return $pkg->new(%$options, store => $self, name => $name);
+                $pkg->new(%$options, store => $self, name => $name);
+            } else {
+                $pkg->new(store => $self, name => $name);
             }
-            $pkg->new(store => $self, name => $name);
         };
     }
 }

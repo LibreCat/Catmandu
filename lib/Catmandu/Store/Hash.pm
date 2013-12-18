@@ -8,6 +8,7 @@ with 'Catmandu::Store';
 
 package Catmandu::Store::Hash::Bag;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Hits;
 use Moo;
