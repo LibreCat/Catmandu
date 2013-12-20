@@ -14,7 +14,7 @@ before add => sub {
 
 =head1 NAME
 
-Catmandu::Plugin::Datestamps - Automatically add datestamps to your Catmandu::Store records
+Catmandu::Plugin::Datestamps - Automatically add datestamps to Catmandu::Store records
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ Catmandu::Plugin::Datestamps - Automatically add datestamps to your Catmandu::St
 				data => {
 				plugins => [qw(Datestamps)]
 			}
- 		})
+ 		});
 
  $store->bag->add({
 		'_id'  => '123',
@@ -67,7 +67,7 @@ records. If you add this plugin to your Catmandu::Store configuration then autom
 The plugin should be set for every bag defined in your Catmandu::Store. In the examples above we've
 set the plugin to the default bag 'data' that is created in every Catmandu::Store.
 
-In Catmandu::Store that don't have a dynamic schema (e.g. Solr, DBI) these new date fields should be
+In Catmandu::Store-s that don't have a dynamic schema (e.g. Solr, DBI) these new date fields should be
 predefined (e.g by changing the schema.xml or tables fields).
 
 =head1 SEE ALSO
