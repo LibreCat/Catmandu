@@ -66,4 +66,17 @@ sub page_size {
     goto &limit;
 }
 
+sub pages_in_spread {
+    my $self = shift;
+
+    if ( $self->current_page == 1 ) {
+        return [1..4];
+    } elsif ($self->current_page == $self->last_page) {
+        return [$self->last_page-3..$self->last_page];
+    } else {
+        return [$self->current_page-1..$self->current_page+2];
+    }
+
+}
+
 1;
