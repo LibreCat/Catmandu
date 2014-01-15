@@ -28,7 +28,7 @@ sub last_page {
     return $last_page;
 }
 
-sub current_page {
+sub page {
     my $self = shift;
 
     my $current = 1 + int ($self->start/$self->limit);
@@ -37,14 +37,14 @@ sub current_page {
 sub previous_page {
     my $self = shift;
 
-    ( $self->current_page > 1 ) ?  ( return $self->current_page - 1 )
+    ( $self->page > 1 ) ?  ( return $self->page - 1 )
         : ( return undef );
 }
 
 sub next_page {
     my $self = shift;
 
-    ( $self->current_page < $self->last_page ) ?  ( return $self->current_page + 1 )
+    ( $self->page < $self->last_page ) ?  ( return $self->page + 1 )
         :  ( return undef );
 }
 
@@ -52,14 +52,14 @@ sub first_on_page {
     my $self = shift;
 
     ( $self->total == 0 ) ? ( return 0 )
-        : (return ( ( $self->current_page - 1 ) * $self->limit ) + 1 );
+        : (return ( ( $self->page - 1 ) * $self->limit ) + 1 );
 }
 
 sub last {
     my $self = shift;
 
-    ( $self->current_page == $self->last_page ) ? ( return $self->total_entries )
-        : ( return ( $self->current_page * $self->limit ) );
+    ( $self->page == $self->last_page ) ? ( return $self->total_entries )
+        : ( return ( $self->page * $self->limit ) );
 }
 
 sub page_size {
@@ -69,14 +69,23 @@ sub page_size {
 sub pages_in_spread {
     my $self = shift;
 
-    if ( $self->current_page == 1 ) {
-        return [1..4];
-    } elsif ($self->current_page == $self->last_page) {
-        return [$self->last_page-3..$self->last_page];
+    my $spread;
+    if ( $self->page == 1 ) {
+        $spread = [1, 2, 3, 4, 0, $self->last_page-1, $self->last_page];
+        $spread->[4] = undef;
+    } elsif ($self->page == $self->last_page) {
+        $spread = [1, 2];
+        push @$spread, undef;
+        push @$spread, ($self->last_page-3..$self->last_page);
     } else {
-        return [$self->current_page-1..$self->current_page+2];
+        $spread = [1];
+        push @$spread, undef;
+        push @$spread, ($self->page-1..$self->page+2);
+        push @$spread, undef;
+        push @$spread, $self->last_page;
     }
 
+    return $spread;
 }
 
 1;

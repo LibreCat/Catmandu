@@ -56,10 +56,8 @@ my $pager2 = {
 };
 $pager2->{pages_in_spread}->[1] = undef;
 $pager2->{pages_in_spread}->[6] = undef;
-use Data::Dumper;
-print Dumper $h2->{pager};
-print Dumper $pager2;
-is_deeply ($h2->{pager}, $pager2, "pagination ok");
+
+is_deeply ($h2->{pager}, $pager2, "another pagination ok");
 
 done_testing 17;
 
