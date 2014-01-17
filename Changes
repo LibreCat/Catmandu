@@ -1,5 +1,11 @@
 Revision history for Catmandu
 
+0.8004  2013-12-18
+  - Exporter::CSV always_quote option
+
+0.8003  2013-12-18
+  - fix bug in Store::bags
+
 0.8002  2013-12-09
   - fix pod
 
