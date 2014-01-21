@@ -55,6 +55,13 @@ my $build = Module::Build->new(
         Catmandu-*
     )],
     create_makefile_pl => 'traditional',
+    meta_merge => {
+         resources => {
+              repository => 'https://github.com/LibreCat/Catmandu.git',
+              bugtracker => 'https://github.com/LibreCat/Catmandu/issues',
+              homepage => 'https://github.com/LibreCat/Catmandu',
+        },
+    },
 );
 
 $build->create_build_script;
