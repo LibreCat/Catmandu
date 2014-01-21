@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.8005  2013-12-208
+  - Catmandu::Plugin:: pod
+
 0.8004  2013-12-18
   - Exporter::CSV always_quote option
 
