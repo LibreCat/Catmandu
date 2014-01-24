@@ -13,8 +13,6 @@ BEGIN {
 }
 require_ok $pkg;
 
-use Carp::Always;
-
 # check -I / --lib_path
 if ($^O ne 'MSWin32') { # /dev/null required
     # FIXME: Catmandu dies if testing with output to STDOUT
