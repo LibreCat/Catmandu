@@ -61,8 +61,13 @@ Display the help screen.
 
 =item -L PATH
 
-Search upwards from this path for configuration files and lib directories.
-This option is repeatable.
+Search upwards from this path for configuration files. This option is repeatable.
+
+=item --lib-path PATH
+
+=item -I
+
+Try to load Catmandu modules from this library path. This option is repeatable.
 
 =back
 
