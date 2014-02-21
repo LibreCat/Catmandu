@@ -20,4 +20,22 @@ sub fix {
     $self->fixer->fix($data);
 }
 
+sub import {
+    my $target = caller;
+    my ($fix, %opts) = @_;
+
+    if (my $sym = $opts{as}) {
+        require Clone;
+        my $sub = sub {
+            my $data = shift;
+            if ($opts{clone}) {
+                $data = Clone::clone($data);
+            }
+            $fix->new(@_)->fix($data);
+        };
+        no strict 'refs';
+        *{"${target}::$sym"} = $sub;
+    }
+}
+
 1;
