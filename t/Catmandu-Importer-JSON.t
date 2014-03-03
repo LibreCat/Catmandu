@@ -28,5 +28,6 @@ isa_ok $importer, $pkg;
 
 is_deeply $importer->to_array, $data;
 
-done_testing 4;
+is($importer->count, 2, "Count ok");
 
+done_testing 5;
