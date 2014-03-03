@@ -25,9 +25,7 @@ EOF
 my $importer = $pkg->new(file => \$json);
 
 isa_ok $importer, $pkg;
-#is($importer->count, 2, "Count ok");
+
 is_deeply $importer->to_array, $data;
-
-
 
 done_testing 4;
