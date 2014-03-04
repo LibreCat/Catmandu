@@ -30,7 +30,10 @@ has fh => (
     default => sub { io($_[0]->file, mode => 'r', binmode => $_[0]->encoding) },
 );
 
-sub encoding { ':utf8' }
+has encoding => (
+    is       => 'ro',
+    default  => sub { ':utf8' }
+);
 
 =head1 NAME
 
@@ -60,7 +63,7 @@ generator the given fixes will be applied first.
 
 =head2 new(file => $file , encoding => $encoding )
 
-=head2 new(fh => $fh)
+=head2 new(fh => $fh , encoding => $encoding)
 
 =head2 count
 
