@@ -23,7 +23,6 @@ my $build = Module::Build->new(
         'Data::MessagePack' => '0.39',
         'Data::UUID' => '1.217',
         'Data::Util' => '0.59',
-        'DateTime' => '0.70',
         'IO::Handle::Util' => '0.01',
         'JSON' => '2.51',
         'Moo' => '1.000008',
