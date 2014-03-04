@@ -1,6 +1,15 @@
 Revision history for Catmandu
 
-0.8005  2013-12-208
+0.8006  2014-03-04
+  - expand_date fix
+  - CLI --lib-path option
+  - more tests
+  - remove dependency on Data::SpreadPagination
+  - Importer encoding is now an attribute
+  - fixes inheriting from Fix::Base can now export their functionality as a
+    function
+
+0.8005  2013-12-20
   - Catmandu::Plugin:: pod
 
 0.8004  2013-12-18
