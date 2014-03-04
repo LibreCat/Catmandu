@@ -20,7 +20,6 @@ my $build = Module::Build->new(
         'CGI::Expand' => '2.02',
         'Clone' => '0.31',
         'Data::Compare' => '1.22',
-        'Data::MessagePack' => '0.39',
         'Data::UUID' => '1.217',
         'Data::Util' => '0.59',
         'IO::Handle::Util' => '0.01',

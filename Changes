@@ -1,5 +1,11 @@
 Revision history for Catmandu
 
+0.8007  2014-03-04
+  - rewrite Catmandu::Serializer
+  - split off Catmandu::Serializer::storable
+  - split off Catmandu::Serializer::messagepack
+  - tests for Catmandu::Serializer
+
 0.8006  2014-03-04
   - expand_date fix
   - CLI --lib-path option
