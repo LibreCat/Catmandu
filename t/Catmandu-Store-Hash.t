@@ -28,5 +28,12 @@ isnt $bag->count, 0, "Count bag size";
 is_deeply $bag->first, {_id => '123', name=>'Patrick',age=>'39'}, "Data package ok.";
 is_deeply $bag->rest->first, {_id => '321', name=>'Nicolas',age=>'34'}, "Data package ok.";
 
-done_testing 21;
+$bag->delete('123');
+is_deeply $bag->first, {_id => '321', name=>'Nicolas',age=>'34'}, "Data package ok.";
+is $bag->count, 1, "Count bag size";
+$bag->delete_all;
+is $bag->count, 0, "Count bag size";
+isnt $bag->count, 1, "Count bag size";
+
+done_testing 25;
 
