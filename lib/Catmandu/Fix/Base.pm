@@ -1,7 +1,9 @@
 package Catmandu::Fix::Base;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Fix;
+use Clone ();
 use Moo::Role;
 
 with 'MooX::Log::Any';
@@ -25,7 +27,6 @@ sub import {
     my ($fix, %opts) = @_;
 
     if (my $sym = $opts{as}) {
-        require Clone;
         my $sub = sub {
             my $data = shift;
             if ($opts{clone}) {
