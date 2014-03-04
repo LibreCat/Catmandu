@@ -32,8 +32,12 @@ has fh => (
 
 has encoding => (
     is       => 'ro',
-    default  => sub { ':utf8' }
+    builder  => 'default_encoding',
 );
+
+sub default_encoding {
+    ':utf8';
+}
 
 =head1 NAME
 
