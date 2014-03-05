@@ -29,7 +29,6 @@ my $build = Module::Build->new(
         'namespace::clean' => '0.24',
         'Sub::Exporter' => '0.982',
         'Sub::Quote' => 0,
-        'Template' => '2.22',
         'Text::CSV' => '1.21',
         'Time::HiRes' => 0, # not always installed
         'Throwable' => '0.200004',
