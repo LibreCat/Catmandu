@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.8008  2014-03-05
+  - split off Catmandu::Exporter::Template
+
 0.8007  2014-03-04
   - rewrite Catmandu::Serializer
   - split off Catmandu::Serializer::storable
