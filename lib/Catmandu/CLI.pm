@@ -25,8 +25,8 @@ sub run {
 
     my ($global_opts, $argv) = $class->_process_args([@ARGV], $class->_global_option_processing_params);
 
-    my $load_path = $global_opts->{load_path};
-    my $lib_path = $global_opts->{lib_path};
+    my $load_path = $global_opts->{load_path} || [];
+    my $lib_path = $global_opts->{lib_path} || [];
 
     Catmandu->load(@$load_path);
 
