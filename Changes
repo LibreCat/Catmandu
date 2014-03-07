@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 0.8009  2014-03-07
+  - sort_field fix
   - fix undefined lib_path
 
 0.8008  2014-03-05
