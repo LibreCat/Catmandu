@@ -1,5 +1,10 @@
 Revision history for Catmandu
 
+0.8010  2014-03-11
+  - bump required version of YAML::Any
+  - use List::Util::sum instead of List::Util::sum0 (not present in older
+    versions)
+
 0.8009  2014-03-07
   - sort_field fix
   - fix undefined lib_path

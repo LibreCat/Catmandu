@@ -33,7 +33,7 @@ my $build = Module::Build->new(
         'Time::HiRes' => 0, # not always installed
         'Throwable' => '0.200004',
         'Try::Tiny::ByClass' => '0.01',
-        'YAML::Any' => '0.81',
+        'YAML::Any' => '0.90',
     },
     recommends => {
         'JSON::XS' => '2.3',
