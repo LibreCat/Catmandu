@@ -167,7 +167,8 @@ sub last {
 }
 
 sub page_size {
-    goto &limit;
+    my $self = shift,;
+    return $self->limit;
 }
 
 sub page_ranges {
