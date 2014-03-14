@@ -61,11 +61,11 @@ Catmandu::Fix::sort_field - sort the values of an array
 =head1 SYNOPSIS
 
    # e.g. tags => ["foo", "bar","bar"]
-   sort('tags'); # tags =>  ["bar","bar","foo"]
-   sort('tags',-uniq=>1); # tags =>  ["bar","foo"]
-   sort('tags',-uniq=>1,-reverse=>1); # tags =>  ["foo","bar"]
+   sort_field('tags'); # tags =>  ["bar","bar","foo"]
+   sort_field('tags',-uniq=>1); # tags =>  ["bar","foo"]
+   sort_field('tags',-uniq=>1,-reverse=>1); # tags =>  ["foo","bar"]
    # e.g. nums => [ 100, 1 , 10]
-   sort('nums',-numeric=>1); # nums => [ 1, 10, 100]
+   sort_field('nums',-numeric=>1); # nums => [ 1, 10, 100]
 
 =head1 SEE ALSO
 

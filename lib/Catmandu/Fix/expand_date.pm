@@ -50,8 +50,5 @@ Catmandu::Fix::expand_date - expand a date field into year, month and date
 The date field is expanded if it contains a year, optionally followed by
 numeric month and day, each separated by C<-> or C<:>.
 
-=head1 SEE ALSO
-
-For more elaborated date parsing see L<Date::Parse>.
 
 =cut
