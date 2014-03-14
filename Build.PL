@@ -13,6 +13,7 @@ my $build = Module::Build->new(
     build_requires => {
         'Test::Exception' => 0,
         'Test::More' => 0,
+        'Log::Any::Adapter' => 0,
     },
     requires => {
         'perl' => '5.10.1',

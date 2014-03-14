@@ -1,0 +1,20 @@
+---
+test: ok
+importer:
+   default:
+      package: YAML
+   mock:
+      package: Mock
+exporter:
+   default:
+      package: YAML
+   csv:
+      package: CSV
+store:
+   default:
+      package: Hash
+   hash:
+      package: Hash
+fixer:
+   default:
+      - nothing()
