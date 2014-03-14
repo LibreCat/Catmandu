@@ -12,21 +12,40 @@ BEGIN {
 }
 require_ok $pkg;
 
+sub test_import(@) { ##no critic
+    my $importer = Catmandu::Importer::JSON->new(%{$_[0]});
+    isa_ok $importer, 'Catmandu::Importer::JSON';
+    if ($_[1]) {
+        is_deeply $importer->to_array, $_[1];
+    } else {
+        dies_ok { $importer->to_array };
+    }
+}
+
 my $data = [
    {name=>'Patrick',age=>'39'},
-   {name=>'Nicolas',age=>'34'},
+   [3,2,1],
+   {foo=>JSON::true,bar=>JSON::false}, # TODO: convert to 0/1?
 ];
 
-my $json = <<EOF;
+my $json_lines = <<EOF;
 {"name":"Patrick","age":"39"}
-{"name":"Nicolas","age":"34"}
+[3,2,1]
+{"foo":true,"bar":false}
 EOF
 
-my $importer = $pkg->new(file => \$json);
+my $json_multilines = <<EOF;
+{"name":"Patrick","age":"39"} [3,2,1
+]
+{
+  "foo":true,
+  "bar":false
+}
+EOF
 
-isa_ok $importer, $pkg;
+test_import { file => \$json_lines }, $data;
+test_import { file => \$json_lines, lines => 1 }, $data;
+test_import { file => \$json_multilines }, $data;
+test_import { file => \$json_multilines, lines => 1 }, undef;
 
-is_deeply $importer->to_array, $data;
-
-done_testing 4;
-
+done_testing;

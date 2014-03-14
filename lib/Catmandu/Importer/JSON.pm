@@ -9,6 +9,7 @@ my $RE_OBJ = qr'^[^{]+';
 
 with 'Catmandu::Importer';
 
+has lines => (is => 'ro', default => sub{0});
 has json => (is => 'ro', lazy => 1, builder => '_build_json');
 
 sub _build_json {
@@ -17,11 +18,23 @@ sub _build_json {
 
 sub generator {
     my ($self) = @_;
-    sub {
+    $self->lines ? sub {
         state $json = $self->json;
         state $fh   = $self->fh;
         if (defined(my $line = <$fh>)) {
             return $json->decode($line);
+        }
+        return;
+    } : sub {
+        state $json = $self->json;
+        state $fh   = $self->fh;
+
+        my $item = $json->incr_parse;
+        return $item if $item;
+
+        while (defined(my $line = <$fh>)) {
+            my $item = $json->incr_parse($line);
+            return $item if $item;
         }
         return;
     };
@@ -37,12 +50,13 @@ Catmandu::Importer::JSON - Package that imports JSON data
 
     my $importer = Catmandu::Importer::JSON->new(file => "/foo/bar.json");
 
+    # read one or multiple concatenated JSON objects or arrays
     my $n = $importer->each(sub {
         my $hashref = $_[0];
         # ...
     });
 
-    The JSON input file needs to include one record per line:
+    With option 'lines' the JSON input needs to include one record per line:
 
     { "recordno": 1, "name": "Alpha" }
     { "recordno": 2, "name": "Beta" }
@@ -50,23 +64,20 @@ Catmandu::Importer::JSON - Package that imports JSON data
 
 =head1 METHODS
 
-=head2 new([file => $filename])
+=head2 new( [ file => $filename | fh => $handle ] [ lines => 0|1 ] )
 
-Create a new JSON importer for $filename. Use STDIN when no filename is given.
+Create a new JSON importer for $filename or for file handle $handle. Use STDIN
+by default. The option 'lines' can be enabled to enforce line-based parsing.
 
-=head2 count
+=head1 INHERITED METHODS
 
-=head2 each(&callback)
-
-=head2 ...
-
-Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
-inherited. The Catmandu::Importer::JSON methods are not idempotent: JSON
-streams can only be read once.
+All methods of L<Catmandu::Importer> and by this L<Catmandu::Iterable> and
+L<Catmandu::Fixable> are inherited. The Catmandu::Importer::JSON methods are
+not idempotent: JSON streams can only be read once.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>
+L<Catmandu::Iterable>, L<Catmandu::Fixable>, L<JSON>
 
 =cut
 
