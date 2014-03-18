@@ -12,13 +12,9 @@ BEGIN {
 } 
 
 is_deeply
-    $pkg->new('tags')->fix({tags => ["name", "Peter","age",12] }),
-    {tags => { name => 'Peter' , age => 12} },
-    "hashing the array";
-
-is_deeply
-    $pkg->new('tags',-invert=>1)->fix({tags => { name => 'Peter'} }),
-    {tags => [ 'name' , 'Peter' ] },
-    "hashing the array (invert)";
+    $pkg->new('tags')->fix({tags => ["name", "Peter", "age", 13]}),
+    {tags => {name => 'Peter', age => 13}},
+    "array to hash";
 
 done_testing 2;
+

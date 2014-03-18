@@ -1,4 +1,4 @@
-package Catmandu::Fix::hash;
+package Catmandu::Fix::array;
 
 use Catmandu::Sane;
 use Moo;
@@ -22,8 +22,8 @@ sub emit {
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
 
-            "if (is_array_ref(${var})) {" .
-                "${var} = {\@{${var}}};" .
+            "if (is_hash_ref(${var})) {" .
+                "${var} = [\%{${var}}];" .
             "}";
         });
     });
@@ -32,13 +32,13 @@ sub emit {
 
 =head1 NAME
 
-Catmandu::Fix::hash - creates a hash out of an array
+Catmandu::Fix::array - creates an array out of a hash
 
 =head1 SYNOPSIS
 
-   # tags => ['name', 'Peter', 'age', 12]
-   hash('tags');
    # tags => {name => 'Peter', age => 12}
+   array('tags');
+   # tags => ['name', 'Peter', 'age', 12]
 
 =head1 SEE ALSO
 
@@ -47,3 +47,4 @@ L<Catmandu::Fix>
 =cut
 
 1;
+

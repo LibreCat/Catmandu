@@ -37,7 +37,7 @@ is(Catmandu->default_load_path, '/tmp', 'got default_load_path');
 Catmandu->default_load_path($curr_path);
 is(Catmandu->default_load_path, $curr_path, 'got default_load_path 2');
 
-# Load 
+# Load
 Catmandu->load;
 is(Catmandu->config->{test}, 'ok', 'load and conf test');
 
