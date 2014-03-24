@@ -1,5 +1,8 @@
 Revision history for Catmandu
 
+0.8012  2014-03-24
+  - add missing List::MoreUtils dependency
+
 0.8011  2014-03-18
   - fix Paged bugs
   - array and hash fixes
