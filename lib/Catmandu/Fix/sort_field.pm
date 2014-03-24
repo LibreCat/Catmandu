@@ -29,25 +29,19 @@ sub emit {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
-            my $perl = "";
+            my $perl = "if (is_array_ref(${var})) {";
 
             if ($self->uniq) {
-                $perl .= "if (is_array_ref(${var})) {" .
-                    "${var} = [List::MoreUtils::uniq \@{${var}}];" .
-                "}";
+                $perl .= "${var} = [List::MoreUtils::uniq(\@{${var}})];";
             }
 
             if ($self->reverse) {
-                $perl .= "if (is_array_ref(${var})) {" .
-                    "${var} = [sort { \$b $comparer \$a } \@{${var}}];" .
-                "}";
-            }
-            else {
-                $perl .= "if (is_array_ref(${var})) {" .
-                    "${var} = [sort { \$a $comparer \$b } \@{${var}}];" .
-                "}";
+                $perl .= "${var} = [sort { \$b $comparer \$a } \@{${var}}];";
+            } else {
+                $perl .= "${var} = [sort { \$a $comparer \$b } \@{${var}}];";
             }
 
+            $perl .= "}";
             $perl;
         });
     });

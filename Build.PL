@@ -25,6 +25,7 @@ my $build = Module::Build->new(
         'Data::Util' => '0.59',
         'IO::Handle::Util' => '0.01',
         'JSON' => '2.51',
+        'List::MoreUtils' => '0.33',
         'Moo' => '1.000008',
         'MooX::Log::Any' => 0,
         'namespace::clean' => '0.24',
