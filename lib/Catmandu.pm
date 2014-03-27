@@ -37,11 +37,11 @@ To install all Catmandu components in one easy step:
 
 =head1 VERSION
 
-Version 0.8012
+Version 0.8013
 
 =cut
 
-our $VERSION = '0.8012';
+our $VERSION = '0.8013';
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.8013  2014-03-27
+  - Importer::JSON multiline switch
+  - Importer pod
+
 0.8012  2014-03-24
   - add missing List::MoreUtils dependency
 

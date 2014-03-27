@@ -69,17 +69,21 @@ Catmandu::Importer::JSON - Package that imports JSON data
         # ...
     });
 
-    The JSON input file needs to include one record per line:
+The defaults assume a newline delimited JSON file:
 
     { "recordno": 1, "name": "Alpha" }
     { "recordno": 2, "name": "Beta" }
     { "recordno": 3, "name": "Gamma" }
 
+Use the C<multiline> option to parse pretty-printed JSON or JSON arrays.
+
 =head1 METHODS
 
-=head2 new([file => $filename])
+=head2 new([file => $filename, multiline => 0|1])
 
-Create a new JSON importer for $filename. Use STDIN when no filename is given.
+Create a new JSON importer for C<$filename>. Uses STDIN when no filename is given.
+C<multiline> switches between line-delimited JSON and multiline JSON or arrays.
+the default is line-delimited JSON.
 
 =head2 count
 
