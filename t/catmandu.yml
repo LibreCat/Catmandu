@@ -15,7 +15,21 @@ store:
       package: Hash
    hash:
       package: Hash
+   test:
+      package: Hash
+      options:
+         init_data:
+            - _id: Sun
+              value: Sol
+            - _id: Mercury
+              value: Mercurius
+            - _id: Moon
+              value: Luna
+            - _id: Earth
+              value: Terra
 fixer:
    default:
       - nothing()
+
+
 

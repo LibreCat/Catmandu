@@ -5,6 +5,8 @@ use warnings;
 use Test::More;
 use Test::Exception;
 
+use Data::Dumper;
+
 my $pkg;
 BEGIN {
     $pkg = 'Catmandu::Fix::lookup_in_store';
@@ -13,4 +15,24 @@ BEGIN {
 
 require_ok $pkg;
 
-done_testing 2;
+is_deeply
+    $pkg->new('planet', 'test')->fix({planet => 'Earth'}),
+    {planet => { _id => 'Earth' , value => 'Terra' } };
+
+is_deeply
+    $pkg->new('planet', 'test')->fix({planet => 'Bartledan'}),
+    {planet => 'Bartledan'};
+
+is_deeply
+    $pkg->new('planet', 'test', '-delete', 1)->fix({planet => 'Bartledan'}),
+    {};
+
+is_deeply
+    $pkg->new('planets.*', 'test', '-delete', 1)->fix({planets => ['Bartledan', 'Earth']}),
+    {planets => [{ _id => 'Earth' , value => 'Terra' }]};
+
+is_deeply
+    $pkg->new('planet', 'test', '-default', 'Mars')->fix({planet => 'Bartledan'}),
+    {planet => 'Mars'};
+
+done_testing 7;
