@@ -20,20 +20,28 @@ such as MongoDB and full text indexes such as Solr to create a rapid
 development environment for digital library services such as institutional
 repositories and search engines.
 
-In the LibreCat project it is our goal to provide in open source a set of
-programming components to build up digital libraries services suited to your
-local needs.
+In the L<http://librecat.org/|LibreCat> project it is our goal to provide an 
+open source set of programming components to build up digital libraries 
+services suited to your local needs.
 
 Read an in depth introduction into Catmandu programming in
 L<Catmandu::Introduction>.
 
+=head1 ONE STEP INSTALL
+
+To install all Catmandu components in one easy step:
+
+    cpan Task::Catmandu
+    # or
+    cpanm --interactive Task::Catmandu
+
 =head1 VERSION
 
-Version 0.7002
+Version 0.8013
 
 =cut
 
-our $VERSION = '0.7002';
+our $VERSION = '0.8013';
 
 =head1 SYNOPSIS
 
@@ -82,51 +90,6 @@ You can do so by including the config hash key in the file name.
 Config files are processed in alphabetical order. To keep things simple, values
 are not merged.  The contents of C<catmandu.store.yml> will overwrite
 C<< Catmandu->config->{store} >> if it already exists.
-
-=head1 EXPORTS
-
-=over
-
-=item config
-
-Same as C<< Catmandu->config >>.
-
-=item store
-
-Same as C<< Catmandu->store >>.
-
-=item importer
-
-Same as C<< Catmandu->importer >>.
-
-=item exporter
-
-Same as C<< Catmandu->exporter >>.
-
-=item export
-
-Same as C<< Catmandu->export >>.
-
-=item export_to_string
-
-Same as C<< Catmandu->export_to_string >>.
-
-=item -all/:all
-
-Import everything.
-
-=item -load/:load
-
-    use Catmandu -load;
-    use Catmandu -load => [];
-    # is the same as
-    Catmandu->load;
-
-    use Catmandu -load => ['/config/path'];
-    # is the same as
-    Catmandu->load('/config/path');
-
-=back
 
 =cut
 
@@ -251,8 +214,8 @@ sub default_store { $_[0]->_env->default_store }
 
 =head2 store([NAME])
 
-Return an instance of a store with name NAME or use the default store when no
-name is provided.  The NAME is set in the configuration file. E.g.
+Return an instance of L<Catmandu::Store> with name NAME or use the default store
+when no name is provided.  The NAME is set in the configuration file. E.g.
 
  store:
   default:
@@ -271,6 +234,7 @@ In your program:
     Catmandu->store('test')->bag->search(...);
 
 =cut
+
 sub store {
     my $class = shift;
     $class->_env->store(@_);
@@ -432,6 +396,51 @@ sub export_to_string {
     $exporter->commit;
     $str;
 }
+
+=head1 EXPORTS
+
+=over
+
+=item config
+
+Same as C<< Catmandu->config >>.
+
+=item store
+
+Same as C<< Catmandu->store >>.
+
+=item importer
+
+Same as C<< Catmandu->importer >>.
+
+=item exporter
+
+Same as C<< Catmandu->exporter >>.
+
+=item export
+
+Same as C<< Catmandu->export >>.
+
+=item export_to_string
+
+Same as C<< Catmandu->export_to_string >>.
+
+=item -all/:all
+
+Import everything.
+
+=item -load/:load
+
+    use Catmandu -load;
+    use Catmandu -load => [];
+    # is the same as
+    Catmandu->load;
+
+    use Catmandu -load => ['/config/path'];
+    # is the same as
+    Catmandu->load('/config/path');
+
+=back
 
 =head1 SEE ALSO
 

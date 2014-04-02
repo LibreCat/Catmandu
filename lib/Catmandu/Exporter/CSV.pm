@@ -7,11 +7,12 @@ use Moo;
 
 with 'Catmandu::Exporter';
 
-has csv         => (is => 'ro', lazy => 1, builder => '_build_csv');
-has sep_char    => (is => 'ro', default => sub { ',' });
-has quote_char  => (is => 'ro', default => sub { '"' });
-has escape_char => (is => 'ro', default => sub { '"' });
-has header      => (is => 'rw', default => sub { 1 });
+has csv          => (is => 'ro', lazy => 1, builder => '_build_csv');
+has sep_char     => (is => 'ro', default => sub { ',' });
+has quote_char   => (is => 'ro', default => sub { '"' });
+has escape_char  => (is => 'ro', default => sub { '"' });
+has always_quote => (is => 'ro');
+has header       => (is => 'rw', default => sub { 1 });
 has fields => (
     is     => 'rw',
     coerce => sub {
@@ -28,6 +29,7 @@ sub _build_csv {
         binary => 1,
         eol => "\n",
         sep_char => $self->sep_char,
+        always_quote => $self->always_quote, 
         quote_char => $self->quote_char ? $self->quote_char : undef,
         escape_char => $self->escape_char ? $self->escape_char : undef,
     });
@@ -63,6 +65,8 @@ Catmandu::Exporter::CSV - a CSV exporter
     my $exporter = Catmandu::Exporter::CSV->new(
 				fix => 'myfix.txt'
 				quote_char => '"' ,
+                escape_char => '"' ,
+                always_quote => 1,
 				sep_char => ',' ,
 				header => 1);
 
@@ -85,7 +89,7 @@ Catmandu::Exporter::CSV - a CSV exporter
 =head2 new(quote_char => STRING, sep_char => STRING, header => 0|1|HASH, fields => ARRAY|HASH|STRING)
 
 Creates a new Catmandu::Exporter::CSV. Optionally set the field and column
-boundaries with quote_char and sep_char. A header line with field names will be
+boundaries with quote_char , sep_char and always_quote. A header line with field names will be
 included if C<header> is set. Field names can be read from the first item
 exported or set by the fields argument (see: C<fields>).
 

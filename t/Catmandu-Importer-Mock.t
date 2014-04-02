@@ -12,5 +12,17 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+my $data = [
+   {n => 0},
+   {n => 1},
+   {n => 2},
+];
+
+my $importer = $pkg->new(size => 3);
+
+isa_ok $importer, $pkg;
+
+is_deeply $importer->to_array, $data, "Data structure ok";
+
+done_testing 4;
 

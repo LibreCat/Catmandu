@@ -12,5 +12,29 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+my $file = "";
+my $exporter = $pkg->new(file => \$file);
+
+my $data = {
+	TY => "BOOK",
+	TI => "Mastering Perl",
+	AU => "brian d foy",
+	PY => "2014",
+	PB => "O'Reilly",
+	XX => "here we go", # unknown key, should be ignored
+};
+
+$exporter->add($data);
+my $ris = <<EOF;
+TY  - BOOK\r
+AU  - brian d foy\r
+PB  - O'Reilly\r
+PY  - 2014\r
+TI  - Mastering Perl\r
+ER  - \r
+EOF
+
+is $ris, $file, "RIS format ok";
+
+done_testing 3;
 

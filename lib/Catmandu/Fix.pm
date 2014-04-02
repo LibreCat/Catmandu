@@ -11,6 +11,7 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Loader;
+use Data::Dumper ();
 use B ();
 
 with 'MooX::Log::Any';
@@ -74,14 +75,22 @@ sub capture {
 sub emit {
     my ($self) = @_;
     my $var = $self->var;
+    my $err = $self->generate_var;
     my $captures = $self->_captures;
     my $perl = "";
 
     $perl .= "sub {";
     $perl .= $self->emit_declare_vars($var, '$_[0]');
+    $perl .= "eval {";
     for my $fix (@{$self->fixes}) {
         $perl .= $self->emit_fix($fix);
     }
+    $perl .= "1;";
+    $perl .= "} or do {";
+    $perl .= $self->emit_declare_vars($err, '$@');
+    # TODO throw Catmandu::Error
+    $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
+    $perl .= "};";
     $perl .= "return $var;";
     $perl .= "};";
 
@@ -120,19 +129,27 @@ sub emit_fix {
     my ($self, $fix) = @_;
 
     if ($fix->can('emit')) {
-        my $n = $self->_num_labels;
-        $self->_num_labels($n + 1);
-        my $label = "__FIX__${n}";
-        my $perl = "${label}: {";
-        $perl .= $fix->emit($self, $label);
-        $perl .= "};";
-        $perl;
+        $self->emit_block(sub {
+            my ($label) = @_;
+            $fix->emit($self, $label);
+        });
     } else {
         my $var = $self->var;
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
         "${var} = ${ref}->fix(${var});";
     }
+}
+
+sub emit_block {
+    my ($self, $cb) = @_;
+    my $n = $self->_num_labels;
+    $self->_num_labels($n + 1);
+    my $label = "__FIX__${n}";
+    my $perl = "${label}: {";
+    $perl .= $cb->($label);
+    $perl .= "};";
+    $perl;
 }
 
 sub emit_value {
@@ -517,17 +534,27 @@ Catmandu::Fix - a Catmandu class used for data crunching
 
     my $fixer = Catmandu::Fix->new(fixes => ['upcase("job")','remove_field("test")']);
 
-    or 
+    or
 
     my $fixer = Catmandu::Fix->new(fixes => ['fix_file.txt']);
 
     my $arr  = $fixer->fix([ ... ]);
     my $hash = $fixer->fix({ ... });
-  
+
     my $it = Catmandu::Importer::YAML(file => '...');
     $fixer->fix($it)->each(sub {
-	...
+        ...
     });
+
+    or
+
+    use Catmandu::Fix::upcase as => 'my_upcase';
+    use Catmandu::Fix::remove_field as => 'my_remove';
+
+    my $hash = { 'job' => 'librarian' , deep => { nested => '1'} };
+
+    my_upcase($hash,'job');
+    my_remove($hash,'deep.nested');
 
 =head1 DESCRIPTION
 
@@ -595,10 +622,6 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 =head2 log
 
 Return the current logger.
-
-=head1 SEE ALSO
-
-L<Catmandu::Fix::add_field>
 
 =cut
 

@@ -30,12 +30,23 @@ sub emit {
             "push(\@{${vals}}, ${var});";
         });
     });
-    $perl .= $fixer->emit_create_path($fixer->var, $new_path, sub {
-        my $var = shift;
-        "if (\@{${vals}}) {".
-            "${var} = clone(shift(\@{${vals}}));".
-        "}";
-    });
+    if (@$new_path && ($new_path->[-1] eq '$prepend' || $new_path->[-1] eq '$append')) {
+        my $new_key = pop @$new_path;
+        $perl .= $fixer->emit_create_path($fixer->var, $new_path, sub {
+            my $var = shift;
+            my $sym = $new_key eq '$prepend' ? 'unshift' : 'push';
+            "if (\@{${vals}} && is_array_ref(${var} //= [])) {" .
+                "${sym}(\@{${var}}, map { clone(\$_) } \@{${vals}});" .
+            "}";
+        });
+    } else {
+        $perl .= $fixer->emit_create_path($fixer->var, $new_path, sub {
+            my $var = shift;
+            "if (\@{${vals}}) {".
+                "${var} = clone(shift(\@{${vals}}));".
+            "}";
+       });
+    }
 
     $perl;
 }

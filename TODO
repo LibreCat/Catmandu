@@ -1,5 +1,6 @@
 TODO
 
+* Fix::Condition documentation
 * (better) error handling
 * logger
 * add catmandu-examples as tests
@@ -12,3 +13,4 @@ TODO
 * split Searchable into Searchable and CQL Searchable (?)
 * generator should guard with a magic ref, not undef (?)
 * make serializers pluggable and split off MessagePack serializer
+

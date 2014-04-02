@@ -2,12 +2,25 @@ package Catmandu::Store::Hash;
 
 use namespace::clean;
 use Catmandu::Sane;
+use Catmandu::Util qw(:is);
 use Moo;
 
 with 'Catmandu::Store';
 
+has init_data => (is => 'ro');
+
+sub BUILD {
+  my $self = $_[0];
+  if (defined $self->init_data && is_array_ref($self->init_data) ) {
+    for (@{$self->init_data}) {
+      $self->bag->add($_);
+    }
+  }
+}
+
 package Catmandu::Store::Hash::Bag;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Hits;
 use Moo;

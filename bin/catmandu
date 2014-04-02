@@ -57,12 +57,19 @@ Verbose output.
 
 Display the help screen.
 
+=item --lib-path PATH
+
+=item -I
+
+Specifies Perl library include paths, like perl's -I option. This option is
+repeatable.
+
 =item --load-path PATH
 
 =item -L PATH
 
-Search upwards from this path for configuration files and lib directories.
-This option is repeatable.
+Search upwards from this path for configuration files and accompanying lib
+directories. This option is repeatable.
 
 =back
 

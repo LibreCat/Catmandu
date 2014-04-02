@@ -5,19 +5,46 @@ use Catmandu::Sane;
 use JSON ();
 use Moo;
 
-my $RE_OBJ = qr'^[^{]+';
-
 with 'Catmandu::Importer';
 
-has json => (is => 'ro', lazy => 1, builder => '_build_json');
+has json      => (is => 'ro', lazy => 1, builder => '_build_json');
+has multiline => (is => 'ro', default => sub { 0 });
 
 sub _build_json {
-     JSON->new->utf8(0);
+    my ($self) = @_;
+    JSON->new->utf8($self->encoding eq ':raw');
 }
+
+sub default_encoding { ':raw' }
 
 sub generator {
     my ($self) = @_;
-    sub {
+
+    $self->multiline ? sub {
+        state $json = $self->json;
+        state $fh   = $self->fh;
+
+        for (;;) {
+            sysread($fh, my $buf, 512) // Catmandu::Error->throw($!);
+            $json->incr_parse($buf); # void context, so no parsing
+            $json->incr_text =~ s/^[^{]+//;
+            return unless length $json->incr_text;
+            last if $json->incr_text =~ /^\{/;
+        }
+
+        # read data until we get a single json object
+        my $data;
+        for (;;) {
+            if ($data = $json->incr_parse) {
+                last;
+            }
+
+            sysread($fh, my $buf, 512) // Catmandu::Error->throw($!);
+            $json->incr_parse($buf);
+        }
+
+        $data;
+    } : sub {
         state $json = $self->json;
         state $fh   = $self->fh;
         if (defined(my $line = <$fh>)) {
@@ -42,17 +69,21 @@ Catmandu::Importer::JSON - Package that imports JSON data
         # ...
     });
 
-    The JSON input file needs to include one record per line:
+The defaults assume a newline delimited JSON file:
 
     { "recordno": 1, "name": "Alpha" }
     { "recordno": 2, "name": "Beta" }
     { "recordno": 3, "name": "Gamma" }
 
+Use the C<multiline> option to parse pretty-printed JSON or JSON arrays.
+
 =head1 METHODS
 
-=head2 new([file => $filename])
+=head2 new([file => $filename, multiline => 0|1])
 
-Create a new JSON importer for $filename. Use STDIN when no filename is given.
+Create a new JSON importer for C<$filename>. Uses STDIN when no filename is given.
+C<multiline> switches between line-delimited JSON and multiline JSON or arrays.
+the default is line-delimited JSON.
 
 =head2 count
 

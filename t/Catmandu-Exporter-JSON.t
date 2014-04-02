@@ -24,5 +24,6 @@ $exporter->add($_) for @$data;
 $exporter->commit;
 is_deeply $data, [ map { JSON::decode_json($_) } split /[\r\n]+/, $file ];
 
-done_testing 4;
+is($exporter->count, 3, "Count ok");
 
+done_testing 5;

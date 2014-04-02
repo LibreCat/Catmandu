@@ -23,7 +23,7 @@ sub emit {
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
             "if (is_array_ref(${var})) {" .
-                "${var} = List::Util::sum0(\@{${var}});" .
+                "${var} = List::Util::sum(\@{${var}}) // 0;" .
             "}";
         });
     });

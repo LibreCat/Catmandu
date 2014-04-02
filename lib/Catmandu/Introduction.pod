@@ -106,18 +106,10 @@ github.com and build and install it.
 
 =head1 Importer
 
-<<<<<<< HEAD
-L<Importers|Catmandu::Importer> are Catmandu packages to read data into an
-application.  We provide importers for MARC, JSON, YAML, CSV, Excel but also
-Atom and OAI-PMH endpoints.  As an example, lets create a Perl script to read a
-YAML file containing an array of values.  We use the each function to loop
-through all the items
-=======
-Importers are Catmandu packages to read data into an application.  We provide
-importers for MARC, JSON, YAML, BibTeX, CSV, Excel but also Atom and OAI-PMH endpoints.
-As an example, lets create a Perl script to read a YAML file containing an array
+L<Importers|Catmandu::Importer> are Catmandu packages to read data into an application.
+We provide importers for MARC, JSON, YAML, BibTeX, CSV, Excel but also Atom and OAI-PMH
+endpoints. As an example, lets create a Perl script to read a YAML file containing an array
 of values.  We use the C<each> function to loop through all the items
->>>>>>> 86a4012f6b367f9f88d19d8440eeb60e9f4f84df
 
   #!/usr/bin/env perl
 
@@ -257,18 +249,11 @@ for every item in an Iterable $data).
 
 =head1 Fix
 
-<<<<<<< HEAD
 L<Fixes|Catmandu::Fix> can be used for easy data manipulation by non
 programmers.  Using a small Perl DSL language librarians can use Fix routines
 to manipulate data objects.  A plain text file of fixes can be created to
-specify all the data manipulations that need to be executed to 'massage' the
+specify all the data manipulations that need to be executed to transform the
 data in the desired format.
-=======
-Fixes can be used for easy data manipulation by non programmers.  Using a small
-Perl DSL language librarians can use Fix routines to manipulate data objects.  A
-plain text file of fixes can be created to specify all the data manipulations
-that need to be executed to transform the data in the desired format.
->>>>>>> 86a4012f6b367f9f88d19d8440eeb60e9f4f84df
 
 As an example we will import data from a MARC file and change some metadata
 fields using Fix routines. Here is the code to run the example:

@@ -132,7 +132,7 @@ sub fixer {
         if (my $fixes = $self->config->{fixer}{$key}) {
             return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
         }
-        return Catmandu::Fix->new(fixes => \@_);
+        return Catmandu::Fix->new(fixes => [@_]);
     }
 }
 
