@@ -1,5 +1,9 @@
 Revision history for Catmandu
 
+0.8014  2014-04-03
+  - fix Paged bugs
+  - more tests
+
 0.8013  2014-03-27
   - Importer::JSON multiline switch
   - Importer pod
