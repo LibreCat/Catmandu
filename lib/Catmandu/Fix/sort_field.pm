@@ -13,9 +13,9 @@ has numeric => (is => 'ro');
 
 around BUILDARGS => sub {
     my ($orig, $class, $path, %options) = @_;
-    my $uniq = defined $options{-uniq} && $options{-uniq} == 1 ? 1 : 0;
-    my $reverse = defined $options{-reverse} && $options{-reverse} == 1 ? 1 : 0;
-    my $numeric = defined $options{-numeric} && $options{-numeric} == 1 ? 1 : 0;
+    my $uniq = defined $options{uniq} && $options{uniq} == 1 ? 1 : 0;
+    my $reverse = defined $options{reverse} && $options{reverse} == 1 ? 1 : 0;
+    my $numeric = defined $options{numeric} && $options{numeric} == 1 ? 1 : 0;
     $orig->($class, path => $path , uniq => $uniq , reverse => $reverse , numeric => $numeric);
 };
 

@@ -18,7 +18,15 @@ sub parse {
                                      my $args = $fix->{args} ||= [];
                                      my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
                                      my $instance = $class->new(map {
-                                         exists $_->{string} ? $_->{string} : $_->{int};
+                                         if (exists $_->{qq_string})  {
+                                             $_->{qq_string};
+                                         } elsif (exists $_->{q_string}) {
+                                             $_->{q_string};
+                                         } elsif (exists $_->{key}) {
+                                             $_->{key};
+                                         } else {
+                                            $_->{int};
+                                         }
                                      } @$args);
                                      if ($MATCH{if_block}{fixes}) {
                                          push @{$instance->fixes},
@@ -36,7 +44,15 @@ sub parse {
                                      my $args = $fix->{args} ||= [];
                                      my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
                                      my $instance = $class->new(map {
-                                         exists $_->{string} ? $_->{string} : $_->{int};
+                                         if (exists $_->{qq_string})  {
+                                             $_->{qq_string};
+                                         } elsif (exists $_->{q_string}) {
+                                             $_->{q_string};
+                                         } elsif (exists $_->{key}) {
+                                             $_->{key};
+                                         } else {
+                                            $_->{int};
+                                         }
                                      } @$args);
                                      if ($MATCH{unless_block}{fixes}) {
                                          push @{$instance->else_fixes},
@@ -50,7 +66,15 @@ sub parse {
                                      my $args = $fix->{args} ||= [];
                                      my $class = require_package($fix->{name}, 'Catmandu::Fix');
                                      my $instance = $class->new(map {
-                                         exists $_->{string} ? $_->{string} : $_->{int};
+                                         if (exists $_->{qq_string})  {
+                                             $_->{qq_string};
+                                         } elsif (exists $_->{q_string}) {
+                                             $_->{q_string};
+                                         } elsif (exists $_->{key}) {
+                                             $_->{key};
+                                         } else {
+                                            $_->{int};
+                                         }
                                      } @$args);
                                      $MATCH{instance} = $instance;
                                  })
@@ -68,21 +92,31 @@ sub parse {
             <rule: args>         <[arg]>+ % <_sep>
                                  <MATCH= (?{ $MATCH{arg} })>
 
-            <rule: arg>          <string>
+            <rule: arg>          <qq_string>
+                                 |
+                                 <q_string>
+                                 |
+                                 <key>
                                  |
                                  <int>
                                  |
-                                 <fatal: Expected string or int>
+                                 <fatal: Expected string, key or int>
 
-            <token: name>        [a-z_][a-z0-9_]*
+            <token: name>        [a-z][a-z0-9_]*
 
-            <token: string>      "((?:[^\\"]|\\.)*)"
+            <token: qq_string>   "((?:[^\\"]|\\.)*)"
+                                 <MATCH= (?{ $CAPTURE })>
+
+            <token: q_string>    '((?:[^\\']|\\.)*)'
+                                 <MATCH= (?{ $CAPTURE })>
+
+            <token: key>         -?([a-z][a-z0-9_]*)
                                  <MATCH= (?{ $CAPTURE })>
 
             <token: int>         (-?\d+)
                                  <MATCH= (?{ eval $CAPTURE })>
 
-            <token: _sep>        [\s,;]+
+            <token: _sep>        (?:\s|,|;|:|=>)+
 
             <token: ws>          (?:<_sep>)*
         /xms;

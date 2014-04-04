@@ -23,15 +23,9 @@ around BUILDARGS => sub {
 sub _build_bag {
     my ($self) = @_;
     my %opts = %{$self->opts};
-    my $bag_name = delete $opts{'-bag'};
-    delete $opts{'-delete'};
-    delete $opts{'-default'};
-    for my $key (keys %opts) {
-        my $val = delete $opts{$key};
-        $key =~ s/^-//;
-        $key =~ s/-/_/g;
-        $opts{$key} = $val;
-    }
+    my $bag_name = delete $opts{bag};
+    delete $opts{delete};
+    delete $opts{default};
     Catmandu->store($self->store_name, %opts)->bag($bag_name);
 }
 
@@ -40,8 +34,8 @@ sub emit {
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
     my $bag_var = $fixer->capture($self->bag);
-    my $delete = $self->opts->{'-delete'};
-    my $default = $self->opts->{'-default'};
+    my $delete = $self->opts->{delete};
+    my $default = $self->opts->{default};
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
@@ -76,9 +70,9 @@ Catmandu::Fix::lookup_in_store - change the value of a HASH key or ARRAY index b
 
 =head1 SYNOPSIS
 
-   lookup_in_store('foo.bar', 'MongoDB', '-bag', 'bars', '-database_name', 'lookups');
+   lookup_in_store('foo.bar', 'MongoDB', bag: 'bars', database_name: 'lookups');
    # using the default bag and a default value
-   lookup_in_store('foo.bar', 'store_name', '-default', 'default value');
+   lookup_in_store('foo.bar', 'store_name', default: 'default value');
 
 =head1 SEE ALSO
 

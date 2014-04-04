@@ -19,14 +19,8 @@ around BUILDARGS => sub {
 sub _build_dictionary {
     my ($self) = @_;
     my %opts = %{$self->opts};
-    delete $opts{'-delete'};
-    delete $opts{'-default'};
-    for my $key (keys %opts) {
-        my $val = delete $opts{$key};
-        $key =~ s/^-//;
-        $key =~ s/-/_/g;
-        $opts{$key} = $val;
-    }
+    delete $opts{delete};
+    delete $opts{default};
     Catmandu::Importer::CSV->new(
         %opts,
         file => $self->file,
@@ -44,8 +38,8 @@ sub emit {
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
     my $dict_var = $fixer->capture($self->dictionary);
-    my $delete = $self->opts->{'-delete'};
-    my $default = $self->opts->{'-default'};
+    my $delete = $self->opts->{delete};
+    my $default = $self->opts->{default};
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
@@ -81,11 +75,11 @@ Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by looking
 =head1 SYNOPSIS
 
    lookup('foo.bar', 'dictionary.csv');
-   lookup('foo.bar', 'dictionary.csv', '-sep_char', '|');
+   lookup('foo.bar', 'dictionary.csv', sep_char: '|');
    # delete value if the lookup fails:
-   lookup('foo.bar', 'dictionary.csv', '-delete', 1);
+   lookup('foo.bar', 'dictionary.csv', delete: 1);
    # use a default value if the lookup fails:
-   lookup('foo.bar', 'dictionary.csv', '-default', 'default value');
+   lookup('foo.bar', 'dictionary.csv', default: 'default value');
 
 =head1 SEE ALSO
 
