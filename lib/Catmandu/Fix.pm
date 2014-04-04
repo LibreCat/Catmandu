@@ -546,6 +546,16 @@ Catmandu::Fix - a Catmandu class used for data crunching
         ...
     });
 
+    or
+
+    use Catmandu::Fix::upcase as => 'my_upcase';
+    use Catmandu::Fix::remove_field as => 'my_remove';
+
+    my $hash = { 'job' => 'librarian' , deep => { nested => '1'} };
+
+    my_upcase($hash,'job');
+    my_remove($hash,'deep.nested');
+
 =head1 DESCRIPTION
 
 Catmandu::Fix-es can be use for easy data manipulation by non programmers. Using a

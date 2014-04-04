@@ -13,6 +13,7 @@ my $build = Module::Build->new(
     build_requires => {
         'Test::Exception' => 0,
         'Test::More' => 0,
+        'Log::Any::Adapter' => 0,
     },
     requires => {
         'perl' => '5.10.1',
@@ -20,25 +21,22 @@ my $build = Module::Build->new(
         'CGI::Expand' => '2.02',
         'Clone' => '0.31',
         'Data::Compare' => '1.22',
-        'Data::MessagePack' => '0.39',
-        'Data::SpreadPagination' => '0.1.2',
         'Data::UUID' => '1.217',
         'Data::Util' => '0.59',
-        'DateTime' => '0.70',
         'IO::Handle::Util' => '0.01',
         'JSON' => '2.51',
+        'List::MoreUtils' => '0.33',
         'Moo' => '1.000008',
         'MooX::Log::Any' => 0,
         'namespace::clean' => '0.24',
         'Regexp::Grammars' => '1.033',
         'Sub::Exporter' => '0.982',
         'Sub::Quote' => 0,
-        'Template' => '2.22',
         'Text::CSV' => '1.21',
         'Time::HiRes' => 0, # not always installed apparently
         'Throwable' => '0.200004',
         'Try::Tiny::ByClass' => '0.01',
-        'YAML::Any' => '0.81',
+        'YAML::Any' => '0.90',
     },
     recommends => {
         'JSON::XS' => '2.3',
@@ -56,6 +54,13 @@ my $build = Module::Build->new(
         Catmandu-*
     )],
     create_makefile_pl => 'traditional',
+    meta_merge => {
+         resources => {
+              repository => 'https://github.com/LibreCat/Catmandu.git',
+              bugtracker => 'https://github.com/LibreCat/Catmandu/issues',
+              homepage => 'https://github.com/LibreCat/Catmandu',
+        },
+    },
 );
 
 $build->create_build_script;

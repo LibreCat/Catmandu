@@ -30,7 +30,14 @@ has fh => (
     default => sub { io($_[0]->file, mode => 'r', binmode => $_[0]->encoding) },
 );
 
-sub encoding { ':utf8' }
+has encoding => (
+    is       => 'ro',
+    builder  => 'default_encoding',
+);
+
+sub default_encoding {
+    ':utf8';
+}
 
 =head1 NAME
 
@@ -47,6 +54,7 @@ Catmandu::Importer - Namespace for packages that can import
         # ...
     });
 
+
 =head1 DESCRIPTION
 
 A Catmandu::Importer is a stub for Perl packages that can import data from
@@ -60,7 +68,12 @@ generator the given fixes will be applied first.
 
 =head2 new(file => $file , encoding => $encoding )
 
-=head2 new(fh => $fh)
+Create a new importer reading input from a local file: $file is a string containing the path to
+the file.
+
+=head2 new(fh => $fh , encoding => $encoding)
+
+Create a new importer by reading from a IO::Handle. Optionally use Catmandu::Util::io to create IO::Handles.
 
 =head2 count
 
@@ -76,7 +89,7 @@ Return the current logger.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>
+L<Catmandu::Iterable> , L<Catmandu::Util>
 
 =cut
 

@@ -30,4 +30,3 @@ is_deeply $h->hits, $data;
 is $h->size, 3;
 
 done_testing 15;
-

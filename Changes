@@ -1,5 +1,61 @@
 Revision history for Catmandu
 
+0.8014  2014-04-03
+  - fix Paged bugs
+  - more tests
+
+0.8013  2014-03-27
+  - Importer::JSON multiline switch
+  - Importer pod
+
+0.8012  2014-03-24
+  - add missing List::MoreUtils dependency
+
+0.8011  2014-03-18
+  - fix Paged bugs
+  - array and hash fixes
+  - more tests
+  - more pod
+
+0.8010  2014-03-11
+  - bump required version of YAML::Any
+  - use List::Util::sum instead of List::Util::sum0 (not present in older
+    versions)
+
+0.8009  2014-03-07
+  - sort_field fix
+  - fix undefined lib_path
+
+0.8008  2014-03-05
+  - split off Catmandu::Exporter::Template
+
+0.8007  2014-03-04
+  - rewrite Catmandu::Serializer
+  - split off Catmandu::Serializer::storable
+  - split off Catmandu::Serializer::messagepack
+  - tests for Catmandu::Serializer
+
+0.8006  2014-03-04
+  - expand_date fix
+  - CLI --lib-path option
+  - more tests
+  - remove dependency on Data::SpreadPagination
+  - Importer encoding is now an attribute
+  - fixes inheriting from Fix::Base can now export their functionality as a
+    function
+
+0.8005  2013-12-20
+  - Catmandu::Plugin:: pod
+
+0.8004  2013-12-18
+  - Exporter::CSV always_quote option
+
+0.8003  2013-12-18
+  - fix bug in Store::bags
+
+0.8002  2013-12-09
+  - fix pod
+
 0.8001  2013-11-19
   - add one step install to pod
 

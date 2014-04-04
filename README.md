@@ -23,5 +23,5 @@ To install this module, run the following commands:
 After installing, you can find documentation for this module with the
 perldoc command.
 
-  perldoc Catmandu::Introduction
+	$ perldoc Catmandu::Introduction
 
