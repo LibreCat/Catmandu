@@ -5,7 +5,23 @@ use Catmandu::Util qw(:is require_package read_file);
 use Catmandu::Fix::Filter;
 use Moo;
 
-sub parse {
+sub _build_fix_instance {
+    my ($pkg, $ns, $args) = @_;
+    my $class = require_package($pkg, $ns);
+    $class->new(map {
+        if (exists $_->{qq_string})  {
+            $_->{qq_string};
+        } elsif (exists $_->{q_string}) {
+            $_->{q_string};
+        } elsif (exists $_->{key}) {
+            $_->{key};
+        } else {
+            $_->{int};
+        }
+    } @$args);
+}
+
+sub _parser {
     state $parser = do {
         use Regexp::Grammars;
         qr/
@@ -16,19 +32,7 @@ sub parse {
 
             <rule: expr>         <if_block>
                                  (?{ my $fix = $MATCH{if_block}{fix};
-                                     my $args = $fix->{args} ||= [];
-                                     my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
-                                     my $instance = $class->new(map {
-                                         if (exists $_->{qq_string})  {
-                                             $_->{qq_string};
-                                         } elsif (exists $_->{q_string}) {
-                                             $_->{q_string};
-                                         } elsif (exists $_->{key}) {
-                                             $_->{key};
-                                         } else {
-                                            $_->{int};
-                                         }
-                                     } @$args);
+                                     my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix::Condition', $fix->{args} || []);
                                      if ($MATCH{if_block}{fixes}) {
                                          push @{$instance->fixes},
                                             map { $_->{instance} } @{$MATCH{if_block}{fixes}};
@@ -42,19 +46,7 @@ sub parse {
                                  |
                                  <unless_block>
                                  (?{ my $fix = $MATCH{unless_block}{fix};
-                                     my $args = $fix->{args} ||= [];
-                                     my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
-                                     my $instance = $class->new(map {
-                                         if (exists $_->{qq_string})  {
-                                             $_->{qq_string};
-                                         } elsif (exists $_->{q_string}) {
-                                             $_->{q_string};
-                                         } elsif (exists $_->{key}) {
-                                             $_->{key};
-                                         } else {
-                                            $_->{int};
-                                         }
-                                     } @$args);
+                                     my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix::Condition', $fix->{args} || []);
                                      if ($MATCH{unless_block}{fixes}) {
                                          push @{$instance->else_fixes},
                                             map { $_->{instance} } @{$MATCH{unless_block}{fixes}};
@@ -64,57 +56,21 @@ sub parse {
                                  |
                                  <select>
                                  (?{ my $fix = $MATCH{select}{fix};
-                                     my $args = $fix->{args} ||= [];
-                                     my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
-                                     my $instance = $class->new(map {
-                                         if (exists $_->{qq_string})  {
-                                             $_->{qq_string};
-                                         } elsif (exists $_->{q_string}) {
-                                             $_->{q_string};
-                                         } elsif (exists $_->{key}) {
-                                             $_->{key};
-                                         } else {
-                                            $_->{int};
-                                         }
-                                     } @$args);
+                                     my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix::Condition', $fix->{args} || []);
                                      push @{$instance->else_fixes}, Catmandu::Fix::Filter->new;
                                      $MATCH{instance} = $instance;
                                  })
                                  |
                                  <reject>
                                  (?{ my $fix = $MATCH{reject}{fix};
-                                     my $args = $fix->{args} ||= [];
-                                     my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
-                                     my $instance = $class->new(map {
-                                         if (exists $_->{qq_string})  {
-                                             $_->{qq_string};
-                                         } elsif (exists $_->{q_string}) {
-                                             $_->{q_string};
-                                         } elsif (exists $_->{key}) {
-                                             $_->{key};
-                                         } else {
-                                            $_->{int};
-                                         }
-                                     } @$args);
+                                     my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix::Condition', $fix->{args} || []);
                                      push @{$instance->fixes}, Catmandu::Fix::Filter->new;
                                      $MATCH{instance} = $instance;
                                  })
                                  |
                                  <fix>
                                  (?{ my $fix = $MATCH{fix};
-                                     my $args = $fix->{args} ||= [];
-                                     my $class = require_package($fix->{name}, 'Catmandu::Fix');
-                                     my $instance = $class->new(map {
-                                         if (exists $_->{qq_string})  {
-                                             $_->{qq_string};
-                                         } elsif (exists $_->{q_string}) {
-                                             $_->{q_string};
-                                         } elsif (exists $_->{key}) {
-                                             $_->{key};
-                                         } else {
-                                            $_->{int};
-                                         }
-                                     } @$args);
+                                     my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix', $fix->{args} || []);
                                      $MATCH{instance} = $instance;
                                  })
 
@@ -163,10 +119,13 @@ sub parse {
             <token: ws>          (?:<_sep>)*
         /xms;
     };
+}
 
+sub parse {
     my ($self, @sources) = @_;
     @sources = map { ref $_ ? @$_ : $_ } @sources;
     my $fixes = [];
+    my $parser = $self->_parser;
 
     for my $source (@sources) {
         if (is_able($source, 'fix')) {
@@ -180,7 +139,6 @@ sub parse {
                 Catmandu::BadArg->throw(join("\n", "cannot parse fix:", @errors));
             };
             if (my $parsed = $/{fixes}) {
-                use Data::Dumper::Concise;say Dumper($parsed);
                 push @$fixes, map { $_->{instance} } @$parsed;
             }
         }
