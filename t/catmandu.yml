@@ -30,6 +30,8 @@ store:
 fixer:
    default:
       - nothing()
+   other:
+      - nothing()
 
 
 
