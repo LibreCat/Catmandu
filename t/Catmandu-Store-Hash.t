@@ -17,7 +17,8 @@ my $data = [
    {_id => '321', name=>'Nicolas',age=>'34'},
 ];
 
-my $bag = $pkg->new()->bag;
+my $store = $pkg->new();
+my $bag = $store->bag;
 my @method = qw(to_array each take add add_many count slice first rest any many all tap map reduce);
 can_ok $bag, $_ for @method;
 
@@ -35,5 +36,13 @@ $bag->delete_all;
 is $bag->count, 0, "Count bag size";
 isnt $bag->count, 1, "Count bag size";
 
-done_testing 25;
+$bag->add({ _id => '123' , foo => "bar"});
+
+my $bag2 = $store->bag;
+is $bag2->count , 1 , "Bags stay alive";
+
+my $bag3 = $store->bag('foo');
+ok ! $bag3->get('123') , "foo doesnt have 123";
+
+done_testing 27;
 
