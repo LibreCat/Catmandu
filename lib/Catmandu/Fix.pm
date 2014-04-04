@@ -24,6 +24,8 @@ has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
+has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
+has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
 sub _trigger_fixes {
     my ($self) = @_;
@@ -42,22 +44,39 @@ sub _build_fixer {
     _eval_emit($self->emit, $self->_captures) or Catmandu::Error->throw($@);
 }
 
+sub _build_reject_var {
+    my ($self) = @_;
+    $self->capture($self->_reject);
+}
+
 sub fix {
     my ($self, $data) = @_;
 
     my $fixer = $self->fixer;
 
     if (is_hash_ref($data)) {
-        return $fixer->($data);
+        my $d = $fixer->($data);
+        return if $d == $self->_reject;
+        return $d;
     }
+
     if (is_instance($data)) {
-        return $data->map(sub { $fixer->($_[0]) });
+        return $data->map(sub { $fixer->($_[0]) })
+                    ->reject(sub { $_[0] == $self->_reject });
     }
+
     if (is_code_ref($data)) {
-        return sub { $fixer->($data->() // return) };
+        return sub {
+            for (;;) {
+                my $d = $fixer->($data->() // return);
+                next if $d == $self->_reject;
+                return $d;
+            }
+        };
     }
+
     if (is_array_ref($data)) {
-        return [ map { $fixer->($_) } @$data ];
+        return [ grep { $_ != $self->_reject } map { $fixer->($_) } @$data ];
     }
 
     Catmandu::BadArg->throw("must be hashref, arrayref, coderef or iterable object");
@@ -90,13 +109,12 @@ sub emit {
     for my $fix (@{$self->fixes}) {
         $perl .= $self->emit_fix($fix);
     }
-    $perl .= "1;";
+    $perl .= "${var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
     $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
     $perl .= "};";
-    $perl .= "return $var;";
     $perl .= "};";
 
     if (%$captures) {
@@ -128,6 +146,12 @@ sub emit {
     }
 
     $perl;
+}
+
+sub emit_reject {
+    my ($self) = @_;
+    my $reject_var = $self->_reject_var;
+    "return $reject_var;";
 }
 
 sub emit_fix {

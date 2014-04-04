@@ -2,6 +2,7 @@ package Catmandu::Fix::Parser;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is require_package read_file);
+use Catmandu::Fix::Filter;
 use Moo;
 
 sub parse {
@@ -61,6 +62,44 @@ sub parse {
                                      $MATCH{instance} = $instance;
                                  })
                                  |
+                                 <select>
+                                 (?{ my $fix = $MATCH{select}{fix};
+                                     my $args = $fix->{args} ||= [];
+                                     my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
+                                     my $instance = $class->new(map {
+                                         if (exists $_->{qq_string})  {
+                                             $_->{qq_string};
+                                         } elsif (exists $_->{q_string}) {
+                                             $_->{q_string};
+                                         } elsif (exists $_->{key}) {
+                                             $_->{key};
+                                         } else {
+                                            $_->{int};
+                                         }
+                                     } @$args);
+                                     push @{$instance->else_fixes}, Catmandu::Fix::Filter->new;
+                                     $MATCH{instance} = $instance;
+                                 })
+                                 |
+                                 <reject>
+                                 (?{ my $fix = $MATCH{reject}{fix};
+                                     my $args = $fix->{args} ||= [];
+                                     my $class = require_package($fix->{name}, 'Catmandu::Fix::Condition');
+                                     my $instance = $class->new(map {
+                                         if (exists $_->{qq_string})  {
+                                             $_->{qq_string};
+                                         } elsif (exists $_->{q_string}) {
+                                             $_->{q_string};
+                                         } elsif (exists $_->{key}) {
+                                             $_->{key};
+                                         } else {
+                                            $_->{int};
+                                         }
+                                     } @$args);
+                                     push @{$instance->fixes}, Catmandu::Fix::Filter->new;
+                                     $MATCH{instance} = $instance;
+                                 })
+                                 |
                                  <fix>
                                  (?{ my $fix = $MATCH{fix};
                                      my $args = $fix->{args} ||= [];
@@ -84,6 +123,9 @@ sub parse {
             <rule: else_block>   else <fixes>
 
             <rule: unless_block> unless <fix> <fixes> end
+
+            <rule: select>       select \( <fix> \)
+            <rule: reject>       reject \( <fix> \)
 
             <rule: fix>          <name> \( \)
                                  |
