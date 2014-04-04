@@ -17,7 +17,8 @@ use B ();
 with 'MooX::Log::Any';
 
 has tidy        => (is => 'ro');
-has fixer       => (is => 'ro', lazy => 1, init_arg => undef, builder => 1);
+has parser      => (is => 'lazy');
+has fixer       => (is => 'lazy', init_arg => undef);
 has _num_labels => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
@@ -27,8 +28,12 @@ has fixes       => (is => 'ro', required => 1, trigger => 1);
 sub _trigger_fixes {
     my ($self) = @_;
     my $fixes = $self->fixes;
-    my $parsed_fixes = Catmandu::Fix::Parser->new->parse($fixes);
+    my $parsed_fixes = $self->parser->parse($fixes);
     splice(@$fixes, 0, @$fixes, @$parsed_fixes);
+}
+
+sub _build_parser {
+    Catmandu::Fix::Parser->new;
 }
 
 sub _build_fixer {
