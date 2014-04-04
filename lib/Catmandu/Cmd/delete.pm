@@ -46,6 +46,10 @@ sub command {
     }
 
     $from->commit;
+
+    unless ($from->count == 0) {
+        say STDERR "error: $from is not empty";
+    }
 }
 
 1;
