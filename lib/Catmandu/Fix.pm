@@ -27,15 +27,22 @@ has fixes       => (is => 'ro', required => 1, trigger => 1);
 has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
+sub _build_parser {
+    Catmandu::Fix::Parser->new;
+}
+
 sub _trigger_fixes {
     my ($self) = @_;
     my $fixes = $self->fixes;
-    my $parsed_fixes = $self->parser->parse($fixes);
+    my $parsed_fixes = [];
+    for my $fix (@$fixes) {
+        if (ref $fix) {
+            push @$parsed_fixes, $fix;
+        } else {
+            push @$parsed_fixes, @{$self->parser->parse($fix)};
+        }
+    }
     splice(@$fixes, 0, @$fixes, @$parsed_fixes);
-}
-
-sub _build_parser {
-    Catmandu::Fix::Parser->new;
 }
 
 sub _build_fixer {

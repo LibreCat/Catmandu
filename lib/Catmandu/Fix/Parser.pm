@@ -1,7 +1,8 @@
 package Catmandu::Fix::Parser;
 
+use namespace::clean;
 use Catmandu::Sane;
-use Catmandu::Util qw(:is require_package read_file);
+use Catmandu::Util qw(is_array_ref check_string require_package read_file);
 use Catmandu::Fix::Filter;
 use Moo;
 
@@ -13,8 +14,8 @@ sub _build_fix_instance {
             $_->{qq_string};
         } elsif (exists $_->{q_string}) {
             $_->{q_string};
-        } elsif (exists $_->{key}) {
-            $_->{key};
+        } elsif (exists $_->{string}) {
+            $_->{string};
         } else {
             $_->{int};
         }
@@ -25,21 +26,18 @@ sub _parser {
     state $parser = do {
         use Regexp::Grammars;
         qr/
-            <fixes>
-
-            <rule: fixes>        <[expr]>*
-                                 <MATCH= (?{ $MATCH{expr} })>
+            <expr>
 
             <rule: expr>         <if_block>
                                  (?{ my $fix = $MATCH{if_block}{fix};
                                      my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix::Condition', $fix->{args} || []);
-                                     if ($MATCH{if_block}{fixes}) {
+                                     if ($MATCH{if_block}{expr}) {
                                          push @{$instance->fixes},
-                                            map { $_->{instance} } @{$MATCH{if_block}{fixes}};
+                                            map { $_->{instance} } @{$MATCH{if_block}{expr}};
                                      }
-                                     if ($MATCH{if_block}{else_block} && $MATCH{if_block}{else_block}{fixes}) {
+                                     if ($MATCH{if_block}{else_block} && $MATCH{if_block}{else_block}{expr}) {
                                          push @{$instance->else_fixes},
-                                            map { $_->{instance} } @{$MATCH{if_block}{else_block}{fixes}};
+                                            map { $_->{instance} } @{$MATCH{if_block}{else_block}{expr}};
                                      }
                                      $MATCH{instance} = $instance;
                                  })
@@ -47,9 +45,9 @@ sub _parser {
                                  <unless_block>
                                  (?{ my $fix = $MATCH{unless_block}{fix};
                                      my $instance = _build_fix_instance($fix->{name}, 'Catmandu::Fix::Condition', $fix->{args} || []);
-                                     if ($MATCH{unless_block}{fixes}) {
+                                     if ($MATCH{unless_block}{expr}) {
                                          push @{$instance->else_fixes},
-                                            map { $_->{instance} } @{$MATCH{unless_block}{fixes}};
+                                            map { $_->{instance} } @{$MATCH{unless_block}{expr}};
                                      }
                                      $MATCH{instance} = $instance;
                                  })
@@ -74,11 +72,15 @@ sub _parser {
                                      $MATCH{instance} = $instance;
                                  })
 
-            <rule: if_block>     if <fix> <fixes> <else_block>? end
+            <rule: if_block>     if <fix> <[expr]>* <else_block>? end
+                                 |
+                                 if_<fix> <[expr]>* end \( \)
 
-            <rule: else_block>   else <fixes>
+            <rule: else_block>   else <[expr]>*
 
-            <rule: unless_block> unless <fix> <fixes> end
+            <rule: unless_block> unless <fix> <[expr]>* end
+                                 |
+                                 unless_<fix> <[expr]>* end \( \)
 
             <rule: select>       select \( <fix> \)
             <rule: reject>       reject \( <fix> \)
@@ -90,17 +92,23 @@ sub _parser {
             <rule: args>         <[arg]>+ % <_sep>
                                  <MATCH= (?{ $MATCH{arg} })>
 
-            <rule: arg>          <qq_string>
+            <rule: arg>          <int>
+                                 |
+                                 <qq_string>
                                  |
                                  <q_string>
                                  |
-                                 <key>
+                                 <string>
                                  |
-                                 <int>
-                                 |
-                                 <fatal: Expected string, key or int>
+                                 <fatal: Expected string or int>
 
-            <token: name>        [a-z][a-z0-9_]*
+            <token: keyword>     if|unless|end|select|reject
+
+            <token: name>        <!keyword>
+                                 [a-z][a-z0-9_-]*
+
+            <token: int>         (-?\d+)
+                                 <MATCH= (?{ eval $CAPTURE })>
 
             <token: qq_string>   "((?:[^\\"]|\\.)*)"
                                  <MATCH= (?{ $CAPTURE })>
@@ -108,11 +116,8 @@ sub _parser {
             <token: q_string>    '((?:[^\\']|\\.)*)'
                                  <MATCH= (?{ $CAPTURE })>
 
-            <token: key>         -?([a-z][a-z0-9_]*)
-                                 <MATCH= (?{ $CAPTURE })>
-
-            <token: int>         (-?\d+)
-                                 <MATCH= (?{ eval $CAPTURE })>
+            <token: string>      <!keyword>
+                                 [^\s,;:=>\(\)"']+
 
             <token: _sep>        (?:\s|,|;|:|=>)+
 
@@ -122,29 +127,28 @@ sub _parser {
 }
 
 sub parse {
-    my ($self, @sources) = @_;
-    @sources = map { ref $_ ? @$_ : $_ } @sources;
-    my $fixes = [];
-    my $parser = $self->_parser;
+    my ($self, $source) = @_;
 
-    for my $source (@sources) {
-        if (is_able($source, 'fix')) {
-            push @$fixes, $source;
-        } elsif (is_string($source)) {
-            if ($source !~ /[\r\n\t\v\*]/ && -f $source) {
-                $source = read_file($source);
-            }
-            $source =~ $parser || do {
-                my @errors = @!;
-                Catmandu::BadArg->throw(join("\n", "cannot parse fix:", @errors));
-            };
-            if (my $parsed = $/{fixes}) {
-                push @$fixes, map { $_->{instance} } @$parsed;
-            }
-        }
+    check_string($source);
+
+    if ($source !~ /\(/) {
+        $source = read_file($source);
     }
 
-    $fixes;
+    $source =~ $self->_parser || do {
+        my @err = @!;
+        Catmandu::BadArg->throw(join("\n", "can't parse fix(es):", @err));
+    };
+
+    if (my $expr = $/{expr}) {
+        if (is_array_ref($expr)) {
+            [ map { $_->{instance} } @$expr ];
+        } else {
+            [ $expr->{instance} ];
+        }
+    } else {
+        [];
+    }
 }
 
 1;
