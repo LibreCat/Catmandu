@@ -23,14 +23,9 @@ around BUILDARGS => sub {
 sub _build_bag {
     my ($self) = @_;
     my %opts = %{$self->opts};
-    my $bag_name = delete $opts{'-bag'};
-    for my $key (keys %opts) {
-        my $val = delete $opts{$key};
-        $key =~ s/^-//;
-        $key =~ s/-/_/g;
-        $opts{$key} = $val;
-    }
-    Catmandu->store($self->store_name, %opts)->bag($bag_name);
+    my $bag_name = delete($opts{bag}) // delete($opts{'-bag'});
+    my $store = Catmandu->store($self->store_name, %opts);
+    $store->bag($bag_name // $store->default_bag);
 }
 
 sub emit {

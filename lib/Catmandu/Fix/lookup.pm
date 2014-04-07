@@ -21,6 +21,8 @@ sub _build_dictionary {
     my %opts = %{$self->opts};
     delete $opts{delete};
     delete $opts{default};
+    delete $opts{'-delete'};
+    delete $opts{'-default'};
     Catmandu::Importer::CSV->new(
         %opts,
         file => $self->file,
@@ -38,8 +40,8 @@ sub emit {
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
     my $dict_var = $fixer->capture($self->dictionary);
-    my $delete = $self->opts->{delete};
-    my $default = $self->opts->{default};
+    my $delete = $self->opts->{delete} // $self->opts->{'-delete'};
+    my $default = $self->opts->{default} // $self->opts->{'-default'};
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;

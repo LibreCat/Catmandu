@@ -23,10 +23,13 @@ around BUILDARGS => sub {
 sub _build_bag {
     my ($self) = @_;
     my %opts = %{$self->opts};
-    my $bag_name = delete $opts{bag};
     delete $opts{delete};
     delete $opts{default};
-    Catmandu->store($self->store_name, %opts)->bag($bag_name);
+    delete $opts{'-delete'};
+    delete $opts{'-default'};
+    my $bag_name = delete($opts{bag}) // delete($opts{'-bag'});
+    my $store = Catmandu->store($self->store_name, %opts);
+    $store->bag($bag_name // $store->default_bag);
 }
 
 sub emit {
@@ -34,8 +37,8 @@ sub emit {
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
     my $bag_var = $fixer->capture($self->bag);
-    my $delete = $self->opts->{delete};
-    my $default = $self->opts->{default};
+    my $delete = $self->opts->{delete} // $self->opts->{'-delete'};
+    my $default = $self->opts->{default} // $self->opts->{'-default'};
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
