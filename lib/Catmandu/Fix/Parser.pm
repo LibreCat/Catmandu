@@ -1,6 +1,5 @@
 package Catmandu::Fix::Parser;
 
-use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(is_array_ref check_string require_package read_file);
 use Catmandu::Fix::Filter;

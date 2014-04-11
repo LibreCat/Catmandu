@@ -3,42 +3,38 @@ package Catmandu::Fix::lookup_in_store;
 use Catmandu::Sane;
 use Catmandu;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path       => (is => 'ro', required => 1);
-has store_name => (is => 'ro', required => 1);
-has opts       => (is => 'ro');
-has bag        => (is => 'ro', lazy => 1, builder => 1);
+has path       => (fix_arg => 1);
+has store_name => (fix_arg => 1);
+has bag_name   => (fix_opt => 1, init_arg => 'bag');
+has default    => (fix_opt => 1);
+has delete     => (fix_opt => 1);
+has store_args => (fix_opt => 'collect');
+has store      => (is => 'lazy', init_arg => undef);
+has bag        => (is => 'lazy', init_arg => undef);
 
-around BUILDARGS => sub {
-    my ($orig, $class, $path, $store_name, %opts) = @_;
-    $orig->($class,
-        path => $path,
-        store_name => $store_name,
-        opts => \%opts,
-    );
-};
+sub _build_store {
+    my ($self) = @_;
+    Catmandu->store($self->store_name, %{$self->store_args});
+}
 
 sub _build_bag {
     my ($self) = @_;
-    my %opts = %{$self->opts};
-    delete $opts{delete};
-    delete $opts{default};
-    delete $opts{'-delete'};
-    delete $opts{'-default'};
-    my $bag_name = delete($opts{bag}) // delete($opts{'-bag'});
-    my $store = Catmandu->store($self->store_name, %opts);
-    $store->bag($bag_name // $store->default_bag);
+    defined $self->bag_name
+        ? $self->store->bag($self->bag_name)
+        : $self->store->bag;
 }
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
-    my $bag_var = $fixer->capture($self->bag);
-    my $delete = $self->opts->{delete} // $self->opts->{'-delete'};
-    my $default = $self->opts->{default} // $self->opts->{'-default'};
+    my $path     = $fixer->split_path($self->path);
+    my $key      = pop @$path;
+    my $bag_var  = $fixer->capture($self->bag);
+    my $delete   = $self->delete;
+    my $default  = $self->default;
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;

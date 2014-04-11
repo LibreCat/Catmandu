@@ -2,16 +2,12 @@ package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path => (is => 'ro', required => 1);
-has args => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, @args) = @_;
-    $orig->($class, path => $path, args => [@args]);
-};
+has path => (fix_arg => 1);
+has args => (fix_arg => 'collect');
 
 sub emit {
     my ($self, $fixer) = @_;
