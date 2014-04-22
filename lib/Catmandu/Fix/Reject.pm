@@ -1,4 +1,4 @@
-package Catmandu::Fix::Filter;
+package Catmandu::Fix::Reject;
 
 use Catmandu::Sane;
 use Moo;
