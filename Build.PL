@@ -11,6 +11,7 @@ my $build = Module::Build->new(
         'Vitali Peil <vitali.peil@uni-bielefeld.de>',
     ],
     build_requires => {
+        'Test::Deep' => 0,
         'Test::Exception' => 0,
         'Test::More' => 0,
         'Log::Any::Adapter' => 0,

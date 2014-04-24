@@ -2,14 +2,14 @@ package Catmandu::Fix::Parser;
 
 use Catmandu::Sane;
 use Marpa::R2;
-use Catmandu::Util qw(check_string read_file);
+use Catmandu::Util qw(check_value read_file);
 use Catmandu::Fix::Reject;
 use Moo;
 
 my $GRAMMAR = <<'GRAMMAR';
 :default ::= action => ::array
 :start ::= fixes
-:discard ~ whitespace
+:discard ~ discard
 
 fixes ::= expression*
 
@@ -48,6 +48,7 @@ args ::= arg* separator => sep
 
 arg ::= int         bless => Int
       | qq_string   bless => DoubleQuotedString
+      | q_string    bless => SingleQuotedString
       | bare_string bless => BareString
 
 old_if_name ~ 'if_' [a-z] name_rest
@@ -66,11 +67,19 @@ qq_string ~ '"' qq_chars '"'
 qq_chars  ~ qq_char*
 qq_char   ~ [^"] | '\"'
 
-bare_string ~ [^\s,;:=>()"]+
+q_string ~ ['] q_chars [']
+q_chars  ~ q_char*
+q_char   ~ [^'] | '\' [']
+
+bare_string ~ [^\s\\\,;:=>()"']+
+
+old_terminator ~ ';'
 
 whitespace ~ [\s]+
 
-sep ~ [,;:]
+discard ~ whitespace | old_terminator
+
+sep ~ [,:]
     | '=>'
 GRAMMAR
 
@@ -82,44 +91,43 @@ sub parse {
 
     my ($self, $source) = @_;
 
-    check_string($source);
+    check_value($source);
 
-    if ($source !~ /\(/) {
+    if ($source =~ /[^\s]/ && $source !~ /\(/) {
         $source = read_file($source);
     }
 
-    my $recce = Marpa::R2::Scanless::R->new({grammar => $grammar});
-    $recce->read(\$source);
-
-    my $parsed = ${$recce->value};
-    [map {$_->reify} @$parsed];
+    my $recognizer = Marpa::R2::Scanless::R->new({grammar => $grammar});
+    $recognizer->read(\$source);
+    my $val = ${$recognizer->value};
+    [ map {$_->reify} @$val ];
 }
 
 sub Catmandu::Fix::Parser::IfElse::reify {
     my $cond       = $_[0]->[0]->reify;
-    my $fixes      = $_[0]->[1];
-    my $else_fixes = $_[0]->[2];
-    push @{$cond->fixes}, map { $_->reify } @$fixes;
-    push @{$cond->else_fixes}, map { $_->reify } @$else_fixes if $else_fixes;
+    my $pass_fixes = $_[0]->[1];
+    my $fail_fixes = $_[0]->[2];
+    $cond->pass_fixes([map { $_->reify } @$pass_fixes]);
+    $cond->fail_fixes([map { $_->reify } @$fail_fixes]) if $fail_fixes;
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Unless::reify {
     my $cond       = $_[0]->[0]->reify;
-    my $else_fixes = $_[0]->[1];
-    push @{$cond->else_fixes}, map { $_->reify } @$else_fixes;
+    my $fail_fixes = $_[0]->[1];
+    $cond->fail_fixes([map { $_->reify } @$fail_fixes]);
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Select::reify {
     my $cond = $_[0]->[0]->reify;
-    push @{$cond->else_fixes}, Catmandu::Fix::Reject->new;
+    $cond->fail_fixes([Catmandu::Fix::Reject->new]);
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Reject::reify {
     my $cond = $_[0]->[0]->reify;
-    push @{$cond->fixes}, Catmandu::Fix::Reject->new;
+    $cond->pass_fixes([Catmandu::Fix::Reject->new]);
     $cond;
 }
 
@@ -160,6 +168,26 @@ sub Catmandu::Fix::Parser::DoubleQuotedString::reify {
         $str =~ s/\\\\/\\/gxms;
         $str =~ s{\\/}{/}gxms;
         $str =~ s{\\"}{"}gxms;
+    }
+
+    $str;
+}
+
+sub Catmandu::Fix::Parser::SingleQuotedString::reify {
+    my $str = $_[0]->[0];
+
+    $str = substr($str, 1, length($str) - 2);
+
+    if (index($str, '\\') != -1) {
+        $str =~ s/\\u([0-9A-Fa-f]{4})/chr(hex($1))/egxms;
+        $str =~ s/\\n/\n/gxms;
+        $str =~ s/\\r/\r/gxms;
+        $str =~ s/\\b/\b/gxms;
+        $str =~ s/\\f/\f/gxms;
+        $str =~ s/\\t/\t/gxms;
+        $str =~ s/\\\\/\\/gxms;
+        $str =~ s{\\/}{/}gxms;
+        $str =~ s{\\'}{'}gxms;
     }
 
     $str;

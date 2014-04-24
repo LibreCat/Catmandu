@@ -5,7 +5,7 @@ use Moo::Role;
 
 with 'Catmandu::Fix::Base';
 
-has fixes      => (is => 'ro', default => sub { [] });
-has else_fixes => (is => 'ro', default => sub { [] });
+has pass_fixes => (is => 'rw', default => sub { [] });
+has fail_fixes => (is => 'rw', default => sub { [] });
 
 1;

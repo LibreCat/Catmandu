@@ -2,15 +2,12 @@ package Catmandu::Fix::Condition::all_match;
 
 use Catmandu::Sane;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Condition::SimpleAllTest';
 
-has pattern => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, $pattern) = @_;
-    $orig->($class, path => $path, pattern => $pattern);
-};
+has path    => (fix_arg => 1);
+has pattern => (fix_arg => 1);
 
 sub emit_test {
     my ($self, $var) = @_;

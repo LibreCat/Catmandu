@@ -10,8 +10,4 @@ BEGIN {
 }
 require_ok $pkg;
 
-#
-# Catmandu::Fix::Condition: need some rework to fic if_otherwise bugs..
-#
-
 done_testing 2;
