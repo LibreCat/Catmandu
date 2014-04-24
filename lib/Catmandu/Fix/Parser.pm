@@ -3,7 +3,6 @@ package Catmandu::Fix::Parser;
 use Catmandu::Sane;
 use Marpa::R2;
 use Catmandu::Util qw(check_value read_file);
-use Catmandu::Fix::Reject;
 use Moo;
 
 my $GRAMMAR = <<'GRAMMAR';
@@ -121,13 +120,13 @@ sub Catmandu::Fix::Parser::Unless::reify {
 
 sub Catmandu::Fix::Parser::Select::reify {
     my $cond = $_[0]->[0]->reify;
-    $cond->fail_fixes([Catmandu::Fix::Reject->new]);
+    $cond->fail_fixes([Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Reject::reify {
     my $cond = $_[0]->[0]->reify;
-    $cond->pass_fixes([Catmandu::Fix::Reject->new]);
+    $cond->pass_fixes([Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
     $cond;
 }
 

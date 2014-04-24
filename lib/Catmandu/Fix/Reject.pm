@@ -1,7 +1,9 @@
-package Catmandu::Fix::Reject;
+package Catmandu::Fix::reject;
 
 use Catmandu::Sane;
 use Moo;
+
+with 'Catmandu::Fix::Base';
 
 sub emit {
     my ($self, $fixer) = @_;

@@ -8,6 +8,7 @@ use Test::Exception;
 use Catmandu::Fix::upcase;
 use Catmandu::Fix::downcase;
 use Catmandu::Fix::Condition::exists;
+use Catmandu::Fix::reject;
 
 my $pkg;
 BEGIN {
@@ -32,6 +33,7 @@ my $foo_exists = Catmandu::Fix::Condition::exists->new("foo");
 my $bar_exists = Catmandu::Fix::Condition::exists->new("bar");
 my $upcase_foo = Catmandu::Fix::upcase->new("foo");
 my $downcase_foo = Catmandu::Fix::downcase->new("foo");
+my $reject = Catmandu::Fix::reject->new;
 
 cmp_deeply $parser->parse(""), [];
 
@@ -88,4 +90,16 @@ cmp_deeply $parser->parse("if exists(foo) if exists(bar) downcase(foo) end upcas
     $foo_exists,
 ];
 
-done_testing 22;
+$foo_exists->pass_fixes([]);
+$foo_exists->fail_fixes([$reject]);
+cmp_deeply $parser->parse("select exists(foo)"), [
+    $foo_exists,
+];
+
+$foo_exists->pass_fixes([$reject]);
+$foo_exists->fail_fixes([]);
+cmp_deeply $parser->parse("reject exists(foo)"), [
+    $foo_exists,
+];
+
+done_testing 24;
