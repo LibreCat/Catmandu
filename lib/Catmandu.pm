@@ -35,6 +35,10 @@ To install all Catmandu components in one easy step:
     # or
     cpanm --interactive Task::Catmandu
 
+or read our wiki for more installation hints:
+
+ https://github.com/LibreCat/Catmandu/wiki/Install
+ 
 =head1 VERSION
 
 Version 0.8014
