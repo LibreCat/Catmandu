@@ -1,6 +1,7 @@
 package Catmandu::Fix;
 
 use Catmandu::Sane;
+use Catmandu;
 use Catmandu::Util qw(:is :string);
 use Clone qw(clone);
 
@@ -131,8 +132,6 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    $self->log->debug($perl);
-    
     if ($self->tidy) {
         require Perl::Tidy;
 
@@ -151,8 +150,10 @@ sub emit {
             Catmandu::Error->throw($err);
         }
 
-        return $tidy_perl;
+        $perl = $tidy_perl;
     }
+
+    $self->log->debug($perl);
 
     $perl;
 }

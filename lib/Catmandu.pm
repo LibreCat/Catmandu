@@ -137,6 +137,19 @@ sub _env {
 Return the current logger (the L<Log::Any::Adapter> for category
 L<Catmandu::Env>).
 
+E.g. turn on logging in your application;
+
+ package main;
+ use Catmandu;
+ use Log::Any::Adapter;
+ use Log::Log4perl;
+
+ Log::Log4perl::init('./log4perl.conf');
+ Log::Any::Adapter->set('Log4perl');
+
+ my $importer = Catmandu::Importer::JSON->new(...);
+ ...
+
 =cut
 
 sub log { $_[0]->_env->log }
