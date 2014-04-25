@@ -4,10 +4,10 @@ use Catmandu::Sane;
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Condition::SimpleAnyTest';
-
 has path    => (fix_arg => 1);
 has pattern => (fix_arg => 1);
+
+with 'Catmandu::Fix::Condition::SimpleAnyTest';
 
 sub emit_test {
     my ($self, $var) = @_;
