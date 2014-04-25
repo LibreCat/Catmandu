@@ -148,5 +148,9 @@ $iter->data(['foo', 'oof']);
 is $iter->min, undef;
 is $iter->max, undef;
 
-done_testing 56;
+$iter->data([{n=>10},{n=>9},{n=>1}]);
+is $iter->min(sub {shift->{n}}), 1;
+is $iter->max(sub {shift->{n}}), 10;
+
+done_testing 58;
 

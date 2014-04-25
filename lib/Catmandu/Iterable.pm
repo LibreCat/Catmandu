@@ -287,7 +287,7 @@ sub max {
     $self->reduce(undef, sub {
         my ($memo, $data) = @_;
         my $val = defined $sub ? $sub->($data) : $data;
-        return $data > $memo ? $val : $memo if is_number($memo) && is_number($val);
+        return $val > $memo ? $val : $memo if is_number($memo) && is_number($val);
         return $memo if is_number($memo);
         return $val  if is_number($val);
         return;
@@ -299,7 +299,7 @@ sub min {
     $_[0]->reduce(undef, sub {
         my ($memo, $data) = @_;
         my $val = defined $sub ? $sub->($data) : $data;
-        return $data < $memo ? $val : $memo if is_number($memo) && is_number($val);
+        return $val < $memo ? $val : $memo if is_number($memo) && is_number($val);
         return $memo if is_number($memo);
         return $val  if is_number($val);
         return;
