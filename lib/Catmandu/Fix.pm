@@ -25,7 +25,6 @@ has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
-has binds       => (is => 'ro');
 has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
@@ -115,26 +114,8 @@ sub emit {
     $perl .= "sub {";
     $perl .= $self->emit_declare_vars($var, '$_[0]');
     $perl .= "eval {";
-    if ($self->binds) {
-        # Loop over all 'Catmandu::Fix::Bind' an use the result
-        # of a previous bind as input for a new bind. In this way
-        # we are sure that every fix is executed once.
-        my $code = [ map { [ref($_) , $self->emit_fix($_)] } @{$self->fixes} ];
-        my $bind_perl = undef;
-        for my $bind (@{$self->binds}) {
-            if (defined $bind_perl) {
-                $bind_perl = $self->emit_bind($bind,[[$bind , $bind_perl]]);
-            }
-            else {
-                $bind_perl = $self->emit_bind($bind,$code);
-            }
-        }
-        $perl .= $bind_perl;
-    }
-    else {
-        for my $fix (@{$self->fixes}) {
-            $perl .= $self->emit_fix($fix);
-        }
+    for my $fix (@{$self->fixes}) {
+        $perl .= $self->emit_fix($fix);
     }
     $perl .= "${var};";
     $perl .= "} or do {";
@@ -181,48 +162,6 @@ sub emit_reject {
     my ($self) = @_;
     my $reject_var = $self->_reject_var;
     "return $reject_var;";
-}
-
-sub emit_bind {
-    my ($self,$bind,$code) = @_;
-
-    my $var = $self->var;
-
-    my $perl = "";
-
-    if (is_instance($bind)) {
-        my $bind_var = $self->capture($bind);
-        my $unit     = $self->generate_var;
-        $perl .= "my ${unit} = ${bind_var}->unit(${var});";
-
-        for my $pair (@$code) { 
-            my $name = $pair->[0];
-            my $code = $pair->[1]; 
-            $perl .= "${bind_var} = ${bind_var}->bind(${unit}, sub {";
-            $perl .= "${var} = shift;";
-            $perl .= $code;
-            $perl .= "${var}";
-            $perl .= "},'$name');"
-        }
-    }
-    elsif (is_string($bind)) {
-        my $instance = require_package($bind,'Catmandu::Fix::Bind')->new;
-        my $bind_var = $self->capture($instance);
-        my $unit     = $self->generate_var;
-        $perl .= "my ${unit} = ${bind_var}->unit(${var});";
-
-        for my $pair (@$code) {
-            my $name = $pair->[0];
-            my $code = $pair->[1]; 
-            $perl .= "${var} = ${bind_var}->bind(${unit}, sub {";
-            $perl .= "${var} = shift;";
-            $perl .= $code;
-            $perl .= "${var}";
-            $perl .= "},'$name');"
-        }
-    }
-
-    $perl;
 }
 
 sub emit_fix {
