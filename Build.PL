@@ -18,7 +18,7 @@ my $build = Module::Build->new(
     },
     requires => {
         'perl' => '5.10.1',
-        'App::Cmd' => '0.310',
+        'App::Cmd' => '0.323',
         'CGI::Expand' => '2.02',
         'Clone' => '0.31',
         'Data::Compare' => '1.22',
