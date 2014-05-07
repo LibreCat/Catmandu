@@ -198,7 +198,7 @@ sub emit_bind {
         for my $pair (@$code) { 
             my $name = $pair->[0];
             my $code = $pair->[1]; 
-            $perl .= "${bind_var} = ${bind_var}->bind(${unit}, sub {";
+            $perl .= "${var} = ${bind_var}->bind(${unit}, sub {";
             $perl .= "${var} = shift;";
             $perl .= $code;
             $perl .= "${var}";
