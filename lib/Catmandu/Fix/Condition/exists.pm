@@ -23,17 +23,16 @@ sub emit {
             $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
         }
         $perl .= ") {";
-        for my $fix (@{$self->pass_fixes}) {
-            $perl .= $fixer->emit_fix($fix);
-        }
+
+        $perl .= $fixer->emit_fixes($self->pass_fixes);
+
         $perl .= "last $label;";
         $perl .= "}";
         $perl;
     });
 
-    for my $fix (@{$self->fail_fixes}) {
-        $perl .= $fixer->emit_fix($fix);
-    }
+    $perl .= $fixer->emit_fixes($self->fail_fixes);
+
     $perl;
 }
 
