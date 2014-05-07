@@ -20,7 +20,6 @@ with 'MooX::Log::Any';
 has tidy        => (is => 'ro');
 has parser      => (is => 'lazy');
 has fixer       => (is => 'lazy', init_arg => undef);
-has binder      => (is => 'ro', default => sub { []; });
 has _num_labels => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
@@ -117,9 +116,6 @@ sub emit {
     $perl .= "eval {";
     for my $fix (@{$self->fixes}) {
         $perl .= $self->emit_fix($fix);
-        for my $bind (@{$self->binder}) {
-            $perl .= $self->emit_bind($bind);
-        }
     }
     $perl .= "${var};";
     $perl .= "} or do {";
@@ -166,30 +162,6 @@ sub emit_reject {
     my ($self) = @_;
     my $reject_var = $self->_reject_var;
     "return $reject_var;";
-}
-
-sub emit_bind {
-    my ($self,$code) = @_;
-    return "" unless ($code);
-
-    my $var = $self->var;
-
-    if (is_instance($code)) {
-        my $bind_var = $self->capture($code);
-        "${bind_var}->bind(${var});";
-    }
-    elsif (is_code_ref($code)) {
-        my $bind_var = $self->capture($code);
-        "${bind_var}->(${var});";
-    }
-    elsif (is_string($code)) {
-        my $instance = require_package($code,'Catmandu::Fix::Bind')->new;
-        my $bind_var = $self->capture($instance);
-        "${bind_var}->bind(${var});";
-    }
-    else {
-        "";
-    }
 }
 
 sub emit_fix {
