@@ -46,10 +46,8 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
     }
 
     my $new_options = {
-        error_handler => sub {
-            
-            
-             sub { Catmandu->log() }
+        error_handler => sub {            
+            sub { Catmandu->log() }
             
             my ($data, $errors) = @_;
             if ($errors) {
@@ -64,29 +62,33 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
 
 =head1 DESCRIPTION
 
-Catmandu::Validator::Simple is ....
+Catmandu::Validator::Simple can be used for doing simple data validation in Catmandu.
 
 =head1 METHODS
 
-new(validation_handler => \&callback)
-new(validation_handler => \&callback, %options)
+=head2 new(validation_handler => \&callback)
 
-validation_handler should be a callback function that will take $hashref to a data record as argument.
+=head2 new(validation_handler => \&callback, %options)
+
+The I<callback> function should take $hashref to a data record as argument.
 Should return undef if the record passes validation otherwise return an error or an arrayref of errors.
-error can either be simple error message string or a hashref to a more detailed error information. If a
+Each error can be either a simple message string or a hashref to a more detailed error information. If a
 hashref is used then it should include the error messages field as 'message'. Any other information is
 optional.
 
-The constructor also optionally takes the common options for Catmandu::Validator.
+The constructor also accepts the common options for L<Catmandu::Validator>.
 
+=head2 validate(...)
 
-validate(...)
+=head2 validate_many(...)
 
-validate_many(...)
+=head2 last_errors(...)
 
-last_errors(...)
+=head2 count_valid()
 
-These are methods inherited from Catmandu::Validator.
+=head2 count_invalid()
+
+These are methods are inherited from L<Catmandu::Validator>.
 
 =head1 SEE ALSO
 

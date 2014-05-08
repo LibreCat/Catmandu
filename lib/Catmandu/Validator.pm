@@ -141,7 +141,7 @@ sub _process_record {
 
 =head1 NAME
 
-Catmandu::Validator - Namespace for packages that can validate records in Catmandu
+Catmandu::Validator - Namespace for packages that can validate records in Catmandu.
 
 =head1 SYNOPSIS
 
@@ -192,57 +192,57 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
  
 =head1 DESCRIPTION
 
-    A Catmandu::Validator is a stub for validating data.....
-
+    A Catmandu::Validator is a base class for Perl packages that can validate data.
 
 =head1 METHODS
 
-new()
+=head2 new()
 
 Create a new Catmandu::Validator.
 
-new(after_callback => \&callback)
+=head2 new(after_callback => \&callback)
 
 Used when validating multiple records after_callback validating each record.
 Reference to callback function that will takes $hashref to each data record, and  $arrayref to list of validation errors
 for the record as arguments.
 
 
-new(error_field => $field_name)
+=head2 new(error_field => $field_name)
 
 If this parameter is set, then during validaiton each record that
 fails validation will get an extra field added containing an
 arrayref to the validation errors. The name of the key will be the
 value passed or '_validation_errors' if 1 is passed. By default it is not set.
 
+=head2 validate( \%hash )
 
+validates a single record. Returns \%hash on success otherwise undef. Information about the validation errors
+can be retrieved with the L</"last_errors()"> method. 
 
--------------------------------
+=head2 validate_many( $iterator, \%options )
 
-validate( \%hash )
-
-validates a single record. Returns \%hash on success otherwise undef. Information about the validation erors
-can be retrieved with the errors() method. 
-
-validate_many( $iterator, \%options )
-validate_many( \@array,   \%options )
+=head2 validate_many( \@array,   \%options )
 
 Validates multiple records in an iterator or an array. Returns validated records in the same type of
 container. The default behaviour is to return the records that passed validation unchanged and omit the invalid records.
-This behaviour can be changed by setting the after_callback callback or the error_info field in the options or in the constructor.
+This behaviour can be changed by setting the I<after_callback> or the I<error_field> in the options or in the constructor.
 
-last_errors()
+=head2 last_errors()
 
 Returns arrayref of errors from the record that was last validated if that record failed validation
 or undef if there were no errors.
 
-count_valid()
+=head2 count_valid()
 
-Returns the number of valid_records from last validate_many or validate operation
+Returns the number of valid_records from last validate_many or validate operation.
 
-count_invalid()
+=head2 count_invalid()
 
-Returns the number of invalid_records from last validate_many or validate operation
+Returns the number of invalid_records from last validate_many or validate operation.
+
+=head1 SEE ALSO
+
+L<Catmandu::Validator::Simple>, L<Catmandu::Iterable>
 
 =cut
 
