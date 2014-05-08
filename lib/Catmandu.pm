@@ -41,7 +41,7 @@ or read our wiki for more installation hints:
 
 =cut
 
-our $VERSION = '0.8014';
+our $VERSION = '0.9';
 
 =head1 SYNOPSIS
 
