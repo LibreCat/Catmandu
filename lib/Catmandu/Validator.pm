@@ -231,7 +231,7 @@ Validates multiple records in an iterator or an array. Returns validated records
 container. The default behaviour is to return the records that passed validation unchanged and omit the invalid records.
 This behaviour can be changed by setting the after_callback callback or the error_info field in the options or in the constructor.
 
-errors()
+last_errors()
 
 Returns arrayref of errors from the record that was last validated if that record failed validation
 or undef if there were no errors.
@@ -240,7 +240,7 @@ count_valid()
 
 Returns the number of valid_records from last validate_many or validate operation
 
-cound_invalid()
+count_invalid()
 
 Returns the number of invalid_records from last validate_many or validate operation
 
