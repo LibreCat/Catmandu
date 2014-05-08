@@ -2,6 +2,7 @@ package Catmandu::Fix::Bind::eval;
 
 use Moo;
 use Data::Dumper;
+use Perl::Tidy;
 
 with 'Catmandu::Fix::Bind';
 
@@ -12,8 +13,10 @@ sub bind {
 		$data = $code->($data);
 	};
 	if ($@) {
-		warn "$name $perl";
-		die "Fix: $name threw an error: $@";
+		warn "$name : failed : $@";
+	}
+	else {
+		warn "$name : ok";
 	}
 
 	$data
