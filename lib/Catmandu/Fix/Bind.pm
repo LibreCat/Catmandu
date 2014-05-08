@@ -90,16 +90,17 @@ Catmandu::Fix::Bind instance before all Fix methods are executed. A trivial impl
       return $data;
   }
 
-=head2 bind($data,$code,$name)
+=head2 bind($data,$code,$name,$perl)
 
 The bind method is executed for every Catmandu::Fix method in the fixer. It receives the $data
-, which as wrapped by unit, the fix method as anonymous subroutine and the name of the fix. It should
-return the fixed code. A trivial implementaion of 'bind' is:
+, which as wrapped by unit, the fix method as anonymous subroutine, the name of the fix and the actual perl
+code to run it. It should return the fixed code. A trivial implementaion of 'bind' is:
 
   sub bind {
 	  my ($self,$data,$code,$name) = @_;
 	  return $code->($data);
   } 
+
 
 =head1 SEE ALSO
 
