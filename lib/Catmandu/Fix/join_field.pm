@@ -2,16 +2,12 @@ package Catmandu::Fix::join_field;
 
 use Catmandu::Sane;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path      => (is => 'ro', required => 1);
-has join_char => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, $join_char) = @_;
-    $orig->($class, path => $path, join_char => $join_char // '');
-};
+has path      => (fix_arg => 1);
+has join_char => (fix_arg => 1, default => sub { '' });
 
 sub emit {
     my ($self, $fixer) = @_;

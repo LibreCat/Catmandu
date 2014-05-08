@@ -12,3 +12,4 @@ META.*
 MYMETA.*
 Catmandu-*
 !*.t
+.perl-version

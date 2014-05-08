@@ -2,6 +2,7 @@ package Catmandu::Fix::expand_date;
 
 use Catmandu::Sane;
 use Moo;
+use Catmandu::Fix::Has;
 
 my $DATE_REGEX = qr{
     ^([0-9]{4})
@@ -10,12 +11,7 @@ my $DATE_REGEX = qr{
         )?
 }x;
 
-has date_field => (is => 'ro', default => sub { 'date' });
-
-around BUILDARGS => sub {
-    my ($orig, $class, $date_field) = @_;
-    $orig->($class, defined $date_field ? (date_field => $date_field) : ());
-};
+has date_field => (fix_arg => 1, default => sub { 'date' });
 
 sub fix {
     my ($self, $data) = @_;

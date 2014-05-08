@@ -1,10 +1,10 @@
 package Catmandu::Fix::Base;
 
-use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Fix;
 use Clone ();
 use Moo::Role;
+use namespace::clean;
 
 with 'MooX::Log::Any';
 

@@ -24,8 +24,8 @@ In the L<http://librecat.org/|LibreCat> project it is our goal to provide an
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
-Read an in depth introduction into Catmandu programming in
-L<Catmandu::Introduction>.
+Read an in depth introduction into Catmandu programming at
+L<https://github.com/LibreCat/Catmandu/wiki/Introduction>.
 
 =head1 ONE STEP INSTALL
 
@@ -35,9 +35,9 @@ To install all Catmandu components in one easy step:
     # or
     cpanm --interactive Task::Catmandu
 
-=head1 VERSION
+or read our wiki for more installation hints:
 
-Version 0.8014
+ https://github.com/LibreCat/Catmandu/wiki/Install
 
 =cut
 
@@ -132,6 +132,19 @@ sub _env {
 
 Return the current logger (the L<Log::Any::Adapter> for category
 L<Catmandu::Env>).
+
+E.g. turn on logging in your application;
+
+ package main;
+ use Catmandu;
+ use Log::Any::Adapter;
+ use Log::Log4perl;
+
+ Log::Log4perl::init('./log4perl.conf');
+ Log::Any::Adapter->set('Log4perl');
+
+ my $importer = Catmandu::Importer::JSON->new(...);
+ ...
 
 =cut
 
@@ -444,7 +457,7 @@ Import everything.
 
 =head1 SEE ALSO
 
-L<Catmandu::Introduction>
+L<https://github.com/LibreCat/Catmandu/wiki>.
 
 =head1 AUTHOR
 

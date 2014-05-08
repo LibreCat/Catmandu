@@ -1,23 +1,16 @@
 package Catmandu::Fix::sort_field;
 
 use Catmandu::Sane;
+use List::MoreUtils ();
 use Moo;
-use List::MoreUtils;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path => (is => 'ro', required => 1);
-has uniq => (is => 'ro', required => 1);
-has reverse => (is => 'ro');
-has numeric => (is => 'ro');
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, %options) = @_;
-    my $uniq = defined $options{-uniq} && $options{-uniq} == 1 ? 1 : 0;
-    my $reverse = defined $options{-reverse} && $options{-reverse} == 1 ? 1 : 0;
-    my $numeric = defined $options{-numeric} && $options{-numeric} == 1 ? 1 : 0;
-    $orig->($class, path => $path , uniq => $uniq , reverse => $reverse , numeric => $numeric);
-};
+has path    => (fix_arg => 1);
+has uniq    => (fix_opt => 1);
+has reverse => (fix_opt => 1);
+has numeric => (fix_opt => 1);
 
 sub emit {
     my ($self, $fixer) = @_;
