@@ -42,24 +42,24 @@ throws_ok { $e->validate_many(1) } qr/Cannot validate data of this type/;
 my $href0 = { field => 0 };
 my $href1 = { field => 1 };
 
-is $e->validate($href1), $href1;
-is $e->validate($href0), undef;
+is $e->validate($href1), $href1, 'validate() - success';
+is $e->validate($href0), undef, 'validate() - fails';
 
-is_deeply($e->last_errors, ['Value is not 1']);
+is_deeply($e->last_errors, ['Value is not 1'], 'last_errors returns errors');
 
-is $e->is_valid($href1), 1;
-is $e->is_valid($href0), 0;
+is $e->is_valid($href1), 1, 'is_valid returns 1';
+is $e->is_valid($href0), 0, 'is_valid returns 0';
 
 my $after_callback_called =0;
-is $e->validate_many($href1, {after_callback => sub { $after_callback_called = 1, $_[0]}}), $href1;
-is $after_callback_called, 1;
+is $e->validate_many($href1, {after_callback => sub { $after_callback_called = 1, $_[0]}}), $href1, 'validate_many, after_callback - success';
+is $after_callback_called, 1, 'validate_many, after_callback - called';
 
 my $arr =
   $e->validate_many([{field => 2},{field => 1}, {field => 0},{field => 3} ]);
 
 
-is $e->count_valid, 1;
-is $e->count_invalid, 3;
+is $e->count_valid, 1, 'count_valid';
+is $e->count_invalid, 3, 'count_invalid';
 
 my $error_field = '_validation_errors';
 my $validation_error_message = "Value is not 1";
@@ -69,7 +69,7 @@ is_deeply $e_efield->validate_many([{field => 5},{field => 3}, {field => 1}]),
         {field => 5, $error_field => [$validation_error_message]},
         {field => 3, $error_field => [$validation_error_message]},
         {field => 1}
-    ];
+    ], 'validate_many, error_field 1';
 
 my $error_field_new = 'my_error';
 is_deeply $e_efield->validate_many(
@@ -80,10 +80,7 @@ is_deeply $e_efield->validate_many(
         {field => 6, $error_field_new => [$validation_error_message]},
         {field => 3, $error_field_new => [$validation_error_message]},
         {field => 1}
-    ];
-
-
-#test after_callback
+    ], 'validate_many, error_field 2';
 
 my @invalid_array;
 
@@ -104,29 +101,26 @@ my $passed_array = $validator->validate_many(
     [{field => 3},{field => 1}, {field => 2}]
 );
 
-is_deeply $passed_array, [{field => 1, valid=>1}];
+is_deeply $passed_array, [{field => 1, valid=>1}], 'validate_many, after_callback - valid';
 is_deeply \@invalid_array, [
     {field => 3, errors => [$validation_error_message]},
     {field => 2, errors => [$validation_error_message]}, 
-     ];
+     ], 'validate_many, after_callback - invalid';
 
-
-
-#test error_callback
 my $x=0;
 @invalid_array =();
 $validator = T::Validator->new( error_callback => sub { push @invalid_array, $_[0] } );
 $passed_array = $validator->validate_many(
     [{field => 1},{field => 8}, {field => 9}]
 );
-is_deeply $passed_array, [{field => 1}];
-is_deeply \@invalid_array, [{field => 8}, {field => 9}];
+is_deeply $passed_array, [{field => 1}], 'validate_many (array) - valid records returned';
+is_deeply \@invalid_array, [{field => 8}, {field => 9}], 'validate_many - invalid records returned';
 
 # test iterator
 
 my $it = Catmandu::ArrayIterator->new([{field => 1},{field=>8},{field=>7}]);
 $validator = T::Validator->new;
 my $new_it = $validator->validate_many($it);
-is_deeply $new_it->to_array, [{field => 1}, {field=>7}];
+is_deeply $new_it->to_array, [{field => 1}, {field=>7}], 'validate_many (iterator) - iterator returned';
 
 done_testing 24;

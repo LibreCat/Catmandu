@@ -22,10 +22,10 @@ throws_ok { $v->new(validation_handler => 1) } qr/Validation_handler should be a
 
 my $rec = {field => 1};
 
-is $v->validate($rec), $rec;
+is $v->validate($rec), $rec,'validate - success' ;
 
-is $v->validate({field => 3}), undef;
+is $v->validate({field => 3}), undef, 'validate - fails';
 
-is_deeply $v->last_errors, ['Not 1'];
+is_deeply $v->last_errors, ['Not 1'], 'last_errors returns error message';
 
 done_testing 7;
