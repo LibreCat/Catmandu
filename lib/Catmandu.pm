@@ -24,8 +24,8 @@ In the L<http://librecat.org/|LibreCat> project it is our goal to provide an
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
-Read an in depth introduction into Catmandu programming in
-L<Catmandu::Introduction>.
+Read an in depth introduction into Catmandu programming at
+L<https://github.com/LibreCat/Catmandu/wiki/Introduction>.
 
 =head1 ONE STEP INSTALL
 
@@ -457,7 +457,7 @@ Import everything.
 
 =head1 SEE ALSO
 
-L<Catmandu::Introduction>
+L<https://github.com/LibreCat/Catmandu/wiki>.
 
 =head1 AUTHOR
 
