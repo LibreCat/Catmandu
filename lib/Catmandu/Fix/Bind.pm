@@ -21,12 +21,18 @@ sub bind {
 sub emit {
     my ($self, $fixer, $label) = @_;
     my $perl = "";
-    
-    $fixer->binder([$self]);
+
+    my $binder = $fixer->binder // [];
+
+    push @$binder , $self;
+    $fixer->binder($binder);
 
     $perl .= $fixer->emit_fixes($self->fixes);
 
-    $fixer->binder(undef);
+    pop @$binder;
+    $binder = undef if (@$binder == 0);
+
+    $fixer->binder($binder);
 
     $perl;
 }
