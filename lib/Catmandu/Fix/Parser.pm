@@ -59,7 +59,7 @@ old_if_name ~ 'if_' [a-z] name_rest
 old_unless_name ~ 'unless_' [a-z] name_rest
 
 name      ~ [a-z] name_rest
-name_rest ~ [_\da-z]*
+name_rest ~ [_\da-zA-Z]*
 
 int ~ digits
     | '-' digits
