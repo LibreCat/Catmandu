@@ -26,7 +26,7 @@ has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
 has binds       => (is => 'ro');
-has binder      => (is => 'lazy');
+has binder      => (is => 'rw');
 has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 

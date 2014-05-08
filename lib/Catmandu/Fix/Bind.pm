@@ -6,6 +6,8 @@ use namespace::clean;
 requires 'unit';
 requires 'bind';
 
+has fixes => (is => 'rw', default => sub { [] });
+
 sub unit {
 	my ($self,$data) = @_;
 	return $data;
@@ -14,6 +16,19 @@ sub unit {
 sub bind {
 	my ($self,$data,$code,$name) = @_;
 	return $code->($data);
+}
+
+sub emit {
+    my ($self, $fixer, $label) = @_;
+    my $perl = "";
+    
+    $fixer->binder([$self]);
+
+    $perl .= $fixer->emit_fixes($self->fixes);
+
+    $fixer->binder(undef);
+
+    $perl;
 }
 
 =head1 NAME
