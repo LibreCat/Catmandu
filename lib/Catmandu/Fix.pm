@@ -181,6 +181,7 @@ sub emit {
     $perl;
 }
 
+# Emit an array of fixes
 sub emit_fixes {
     my ($self,$fixes) = @_;
     my $perl = '';
@@ -189,16 +190,21 @@ sub emit_fixes {
         # Loop over all 'Catmandu::Fix::Bind' an use the result
         # of a previous bind as input for a new bind. In this way
         # we are sure that every fix is executed once.
+
         my $code = [ map { [ref($_) , $self->emit_fix($_)] } @{$fixes} ];
+
         my $bind_perl = undef;
+        my $prev_bind = undef;
         for my $bind (@{$self->binder}) {
             if (defined $bind_perl) {
-                $bind_perl = $self->emit_bind($bind,[[$bind , $bind_perl]]);
+                $bind_perl = $self->emit_bind($bind,[[$prev_bind , $bind_perl]]);
             }
             else {
                 $bind_perl = $self->emit_bind($bind,$code);
             }
+            $prev_bind = ref $bind;
         }
+        
         $perl .= $bind_perl;
     }
     else {
@@ -210,12 +216,14 @@ sub emit_fixes {
     $perl;
 }
 
-sub emit_reject {
-    my ($self) = @_;
-    my $reject_var = $self->_reject_var;
-    "return $reject_var;";
-}
-
+# Wrap an array of fix names and code in bind a bind
+# 
+# $bind : a Catmandu::Fix::Bind
+# $code : array of [ $name , $perl] 
+# 
+# where
+#       $name : name of a fix
+#       $perl : perl code of a fix
 sub emit_bind {
     my ($self,$bind,$code) = @_;
 
@@ -223,7 +231,7 @@ sub emit_bind {
 
     my $perl = "";
 
-    if (is_instance($bind)) {
+    if (is_instance($bind) && $bind->can('unit') && $bind->can('bind')) {
         my $bind_var = $self->capture($bind);
         my $unit     = $self->generate_var;
         $perl .= "my ${unit} = ${bind_var}->unit(${var});";
@@ -240,6 +248,12 @@ sub emit_bind {
     }
 
     $perl;
+}
+
+sub emit_reject {
+    my ($self) = @_;
+    my $reject_var = $self->_reject_var;
+    "return $reject_var;";
 }
 
 sub emit_fix {
