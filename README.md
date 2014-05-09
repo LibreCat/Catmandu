@@ -85,7 +85,7 @@ makes your configuration more readable by keeping indentation to a minimum.
 
 A config file containing
 
-    _path:
+    _prefix:
         foo:
             bar:
     baz: 1
@@ -139,6 +139,8 @@ Load all the configuration options in the catmandu.yml configuration file.
 ## load('/path', '/another/path')
 
 Load all the configuration options stored at alternative paths.
+
+A load path `':up'` will search upwards from your program for configuration.
 
 ## roots
 

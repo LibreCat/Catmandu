@@ -15,7 +15,7 @@ require_ok $pkg;
 
 my $v = Catmandu::Validator::Simple->new(handler => sub { $_[0]->{field} eq '1' ? undef :
    'Not 1'});;
-#isa_ok
+
 can_ok $v, 'validate_data';
 
 throws_ok { $v->new(handler => 1) } qr/handler should be a CODE reference/;

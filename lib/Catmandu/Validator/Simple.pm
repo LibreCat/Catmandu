@@ -9,19 +9,19 @@ has handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
-        Catmandu::BadArg->throw( "handler should be a CODE reference") unless ref $_[0] eq 'CODE',
+        Catmandu::BadArg->throw( "handler should be a CODE reference")
+            unless ref $_[0] eq 'CODE';
     },
 );
 
-
-sub validate_data  {
+sub validate_data {
     my ($self, $data) = @_;
 
     my $error_messages = &{$self->handler}($data);
-    $error_messages = [$error_messages] unless !$error_messages || ref $error_messages eq 'ARRAY'; 
+    $error_messages = [$error_messages]
+        unless !$error_messages || ref $error_messages eq 'ARRAY';
     return $error_messages;
 }
-
 
 =head1 NAME
 
@@ -48,15 +48,17 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
 
 =head1 DESCRIPTION
 
-Catmandu::Validator::Simple can be used for doing simple data validation in Catmandu.
+Catmandu::Validator::Simple can be used for doing simple data validation in
+Catmandu.
 
 =head1 METHODS
 
 =head2 new(handler => \&callback, %options)
 
 The I<callback> function should take $hashref to a data record as argument.
-Should return undef if the record passes validation otherwise return an error or an arrayref of errors.
-Each error can be either a simple message string or a hashref to a more detailed error information.
+Should return undef if the record passes validation otherwise return an error
+or an arrayref of errors.  Each error can be either a simple message string or
+a hashref to a more detailed error information.
 
 The constructor also accepts the common options for L<Catmandu::Validator>.
 

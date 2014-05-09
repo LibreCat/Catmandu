@@ -7,7 +7,7 @@ use Moo::Role;
 requires 'validate_data';
 
 has 'last_errors' => (
-      is     => 'rwp',
+      is => 'rwp',
       clearer => '_clear_last_errors',
       init_arg => undef,
 );
@@ -22,7 +22,6 @@ has 'error_callback' => (
     clearer => 1,
 );
 
-
 has 'error_field' => (
     is => 'ro',
     clearer => 1,
@@ -34,14 +33,13 @@ has ['valid_count', 'invalid_count'] => (
     default => sub {0},
 );
 
-
 sub is_valid {
     my ($self, $data) = @_;
-    
-    if (! is_hash_ref($data) ) {
+
+    if (! is_hash_ref($data)) {
         Catmandu::BadArg->throw('Cannot validate data of this type');
     }
-    
+
     $self->_clear_last_errors;
     $self->_set_valid_count(0);
     $self->_set_invalid_count(0);
@@ -56,9 +54,8 @@ sub is_valid {
         $self->_set_valid_count(1);
     }
 
-    1; 
+    1;
 }
-
 
 sub validate {
     my ($self, $data) = @_;
@@ -66,65 +63,61 @@ sub validate {
     $self->_set_valid_count(0);
     $self->_set_invalid_count(0);
 
-    # Handle a single record
-    if ( is_hash_ref($data) ) {
+    # handle a single record
+    if (is_hash_ref($data)) {
         return $self->_process_record($data);
     }
-    
-    # Handle arrayref, returns a new arrayref
-    if ( is_array_ref($data) ) {
+
+    # handle arrayref, returns a new arrayref
+    if (is_array_ref($data)) {
         return [grep {defined} map {
              $self->_process_record($_)
         } @$data];
     }
-   
-    # Handle iterators, returns a new iterator
-    if ( is_invocant($data) ) {
-        return $data->select( sub { $self->_process_record($_[0]) } );
+
+    # handle iterators, returns a new iterator
+    if (is_invocant($data)) {
+        return $data->select(sub { $self->_process_record($_[0]) });
     }
-    
-    Catmandu::BadArg->throw('Cannot validate data of this type'); 
+
+    Catmandu::BadArg->throw('Cannot validate data of this type');
 }
 
 sub _process_record {
-    my $self = shift;
-    my ($data)  = @_;
+    my ($self, $data) = @_;
 
-    my $error_field = 
+    my $error_field =
         ($self->error_field||0) eq '1'
         ? '_validation_errors'
         : $self->error_field;
- 
+
     $self->_clear_last_errors;
     my $errors =  $self->validate_data($data);
     $self->_set_last_errors($errors);
-    
+
     if ($errors) {
         $self->_set_invalid_count(1+$self->invalid_count);
     } else {
         $self->_set_valid_count(1+$self->valid_count);
     }
 
-    if ( $errors && $error_field ) {
+    if ($errors && $error_field) {
         $data->{$error_field} = $errors;
-    } else {
     }
-    
-    if ( $self->after_callback ) {
-        return &{$self->after_callback}($data,$errors);
+
+    if ($self->after_callback) {
+        return $self->after_callback->($data, $errors);
     }
-    
-    if ( $errors && $self->error_callback ) {
-        &{$self->error_callback}($data,$errors);
+
+    if ($errors && $self->error_callback) {
+        $self->error_callback->($data, $errors);
         return;
     }
-    
+
     return if $errors && !$error_field;
-  
+
     $data;
-} 
-
-
+}
 
 =head1 NAME
 
@@ -141,14 +134,13 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
             return;
         }
     );
-    
+
     if ( $validator->is_valid($hashref) ) {
         save_record_in_database($hashref);
     } else {
         reject_form($validator->last_errors);
     }
-    
-        
+
     my $validator = Catmandu::Validator::Simple->new(
         handler => sub { ...},
         error_callback => sub {
@@ -157,9 +149,9 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
             print "$_\n" for @{$errors};
         }
     };
-    
+
     my $validated_arrayref = $validator->validate($arrayref);
-    
+
     $validator->validate($iterator, {
         after_callback => sub {
             my ($record, $errors) = @_;
@@ -174,11 +166,10 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
         my $record = shift;
         publish_record($record);
     });
-  
- 
+
 =head1 DESCRIPTION
 
-    A Catmandu::Validator is a base class for Perl packages that can validate data.
+A Catmandu::Validator is a base class for Perl packages that can validate data.
 
 =head1 METHODS
 
