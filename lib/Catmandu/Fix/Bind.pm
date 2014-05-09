@@ -2,7 +2,6 @@ package Catmandu::Fix::Bind;
 
 use Moo::Role;
 use namespace::clean;
-use Data::Dumper;
 
 requires 'unit';
 requires 'bind';
@@ -46,7 +45,7 @@ sub emit_bind {
 
     my $bind_var = $fixer->capture($self);
     my $unit     = $fixer->generate_var;
-    
+
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
     for my $pair (@$code) { 
