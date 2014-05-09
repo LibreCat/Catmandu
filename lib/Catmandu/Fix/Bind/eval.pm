@@ -15,9 +15,6 @@ sub bind {
 	if ($@) {
 		warn "$name : failed : $@";
 	}
-	else {
-		warn "$name : ok";
-	}
 
 	$data
 }

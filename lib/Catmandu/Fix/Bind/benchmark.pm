@@ -6,7 +6,8 @@ use Time::HiRes qw(gettimeofday tv_interval);
 
 with 'Catmandu::Fix::Bind';
 
-has stats => (is => 'lazy');
+has output => (is => 'ro' , required => 1);
+has stats  => (is => 'lazy');
 
 sub _build_stats {
 	+{};
@@ -27,24 +28,27 @@ sub bind {
 
 sub DESTROY {
 	my ($self) = @_;
+	local(*OUT);
+	open (OUT, '>' , $self->output) || return undef;
 
-	printf STDERR "%-8.8s\t%-40.40s\t%-8.8s\t%-8.8s\n"
+	printf OUT "%-8.8s\t%-40.40s\t%-8.8s\t%-8.8s\n"
 					, 'elapsed'
 					, 'command'
 					, 'calls'
 					, 'sec/command';
-	printf STDERR "-" x 100 . "\n";
+	printf OUT "-" x 100 . "\n";
 
 	for my $key (sort { $self->stats->{$b}->{elapsed} cmp $self->stats->{$a}->{elapsed} } keys %{$self->stats} ) {
 		my $speed = $self->stats->{$key}->{elapsed} / $self->stats->{$key}->{count};
-		printf STDERR "%f\t%-40.40s\t%d times\t%f secs/command\n" 
+		printf OUT "%f\t%-40.40s\t%d times\t%f secs/command\n" 
 					, $self->stats->{$key}->{elapsed}
 					, $key 
 					, $self->stats->{$key}->{count}
 					, $speed;
 	}
 
-	printf STDERR "\n\n";
+	printf OUT "\n\n";
+	close (OUT);
 }
 
 1;

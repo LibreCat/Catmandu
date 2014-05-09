@@ -8,18 +8,14 @@ requires 'bind';
 
 has fixes => (is => 'rw', default => sub { [] });
 
-sub BUILD {
-    warn "creating " . $_[0];
-}
-
 sub unit {
 	my ($self,$data) = @_;
 	return $data;
 }
 
 sub bind {
-    my ($self,$data,$code,$name) = @_;
-	return $code->($data);
+    my ($self,$data,$code,$name,$perl) = @_;
+	  return $code->($data);
 }
 
 sub finally {
@@ -66,42 +62,49 @@ sub emit_bind {
 
 =head1 NAME
 
-Catmandu::Fix::Bind - a Binder for fixes
+Catmandu::Fix::Bind - a wrapper for Catmandu::Fix-es
 
 =head1 SYNOPSIS
 
-  package Catmandu::Fix::Bind::Demo;
+  package Catmandu::Fix::Bind::demo;
   use Moo;
   with 'Catmandu::Fix::Bind';
 
   sub bind {
-    my $(self,$data,$code,$name) = @_;
+    my ($self,$data,$code,$name) = @_;
     warn "executing $name";
     $code->($data);
   }
 
-  package main;
-  use Catmandu::Importer::JSON;
-  use Catmandu::Fix;
+  # in your fix script you can now write
+  do
+     demo()
 
-  my $importer = Catmandu::Importer::JSON->new(file => 'test.data');
-  my $fixer = Catmandu::Fix->new(
-           fixes => ['add_field("foo","bar"); set_field("foo","test")'],
-           binds => ['Demo']
-  );
+     fix1()
+     fix2()
+     fix3()
+  end
 
-  # This will print:
-  #   executing add_field
-  #   executing set_field
-  #   executing add_field
-  #   executing set_field
-  $fixer->fix($importer)->each(sub {});
-
+  # this will execute all the fixes as expected plus print to STDERR
+  executing fix1
+  executing fix2
+  executing fix3
+   
 =head1 DESCRIPTION
 
 Bind is a package that wraps Catmandu::Fix-es and other Catmandu::Bind-s together. This gives
 the programmer further control on the excution of fixes. With Catmandu::Fix::Bind you can simulate
-the 'before', 'after' and 'around' modifiers as found in Moo. 
+the 'before', 'after' and 'around' modifiers as found in Moo or Dancer.
+
+To wrap Fix functions, the Fix language has provided a 'do' statment:
+
+  do BIND
+     FIX1
+     FIX2
+     FIX3
+  end
+
+In the example above the BIND will wrap FIX1, FIX2 and FIX3.
 
 A Catmandu::Fix::Bind needs to implement two methods: 'unit' and 'bind'.
 
@@ -124,17 +127,18 @@ The bind method is executed for every Catmandu::Fix method in the fixer. It rece
 code to run it. It should return the fixed code. A trivial implementaion of 'bind' is:
 
   sub bind {
-	  my ($self,$data,$code,$name) = @_;
-	  return $code->($data);
+    my ($self,$data,$code,$name) = @_;
+    return $code->($data);
   } 
 
 =head2 finally($data)
 
-Optionally finally is executed on the data when all the fixes have run.
+Optionally finally is executed on the data when all the fixes in a do block have run.
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix>
+L<Catmandu::Fix::Bind::identity>, L<Catmandu::Fix::Bind::each> , L<Catmandu::Fix::Bind::loop> ,
+L<Catmandu::Fix::Bind::eval>, L<Catmandu::Fix::Bind::benchmark>
 
 =cut
 
