@@ -4,12 +4,31 @@ use Catmandu::Sane;
 use Class::Method::Modifiers qw(install_modifier);
 use namespace::clean;
 
+my %package_args;
+my %package_opts;
+
+sub my_package_args {
+    $_[0]->package_args_for(caller);
+}
+sub package_args_for {
+    $package_args{$_[1]} || [];
+}
+sub my_package_opts {
+    $_[0]->package_opts_for(caller);
+}
+sub package_opts_for {
+    $package_opts{$_[1]} || [];
+}
+
 sub import {
     my $target = caller;
 
     my $around = do { no strict 'refs'; \&{"${target}::around"} };
     my $fix_args = [];
     my $fix_opts = [];
+
+    $package_args{$target} = $fix_args;
+    $package_opts{$target} = $fix_opts;
 
     install_modifier($target, 'around', 'has', sub {
         my ($orig, $attr, %opts) = @_;
