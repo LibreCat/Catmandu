@@ -25,7 +25,6 @@ has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
-has binder      => (is => 'rw');
 has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
@@ -165,66 +164,8 @@ sub emit_fixes {
     my ($self,$fixes) = @_;
     my $perl = '';
 
-    if ($self->binder) {
-        # Loop over all 'Catmandu::Fix::Bind' an use the result
-        # of a previous bind as input for a new bind. In this way
-        # we are sure that every fix is executed once.
-
-        my $code = [ map { [ref($_) , $self->emit_fix($_)] } @{$fixes} ];
-
-        my $bind_perl = undef;
-        my $prev_bind = undef;
-        for my $bind (@{$self->binder}) {
-            if (defined $bind_perl) {
-                $bind_perl = $self->emit_bind($bind,[[$prev_bind , $bind_perl]]);
-            }
-            else {
-                $bind_perl = $self->emit_bind($bind,$code);
-            }
-            $prev_bind = ref $bind;
-        }
-        
-        $perl .= $bind_perl;
-    }
-    else {
-        for my $fix (@{$fixes}) {
-            $perl .= $self->emit_fix($fix);
-        }
-    }
-
-    $perl;
-}
-
-# Wrap an array of fix names and code in bind a bind
-# 
-# $bind : a Catmandu::Fix::Bind
-# $code : array of [ $name , $perl] 
-# 
-# where
-#       $name : name of a fix
-#       $perl : perl code of a fix
-sub emit_bind {
-    my ($self,$bind,$code) = @_;
-
-    my $var = $self->var;
-
-    my $perl = "";
-
-    if (is_instance($bind) && $bind->can('unit') && $bind->can('bind')) {
-        my $bind_var = $self->capture($bind);
-        my $unit     = $self->generate_var;
-        $perl .= "my ${unit} = ${bind_var}->unit(${var});";
-
-        for my $pair (@$code) { 
-            my $name = $pair->[0];
-            my $code = $pair->[1]; 
-            my $code_var = $self->capture($code);
-            $perl .= "${var} = ${bind_var}->bind(${unit}, sub {";
-            $perl .= "${var} = shift;";
-            $perl .= $code;
-            $perl .= "${var}";
-            $perl .= "},'$name',${code_var});"
-        }
+    for my $fix (@{$fixes}) {
+        $perl .= $self->emit_fix($fix);
     }
 
     $perl;

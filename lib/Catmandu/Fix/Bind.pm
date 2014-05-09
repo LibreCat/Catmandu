@@ -2,11 +2,16 @@ package Catmandu::Fix::Bind;
 
 use Moo::Role;
 use namespace::clean;
+use Data::Dumper;
 
 requires 'unit';
 requires 'bind';
 
 has fixes => (is => 'rw', default => sub { [] });
+
+sub BUILD {
+    warn "creating " . $_[0];
+}
 
 sub unit {
 	my ($self,$data) = @_;
@@ -14,26 +19,49 @@ sub unit {
 }
 
 sub bind {
-	my ($self,$data,$code,$name) = @_;
+    my ($self,$data,$code,$name) = @_;
 	return $code->($data);
+}
+
+sub finally {
+    my ($self,$data) = @_;
+    $data;
 }
 
 sub emit {
     my ($self, $fixer, $label) = @_;
+
+    my $code = [ map { [ref($_) , $fixer->emit_fix($_)] } @{$self->fixes} ];
+    my $perl = $self->emit_bind($fixer,$code);
+
+    $perl; 
+}
+
+sub emit_bind {
+    my ($self,$fixer,$code) = @_;
+
+    my $var = $fixer->var;
+
     my $perl = "";
 
-    my $binder = $fixer->binder // [];
+    my $bind_var = $fixer->capture($self);
+    my $unit     = $fixer->generate_var;
+    
+    $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-    push @$binder , $self;
-    $fixer->binder($binder);
+    for my $pair (@$code) { 
+        my $name = $pair->[0];
+        my $code = $pair->[1]; 
+        my $code_var = $fixer->capture($code);
+        $perl .= "${unit} = ${bind_var}->bind(${unit}, sub {";
+        $perl .= "${var} = shift;";
+        $perl .= $code;
+        $perl .= "${var}";
+        $perl .= "},'$name',${code_var});"
+    }
 
-    $perl .= $fixer->emit_fixes($self->fixes);
-
-    pop @$binder;
-    $binder = undef if (@$binder == 0);
-
-    $fixer->binder($binder);
-
+    $perl .= "${unit} = ${bind_var}->finally(${unit});" if $self->can('finally');
+    
     $perl;
 }
 
@@ -101,6 +129,9 @@ code to run it. It should return the fixed code. A trivial implementaion of 'bin
 	  return $code->($data);
   } 
 
+=head2 finally($data)
+
+Optionally finally is executed on the data when all the fixes have run.
 
 =head1 SEE ALSO
 
