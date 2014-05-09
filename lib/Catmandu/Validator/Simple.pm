@@ -9,12 +9,12 @@ has validation_handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
-        Catmandu::BadArg->throw( "Validation_handler should be a CODE reference") unless ref $_[0] eq 'CODE',
+        Catmandu::BadArg->throw( "validation_handler should be a CODE reference") unless ref $_[0] eq 'CODE',
     },
 );
 
 
-sub validate_hash  {
+sub validate_data  {
     my ($self, $data) = @_;
 
     my $error_messages = &{$self->validation_handler}($data);
@@ -39,25 +39,11 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
         }
     );
 
-    if ( $validator->validate($hashref) ) {
+    if ( $validator->is_valid($hashref) ) {
         save_record_in_database($hashref);
     } else {
-        reject_form($validator->error_messages);
+        reject_form($validator->last_errors);
     }
-
-    my $new_options = {
-        error_handler => sub {            
-            sub { Catmandu->log() }
-            
-            my ($data, $errors) = @_;
-            if ($errors) {
-                print "Validation Errors for record $data->{_id}:\n";
-                print "Error message: $_\n" for @{$errors};
-            }
-        }
-    };
-    
-    my $validated_arrayref = $validator->validate_many($arrayref, $new_options);
 
 
 =head1 DESCRIPTION
@@ -66,23 +52,17 @@ Catmandu::Validator::Simple can be used for doing simple data validation in Catm
 
 =head1 METHODS
 
-=head2 new(validation_handler => \&callback)
-
 =head2 new(validation_handler => \&callback, %options)
 
 The I<callback> function should take $hashref to a data record as argument.
 Should return undef if the record passes validation otherwise return an error or an arrayref of errors.
-Each error can be either a simple message string or a hashref to a more detailed error information. If a
-hashref is used then it should include the error messages field as 'message'. Any other information is
-optional.
+Each error can be either a simple message string or a hashref to a more detailed error information.
 
 The constructor also accepts the common options for L<Catmandu::Validator>.
 
-=head2 validate(...)
-
 =head2 is_valid(...)
 
-=head2 validate_many(...)
+=head2 validate(...)
 
 =head2 last_errors(...)
 

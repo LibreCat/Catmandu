@@ -4,7 +4,7 @@ use Catmandu::Sane;
 use Catmandu::Util qw(:is);
 use Moo::Role;
 
-requires 'validate_hash';
+requires 'validate_data';
 
 has 'last_errors' => (
       is     => 'rwp',
@@ -13,18 +13,18 @@ has 'last_errors' => (
 );
 
 has 'after_callback' => (
-    is => 'rw',
+    is => 'ro',
     clearer => 1,
 );
 
 has 'error_callback' => (
-    is => 'rw',
+    is => 'ro',
     clearer => 1,
 );
 
 
 has 'error_field' => (
-    is => 'rw',
+    is => 'ro',
     clearer => 1,
 );
 
@@ -36,12 +36,7 @@ has ['count_valid', 'count_invalid'] => (
 
 
 sub is_valid {
-    shift->validate(@_) ? 1 : 0;
-}
-
-
-sub validate {
-    my ($self, $data, $options) = @_;
+    my ($self, $data) = @_;
     
     if (! is_hash_ref($data) ) {
         Catmandu::BadArg->throw('Cannot validate data of this type');
@@ -51,31 +46,25 @@ sub validate {
     $self->_set_count_valid(0);
     $self->_set_count_invalid(0);
 
-    my $errors = $self->validate_hash($data, $options);
+    my $errors = $self->validate_data($data);
 
     if ($errors) {
         $self->_set_last_errors($errors);
         $self->_set_count_invalid(1);
-        return;
+        return 0;
     } else {
         $self->_set_count_valid(1);
     }
 
-    $data; 
+    1; 
 }
 
 
-sub validate_many {
-    my ($self, $data, $options) = @_;
+sub validate {
+    my ($self, $data) = @_;
 
     $self->_set_count_valid(0);
     $self->_set_count_invalid(0);
-
-    # Update options if passed
-    
-    for ( qw(after_callback error_callback error_field) ) {
-        $self->$_( $options->{$_} ) if exists $options->{$_}
-    }
 
     # Handle a single record
     if ( is_hash_ref($data) ) {
@@ -107,7 +96,7 @@ sub _process_record {
         : $self->error_field;
  
     $self->_clear_last_errors;
-    my $errors =  $self->validate_hash($data);
+    my $errors =  $self->validate_data($data);
     $self->_set_last_errors($errors);
     
     if ($errors) {
@@ -153,26 +142,25 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
         }
     );
     
-    if ( $validator->validate($hashref) ) {
+    if ( $validator->is_valid($hashref) ) {
         save_record_in_database($hashref);
     } else {
         reject_form($validator->last_errors);
     }
     
         
-    my $new_options = {
+    my $validator = Catmandu::Validator::Simple->new(
+        validation_handler => sub { ...},
         error_callback => sub {
             my ($data, $errors) = @_;
-            print "Validation Errors for record $data->{_id}:\n";
-            print "Error message: $_->{message}\n" for @{$errors};
+            print "Validation errors for record $data->{_id}:\n";
+            print "$_\n" for @{$errors};
         }
     };
     
-    my $validated_arrayref = $validator->validate_many($arrayref, $new_options);
-
-    #together with iterators:
+    my $validated_arrayref = $validator->validate($arrayref);
     
-    $validator->validate_many($iterator, {
+    $validator->validate($iterator, {
         after_callback => sub {
             my ($record, $errors) = @_;
             if ($errors) {
@@ -200,7 +188,7 @@ Create a new Catmandu::Validator.
 
 =head2 new( after_callback => \&callback )
 
-Used when validating multiple records the after_callback is called after each record has been validated.
+The after_callback is called after each record has been validated.
 The callback function should take $hashref to each data record, and $arrayref to list of validation errors
 for the record as arguments.
 
@@ -211,22 +199,20 @@ fails validation will get an extra field added containing an
 arrayref to the validation errors. The name of the key will be the
 value passed or '_validation_errors' if 1 is passed. By default it is not set.
 
-=head2 validate( \%hash )
-
-Validates a single record. Returns \%hash on success otherwise undef. Information about the validation errors
-can be retrieved with the L</"last_errors()"> method. 
-
 =head2 is_valid( \%hash )
 
-Like L</"validate()"> but returns 1 success and 0 on failure.
+Validates a single record. Returns 1 success and 0 on failure. Information about the validation errors
+can be retrieved with the L</"last_errors()"> method.
 
-=head2 validate_many( $iterator, \%options )
+=head2 validate( \%hash )
 
-=head2 validate_many( \@array,   \%options )
+=head2 validate( $iterator )
 
-Validates multiple records in an iterator or an array. Returns validated records in the same type of
-container. The default behaviour is to return the records that passed validation unchanged and omit the invalid records.
-This behaviour can be changed by setting the I<after_callback> or the I<error_field> in the options or in the constructor.
+=head2 validate( \@array )
+
+Validates a single record or multiple records in an iterator or an array. Returns validated records in the same type of
+container for multiple records or the record itself for a single record. The default behaviour is to return the records that passed validation unchanged and omit the invalid records.
+This behaviour can be changed by setting the I<after_callback> or the I<error_field> in the constructor. Returns undef on validation failure for single records.
 
 =head2 last_errors()
 
@@ -235,11 +221,11 @@ or undef if there were no errors.
 
 =head2 count_valid()
 
-Returns the number of valid_records from last validate_many or validate operation.
+Returns the number of valid records from last validate operation.
 
 =head2 count_invalid()
 
-Returns the number of invalid_records from last validate_many or validate operation.
+Returns the number of invalid records from the last validate operation.
 
 =head1 SEE ALSO
 
