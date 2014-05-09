@@ -58,8 +58,8 @@ my $arr =
   $e->validate([{field => 2},{field => 1}, {field => 0},{field => 3} ]);
 
 
-is $e->count_valid, 1, 'count_valid';
-is $e->count_invalid, 3, 'count_invalid';
+is $e->valid_count, 1, 'valid_count';
+is $e->invalid_count, 3, 'invalid_count';
 
 my $error_field = '_validation_errors';
 my $validation_error_message = "Value is not 1";

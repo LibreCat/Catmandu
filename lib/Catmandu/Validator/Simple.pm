@@ -9,7 +9,7 @@ has handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
-        Catmandu::BadArg->throw( "validation_handler should be a CODE reference") unless ref $_[0] eq 'CODE',
+        Catmandu::BadArg->throw( "handler should be a CODE reference") unless ref $_[0] eq 'CODE',
     },
 );
 
@@ -17,7 +17,7 @@ has handler => (
 sub validate_data  {
     my ($self, $data) = @_;
 
-    my $error_messages = &{$self->validation_handler}($data);
+    my $error_messages = &{$self->handler}($data);
     $error_messages = [$error_messages] unless !$error_messages || ref $error_messages eq 'ARRAY'; 
     return $error_messages;
 }
@@ -32,9 +32,9 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
     use Catmandu::Validator::Simple;
 
     my $validator = Catmandu::Validator::Simple->new(
-        validation_handler => sub {
+        handler => sub {
             $data = shift;
-            return "error" unless $data =~ m/good data/;
+            return "error" unless $data->{title} =~ m/good title/;
             return;
         }
     );
@@ -52,7 +52,7 @@ Catmandu::Validator::Simple can be used for doing simple data validation in Catm
 
 =head1 METHODS
 
-=head2 new(validation_handler => \&callback, %options)
+=head2 new(handler => \&callback, %options)
 
 The I<callback> function should take $hashref to a data record as argument.
 Should return undef if the record passes validation otherwise return an error or an arrayref of errors.

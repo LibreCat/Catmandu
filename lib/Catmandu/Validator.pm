@@ -137,7 +137,7 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
     my $validator = Catmandu::Validator::Simple->new(
         handler => sub {
             $data = shift;
-            return "error" unless $data =~ m/good data/;
+            return "error" unless $data->{title} =~ m/good title/;
             return;
         }
     );
