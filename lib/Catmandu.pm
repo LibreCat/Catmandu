@@ -96,7 +96,7 @@ makes your configuration more readable by keeping indentation to a minimum.
 
 A config file containing
 
-    _path:
+    _prefix:
         foo:
             bar:
     baz: 1
@@ -173,7 +173,7 @@ Set the location of the default configuration file to a new path.
 
 =cut
 
-sub default_load_path {
+sub default_load_path { # TODO move to Catmandu::Env
     my ($class, $path) = @_;
     state $default_path;
     $default_path = $path if defined $path;
