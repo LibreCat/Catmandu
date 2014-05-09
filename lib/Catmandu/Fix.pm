@@ -663,7 +663,24 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 
 =head2 log
 
-Return the current logger.
+Return the current logger. Can be used when creating your own Fix commands.
+
+E.g.
+    
+    package Catmandu::Fix::meow;
+
+    use Moo;
+
+    sub fix {
+        my ($self,$data) = @_;
+
+        $self->log->debug("Setting meow");
+        $data->{meow} = 'purrrrr';
+
+        $data;
+    }
+
+See also: L<Catmandu> for activating the logger in your main code.
 
 =cut
 
