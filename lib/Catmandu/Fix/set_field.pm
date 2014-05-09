@@ -34,10 +34,10 @@ if they are missing.
 =head1 SYNOPSIS
 
    # Change the value of 'foo' to 'bar 123'
-   set_field('foo','bar 123');
+   set_field(foo, 'bar 123')
 
    # Change a deeply nested key
-   set_field('my.deep.nested.key','hi');
+   set_field(my.deep.nested.key, hi)
 
 =head1 SEE ALSO
 

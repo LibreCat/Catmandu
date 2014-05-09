@@ -31,14 +31,14 @@ if they are missing.
 
 =head1 SYNOPSIS
 
-   # Add a new field 'foo' with value '2'
-   add_field('foo','2');
+   # Add a new field 'foo' with value 2
+   add_field(foo, 2)
 
    # Change the value of 'foo' to 'bar 123'
-   add_field('foo','bar 123');
+   add_field(foo, 'bar 123')
 
    # Create a deeply nested key
-   add_field('my.deep.nested.key','hi');
+   add_field(my.deep.nested.key, hi)
 
 =head1 SEE ALSO
 

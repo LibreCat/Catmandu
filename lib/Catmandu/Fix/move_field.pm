@@ -47,7 +47,7 @@ Catmandu::Fix::move_field - move a field to another place in the data structure
 =head1 SYNOPSIS
 
    # Move 'foo.bar' to 'bar.foo'
-   move_field('foo.bar','bar.foo');
+   move_field(foo.bar, bar.foo)
 
 =head1 SEE ALSO
 

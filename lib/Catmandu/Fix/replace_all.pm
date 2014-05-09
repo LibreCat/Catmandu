@@ -36,7 +36,9 @@ Catmandu::Fix::replace_all - search and replace using regex expressions
 =head1 SYNOPSIS
 
    # Extract a substring out of the value of a field
-   replace_all('year','\^','0');
+   # {author => "tom jones"}
+   replace_all(author, '([^ ]+) ([^ ]+)', '$2, $1')
+   # {author => "jones, tom"}
 
 =head1 SEE ALSO
 

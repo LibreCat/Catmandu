@@ -16,7 +16,7 @@ Catmandu::Fix::nothing - does nothing (for testing)
 
 =head1 SYNOPSIS
 
-   nothing();
+   nothing()
 
 =head1 SEE ALSO
 

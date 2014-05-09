@@ -22,9 +22,9 @@ Catmandu::Fix::Condition::any_match - only execute fixes if any path value match
 =head1 SYNOPSIS
 
    # uppercase the value of field 'foo' if field 'oogly' has the value 'doogly'
-   if_any_match('oogly', 'doogly');
-   upcase('foo'); # foo => 'BAR'
-   end()
+   if any_match(oogly, "doogly")
+     upcase(foo) # foo => 'BAR'
+   end
 
 =head1 SEE ALSO
 

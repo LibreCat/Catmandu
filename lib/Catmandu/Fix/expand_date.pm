@@ -34,11 +34,11 @@ Catmandu::Fix::expand_date - expand a date field into year, month and date
 =head1 SYNOPSIS
 
     # {date => "2001-09-11"}
-    expand_date();
+    expand_date()
     # => {year => 2001, month => "9", day => "11", date => "2001-09-11"}
 
     # {datestamp => "2001:09"}
-    expand_date('datestamp');
+    expand_date(datestamp)
     # => {year => 2001, month => "9", datestamp => "2001:09"}
 
 =head1 DESCRIPTION

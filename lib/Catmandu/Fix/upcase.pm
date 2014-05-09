@@ -29,7 +29,7 @@ Catmandu::Fix::upcase - uppercase the value of a field
 =head1 SYNOPSIS
 
    # Uppercase the value of 'foo'. E.g. foo => 'bar'
-   upcase('foo'); # foo => 'BAR'
+   upcase(foo) # foo => 'BAR'
 
 =head1 SEE ALSO
 
