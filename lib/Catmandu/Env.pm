@@ -1,24 +1,41 @@
 package Catmandu::Env;
 
-use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
 use Catmandu::Fix;
 use Config::Onion;
 use File::Spec;
 use Moo;
+require Catmandu;
+use namespace::clean;
 
 with 'MooX::Log::Any';
+
+sub _search_up {
+    my $dir = $_[0];
+    my @dirs = grep length, File::Spec->splitdir(Catmandu->default_load_path);
+    for (; @dirs; pop @dirs) {
+        my $path = File::Spec->catdir(File::Spec->rootdir, @dirs);
+        opendir my $dh, $path or last;
+        return $path if
+            grep { -f File::Spec->catfile($path, $_) }
+            grep /^catmandu.+(?:yaml|yml|json|pl)$/,
+            readdir $dh;
+    }
+    Catmandu->default_load_path;
+}
 
 has load_paths => (
     is      => 'ro',
     default => sub { [] },
     coerce  => sub {
-        [ map { File::Spec->canonpath($_) }split /,/, join ',', ref $_[0] ? @{$_[0]} : $_[0] ];
+        [ map { File::Spec->canonpath($_) }
+          map { $_ eq ':up' ? _search_up($_) : $_ }
+          split /,/, join ',',
+          ref $_[0] ? @{$_[0]} : $_[0] ];
     },
 );
 
-has config_extensions => (is => 'ro', builder => 'default_config_extensions');
 has config => (is => 'rwp', default => sub { +{} });
 
 has stores => (is => 'ro', default => sub { +{} });
@@ -60,13 +77,11 @@ sub BUILD {
     }
 
     if (@config_dirs) {
-        my $exts = $self->default_config_extensions;
         my @globs = map { my $dir = $_;
-                          map { File::Spec->catfile($dir, "catmandu*.$_") } @$exts }
+                          map { File::Spec->catfile($dir, "catmandu*.$_") } qw(yaml yml json pl) }
                               reverse @config_dirs;
 
-        local $Config::Onion::prefix_key = '_path';
-        my $config = Config::Onion->new;
+        my $config = Config::Onion->new(prefix_key => '_prefix');
         $config->load_glob(@globs);
         $self->_set_config($config->get);
     }
