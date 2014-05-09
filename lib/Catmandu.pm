@@ -150,7 +150,7 @@ sub _env {
 Return the current logger (the L<Log::Any::Adapter> for category
 L<Catmandu::Env>).
 
-E.g. turn on logging in your application;
+E.g. turn on Log4perl logging in your application;
 
  package main;
  use Catmandu;
@@ -162,6 +162,16 @@ E.g. turn on logging in your application;
 
  my $importer = Catmandu::Importer::JSON->new(...);
  ...
+
+With log4perl.conf something like:
+
+ log4perl.rootLogger=DEBUG,STDOUT
+ log4perl.appender.STDOUT=Log::Log4perl::Appender::Screen
+ log4perl.appender.STDOUT.stderr=1
+ log4perl.appender.STDOUT.utf8=1
+
+ log4perl.appender.STDOUT.layout=PatternLayout
+ log4perl.appender.STDOUT.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
 
 =cut
 
