@@ -2,6 +2,9 @@ package Catmandu::Importer::Module::Info;
 use Catmandu::Sane;
 use Moo;
 use Module::Info;
+use Catmandu::Util qw(:is);
+
+our $VERSION = "0.1";
 
 with 'Catmandu::Importer';
 
@@ -12,6 +15,9 @@ has local => (
 has namespace => (
     is => 'ro',
     required => 1
+);
+has max_depth => (
+    is => 'ro'
 );
 
 sub generator {
@@ -25,11 +31,16 @@ sub generator {
 
             if($self->local){
                 require Module::Pluggable;
-                Module::Pluggable->import(
+                my %args = (
                     search_path => [$self->namespace],
                     search_dirs => [@INC],
                     sub_name => "_all_ns_packages"
                 );
+                if(is_natural($self->max_depth)){
+                    $args{max_depth} = $self->max_depth;
+                }
+                #use version 4.8 only?
+                Module::Pluggable->import(%args);
                 push @local_packages,__PACKAGE__->_all_ns_packages();
                 
             }
@@ -57,4 +68,22 @@ sub generator {
     };
 }
 
+=head1 NAME 
+ 
+    Catmandu::Cmd::Module::Info  -  list available packages in a given namespace 
+ 
+=head1 OPTIONS 
+ 
+    namespace:      namespace for the packages to list 
+    local:          list only local packages (default)
+ 
+=head1 SEE ALSO 
+ 
+    L<Catmandu::Importer>
+
+=head1 AUTHOR
+
+    Nicolas Franck, C<< <nicolas.franck at ugent.be> >> 
+
+=cut
 1;

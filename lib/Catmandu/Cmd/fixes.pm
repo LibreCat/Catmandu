@@ -2,7 +2,7 @@ package Catmandu::Cmd::fixes;
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
 use Catmandu::Util qw(:is);
-use Catmandu::Importer::Fixes;
+use Catmandu::Importer::Module::Info;
 use Catmandu::Fix;
 
 sub command_opt_spec {
@@ -30,10 +30,18 @@ sub command {
 
     my $verbose = $opts->verbose;
 
-    Catmandu::Importer::Fixes->new(
-        local => $opts->local
+    Catmandu::Importer::Module::Info->new(
+        local => $opts->local,
+        max_depth => 4,
+        namespace => "Catmandu::Fix"
     )->each(sub{
         my $record = shift;
+
+        #filter real fixes
+        my(@parts)= split ':',$record->{name};
+
+        return unless $parts[-1] =~ /^[a-z][0-9a-z_]+$/o;
+
         unless($verbose){
             say $record->{name};
         }else{
