@@ -3,6 +3,7 @@ Revision history for Catmandu
 {{NEXT}}
   - switch to Dist::Milla
   - Marpa based fix parser
+  - Config::Onion based config loader
 
 0.8014  2014-04-03
   - fix Paged bugs
