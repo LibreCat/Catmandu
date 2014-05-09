@@ -108,10 +108,14 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
 
 $fixes  =<<EOF;
-do loop(count => 3 , index => i)
+add_field(test.\$append,0)
+add_field(test.\$append,1)
+add_field(test.\$append,2)
+do each(path => test, index => i)
   copy_field(i,demo.\$append)
   copy_field(i,demo2.\$append)
 end
+remove_field(test)
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
@@ -119,12 +123,16 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 is_deeply $fixer->fix({}), {demo => [(qw(0 1 2))] , demo2 => [qw(0 1 2 )]} , 'testing specific loop';
 
 $fixes  =<<EOF;
-do loop(count => 3 , index => i)
+add_field(test.\$append,0)
+add_field(test.\$append,1)
+add_field(test.\$append,2)
+do each(path => test, index => i)
   copy_field(i,demo.\$append)
   do loop(count => 3)
     copy_field(i,demo2.\$append)
   end
 end
+remove_field(test)
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
