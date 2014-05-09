@@ -76,11 +76,14 @@ q_char   ~ [^'] | '\' [']
 
 bare_string ~ [^\s\\\,;:=>()"']+
 
-old_terminator ~ ';'
+discard ~ comment | whitespace | old_terminator
 
 whitespace ~ [\s]+
 
-discard ~ whitespace | old_terminator
+comment      ~ '#' comment_text
+comment_text ~ [^\n]+
+
+old_terminator ~ ';'
 
 sep ~ [,:]
     | '=>'
