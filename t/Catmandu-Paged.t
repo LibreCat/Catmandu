@@ -49,7 +49,7 @@ require_ok $pkg;
 	use Moo;
 	with $pkg;
 
-	sub start { return 1; }
+	sub start { return 0; }
 	sub limit { return 10; }
 	sub total { return 33; }
 }

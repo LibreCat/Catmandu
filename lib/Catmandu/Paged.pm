@@ -8,14 +8,14 @@ requires 'start';
 requires 'limit';
 requires 'total';
 
-has max_pages_in_spread => ( is => 'rw', lazy => 1, default => sub { 5 } );
+has max_pages_in_spread => ( is => 'rw', lazy => 1, default => sub {5} );
 
 # function _do_pagination copied from Data::SpreadPagination,
 # decrease dependencies for Catmandu
 
 sub _ceil {
     my $x = shift;
-    return int( $x + 0.99 );
+    return int( $x + 0.9999999 );
 }
 
 sub _floor {
@@ -41,10 +41,10 @@ sub _do_pagination {
 
     # step 2
     my $total_pages = _ceil( $total_entries / $entries_per_page );
-    my $visible_pages =
-        $max_pages < ( $total_pages - 1 )
-      ? $max_pages
-      : $total_pages - 1;
+    my $visible_pages
+        = $max_pages < ( $total_pages - 1 )
+        ? $max_pages
+        : $total_pages - 1;
     if ( $total_pages - 1 <= $max_pages ) {
         @q_size = ( $current_page - 1, 0, 0, $total_pages - $current_page );
     }
@@ -64,8 +64,8 @@ sub _do_pagination {
                 $q_size[3] + _floor( $add_pages / 2 )
             );
         }
-        elsif (
-            $current_page - $q_size[1] - _ceil( $q_size[1] / 3 ) <= $q_size[0] )
+        elsif ( $current_page - $q_size[1] - _ceil( $q_size[1] / 3 )
+            <= $q_size[0] )
         {
             $adj = _ceil( ( 3 * ( $current_page - $q_size[0] - 1 ) ) / 4 );
             $add_pages = $q_size[1] - $adj;
@@ -76,8 +76,9 @@ sub _do_pagination {
             );
         }
         elsif ( $current_page + $q_size[3] >= $total_pages ) {
-            $add_pages = $q_size[2] + $q_size[3] - $total_pages + $current_page;
-            @q_size    = (
+            $add_pages
+                = $q_size[2] + $q_size[3] - $total_pages + $current_page;
+            @q_size = (
                 $q_size[0] + _floor( $add_pages / 2 ),
                 $q_size[1] + _ceil( $add_pages / 2 ),
                 0, $total_pages - $current_page
@@ -116,54 +117,51 @@ sub first_page {
 sub last_page {
     my $self = shift;
 
-    my $pages = $self->total / $self->limit;
-    my $last_page;
-
-    ( $pages == int $pages )
-      ? ( $last_page = $pages )
-      : ( $last_page = 1 + int($pages) );
-
-    $last_page = 1 if $last_page < 1;
-
-    return $last_page;
+    my $last = $self->total / $self->limit;
+    return _ceil($last);
 }
 
 sub page {
     my $self = shift;
 
-    my $current = _ceil( $self->start / $self->limit );
+    ( $self->start == 0 ) && ( return 1 );
+
+    my $page = _ceil( ( $self->start + 1 ) / $self->limit );
+    ( $page < $self->last_page )
+        ? ( return $page )
+        : ( return $self->last_page );
 }
 
 sub previous_page {
     my $self = shift;
 
     ( $self->page > 1 )
-      ? ( return $self->page - 1 )
-      : ( return undef );
+        ? ( return $self->page - 1 )
+        : ( return undef );
 }
 
 sub next_page {
     my $self = shift;
 
     ( $self->page < $self->last_page )
-      ? ( return $self->page + 1 )
-      : ( return undef );
+        ? ( return $self->page + 1 )
+        : ( return undef );
 }
 
 sub first_on_page {
     my $self = shift;
 
     ( $self->total == 0 )
-      ? ( return 0 )
-      : ( return ( ( $self->page - 1 ) * $self->limit ) + 1 );
+        ? ( return 0 )
+        : ( return ( ( $self->page - 1 ) * $self->limit ) + 1 );
 }
 
 sub last {
     my $self = shift;
 
     ( $self->page == $self->last_page )
-      ? ( return $self->total_entries )
-      : ( return ( $self->page * $self->limit ) );
+        ? ( return $self->total_entries )
+        : ( return ( $self->page * $self->limit ) );
 }
 
 sub page_size {
@@ -190,7 +188,8 @@ sub pages_in_spread {
     else {
         push @$pages, $ranges->[0][0] .. $ranges->[0][1];
         push @$pages, undef
-          if defined $ranges->[1] and ( $ranges->[1][0] - $ranges->[0][1] ) > 1;
+            if defined $ranges->[1]
+            and ( $ranges->[1][0] - $ranges->[0][1] ) > 1;
     }
 
     push @$pages, $ranges->[1][0] .. $ranges->[1][1] if defined $ranges->[1];
@@ -202,7 +201,8 @@ sub pages_in_spread {
     }
     else {
         push @$pages, undef
-          if defined $ranges->[2] and ( $ranges->[3][0] - $ranges->[2][1] ) > 1;
+            if defined $ranges->[2]
+            and ( $ranges->[3][0] - $ranges->[2][1] ) > 1;
         push @$pages, $ranges->[3][0] .. $ranges->[3][1];
     }
 

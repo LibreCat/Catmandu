@@ -2,16 +2,12 @@ package Catmandu::Fix::split_field;
 
 use Catmandu::Sane;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path       => (is => 'ro', required => 1);
-has split_char => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, $split_char) = @_;
-    $orig->($class, path => $path, split_char => $split_char // qr'\s+');
-};
+has path       => (fix_arg => 1);
+has split_char => (fix_arg => 1, default => sub { qr'\s+' });
 
 sub emit {
     my ($self, $fixer) = @_;

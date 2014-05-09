@@ -3,33 +3,22 @@ package Catmandu::Fix::lookup;
 use Catmandu::Sane;
 use Catmandu::Importer::CSV;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path => (is => 'ro', required => 1);
-has file => (is => 'ro', required => 1);
-has opts => (is => 'ro');
-has dictionary => (is => 'ro', lazy => 1, builder => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, $file, %opts) = @_;
-    $orig->($class, path => $path, file => $file, opts => \%opts);
-};
+has path       => (fix_arg => 1);
+has file       => (fix_arg => 1);
+has default    => (fix_opt => 1);
+has delete     => (fix_opt => 1);
+has csv_args   => (fix_opt => 'collect');
+has dictionary => (is => 'lazy', init_arg => undef);
 
 sub _build_dictionary {
     my ($self) = @_;
-    my %opts = %{$self->opts};
-    delete $opts{'-delete'};
-    delete $opts{'-default'};
-    for my $key (keys %opts) {
-        my $val = delete $opts{$key};
-        $key =~ s/^-//;
-        $key =~ s/-/_/g;
-        $opts{$key} = $val;
-    }
     Catmandu::Importer::CSV->new(
-        %opts,
-        file => $self->file,
+        %{$self->csv_args},
+        file   => $self->file,
         header => 0,
         fields => ['key', 'val'],
     )->reduce({}, sub {
@@ -41,11 +30,11 @@ sub _build_dictionary {
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+    my $path     = $fixer->split_path($self->path);
+    my $key      = pop @$path;
     my $dict_var = $fixer->capture($self->dictionary);
-    my $delete = $self->opts->{'-delete'};
-    my $default = $self->opts->{'-default'};
+    my $delete   = $self->delete;
+    my $default  = $self->default;
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
@@ -81,11 +70,11 @@ Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by looking
 =head1 SYNOPSIS
 
    lookup('foo.bar', 'dictionary.csv');
-   lookup('foo.bar', 'dictionary.csv', '-sep_char', '|');
+   lookup('foo.bar', 'dictionary.csv', sep_char: '|');
    # delete value if the lookup fails:
-   lookup('foo.bar', 'dictionary.csv', '-delete', 1);
+   lookup('foo.bar', 'dictionary.csv', delete: 1);
    # use a default value if the lookup fails:
-   lookup('foo.bar', 'dictionary.csv', '-default', 'default value');
+   lookup('foo.bar', 'dictionary.csv', default: 'default value');
 
 =head1 SEE ALSO
 

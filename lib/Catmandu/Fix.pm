@@ -1,7 +1,8 @@
 package Catmandu::Fix;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :string);
+use Catmandu;
+use Catmandu::Util qw(:is :string :misc);
 use Clone qw(clone);
 
 sub _eval_emit {
@@ -10,25 +11,39 @@ sub _eval_emit {
 }
 
 use Moo;
-use Catmandu::Fix::Loader;
+use Catmandu::Fix::Parser;
 use Data::Dumper ();
 use B ();
 
 with 'MooX::Log::Any';
 
 has tidy        => (is => 'ro');
-has fixer       => (is => 'ro', lazy => 1, init_arg => undef, builder => 1);
+has parser      => (is => 'lazy');
+has fixer       => (is => 'lazy', init_arg => undef);
 has _num_labels => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
+has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
+has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
+
+sub _build_parser {
+    Catmandu::Fix::Parser->new;
+}
 
 sub _trigger_fixes {
     my ($self) = @_;
     my $fixes = $self->fixes;
-    my $loaded_fixes = Catmandu::Fix::Loader::load_fixes($fixes);
-    splice(@$fixes, 0, @$fixes, @$loaded_fixes);
+    my $parsed_fixes = [];
+    for my $fix (@$fixes) {
+        if (ref $fix) {
+            push @$parsed_fixes, $fix;
+        } else {
+            push @$parsed_fixes, @{$self->parser->parse($fix)};
+        }
+    }
+    splice(@$fixes, 0, @$fixes, @$parsed_fixes);
 }
 
 sub _build_fixer {
@@ -37,22 +52,39 @@ sub _build_fixer {
     _eval_emit($self->emit, $self->_captures) or Catmandu::Error->throw($@);
 }
 
+sub _build_reject_var {
+    my ($self) = @_;
+    $self->capture($self->_reject);
+}
+
 sub fix {
     my ($self, $data) = @_;
 
     my $fixer = $self->fixer;
 
     if (is_hash_ref($data)) {
-        return $fixer->($data);
+        my $d = $fixer->($data);
+        return if $d == $self->_reject;
+        return $d;
     }
+
     if (is_instance($data)) {
-        return $data->map(sub { $fixer->($_[0]) });
+        return $data->map(sub { $fixer->($_[0]) })
+                    ->reject(sub { $_[0] == $self->_reject });
     }
+
     if (is_code_ref($data)) {
-        return sub { $fixer->($data->() // return) };
+        return sub {
+            for (;;) {
+                my $d = $fixer->($data->() // return);
+                next if $d == $self->_reject;
+                return $d;
+            }
+        };
     }
+
     if (is_array_ref($data)) {
-        return [ map { $fixer->($_) } @$data ];
+        return [ grep { $_ != $self->_reject } map { $fixer->($_) } @$data ];
     }
 
     Catmandu::BadArg->throw("must be hashref, arrayref, coderef or iterable object");
@@ -85,13 +117,12 @@ sub emit {
     for my $fix (@{$self->fixes}) {
         $perl .= $self->emit_fix($fix);
     }
-    $perl .= "1;";
+    $perl .= "${var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
     $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
     $perl .= "};";
-    $perl .= "return $var;";
     $perl .= "};";
 
     if (%$captures) {
@@ -119,17 +150,26 @@ sub emit {
             Catmandu::Error->throw($err);
         }
 
-        return $tidy_perl;
+        $perl = $tidy_perl;
     }
+
+    $self->log->debug($perl);
 
     $perl;
 }
 
+sub emit_reject {
+    my ($self) = @_;
+    my $reject_var = $self->_reject_var;
+    "return $reject_var;";
+}
+
 sub emit_fix {
     my ($self, $fix) = @_;
+    my $perl;
 
     if ($fix->can('emit')) {
-        $self->emit_block(sub {
+        $perl = $self->emit_block(sub {
             my ($label) = @_;
             $fix->emit($self, $label);
         });
@@ -137,8 +177,10 @@ sub emit_fix {
         my $var = $self->var;
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
-        "${var} = ${ref}->fix(${var});";
+        $perl = "${var} = ${ref}->fix(${var});";
     }
+
+    $perl;
 }
 
 sub emit_block {

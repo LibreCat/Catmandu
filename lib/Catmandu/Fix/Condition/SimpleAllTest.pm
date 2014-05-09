@@ -5,23 +5,22 @@ use Moo::Role;
 
 with 'Catmandu::Fix::Condition';
 
+requires 'path';
 requires 'emit_test';
-
-has path => (is => 'ro', required => 1);
 
 sub emit {
     my ($self, $fixer, $label) = @_;
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
 
-    my $fixes = $self->fixes;
+    my $pass_fixes = $self->pass_fixes;
+    my $fail_fixes = $self->fail_fixes;
 
-    my $otherwise_fixes = $self->otherwise_fixes;
-    my $otherwise_label;
-    my $otherwise_block = $fixer->emit_block(sub {
-        $otherwise_label = shift;
+    my $fail_label;
+    my $fail_block = $fixer->emit_block(sub {
+        $fail_label = shift;
         my $perl = "";
-        for my $fix (@$otherwise_fixes) {
+        for my $fix (@$fail_fixes) {
             $perl .= $fixer->emit_fix($fix);
         }
         $perl;
@@ -37,8 +36,8 @@ sub emit {
             my $var = shift;
             my $perl = "${has_match_var} ||= 1;";
             $perl .= "unless (" . $self->emit_test($var) . ") {";
-            if (@$otherwise_fixes) {
-                $perl .= "goto ${otherwise_label};";
+            if (@$fail_fixes) {
+                $perl .= "goto ${fail_label};";
             } else {
                 $perl .= "last ${label};";
             }
@@ -48,14 +47,14 @@ sub emit {
     });
 
     $perl .= "if (${has_match_var}) {";
-    for my $fix (@$fixes) {
+    for my $fix (@$pass_fixes) {
         $perl .= $fixer->emit_fix($fix);
     }
     $perl .= "last ${label};";
     $perl .= "}";
 
-    if (@$otherwise_fixes) {
-        $perl .= $otherwise_block;
+    if (@$fail_fixes) {
+        $perl .= $fail_block;
     }
 
     $perl;

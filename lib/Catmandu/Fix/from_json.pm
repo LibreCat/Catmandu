@@ -1,17 +1,13 @@
 package Catmandu::Fix::from_json;
 
 use Catmandu::Sane;
-use Moo;
 use JSON ();
+use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path) = @_;
-    $orig->($class, path => $path);
-};
+has path => (fix_arg => 1);
 
 sub emit {
     my ($self, $fixer) = @_;
@@ -37,7 +33,7 @@ Catmandu::Fix::from_json - replace a json field with the parsed value
 
 =head1 SYNOPSIS
 
-   to_json('my.field');
+   from_json('my.field');
 
 =head1 SEE ALSO
 

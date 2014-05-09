@@ -7,6 +7,7 @@ use Moo;
 
 with 'Catmandu::Store';
 
+has _hashes   => (is => 'ro' , lazy => 1, init_arg => undef, default => sub { +{} });
 has init_data => (is => 'ro');
 
 sub BUILD {
@@ -28,9 +29,14 @@ use Clone qw(clone);
 
 with 'Catmandu::Bag';
 
-has _hash => (is => 'rw', init_arg => undef, default => sub { +{} });
+has _hash => (is => 'rw', lazy => 1 , init_arg => undef, builder => '_build_hash');
 has _head => (is => 'rw', init_arg => undef, clearer => '_clear_head');
 has _tail => (is => 'rw', init_arg => undef, clearer => '_clear_tail');
+
+sub _build_hash {
+    my $self = $_[0];
+    $self->store->_hashes->{$self->name} ||= {};
+}
 
 sub generator {
     my $self = $_[0];
@@ -86,9 +92,10 @@ sub delete {
 }
 
 sub delete_all {
-    $_[0]->_clear_head;
-    $_[0]->_clear_tail;
-    $_[0]->_hash({});
+    my $self = $_[0];
+    $self->_clear_head;
+    $self->_clear_tail;
+    $self->_hash($self->store->_hashes->{$self->name} = {});
 }
 
 1;

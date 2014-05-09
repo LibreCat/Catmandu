@@ -2,17 +2,13 @@ package Catmandu::Fix::replace_all;
 
 use Catmandu::Sane;
 use Moo;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path    => (is => 'ro', required => 1);
-has search  => (is => 'ro', required => 1);
-has replace => (is => 'ro', required => 1);
-
-around BUILDARGS => sub {
-    my ($orig, $class, $path, $search, $replace) = @_;
-    $orig->($class, path => $path, search => $search, replace => $replace);
-};
+has path    => (fix_arg => 1);
+has search  => (fix_arg => 1);
+has replace => (fix_arg => 1);
 
 sub emit {
     my ($self, $fixer) = @_;

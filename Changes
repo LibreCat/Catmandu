@@ -1,5 +1,15 @@
 Revision history for Catmandu
 
+{{NEXT}}
+  - switch to Dist::Milla
+  - Marpa based fix parser
+  - Config::Onion based config loader
+  - move documentation to the Github wiki
+
+0.8014  2014-04-03
+  - fix Paged bugs
+  - more tests
+
 0.8013  2014-03-27
   - Importer::JSON multiline switch
   - Importer pod

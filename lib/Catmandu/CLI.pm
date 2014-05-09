@@ -37,6 +37,7 @@ sub run {
     my $self = ref $class ? $class : $class->new;
     $self->set_global_options($global_opts);
     my ($cmd, $opts, @args) = $self->prepare_command(@$argv);
+
     $self->execute_command($cmd, $opts, @args);
 }
 

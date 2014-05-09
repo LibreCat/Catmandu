@@ -283,21 +283,25 @@ sub interleave {
 }
 
 sub max {
-    $_[0]->reduce(undef, sub {
+    my ($self, $sub) = @_;
+    $self->reduce(undef, sub {
         my ($memo, $data) = @_;
-        return $data > $memo ? $data : $memo if is_number($memo) && is_number($data);
+        my $val = defined $sub ? $sub->($data) : $data;
+        return $val > $memo ? $val : $memo if is_number($memo) && is_number($val);
         return $memo if is_number($memo);
-        return $data if is_number($data);
+        return $val  if is_number($val);
         return;
     });
 }
 
 sub min {
+    my ($self, $sub) = @_;
     $_[0]->reduce(undef, sub {
         my ($memo, $data) = @_;
-        return $data < $memo ? $data : $memo if is_number($memo) && is_number($data);
+        my $val = defined $sub ? $sub->($data) : $data;
+        return $val < $memo ? $val : $memo if is_number($memo) && is_number($val);
         return $memo if is_number($memo);
-        return $data if is_number($data);
+        return $val  if is_number($val);
         return;
     });
 }
@@ -347,6 +351,8 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
     $it->tap(\&logme)->tap(\&printme)->tap(\&mailme)
        ->each(sub { print shift->{n} });
 
+    my $titles = $it->pluck('title')->to_array;
+
     # Select and loop
     my $item = $it->detect(sub { shift->{n} > 5 });
 
@@ -378,6 +384,16 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
 		});
 
     my $it3 = $it->group(2)->invoke('to_array');
+
+    # Caculate maximum of 'n' field
+    my $max = $it->max(sub {
+            shift->{n};
+    });
+
+    # Caculate minimum of 'n' field
+    my $in = $it->min(sub {
+            shift->{n};
+    });
 
 =head1 DESCRIPTION
 
@@ -490,6 +506,10 @@ $key matches the regex.
 If the iterator contains HASH values, then return the first item where the value of
 $key is equal to any of the vals given.
 
+=head2 pluck($key)
+
+Return an Iterator that only containes the values of the given $key.
+
 =head2 select(\&callback)
 
 Returns an Iterator for each item for which callback returns a true value.
@@ -573,11 +593,24 @@ final result of the callback function.
 
 =head2 invoke(NAME)
 
+Returns an interator were the method NAME is called on every object in the iterable.
 This is a shortcut for $it->map(sub { $_[0]->NAME }).
 
 =head2 max()
 
+Returns the maximum of an iterator containing only numbers.
+
+=head2 max(\&callback)
+
+Returns the maximum of the numbers returned by executing callback.
+
 =head2 min()
+
+Returns the minimum of an iterator containing only numbers.
+
+=head2 min(\&callback)
+
+Returns the minimum of the numbers returned by executing callback.
 
 =head1 SEE ALSO
 

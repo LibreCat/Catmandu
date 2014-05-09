@@ -24,15 +24,15 @@ is_deeply
     {planet => 'Bartledan'};
 
 is_deeply
-    $pkg->new('planet', 'test', '-delete', 1)->fix({planet => 'Bartledan'}),
+    $pkg->new('planet', 'test', 'delete', 1)->fix({planet => 'Bartledan'}),
     {};
 
 is_deeply
-    $pkg->new('planets.*', 'test', '-delete', 1)->fix({planets => ['Bartledan', 'Earth']}),
+    $pkg->new('planets.*', 'test', 'delete', 1)->fix({planets => ['Bartledan', 'Earth']}),
     {planets => [{ _id => 'Earth' , value => 'Terra' }]};
 
 is_deeply
-    $pkg->new('planet', 'test', '-default', 'Mars')->fix({planet => 'Bartledan'}),
+    $pkg->new('planet', 'test', 'default', 'Mars')->fix({planet => 'Bartledan'}),
     {planet => 'Mars'};
 
 done_testing 7;
