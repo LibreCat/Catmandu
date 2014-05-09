@@ -1,8 +1,6 @@
 package Catmandu::Cmd::doc;
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Util qw(:is);
-use Module::Info;
 use Pod::Perldoc;
 
 sub command_opt_spec {

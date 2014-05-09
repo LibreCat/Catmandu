@@ -15,19 +15,24 @@ use Module::Info;
 sub command_opt_spec {
     (
         ["local|l!","list local packages",{ default => 1 }],
+        ["verbose|v","include package information"],
         ["csv","output in csv format"]
 
     );
 }
 sub print_simple {
-    my $mods = $_[0];
+    my($mods,%opts)=@_;
 
     for my $mod(@$mods){
         print $mod->{name};
-        print ", file: ".$mod->{file};
-        if(is_string($mod->{version})){
-            print ", version: ".$mod->{version};
+        
+        if($opts{verbose}){
+            print ", file: ".$mod->{file};
+            if(is_string($mod->{version})){
+                print ", version: ".$mod->{version};
+            }
         }
+
         say "";
     }
 
@@ -35,9 +40,12 @@ sub print_simple {
 sub print_csv {
     require Catmandu::Exporter::CSV;
 
-    my $mods = $_[0];
+    my($mods,%opts) = @_;
 
-    my $exporter = Catmandu::Exporter::CSV->new(fields => [qw(name version file)]);
+    my @fields = qw(name);
+    push @fields,qw(version file) if $opts{verbose};
+
+    my $exporter = Catmandu::Exporter::CSV->new(fields => \@fields);
     $exporter->add_many($mods);
     $exporter->commit;
 }
@@ -77,9 +85,9 @@ sub command {
     } @modules;
 
     if($opts->csv){
-        print_csv(\@modules);
+        print_csv(\@modules,verbose => $opts->verbose);
     }else{
-        print_simple(\@modules);
+        print_simple(\@modules,verbose => $opts->verbose);
     }
 
 }
