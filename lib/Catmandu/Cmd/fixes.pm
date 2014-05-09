@@ -35,9 +35,10 @@ sub command {
     )->each(sub{
         my $record = shift;
         unless($verbose){
-            delete $record->{$_} for qw(file version);
+            say $record->{name};
+        }else{
+            print_simple($record);
         }
-        print_simple($record);
     });
 }
 
