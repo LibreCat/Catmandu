@@ -117,10 +117,8 @@ sub _process_record {
     }
 
     if ( $errors && $error_field ) {
-#        warn "ho: $error_field, $data->{field}";
         $data->{$error_field} = $errors;
     } else {
-#         warn "hi: $data->{field}";
     }
     
     if ( $self->after_callback ) {
@@ -200,24 +198,27 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
 
 Create a new Catmandu::Validator.
 
-=head2 new(after_callback => \&callback)
+=head2 new( after_callback => \&callback )
 
-Used when validating multiple records after_callback validating each record.
-Reference to callback function that will takes $hashref to each data record, and  $arrayref to list of validation errors
+Used when validating multiple records the after_callback is called after each record has been validated.
+The callback function should take $hashref to each data record, and $arrayref to list of validation errors
 for the record as arguments.
 
+=head2 new( error_field => $field_name )
 
-=head2 new(error_field => $field_name)
-
-If this parameter is set, then during validaiton each record that
+If the error_field parameter is set, then during validation each record that
 fails validation will get an extra field added containing an
 arrayref to the validation errors. The name of the key will be the
 value passed or '_validation_errors' if 1 is passed. By default it is not set.
 
 =head2 validate( \%hash )
 
-validates a single record. Returns \%hash on success otherwise undef. Information about the validation errors
+Validates a single record. Returns \%hash on success otherwise undef. Information about the validation errors
 can be retrieved with the L</"last_errors()"> method. 
+
+=head2 is_valid( \%hash )
+
+Like L</"validate()"> but returns 1 success and 0 on failure.
 
 =head2 validate_many( $iterator, \%options )
 

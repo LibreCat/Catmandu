@@ -80,6 +80,8 @@ The constructor also accepts the common options for L<Catmandu::Validator>.
 
 =head2 validate(...)
 
+=head2 is_valid(...)
+
 =head2 validate_many(...)
 
 =head2 last_errors(...)
