@@ -4,8 +4,8 @@ use Catmandu::Sane;
 use Class::Method::Modifiers qw(install_modifier);
 use namespace::clean;
 
-my %package_args;
-my %package_opts;
+our %package_args;
+our %package_opts;
 
 sub my_package_args {
     $_[0]->package_args_for(caller);
