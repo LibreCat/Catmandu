@@ -5,7 +5,7 @@ use Moo;
 
 with  'Catmandu::Validator';
 
-has validation_handler => (
+has handler => (
     is  => 'rw',
     required => 1,
     isa => sub {
@@ -66,9 +66,9 @@ The constructor also accepts the common options for L<Catmandu::Validator>.
 
 =head2 last_errors(...)
 
-=head2 count_valid()
+=head2 valid_count()
 
-=head2 count_invalid()
+=head2 invalid_count()
 
 These are methods are inherited from L<Catmandu::Validator>.
 

@@ -28,7 +28,7 @@ has 'error_field' => (
     clearer => 1,
 );
 
-has ['count_valid', 'count_invalid'] => (
+has ['valid_count', 'invalid_count'] => (
     is => 'rwp',
     init_arg => undef,
     default => sub {0},
@@ -43,17 +43,17 @@ sub is_valid {
     }
     
     $self->_clear_last_errors;
-    $self->_set_count_valid(0);
-    $self->_set_count_invalid(0);
+    $self->_set_valid_count(0);
+    $self->_set_invalid_count(0);
 
     my $errors = $self->validate_data($data);
 
     if ($errors) {
         $self->_set_last_errors($errors);
-        $self->_set_count_invalid(1);
+        $self->_set_invalid_count(1);
         return 0;
     } else {
-        $self->_set_count_valid(1);
+        $self->_set_valid_count(1);
     }
 
     1; 
@@ -63,8 +63,8 @@ sub is_valid {
 sub validate {
     my ($self, $data) = @_;
 
-    $self->_set_count_valid(0);
-    $self->_set_count_invalid(0);
+    $self->_set_valid_count(0);
+    $self->_set_invalid_count(0);
 
     # Handle a single record
     if ( is_hash_ref($data) ) {
@@ -100,9 +100,9 @@ sub _process_record {
     $self->_set_last_errors($errors);
     
     if ($errors) {
-        $self->_set_count_invalid(1+$self->count_invalid);
+        $self->_set_invalid_count(1+$self->invalid_count);
     } else {
-        $self->_set_count_valid(1+$self->count_valid);
+        $self->_set_valid_count(1+$self->valid_count);
     }
 
     if ( $errors && $error_field ) {
@@ -135,7 +135,7 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
     use Catmandu::Validator::Simple;
 
     my $validator = Catmandu::Validator::Simple->new(
-        validation_handler => sub {
+        handler => sub {
             $data = shift;
             return "error" unless $data =~ m/good data/;
             return;
@@ -150,7 +150,7 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
     
         
     my $validator = Catmandu::Validator::Simple->new(
-        validation_handler => sub { ...},
+        handler => sub { ...},
         error_callback => sub {
             my ($data, $errors) = @_;
             print "Validation errors for record $data->{_id}:\n";
@@ -219,11 +219,11 @@ This behaviour can be changed by setting the I<after_callback> or the I<error_fi
 Returns arrayref of errors from the record that was last validated if that record failed validation
 or undef if there were no errors.
 
-=head2 count_valid()
+=head2 valid_count()
 
 Returns the number of valid records from last validate operation.
 
-=head2 count_invalid()
+=head2 invalid_count()
 
 Returns the number of invalid records from the last validate operation.
 
