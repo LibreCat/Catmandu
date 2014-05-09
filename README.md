@@ -17,8 +17,8 @@ In the [http://librecat.org/|LibreCat](http://librecat.org/|LibreCat) project it
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
-Read an in depth introduction into Catmandu programming in
-[Catmandu::Introduction](https://metacpan.org/pod/Catmandu::Introduction).
+Read an in depth introduction into Catmandu programming at
+[https://github.com/LibreCat/Catmandu/wiki/Introduction](https://github.com/LibreCat/Catmandu/wiki/Introduction).
 
 # ONE STEP INSTALL
 
@@ -299,7 +299,7 @@ Export data using a default or named exporter to a string.
 
 # SEE ALSO
 
-[Catmandu::Introduction](https://metacpan.org/pod/Catmandu::Introduction)
+[https://github.com/LibreCat/Catmandu/wiki](https://github.com/LibreCat/Catmandu/wiki).
 
 # AUTHOR
 
