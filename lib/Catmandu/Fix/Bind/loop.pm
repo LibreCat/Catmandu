@@ -26,7 +26,7 @@ sub finally {
     		if (defined $self->index) {
    	  			$data->{$self->index} = $i;
    	  		}
-	  		$data = $code->($data);
+	  	    $data = $code->($data);
     	}
     }
 

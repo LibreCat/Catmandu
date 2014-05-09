@@ -67,7 +67,7 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), undef , 'testing reject';
+ok ! defined $fixer->fix({foo => 'bar'}) , 'testing reject';
 
 $fixes =<<EOF;
 do loop(count => 1)
