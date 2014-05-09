@@ -208,6 +208,8 @@ Load all the configuration options in the catmandu.yml configuration file.
 
 Load all the configuration options stored at alternative paths.
 
+A load path C<':up'> will search upwards from your program for configuration.
+
 =cut
 
 sub load {
