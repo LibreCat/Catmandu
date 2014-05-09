@@ -124,7 +124,22 @@ Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
 
 =head2 log
 
-Return the current logger.
+Return the current logger. Can be used when creating your own Stores.
+
+E.g.
+    
+    package Catmandu::Importer::Store::Mock;
+
+    ...
+
+    sub generator {
+        my ($self) = @_;
+
+        $self->log->debug("generating record");
+        ...
+    }
+
+See also: L<Catmandu> for activating the logger in your main code.
 
 =head1 SEE ALSO
 

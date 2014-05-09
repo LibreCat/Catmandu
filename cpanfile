@@ -10,7 +10,7 @@ on 'test', sub {
 requires 'App::Cmd', '0.323';
 requires 'CGI::Expand', '2.02';
 requires 'Clone', '0.31';
-requires 'Config::Onion', '1.002';
+requires 'Config::Onion', '1.004';
 requires 'Data::Compare', '1.22';
 requires 'Data::UUID', '1.217';
 requires 'Data::Util', '0.59';
