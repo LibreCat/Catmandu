@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use v5.10.1;
 use Test::More;
 use Test::Exception;
 
@@ -17,11 +18,24 @@ require_ok $pkg;
     use Moo;
     with $pkg;
 
-    sub generator { sub {} }
+    sub generator {
+        my ($self) = @_;
+        state $fh = $self->fh;
+        return sub {
+            my $name = $self->readline;
+            return defined $name ? { "hello" => $name } : undef;
+        };
+    }
 }
 
 my $i = T::Importer->new;
 ok $i->does('Catmandu::Iterable');
 
-done_testing 3;
+$i = T::Importer->new( file => \"World" );
+is_deeply $i->to_array, [{ hello => "World"}], 'import from string reference';
+
+$i = T::Importer->new( file => \"Hello\nWorld" );
+is $i->readall, "Hello\nWorld", "import all";
+
+done_testing;
 
