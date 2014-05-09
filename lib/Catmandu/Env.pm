@@ -14,7 +14,7 @@ has load_paths => (
     is      => 'ro',
     default => sub { [] },
     coerce  => sub {
-        [ split /,/, join ',', ref $_[0] ? @{$_[0]} : $_[0] ];
+        [ map { File::Spec->canonpath($_) }split /,/, join ',', ref $_[0] ? @{$_[0]} : $_[0] ];
     },
 );
 

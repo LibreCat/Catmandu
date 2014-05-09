@@ -51,7 +51,7 @@ or read our wiki for more installation hints:
 
 # CONFIG
 
-Catmandu configuration options can be stored in a file in the root directory of
+Catmandu configuration options can be stored in files in the root directory of
 your programming project. The file can be YAML, JSON or Perl and is called
 `catmandu.yml`, `catmandu.json` or `catmandu.pl`. In this file you can set
 the default Catmandu stores and exporters to be used. Here is an example of a
@@ -70,15 +70,33 @@ the default Catmandu stores and exporters to be used. Here is an example of a
 ## Split config
 
 For large configs it's more convenient to split the config into several files.
-You can do so by including the config hash key in the file name.
+You can do so by having multiple config files starting with catmandu\*.
 
-    catmandu.yaml
-    catmandu.store.yaml
-    catmandu.foo.bar.json
+    catmandu.general.yml
+    catmandu.db.yml
+    ...
 
-Config files are processed in alphabetical order. To keep things simple, values
-are not merged.  The contents of `catmandu.store.yml` will overwrite
-`Catmandu->config->{store}` if it already exists.
+Split config files are processed and merged by [Config::Onion](https://metacpan.org/pod/Config::Onion).
+
+## Deeply nested config structures
+
+Config files can indicate a path under which their keys will be nested. This
+makes your configuration more readable by keeping indentation to a minimum.
+
+A config file containing
+
+    _path:
+        foo:
+            bar:
+    baz: 1
+
+will be loaded as
+
+    foo:
+      bar:
+        baz: 1
+
+See [Config::Onion](https://metacpan.org/pod/Config::Onion) for more information on how this works.
 
 # METHODS
 
