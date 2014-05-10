@@ -51,4 +51,41 @@ sub DESTROY {
 	close (OUT);
 }
 
+=head1 NAME
+
+Catmandu::Fix::Bind::benchmark - a binder that calculates the execution time of Fix functions
+
+=head1 SYNOPSIS
+
+ do benchmark(output => /dev/stderr)
+	foo()
+ end
+
+ # will create as side effect computation statistics on the stderr
+
+ elapsed 	command                                 	calls   	sec/comm
+ ----------------------------------------------------------------------------------------------------
+ 0.000006	Catmandu::Fix::foo                      	1 times	0.000006 secs/command
+
+=head1 DESCRIPTION
+
+The benchmark binder computes all the Fix function plus as side effect calculates the execution time
+of all wrapped functions over all input records.
+
+=head1 CONFIGURATION
+
+=head2 output 
+
+Required. The path of a file to which the benchmark statistics will be written.
+
+=head1 AUTHOR
+
+hochsten L<hochsten@cpan.org>
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix::Bind>
+
+=cut
+
 1;
