@@ -15,7 +15,7 @@ sub _build_stats {
 
 sub bind {
    my ($self,$data,$code,$name) = @_;
-   
+   $name = '<undef>' unless defined $name;
    my $t0 = [gettimeofday];
    $data = $code->($data);
    my $elapsed = tv_interval ( $t0 );
