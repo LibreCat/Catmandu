@@ -8,6 +8,11 @@ requires 'bind';
 
 has fixes => (is => 'rw', default => sub { [] });
 
+sub zero {
+    my ($self) = @_;
+    +{};
+}
+
 sub unit {
 	my ($self,$data) = @_;
 	return $data;
@@ -15,7 +20,17 @@ sub unit {
 
 sub bind {
     my ($self,$data,$code,$name,$perl) = @_;
-	  return $code->($data);
+	return $code->($data);
+}
+
+sub plus {
+    my ($self,$prev,$curr) = @_;
+    if ($prev == $self->zero || $curr == $self->zero) {
+        $self->zero;
+    }
+    else {
+        $curr;
+    }
 }
 
 sub finally {
@@ -39,26 +54,26 @@ sub emit_bind {
 
     my $perl = "";
 
-    my $bind_var = $fixer->capture($self);
-    my $unit     = $fixer->generate_var;
+    my $monad   = $fixer->capture($self);
+    my $m_res   = $fixer->generate_var;
 
-    $perl .= "my ${unit} = ${bind_var}->unit(${var});";
+    $perl .= "my ${m_res} = ${monad}->unit(${var});";
 
     for my $pair (@$code) { 
         my $name = $pair->[0];
         my $code = $pair->[1]; 
         my $code_var = $fixer->capture($code);
-        $perl .= "${unit} = ${bind_var}->bind(${unit}, sub {";
+        $perl .= "${m_res} = ${monad}->plus(${m_res},${monad}->bind(${m_res}, sub {";
         $perl .= "${var} = shift;";
         $perl .= $code;
         $perl .= "${var}";
-        $perl .= "},'$name',${code_var});"
+        $perl .= "},'$name',${code_var}));"
     }
 
-    $perl .= "${unit} = ${bind_var}->finally(${unit});" if $self->can('finally');
+    $perl .= "${var} = ${monad}->finally(${m_res});" if $self->can('finally');
 
     my $reject = $fixer->capture($fixer->_reject);
-    $perl .= "return ${unit} if ${unit} == ${reject};";
+    $perl .= "return ${var} if ${var} == ${reject};";
     
     $perl;
 }
@@ -118,25 +133,54 @@ A Catmandu::Fix::Bind needs to implement two methods: 'unit' and 'bind'.
 The unit method receives a Perl $data HASH and should return it. The 'unit' method is called on a 
 Catmandu::Fix::Bind instance before all Fix methods are executed. A trivial implementation of 'unit' is:
 
+  # Wrap the data into an array
   sub unit {
       my ($self,$data) = @_;
-      return $data;
+      my $m_data = ['foobar',$data];
+      return $m_data;
   }
 
-=head2 bind($data,$code,$name,$perl)
+=head2 bind($m_data,$code,$name,$perl)
 
 The bind method is executed for every Catmandu::Fix method in the fixer. It receives the $data
 , which as wrapped by unit, the fix method as anonymous subroutine, the name of the fix and the actual perl
 code to run it. It should return the fixed code. A trivial implementaion of 'bind' is:
 
+  # Unwrap the data and execute the given code
   sub bind {
-    my ($self,$data,$code,$name) = @_;
-    return $code->($data);
+    my ($self,$m_data,$code,$name) = @_;
+    my ($foo, $data) = @$m_data
+    my $res = $code->($data);
+    ['foobar',$res];
   } 
+
+=head2 zero
+
+Optionally provide an zero unit in combining computations. E.g.
+    
+  sub zero {
+    return undef;
+  }
+
+=head2 plus($prev,$curr)
+
+Optionally provide a function to combine the results of two computations. E.g.
+
+  sub plus {
+      my ($self,$prev,$curr) = @_;
+      return $curr;
+  }
 
 =head2 finally($data)
 
-Optionally finally is executed on the data when all the fixes in a do block have run.
+Optionally finally is executed on the data when all the fixes in a do block have run. A trivial example of finally is:
+
+  # Unwrap the data and return the original
+  sub finally {
+      my ($self,$m_data) = @_;
+      my ($foo, $data) = @$m_data ;
+      $data;
+  }
 
 =head1 SEE ALSO
 
