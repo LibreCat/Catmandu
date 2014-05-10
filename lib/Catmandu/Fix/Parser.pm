@@ -2,8 +2,12 @@ package Catmandu::Fix::Parser;
 
 use Catmandu::Sane;
 use Marpa::R2;
+use Data::Dumper;
+use Catmandu;
 use Catmandu::Util qw(check_value read_file);
 use Moo;
+
+with 'MooX::Log::Any';
 
 my $GRAMMAR = <<'GRAMMAR';
 :default ::= action => ::array
@@ -55,7 +59,7 @@ old_if_name ~ 'if_' [a-z] name_rest
 old_unless_name ~ 'unless_' [a-z] name_rest
 
 name      ~ [a-z] name_rest
-name_rest ~ [_\da-z]*
+name_rest ~ [_\da-zA-Z]*
 
 int ~ digits
     | '-' digits
@@ -99,6 +103,9 @@ sub parse {
     my $recognizer = Marpa::R2::Scanless::R->new({grammar => $grammar});
     $recognizer->read(\$source);
     my $val = ${$recognizer->value};
+
+    $self->log->debugf(Dumper($val)) if $self->log->is_debug();
+
     [ map {$_->reify} @$val ];
 }
 

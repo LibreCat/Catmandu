@@ -85,7 +85,31 @@ Every Catmandu::Importer is a L<Catmandu::Iterable> all its methods are inherite
 
 =head2 log
 
-Return the current logger.
+Return the current logger. Can be used when creating your own Importers.
+
+E.g.
+    
+    package Catmandu::Importer::Mock;
+
+    use namespace::clean;
+    use Catmandu::Sane;
+    use Moo;
+
+    with 'Catmandu::Importer';
+
+    has size => (is => 'ro');
+
+    sub generator {
+        my ($self) = @_;
+        my $n = 0;
+        sub {
+            $self->log->debug("generating record $n");
+            return if defined $self->size && $n == $self->size;
+            return { n => $n++ };
+        };
+    }
+
+See also: L<Catmandu> for activating the logger in your main code.
 
 =head1 SEE ALSO
 

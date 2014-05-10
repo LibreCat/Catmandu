@@ -1,7 +1,8 @@
 package Catmandu::Fix;
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is :string);
+use Catmandu;
+use Catmandu::Util qw(:is :string :misc);
 use Clone qw(clone);
 
 sub _eval_emit {
@@ -131,8 +132,6 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    $self->log->debug($perl);
-    
     if ($self->tidy) {
         require Perl::Tidy;
 
@@ -151,8 +150,10 @@ sub emit {
             Catmandu::Error->throw($err);
         }
 
-        return $tidy_perl;
+        $perl = $tidy_perl;
     }
+
+    $self->log->debug($perl);
 
     $perl;
 }
@@ -165,9 +166,10 @@ sub emit_reject {
 
 sub emit_fix {
     my ($self, $fix) = @_;
+    my $perl;
 
     if ($fix->can('emit')) {
-        $self->emit_block(sub {
+        $perl = $self->emit_block(sub {
             my ($label) = @_;
             $fix->emit($self, $label);
         });
@@ -175,8 +177,10 @@ sub emit_fix {
         my $var = $self->var;
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
-        "${var} = ${ref}->fix(${var});";
+        $perl = "${var} = ${ref}->fix(${var});";
     }
+
+    $perl;
 }
 
 sub emit_block {
@@ -659,7 +663,24 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 
 =head2 log
 
-Return the current logger.
+Return the current logger. Can be used when creating your own Fix commands.
+
+E.g.
+    
+    package Catmandu::Fix::meow;
+
+    use Moo;
+
+    sub fix {
+        my ($self,$data) = @_;
+
+        $self->log->debug("Setting meow");
+        $data->{meow} = 'purrrrr';
+
+        $data;
+    }
+
+See also: L<Catmandu> for activating the logger in your main code.
 
 =cut
 

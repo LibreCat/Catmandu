@@ -24,8 +24,8 @@ In the L<http://librecat.org/|LibreCat> project it is our goal to provide an
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
-Read an in depth introduction into Catmandu programming in
-L<Catmandu::Introduction>.
+Read an in depth introduction into Catmandu programming at
+L<https://github.com/LibreCat/Catmandu/wiki/Introduction>.
 
 =head1 ONE STEP INSTALL
 
@@ -38,10 +38,6 @@ To install all Catmandu components in one easy step:
 or read our wiki for more installation hints:
 
  https://github.com/LibreCat/Catmandu/wiki/Install
- 
-=head1 VERSION
-
-Version 0.8014
 
 =cut
 
@@ -66,7 +62,7 @@ our $VERSION = '0.8014';
 
 =head1 CONFIG
 
-Catmandu configuration options can be stored in a file in the root directory of
+Catmandu configuration options can be stored in files in the root directory of
 your programming project. The file can be YAML, JSON or Perl and is called
 C<catmandu.yml>, C<catmandu.json> or C<catmandu.pl>. In this file you can set
 the default Catmandu stores and exporters to be used. Here is an example of a
@@ -85,16 +81,33 @@ C<catmandu.yml> file:
 =head2 Split config
 
 For large configs it's more convenient to split the config into several files.
-You can do so by including the config hash key in the file name.
+You can do so by having multiple config files starting with catmandu*.
 
-    catmandu.yaml
-    catmandu.store.yaml
-    catmandu.foo.bar.json
+    catmandu.general.yml
+    catmandu.db.yml
+    ...
 
-Config files are processed in alphabetical order. To keep things simple, values
-are not merged.  The contents of C<catmandu.store.yml> will overwrite
-C<< Catmandu->config->{store} >> if it already exists.
+Split config files are processed and merged by L<Config::Onion>.
 
+=head2 Deeply nested config structures
+
+Config files can indicate a path under which their keys will be nested. This
+makes your configuration more readable by keeping indentation to a minimum.
+
+A config file containing
+
+    _prefix:
+        foo:
+            bar:
+    baz: 1
+
+will be loaded as
+
+    foo:
+      bar:
+        baz: 1
+
+See L<Config::Onion> for more information on how this works.
 =cut
 
 use Sub::Exporter::Util qw(curry_method);
@@ -137,6 +150,29 @@ sub _env {
 Return the current logger (the L<Log::Any::Adapter> for category
 L<Catmandu::Env>).
 
+E.g. turn on Log4perl logging in your application;
+
+ package main;
+ use Catmandu;
+ use Log::Any::Adapter;
+ use Log::Log4perl;
+
+ Log::Log4perl::init('./log4perl.conf');
+ Log::Any::Adapter->set('Log4perl');
+
+ my $importer = Catmandu::Importer::JSON->new(...);
+ ...
+
+With log4perl.conf something like:
+
+ log4perl.rootLogger=DEBUG,STDOUT
+ log4perl.appender.STDOUT=Log::Log4perl::Appender::Screen
+ log4perl.appender.STDOUT.stderr=1
+ log4perl.appender.STDOUT.utf8=1
+
+ log4perl.appender.STDOUT.layout=PatternLayout
+ log4perl.appender.STDOUT.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
+
 =cut
 
 sub log { $_[0]->_env->log }
@@ -147,15 +183,21 @@ Set the location of the default configuration file to a new path.
 
 =cut
 
-sub default_load_path {
+sub default_load_path { # TODO move to Catmandu::Env
     my ($class, $path) = @_;
     state $default_path;
     $default_path = $path if defined $path;
     $default_path //= do {
         my $script = File::Spec->rel2abs($0);
         my ($script_vol, $script_path, $script_name) = File::Spec->splitpath($script);
-        $script_path;
-    }
+        my @dirs = grep length, File::Spec->splitdir($script_path);
+        if ($dirs[-1] eq 'bin') {
+            pop @dirs;
+            File::Spec->catdir(File::Spec->rootdir, @dirs);
+        } else {
+            $script_path;
+        }
+    };
 }
 
 =head2 load
@@ -165,6 +207,8 @@ Load all the configuration options in the catmandu.yml configuration file.
 =head2 load('/path', '/another/path')
 
 Load all the configuration options stored at alternative paths.
+
+A load path C<':up'> will search upwards from your program for configuration.
 
 =cut
 
@@ -448,7 +492,7 @@ Import everything.
 
 =head1 SEE ALSO
 
-L<Catmandu::Introduction>
+L<https://github.com/LibreCat/Catmandu/wiki>.
 
 =head1 AUTHOR
 
