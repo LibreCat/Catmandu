@@ -62,7 +62,7 @@ sub emit_bind {
     $perl .= "${unit} = ${bind_var}->finally(${unit});" if $self->can('finally');
 
     my $reject = $fixer->capture($fixer->_reject);
-    $perl .= "return ${unit} if ${unit} == ${reject};";
+    $perl .= "return ${unit} if defined ${unit} && ${unit} == ${reject};";
     
     $perl;
 }
