@@ -1,15 +1,7 @@
-package CatmanduLocalFixes;
-use Catmandu::Sane;
-use Module::Pluggable search_path => ["Catmandu::Fix"],search_dirs => [@INC];
-
-sub new {
-    bless {},$_[0];
-}
-
 package Catmandu::Importer::Fixes;
 use Catmandu::Sane;
 use Moo;
-use Module::Info;
+use Catmandu::Importer::Module::Info;
 
 with 'Catmandu::Importer';
 
@@ -25,36 +17,16 @@ sub generator {
         state $modules = [];
 
         unless($loaded){
-            my @local_packages;
-
-            if($self->local){
-            
-                push @local_packages,grep {
-
-                    #filter real fixes
-                    my(@parts)= split ':',$_;
-                    $parts[-1] =~ /^[a-z][0-9a-z_]+$/o;
-
-                } CatmanduLocalFixes->new()->plugins();
-            
-            }
-
-            for my $package(@local_packages){
-
-                #reason for this: previous step return first found package, not all installed versions
-                push @$modules,Module::Info->all_installed($package,@INC);
-
-            }
-
-
-            $modules = [map { 
-                +{
-                    name => $_->name,
-                    file => $_->file,
-                    version => $_->version
-                };
-            } @$modules];
-
+            Catmandu::Importer::Module::Info->new(
+                local => $self->local,
+                max_depth => 4,
+                namespace => "Catmandu::Fix"
+            )->each(sub{
+                my $record = $_[0];
+                #filter real fixes
+                my(@parts)= split ':',$record->{name};
+                push @$modules,$record if $parts[-1] =~ /^[a-z][0-9a-z_]+$/o;
+            });
             $loaded = 1;
         }
 

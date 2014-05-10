@@ -50,7 +50,7 @@ sub command {
 
 =head1 NAME
 
-    Catmandu::Cmd::module_info  -  list available packages in a given namespace
+Catmandu::Cmd::module_info - list available packages in a given namespace
 
 =head1 OPTIONS
 

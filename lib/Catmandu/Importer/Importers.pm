@@ -1,4 +1,4 @@
-package Catmandu::Importer::Stores;
+package Catmandu::Importer::Importers;
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Importer::Module::Info;
@@ -19,7 +19,7 @@ sub generator {
         unless($loaded){
             $modules = Catmandu::Importer::Module::Info->new(
                 local => $self->local,
-                namespace => "Catmandu::Store",
+                namespace => "Catmandu::Importer",
                 max_depth => 3
             )->to_array();
             $loaded = 1;

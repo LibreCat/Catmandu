@@ -18,6 +18,6 @@ sub command {
 
 =head1 NAME
 
-    Catmandu::Cmd::doc  -  show information about a Catmandu module
+Catmandu::Cmd::doc - show documentation for a Catmandu module
 
 =cut

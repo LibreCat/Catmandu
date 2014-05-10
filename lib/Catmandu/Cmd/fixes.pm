@@ -1,9 +1,7 @@
 package Catmandu::Cmd::fixes;
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Util qw(:is);
-use Catmandu::Importer::Module::Info;
-use Catmandu::Fix;
+use Catmandu::Importer::Fixes;
 
 sub command_opt_spec {
     (
@@ -11,6 +9,15 @@ sub command_opt_spec {
         ["verbose|v","include package information"]
 
     );
+}
+sub description {
+    <<EOS;
+examples:
+
+catmandu fixes -v
+
+options:
+EOS
 }
 sub print_simple {
     my $record = $_[0];
@@ -30,17 +37,10 @@ sub command {
 
     my $verbose = $opts->verbose;
 
-    Catmandu::Importer::Module::Info->new(
+    Catmandu::Importer::Fixes->new(
         local => $opts->local,
-        max_depth => 4,
-        namespace => "Catmandu::Fix"
     )->each(sub{
         my $record = shift;
-
-        #filter real fixes
-        my(@parts)= split ':',$record->{name};
-
-        return unless $parts[-1] =~ /^[a-z][0-9a-z_]+$/o;
 
         unless($verbose){
             say $record->{name};
@@ -54,6 +54,6 @@ sub command {
 
 =head1 NAME
 
-    Catmandu::Cmd::fixes  -  list available Catmandu fixes
+Catmandu::Cmd::fixes - list available Catmandu fixes
 
 =cut

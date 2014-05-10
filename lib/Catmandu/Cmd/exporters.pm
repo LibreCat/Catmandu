@@ -1,7 +1,7 @@
-package Catmandu::Cmd::stores;
+package Catmandu::Cmd::exporters;
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::Stores;
+use Catmandu::Importer::Exporters;
 
 sub command_opt_spec {
     (
@@ -26,7 +26,7 @@ sub command {
 
     my $verbose = $opts->verbose;
 
-    Catmandu::Importer::Stores->new(
+    Catmandu::Importer::Exporters->new(
 
         local => $opts->local,
 
@@ -47,6 +47,6 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::stores - list available Catmandu stores
+Catmandu::Cmd::exporters - list available Catmandu exporters
 
 =cut
