@@ -80,7 +80,7 @@ Required. The path of a file to which the benchmark statistics will be written.
 
 =head1 AUTHOR
 
-hochsten L<hochsten@cpan.org>
+Patrick Hochstenbach <Patrick . Hochstenbach @ UGent . be >
 
 =head1 SEE ALSO
 

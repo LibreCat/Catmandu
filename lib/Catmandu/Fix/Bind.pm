@@ -6,7 +6,8 @@ use namespace::clean;
 requires 'unit';
 requires 'bind';
 
-has fixes => (is => 'rw', default => sub { [] });
+has return => (is => 'rw', default => sub { [0]});
+has fixes  => (is => 'rw', default => sub { [] });
 
 sub unit {
 	my ($self,$data) = @_;
@@ -16,11 +17,6 @@ sub unit {
 sub bind {
     my ($self,$data,$code,$name,$perl) = @_;
 	return $code->($data);
-}
-
-sub finally {
-    my ($self,$data) = @_;
-    $data;
 }
 
 sub emit {
@@ -42,10 +38,6 @@ sub emit_bind {
     my $bind_var = $fixer->capture($self);
     my $unit     = $fixer->generate_var;
 
-    # Poor man's monads using global state. Should be a bit
-    # faster than nested binds. The finally method is required
-    # to unwrap monadic values again to perl Hashes that
-    # Catmandu::Fix can understand
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
     for my $pair (@$code) { 
@@ -53,17 +45,22 @@ sub emit_bind {
         my $code = $pair->[1]; 
         my $code_var = $fixer->capture($code);
         $perl .= "${unit} = ${bind_var}->bind(${unit}, sub {";
-        $perl .= "${var} = shift;";
+        $perl .= "my ${var} = shift;";
         $perl .= $code;
         $perl .= "${var}";
         $perl .= "},'$name',${code_var});"
     }
 
-    $perl .= "${unit} = ${bind_var}->finally(${unit});" if $self->can('finally');
-
     my $reject = $fixer->capture($fixer->_reject);
     $perl .= "return ${unit} if defined ${unit} && ${unit} == ${reject};";
     
+    if ($self->return) {
+        $perl .= "return ${unit};";
+    }
+    else {
+        $perl .= "return ${var};";
+    }
+
     $perl;
 }
 
@@ -104,7 +101,7 @@ Bind is a package that wraps Catmandu::Fix-es and other Catmandu::Bind-s togethe
 the programmer further control on the excution of fixes. With Catmandu::Fix::Bind you can simulate
 the 'before', 'after' and 'around' modifiers as found in Moo or Dancer.
 
-To wrap Fix functions, the Fix language has a 'do' statment:
+To wrap Fix functions, the Fix language has a 'do' statement:
 
   do BIND
      FIX1
@@ -112,9 +109,34 @@ To wrap Fix functions, the Fix language has a 'do' statment:
      FIX3
   end
 
-where BIND is a implementation of BIND and FIX1,...,FIXn are fix functions.
+where BIND is a implementation of Catmandu::Fix::Bind and FIX1,...,FIXn are Catmandu::Fix functions.
 
-In the example above the BIND will wrap FIX1, FIX2 and FIX3.
+In the example above the BIND will wrap FIX1, FIX2 and FIX3. BIND will first wrap the record data
+using its 'unit' method and send the data sequentially to each FIX which can make inline changes
+to the record data. In pseudo-code this will look like:
+
+  $bind_data = $bind->unit($data);
+  $bind_data = $bind->bind($bind_data, $fix1);
+  $bind_data = $bind->bind($bind_data, $fix2);
+  $bind_data = $bind->bind($bind_data, $fix3);
+  return $data;
+
+ An alternative form exists, 'doset' which will overwrite the record data with results of the last
+ fix. 
+
+  doset BIND
+        FIX1
+        FIX2
+        FIX3
+  end
+
+Will result in a pseudo code like:
+
+  $bind_data = $bind->unit($data);
+  $bind_data = $bind->bind($bind_data, $fix1);
+  $bind_data = $bind->bind($bind_data, $fix2);
+  $bind_data = $bind->bind($bind_data, $fix3);
+  return $bind_data;
 
 A Catmandu::Fix::Bind needs to implement two methods: 'unit' and 'bind'.
 
@@ -147,20 +169,9 @@ A trivial, but verbose, implementaion of 'bind' is:
     $data;
   } 
 
-=head2 finally($data)
-
-Optionally finally is executed at the end the 'do' block. This method should be an inverse of unit (unwrap the data).
-A trivial, but verbose, implementation of 'finally' is:
-
-  sub finally {
-    my ($self,$wrapped_data) = @_;
-    my $data = $wrapped_data;
-    $data;
-  }
-
 =head1 REQUIREMENTS
 
-Bind mmodules are simplified implementations of Monads. They should answer the formal definition of Monads, codified 
+Bind modules are simplified implementations of Monads. They should answer the formal definition of Monads, codified 
 in 3  monadic laws:
 
 =head2 left unit: unit acts as a neutral element of bind

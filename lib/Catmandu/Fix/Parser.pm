@@ -23,6 +23,7 @@ expression ::= old_if     action => ::first
              | unless     action => ::first
              | select     action => ::first
              | reject     action => ::first
+             | doset      action => ::first
              | do         action => ::first
              | fix        action => ::first
 
@@ -45,6 +46,8 @@ old_if_condition ::= old_if_name ('(') args (')') bless => OldCondition
 old_unless_condition ::= old_unless_name ('(') args (')') bless => OldCondition
 
 condition ::= name ('(') args (')') bless => Condition
+
+doset ::= ('doset') bind fixes ('end') bless => DoSet
 
 do ::= ('do') bind fixes ('end') bless => Do
 
@@ -164,9 +167,18 @@ sub Catmandu::Fix::Parser::OldCondition::reify {
         ->new(map { $_->reify } @$args);
 }
 
+sub Catmandu::Fix::Parser::DoSet::reify {
+    my $bind       = $_[0]->[0]->reify;
+    my $do_fixes   = $_[0]->[1];
+    $bind->return(1);
+    $bind->fixes([map { $_->reify } @$do_fixes]);
+    $bind;
+}
+
 sub Catmandu::Fix::Parser::Do::reify {
     my $bind       = $_[0]->[0]->reify;
     my $do_fixes   = $_[0]->[1];
+    $bind->return(0);
     $bind->fixes([map { $_->reify } @$do_fixes]);
     $bind;
 }

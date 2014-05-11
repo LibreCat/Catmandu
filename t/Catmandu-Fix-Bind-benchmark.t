@@ -22,7 +22,6 @@ is_deeply $monad->bind( $monad->unit({}), $f) , $f->({}) , "left unit monadic la
 is_deeply $monad->bind( $monad->unit({}), sub { $monad->unit(shift) }) , $monad->unit({}) , "right unit monadic law";
 is_deeply $monad->bind( $monad->bind( $monad->unit({}), $f ) , $g )  ,
           $monad->bind( $monad->unit({}) , sub { $monad->bind($f->($_[0]),$g) } ) , "associative monadic law";
-is_deeply $monad->finally( $monad->unit({hello => 'world'} ) ) , {hello => 'world'} , "can we unwrap the monad?";
 
 my $fixes =<<EOF;
 do benchmark(output => /dev/null)
@@ -103,4 +102,4 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
 
-done_testing 14;
+done_testing 13;

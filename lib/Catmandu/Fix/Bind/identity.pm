@@ -37,7 +37,7 @@ applies the bound fix functions to its input without any modification.
 
 =head1 AUTHOR
 
-hochsten L<hochsten@cpan.org>
+Patrick Hochstenbach <Patrick . Hochstenbach @ UGent . be >
 
 =head1 SEE ALSO
 
