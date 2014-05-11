@@ -9,6 +9,18 @@ requires 'bind';
 has return => (is => 'rw', default => sub { [0]});
 has fixes  => (is => 'rw', default => sub { [] });
 
+around bind => sub {
+    my ($orig, $self, $prev, @args) = @_;
+    my $next = $orig->($self,$prev,@args);
+
+    if ($self->can('plus') && $self->can('zero')) {
+        return $self->plus($prev,$next);
+    }
+    else {
+        return $next;
+    }
+};
+
 sub unit {
 	my ($self,$data) = @_;
 	return $data;

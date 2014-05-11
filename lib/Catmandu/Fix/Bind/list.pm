@@ -15,7 +15,17 @@ sub zero {
 
 sub plus {
 	my ($self,$a,$b) = @_;
-	push @$a , @$b;
+
+	if ($a == $self->zero || $b == $self->zero) {
+		return $self->zero;
+	}
+	elsif (Catmandu::Util::is_array_ref($b)) {
+		# Flatten the results
+		return [ grep {defined $_} (map { Catmandu::Util::is_array_ref($_) ? @$_ : $_ } @$b) ];
+	}
+	else {
+		$b;
+	}
 }
 
 sub unit {
@@ -36,7 +46,7 @@ sub bind {
 	my ($self,$mvar,$func,$name) = @_;
 
 	if (Catmandu::Util::is_array_ref($mvar)) {
-		map { $func->($_) } @$mvar;
+		[ map { $func->($_) } @$mvar ];
 	}
 	else {
 		return $self->zero;

@@ -127,7 +127,7 @@ sub emit {
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
-    $perl .= qq|if (${err} == ${reject_var}) { ${err} } else { die ${err}.Data::Dumper->Dump([${var}], [qw(data)]); }|;
+    $perl .= qq|if (ref(${err}) eq 'Catmandu::Fix::Reject') { ${err} } else { die ${err}.Data::Dumper->Dump([${var}], [qw(data)]); }|;
     $perl .= "};";
     $perl .= "};";
 
