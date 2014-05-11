@@ -2,19 +2,63 @@ package Catmandu::Fix::Bind::maybe;
 
 use Moo;
 use Data::Dumper;
+use Scalar::Util qw/reftype/;
 
 with 'Catmandu::Fix::Bind';
+
+# Copied from hiratara's Data::Monad::Maybe
+sub just {
+	my ($self,@values) = @_;
+	bless [@values] , __PACKAGE__;
+}
+
+sub nothing {
+	my ($self) = @_;
+	bless \(my $d = undef), __PACKAGE__;
+}
+
+sub is_nothing { reftype $_[0] ne 'ARRAY'  }
+
+sub value {
+    if (is_nothing($_[0])) {
+        {};
+    } else {
+        $_[0]->[0];
+    }
+}
+# ---
+
+sub unit {
+	my ($self,$data) = @_;
+	$self->just($data);
+}
 
 sub bind {
 	my ($self,$mvar,$func) = @_;
 
-	if (! defined $mvar) {
-		return undef;
+	if (is_nothing($mvar)) {
+		return $self->nothing;
 	}
 
-	my $res = $func->($mvar);
+	my $res;
+
+	eval { 
+
+		$res = $func->(value($mvar))
+	};
+	if ($@ && ref $@ eq 'Catmandu::Fix::Reject') {
+		die $@;
+	}
+	else {
+		return $self->nothing;
+	}  
 	
-	$res;
+	if (defined $res) {
+		return $self->just($res);
+	}
+	else {
+		return $self->nothing;
+	}
 }
 
 =head1 NAME

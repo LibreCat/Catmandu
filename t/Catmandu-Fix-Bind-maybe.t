@@ -23,15 +23,6 @@ BEGIN {
 }
 require_ok $pkg;
 
-my $monad = Catmandu::Fix::Bind::maybe->new();
-my $f     = sub { $_[0]->{demo}  = 1 ; $_[0] };
-my $g     = sub { $_[0]->{demo} += 1 ; $_[0] };
-
-is_deeply $monad->bind( $monad->unit({}), $f) , $f->({}) , "left unit monadic law";
-is_deeply $monad->bind( $monad->unit({}), sub { $monad->unit(shift) }) , $monad->unit({}) , "right unit monadic law";
-is_deeply $monad->bind( $monad->bind( $monad->unit({}), $f ) , $g )  ,
-          $monad->bind( $monad->unit({}) , sub { $monad->bind($f->($_[0]),$g) } ) , "associative monadic law";
-
 my $fixes =<<EOF;
 do maybe()
   add_field(foo,bar)
@@ -122,4 +113,4 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'specific testing';
 
-done_testing 14;
+done_testing 11;
