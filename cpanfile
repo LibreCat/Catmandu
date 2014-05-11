@@ -28,6 +28,8 @@ requires 'Time::HiRes', 0, # not always installed apparently
 requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
 requires 'YAML::Any', '0.90';
+requires 'Module::Info',0;
+requires 'Module::Pluggable',0;
 
 recommends 'JSON::XS', '2.3';
 recommends 'YAML::XS', '0.34';

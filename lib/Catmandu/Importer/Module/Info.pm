@@ -53,7 +53,7 @@ sub generator {
             for my $package(@local_packages){
 
                 #reason for this: previous step return first found package, not all installed versions
-                push @$modules,Module::Info->all_installed($package,@INC);
+                push @$modules,Module::Info->all_installed($package,@{ $self->inc });
                 
             }
 
