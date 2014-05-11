@@ -17,13 +17,18 @@ sub nothing {
 	bless \(my $d = undef), __PACKAGE__;
 }
 
-sub is_nothing { reftype $_[0] ne 'ARRAY'  }
+sub is_nothing { 
+	my ($self,$mvar) = @_;
+	reftype $mvar ne 'ARRAY'  
+}
 
 sub value {
-    if (is_nothing($_[0])) {
+	my ($self,$mvar) = @_;
+
+    if ($self->is_nothing($mvar)) {
         {};
     } else {
-        $_[0]->[0];
+        $mvar->[0];
     }
 }
 # ---
@@ -36,16 +41,16 @@ sub unit {
 sub bind {
 	my ($self,$mvar,$func) = @_;
 
-	if (is_nothing($mvar)) {
+	if ($self->is_nothing($mvar)) {
 		return $self->nothing;
 	}
 
 	my $res;
 
 	eval { 
-
-		$res = $func->(value($mvar))
+		$res = $func->($self->value($mvar));
 	};
+
 	if ($@ && ref $@ eq 'Catmandu::Fix::Reject') {
 		die $@;
 	}
