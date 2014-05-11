@@ -8,32 +8,24 @@ with 'Catmandu::Fix::Bind';
 sub bind {
 	my ($self,$mvar,$func) = @_;
 
-	my $res;
-
-	eval {
-		$res = $func->($mvar);
-	};
-	if ($@) {
-		if (ref $@ eq 'Catmandu::Fix::Reject') {
-			die $@;
-		}
-		else {
-			return $mvar;
-		}
+	if (! defined $mvar) {
+		return undef;
 	}
+
+	my $res = $func->($mvar);
 	
 	$res;
 }
 
 =head1 NAME
 
-Catmandu::Fix::Bind::maybe - a binder that ignores all Fix functions that throw errors
+Catmandu::Fix::Bind::maybe - a binder that skips fixes is one returns undef
 
 =head1 SYNOPSIS
 
  do maybe()
 	foo()
-	throw_error() # will be ignored
+	return_undef() # rest will be ignored
 	bar()
  end
 

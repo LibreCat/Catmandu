@@ -15,7 +15,7 @@ BEGIN {
 require_ok $pkg;
 
 my $monad = Catmandu::Fix::Bind::list->new();
-my $f     = sub { $_[0]->{demo} = 1  ;  [ $_[0] ]; };
+my $f     = sub { $_[0]->{demo} = 1  ; [ $_[0] ]; };
 my $g     = sub { $_[0]->{demo} += 1 ; [ $_[0] ]; };
 
 is_deeply $monad->bind( $monad->unit({}), $f) , $f->({}) , "left unit monadic law";

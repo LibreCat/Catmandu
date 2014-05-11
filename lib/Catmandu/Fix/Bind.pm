@@ -13,7 +13,7 @@ around bind => sub {
     my ($orig, $self, $prev, @args) = @_;
     my $next = $orig->($self,$prev,@args);
 
-    if ($self->can('plus') && $self->can('zero')) {
+    if ($self->can('plus')) {
         return $self->plus($prev,$next);
     }
     else {

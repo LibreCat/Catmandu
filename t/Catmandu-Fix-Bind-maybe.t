@@ -1,10 +1,10 @@
 #!/usr/bin/env perl
-package Catmandu::Fix::throw_error;
+package Catmandu::Fix::undef_error;
 
 use Moo;
 
 sub fix {
-  die "eek!";
+   undef;
 }
 
 package main;
@@ -113,7 +113,7 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
 
 $fixes =<<EOF;
 do maybe()
-  throw_error()
+  undef_error()
   add_field(foo,bar)
 end
 EOF
