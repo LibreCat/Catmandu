@@ -16,7 +16,7 @@ sub unit {
 
 sub bind {
     my ($self,$data,$code,$name,$perl) = @_;
-	return $code->($data);
+	  return $code->($data);
 }
 
 sub emit {
@@ -37,6 +37,7 @@ sub emit_bind {
 
     my $bind_var = $fixer->capture($self);
     my $unit     = $fixer->generate_var;
+    my $reject   = $fixer->capture($fixer->_reject);
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
@@ -50,9 +51,6 @@ sub emit_bind {
         $perl .= "${var}";
         $perl .= "},'$name',${code_var});"
     }
-
-    my $reject = $fixer->capture($fixer->_reject);
-    $perl .= "return ${unit} if defined ${unit} && ${unit} == ${reject};";
     
     if ($self->return) {
         $perl .= "return ${unit};";

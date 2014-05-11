@@ -14,7 +14,12 @@ sub bind {
 		$res = $func->($mvar);
 	};
 	if ($@) {
-		return $mvar;
+		if (ref $@ eq 'Catmandu::Fix::Reject') {
+			die $@;
+		}
+		else {
+			return $mvar;
+		}
 	}
 	
 	$res;

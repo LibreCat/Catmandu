@@ -1,3 +1,7 @@
+package Catmandu::Fix::Reject;
+
+use Moo;
+
 package Catmandu::Fix;
 
 use Catmandu::Sane;
@@ -25,7 +29,7 @@ has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
-has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
+has _reject     => (is => 'ro', init_arg => undef, default => sub { Catmandu::Fix::Reject->new; });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
 sub _build_parser {
@@ -109,6 +113,7 @@ sub emit {
     my $var = $self->var;
     my $err = $self->generate_var;
     my $captures = $self->_captures;
+    my $reject_var = $self->_reject_var;
     my $perl = "";
 
     $perl .= "sub {";
@@ -122,7 +127,7 @@ sub emit {
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
-    $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
+    $perl .= qq|if (${err} == ${reject_var}) { ${err} } else { die ${err}.Data::Dumper->Dump([${var}], [qw(data)]); }|;
     $perl .= "};";
     $perl .= "};";
 
@@ -174,7 +179,7 @@ sub emit_fixes {
 sub emit_reject {
     my ($self) = @_;
     my $reject_var = $self->_reject_var;
-    "return $reject_var;";
+    "die $reject_var;";
 }
 
 sub emit_fix {
