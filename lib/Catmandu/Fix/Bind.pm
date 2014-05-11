@@ -64,6 +64,10 @@ sub emit_bind {
         $perl .= "},'$name',${code_var});"
     }
     
+    if ($self->can('result')) {
+        $perl .= "${unit} = ${bind_var}->result(${unit});";
+    }
+
     if ($self->return) {
         $perl .= "return ${unit};";
     }

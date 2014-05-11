@@ -54,10 +54,10 @@ sub bind {
 	if ($@ && ref $@ eq 'Catmandu::Fix::Reject') {
 		die $@;
 	}
-	else {
+	elsif ($@) {
 		return $self->nothing;
 	}  
-	
+
 	if (defined $res) {
 		return $self->just($res);
 	}
@@ -66,9 +66,14 @@ sub bind {
 	}
 }
 
+sub result {
+	my ($self,$mvar) = @_;
+	$self->value($mvar);
+}
+
 =head1 NAME
 
-Catmandu::Fix::Bind::maybe - a binder that skips fixes is one returns undef
+Catmandu::Fix::Bind::maybe - a binder that skips fixes if one returns undef
 
 =head1 SYNOPSIS
 
