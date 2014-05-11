@@ -49,4 +49,8 @@ sub command {
 
 Catmandu::Cmd::importers - list available Catmandu importers
 
+=head1 AUTHOR
+
+    Nicolas Franck, C<< <nicolas.franck at ugent.be> >>
+
 =cut

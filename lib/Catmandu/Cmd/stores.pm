@@ -49,4 +49,8 @@ sub command {
 
 Catmandu::Cmd::stores - list available Catmandu stores
 
+=head1 AUTHOR
+
+    Nicolas Franck, C<< <nicolas.franck at ugent.be> >>
+
 =cut

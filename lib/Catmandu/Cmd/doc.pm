@@ -20,4 +20,8 @@ sub command {
 
 Catmandu::Cmd::doc - show documentation for a Catmandu module
 
+=head1 AUTHOR
+
+    Nicolas Franck, C<< <nicolas.franck at ugent.be> >>
+
 =cut

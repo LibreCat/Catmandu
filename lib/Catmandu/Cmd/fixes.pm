@@ -56,4 +56,8 @@ sub command {
 
 Catmandu::Cmd::fixes - list available Catmandu fixes
 
+=head1 AUTHOR
+
+    Nicolas Franck, C<< <nicolas.franck at ugent.be> >>
+
 =cut

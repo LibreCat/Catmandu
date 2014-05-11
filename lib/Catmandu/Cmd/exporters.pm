@@ -49,4 +49,8 @@ sub command {
 
 Catmandu::Cmd::exporters - list available Catmandu exporters
 
+=head1 AUTHOR
+
+    Nicolas Franck, C<< <nicolas.franck at ugent.be> >>
+
 =cut

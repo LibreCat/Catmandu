@@ -2,7 +2,7 @@ package Catmandu::Importer::Module::Info;
 use Catmandu::Sane;
 use Moo;
 use Module::Info;
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(:is :check);
 
 our $VERSION = "0.1";
 
@@ -11,6 +11,11 @@ with 'Catmandu::Importer';
 has local => (
     is => 'ro',
     default => sub { 1; }
+);
+has inc => (
+    is => 'ro',
+    isa => sub { check_array_ref($_[0]); },
+    default => sub { [@INC]; }
 );
 has namespace => (
     is => 'ro',
@@ -33,7 +38,7 @@ sub generator {
                 require Module::Pluggable;
                 my %args = (
                     search_path => [$self->namespace],
-                    search_dirs => [@INC],
+                    search_dirs => $self->inc(),
                     sub_name => "_all_ns_packages"
                 );
                 if(is_natural($self->max_depth)){
@@ -75,7 +80,8 @@ sub generator {
 =head1 OPTIONS 
  
     namespace:      namespace for the packages to list 
-    local:          list only local packages (default)
+    local:          list only local packages (default). Only local possible for now.
+    inc:            list or lookup directories (defaults to @INC)
  
 =head1 SEE ALSO 
  
