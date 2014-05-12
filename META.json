@@ -62,7 +62,6 @@
             "IO::Handle::Util" : "0.01",
             "JSON" : "2.51",
             "List::MoreUtils" : "0.33",
-            "Log::Any::Adapter" : "0.11",
             "Marpa::R2" : "2.084000",
             "Moo" : "1.000008",
             "MooX::Log::Any" : "0",
@@ -79,7 +78,7 @@
       },
       "test" : {
          "requires" : {
-            "Log::Any::Adapter" : "0.11",
+            "Log::Any::Adapter" : "0",
             "Test::Deep" : "0",
             "Test::Exception" : "0",
             "Test::More" : "0"
