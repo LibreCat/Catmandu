@@ -132,10 +132,13 @@ sub write_file {
 }
 
 sub read_yaml {
+    # dies on error
     YAML::Any::LoadFile($_[0]);
 }
 
 sub read_json {
+    my $text = read_file($_[0]);
+    # dies on error
     JSON::decode_json(read_file($_[0]));
 }
 
@@ -579,26 +582,42 @@ Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
 
+Throws a Catmandu::Error on failure. 
+
 =item write_file($path, $str);
 
 Writes the string C<$str> to a file at C<$path>.
 
     write_file('/path/to/file.txt', "contents");
 
+Throws a Catmandu::Error on failure. 
+
 =item read_yaml($path);
 
-    my $cfg = read_yaml('config.yaml');
+Reads the YAML file at C<$path> into a Perl hash.
+
+    my $cfg = read_yaml($path);
+
+Dies on failure reading the file or parsing the YAML.
 
 =item read_json($path);
 
-    my $cfg = read_json('config.json');
+Reads the JSON file at C<$path> into a Perl hash.
+
+    my $cfg = read_json($path);
+
+Dies on failure reading the file or parsing the JSON.
 
 =item join_path(@path);
+
+Joins relative paths into an absolute path.
 
     join_path('/path/..', './to', 'file.txt');
     # => "/to/file.txt"
 
 =item normalize_path($path);
+
+Normalizes a relative path to an absolute path.
 
     normalize_path('/path/../to/./file.txt');
     # => "/to/file.txt"
@@ -1001,9 +1020,13 @@ Load package C<$pkg> at runtime with C<require> and return it's full name.
     require_package('Catmandu::Util', 'Catmandu');
     # => "Catmandu::Util"
 
+Throws a Catmandu::Error on failure.
+
 =item use_lib(@dirs)
 
 Add directories to C<@INC> at runtime.
+
+Throws a Catmandu::Error on failure.
 
 =back
 
