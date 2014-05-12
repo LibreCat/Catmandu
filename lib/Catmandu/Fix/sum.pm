@@ -32,7 +32,7 @@ Catmandu::Fix::sum - replace the value of an array field with the sum of it's el
 =head1 SYNOPSIS
 
    # e.g. numbers => [2, 3]
-   sum('numbers');
+   sum(numbers)
    # numbers => 5
 
 =head1 SEE ALSO

@@ -33,7 +33,7 @@ Catmandu::Fix::from_json - replace a json field with the parsed value
 
 =head1 SYNOPSIS
 
-   from_json('my.field');
+   from_json(my.field)
 
 =head1 SEE ALSO
 

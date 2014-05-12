@@ -6,20 +6,14 @@ use namespace::clean;
 
 sub import {
     my $target = caller;
-   
+
     my $around = do { no strict 'refs'; \&{"${target}::around"} };
     my $fix_args = [];
     my $fix_opts = [];
 
-    do {
-        no strict 'refs';
-        *{"${target}::package_args"} = sub { $fix_args; };
-        *{"${target}::package_opts"} = sub { $fix_opts; };
-    };
-
     install_modifier($target, 'around', 'has', sub {
         my ($orig, $attr, %opts) = @_;
-        
+
         return $orig->($attr, %opts)
             unless exists $opts{fix_arg} || exists $opts{fix_opt};
 
@@ -77,8 +71,7 @@ sub import {
         }
 
         $args;
-    });
-
+  });
 }
 
 1;

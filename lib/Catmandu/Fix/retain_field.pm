@@ -26,7 +26,7 @@ Catmandu::Fix::retain_field - delete everything from a field except
 =head1 SYNOPSIS
 
    # Delete every key from foo except bar
-   retain_field('foo.bar');
+   retain_field(foo.bar)
 
 =head1 SEE ALSO
 

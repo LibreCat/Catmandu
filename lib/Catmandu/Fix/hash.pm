@@ -33,7 +33,7 @@ Catmandu::Fix::hash - creates a hash out of an array
 =head1 SYNOPSIS
 
    # tags => ['name', 'Peter', 'age', 12]
-   hash('tags');
+   hash(tags)
    # tags => {name => 'Peter', age => 12}
 
 =head1 SEE ALSO
