@@ -43,7 +43,7 @@ Catmandu::Sane - Package boilerplate
 
     # Provides try/catch[/finally] try/catch_case[/finally]
     try {
-    } catch {}
+    } catch {};
 
     # Provides
     Catmandu::Error->throw("error");
