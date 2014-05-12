@@ -44,13 +44,13 @@ Catmandu::Fix::Condition::exists - only execute fixes if the path exists
 =head1 SYNOPSIS
 
    # uppercase the value of field 'foo' if the field 'oogly' exists
-   if exists(oogly)
-     upcase(foo) # foo => 'BAR'
-   end
+   if_exists('oogly');
+   upcase('foo'); # foo => 'BAR'
+   end()
    # inverted
-   unless exists(oogly)
-     upcase(foo) # foo => 'bar'
-   end
+   unless_exists('oogly');
+   upcase('foo'); # foo => 'bar'
+   end()
 
 =head1 SEE ALSO
 

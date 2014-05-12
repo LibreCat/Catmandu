@@ -39,7 +39,7 @@ Catmandu::Fix::substring - extract a substring out of the value of a field
 =head1 SYNOPSIS
 
    # Extract a substring out of the value of a field
-   substring(initials, 0, 1)
+   substring('initials',0,1);
 
 =head1 SEE ALSO
 

@@ -31,7 +31,7 @@ Catmandu::Fix::split_field - split a string value in a field into an ARRAY
 =head1 SYNOPSIS
 
    # Split the 'foo' value into an array. E.g. foo => '1:2:3'
-   split_field(foo, ':') # foo => [1,2,3]
+   split_field('foo',':'); # foo => [1,2,3]
 
 =head1 SEE ALSO
 

@@ -33,7 +33,7 @@ Catmandu::Fix::count - replace the value of an array or hash field with it's cou
 =head1 SYNOPSIS
 
    # e.g. tags => ["foo", "bar"]
-   count(tags) # tags => 2
+   count('tags'); # tags => 2
 
 =head1 SEE ALSO
 

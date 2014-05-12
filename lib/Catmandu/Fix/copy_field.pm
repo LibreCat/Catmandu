@@ -53,7 +53,7 @@ Catmandu::Fix::copy_field - copy the value of one field to a new field
 =head1 SYNOPSIS
 
    # Copy the values of foo.bar into bar.foo
-   copy_field(foo.bar, bar.foo)
+   copy_field('foo.bar','bar.foo');
 
 =head1 SEE ALSO
 

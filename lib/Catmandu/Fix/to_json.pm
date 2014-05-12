@@ -33,7 +33,7 @@ Catmandu::Fix::to_json - convert the value of a field to json
 
 =head1 SYNOPSIS
 
-   to_json(my.field)
+   to_json('my.field');
 
 =head1 SEE ALSO
 

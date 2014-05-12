@@ -40,11 +40,11 @@ Catmandu::Fix::trim - trim leading and ending junk from the value of a field
 
    # the default mode trims whitespace
    # e.g. foo => '   abc   ';
-   trim(foo) # foo => 'abc';
-   trim(foo, whitespace) # foo => 'abc';
+   trim('foo'); # foo => 'abc';
+   trim('foo', 'whitespace'); # foo => 'abc';
    # trim non-word characters
    # e.g. foo => '   abc  / : .';
-   trim(foo, nonword) # foo => 'abc';
+   trim('foo', 'nonword'); # foo => 'abc';
 
 =head1 SEE ALSO
 

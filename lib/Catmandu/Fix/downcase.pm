@@ -29,7 +29,7 @@ Catmandu::Fix::downcase - lowercase the value of a field
 =head1 SYNOPSIS
 
    # Lowercase 'foo'. E.g. foo => 'BAR'
-   downcase(foo) # foo => 'bar'
+   downcase('foo'); # foo => 'bar'
 
 =head1 SEE ALSO
 

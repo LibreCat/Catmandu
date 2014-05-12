@@ -600,7 +600,7 @@ Catmandu::Fix - a Catmandu class used for data crunching
 
 =head1 DESCRIPTION
 
-Catmandu::Fixes can be used for easy data manipulation by non programmers. Using a
+Catmandu::Fix-es can be use for easy data manipulation by non programmers. Using a
 small Perl DSL language end-users can use Fix routines to manipulate data objects.
 A plain text file of fixes can be created to specify all the routines needed to
 tranform the data into the desired format.
@@ -608,10 +608,10 @@ tranform the data into the desired format.
 =head1 PATHS
 
 All the Fix routines in Catmandu::Fix use a TT2 type reference to point to values
-in a Perl Hash. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the
+in a Perl Hash. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the 
 key 'foo'.
 
-A special case is when you want to point to all items in an array. In this case
+A special case is when you want to point to all items in an array. In this case 
 the wildcard '*' can be used. E.g. 'foo.*' points to all the items in the 'foo'
 array.
 
@@ -666,7 +666,7 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 Return the current logger. Can be used when creating your own Fix commands.
 
 E.g.
-
+    
     package Catmandu::Fix::meow;
 
     use Moo;

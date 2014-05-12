@@ -22,9 +22,9 @@ Catmandu::Fix::Condition::all_match - only execute fixes if all path values matc
 =head1 SYNOPSIS
 
    # uppercase the value of field 'foo' if all members of 'oogly' have the value 'doogly'
-   if all_match(oogly.*, "doogly")
-     upcase(foo) # foo => 'BAR'
-   end
+   if_all_match('oogly.*', 'doogly');
+   upcase('foo'); # foo => 'BAR'
+   end()
 
 =head1 SEE ALSO
 

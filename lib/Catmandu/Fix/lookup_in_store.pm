@@ -65,14 +65,13 @@ sub emit {
 
 =head1 NAME
 
-Catmandu::Fix::lookup_in_store - change the value of a HASH key or ARRAY index
-by looking up it's value in a store
+Catmandu::Fix::lookup_in_store - change the value of a HASH key or ARRAY index by looking up it's value in a store
 
 =head1 SYNOPSIS
 
-   lookup_in_store(foo.bar, MongoDB, bag: bars, database_name: lookups)
+   lookup_in_store('foo.bar', 'MongoDB', bag: 'bars', database_name: 'lookups');
    # using the default bag and a default value
-   lookup_in_store(foo.bar, store_name, default: 'default value')
+   lookup_in_store('foo.bar', 'store_name', default: 'default value');
 
 =head1 SEE ALSO
 
