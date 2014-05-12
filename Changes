@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
-{{NEXT}}
+{{$NEXT}}
+
+0.9  2014-05-12 10:18:40 CEST
   - switch to Dist::Milla
   - Marpa based fix parser
   - Config::Onion based config loader
