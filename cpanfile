@@ -5,11 +5,11 @@ on 'configure', sub {
 };
 
 on 'test', sub {
-  requires 'Test::Deep', 0;
-  requires 'Test::Exception', 0;
-  requires 'Test::More', 0;
-  requires 'Log::Any::Test', 0;
-  requires 'Log::Any::Adapter', 0;
+  requires 'Test::Deep', '0.112';
+  requires 'Test::Exception', '0.32';
+  requires 'Test::More', '1.001003';
+  requires 'Log::Any::Test', '0.15';
+  requires 'Log::Any::Adapter', '0.11';
 };
 
 requires 'App::Cmd', '0.323';
