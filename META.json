@@ -4,7 +4,7 @@
       "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.4, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.131560",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -36,9 +36,15 @@
       }
    },
    "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.035"
+            "Module::Build" : "0.3601",
+            "Module::Build::Tiny" : "0.36"
          }
       },
       "develop" : {
@@ -78,10 +84,11 @@
       },
       "test" : {
          "requires" : {
-            "Log::Any::Adapter" : "0",
-            "Test::Deep" : "0",
-            "Test::Exception" : "0",
-            "Test::More" : "0"
+            "Log::Any::Adapter" : "0.11",
+            "Log::Any::Test" : "0.15",
+            "Test::Deep" : "0.112",
+            "Test::Exception" : "0.32",
+            "Test::More" : "1.001003"
          }
       }
    },

@@ -1,7 +1,7 @@
 requires 'perl', 'v5.10.1';
 
 on 'configure', sub {
-	requires 'Module::Build::Tiny', '0.035';
+	requires 'Module::Build::Tiny', '0.36';
 };
 
 on 'test', sub {

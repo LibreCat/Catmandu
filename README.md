@@ -13,7 +13,7 @@ such as MongoDB and full text indexes such as Solr to create a rapid
 development environment for digital library services such as institutional
 repositories and search engines.
 
-In the [http://librecat.org/|LibreCat](http://librecat.org/|LibreCat) project it is our goal to provide an 
+In the [http://librecat.org/](https://metacpan.org/pod/LibreCat) project it is our goal to provide an 
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
@@ -294,11 +294,11 @@ Export data using a default or named exporter to a string.
 
     Same as `Catmandu->export_to_string`.
 
-- -all/:all
+- \-all/:all
 
     Import everything.
 
-- -load/:load
+- \-load/:load
 
         use Catmandu -load;
         use Catmandu -load => [];
