@@ -8,6 +8,7 @@ on 'test', sub {
   requires 'Test::Deep', 0;
   requires 'Test::Exception', 0;
   requires 'Test::More', 0;
+  requires 'Log::Any::Test', 0;
   requires 'Log::Any::Adapter', 0;
 };
 
