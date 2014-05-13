@@ -1,9 +1,5 @@
 requires 'perl', 'v5.10.1';
 
-on 'configure', sub {
-	requires 'Module::Build::Tiny', '0.36';
-};
-
 on 'test', sub {
   requires 'Test::Deep', '0.112';
   requires 'Test::Exception', '0.32';

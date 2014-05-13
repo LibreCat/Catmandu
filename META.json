@@ -43,8 +43,7 @@
       },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.3601",
-            "Module::Build::Tiny" : "0.36"
+            "Module::Build" : "0.3601"
          }
       },
       "develop" : {

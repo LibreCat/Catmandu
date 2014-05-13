@@ -11,8 +11,7 @@ my %module_build_args = (
     "Module::Build" => "0.3601"
   },
   "configure_requires" => {
-    "Module::Build" => "0.3601",
-    "Module::Build::Tiny" => "0.36"
+    "Module::Build" => "0.3601"
   },
   "dist_abstract" => "a data toolkit",
   "dist_author" => [
