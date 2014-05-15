@@ -6,9 +6,10 @@ _build
 blib
 Build
 cover_db
+LICENSE
 Makefile.PL
 MANIFEST*
-META.*
+!META.json
 MYMETA.*
 Catmandu-*
 !*.t

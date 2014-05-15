@@ -1,0 +1,126 @@
+{
+   "abstract" : "a data toolkit",
+   "author" : [
+      "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Milla version v1.0.4, Dist::Zilla version 5.013, CPAN::Meta::Converter version 2.133380",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Catmandu",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
+   "optional_features" : {
+      "tidy" : {
+         "description" : "Support pretty printing compiled fix code",
+         "prereqs" : {
+            "runtime" : {
+               "requires" : {
+                  "Perl::Tidy" : "0"
+               }
+            }
+         }
+      }
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "Module::Build::Tiny" : "0.035"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Test::Pod" : "1.41"
+         }
+      },
+      "runtime" : {
+         "recommends" : {
+            "JSON::XS" : "2.3",
+            "YAML::XS" : "0.34"
+         },
+         "requires" : {
+            "App::Cmd" : "0.323",
+            "CGI::Expand" : "2.02",
+            "Clone" : "0.31",
+            "Config::Onion" : "1.004",
+            "Data::Compare" : "1.22",
+            "Data::UUID" : "1.217",
+            "Data::Util" : "0.59",
+            "IO::Handle::Util" : "0.01",
+            "JSON" : "2.51",
+            "List::MoreUtils" : "0.33",
+            "Marpa::R2" : "2.084000",
+            "Moo" : "1.000008",
+            "MooX::Log::Any" : "0",
+            "Sub::Exporter" : "0.982",
+            "Sub::Quote" : "0",
+            "Text::CSV" : "1.21",
+            "Throwable" : "0.200004",
+            "Time::HiRes" : "0",
+            "Try::Tiny::ByClass" : "0.01",
+            "YAML::Any" : "0.90",
+            "namespace::clean" : "0.24",
+            "perl" : "v5.10.1"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Log::Any::Adapter" : "0",
+            "Test::Deep" : "0",
+            "Test::Exception" : "0",
+            "Test::More" : "0"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/LibreCat/Catmandu/issues"
+      },
+      "homepage" : "https://github.com/LibreCat/Catmandu",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/LibreCat/Catmandu.git",
+         "web" : "https://github.com/LibreCat/Catmandu"
+      }
+   },
+   "version" : "0.9",
+   "x_contributors" : [
+      "Christian Pietsch <chr.pietsch+github@googlemail.com>",
+      "Dave Sherohman <Dave.Sherohman@lub.lu.se>",
+      "Dave Sherohman <Dave.Sherohman@ub.lu.se>",
+      "EC2 Default User <ec2-user@ip-10-113-18-155.ec2.internal>",
+      "EC2 Default User <ec2-user@ip-10-114-199-125.ec2.internal>",
+      "EC2 Default User <ec2-user@ip-10-194-230-16.ec2.internal>",
+      "EC2 Default User <ec2-user@ip-10-77-5-148.ec2.internal>",
+      "Jakob Voss <jakob@nichtich.de>",
+      "Jakob Voss <voss@gbv.de>",
+      "Nicolas <nicolas.steenlant@ugent.be>",
+      "Nicolas Franck <nicolas.franck@ugent.be>",
+      "Nicolas Steenlant <nicolas.steenlant@gmail.com>",
+      "Nicolas Steenlant <nsteenla@ca20c608.ugent.be>",
+      "Nicolas Steenlnat <nicolas.steenlant@ugent.be>",
+      "Patrick <phochste@hal.lub.lu.se>",
+      "Patrick Hochstenbach <Patrick.Hochstenbach@UGent.be>",
+      "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>",
+      "Snorri Briem <Snorri.Briem@lub.lu.se>",
+      "Snorri Briem <Snorri.Briem@ub.lu.se>",
+      "Vitali Peil <vitali.peil@uni-bielefeld.de>",
+      "phochste <phochste@vmtemp4.ugent.be>",
+      "vpeil <vitali.peil@uni-bielefeld.de>"
+   ]
+}
+

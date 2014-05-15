@@ -17,10 +17,10 @@ Catmandu::Fix::clone - create a clone of the data object
 =head1 SYNOPSIS
 
    # Create a clone of the data object
-   clone();
+   clone()
 
    # Now do all the changes on the clone
-   add_field('foo','2');
+   add_field(foo, 2)
 
 =head1 SEE ALSO
 

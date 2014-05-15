@@ -67,7 +67,7 @@ old_if_name ~ 'if_' [a-z] name_rest
 old_unless_name ~ 'unless_' [a-z] name_rest
 
 name      ~ [a-z] name_rest
-name_rest ~ [_\da-z]*
+name_rest ~ [_\da-zA-Z]*
 
 int ~ digits
     | '-' digits
@@ -84,11 +84,14 @@ q_char   ~ [^'] | '\' [']
 
 bare_string ~ [^\s\\\,;:=>()"']+
 
-old_terminator ~ ';'
+discard ~ comment | whitespace | old_terminator
 
 whitespace ~ [\s]+
 
-discard ~ whitespace | old_terminator
+comment      ~ '#' comment_text
+comment_text ~ [^\n]+
+
+old_terminator ~ ';'
 
 sep ~ [,:]
     | '=>'

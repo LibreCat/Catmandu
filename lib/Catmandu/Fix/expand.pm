@@ -15,9 +15,9 @@ Catmandu::Fix::expand - convert a flat hash into nested data using the TT2 dot c
 =head1 SYNOPSIS
 
    # collapse the data into a flat hash
-   collapse();
+   collapse()
    # expand again to the nested original
-   expand();
+   expand()
 
 =head1 SEE ALSO
 
