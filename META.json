@@ -4,7 +4,7 @@
       "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.4, Dist::Zilla version 5.013, CPAN::Meta::Converter version 2.133380",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -36,9 +36,14 @@
       }
    },
    "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.035"
+            "Module::Build" : "0.3601"
          }
       },
       "develop" : {
@@ -62,6 +67,7 @@
             "IO::Handle::Util" : "0.01",
             "JSON" : "2.51",
             "List::MoreUtils" : "0.33",
+            "Log::Any::Adapter" : "0.11",
             "Marpa::R2" : "2.084000",
             "Moo" : "1.000008",
             "MooX::Log::Any" : "0",
@@ -78,23 +84,24 @@
       },
       "test" : {
          "requires" : {
-            "Log::Any::Adapter" : "0",
-            "Test::Deep" : "0",
-            "Test::Exception" : "0",
-            "Test::More" : "0"
+            "Log::Any::Adapter" : "0.11",
+            "Log::Any::Test" : "0.15",
+            "Test::Deep" : "0.112",
+            "Test::Exception" : "0.32",
+            "Test::More" : "1.001003"
          }
       }
    },
    "release_status" : "stable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/LibreCat/Catmandu/issues"
+         "web" : "https://github.com/vpeil/Catmandu/issues"
       },
-      "homepage" : "https://github.com/LibreCat/Catmandu",
+      "homepage" : "https://github.com/vpeil/Catmandu",
       "repository" : {
          "type" : "git",
-         "url" : "https://github.com/LibreCat/Catmandu.git",
-         "web" : "https://github.com/LibreCat/Catmandu"
+         "url" : "https://github.com/vpeil/Catmandu.git",
+         "web" : "https://github.com/vpeil/Catmandu"
       }
    },
    "version" : "0.9",
@@ -111,6 +118,7 @@
       "Nicolas <nicolas.steenlant@ugent.be>",
       "Nicolas Franck <nicolas.franck@ugent.be>",
       "Nicolas Steenlant <nicolas.steenlant@gmail.com>",
+      "Nicolas Steenlant <nicolas.steenlant@ugent.be>",
       "Nicolas Steenlant <nsteenla@ca20c608.ugent.be>",
       "Nicolas Steenlnat <nicolas.steenlant@ugent.be>",
       "Patrick <phochste@hal.lub.lu.se>",
