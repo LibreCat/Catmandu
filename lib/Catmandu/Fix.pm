@@ -123,13 +123,15 @@ sub emit {
     # Loop over all the fixes and emit their code, binded to Binds if required
     $perl .= $self->emit_fixes($self->fixes);
 
-    $perl .= "${var};";
+    $perl .= "return ${var};";
+    $perl .= "__REJECT__: return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
-    $perl .= qq|if (ref(${err}) eq 'Catmandu::Fix::Reject') { ${err} } else { die ${err}.Data::Dumper->Dump([${var}], [qw(data)]); }|;
+    $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
     $perl .= "};";
     $perl .= "};";
+
 
     if (%$captures) {
         my @captured_vars = map {
@@ -179,7 +181,7 @@ sub emit_fixes {
 sub emit_reject {
     my ($self) = @_;
     my $reject_var = $self->_reject_var;
-    "die $reject_var;";
+    "goto __REJECT__;";
 }
 
 sub emit_fix {

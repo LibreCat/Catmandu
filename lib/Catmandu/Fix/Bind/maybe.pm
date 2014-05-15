@@ -51,7 +51,7 @@ sub bind {
 		$res = $func->($self->value($mvar));
 	};
 
-	if ($@ && ref $@ eq 'Catmandu::Fix::Reject') {
+	if ($@) {
 		die $@;
 	}
 	elsif ($@) {
