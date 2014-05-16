@@ -501,13 +501,17 @@ Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
 
 =head1 CONTRIBUTORS
 
-Patrick Hochstenbach, C<< <patrick.hochstenbach at ugent.be> >>
+Nicolas Franck, C<< nicolas.francck at ugent.be >>
+
+Patrick Hochstenbach, C<< patrick.hochstenbach at ugent.be >>
 
 Vitali Peil, C<< vitali.peil at uni-bielefeld.de >>
 
 Christian Pietsch, C<< christian.pietsch at uni-bielefeld.de >>
 
 Dave Sherohman, C<< dave.sherohman at ub.lu.se >>
+
+Jakob Voss, C<< nichtich at cpan.org >>
 
 =head1 LICENSE AND COPYRIGHT
 
