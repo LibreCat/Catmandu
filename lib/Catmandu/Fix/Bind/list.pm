@@ -45,7 +45,7 @@ sub concat {
 
 =head1 NAME
 
-Catmandu::Fix::Bind::maybe - a binder that computes Fix-es for every element in a list
+Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a list
 
 =head1 SYNOPSIS
 

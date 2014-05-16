@@ -176,7 +176,6 @@ sub emit_fixes {
 
 sub emit_reject {
     my ($self) = @_;
-    my $reject_var = $self->_reject_var;
     "goto __FIX_REJECT__;";
 }
 

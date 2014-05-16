@@ -52,9 +52,6 @@ sub bind {
 	};
 
 	if ($@) {
-		die $@;
-	}
-	elsif ($@) {
 		return $self->nothing;
 	}  
 
@@ -73,7 +70,7 @@ sub result {
 
 =head1 NAME
 
-Catmandu::Fix::Bind::maybe - a binder that skips fixes if one returns undef
+Catmandu::Fix::Bind::maybe - a binder that skips fixes if one returns undef or dies
 
 =head1 SYNOPSIS
 
