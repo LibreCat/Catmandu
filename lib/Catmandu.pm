@@ -148,7 +148,8 @@ sub _env {
 =head2 log
 
 Return the current logger (the L<Log::Any::Adapter> for category
-L<Catmandu::Env>).
+L<Catmandu::Env>). See L<Log::Any#Logging> for how to send messages to the
+logger.
 
 E.g. turn on Log4perl logging in your application;
 
