@@ -55,6 +55,9 @@ sub run {
         elsif ($@ =~ /Can't locate Catmandu\/(Importer|Exporter|Store)\/([^\.]+)/) {
             print STDERR "Can't find:\n\n\tCatmandu::$1\::$2\n\nin your installation. Or a\n\n\t$2\n\nin your catmandu.yml\n";
         }
+        elsif ($@ =~ /unknown store default/) {
+            print STDERR "You need to provide the type of a Store or define one in your catmandu.yml file.\n";
+        }
         else {
             die $@;
         }
