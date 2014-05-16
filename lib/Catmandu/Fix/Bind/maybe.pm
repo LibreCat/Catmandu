@@ -89,7 +89,7 @@ The maybe binder computes all the Fix function and ignores fixes that throw exce
 
 =head1 AUTHOR
 
-Patrick Hochstenbach <Patrick . Hochstenbach @ UGent . be >
+Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
 
 =head1 SEE ALSO
 

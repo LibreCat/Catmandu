@@ -75,7 +75,7 @@ The path to a list in the data.
 
 =head1 AUTHOR
 
-Patrick Hochstenbach <Patrick . Hochstenbach @ UGent . be >
+Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
 
 =head1 SEE ALSO
 

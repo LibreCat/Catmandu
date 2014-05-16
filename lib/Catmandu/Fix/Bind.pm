@@ -55,12 +55,11 @@ sub emit_bind {
     for my $pair (@$code) { 
         my $name = $pair->[0];
         my $code = $pair->[1]; 
-        my $code_var = $fixer->capture($code);
         $perl .= "${unit} = ${bind_var}->bind(${unit}, sub {";
         $perl .= "my ${var} = shift;";
         $perl .= $code;
         $perl .= "${var}";
-        $perl .= "},'$name',${code_var});"
+        $perl .= "},'$name');"
     }
     
     if ($self->can('result')) {
@@ -170,8 +169,8 @@ of 'unit' is:
 =head2 bind($wrapped_data,$code,$name,$perl)
 
 The bind method is executed for every Catmandu::Fix method in the fix script. It receives the $wrapped_data
-(wrapped by 'unit'), the fix method as anonymous subroutine, the name of the fix and the actual perl
-code which runs it as a string. It should return data with the same type as returned by 'unit'. 
+(wrapped by 'unit'), the fix method as anonymous subroutine and the name of the fix. It should return data 
+with the same type as returned by 'unit'. 
 A trivial, but verbose, implementaion of 'bind' is:
 
   sub bind {
@@ -191,8 +190,8 @@ in 3  monadic laws:
 
    my $monad = Catmandu::Fix::Bind->demo();
 
-   # bind(unit(data), coderef) == coderef(data)
-   $monad->bind( $monad->unit({foo=>'bar'}) , $coderef) == $coderef->({foo=>'bar'});
+   # bind(unit(data), coderef) == unit(coderef(data))
+   $monad->bind( $monad->unit({foo=>'bar'}) , $coderef) == $monad->unit($coderef->({foo=>'bar'}));
 
 =head2 right unit: unit act as a neutral element of bind
 
@@ -201,12 +200,12 @@ in 3  monadic laws:
 
 =head2 associative: chaining bind blocks should have the same effect as nesting them
 
-   # bind(bind(unit(data),f),g) == bind(unit(data), sub { return bind(f(data),g) } )
+   # bind(bind(unit(data),f),g) == bind(unit(data), sub { return bind(unit(f(data)),g) } )
    my $f = sub { my $data = shift; $data->{demo} = 1 ; $data };
    my $g = sub { my $data = shift; $data->{demo} += 1 ; $data};
 
    $monad->bind( $monad->bind( $monad->unit({}) , f ) , g ) ==
-     $monad->bind( $monad->unit({}) , sub { my $data = shift; $monad->bind($f->($data), $g ); $data; });
+     $monad->bind( $monad->unit({}) , sub { my $data = shift; $monad->bind($monad->unit($f->($data)), $g ); $data; });
 
 =head1 SEE ALSO
 
