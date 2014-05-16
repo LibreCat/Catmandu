@@ -636,6 +636,8 @@ E.g.
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
 
+Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catmandu/wiki/Fixes>
+
 =head1 METHODS
 
 =head2 new(fixes => [ FIX , ...])

@@ -20,7 +20,7 @@ such as MongoDB and full text indexes such as Solr to create a rapid
 development environment for digital library services such as institutional
 repositories and search engines.
 
-In the L<http://librecat.org/|LibreCat> project it is our goal to provide an 
+In the L<http://librecat.org/> project it is our goal to provide an 
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
