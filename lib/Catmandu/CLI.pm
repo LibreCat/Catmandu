@@ -45,7 +45,21 @@ sub run {
     $self->set_global_options($global_opts);
     my ($cmd, $opts, @args) = $self->prepare_command(@$argv);
 
-    $self->execute_command($cmd, $opts, @args);
+    eval {
+        $self->execute_command($cmd, $opts, @args);
+    };
+    if ($@) {
+        if ($@ =~ /^Can't locate Catmandu\/Importer/ && $ARGV[1] eq 'help') {
+            print STDERR "You probably mean:\n\n\t$0 $ARGV[1] $ARGV[0]\n";
+        }
+        elsif ($@ =~ /Can't locate Catmandu\/(Importer|Exporter|Store)\/([^\.]+)/) {
+            print STDERR "Can't find:\n\n\tCatmandu::$1\::$2\n\nin your installation. Or a\n\n\t$2\n\nin your catmandu.yml\n";
+        }
+        else {
+            die $@;
+        }
+    }
+
 }
 
 1;
