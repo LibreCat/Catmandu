@@ -50,7 +50,7 @@ sub run {
     };
     if ($@) {
         if ($@ =~ /^Can't locate Catmandu\/Importer/ && $ARGV[1] eq 'help') {
-            print STDERR "You probably mean:\n\n\t$0 $ARGV[1] $ARGV[0]\n";
+            print STDERR "You probably mean:\n\n\tcatmandu $ARGV[1] $ARGV[0]\n";
             return undef;
         }
         elsif ($@ =~ /Can't locate Catmandu\/(Importer|Exporter|Store)\/([^\.]+)/) {
