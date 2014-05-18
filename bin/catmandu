@@ -147,8 +147,6 @@ Verbose output.
 
 =item -?
 
-Display the help screen.
-
 =item --lib-path PATH
 
 =item -I

@@ -79,6 +79,7 @@
       "test" : {
          "requires" : {
             "Log::Any::Adapter" : "0",
+            "Log::Any::Test" : "0.15",
             "Test::Deep" : "0",
             "Test::Exception" : "0",
             "Test::More" : "0"
