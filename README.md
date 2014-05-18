@@ -13,7 +13,7 @@ such as MongoDB and full text indexes such as Solr to create a rapid
 development environment for digital library services such as institutional
 repositories and search engines.
 
-In the [http://librecat.org/|LibreCat](http://librecat.org/|LibreCat) project it is our goal to provide an 
+In the [http://librecat.org/](http://librecat.org/) project it is our goal to provide an 
 open source set of programming components to build up digital libraries 
 services suited to your local needs.
 
@@ -103,7 +103,8 @@ See [Config::Onion](https://metacpan.org/pod/Config::Onion) for more information
 ## log
 
 Return the current logger (the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) for category
-[Catmandu::Env](https://metacpan.org/pod/Catmandu::Env)).
+[Catmandu::Env](https://metacpan.org/pod/Catmandu::Env)). See [Log::Any#Logging](https://metacpan.org/pod/Log::Any#Logging) for how to send messages to the
+logger.
 
 E.g. turn on Log4perl logging in your application;
 
@@ -319,13 +320,17 @@ Nicolas Steenlant, `<nicolas.steenlant at ugent.be>`
 
 # CONTRIBUTORS
 
-Patrick Hochstenbach, `<patrick.hochstenbach at ugent.be>`
+Nicolas Franck, `nicolas.franck at ugent.be`
+
+Patrick Hochstenbach, `patrick.hochstenbach at ugent.be`
 
 Vitali Peil, `vitali.peil at uni-bielefeld.de`
 
 Christian Pietsch, `christian.pietsch at uni-bielefeld.de`
 
 Dave Sherohman, `dave.sherohman at ub.lu.se`
+
+Jakob Voss, `nichtich at cpan.org`
 
 # LICENSE AND COPYRIGHT
 

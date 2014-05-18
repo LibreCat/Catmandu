@@ -1,34 +1,39 @@
 #!/usr/bin/env perl
-package Catmandu::Plugin::Test;
-use Moo::Role;
-
-sub test {
-	"ok";
-}
-
-package main;
 
 use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use Catmandu::Store::Hash;
 
 my $pkg;
 BEGIN {
     $pkg = 'Catmandu::Pluggable';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-my $store = Catmandu::Store::Hash->new();
-ok $store , 'new store';
+{
+    package Catmandu::Plugin::Frangle;
+    use Moo::Role;
+    sub frangle {
+        "frangle";
+    }
 
-my $bag = $store->bag->with_plugins('Test');
-ok $bag , 'bag with Test plugin';
-can_ok $bag , 'test';
-is $bag->test , 'ok' , 'bag->test';
-dies_ok { $store->bag->test } 'original bag doesnt have plugin';
+    package T::Pluggable;
+    use Moo;
+    with $pkg;
+}
+
+my $t = T::Pluggable->new;
+
+can_ok $t, 'plugin_namespace';
+can_ok $t, 'with_plugins';
+is $t->plugin_namespace, 'Catmandu::Plugin';
+dies_ok { $t->frangle } "original instance doesn't have plugin";
+
+my $t_plugged = $t->with_plugins('Frangle');
+
+ok $t_plugged, 'instance with plugin';
+can_ok $t_plugged, 'frangle';
 
 done_testing 7;
 

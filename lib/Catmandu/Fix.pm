@@ -25,7 +25,7 @@ has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
-has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
+has _reject     => (is => 'ro', init_arg => undef, default => sub { +{}; });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
 sub _build_parser {
@@ -109,21 +109,25 @@ sub emit {
     my $var = $self->var;
     my $err = $self->generate_var;
     my $captures = $self->_captures;
+    my $reject_var = $self->_reject_var;
     my $perl = "";
 
     $perl .= "sub {";
     $perl .= $self->emit_declare_vars($var, '$_[0]');
     $perl .= "eval {";
-    for my $fix (@{$self->fixes}) {
-        $perl .= $self->emit_fix($fix);
-    }
-    $perl .= "${var};";
+
+    # Loop over all the fixes and emit their code, binded to Binds if required
+    $perl .= $self->emit_fixes($self->fixes);
+
+    $perl .= "return ${var};";
+    $perl .= "__FIX_REJECT__: return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
     $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
     $perl .= "};";
     $perl .= "};";
+
 
     if (%$captures) {
         my @captured_vars = map {
@@ -158,10 +162,21 @@ sub emit {
     $perl;
 }
 
+# Emit an array of fixes
+sub emit_fixes {
+    my ($self,$fixes) = @_;
+    my $perl = '';
+
+    for my $fix (@{$fixes}) {
+        $perl .= $self->emit_fix($fix);
+    }
+
+    $perl;
+}
+
 sub emit_reject {
     my ($self) = @_;
-    my $reject_var = $self->_reject_var;
-    "return $reject_var;";
+    "goto __FIX_REJECT__;";
 }
 
 sub emit_fix {
@@ -635,6 +650,8 @@ E.g.
 
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
+
+Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catmandu/wiki/Fixes>
 
 =head1 METHODS
 
