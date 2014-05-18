@@ -5,8 +5,8 @@ use Catmandu::Importer::Fixes;
 
 sub command_opt_spec {
     (
-        ["local|l!","list local packages",{ default => 1 }],
         ["inc|i=s@","override included directories (defaults to \@INC)",{ default => [@INC] }],
+        ["add_inc=s@","add lookup directories",{ default => [] }],
         ["verbose|v","include package information"]
 
     );
@@ -39,8 +39,8 @@ sub command {
     my $verbose = $opts->verbose;
 
     Catmandu::Importer::Fixes->new(
-        local => $opts->local,
-        inc => $opts->inc
+        inc => $opts->inc,
+        add_inc => $opts->add_inc
     )->each(sub{
         my $record = shift;
 

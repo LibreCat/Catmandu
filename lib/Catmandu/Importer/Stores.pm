@@ -6,14 +6,16 @@ use Catmandu::Importer::Module::Info;
 
 with 'Catmandu::Importer';
 
-has local => (
-    is => 'ro',
-    default => sub { 1; }
-);
 has inc => (
     is => 'ro',
     isa => sub { check_array_ref($_[0]); },
     default => sub { [@INC]; }
+);
+has add_inc => (
+    is => 'ro',
+    isa => sub { check_array_ref($_[0]); },
+    lazy => 1,
+    default => sub { []; }
 );
 
 sub generator {
@@ -24,10 +26,9 @@ sub generator {
 
         unless($loaded){
             $modules = Catmandu::Importer::Module::Info->new(
-                local => $self->local,
                 namespace => "Catmandu::Store",
                 max_depth => 3,
-                inc => $self->inc
+                inc => [ @{ $self->inc() },@{ $self->add_inc() }]
             )->to_array();
             $loaded = 1;
         }
@@ -43,8 +44,8 @@ Catmandu::Importer::Stores - list all installed Catmandu stores
 
 =head1 OPTIONS 
  
-    local:          list only local packages (default). Only local possible for now.
     inc:            list or lookup directories (defaults to @INC)
+    add_inc:        add list of lookup directories to inc
 
 =head1 NOTES
 

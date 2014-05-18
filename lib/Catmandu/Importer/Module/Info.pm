@@ -8,14 +8,19 @@ our $VERSION = "0.1";
 
 with 'Catmandu::Importer';
 
-has local => (
-    is => 'ro',
-    default => sub { 1; }
-);
 has inc => (
     is => 'ro',
-    isa => sub { check_array_ref($_[0]); },
+    isa => sub { 
+      check_array_ref($_[0]); 
+    },
+    lazy => 1,
     default => sub { [@INC]; }
+);
+has add_inc => (
+    is => 'ro',
+    isa => sub { check_array_ref($_[0]); },
+    lazy => 1,
+    default => sub { []; } 
 );
 has namespace => (
     is => 'ro',
@@ -32,25 +37,24 @@ sub generator {
         state $modules = [];
 
         unless($loaded){
-            my @local_packages;
 
-            if($self->local){
-                require Module::Pluggable;
-                my %args = (
-                    search_path => [$self->namespace],
-                    search_dirs => $self->inc(),
-                    sub_name => "_all_ns_packages"
-                );
-                if(is_natural($self->max_depth)){
-                    $args{max_depth} = $self->max_depth;
-                }
-                #use version 4.8 only?
-                Module::Pluggable->import(%args);
-                push @local_packages,__PACKAGE__->_all_ns_packages();
-                
+            my @packages;
+
+            require Module::Pluggable;
+            my %args = (
+                search_path => [$self->namespace],
+                search_dirs => [ @{ $self->inc() },@{ $self->add_inc() }],
+                sub_name => "_all_ns_packages"
+            );
+            if(is_natural($self->max_depth)){
+                $args{max_depth} = $self->max_depth;
             }
+            #use version 4.8 only?
+            Module::Pluggable->import(%args);
+            push @packages,__PACKAGE__->_all_ns_packages();
+                
 
-            for my $package(@local_packages){
+            for my $package(@packages){
 
                 #reason for this: previous step return first found package, not all installed versions
                 push @$modules,Module::Info->all_installed($package,@{ $self->inc });
@@ -75,13 +79,16 @@ sub generator {
 
 =head1 NAME 
  
-    Catmandu::Cmd::Module::Info  -  list available packages in a given namespace 
+    Catmandu::Cmd::Module::Info  -  list system available packages in a given namespace 
  
 =head1 OPTIONS 
  
     namespace:      namespace for the packages to list 
-    local:          list only local packages (default). Only local possible for now.
-    inc:            list or lookup directories (defaults to @INC)
+    inc:            override list of lookup directories (defaults to @INC)
+    add_inc:        add list of lookup directories to inc
+    max_depth:      maximum depth to search for. Depth means the number of words in the package name
+                    e.g.  Catmandu::Fix has a depth of 2
+                          Catmandu::Importer::JSON has a depth of 3
  
 =head1 SEE ALSO 
  
