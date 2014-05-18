@@ -13,7 +13,7 @@ catmandu - LibreCat command line tools
 
 =head1 SYNOPSIS
 
- catmandu [-d] [-I path] [-L path] [COMMAND] [-?hqv] [long options...] [ARGS]
+ catmandu [-I path] [-L path] [COMMAND] [-?hqv] [long options...] [ARGS]
 
  catmandu help
 
@@ -148,12 +148,6 @@ Verbose output.
 =item -?
 
 Display the help screen.
-
-=item --debug
-
-=item -d
-
-Display debug messages.
 
 =item --lib-path PATH
 

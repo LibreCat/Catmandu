@@ -3,7 +3,6 @@ package Catmandu::CLI;
 use Catmandu::Sane;
 use App::Cmd::Setup -app;
 use Catmandu::Util;
-use Log::Any::Adapter;
 use Catmandu;
 
 sub VERSION {
@@ -16,7 +15,6 @@ sub global_opt_spec {
     (
         ['load_path|L=s@', ""],
         ['lib_path|I=s@', ""],
-        ['debug|d',""],
     );
 }
 
@@ -29,16 +27,11 @@ sub run {
 
     my $load_path = $global_opts->{load_path} || [];
     my $lib_path = $global_opts->{lib_path} || [];
-    my $debug = $global_opts->{debug};
 
     Catmandu->load(@$load_path);
 
     if (@$lib_path) {
         Catmandu::Util::use_lib(@$lib_path);
-    }
-
-    if (defined $debug) {
-        Log::Any::Adapter->set('Stderr');
     }
 
     my $self = ref $class ? $class : $class->new;
