@@ -320,13 +320,17 @@ Nicolas Steenlant, `<nicolas.steenlant at ugent.be>`
 
 # CONTRIBUTORS
 
-Patrick Hochstenbach, `<patrick.hochstenbach at ugent.be>`
+Nicolas Franck, `nicolas.franck at ugent.be`
+
+Patrick Hochstenbach, `patrick.hochstenbach at ugent.be`
 
 Vitali Peil, `vitali.peil at uni-bielefeld.de`
 
 Christian Pietsch, `christian.pietsch at uni-bielefeld.de`
 
 Dave Sherohman, `dave.sherohman at ub.lu.se`
+
+Jakob Voss, `nichtich at cpan.org`
 
 # LICENSE AND COPYRIGHT
 

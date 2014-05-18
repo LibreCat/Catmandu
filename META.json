@@ -4,7 +4,7 @@
       "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.132830",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.141170",
    "license" : [
       "perl_5"
    ],
@@ -79,6 +79,7 @@
       "test" : {
          "requires" : {
             "Log::Any::Adapter" : "0",
+            "Log::Any::Test" : "0.15",
             "Test::Deep" : "0",
             "Test::Exception" : "0",
             "Test::More" : "0"
