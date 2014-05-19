@@ -104,7 +104,7 @@ parameter that can be set in the constructor. When given then each item returned
 by the generator will be automatically Fixed using one or more L<Catmandu::Fix>es.
 E.g.
     
-    my $importer = Catmandu::Importer::Hello->new(fix => ['upcase(hello)']);
+    my $importer = Catmandu->importer('Hello',fix => ['upcase(hello)']);
     $importer->each( sub {
         my $item = shift ; # Every item will be upcased... 
     } );
