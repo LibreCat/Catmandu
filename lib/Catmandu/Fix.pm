@@ -124,7 +124,7 @@ sub emit {
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
-    $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
+    $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var});";
     $perl .= "};";
     $perl .= "};";
 

@@ -38,7 +38,63 @@ sub run {
     $self->set_global_options($global_opts);
     my ($cmd, $opts, @args) = $self->prepare_command(@$argv);
 
-    $self->execute_command($cmd, $opts, @args);
+
+    try {
+        $self->execute_command($cmd, $opts, @args);
+    } catch {
+        if (ref $_ eq 'Catmandu::NoSuchPackage') {
+            my $message = $_->message;
+
+            if ($message =~ /Catmandu::Importer::help/) {
+                say STDERR "Oops! Did you mean 'catmandu $ARGV[1] $ARGV[0]'?";
+            }
+            elsif ($message =~ /Catmandu::Importer::(\S+)/) {
+                say STDERR "Oops! Can not find the importer '$1' in your configuration file or Catmandu::Importer::$1 is not installed.";
+            }
+            elsif ($message =~ /Catmandu::Exporter::(\S+)/) {
+                say STDERR "Oops! Can not find the exporter '$1' in your configuration file or Catmandu::Exporter::$1 is not installed.";
+            }
+            elsif ($message =~ /Catmandu::Store::(\S+)/) {
+                say STDERR "Oops! Can not find the store '$1' in your configuration file or Catmandu::Store::$1 is not installed.";
+            }
+            elsif ($message =~ /Catmandu::Fix::(\S+)/) {
+                say STDERR "Oops! Tried to execute the fix '$1' but can't find Catmandu::Fix::$1 on your system.";
+            }
+            else {
+                say STDERR "Oops! Failed to load $message";
+            }
+
+            return undef;
+        }
+        elsif (ref $_ eq 'Catmandu::ParseError') {
+            my $message = $_->message;
+            my $source  = $_->source;
+
+            say STDERR "Oops! Syntax error in your fixes...";
+            say STDERR "Source:\n";
+            for (split(/\n/,$source)) {
+                print STDERR "\t$_\n";
+            }
+
+            return undef;
+        }
+        elsif (ref $_ eq 'Catmandu::FixError') {
+            my $message = $_->message;
+            my $data    = $_->data;
+            my $source  = $_->source;
+            use Data::Dumper;
+            say STDERR "Oops! Can't execute your fixes... : $message";
+            say STDERR "Source:\n$source" if defined $source;
+            say STDERR "Data:\n" . Dumper($data) if defined $data;
+
+            return undef;
+        }
+        else {
+            die $_;
+        }
+    };
+
+    return 1;
 }
 
 1;

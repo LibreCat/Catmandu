@@ -111,13 +111,20 @@ sub parse {
         $source = read_file($source);
     }
 
-    my $recognizer = Marpa::R2::Scanless::R->new({grammar => $grammar});
-    $recognizer->read(\$source);
-    my $val = ${$recognizer->value};
+    my $val;
 
-    $self->log->debugf(Dumper($val)) if $self->log->is_debug();
+    try {
+        my $recognizer = Marpa::R2::Scanless::R->new({grammar => $grammar});
+        $recognizer->read(\$source);
+        $val = ${$recognizer->value};
 
-    [ map {$_->reify} @$val ];
+        $self->log->debugf(Dumper($val)) if $self->log->is_debug();
+
+        [ map {$_->reify} @$val ];
+    }
+    catch {
+         Catmandu::ParseError->throw(message => "parse error", source => $source);
+    };
 }
 
 sub Catmandu::Fix::Parser::IfElse::reify {

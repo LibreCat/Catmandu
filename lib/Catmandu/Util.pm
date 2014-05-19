@@ -512,7 +512,7 @@ sub require_package {
     return $pkg if is_invocant($pkg);
 
     eval "require $pkg;1;"
-        or Catmandu::Error->throw($@);
+        or Catmandu::NoSuchPackage->throw("$pkg");
 
     $pkg;
 }
