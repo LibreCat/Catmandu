@@ -17,16 +17,18 @@ use B ();
 
 with 'MooX::Log::Any';
 
-has tidy        => (is => 'ro');
-has parser      => (is => 'lazy');
-has fixer       => (is => 'lazy', init_arg => undef);
-has _num_labels => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
-has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
-has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
-has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
-has fixes       => (is => 'ro', required => 1, trigger => 1);
-has _reject     => (is => 'ro', init_arg => undef, default => sub { +{}; });
-has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
+has tidy         => (is => 'ro');
+has parser       => (is => 'lazy');
+has fixer        => (is => 'lazy', init_arg => undef);
+has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
+has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
+has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
+has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
+has fixes        => (is => 'ro', required => 1, trigger => 1);
+has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
+has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
+has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
+has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
@@ -55,6 +57,16 @@ sub _build_fixer {
 sub _build_reject_var {
     my ($self) = @_;
     $self->capture($self->_reject);
+}
+
+sub _build_fixes_var {
+    my ($self) = @_;
+    $self->capture($self->fixes);
+}
+
+sub _build_current_fix_var {
+    my ($self) = @_;
+    $self->generate_var;
 }
 
 sub fix {
@@ -110,9 +122,11 @@ sub emit {
     my $err = $self->generate_var;
     my $captures = $self->_captures;
     my $reject_var = $self->_reject_var;
+    my $current_fix_var = $self->_current_fix_var;
     my $perl = "";
 
     $perl .= "sub {";
+    $perl .= $self->emit_declare_vars($current_fix_var);
     $perl .= $self->emit_declare_vars($var, '$_[0]');
     $perl .= "eval {";
 
@@ -124,7 +138,7 @@ sub emit {
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
-    $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var});";
+    $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
     $perl .= "};";
     $perl .= "};";
 
@@ -167,7 +181,9 @@ sub emit_fixes {
     my ($self,$fixes) = @_;
     my $perl = '';
 
-    for my $fix (@{$fixes}) {
+    for (my $i = 0; $i < @{$fixes}; $i++) {
+        my $fix = $fixes->[$i];
+        $perl .= $self->_current_fix_var . " = " . $self->_fixes_var . "->[${i}];";
         $perl .= $self->emit_fix($fix);
     }
 

@@ -81,11 +81,14 @@ sub run {
         elsif (ref $_ eq 'Catmandu::FixError') {
             my $message = $_->message;
             my $data    = $_->data;
-            my $source  = $_->source;
+            my $fix     = $_->fix;
+        
+            say STDERR "Oops! One of your fixes threw an error...";
+            say STDERR "Source: " . $_->fix;
+            say STDERR "Error: $message";    
+
             use Data::Dumper;
-            say STDERR "Oops! Can't execute your fixes... : $message";
-            say STDERR "Source:\n$source" if defined $source;
-            say STDERR "Data:\n" . Dumper($data) if defined $data;
+            say STDERR "Input:\n" . Dumper($data) if defined $data;
 
             return undef;
         }

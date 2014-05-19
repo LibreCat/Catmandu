@@ -42,8 +42,8 @@ use Catmandu::Sane;
 use Moo;
 extends 'Catmandu::Error';
 
-has source => (is => 'ro');
 has data   => (is => 'ro');
+has fix    => (is => 'ro');
 
 =head1 NAME
 
