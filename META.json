@@ -4,7 +4,7 @@
       "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.141170",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.132830",
    "license" : [
       "perl_5"
    ],
@@ -36,9 +36,14 @@
       }
    },
    "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
       "configure" : {
          "requires" : {
-            "Module::Build::Tiny" : "0.036"
+            "Module::Build" : "0.3601"
          }
       },
       "develop" : {
@@ -62,6 +67,7 @@
             "IO::Handle::Util" : "0.01",
             "JSON" : "2.51",
             "List::MoreUtils" : "0.33",
+            "Log::Any::Adapter" : "0.11",
             "Marpa::R2" : "2.084000",
             "Moo" : "1.000008",
             "MooX::Log::Any" : "0",
@@ -78,11 +84,11 @@
       },
       "test" : {
          "requires" : {
-            "Log::Any::Adapter" : "0",
+            "Log::Any::Adapter" : "0.11",
             "Log::Any::Test" : "0.15",
-            "Test::Deep" : "0",
-            "Test::Exception" : "0",
-            "Test::More" : "0"
+            "Test::Deep" : "0.112",
+            "Test::Exception" : "0.32",
+            "Test::More" : "1.001003"
          }
       }
    },
