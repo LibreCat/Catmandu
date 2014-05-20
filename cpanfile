@@ -20,6 +20,7 @@ requires 'IO::Handle::Util', '0.01';
 requires 'JSON', '2.51';
 requires 'List::MoreUtils', '0.33';
 requires 'Log::Any::Adapter', '0.11';
+requires 'Time::Piece', 0; # required by Marpa
 requires 'Marpa::R2', '2.084000';
 requires 'Moo', '1.000008';
 requires 'MooX::Log::Any', 0;
