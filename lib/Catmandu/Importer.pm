@@ -130,6 +130,10 @@ create the input stream from the C<file> argument or by using STDIN.
 
 Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 
+=item fix
+
+An ARRAY of one or more fixes or file scripts to be applied to imported items.
+
 =back
 
 =head1 METHODS
@@ -148,7 +152,8 @@ See L<Catmandu::Iterable> for all inherited methods.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable> , L<Catmandu::Util>
+L<Catmandu::Iterable> , L<Catmandu::Fix> ,
+L<Catmandu::Importer::CSV>, L<Catmandu::Importer::JSON> , L<Catmandu::Importer::YAML>
 
 =cut
 
