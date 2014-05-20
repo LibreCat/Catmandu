@@ -4,7 +4,7 @@
       "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.132830",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.017, CPAN::Meta::Converter version 2.140640",
    "license" : [
       "perl_5"
    ],
@@ -105,7 +105,7 @@
          "web" : "https://github.com/LibreCat/Catmandu"
       }
    },
-   "version" : "0.91",
+   "version" : "0.9101",
    "x_contributors" : [
       "Christian Pietsch <chr.pietsch+github@googlemail.com>",
       "Dave Sherohman <Dave.Sherohman@lub.lu.se>",
@@ -119,10 +119,11 @@
       "Nicolas <nicolas.steenlant@ugent.be>",
       "Nicolas Franck <nicolas.franck@ugent.be>",
       "Nicolas Steenlant <nicolas.steenlant@gmail.com>",
-      "Nicolas Steenlant <nicolas.steenlant@ugent.be>",
       "Nicolas Steenlant <nsteenla@ca20c608.ugent.be>",
       "Nicolas Steenlnat <nicolas.steenlant@ugent.be>",
       "Patrick <phochste@hal.lub.lu.se>",
+      "Patrick Hochstenbach <Patrick.Hochstenbach@UGent.be>",
+      "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>",
       "Snorri Briem <Snorri.Briem@lub.lu.se>",
       "Snorri Briem <Snorri.Briem@ub.lu.se>",
       "Vitali Peil <vitali.peil@uni-bielefeld.de>",
