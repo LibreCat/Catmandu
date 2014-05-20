@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "0.9",
+  "dist_version" => "0.91",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -57,7 +57,8 @@ my %module_build_args = (
     "Log::Any::Test" => "0.15",
     "Test::Deep" => "0.112",
     "Test::Exception" => "0.32",
-    "Test::More" => "1.001003"
+    "Test::More" => "1.001003",
+    "Test::Pod" => 0
   }
 );
 
@@ -68,7 +69,8 @@ my %fallback_build_requires = (
   "Module::Build" => "0.3601",
   "Test::Deep" => "0.112",
   "Test::Exception" => "0.32",
-  "Test::More" => "1.001003"
+  "Test::More" => "1.001003",
+  "Test::Pod" => 0
 );
 
 

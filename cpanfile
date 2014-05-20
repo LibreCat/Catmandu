@@ -4,6 +4,7 @@ on 'test', sub {
   requires 'Test::Deep', '0.112';
   requires 'Test::Exception', '0.32';
   requires 'Test::More', '1.001003';
+  requires 'Test::Pod', 0;
   requires 'Log::Any::Test', '0.15';
   requires 'Log::Any::Adapter', '0.11';
 };

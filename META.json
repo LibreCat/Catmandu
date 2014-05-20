@@ -88,7 +88,8 @@
             "Log::Any::Test" : "0.15",
             "Test::Deep" : "0.112",
             "Test::Exception" : "0.32",
-            "Test::More" : "1.001003"
+            "Test::More" : "1.001003",
+            "Test::Pod" : "0"
          }
       }
    },
@@ -104,7 +105,7 @@
          "web" : "https://github.com/LibreCat/Catmandu"
       }
    },
-   "version" : "0.9",
+   "version" : "0.91",
    "x_contributors" : [
       "Christian Pietsch <chr.pietsch+github@googlemail.com>",
       "Dave Sherohman <Dave.Sherohman@lub.lu.se>",
