@@ -251,6 +251,13 @@ Report the number of items processed.
 
 =head1 SEE ALSO
 
-L<Catmandu::Importer>, L<Catmandu::Exporter>, L<Catmandu::Store>
+L<Catmandu::Importer>
+L<Catmandu::Exporter>
+L<Catmandu::Store>
+L<Catmandu::MARC>
+L<Catmandu::OAI>
+L<Catmandu::MongoDB>
+L<Catmandu::Solr>
+L<Catmandu::ElasticSearch>
 
 =cut

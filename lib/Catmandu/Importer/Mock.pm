@@ -34,9 +34,12 @@ Catmandu::Importer::Mock - Mock importer used for testing purposes
 
 =head1 METHODS
 
-=head2 new(size => $n)
+=head2 new(size => $n, fix => [...])
 
 Create a new Mock importer. Optionally provide a size parameter.
+
+The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
+then each fix or fix script will be applied to imported items.
 
 =head2 count
 

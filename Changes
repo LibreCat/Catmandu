@@ -2,6 +2,14 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+0.9101  2014-05-20 11:58:46 CEST
+  - less_than, greater_than conditions
+
+0.91  2014-05-20 09:29:01 CEST
+  - adding monads in disguise Catmandu::Fix::Bind
+  - much more pod
+  - make travis a bit happier
+
 0.9  2014-05-12 10:18:40 CEST
   - switch to Dist::Milla
   - Marpa based fix parser
