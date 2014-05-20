@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Marpa requires Time::Piece
 
 0.9101  2014-05-20 11:58:46 CEST
   - less_than, greater_than conditions
