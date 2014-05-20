@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.91  2014-05-20 09:29:01 CEST
   - adding monads in disguise Catmandu::Fix::Bind
   - much more pod
   - make travis a bit happier
