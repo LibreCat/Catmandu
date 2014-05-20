@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9102  2014-05-20 14:07:46 CEST
   - Marpa requires Time::Piece
 
 0.9101  2014-05-20 11:58:46 CEST
