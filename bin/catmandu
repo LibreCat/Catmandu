@@ -5,9 +5,7 @@ use Catmandu::CLI;
 use Cwd ();
 
 Catmandu->default_load_path(Cwd::getcwd);
-my $ok = Catmandu::CLI->run;
-
-defined $ok && $ok == 1 ? exit(0) : exit(2);
+Catmandu::CLI->run // exit(2);
 
 =head1 NAME
 

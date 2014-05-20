@@ -38,7 +38,6 @@ sub run {
     $self->set_global_options($global_opts);
     my ($cmd, $opts, @args) = $self->prepare_command(@$argv);
 
-
     try {
         $self->execute_command($cmd, $opts, @args);
     } catch {
@@ -64,7 +63,7 @@ sub run {
                 say STDERR "Oops! Failed to load $message";
             }
 
-            return undef;
+            goto ERROR;
         }
         elsif (ref $_ eq 'Catmandu::ParseError') {
             my $message = $_->message;
@@ -72,11 +71,12 @@ sub run {
 
             say STDERR "Oops! Syntax error in your fixes...";
             say STDERR "Source:\n";
+            
             for (split(/\n/,$source)) {
                 print STDERR "\t$_\n";
             }
 
-            return undef;
+            goto ERROR;
         }
         elsif (ref $_ eq 'Catmandu::FixError') {
             my $message = $_->message;
@@ -90,7 +90,7 @@ sub run {
             use Data::Dumper;
             say STDERR "Input:\n" . Dumper($data) if defined $data;
 
-            return undef;
+            goto ERROR;
         }
         else {
             die $_;
@@ -98,6 +98,9 @@ sub run {
     };
 
     return 1;
+
+    ERROR:
+        return undef;
 }
 
 1;
