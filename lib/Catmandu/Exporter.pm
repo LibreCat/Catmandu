@@ -49,21 +49,23 @@ Catmandu::Exporter - Namespace for packages that can export
 
     use Catmandu;
 
-    my $exporter = Catmandu->exporter('Foo', %opts);
+    my $exporter = Catmandu->exporter('Foo', file => "/tmp/output.txt");
     
     # Or on the command line
-    $ catmandu convert JSON to Foo < /tmp/something.txt
+    $ catmandu convert JSON to Foo < /tmp/something.txt >/tmp/output.txt
 
 =head1 DESCRIPTION
 
-A Catmandu::Exporter is a Perl package the can export data.
-Create a new Catmandu::Exporter. When no options are given exported data is written to
+A Catmandu::Exporter is a Perl package the can export data. 
+When no options are given exported data is written to
 the stdout. Optionally provide a "file" pathname or a "fh" file handle to redirect the
 ouput.
 
 Every Catmandu::Exporter is a L<Catmandu::Fixable> and thus provides a "fix" parameter that
 can be set in the constructor. For every "add" or for every item in "add_many" the given
 fixes will be applied first. E.g.
+
+Every Catmandu::Exporter is a L<Catmandu::Addable> and inherits the methods "add" and "add_many".
 
 =head1 CONFIGURATION
 
