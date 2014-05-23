@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9103  2014-05-23 10:24:52 CEST
   - fix script dir in build script
   - Fix::Parser handles empty comments
   - Exporter pod
