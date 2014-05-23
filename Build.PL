@@ -52,7 +52,9 @@ my %module_build_args = (
     "namespace::clean" => "0.24",
     "perl" => "v5.10.1"
   },
-  "script_files" => [],
+  "script_files" => [
+    "bin/catmandu"
+  ],
   "test_requires" => {
     "Log::Any::Adapter" => "0.11",
     "Log::Any::Test" => "0.15",
