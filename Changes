@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix script dir in build script
+  - Exporter pod
 
 0.9102  2014-05-20 14:07:46 CEST
   - Marpa requires Time::Piece
