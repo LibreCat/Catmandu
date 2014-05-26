@@ -88,8 +88,9 @@ discard ~ comment | whitespace | old_terminator
 
 whitespace ~ [\s]+
 
-comment      ~ '#' comment_text
-comment_text ~ [^\n]+
+comment       ~ '#' comment_chars
+comment_chars ~ comment_char*
+comment_char  ~ [^\n]
 
 old_terminator ~ ';'
 

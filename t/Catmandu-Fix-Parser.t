@@ -39,6 +39,7 @@ cmp_deeply $parser->parse(""), [];
 
 cmp_deeply $parser->parse("# a comment
     # another comment
+    #
     downcase(foo) # yet another comment"), [
     $downcase_foo,
 ], "comments";

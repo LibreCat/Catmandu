@@ -27,7 +27,7 @@ Catmandu::Exporter::YAML - a YAML exporter
 
     # Print to file or IO::Handle
     my $exporter = Catmandu::Exporter::YAML->new(file => '/tmp/out.yml');
-    my $exporter = Catmandu::Exporter::YAML->new(fh => $fh);
+    my $exporter = Catmandu::Exporter::YAML->new(file => $fh);
 
     $exporter->add_many($arrayref);
     $exporter->add_many($iterator);
