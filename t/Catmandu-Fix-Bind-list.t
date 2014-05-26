@@ -91,7 +91,19 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'before/after testing';
+
+$fixes =<<EOF;
+add_field(before,ok)
+do list()
+   add_field(inside,ok)
+end
+add_field(after,ok)
+EOF
+
+$fixer = Catmandu::Fix->new(fixes => [$fixes]);
+
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'} , 'before/after testing';
 
 $fixes =<<EOF;
 do list(path => foo)
@@ -106,4 +118,4 @@ is_deeply $fixer->fix(
           ), {foo => [ {bar => 1 , test => 'bar'} , 
              {bar => 2 , test => 'bar'}]} , 'specific testing';
 
-done_testing 11;
+done_testing 12;
