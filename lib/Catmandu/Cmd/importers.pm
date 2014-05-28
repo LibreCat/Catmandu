@@ -49,7 +49,7 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::importers - list available Catmandu importers
+Catmandu::Cmd::importers - list local available Catmandu importers
 
 =head1 AUTHOR
 

@@ -49,7 +49,7 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::exporters - list available Catmandu exporters
+Catmandu::Cmd::exporters - list local available Catmandu exporters
 
 =head1 AUTHOR
 

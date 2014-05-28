@@ -2,7 +2,7 @@ package Catmandu::Importer::Importers;
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Util qw(:check);
-use Catmandu::Importer::Module::Info;
+use Catmandu::Importer::ModuleInfo;
 
 with 'Catmandu::Importer';
 
@@ -25,7 +25,7 @@ sub generator {
         state $modules = [];
 
         unless($loaded){
-            $modules = Catmandu::Importer::Module::Info->new(
+            $modules = Catmandu::Importer::ModuleInfo->new(
                 namespace => "Catmandu::Importer",
                 max_depth => 3,
                 inc => [ @{ $self->inc() },@{ $self->add_inc() }]
@@ -50,12 +50,28 @@ Catmandu::Importer::Importers - list all installed Catmandu importers
 
     For the moment this importer only list those importers that are directly
     under the namespace Catmandu::Importer. If you want to list them all,
-    please try L<Catmandu::Importer::Module::Info>.
+    please try L<Catmandu::Importer::ModuleInfo>.
 
     Reason: this importer assumes that packages that are directly under the namespace
     of Catmandu::Importer are to be considered importers. Other importers that
     have deeper package names are discarded. That would require package inspection
     within a safe environment (see L<Safe>).
+
+    It is not recommended to use this importer from the command line,
+    because the command "catmandu convert" only accepts strings for each argument.
+
+    This will work:
+        
+        catmandu convert importers
+
+    But this will crash
+
+        catmandu convert importers --inc . --inc /usr/local/share/perl5
+
+    use this command instead
+
+        catmandu importers --inc . --inc /usr/local/share/perl5
+
 =head1 AUTHOR
 
     Nicolas Franck, C<< <nicolas.franck at ugent.be> >>

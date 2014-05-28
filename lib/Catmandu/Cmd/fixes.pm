@@ -56,7 +56,7 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::fixes - list available Catmandu fixes
+Catmandu::Cmd::fixes - list local available Catmandu fixes
 
 =head1 AUTHOR
 

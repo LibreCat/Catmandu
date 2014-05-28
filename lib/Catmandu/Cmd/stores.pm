@@ -49,7 +49,7 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::stores - list available Catmandu stores
+Catmandu::Cmd::stores - list local available Catmandu stores
 
 =head1 AUTHOR
 

@@ -6,7 +6,7 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Importer::Module::Info';
+    $pkg = 'Catmandu::Importer::ModuleInfo';
     use_ok $pkg;
 }
 require_ok $pkg;

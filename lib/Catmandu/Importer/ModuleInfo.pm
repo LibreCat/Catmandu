@@ -1,4 +1,4 @@
-package Catmandu::Importer::Module::Info;
+package Catmandu::Importer::ModuleInfo;
 use Catmandu::Sane;
 use Moo;
 use Module::Info;
@@ -79,7 +79,7 @@ sub generator {
 
 =head1 NAME 
  
-    Catmandu::Cmd::Module::Info  -  list system available packages in a given namespace 
+    Catmandu::Cmd::ModuleInfo  -  list system available packages in a given namespace 
  
 =head1 OPTIONS 
  

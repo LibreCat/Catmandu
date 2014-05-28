@@ -2,7 +2,7 @@ package Catmandu::Importer::Fixes;
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Util qw(:check);
-use Catmandu::Importer::Module::Info;
+use Catmandu::Importer::ModuleInfo;
 
 with 'Catmandu::Importer';
 
@@ -25,7 +25,7 @@ sub generator {
         state $modules = [];
 
         unless($loaded){
-            Catmandu::Importer::Module::Info->new(
+            Catmandu::Importer::ModuleInfo->new(
                 max_depth => 4,
                 namespace => "Catmandu::Fix",
                 inc => [ @{ $self->inc() },@{ $self->add_inc() }]
@@ -56,6 +56,21 @@ Catmandu::Importer::Fixes - list all installed Catmandu fixes
 
     This importers assumes that all Catmandu fixes must be within the namespace
     Catmandu::Fix, and must start with a lowercase letter.
+
+    It is not recommended to use this importer from the command line,
+    because the command "catmandu convert" only accepts strings for each argument.
+
+    This will work:
+        
+        catmandu convert fixes
+
+    But this will crash
+
+        catmandu convert fixes --inc . --inc /usr/local/share/perl5
+
+    use this command instead
+
+        catmandu fixes --inc . --inc /usr/local/share/perl5
 
 =head1 AUTHOR
 

@@ -2,7 +2,7 @@ package Catmandu::Importer::Stores;
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Util qw(:check);
-use Catmandu::Importer::Module::Info;
+use Catmandu::Importer::ModuleInfo;
 
 with 'Catmandu::Importer';
 
@@ -25,7 +25,7 @@ sub generator {
         state $modules = [];
 
         unless($loaded){
-            $modules = Catmandu::Importer::Module::Info->new(
+            $modules = Catmandu::Importer::ModuleInfo->new(
                 namespace => "Catmandu::Store",
                 max_depth => 3,
                 inc => [ @{ $self->inc() },@{ $self->add_inc() }]
@@ -51,12 +51,29 @@ Catmandu::Importer::Stores - list all installed Catmandu stores
 
     For the moment this importer only list those stores that are directly
     under the namespace Catmandu::Store. If you want to list them all,
-    please try L<Catmandu::Importer::Module::Info>.
+    please try L<Catmandu::Importer::ModuleInfo>.
 
     Reason: this importer assumes that packages that are directly under the namespace
     of Catmandu::Store are to be considered stores. Other stores that
     have deeper package names are discarded. That would require package inspection
     within a safe environment (see L<Safe>).
+
+
+    It is not recommended to use this importer from the command line,
+    because the command "catmandu convert" only accepts strings for each argument.
+
+    This will work:
+        
+        catmandu convert stores
+
+    But this will crash
+
+        catmandu convert stores --inc . --inc /usr/local/share/perl5
+
+    use this command instead
+
+        catmandu stores --inc . --inc /usr/local/share/perl5
+
 =head1 AUTHOR
 
     Nicolas Franck, C<< <nicolas.franck at ugent.be> >>

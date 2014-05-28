@@ -1,7 +1,7 @@
 package Catmandu::Cmd::module_info;
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::Module::Info;
+use Catmandu::Importer::ModuleInfo;
 
 sub command_opt_spec {
     (
@@ -29,7 +29,7 @@ sub command {
 
     my $verbose = $opts->verbose;
 
-    Catmandu::Importer::Module::Info->new(
+    Catmandu::Importer::ModuleInfo->new(
 
         inc => $opts->inc,
         add_inc => $opts->add_inc,
@@ -62,7 +62,7 @@ Catmandu::Cmd::module_info - list available packages in a given namespace
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::Module::Info>
+    L<Catmandu::Importer::ModuleInfo>
     L<Catmandu::Importer>
 
 =head1 AUTHOR
