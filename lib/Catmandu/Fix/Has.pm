@@ -1,3 +1,32 @@
+=head1 NAME
+
+Catmandu::Fix::Has - helper class for creating Fix-es with (optional) parameters
+
+=head1 SYNOPSIS
+
+    package Catmandu::Fix::foo;
+    use Moo;
+    use Catmandu::Fix::Has;
+
+    has greeting => (fix_arg => 1);   # required parameter 1
+    has message  => (fix_arg => 1);   # required parameter 2
+    has eol      => (fix_opt => '!'); # optional parameter 'eol' with default '!'
+
+    sub fix {
+        my ($self,$data) = @_;
+
+        print STDERR $self->greeting . ", " . $self->message . $self->eol . "\n";
+
+        $data;
+    }
+
+    1;
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
 package Catmandu::Fix::Has;
 
 use Catmandu::Sane;
