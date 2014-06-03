@@ -60,7 +60,7 @@ with log4perl.conf as:
 =head2 log
 
 The C<log> attribute holds the L<Log::Any::Adapter> object that implements all logging methods for the
-defined log levels, such as C<debug> or C<error>. 
+defined log levels, such as C<debug> or C<error>.
 
     package MyApp::View::JSON;
 
