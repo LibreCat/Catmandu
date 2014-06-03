@@ -67,6 +67,6 @@ L<Log::Any>
 
 Code and documentation blatantly stolen from C<MooX::Log::Any>.
 
-=back
+=cut
 
 1;
