@@ -6,12 +6,6 @@ use parent 'Catmandu::Cmd';
 use Catmandu::Util qw(data_at);
 use Catmandu;
 
-sub command_opt_spec {
-    (
-        [ "path-prefix=s", "" ],
-    );
-}
-
 sub description {
     <<EOS;
 examples:
