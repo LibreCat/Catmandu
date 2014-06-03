@@ -1,21 +1,78 @@
 package Catmandu::CLI;
 
+
 use Catmandu::Sane;
 use App::Cmd::Setup -app;
 use Catmandu::Util;
 use Catmandu;
+use Log::Any::Adapter;
 
 sub VERSION {
     $Catmandu::VERSION;
 }
 
+sub default_command { 'commands' }
+
 sub plugin_search_path { 'Catmandu::Cmd' }
 
 sub global_opt_spec {
     (
+        ['debug|d+',''],
         ['load_path|L=s@', ""],
         ['lib_path|I=s@', ""]
     );
+}
+
+sub default_log4perl_config {
+    my $level    = shift // 'DEBUG';
+    my $appender = shift // 'STDOUT';
+
+    my $config =<<EOF;
+log4perl.category.Catmandu=$level,$appender
+
+log4perl.appender.STDOUT=Log::Log4perl::Appender::Screen
+log4perl.appender.STDOUT.stderr=0
+log4perl.appender.STDOUT.utf8=1
+
+log4perl.appender.STDOUT.layout=PatternLayout
+log4perl.appender.STDOUT.layout.ConversionPattern=%d [%P] - %p %l %M time=%r : %m%n
+
+log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
+log4perl.appender.STDERR.stderr=0
+log4perl.appender.STDERR.utf8=1
+
+log4perl.appender.STDERR.layout=PatternLayout
+log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %l : %m%n
+
+EOF
+    \$config
+}
+
+sub setup_debugging {
+    my %LEVELS = ( 1 => 'WARN' , 2 => 'INFO' , 3 => 'DEBUG');
+    my $debug = shift;
+    my $level = $LEVELS{$debug} // 'WARN';
+
+    try {
+        my $log4perl_pkg   = Catmandu::Util::require_package('Log::Log4perl');
+        my $logany_adapter = Catmandu::Util::require_package('Log::Any::Adapter::Log4perl');
+       
+
+        Log::Log4perl::init( default_log4perl_config($level, 'STDERR') );
+        Log::Any::Adapter->set('Log4perl');
+    } catch {
+        print STDERR <<EOF;
+
+Oops! Debugging tools not available on this platform
+
+Try to install Log::Log4perl and Log::Any::Adapter::Log4perl
+
+Hint: cpan Log::Log4perl Log::Any::Adapter::Log4perl
+EOF
+        exit(2);
+    };
+
+    Catmandu->log->warn("debug activated - level $level");
 }
 
 # overload run to read the global options before
@@ -25,8 +82,13 @@ sub run {
 
     my ($global_opts, $argv) = $class->_process_args([@ARGV], $class->_global_option_processing_params);
 
+    my $debug     = $global_opts->{debug} || 0;
     my $load_path = $global_opts->{load_path} || [];
-    my $lib_path = $global_opts->{lib_path} || [];
+    my $lib_path  = $global_opts->{lib_path} || [];
+
+    if ($debug > 0) {
+        setup_debugging($debug);
+    }
 
     if (@$lib_path) {
         Catmandu::Util::use_lib(@$lib_path);
