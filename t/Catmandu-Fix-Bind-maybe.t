@@ -103,6 +103,18 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
 
 $fixes =<<EOF;
+add_field(before,ok)
+do maybe()
+   add_field(inside,ok)
+end
+add_field(after,ok)
+EOF
+
+$fixer = Catmandu::Fix->new(fixes => [$fixes]);
+
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'} , 'before/after testing';
+
+$fixes =<<EOF;
 do maybe()
   undef_error()
   add_field(foo,bar)
@@ -113,4 +125,4 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'specific testing';
 
-done_testing 11;
+done_testing 12;

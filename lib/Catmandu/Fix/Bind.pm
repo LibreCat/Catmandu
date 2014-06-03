@@ -67,10 +67,7 @@ sub emit_bind {
     }
 
     if ($self->return) {
-        $perl .= "return ${unit};";
-    }
-    else {
-        $perl .= "return ${var};";
+        $perl .= "${var} = ${unit};";
     }
 
     $perl;

@@ -2,6 +2,14 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+0.9103  2014-05-23 10:24:52 CEST
+  - fix script dir in build script
+  - Fix::Parser handles empty comments
+  - Exporter pod
+
+0.9102  2014-05-20 14:07:46 CEST
+  - Marpa requires Time::Piece
+
 0.9101  2014-05-20 11:58:46 CEST
   - less_than, greater_than conditions
 

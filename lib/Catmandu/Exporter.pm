@@ -29,47 +29,79 @@ sub encoding { ':utf8' }
 
 =head1 NAME
 
-Catmandu::Exporter - Namespace for packages that can export a hashref or an iterable object
+Catmandu::Exporter - Namespace for packages that can export
 
 =head1 SYNOPSIS
 
-    use Catmandu::Exporter::YAML;
+    package Catmandu::Exporter::Foo;
 
-    my $exporter = Catmandu::Exporter::YAML->new(fix => 'myfix.txt');
+    use Catmandu::Sane;
+    use Moo;
 
-    $exporter->add_many($arrayref);
-    $exporter->add_many($iterator);
-    $exporter->add_many(sub { });
+    with 'Catmandu::Exporter'
 
-    $exporter->add($hashref);
+    sub add {
+        my ($self, $data) = @_;
+        my $fh = $self->fh;
+    }
 
-    printf "exported %d objects\n" , $exporter->count;
+    package main;
+
+    use Catmandu;
+
+    my $exporter = Catmandu->exporter('Foo', file => "/tmp/output.txt");
+    
+    # Or on the command line
+    $ catmandu convert JSON to Foo < /tmp/something.txt >/tmp/output.txt
+
+=head1 DESCRIPTION
+
+A Catmandu::Exporter is a Perl package the can export data. 
+When no options are given exported data is written to
+the stdout. Optionally provide a "file" pathname or a "fh" file handle to redirect the
+ouput.
+
+Every Catmandu::Exporter is a L<Catmandu::Fixable> and thus provides a "fix" parameter that
+can be set in the constructor. For every "add" or for every item in "add_many" the given
+fixes will be applied first. E.g.
+
+Every Catmandu::Exporter is a L<Catmandu::Addable> and inherits the methods "add" and "add_many".
+
+=head1 CONFIGURATION
+
+=over
+
+=item file
+
+Write output to a local file given by its path.
+Alternatively a scalar reference can be passed to write to a string.
+
+=item fh
+
+Write the output to an IO::Handle. If not specified, Catmandu::Util::io is
+used to create the output stream from the "file" argument or by using STDOUT.
+
+=item encoding
+
+Binmode of the output stream "fh". Set to ":utf8" by default.
+
+=item fix
+
+An ARRAY of one or more fixes or file scripts to be applied  to exported items.
+
+=back
 
 =head1 METHODS
 
-=head2 new(file => PATH, fh => HANDLE, fix => STRING|ARRAY)
+=head2 add
 
-Create a new Catmandu::Exporter. When no options are given exported data is written to
-the stdout. Optionally provide a 'file' pathname or a 'fh' file handle to redirect the
-ouput.
+Adds one object to be exported. 
 
-Every Catmandu::Exporter is a L<Catmandu::Fixable> and thus provides a 'fix' parameter that
-can be set in the constructor. For every 'add' or for every item in 'add_many' the given
-fixes will be applied first.
+=head2 add_many
 
-=head2 add($hashref)
-
-Adds one object to be exported. Provide a HASH-ref or an L<Catmandu::Iterator> to loop. 
-Returns a true value when the export was successful or undef on error.
-
-=head2 add_many($arrayref)
-
-=head2 add_many($iterator)
-
-=head2 add_many(sub {})
-
-Provide one or more objects to be exported. The exporter will use array references, iterators
-and generator routines to loop over all items. Returns the total number of items exported.
+Adds many objects to be exported. This can be either an ARRAY-ref or
+an L<Catmandu::Iterator>. Returns a true value when the export was 
+successful or undef on error.
 
 =head2 count
 
@@ -77,11 +109,12 @@ Returns the number of items exported by this Catmandu::Exporter.
 
 =head2 log
 
-Return the current logger.
+Returns the current logger.
 
 =head1 SEE ALSO
 
-L<Catmandu::Exporter::Fix>
+L<Catmandu::Addable>, L<Catmandu::Fix>,L<Catmandu::JSON>,
+L<Catmandu::YAML>, L<Catmandu::CSV>, L<Catmandu::RIS>
 
 =cut
 
