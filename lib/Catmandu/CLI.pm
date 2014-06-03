@@ -1,6 +1,5 @@
 package Catmandu::CLI;
 
-
 use Catmandu::Sane;
 use App::Cmd::Setup -app;
 use Catmandu::Util;
@@ -52,13 +51,22 @@ sub setup_debugging {
     my %LEVELS = ( 1 => 'WARN' , 2 => 'INFO' , 3 => 'DEBUG');
     my $debug = shift;
     my $level = $LEVELS{$debug} // 'WARN';
+    my $load_from;
 
     try {
         my $log4perl_pkg   = Catmandu::Util::require_package('Log::Log4perl');
         my $logany_adapter = Catmandu::Util::require_package('Log::Any::Adapter::Log4perl');
-       
+        my $config         = Catmandu->config->{log4perl};
 
-        Log::Log4perl::init( default_log4perl_config($level, 'STDERR') );
+        if (defined $config) {
+            Log::Log4perl::init( $config );
+            $load_from = "file: $config";
+        }
+        else {
+            Log::Log4perl::init( default_log4perl_config($level, 'STDERR') );
+            $load_from = "internal";
+        }
+
         Log::Any::Adapter->set('Log4perl');
     } catch {
         print STDERR <<EOF;
@@ -72,7 +80,7 @@ EOF
         exit(2);
     };
 
-    Catmandu->log->warn("debug activated - level $level");
+    Catmandu->log->warn("debug activated - level $level - config load from $load_from");
 }
 
 # overload run to read the global options before
