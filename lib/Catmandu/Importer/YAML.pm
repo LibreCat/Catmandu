@@ -2,7 +2,7 @@ package Catmandu::Importer::YAML;
 
 use namespace::clean;
 use Catmandu::Sane;
-use YAML::Any qw(Load);
+use YAML::XS ();
 use Moo;
 
 with 'Catmandu::Importer';
@@ -22,22 +22,20 @@ sub generator {
                 last;
             }
             if ($line =~ $RE_SEP && $yaml) {
-                $data = Load($yaml);
+                $data = YAML::XS::Load($yaml);
                 $yaml = $line;
                 return $data;
             }
             $yaml .= $line;
         }
         if ($yaml) {
-            $data = Load($yaml);
+            $data = YAML::XS::Load($yaml);
             $yaml = "";
             return $data;
         }
         return;
     };
 }
-
-no YAML::Any;
 
 =head1 NAME
 

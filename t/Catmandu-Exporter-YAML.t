@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use YAML::Any ();
+use YAML::XS ();
 
 my $pkg;
 BEGIN {
@@ -22,7 +22,7 @@ isa_ok $exporter, $pkg;
 
 $exporter->add($_) for @$data;
 $exporter->commit;
-is_deeply $data, [ YAML::Any::Load($file) ];
+is_deeply $data, [ YAML::XS::Load($file) ];
 
 is($exporter->count, 3, "Count ok");
 

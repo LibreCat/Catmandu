@@ -31,10 +31,9 @@ requires 'Text::CSV', '1.21';
 requires 'Time::HiRes', 0, # not always installed apparently
 requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
-requires 'YAML::Any', '0.90';
+requires 'YAML::XS', '0.41';
 
 recommends 'JSON::XS', '2.3';
-recommends 'YAML::XS', '0.34';
 
 feature 'tidy',
     "Support pretty printing compiled fix code",
