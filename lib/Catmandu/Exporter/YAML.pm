@@ -2,14 +2,14 @@ package Catmandu::Exporter::YAML;
 
 use namespace::clean;
 use Catmandu::Sane;
-use YAML::Any qw(Dump);
+use YAML::XS ();
 use Moo;
 
 with 'Catmandu::Exporter';
 
 sub add {
     my ($self, $data) = @_;
-    my $yaml = Dump($data);
+    my $yaml = YAML::XS::Dump($data);
     utf8::decode($yaml);
     $self->fh->print($yaml);
 }

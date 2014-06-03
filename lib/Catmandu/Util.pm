@@ -10,7 +10,7 @@ use Data::Compare ();
 use IO::File;
 use IO::Handle::Util ();
 use File::Spec;
-use YAML::Any ();
+use YAML::XS ();
 use JSON ();
 
 our %EXPORT_TAGS = (
@@ -133,7 +133,7 @@ sub write_file {
 
 sub read_yaml {
     # dies on error
-    YAML::Any::LoadFile($_[0]);
+    YAML::XS::LoadFile($_[0]);
 }
 
 sub read_json {

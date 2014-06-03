@@ -5,7 +5,7 @@ use Catmandu::Sane;
 use Catmandu::Util qw(io);
 use Moo::Role;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 with 'Catmandu::Iterable';
 with 'Catmandu::Fixable';
 

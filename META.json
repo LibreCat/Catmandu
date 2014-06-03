@@ -4,7 +4,7 @@
       "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.016, CPAN::Meta::Converter version 2.132830",
+   "generated_by" : "Dist::Milla version v1.0.5, Dist::Zilla version 5.017, CPAN::Meta::Converter version 2.140640",
    "license" : [
       "perl_5"
    ],
@@ -53,8 +53,7 @@
       },
       "runtime" : {
          "recommends" : {
-            "JSON::XS" : "2.3",
-            "YAML::XS" : "0.34"
+            "JSON::XS" : "2.3"
          },
          "requires" : {
             "App::Cmd" : "0.323",
@@ -67,10 +66,10 @@
             "IO::Handle::Util" : "0.01",
             "JSON" : "2.51",
             "List::MoreUtils" : "0.33",
+            "Log::Any" : "0.15",
             "Log::Any::Adapter" : "0.11",
             "Marpa::R2" : "2.084000",
-            "Moo" : "1.000008",
-            "MooX::Log::Any" : "0",
+            "Moo" : "1.004006",
             "Sub::Exporter" : "0.982",
             "Sub::Quote" : "0",
             "Text::CSV" : "1.21",
@@ -78,7 +77,7 @@
             "Time::HiRes" : "0",
             "Time::Piece" : "0",
             "Try::Tiny::ByClass" : "0.01",
-            "YAML::Any" : "0.90",
+            "YAML::XS" : "0.41",
             "namespace::clean" : "0.24",
             "perl" : "v5.10.1"
          }
@@ -120,10 +119,11 @@
       "Nicolas <nicolas.steenlant@ugent.be>",
       "Nicolas Franck <nicolas.franck@ugent.be>",
       "Nicolas Steenlant <nicolas.steenlant@gmail.com>",
-      "Nicolas Steenlant <nicolas.steenlant@ugent.be>",
       "Nicolas Steenlant <nsteenla@ca20c608.ugent.be>",
       "Nicolas Steenlnat <nicolas.steenlant@ugent.be>",
       "Patrick <phochste@hal.lub.lu.se>",
+      "Patrick Hochstenbach <Patrick.Hochstenbach@UGent.be>",
+      "Patrick Hochstenbach <patrick.hochstenbach@ugent.be>",
       "Snorri Briem <Snorri.Briem@lub.lu.se>",
       "Snorri Briem <Snorri.Briem@ub.lu.se>",
       "Vitali Peil <vitali.peil@uni-bielefeld.de>",

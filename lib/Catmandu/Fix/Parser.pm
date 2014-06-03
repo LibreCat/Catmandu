@@ -7,7 +7,7 @@ use Catmandu;
 use Catmandu::Util qw(check_value read_file);
 use Moo;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 my $GRAMMAR = <<'GRAMMAR';
 :default ::= action => ::array
