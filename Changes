@@ -8,6 +8,8 @@ Revision history for Catmandu
   - MooX::Log::Any replaced by Catmandu::Logger because it doesn't set the
     correct category
   - config command can use any Exporter
+  - Exporter::JSON supports canonical, indent, space_before, space_after
+    options
 
 0.9103  2014-05-23 10:24:52 CEST
   - fix script dir in build script
