@@ -12,7 +12,7 @@ has multiline => (is => 'ro', default => sub { 0 });
 
 sub _build_json {
     my ($self) = @_;
-    JSON->new->utf8($self->encoding eq ':raw')->allow_nonref;
+    JSON->new->utf8($self->encoding eq ':raw');
 }
 
 sub default_encoding { ':raw' }
