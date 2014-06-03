@@ -19,11 +19,11 @@ requires 'Data::Util', '0.59';
 requires 'IO::Handle::Util', '0.01';
 requires 'JSON', '2.51';
 requires 'List::MoreUtils', '0.33';
+requires 'Log::Any', '0.15';
 requires 'Log::Any::Adapter', '0.11';
 requires 'Time::Piece', 0; # required by Marpa
 requires 'Marpa::R2', '2.084000';
 requires 'Moo', '1.004006';
-requires 'MooX::Log::Any', 0;
 requires 'namespace::clean', '0.24';
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;

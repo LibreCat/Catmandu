@@ -15,7 +15,7 @@ use Catmandu::Fix::Parser;
 use Data::Dumper ();
 use B ();
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 has tidy        => (is => 'ro');
 has parser      => (is => 'lazy');

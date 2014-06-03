@@ -6,7 +6,7 @@ use Hash::Util::FieldHash ();
 use Sub::Quote qw(quote_sub);
 use Moo::Role;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 has bag_class => (
     is => 'ro',

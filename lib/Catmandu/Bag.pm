@@ -6,7 +6,7 @@ use Catmandu::Util qw(:check);
 use Moo::Role;
 use Data::UUID;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 with 'Catmandu::Pluggable'; # TODO
 with 'Catmandu::Iterable';
 with 'Catmandu::Addable';

@@ -9,7 +9,7 @@ use Moo;
 require Catmandu;
 use namespace::clean;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 sub _search_up {
     my $dir = $_[0];
