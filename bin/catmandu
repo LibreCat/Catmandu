@@ -5,7 +5,7 @@ use Catmandu::CLI;
 use Cwd ();
 
 Catmandu->default_load_path(Cwd::getcwd);
-Catmandu::CLI->run;
+Catmandu::CLI->run // exit(2);
 
 =head1 NAME
 
@@ -13,7 +13,7 @@ catmandu - LibreCat command line tools
 
 =head1 SYNOPSIS
 
- catmandu [-I path] [-L path] [COMMAND] [-?hqv] [long options...] [ARGS]
+ catmandu [-D|-D2|-D3] [-I path] [-L path] [COMMAND] [-?hqv] [long options...] [ARGS]
 
  catmandu --version
 
@@ -162,6 +162,47 @@ repeatable.
 
 Search upwards from this path for configuration files and accompanying lib
 directories. This option is repeatable.
+
+=item --debug [LEVEL]
+
+=item -D[LEVEL]
+
+Set the debugging level for Catmandu. LEVEL is one of:
+
+    1 - WARN messages
+    2 - INFO messages
+    3 - DEBUG messages
+
+Requires an installation of L<Log::Log4perl> and L<Log::Any::Adapter::Log4perl>. By
+default an internal log4perl configuration file is used that sends all debug messages
+to stderr. Optionally in the catmandu.yml the path to a log4perl configuration file
+can be set. E.g.
+
+    catmandu.yml:
+
+    log4perl: /etc/log4perl.conf
+
+    or
+
+    log4perl: "
+     log4perl.category.Catmandu=$level,$appender
+
+	 log4perl.appender.STDOUT=Log::Log4perl::Appender::Screen
+	 log4perl.appender.STDOUT.stderr=0
+	 log4perl.appender.STDOUT.utf8=1
+
+	 log4perl.appender.STDOUT.layout=PatternLayout
+	 log4perl.appender.STDOUT.layout.ConversionPattern=%d [%P] - %p %l %M time=%r : %m%n
+
+	 log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
+	 log4perl.appender.STDERR.stderr=0
+	 log4perl.appender.STDERR.utf8=1
+
+	 log4perl.appender.STDERR.layout=PatternLayout
+	 log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %l : %m%n
+    "
+
+See also L<Catmandu::Logger> to enable logging for your own Catmandu packages.
 
 =back
 
