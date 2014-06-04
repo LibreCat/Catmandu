@@ -124,7 +124,13 @@ sub parse {
         [ map {$_->reify} @$val ];
     }
     catch {
-         Catmandu::ParseError->throw(message => "parse error", source => $source);
+         my $message = "parse error";
+
+         if ($_ =~ /coercion for "_fixer"/) {
+            $message .= " - wrong number of arguments in your fix command";
+         }
+
+         Catmandu::ParseError->throw(message => $message, source => $source);
     };
 }
 

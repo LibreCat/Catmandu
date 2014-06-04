@@ -16,7 +16,7 @@ sub plugin_search_path { 'Catmandu::Cmd' }
 
 sub global_opt_spec {
     (
-        ['debug|d+',''],
+        ['debug|D:i',''],
         ['load_path|L=s@', ""],
         ['lib_path|I=s@', ""]
     );
@@ -59,12 +59,18 @@ sub setup_debugging {
         my $config         = Catmandu->config->{log4perl};
 
         if (defined $config) {
-            Log::Log4perl::init( $config );
-            $load_from = "file: $config";
+            if ($config =~ /^\S+$/) {
+                Log::Log4perl::init( $config ) ;
+                $load_from = "file: $config";
+            }
+            else {
+                Log::Log4perl::init( \$config ) ;
+                $load_from = "string: <defined in catmandu.yml>";
+            }
         }
         else {
             Log::Log4perl::init( default_log4perl_config($level, 'STDERR') );
-            $load_from = "internal";
+            $load_from = "string: <defined in " . __PACKAGE__ . ">";
         }
 
         Log::Any::Adapter->set('Log4perl');
@@ -90,12 +96,11 @@ sub run {
 
     my ($global_opts, $argv) = $class->_process_args([@ARGV], $class->_global_option_processing_params);
 
-    my $debug     = $global_opts->{debug} || 0;
     my $load_path = $global_opts->{load_path} || [];
     my $lib_path  = $global_opts->{lib_path} || [];
 
-    if ($debug > 0) {
-        setup_debugging($debug);
+    if (exists $global_opts->{debug}) {
+        setup_debugging($global_opts->{debug} // 1);
     }
 
     if (@$lib_path) {
@@ -140,6 +145,7 @@ sub run {
             my $source  = $_->source;
 
             say STDERR "Oops! Syntax error in your fixes...";
+            say STDERR "\n\t$message\n";
             say STDERR "Source:\n";
             
             for (split(/\n/,$source)) {

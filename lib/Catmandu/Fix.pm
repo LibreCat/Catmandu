@@ -150,7 +150,7 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    if ($self->tidy) {
+    if ($self->tidy || $self->log->is_debug) {
         require Perl::Tidy;
 
         my $tidy_perl = "";
