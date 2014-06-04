@@ -83,6 +83,11 @@ sub BUILD {
 
         my $config = Config::Onion->new(prefix_key => '_prefix');
         $config->load_glob(@globs);
+
+        if ($self->log->is_debug) {
+            use Data::Dumper;
+            $self->log->debug(Dumper($config->get));
+        }
         $self->_set_config($config->get);
     }
 
@@ -153,16 +158,18 @@ sub importer {
     my $self = shift;
     my $name = shift;
     my $ns = $self->importer_namespace;
-    if (my $c = $self->config->{importer}{$name || $self->default_importer}) {
-        check_hash_ref($c);
-        my $package = $c->{package} || $self->default_importer_package;
-        my $opts    = $c->{options} || {};
-        if (@_ > 1) {
-            $opts = {%$opts, @_};
-        } elsif (@_ == 1) {
-            $opts = {%$opts, %{$_[0]}};
+    if (exists $self->config->{importer}) {
+        if (my $c = $self->config->{importer}{$name || $self->default_importer}) {
+            check_hash_ref($c);
+            my $package = $c->{package} || $self->default_importer_package;
+            my $opts    = $c->{options} || {};
+            if (@_ > 1) {
+                $opts = {%$opts, @_};
+            } elsif (@_ == 1) {
+                $opts = {%$opts, %{$_[0]}};
+            }
+            return require_package($package, $ns)->new($opts);
         }
-        return require_package($package, $ns)->new($opts);
     }
     require_package($name ||
         $self->default_importer_package, $ns)->new(@_);
@@ -172,16 +179,18 @@ sub exporter {
     my $self = shift;
     my $name = shift;
     my $ns = $self->exporter_namespace;
-    if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {
-        check_hash_ref($c);
-        my $package = $c->{package} || $self->default_exporter_package;
-        my $opts    = $c->{options} || {};
-        if (@_ > 1) {
-            $opts = {%$opts, @_};
-        } elsif (@_ == 1) {
-            $opts = {%$opts, %{$_[0]}};
+    if (exists $self->config->{exporter}) {
+        if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {
+            check_hash_ref($c);
+            my $package = $c->{package} || $self->default_exporter_package;
+            my $opts    = $c->{options} || {};
+            if (@_ > 1) {
+                $opts = {%$opts, @_};
+            } elsif (@_ == 1) {
+                $opts = {%$opts, %{$_[0]}};
+            }
+            return require_package($package, $ns)->new($opts);
         }
-        return require_package($package, $ns)->new($opts);
     }
     require_package($name ||
         $self->default_exporter_package, $ns)->new(@_);

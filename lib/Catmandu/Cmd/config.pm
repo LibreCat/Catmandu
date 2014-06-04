@@ -22,6 +22,7 @@ EOS
 sub command {
     my ($self, $opts, $args) = @_;
     my $path;
+
     if (@$args == 1 || (@$args > 1 && $args->[1] eq 'to')) {
         $path = shift @$args;
     }
@@ -45,7 +46,7 @@ sub command {
 
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
     $into->add(defined $path ?
-        data_at($path, Catmandu->config) :
+            data_at($path, Catmandu->config) :
         Catmandu->config);
     $into->commit;
 }
