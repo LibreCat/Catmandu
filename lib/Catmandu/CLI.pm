@@ -24,7 +24,7 @@ sub global_opt_spec {
 
 sub default_log4perl_config {
     my $level    = shift // 'DEBUG';
-    my $appender = shift // 'STDOUT';
+    my $appender = shift // 'STDERR';
 
     my $config =<<EOF;
 log4perl.category.Catmandu=$level,$appender
@@ -37,7 +37,7 @@ log4perl.appender.STDOUT.layout=PatternLayout
 log4perl.appender.STDOUT.layout.ConversionPattern=%d [%P] - %p %l %M time=%r : %m%n
 
 log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
-log4perl.appender.STDERR.stderr=0
+log4perl.appender.STDERR.stderr=1
 log4perl.appender.STDERR.utf8=1
 
 log4perl.appender.STDERR.layout=PatternLayout
