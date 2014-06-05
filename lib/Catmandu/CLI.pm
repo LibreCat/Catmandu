@@ -28,7 +28,7 @@ sub default_log4perl_config {
 
     my $config =<<EOF;
 log4perl.category.Catmandu=$level,$appender
-log4perl.categoty.Catmandu::Fix::logger=TRACE,$appender
+log4perl.categoty.Catmandu::Fix::log=TRACE,$appender
 
 log4perl.appender.STDOUT=Log::Log4perl::Appender::Screen
 log4perl.appender.STDOUT.stderr=0

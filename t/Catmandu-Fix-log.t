@@ -7,7 +7,7 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Fix::logger';
+    $pkg = 'Catmandu::Fix::log';
     use_ok $pkg;
 }
 

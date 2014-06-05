@@ -1,19 +1,19 @@
 =head1 NAME
 
-Catmandu::Fix::logger - Log::Any logger as fix
+Catmandu::Fix::log - Log::Any logger as fix
 
 =head1 SYNOPSIS
 
-  logger('test123');
+  log('test123');
 
-  logger('hello world' , level => 'DEBUG');
+  log('hello world' , level => 'DEBUG');
 
 =head1 SEE ALSO
 
 L<Catmandu::Fix>
 
 =cut
-package Catmandu::Fix::logger;
+package Catmandu::Fix::log;
 use Moo;
 use Catmandu;
 use Catmandu::Fix::Has;
