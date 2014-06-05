@@ -9,7 +9,7 @@ use Moo;
 require Catmandu;
 use namespace::clean;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 sub _search_up {
     my $dir = $_[0];
@@ -71,7 +71,7 @@ sub BUILD {
 
         my $lib_dir = File::Spec->catdir($dir, 'lib');
 
-        if (-d -r $lib_dir) {
+        if (-d $lib_dir && -r $lib_dir) {
             push @lib_dirs, $lib_dir;
         }
     }

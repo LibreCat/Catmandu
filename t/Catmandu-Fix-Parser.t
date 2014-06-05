@@ -37,6 +37,13 @@ my $reject = Catmandu::Fix::reject->new;
 
 cmp_deeply $parser->parse(""), [];
 
+cmp_deeply $parser->parse("# a comment
+    # another comment
+    #
+    downcase(foo) # yet another comment"), [
+    $downcase_foo,
+], "comments";
+
 cmp_deeply $parser->parse("upcase(foo)"), [
     $upcase_foo,
 ];
@@ -102,4 +109,4 @@ cmp_deeply $parser->parse("reject exists(foo)"), [
     $foo_exists,
 ];
 
-done_testing 24;
+done_testing 25;

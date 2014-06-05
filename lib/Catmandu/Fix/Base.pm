@@ -6,7 +6,7 @@ use Clone ();
 use Moo::Role;
 use namespace::clean;
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 requires 'emit';
 

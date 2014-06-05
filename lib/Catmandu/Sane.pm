@@ -28,6 +28,29 @@ Catmandu::Sane - Package boilerplate
 
     use Catmandu::Sane;
 
+    # Provides all the 5.10 features.
+    say("what"); 
+    given($foo) {
+        when(1)     { say "1" }
+        when([2,3]) { say "2 or 3" }
+        when(/abc/) { say "has abc" }
+        default     { none of the above } 
+    }
+    sub next_id{
+      state $id;
+      ++$id;
+    }
+
+    # Provides try/catch[/finally] try/catch_case[/finally]
+    try {
+    } catch {};
+
+    # Provides
+    Catmandu::Error->throw("error");
+    Catmandu::BadVal->throw("eek val");
+    Catmandu::BadArg->throw("eek arg");
+    Catmandu::NotImplemented->throw("cant do that!");
+
 =head1 DESCRIPTION
 
 Package boilerplate equivalent to:

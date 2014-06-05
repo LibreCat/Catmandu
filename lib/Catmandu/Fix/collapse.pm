@@ -15,7 +15,7 @@ Catmandu::Fix::collapse - convert nested data into a flat hash using the TT2 dot
 =head1 SYNOPSIS
 
    # Collapse the data into a flat hash
-   collapse();
+   collapse()
 
 =head1 SEE ALSO
 

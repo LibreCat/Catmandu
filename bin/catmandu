@@ -13,37 +13,131 @@ catmandu - LibreCat command line tools
 
 =head1 SYNOPSIS
 
- catmandu [COMMAND] [-?hqv] [long options...] [ARGS]
+ catmandu [-I path] [-L path] [COMMAND] [-?hqv] [long options...] [ARGS]
 
- catmandu help data
+ catmandu --version
 
- catmandu help config
+ catmandu help
 
- # Import a JSON file into the default store (set in catmandu.yml)
- catmandu data --into-bag data < test.json
+ # convert
+ catmandu convert JSON to YAML < file.json
+ catmandu convert YAML to JSON < file.yaml
+ catmandu convert YAML < file.yaml # 'to JSON' is implicit
+ catmandu convert MARC < records.mrc 
+ catmandu convert MARC --fix 'marc_map(245,title)' < records.mrc
+ catmandu convert OAI --url https://biblio.ugent.be/oai 
+ catmandu convert SRU --base http://www.unicat.be/sru --query dna 
 
- # Import a YAML file into the default store
- catmandu data --from-importer YAML --into-bag data < test.yaml
+ # import
+ catmandu import JSON to MongoDB --database_name mydb < records.json
+ catmandu import MARC to MongoDB --database_name mydb < records.mrc
+ catmandu import MARC to ElasticSearch --index_name mydb < records.mrc
+ catmandu import MARC to ElasticSearch --index_name mydb --fix 'marc_map("245a","title")' < records.mrc
 
- # Export a JSON file from the default store
- catmandu data --from-bag data > test.json
+ # export
+ catmandu export MongoDB --database_name mydb --bag data to JSON
+ catmandu export MongoDB --database_name mydb --bag data to JSON --fix 'retain_field("_id")'
+ catmandu export Solr --url http://localhost:8983/solr to JSON
+ catmandu export ElasticSearch --index_name mydb to JSON
 
- # Export a YAML file from the default store
- catmandu data --from-bag data --into-exporter YAML > test.yaml
+ # configuration
+ $ cat catmandu.yml
+ ---
+ store:
+  test1:
+   package: MongoDB
+   options:
+    database_name: mydb
+
+ catmandu import JSON to test1 < records.json 
+
+ catmandu config   # show the contents of catmandu.yml
+
+ catmandu count test1 
+ catmandu delete test1 -q 'title:"My Rabbit"'
 
 =head1 COMMANDS
 
-=head2 data OPTIONS
-
-Data manipulation commands: import, export, store, search.
-
 =head2 help COMMAND
 
-Documentation about command line options.
+Documentation about command line options. 
+
+=head2 config
+
+Display the contents of the catmandu.yml files in your project.
+
+=head2 convert IMPORTER [OPTIONS] [[--fix FIX]] to EXPORTER [OPTIONS]
+
+Convert data from one format to another format with help of L<Catmandu::Importer>s and 
+L<Catmandu::Exporter>s. All options given on the command line will be send to the Importer 
+or Exporter as initialization parameters. E.g.
+
+ catmandu convert OAI --url BASEURL --metadataPrefx PREFIX \
+                  to \
+                  CSV --header 1 --sep_char '|'
+
+Look at the documentation of all the importers and exporters to see which options are
+available.
+
+All importers accept one or more --fix options with the name of a fix file or file command.
+
+ catmandu convert JSON --fix fixes.txt
+ catmandu convert JSON --fix 'remove_field(abc)'
+
+The JSON exporter is implicit and is optional.
+
+ catmandu convert YAML to JSON  
+ catmandu convert YAML # shorter 
+
+=head2 count STORE [OPTIONS]
+
+Count the number of items in a L<Catmandu::Store>. All options given on the command line 
+will be send to the store as initialization parameters. E.g.
+
+ catmandu count MongoDB --database_name mydb --bag data
+
+=head2 delete STORE [OPTIONS] [-q QUERY]
+
+Delete items from a L<Catmandu::Store>. All options given on the command line 
+will be send to the store as initialization parameters. Optionally a QUERY can
+be provided to select the items to delete. E.g.
+
+ catmandu delete MongoDB --database_name mydb --bag data -q "title:Delete me"
+
+=head2 export STORE [OPTIONS] [-q QUERY] [--limit LIMIT] [[--fix FIX]] to EXPORTER [OPTIONS]
+
+Export items from a L<Catmandu::Store> using a L<Catmandu::Exporter>. All options given 
+on the command line will be send to the Store or Exporter as initialization parameters.
+Optionally a QUERY and LIMIT can be provided to selectively export items from the Store.
+Optionally a FIX can be provided to be executed on all the items before they are 
+exporter by the exporter.
+
+E.g.
+
+ catmandu export MongoDB --database_name mydb --bag data -q "title:Perl"
+
+=head2 import IMPORTER [OPTIONS] [[--fix FIX]] to STORE [OPTIONS]
+
+Import items from a L<Catmandu::Importer> to a L<Catmandu::Store>. All options given 
+on the command line will be send to the Importer or Store as initialization parameters.
+Optionally a FIX can be provided to be executed on all the items before they are
+stored into the Store.
+
+ catmandu import JSON to MongoDB --database_name mydb < records.json
+
+=head2 move STORE [OPTIONS] [-q QUERY] [--limit LIMIT] [[--fix FIX]] to STORE [OPTIONS]
+
+Move items from one L<Catmandu::Store> to another. All options given 
+on the command line will be send to the Stores as initialization parameters.
+Optionally a QUERY and LIMIT can be provided to selectively export items from the Store.
+Optionally a FIX can be provided to be executed on all the items before they are 
+stored.
+
+=head2 data [LONG_OPTIONS]
+
+Low level data manipulation command. See DATA OPTIONS below for full documentation.
 
 =head1 OPTIONS
-
-=head2 Basic Startup Options
 
 =over 4
 
@@ -54,8 +148,6 @@ Verbose output.
 =item -h
 
 =item -?
-
-Display the help screen.
 
 =item --lib-path PATH
 
@@ -73,7 +165,9 @@ directories. This option is repeatable.
 
 =back
 
-=head2 Data Options
+=head1 DATA OPTIONS
+
+These low level options are available to the "catmandu data" command.
 
 =over 4
 
@@ -93,10 +187,10 @@ only the items belonging to the bag BAG_NAME.
 =item --from-OPTION OPTION_VALUE
 
 To include configuration options to a Catmandu::Store or Catmandu::Importer an
-argument with prefix '--from-' can be used. E.g. to provide an 'url' to an Importer
+argument with prefix '--from-' can be used. E.g. to provide an 'file' to an Importer
 use:
 
-  --from-url http://my.url
+  --from-file /my/path/to/file.txt
 
 =item --into-exporter EXPORTER
 
@@ -114,10 +208,10 @@ Store with bag BAG_NAME.
 =item --into-OPTION OPTION_VALUE
 
 To include configuration options to a Catmandu::Store or Catmandu::Exporter an
-argument with prefix '--into-' can be used. E.g. to provide an 'url' to an Exporter
+argument with prefix '--into-' can be used. E.g. to provide an 'file' to an Exporter
 use:
 
-  --into-url http://my.url
+  --into-file /tmp/file.txt
 
 =item --fix EXPRESSION
 
@@ -153,6 +247,21 @@ Limit the number of results returned from the searchable results to NUM.
 
 Report the number of items processed.
 
+=item --version
+
+Return the installed version of Catmandu.
+
 =back
+
+=head1 SEE ALSO
+
+L<Catmandu::Importer>
+L<Catmandu::Exporter>
+L<Catmandu::Store>
+L<Catmandu::MARC>
+L<Catmandu::OAI>
+L<Catmandu::MongoDB>
+L<Catmandu::Solr>
+L<Catmandu::ElasticSearch>
 
 =cut

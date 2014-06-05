@@ -79,11 +79,14 @@ Use the C<multiline> option to parse pretty-printed JSON or JSON arrays.
 
 =head1 METHODS
 
-=head2 new([file => $filename, multiline => 0|1])
+=head2 new(file => $filename , fh => $fh , multiline => 0|1 ,fix => [...])
 
 Create a new JSON importer for C<$filename>. Uses STDIN when no filename is given.
-C<multiline> switches between line-delimited JSON and multiline JSON or arrays.
+C<multiline> switches optionally between line-delimited JSON and multiline JSON or arrays.
 the default is line-delimited JSON.
+
+The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
+then each fix or fix script will be applied to imported items.
 
 =head2 count
 

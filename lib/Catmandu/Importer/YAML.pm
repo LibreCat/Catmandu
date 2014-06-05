@@ -2,7 +2,7 @@ package Catmandu::Importer::YAML;
 
 use namespace::clean;
 use Catmandu::Sane;
-use YAML::Any qw(Load);
+use YAML::XS ();
 use Moo;
 
 with 'Catmandu::Importer';
@@ -22,22 +22,20 @@ sub generator {
                 last;
             }
             if ($line =~ $RE_SEP && $yaml) {
-                $data = Load($yaml);
+                $data = YAML::XS::Load($yaml);
                 $yaml = $line;
                 return $data;
             }
             $yaml .= $line;
         }
         if ($yaml) {
-            $data = Load($yaml);
+            $data = YAML::XS::Load($yaml);
             $yaml = "";
             return $data;
         }
         return;
     };
 }
-
-no YAML::Any;
 
 =head1 NAME
 
@@ -68,9 +66,12 @@ Catmandu::Importer::YAML - Package that imports YAML data
 
 =head1 METHODS
 
-=head2 new([file => $filename])
+=head2 new(file => $filename, fh => $fh , fix => [...])
 
 Create a new YAML importer for $filename. Use STDIN when no filename is given.
+
+The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
+then any fix or fix script will be applied to imported items.
 
 =head2 count
 

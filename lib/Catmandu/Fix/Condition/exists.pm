@@ -23,17 +23,16 @@ sub emit {
             $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
         }
         $perl .= ") {";
-        for my $fix (@{$self->pass_fixes}) {
-            $perl .= $fixer->emit_fix($fix);
-        }
+
+        $perl .= $fixer->emit_fixes($self->pass_fixes);
+
         $perl .= "last $label;";
         $perl .= "}";
         $perl;
     });
 
-    for my $fix (@{$self->fail_fixes}) {
-        $perl .= $fixer->emit_fix($fix);
-    }
+    $perl .= $fixer->emit_fixes($self->fail_fixes);
+
     $perl;
 }
 
@@ -44,13 +43,13 @@ Catmandu::Fix::Condition::exists - only execute fixes if the path exists
 =head1 SYNOPSIS
 
    # uppercase the value of field 'foo' if the field 'oogly' exists
-   if_exists('oogly');
-   upcase('foo'); # foo => 'BAR'
-   end()
+   if exists(oogly)
+     upcase(foo) # foo => 'BAR'
+   end
    # inverted
-   unless_exists('oogly');
-   upcase('foo'); # foo => 'bar'
-   end()
+   unless exists(oogly)
+     upcase(foo) # foo => 'bar'
+   end
 
 =head1 SEE ALSO
 

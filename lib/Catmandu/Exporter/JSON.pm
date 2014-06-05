@@ -7,13 +7,24 @@ use Moo;
 
 with 'Catmandu::Exporter';
 
-has pretty => (is => 'ro', default => sub { 0 });
-has array  => (is => 'ro', default => sub { 0 });
-has json   => (is => 'ro', lazy => 1, builder => '_build_json');
+has pretty       => (is => 'ro', default => sub { 0 });
+has indent       => (is => 'ro', default => sub { 0 });
+has space_before => (is => 'ro', default => sub { 0 });
+has space_after  => (is => 'ro', default => sub { 0 });
+has canonical    => (is => 'ro', default => sub { 0 });
+has array        => (is => 'ro', default => sub { 0 });
+has json         => (is => 'ro', lazy => 1, builder => '_build_json');
 
 sub _build_json {
     my ($self) = @_;
-    JSON->new->utf8(0)->pretty($self->pretty);
+    JSON->new
+        ->utf8(0)
+        ->allow_nonref
+        ->pretty($self->pretty)
+        ->indent($self->pretty || $self->indent)
+        ->space_before($self->pretty || $self->space_before)
+        ->space_after($self->pretty || $self->space_after)
+        ->canonical($self->canonical);
 }
 
 sub add {

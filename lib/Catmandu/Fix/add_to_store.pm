@@ -49,7 +49,7 @@ Catmandu::Fix::add_to_store - add matching values to a store as a side effect
 
 =head1 SYNOPSIS
 
-   add_to_store('authors.*', 'MongoDB', '-bag', 'authors', '-database_name', 'catalog');
+   add_to_store(authors.*, MongoDB, bag: authors, database_name: catalog)
 
 =head1 SEE ALSO
 

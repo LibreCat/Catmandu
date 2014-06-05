@@ -19,11 +19,8 @@ sub emit {
     my $fail_label;
     my $fail_block = $fixer->emit_block(sub {
         $fail_label = shift;
-        my $perl = "";
-        for my $fix (@$fail_fixes) {
-            $perl .= $fixer->emit_fix($fix);
-        }
-        $perl;
+
+        $fixer->emit_fixes($fail_fixes);
     });
 
     my $has_match_var = $fixer->generate_var;
@@ -47,9 +44,9 @@ sub emit {
     });
 
     $perl .= "if (${has_match_var}) {";
-    for my $fix (@$pass_fixes) {
-        $perl .= $fixer->emit_fix($fix);
-    }
+
+    $perl .= $fixer->emit_fixes($pass_fixes);
+
     $perl .= "last ${label};";
     $perl .= "}";
 

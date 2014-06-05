@@ -72,11 +72,14 @@ Catmandu::Importer::CSV - Package that imports CSV data
 
 =head1 METHODS
 
-=head2 new(file => $filename, fields => \@fields, quote_char => "\"", sep_char => ",")
+=head2 new(file => $filename, fh = $fh, fields => \@fields, quote_char => "\"", sep_char => ",", fix => [...])
 
 Create a new CSV importer for $filename. Use STDIN when no filename is given. The
 object fields are read from the CSV header line or given via the 'fields' parameter.
 Strings in CSV are quoted by 'quote_char' and fields are separated by 'sep_char'.
+
+The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
+then ech fix or fix script will be applied to imported items.
 
 =head2 count
 

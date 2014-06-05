@@ -1,3 +1,32 @@
+=head1 NAME
+
+Catmandu::Fix::Has - helper class for creating Fix-es with (optional) parameters
+
+=head1 SYNOPSIS
+
+    package Catmandu::Fix::foo;
+    use Moo;
+    use Catmandu::Fix::Has;
+
+    has greeting => (fix_arg => 1);   # required parameter 1
+    has message  => (fix_arg => 1);   # required parameter 2
+    has eol      => (fix_opt => '!'); # optional parameter 'eol' with default '!'
+
+    sub fix {
+        my ($self,$data) = @_;
+
+        print STDERR $self->greeting . ", " . $self->message . $self->eol . "\n";
+
+        $data;
+    }
+
+    1;
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+=cut
 package Catmandu::Fix::Has;
 
 use Catmandu::Sane;
@@ -6,20 +35,14 @@ use namespace::clean;
 
 sub import {
     my $target = caller;
-   
+
     my $around = do { no strict 'refs'; \&{"${target}::around"} };
     my $fix_args = [];
     my $fix_opts = [];
 
-    do {
-        no strict 'refs';
-        *{"${target}::package_args"} = sub { $fix_args; };
-        *{"${target}::package_opts"} = sub { $fix_opts; };
-    };
-
     install_modifier($target, 'around', 'has', sub {
         my ($orig, $attr, %opts) = @_;
-        
+
         return $orig->($attr, %opts)
             unless exists $opts{fix_arg} || exists $opts{fix_opt};
 
@@ -77,8 +100,7 @@ sub import {
         }
 
         $args;
-    });
-
+  });
 }
 
 1;

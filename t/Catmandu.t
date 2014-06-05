@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use Log::Any::Test;
 use Log::Any::Adapter;
 use Data::Dumper;
 

@@ -69,12 +69,12 @@ Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by looking
 
 =head1 SYNOPSIS
 
-   lookup('foo.bar', 'dictionary.csv');
-   lookup('foo.bar', 'dictionary.csv', sep_char: '|');
+   lookup(foo.bar, dictionary.csv)
+   lookup(foo.bar, dictionary.csv, sep_char: |)
    # delete value if the lookup fails:
-   lookup('foo.bar', 'dictionary.csv', delete: 1);
+   lookup(foo.bar, dictionary.csv, delete: 1)
    # use a default value if the lookup fails:
-   lookup('foo.bar', 'dictionary.csv', default: 'default value');
+   lookup(foo.bar, dictionary.csv, default: 'default value')
 
 =head1 SEE ALSO
 

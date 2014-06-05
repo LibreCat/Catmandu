@@ -15,7 +15,7 @@ use Catmandu::Fix::Parser;
 use Data::Dumper ();
 use B ();
 
-with 'MooX::Log::Any';
+with 'Catmandu::Logger';
 
 has tidy        => (is => 'ro');
 has parser      => (is => 'lazy');
@@ -25,7 +25,7 @@ has _num_vars   => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0
 has _captures   => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var         => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has fixes       => (is => 'ro', required => 1, trigger => 1);
-has _reject     => (is => 'ro', init_arg => undef, default => sub { +{} });
+has _reject     => (is => 'ro', init_arg => undef, default => sub { +{}; });
 has _reject_var => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 
 sub _build_parser {
@@ -109,21 +109,25 @@ sub emit {
     my $var = $self->var;
     my $err = $self->generate_var;
     my $captures = $self->_captures;
+    my $reject_var = $self->_reject_var;
     my $perl = "";
 
     $perl .= "sub {";
     $perl .= $self->emit_declare_vars($var, '$_[0]');
     $perl .= "eval {";
-    for my $fix (@{$self->fixes}) {
-        $perl .= $self->emit_fix($fix);
-    }
-    $perl .= "${var};";
+
+    # Loop over all the fixes and emit their code, binded to Binds if required
+    $perl .= $self->emit_fixes($self->fixes);
+
+    $perl .= "return ${var};";
+    $perl .= "__FIX_REJECT__: return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     # TODO throw Catmandu::Error
     $perl .= qq|die ${err}.Data::Dumper->Dump([${var}], [qw(data)]);|;
     $perl .= "};";
     $perl .= "};";
+
 
     if (%$captures) {
         my @captured_vars = map {
@@ -158,10 +162,21 @@ sub emit {
     $perl;
 }
 
+# Emit an array of fixes
+sub emit_fixes {
+    my ($self,$fixes) = @_;
+    my $perl = '';
+
+    for my $fix (@{$fixes}) {
+        $perl .= $self->emit_fix($fix);
+    }
+
+    $perl;
+}
+
 sub emit_reject {
     my ($self) = @_;
-    my $reject_var = $self->_reject_var;
-    "return $reject_var;";
+    "goto __FIX_REJECT__;";
 }
 
 sub emit_fix {
@@ -600,7 +615,7 @@ Catmandu::Fix - a Catmandu class used for data crunching
 
 =head1 DESCRIPTION
 
-Catmandu::Fix-es can be use for easy data manipulation by non programmers. Using a
+Catmandu::Fixes can be used for easy data manipulation by non programmers. Using a
 small Perl DSL language end-users can use Fix routines to manipulate data objects.
 A plain text file of fixes can be created to specify all the routines needed to
 tranform the data into the desired format.
@@ -608,10 +623,10 @@ tranform the data into the desired format.
 =head1 PATHS
 
 All the Fix routines in Catmandu::Fix use a TT2 type reference to point to values
-in a Perl Hash. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the 
+in a Perl Hash. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the
 key 'foo'.
 
-A special case is when you want to point to all items in an array. In this case 
+A special case is when you want to point to all items in an array. In this case
 the wildcard '*' can be used. E.g. 'foo.*' points to all the items in the 'foo'
 array.
 
@@ -635,6 +650,8 @@ E.g.
 
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
+
+Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catmandu/wiki/Fixes>
 
 =head1 METHODS
 
@@ -666,7 +683,7 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 Return the current logger. Can be used when creating your own Fix commands.
 
 E.g.
-    
+
     package Catmandu::Fix::meow;
 
     use Moo;
