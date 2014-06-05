@@ -1,13 +1,5 @@
 #!/usr/bin/env perl
-package Catmandu::Fix::undef_error;
-
-use Moo;
-
-sub fix {
-   undef;
-}
-
-package main;
+use lib 't/lib';
 use strict;
 use warnings;
 use Test::More;
