@@ -27,6 +27,7 @@ Catmandu::Fix::Has - helper class for creating Fix-es with (optional) parameters
 L<Catmandu::Fix>
 
 =cut
+
 package Catmandu::Fix::Has;
 
 use Catmandu::Sane;
