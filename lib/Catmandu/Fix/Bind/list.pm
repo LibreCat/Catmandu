@@ -38,7 +38,7 @@ sub bind {
 	}
 }
 
-# Flatten an array: [ [A] , [A] , [A] ] -> [ A, A, A]
+# Flatten an array: [ [A] , [A] , [A] ] -> [ A, A, A ]
 sub concat {
 	[ map { Catmandu::Util::is_array_ref($_) ? @$_ : $_ } @{$_[0]} ];
 }
