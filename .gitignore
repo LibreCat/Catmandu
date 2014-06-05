@@ -9,7 +9,7 @@ cover_db
 LICENSE
 Makefile.PL
 MANIFEST*
-!META.json
+META.json
 MYMETA.*
 Catmandu-*
 !*.t
