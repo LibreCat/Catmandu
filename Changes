@@ -10,6 +10,7 @@ Revision history for Catmandu
   - config command can use any Exporter
   - Exporter::JSON supports canonical, indent, space_before, space_after
     options
+  - info commands and matching importers
 
 0.9103  2014-05-23 10:24:52 CEST
   - fix script dir in build script
