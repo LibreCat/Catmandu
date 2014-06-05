@@ -14,6 +14,17 @@ sub _build_log {
     Log::Any->get_logger(category => ref($self));
 }
 
+sub BUILD {
+    my ($self) = @_;
+    my $params = join(", ", map { "$_ => " . $self->{$_} } keys %$self);
+    $self->log->debug('creating: ' . ref($self) . "($params)");
+}
+
+sub DEMOLISH {
+    my ($self) = @_;
+    $self->log->debug('destroying: ' . ref($self));
+}
+
 =head1 SYNOPSIS
 
     package MyApp::View;
