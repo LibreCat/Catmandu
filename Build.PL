@@ -22,7 +22,9 @@ my %module_build_args = (
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
-    "JSON::XS" => "2.3"
+    "JSON::XS" => "2.3",
+    "Log::Any::Adapter::Log4perl" => "0.06",
+    "Log::Log4perl" => "1.44"
   },
   "recursive_test_files" => 1,
   "requires" => {
