@@ -22,12 +22,14 @@ EOS
 sub command {
     my ($self, $opts, $args) = @_;
     my $path;
+    my $into_args = [];
+    my $into_opts = {};
+    my $into;
 
     if (@$args == 1 || (@$args > 1 && $args->[1] eq 'to')) {
         $path = shift @$args;
     }
-    my $into_args = [];
-    my $into_opts = {};
+
     if (@$args && $args->[0] eq 'to') {
         for (my $i = 1; $i < @$args; $i++) {
             my $arg = $args->[$i];
@@ -44,7 +46,12 @@ sub command {
         }
     }
 
-    my $into = Catmandu->exporter($into_args->[0], $into_opts);
+    if (@$into_args || %$into_opts) {
+        $into = Catmandu->exporter($into_args->[0], $into_opts);
+    } else {
+        $into = Catmandu->exporter('JSON', pretty => 1);
+    }
+
     $into->add(defined $path ?
             data_at($path, Catmandu->config) :
         Catmandu->config);
