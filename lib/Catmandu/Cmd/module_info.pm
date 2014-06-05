@@ -1,51 +1,78 @@
 package Catmandu::Cmd::module_info;
+
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::ModuleInfo;
+use List::Util qw(sum);
+use Catmandu;
 
 sub command_opt_spec {
     (
-        ["namespace|n=s","namespace"],
-        ["max_depth=i","maximum depth to search for modules"],
-        ["inc|i=s@","override included directories (defaults to \@INC)",{ default => [@INC] }],
-        ["add_inc=s@","add lookup directories",{ default => [] }],
-        ["verbose|v","include package information"]
+        ["namespace=s", "namespace"],
+        ["max_depth=i", "maximum depth to search for modules"],
+        ["inc=s@", 'override included directories (defaults to @INC)', {default => [@INC]}],
+        ["verbose|v", "include package information"]
     );
-}
-sub print_simple {
-    my $record = $_[0];
-
-    my @p = map { 
-        "$_: ".$record->{$_}; 
-    } grep { 
-        defined($record->{$_}); 
-    } qw(name file version);
-   
-    say join(', ',@p);
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
-
     my $verbose = $opts->verbose;
+    my $from_opts = {};
+    for my $key (qw(namespace max_depth inc)) {
+        $from_opts->{$key} = $opts->$key if defined $opts->$key;
+    }
+    my $from = Catmandu->importer('ModuleInfo', $from_opts);
 
-    Catmandu::Importer::ModuleInfo->new(
+    my $into_args = [];
+    my $into_opts = {};
+    my $into;
 
-        inc => $opts->inc,
-        add_inc => $opts->add_inc,
-        namespace => $opts->namespace,
-        max_depth => $opts->max_depth
-
-    )->each(sub{
-        my $record = $_[0];
-        
-        unless($verbose){
-            say $record->{name}
-        }else{      
-            print_simple($record);
+    if (@$args && $args->[0] eq 'to') {
+        for (my $i = 1; $i < @$args; $i++) {
+            my $arg = $args->[$i];
+            if ($arg =~ s/^-+//) {
+                $arg =~ s/-/_/g;
+                if ($arg eq 'fix') {
+                    push @{$into_opts->{$arg} ||= []}, $args->[++$i];
+                } else {
+                    $into_opts->{$arg} = $args->[++$i];
+                }
+            } else {
+                push @$into_args, $arg;
+            }
         }
-    });
+    }
 
+    if (@$into_args || %$into_opts) {
+        $into = Catmandu->exporter($into_args->[0], $into_opts);
+        $into->add_many($from);
+        $into->commit;
+    } else {
+        my $col_sep = " | ";
+        my @cols = qw(name version);
+        push @cols, 'file' if $opts->verbose;
+        my @col_lengths = map length, @cols;
+        my $rows = $from->map(sub {
+            my $data = $_[0];
+            my $row = [];
+            for (my $i = 0; $i < @cols; $i++) {
+                my $col = $data->{$cols[$i]} // "";
+                my $len = length $col;
+                $col_lengths[$i] = $len if $len > $col_lengths[$i];
+                push @$row, $col;
+            }
+            $row;
+        })->to_array;
+        my $longest_row = sum(@col_lengths) + (length($col_sep) * (scalar(@cols) - 1));
+        my @indices = 0 .. @cols-1;
+        my $pattern = join($col_sep, map { "%-$col_lengths[$_]s" } @indices)."\n";
+        printf $pattern, @cols;
+        print '=' x $longest_row;
+        print "\n";
+        for my $row (@$rows) {
+            printf $pattern, @$row;
+        }
+    }
 }
 
 1;
@@ -54,19 +81,8 @@ sub command {
 
 Catmandu::Cmd::module_info - list available packages in a given namespace
 
-=head1 OPTIONS
-
-    namespace:      namespace for the packages to list
-    local:          list only local packages
-    verbose:        add extra information to output (i.e. the file and version)
-
 =head1 SEE ALSO
 
     L<Catmandu::Importer::ModuleInfo>
-    L<Catmandu::Importer>
-
-=head1 AUTHOR
-
-    Nicolas Franck, C<< <nicolas.franck at ugent.be> >>
 
 =cut
