@@ -95,9 +95,8 @@ sub io {
         $io = IO::Handle::Util::io_from_scalar_ref($arg);
         binmode $io, $binmode;
     } elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
-        $io = $arg;
-       # $io = IO::Handle->new_from_fd($arg, $mode);
-       # binmode $io, $binmode;
+        $io = IO::Handle->new_from_fd($arg, $mode) // $arg;
+        binmode $io, $binmode;
     } elsif (is_string($arg)) {
         $io = IO::File->new($arg, $mode);
         binmode $io, $binmode;
