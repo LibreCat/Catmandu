@@ -16,7 +16,7 @@ sub plugin_search_path { 'Catmandu::Cmd' }
 
 sub global_opt_spec {
     (
-        ['debug|D:i',''],
+        ['debug|D:i',""],
         ['load_path|L=s@', ""],
         ['lib_path|I=s@', ""]
     );

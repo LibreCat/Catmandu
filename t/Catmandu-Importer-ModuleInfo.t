@@ -17,8 +17,8 @@ isa_ok $importer,$pkg;
 
 my $count = 0;
 
-lives_ok(sub { $count = $importer->count; },"try count");
+lives_ok(sub { $count = $importer->count; }, "try count");
 
-ok($count > 0,"module must see Catmandu modules");
+ok($count > 0, "module must see Catmandu modules");
 
 done_testing 5;

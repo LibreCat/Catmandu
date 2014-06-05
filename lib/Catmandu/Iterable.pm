@@ -4,6 +4,7 @@ use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
+use List::Util ();
 require Catmandu::Iterator;
 require Catmandu::ArrayIterator;
 use Role::Tiny;
@@ -317,6 +318,39 @@ sub benchmark {
     });
 }
 
+sub format {
+    my ($self, %opts) = @_;
+    $opts{header} //= 1;
+    $opts{col_sep} //= " | ";
+    my @cols = $opts{cols} ? @{$opts{cols}} : ();
+    my @col_lengths = map length, @cols;
+
+    my $rows = $self->map(sub {
+        my $data = $_[0];
+        my $row = [];
+        for (my $i = 0; $i < @cols; $i++) {
+            my $col = $data->{$cols[$i]} // "";
+            my $len = length $col;
+            $col_lengths[$i] = $len if $len > $col_lengths[$i];
+            push @$row, $col;
+        }
+        $row;
+    })->to_array;
+
+    my $longest_row = List::Util::sum(@col_lengths) + (length($opts{col_sep}) * (scalar(@cols) - 1));
+    my @indices = 0 .. @cols-1;
+    my $pattern = join($opts{col_sep}, map { "%-$col_lengths[$_]s" } @indices)."\n";
+
+    if ($opts{header}) {
+        printf $pattern, @cols;
+        print '=' x $longest_row;
+        print "\n";
+    }
+    for my $row (@$rows) {
+        printf $pattern, @$row;
+    }
+}
+
 1;
 
 =head1 NAME
@@ -364,24 +398,24 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
 
     # Boolean
     if ($it->any(sub { shift->{n} > 5}) {
-	 .. at least one n > 5 ..
+     .. at least one n > 5 ..
     }
 
     if ($it->many(sub { shift->{n} > 5}) {
-	 .. at least two n > 5 ..
+     .. at least two n > 5 ..
     }
 
     if ($it->all(sub { shift->{n} > 5}) {
-	 .. all n > 5 ..
+     .. all n > 5 ..
     }
 
     # Modify and summary
     my $it2 = $it->map(sub { shift->{n} * 2 });
 
     my $sum = $it2->reduce(0,sub {
-		my ($prev,$this) = @_;
-		$prev + $this;
-		});
+        my ($prev,$this) = @_;
+        $prev + $this;
+        });
 
     my $it3 = $it->group(2)->invoke('to_array');
 
@@ -460,8 +494,8 @@ processing results. E.g. you are writing code to process an iterable and wrote
 something like:
 
    $it->each(sub {
-	  # Very complicated routine
-	  ....
+      # Very complicated routine
+      ....
    });
 
 Now you would like to benchmark this piece of code (how fast are we processing).
@@ -470,8 +504,8 @@ in your program that for instance counts the number of items divided by the
 execution time.
 
    $it->tap(\&benchmark)->each(sub {
-	  # Very complicated routine
-	  ....
+      # Very complicated routine
+      ....
    });
 
    sub benchmark {

@@ -1,15 +1,13 @@
-package Catmandu::Cmd::module_info;
+package Catmandu::Cmd::fix_info;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::ModuleInfo;
+use Catmandu::Importer::FixInfo;
 
 sub command_opt_spec {
     (
-        ["namespace=s", "namespace"],
-        ["max_depth=i", "maximum depth to search for modules"],
         ["inc=s@", 'override included directories (defaults to @INC)', {default => [@INC]}],
-        ["verbose|v", "include package information"]
+        ["verbose|v", ""]
     );
 }
 
@@ -17,10 +15,10 @@ sub command {
     my ($self, $opts, $args) = @_;
     my $verbose = $opts->verbose;
     my $from_opts = {};
-    for my $key (qw(namespace max_depth inc)) {
+    for my $key (qw(inc)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
-    my $from = Catmandu::Importer::ModuleInfo->new($from_opts);
+    my $from = Catmandu::Importer::FixInfo->new($from_opts);
 
     my $into_args = [];
     my $into_opts = {};
@@ -57,10 +55,10 @@ sub command {
 
 =head1 NAME
 
-Catmandu::Cmd::module_info - list installed perl modules in a given namespace
+Catmandu::Cmd::fix_info - list installed Catmandu fixes
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::ModuleInfo>
+    L<Catmandu::Importer::FixInfo>
 
 =cut
