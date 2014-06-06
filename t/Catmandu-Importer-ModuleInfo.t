@@ -9,16 +9,11 @@ BEGIN {
     $pkg = 'Catmandu::Importer::ModuleInfo';
     use_ok $pkg;
 }
-require_ok $pkg;
 
-my $importer = $pkg->new(namespace => "Catmandu");
+my $importer = $pkg->new(namespace => "Catmandu::Importer", max_depth => 1);
 
 isa_ok $importer,$pkg;
 
-my $count = 0;
+ok($importer->any(sub { $_[0]->{name} eq $pkg }), "$pkg finds info about itself");
 
-lives_ok(sub { $count = $importer->count; }, "try count");
-
-ok($count > 0, "module must see Catmandu modules");
-
-done_testing 5;
+done_testing 3;
