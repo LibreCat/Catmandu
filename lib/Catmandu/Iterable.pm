@@ -516,6 +516,8 @@ execution time.
        printf "%d recs/sec\n" , $count/(time - $start + 1) if $count % 100 == 0;
    }
 
+Note that the C<benchmark> method already implements this common case.
+
 =head2 detect(\&callback)
 
 Returns the first item for which callback returns a true value.
@@ -645,6 +647,15 @@ Returns the minimum of an iterator containing only numbers.
 =head2 min(\&callback)
 
 Returns the minimum of the numbers returned by executing callback.
+
+=head2 benchmark()
+
+Prints the number of records processed per second to STDERR.
+
+=head2 format(cols => ['key', ...], col_sep => '  |  ', header => 1|0)
+
+Print the iterator data formatted as a spreadsheet like table. Note that this
+method will load the whole dataset in memory to calculate column widths.
 
 =head1 SEE ALSO
 

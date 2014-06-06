@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Iterable benchmark and format method pod
 
 0.92  2014-06-06 13:06:01 CEST
   - catmandu debug flag and more informative error messages
