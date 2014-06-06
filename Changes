@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.92  2014-06-06 13:06:01 CEST
   - more pod
   - bump required version of Moo
   - require YAML::XS to avoid YAML weirdness
