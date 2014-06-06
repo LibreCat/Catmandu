@@ -25,25 +25,28 @@ sub generator {
         state $fh   = $self->fh;
 
         for (;;) {
-            sysread($fh, my $buf, 512) // Catmandu::Error->throw($!);
+            my $res = sysread($fh, my $buf, 512);
+            $res // Catmandu::Error->throw($!);
             $json->incr_parse($buf); # void context, so no parsing
             $json->incr_text =~ s/^[^{]+//;
-            return unless length $json->incr_text;
-            last if $json->incr_text =~ /^\{/;
+            return if $json->incr_text =~ /^$/;
+            last if $json->incr_text =~ /^{/;
         }
 
         # read data until we get a single json object
-        my $data;
         for (;;) {
-            if ($data = $json->incr_parse) {
-                last;
+            if (my $data = $json->incr_parse) {
+                return $data;
             }
 
-            sysread($fh, my $buf, 512) // Catmandu::Error->throw($!);
+            my $res = sysread($fh, my $buf, 512);
+            $res // Catmandu::Error->throw($!);
+            $res || Catmandu::Error->throw("JSON syntax error: unexpected end of object");
             $json->incr_parse($buf);
         }
 
-        $data;
+        return;
+ 
     } : sub {
         state $json = $self->json;
         state $fh   = $self->fh;
