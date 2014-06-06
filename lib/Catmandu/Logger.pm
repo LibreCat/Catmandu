@@ -20,11 +20,6 @@ sub BUILD {
     $self->log->debug('creating: ' . ref($self) . "($params)");
 }
 
-sub DEMOLISH {
-    my ($self) = @_;
-    $self->log->debug('destroying: ' . ref($self));
-}
-
 =head1 SYNOPSIS
 
     package MyApp::View;
