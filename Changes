@@ -8,6 +8,7 @@ Revision history for Catmandu
   - MooX::Log::Any replaced by Catmandu::Logger because it doesn't set the
     correct category
   - config command can use any Exporter
+  - Importer::JSON multiline is more robust
   - Exporter::JSON supports canonical, indent, space_before, space_after
     options
   - info commands and matching importers

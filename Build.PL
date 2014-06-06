@@ -17,10 +17,10 @@ my %module_build_args = (
   "dist_author" => [
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
-  "dist_name" => "Catmandu",
+  "dist_name" => "catmandu",
   "dist_version" => "0.9103",
   "license" => "perl",
-  "module_name" => "Catmandu",
+  "module_name" => "catmandu",
   "recommends" => {
     "JSON::XS" => "2.3",
     "Log::Any::Adapter::Log4perl" => "0.06",
