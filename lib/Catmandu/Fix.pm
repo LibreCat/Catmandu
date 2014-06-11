@@ -227,7 +227,8 @@ sub emit_block {
 
 sub emit_value {
     my ($self, $val) = @_;
-    is_number($val) ? $val : $self->emit_string($val);
+    # Number should look like number and don't start with a 0 (no support for octals)
+    is_number($val) && $val !~ /^0+/ ? $val : $self->emit_string($val);
 }
 
 sub emit_string {
