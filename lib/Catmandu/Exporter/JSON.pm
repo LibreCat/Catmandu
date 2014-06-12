@@ -52,6 +52,9 @@ sub commit {
     my ($self, $data) = @_;
     if ($self->array) {
         my $fh = $self->fh;
+        unless ( $self->count ) {
+            print $fh "[";
+        }
         print $fh "]\n";
     }
 }
