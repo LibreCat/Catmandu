@@ -53,7 +53,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR $n > 1 ? "converted $n objects" : "converted 1 object";
+        say STDERR ($n > 1 || $n <= 0) ? "converted $n objects" : "converted 1 object";
         say STDERR "done";
     }
 }
