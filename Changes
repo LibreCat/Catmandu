@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9204  2014-06-13 09:44:48 CEST
   - fix issue #93 octal number bug
 
 0.9203  2014-06-13 09:27:54 CEST
