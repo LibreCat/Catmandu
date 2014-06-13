@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9203  2014-06-13 09:27:54 CEST
   - fix counting bugs
 
 0.9202  2014-06-10 09:30:24 CEST

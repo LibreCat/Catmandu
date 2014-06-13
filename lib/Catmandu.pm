@@ -5,7 +5,7 @@ use Catmandu::Env;
 use Catmandu::Util qw(:is);
 use File::Spec;
 
-our $VERSION = '0.9202';
+our $VERSION = '0.9203';
 
 =head1 NAME
 
