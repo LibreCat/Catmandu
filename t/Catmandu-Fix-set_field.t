@@ -31,4 +31,9 @@ is_deeply
     {deeply => {nested => {}}},
     "only set field if the path matches";
 
-done_testing 5;
+is_deeply
+    $pkg->new('test', '0123')->fix({test => 'ok'}),
+    {test => '0123'},
+    "set a number";
+
+done_testing 6;
