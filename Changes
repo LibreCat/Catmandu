@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix counting bugs
 
 0.9202  2014-06-10 09:30:24 CEST
   - fix Logger bug
