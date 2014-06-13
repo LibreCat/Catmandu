@@ -54,7 +54,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR ($n > 1 || $n <= 0) ? "imported $n objects" : "imported 1 object";
+        say STDERR $n == 1 ? "imported 1 object" : "imported $n objects";
         say STDERR "done";
     }
 }

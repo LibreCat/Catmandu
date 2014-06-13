@@ -62,7 +62,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR ($n > 1 || $n <= 0) ? "moved $n objects" : "moved 1 object";
+        say STDERR $n ==1 ? "moved 1 object" : "moved $n objects";
         say STDERR "done";
     }
 }

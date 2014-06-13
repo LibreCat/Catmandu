@@ -61,7 +61,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR ($n > 1 || $n <= 0) ? "exported $n objects" : "exported 1 object";
+        say STDERR $n == 1 ? "exported 1 object" : "exported $n objects";
         say STDERR "done";
     }
 }
