@@ -1,8 +1,8 @@
-package Catmandu::Importer::ImporterInfo;
+package Catmandu::Importer::Fixes;
 
 use Catmandu::Sane;
 use Moo;
-use Catmandu::Importer::ModuleInfo;
+use Catmandu::Importer::Modules;
 
 has inc => (
     is      => 'ro',
@@ -18,16 +18,16 @@ has _module_info => (
 
 sub _build_module_info {
     my ($self) = @_;
-    Catmandu::Importer::ModuleInfo->new(
-        namespace => 'Catmandu::Importer',
+    Catmandu::Importer::Modules->new(
+        namespace => 'Catmandu::Fix',
         inc       => $self->inc,
-        max_depth => 1,
+        pattern   => qr/:[a-z][^:]*$/,
     );
 }
 
 =head1 NAME
 
-Catmandu::Importer::ImporterInfo - list installed Catmandu importers
+Catmandu::Importer::Fixes - list installed Catmandu fixes
 
 =head1 OPTIONS
 
@@ -35,9 +35,8 @@ Catmandu::Importer::ImporterInfo - list installed Catmandu importers
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::ModuleInfo>
+L<Catmandu::Importer::Modules>
 
 =cut
 
 1;
-

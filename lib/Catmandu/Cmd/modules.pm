@@ -1,13 +1,15 @@
-package Catmandu::Cmd::exporter_info;
+package Catmandu::Cmd::modules;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::ExporterInfo;
+use Catmandu::Importer::Modules;
 
 sub command_opt_spec {
     (
+        ["namespace=s", "namespace"],
+        ["max_depth=i", "maximum depth to search for modules"],
         ["inc=s@", 'override included directories (defaults to @INC)', {default => [@INC]}],
-        ["verbose|v", ""]
+        ["verbose|v", "include package information"]
     );
 }
 
@@ -15,10 +17,10 @@ sub command {
     my ($self, $opts, $args) = @_;
     my $verbose = $opts->verbose;
     my $from_opts = {};
-    for my $key (qw(inc)) {
+    for my $key (qw(namespace max_depth inc)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
-    my $from = Catmandu::Importer::ExporterInfo->new($from_opts);
+    my $from = Catmandu::Importer::Modules->new($from_opts);
 
     my $into_args = [];
     my $into_opts = {};
@@ -51,15 +53,14 @@ sub command {
     }
 }
 
-1;
-
 =head1 NAME
 
-Catmandu::Cmd::exporter_info - list installed Catmandu exporters
+Catmandu::Cmd::modules - list installed perl modules in a given namespace
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::ExporterInfo>
+L<Catmandu::Importer::Modules>
 
 =cut
 
+1;

@@ -1,8 +1,8 @@
-package Catmandu::Importer::StoreInfo;
+package Catmandu::Importer::Stores;
 
 use Catmandu::Sane;
 use Moo;
-use Catmandu::Importer::ModuleInfo;
+use Catmandu::Importer::Modules;
 
 has inc => (
     is      => 'ro',
@@ -18,7 +18,7 @@ has _module_info => (
 
 sub _build_module_info {
     my ($self) = @_;
-    Catmandu::Importer::ModuleInfo->new(
+    Catmandu::Importer::Modules->new(
         namespace => 'Catmandu::Store',
         inc       => $self->inc,
         max_depth => 1,
@@ -27,7 +27,7 @@ sub _build_module_info {
 
 =head1 NAME
 
-Catmandu::Importer::StoreInfo - list installed Catmandu stores
+Catmandu::Importer::Stores - list installed Catmandu stores
 
 =head1 OPTIONS
 
@@ -35,9 +35,8 @@ Catmandu::Importer::StoreInfo - list installed Catmandu stores
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::ModuleInfo>
+L<Catmandu::Importer::Modules>
 
 =cut
 
 1;
-

@@ -1,4 +1,4 @@
-package Catmandu::Importer::ModuleInfo;
+package Catmandu::Importer::Modules;
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -80,21 +80,31 @@ sub generator {
 
 =head1 NAME
 
-    Catmandu::Importer::ModuleInfo - list installed perl modules in a given namespace
+Catmandu::Importer::Modules - list installed perl modules in a given namespace
 
 =head1 OPTIONS
 
-    namespace: namespace for the packages to list
-    inc:       list of library paths (defaults to @INC)
-    max_depth: maximum depth to recurse into the namespace
-               e.g. if the namespace is Catmandu::Fix then
-               Catmandu::Fix::add_field has a depth of 1 and
-               Catmandu::Fix::Condition::exists a depth of 2
-    pattern:   filter modules by the given regex pattern
+=over
 
-=head1 SEE ALSO
+=item namespace
 
-    L<Catmandu::Importer::ModuleInfo>
+namespace for the packages to list
+
+=item inc
+
+list of library paths (defaults to C<@INC>)
+
+=item max_depth
+
+maximum depth to recurse into the namespace e.g. if the namespace is
+Catmandu::Fix then Catmandu::Fix::add_field has a depth of 1 and
+Catmandu::Fix::Condition::exists a depth of 2
+
+=item pattern
+
+filter modules by the given regex pattern
+
+=back
 
 =cut
 

@@ -1,8 +1,8 @@
-package Catmandu::Importer::ExporterInfo;
+package Catmandu::Importer::Exporters;
 
 use Catmandu::Sane;
 use Moo;
-use Catmandu::Importer::ModuleInfo;
+use Catmandu::Importer::Modules;
 
 has inc => (
     is      => 'ro',
@@ -18,7 +18,7 @@ has _module_info => (
 
 sub _build_module_info {
     my ($self) = @_;
-    Catmandu::Importer::ModuleInfo->new(
+    Catmandu::Importer::Modules->new(
         namespace => 'Catmandu::Exporter',
         inc       => $self->inc,
         max_depth => 1,
@@ -27,15 +27,21 @@ sub _build_module_info {
 
 =head1 NAME
 
-Catmandu::Importer::ExporterInfo - list installed Catmandu exporters
+Catmandu::Importer::Exporters - list installed Catmandu exporters
 
 =head1 OPTIONS
 
-    inc: list of library paths (defaults to @INC)
+=over
+
+=item inc
+
+list of library paths (defaults to @INC)
+
+=back
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::ModuleInfo>
+L<Catmandu::Importer::Modules>
 
 =cut
 

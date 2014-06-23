@@ -1,8 +1,8 @@
-package Catmandu::Cmd::importer_info;
+package Catmandu::Cmd::stores;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::ImporterInfo;
+use Catmandu::Importer::Stores;
 
 sub command_opt_spec {
     (
@@ -18,7 +18,7 @@ sub command {
     for my $key (qw(inc)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
-    my $from = Catmandu::Importer::ImporterInfo->new($from_opts);
+    my $from = Catmandu::Importer::Stores->new($from_opts);
 
     my $into_args = [];
     my $into_opts = {};
@@ -51,15 +51,15 @@ sub command {
     }
 }
 
-1;
-
 =head1 NAME
 
-Catmandu::Cmd::importer_info - list installed Catmandu importers
+Catmandu::Cmd::stores - list installed Catmandu stores
 
 =head1 SEE ALSO
 
-    L<Catmandu::Importer::ImporterInfo>
+L<Catmandu::Importer::Stores>
 
 =cut
+
+1;
 
