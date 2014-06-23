@@ -57,9 +57,10 @@ sub command {
 
 Catmandu::Cmd::modules - list installed perl modules in a given namespace
 
-=head1 SEE ALSO
+=head1 DESCRIPTION
 
-L<Catmandu::Importer::Modules>
+This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all
+modules in a given namespace.
 
 =cut
 

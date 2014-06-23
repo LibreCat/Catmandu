@@ -2,7 +2,7 @@ package Catmandu::Cmd::stores;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::Stores;
+use Catmandu::Importer::Modules;
 
 sub command_opt_spec {
     (
@@ -14,11 +14,13 @@ sub command_opt_spec {
 sub command {
     my ($self, $opts, $args) = @_;
     my $verbose = $opts->verbose;
-    my $from_opts = {};
+    my $from_opts = {
+        namespace => 'Catmandu::Store'
+    };
     for my $key (qw(inc)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
-    my $from = Catmandu::Importer::Stores->new($from_opts);
+    my $from = Catmandu::Importer::Modules->new($from_opts);
 
     my $into_args = [];
     my $into_opts = {};
@@ -57,7 +59,8 @@ Catmandu::Cmd::stores - list installed Catmandu stores
 
 =head1 SEE ALSO
 
-L<Catmandu::Importer::Stores>
+This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all
+modules in namespace L<Catmandu::Store>.
 
 =cut
 
