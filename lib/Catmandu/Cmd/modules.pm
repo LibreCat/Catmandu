@@ -1,8 +1,8 @@
-package Catmandu::Cmd::module_info;
+package Catmandu::Cmd::modules;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::ModuleInfo;
+use Catmandu::Importer::Modules;
 
 sub command_opt_spec {
     (
@@ -20,7 +20,7 @@ sub command {
     for my $key (qw(namespace max_depth inc)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
-    my $from = Catmandu::Importer::ModuleInfo->new($from_opts);
+    my $from = Catmandu::Importer::Modules->new($from_opts);
 
     my $into_args = [];
     my $into_opts = {};
@@ -53,14 +53,15 @@ sub command {
     }
 }
 
-1;
-
 =head1 NAME
 
-Catmandu::Cmd::module_info - list installed perl modules in a given namespace
+Catmandu::Cmd::modules - list installed perl modules in a given namespace
 
-=head1 SEE ALSO
+=head1 DESCRIPTION
 
-    L<Catmandu::Importer::ModuleInfo>
+This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all
+modules in a given namespace.
 
 =cut
+
+1;

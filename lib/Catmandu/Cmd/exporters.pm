@@ -1,8 +1,8 @@
-package Catmandu::Cmd::fix_info;
+package Catmandu::Cmd::exporters;
 
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::FixInfo;
+use Catmandu::Importer::Modules;
 
 sub command_opt_spec {
     (
@@ -14,11 +14,13 @@ sub command_opt_spec {
 sub command {
     my ($self, $opts, $args) = @_;
     my $verbose = $opts->verbose;
-    my $from_opts = {};
+    my $from_opts = {
+        namespace => 'Catmandu::Exporter'
+    };
     for my $key (qw(inc)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
-    my $from = Catmandu::Importer::FixInfo->new($from_opts);
+    my $from = Catmandu::Importer::Modules->new($from_opts);
 
     my $into_args = [];
     my $into_opts = {};
@@ -51,14 +53,15 @@ sub command {
     }
 }
 
-1;
-
 =head1 NAME
 
-Catmandu::Cmd::fix_info - list installed Catmandu fixes
+Catmandu::Cmd::exporters - list installed Catmandu exporters
 
-=head1 SEE ALSO
+=head1 DESCRIPTION
 
-    L<Catmandu::Importer::FixInfo>
+This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all
+modules in namespace L<Catmandu::Exporter>.
 
 =cut
+
+1;
