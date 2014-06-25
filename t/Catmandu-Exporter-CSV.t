@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 use Test::More;
@@ -13,10 +11,9 @@ BEGIN {
 require_ok $pkg;
 
 my $data = [{'a' => 'moose', b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
-my $file = "";
+my $out = "";
 
-my $exporter = $pkg->new(file => \$file);
-
+my $exporter = $pkg->new(file => \$out);
 isa_ok $exporter, $pkg;
 
 $exporter->add($_) for @$data;
@@ -29,8 +26,13 @@ pony,2
 shrimp,3
 EOF
 
-is($file, $csv, "CSV strings ok");
+is $out, $csv, "CSV strings ok";
+is $exporter->count,3, "Count ok";
+ 
+$out = "";
+$exporter = $pkg->new( fields => { a => 'Longname', x => 'X' }, file => \$out );
+$exporter->add( { a => 'Hello', b => 'World' } );
+$csv = "Longname,X\nHello,\n";
+is $out, $csv, "custom column names as HASH";
 
-is($exporter->count,3, "Count ok");
-
-done_testing 5;
+done_testing;
