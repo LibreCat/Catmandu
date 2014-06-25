@@ -7,12 +7,11 @@ use Moo;
 
 with 'Catmandu::Exporter';
 
-has csv          => (is => 'ro', lazy => 1, builder => '_build_csv');
-has sep_char     => (is => 'ro', default => sub { ',' });
-has quote_char   => (is => 'ro', default => sub { '"' });
-has escape_char  => (is => 'ro', default => sub { '"' });
-has always_quote => (is => 'ro');
-has header       => (is => 'rw', default => sub { 1 });
+has csv         => (is => 'ro', lazy => 1, builder => 1);
+has sep_char    => (is => 'ro', default => sub { ',' });
+has quote_char  => (is => 'ro', default => sub { '"' });
+has escape_char => (is => 'ro', default => sub { '"' });
+has header      => (is => 'rw', default => sub { 1 });
 has fields => (
     is     => 'rw',
     coerce => sub {
@@ -29,7 +28,6 @@ sub _build_csv {
         binary => 1,
         eol => "\n",
         sep_char => $self->sep_char,
-        always_quote => $self->always_quote,
         quote_char => $self->quote_char ? $self->quote_char : undef,
         escape_char => $self->escape_char ? $self->escape_char : undef,
     });
@@ -65,8 +63,6 @@ Catmandu::Exporter::CSV - a CSV exporter
     my $exporter = Catmandu::Exporter::CSV->new(
 				fix => 'myfix.txt'
 				quote_char => '"' ,
-                escape_char => '"' ,
-                always_quote => 1,
 				sep_char => ',' ,
 				header => 1);
 
@@ -84,14 +80,31 @@ Catmandu::Exporter::CSV - a CSV exporter
 
     printf "exported %d objects\n" , $exporter->count;
 
-=head1 METHODS
+=head1 DESCRIPTION
 
-=head2 new(quote_char => STRING, sep_char => STRING, header => 0|1|HASH, fields => ARRAY|HASH|STRING)
+This C<Catmandu::Exporter> exports items as rows with comma-separated values
+(CSV). Serialization is based on L<Text::CSV>. A header line with field names
+will be included if option C<header> is set. Field names can be read from the
+first item exported or set by option C<fields>. Newlines and tabulator values
+are in field values are escaped as C<\n>, C<\r>, and C<\t>.
 
-Creates a new Catmandu::Exporter::CSV. Optionally set the field and column
-boundaries with quote_char , sep_char and always_quote. A header line with field names will be
-included if C<header> is set. Field names can be read from the first item
-exported or set by the fields argument (see: C<fields>).
+=head1 CONFIGURATION
+
+=item sep_char
+
+Column separator (C<,> by default>)
+
+=item quote_char
+
+Quotation character (C<"> by default>)
+
+=item escape_char
+
+Character for escaping inside quoted field (C<"> by default)
+
+=item fields
+
+List of fields to be used as columns, given as array reference, comma-separated string, or hash reference.
 
 =head2 fields($arrayref)
 
@@ -105,17 +118,21 @@ Set the field names by the keys of a HASH reference.
 
 Set the fields by a comma delimited string.
 
-=head2 header(1)
+=item header
 
-Include a header line with the field names
+Include a header line with the field names, if set to C<1> (the default).
+Custom field names can be supplied as has reference.
 
-=head2 header($hashref)
+=back
 
-Include a header line with custom field names
+=head1 METHODS
+
+See L<Catmandu::Exporter>, L<Catmandu::Addable>, L<Catmandu::Fixable>,
+L<Catmandu::Counter>, and L<Catmandu::Logger> for a full list of methods.
 
 =head1 SEE ALSO
 
-L<Catmandu::Exporter>
+L<Catmandu::Exporter::Table>
 
 =cut
 
