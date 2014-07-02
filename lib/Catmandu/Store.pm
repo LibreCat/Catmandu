@@ -128,7 +128,7 @@ Return the current logger. Can be used when creating your own Stores.
 
 E.g.
     
-    package Catmandu::Importer::Store::Mock;
+    package Catmandu::Store::Hash;
 
     ...
 

@@ -17,7 +17,7 @@ sub description {
     <<EOS;
 examples:
 
-catmandu move MongoDB --database-name items --bag book to ElasticSearch --index-name items --bag book
+catmandu move MongoDB --database_name items --bag book to ElasticSearch --index_name items --bag book
 
 options:
 EOS
