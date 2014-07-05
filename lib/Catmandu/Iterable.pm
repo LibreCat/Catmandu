@@ -4,7 +4,6 @@ use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
-use List::Util ();
 require Catmandu::Iterator;
 require Catmandu::ArrayIterator;
 use Role::Tiny;
@@ -337,14 +336,14 @@ sub format {
         $row;
     })->to_array;
 
-    my $longest_row = List::Util::sum(@col_lengths) + (length($opts{col_sep}) * (scalar(@cols) - 1));
     my @indices = 0 .. @cols-1;
     my $pattern = join($opts{col_sep}, map { "%-$col_lengths[$_]s" } @indices)."\n";
 
     if ($opts{header}) {
         printf $pattern, @cols;
-        print '=' x $longest_row;
-        print "\n";
+        my $sep = $opts{col_sep};
+        $sep =~ s/[^|]/-/g;
+        print join($sep, map { '-' x $col_lengths[$_] } @indices)."\n";
     }
     for my $row (@$rows) {
         printf $pattern, @$row;
@@ -655,7 +654,9 @@ Prints the number of records processed per second to STDERR.
 =head2 format(cols => ['key', ...], col_sep => '  |  ', header => 1|0)
 
 Print the iterator data formatted as a spreadsheet like table. Note that this
-method will load the whole dataset in memory to calculate column widths.
+method will load the whole dataset in memory to calculate column widths. See
+also L<Catmandu::Exporter::Table> for a more elaborated method of printing
+iterators in tabular form.
 
 =head1 SEE ALSO
 
