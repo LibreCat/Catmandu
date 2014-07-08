@@ -35,6 +35,8 @@ sub bind {
     my $key   = $data->{key};
     my $value = $data->{value};
 
+    $code->($data);
+
     if (defined $key) {
         if (is_string($key)) {
             $self->add_to_hash($key,$value);
@@ -48,8 +50,6 @@ sub bind {
             warn "$key is not a string or array for $value";
         }
     }
-
-    $code->($data);
 }
 
 sub DESTROY {
@@ -83,7 +83,7 @@ sub DESTROY {
         }
 
 
-        $e->add({ _id => sprintf("%9.9d",++$id) ,  value => {$_ => $v }});
+        $e->add({ _id => $_ ,  value => $v });
     }
 
     $e->commit;
@@ -96,20 +96,25 @@ Catmandu::Fix::Bind::hashmap - a binder to add key/value pairs to an internal ha
 =head1 SYNOPSIS
 
  # Find all ISBN in a stream
- do hashmap(exporter => JSON)
+ do hashmap(exporter => JSON, join => ',')
+   # Need an identity binder to group all operations that calculate key_value pairs
+   do identity()
     copy_field(isbn,key)
     copy_field(_id,value)
+   end
  end
 
  # will export to the YAML exporter a hash map containing all isbn occurrences in the stream
 
- { "_id": "000000001" , "value":{ "ISBN1":0121,12912,121}}
- { "_id": "000000002" , "value":{ "ISBN2":102012}}
+ { "_id": "ISBN1" , "value": "0121,12912,121" }
+ { "_id": "ISBN2" , "value": "102012" }
 
  # Count the number of ISBN occurrences in a stream
  # File: count.fix:
  do hashmap(count: 1)
+   do identity()
     copy_field(isbn,key)
+   end
  end
 
  # Use the Null exporter to suppress the normal output
