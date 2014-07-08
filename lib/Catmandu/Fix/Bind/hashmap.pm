@@ -32,10 +32,11 @@ sub add_to_hash {
 
 sub bind {
     my ($self,$data,$code,$name) = @_;
+
+    $data = $code->($data);
+
     my $key   = $data->{key};
     my $value = $data->{value};
-
-    $code->($data);
 
     if (defined $key) {
         if (is_string($key)) {
@@ -50,6 +51,8 @@ sub bind {
             warn "$key is not a string or array for $value";
         }
     }
+
+    $data;
 }
 
 sub DESTROY {
