@@ -100,11 +100,11 @@ Some stores can be searched using L<Catmandu::Searchable> methods.
 
 =head1 METHODS
 
-=head2 new(%store_args, bag_class => $class, bags => { $bagname => \%bag_args })
+=head2 new(%store_args, bag_class => $class, default_bag => $name, bags => { $bagname => \%bag_args })
 
 Create a new Catmandu::Store. Optionally provide the class name of a sub-class of
-L<Catmandu::Bag>. Startup parameters can be provided for each $bagname using the
-'bags' parameter. E.g.
+L<Catmandu::Bag>, and the name of the default bag ('data'). Startup parameters can be 
+provided for each $bagname using the 'bags' parameter. E.g.
 
  my $store = Catmandu::Store::Hash->new(
 		bags => {myBag => {plugins => ['Datestamps']}});
