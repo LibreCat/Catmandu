@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use utf8;
 
 my $pkg;
 BEGIN {
@@ -15,6 +16,7 @@ require_ok $pkg;
 my $data = [
    {name=>'Patrick',age=>'39'},
    {name=>'Nicolas',age=>'34'},
+   {name=>'村上 春樹',age=>'65'},
 ];
 
 my $yaml = <<EOF;
@@ -24,6 +26,9 @@ age: 39
 ---
 name: Nicolas
 age: 34
+---
+name: 村上 春樹
+age: 65
 
 EOF
 
@@ -31,7 +36,14 @@ my $importer = $pkg->new(file => \$yaml);
 
 isa_ok $importer, $pkg;
 
-is_deeply $importer->to_array, $data;
+my $arr = $importer->to_array;
+is_deeply $arr, $data, 'checking correct import';
 
-done_testing 4;
+is $arr->[2]->{name} , '村上 春樹' , 'checking utf8 issues';
+
+$importer = $pkg->new(file => 't/non_ascii.yaml');
+
+is $importer->count, 1000 , 'parsed non ascii file';
+
+done_testing 6;
 

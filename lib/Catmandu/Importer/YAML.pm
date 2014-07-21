@@ -4,6 +4,7 @@ use namespace::clean;
 use Catmandu::Sane;
 use YAML::XS ();
 use Moo;
+use Devel::Peek;
 
 with 'Catmandu::Importer';
 
@@ -22,13 +23,15 @@ sub generator {
                 last;
             }
             if ($line =~ $RE_SEP && $yaml) {
+                utf8::encode($yaml);
                 $data = YAML::XS::Load($yaml);
                 $yaml = $line;
                 return $data;
             }
             $yaml .= $line;
         }
-        if ($yaml) {
+        if ($yaml) { 
+            utf8::encode($yaml);
             $data = YAML::XS::Load($yaml);
             $yaml = "";
             return $data;
