@@ -15,7 +15,7 @@ Catmandu - a data toolkit
 
     use Catmandu -all;
     use Catmandu qw(config store);
-    use Catmandu -load;
+    use Catmandu -load; # loads default configuration file
     use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
 
     # If you have Catmandu::OAI and Catmandu::MongoDB installed
@@ -451,6 +451,14 @@ Same as C<< Catmandu->export >>.
 
 Same as C<< Catmandu->export_to_string >>.
 
+=item fixer
+
+Same as C<< Catmandu->fixer >>.
+
+=item log
+
+Same as C<< Catmandu->log >>.
+
 =item -all/:all
 
 Import everything.
@@ -519,11 +527,27 @@ See L<Config::Onion> for more information on how this works.
 
 =head1 SEE ALSO
 
-L<https://github.com/LibreCat/Catmandu/wiki>,
-L<Catmandu::Importer>,
+=over 4
+
+=item documentation
+
+L<https://github.com/LibreCat/Catmandu/wiki>
+
+=item command line client
+
+L<catmandu>
+
+=item core modules
+
+L<Catmandu::Importer>
 L<Catmandu::Exporter>,
 L<Catmandu::Store>,
-L<Catmandu::Fix>
+L<Catmandu::Fix>,
+L<Catmandu::Iterable>
+
+=item extended features
+
+L<Catmandu::Validator>
 
 =head1 AUTHOR
 
