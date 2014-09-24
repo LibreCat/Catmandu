@@ -46,4 +46,68 @@ sub add_many {
 
 sub commit {}
 
+=head1 NAME
+
+Catmandu::Addable - Base class for all Catmandu modules need to implement add
+
+=head1 SYNOPSIS
+
+    package My::Adder;
+
+    use Moo;
+    use Data::Dumper;
+  
+    with 'Catmandu::Addable';
+
+    sub add {
+        my ($self,$object) = @_;
+
+        print "So you want to add:\n";
+        print Dumper($object);
+
+        1;
+    }
+
+    sub commit {
+        my $self = shift;
+
+        print "And now you are done?\n";
+    }
+
+    package main;
+
+    my $adder = My::Adder->new(fix => ['upcase(foo)']);
+
+    # prints foo => BAR
+    $adder->add({ foo => 'bar' });
+    
+    # prints:
+    #  foo => BAR
+    #  foo => BAR
+    $adder->add_many([ { foo => 'bar' } , { foo => 'bar' }]);
+
+    # prints a commit statement
+    $adder->commit;
+
+=head1 METHODS
+
+=head2 add($hash)
+
+Receives a Perl hash and should return true or false.
+
+=head2 commit
+
+This method is usually called at the end of many add or add_many operations.
+
+=head1 INHERIT
+
+If you provide an 'add' method, then automatically your package gets a add_many method, plus
+a fix attribute which transforms all Perl hashes provided to the add method.
+
+=head1 SEE ALSO
+
+L<Catmandu::Fixable>, L<Catmandu::Exporter> , L<Catmandu::Store>
+
+=cut
+
 1;

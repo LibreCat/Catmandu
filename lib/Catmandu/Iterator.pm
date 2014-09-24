@@ -47,7 +47,7 @@ Catmandu::Iterator - Base class for all Catmandu iterators
 
   my $it2 = $it->map(sub { shift->{random} * 2 });
 
-=head1 METHOD
+=head1 METHODS
 
 =head2 generator
 
