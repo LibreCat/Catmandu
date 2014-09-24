@@ -41,6 +41,8 @@ sub _trigger_fixes {
     for my $fix (@$fixes) {
         if (ref $fix) {
             push @$parsed_fixes, $fix;
+        } elsif(-X $fix) {
+            push @$parsed_fixes, require_package('Catmandu::Fix::cmd')->new($fix);
         } else {
             push @$parsed_fixes, @{$self->parser->parse($fix)};
         }
@@ -674,9 +676,10 @@ Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catm
 
 =head2 new(fixes => [ FIX , ...])
 
-Create a new Catmandu::Fix which will execute every FIX into a consecutive order. A
-FIX can be the name of a Catmandu::Fix::* routine or the path to a plain text file
-containing all the fixes to be executed.
+Create a new Catmandu::Fix which will execute every FIX into a consecutive
+order. A FIX can be the name of a Catmandu::Fix::* routine, or the path to a
+plain text file containing all the fixes to be executed or a path to any
+executable if L<Catmandu::Fix::cmd> is installed.
 
 =head2 fix(HASH)
 
