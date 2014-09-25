@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Catmandu</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
   <style type="text/css">
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
@@ -28,21 +34,64 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #06287e; }
 code > span.er { color: #ff0000; font-weight: bold; }
   </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="layout.css">
 </head>
 <body>
-<header>
+
+<!-- Fixed navbar -->
+    <div class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!--div class="navbar-header">
+          <a class="navbar-brand" href="#">Project name</a>
+        </div-->
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="/index.html">Home</a>
+            </li>
+            <li class="active">
+              <a href="/Catmandu">Documentation</a>
+            </li>
+            <li class="">
+              <a href="/events.html">Events &mdash; Workshops</a>
+            </li>
+            <li>
+              <a href="/blog.html">Blog</a>
+            </li>
+            <li>
+              <a href="http://demo.librecat.org/">Demo</a>
+            </li>
+            <li>
+              <a href="/about.html">About</a>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+<div class="container">
+
+<div class="jumbotron">
 <h1 class="title">Catmandu</h1>
-<h1 class="subtitle">a data toolkit</h1>
-</header>
+<h2 class="subtitle">a data toolkit</h2>
+</div>
+
+<p>
+  This handbook is contains the aggregated content of
+  <a href="https://github.com/LibreCat/Catmandu/wiki">Catmandu documentation wiki</a>. 
+  Feel free to improve the documentation there!
+</p>
+
 <nav id="TOC">
+<h1>Table of Contents</h1>
 <ul>
-<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a><ul>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction <a href="https://github.com/LibreCat/Catmandu/wiki/Introduction/_edit">✎</a></a><ul>
 <li><a href="#where-do-we-use-it"><span class="toc-section-number">1.0.1</span> Where do we use it?</a></li>
 <li><a href="#why-do-we-use-it"><span class="toc-section-number">1.0.2</span> Why do we use it?</a></li>
 <li><a href="#before-you-start"><span class="toc-section-number">1.0.3</span> Before you start</a></li>
 <li><a href="#command-line"><span class="toc-section-number">1.0.4</span> Command line</a></li>
-<li><a href="#installation"><span class="toc-section-number">1.1</span> Installation</a><ul>
+<li><a href="#installation"><span class="toc-section-number">1.1</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation/_edit">✎</a></a><ul>
 <li><a href="#centos-6.4"><span class="toc-section-number">1.1.1</span> CentOS 6.4</a></li>
 <li><a href="#debian-7-stable-wheezy"><span class="toc-section-number">1.1.2</span> Debian 7 (stable, “Wheezy”)</a></li>
 <li><a href="#opensuse-12.3"><span class="toc-section-number">1.1.3</span> openSUSE 12.3</a></li>
@@ -50,23 +99,23 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">1.1.5</span> Ubuntu Server 12.04.4 LTS</a></li>
 <li><a href="#openbsd-53"><span class="toc-section-number">1.1.6</span> OpenBSD 53</a></li>
 </ul></li>
-<li><a href="#concepts"><span class="toc-section-number">1.2</span> Concepts</a><ul>
+<li><a href="#concepts"><span class="toc-section-number">1.2</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></a><ul>
 <li><a href="#extended-features"><span class="toc-section-number">1.2.1</span> Extended features</a></li>
 </ul></li>
-<li><a href="#items"><span class="toc-section-number">1.3</span> Items</a></li>
+<li><a href="#items"><span class="toc-section-number">1.3</span> Items <a href="https://github.com/LibreCat/Catmandu/wiki/Items/_edit">✎</a></a></li>
 </ul></li>
-<li><a href="#command-line-client"><span class="toc-section-number">2</span> Command line client</a><ul>
-<li><a href="#configuration"><span class="toc-section-number">2.1</span> Configuration</a></li>
-<li><a href="#command-line-client-cheat-sheet"><span class="toc-section-number">2.2</span> Command line client Cheat Sheet</a><ul>
+<li><a href="#command-line-client"><span class="toc-section-number">2</span> Command line client <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client/_edit">✎</a></a><ul>
+<li><a href="#configuration"><span class="toc-section-number">2.1</span> Configuration <a href="https://github.com/LibreCat/Catmandu/wiki/Configuration/_edit">✎</a></a></li>
+<li><a href="#command-line-client-cheat-sheet"><span class="toc-section-number">2.2</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></a><ul>
 <li><a href="#convert-1"><span class="toc-section-number">2.2.1</span> Convert</a></li>
 <li><a href="#importexport"><span class="toc-section-number">2.2.2</span> Import/Export</a></li>
 <li><a href="#configuration-1"><span class="toc-section-number">2.2.3</span> Configuration</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#iterables"><span class="toc-section-number">3</span> Iterables</a></li>
-<li><a href="#importers"><span class="toc-section-number">4</span> Importers</a></li>
-<li><a href="#exporters"><span class="toc-section-number">5</span> Exporters</a></li>
-<li><a href="#stores"><span class="toc-section-number">6</span> Stores</a><ul>
+<li><a href="#iterables"><span class="toc-section-number">3</span> Iterables <a href="https://github.com/LibreCat/Catmandu/wiki/Iterables/_edit">✎</a></a></li>
+<li><a href="#importers"><span class="toc-section-number">4</span> Importers <a href="https://github.com/LibreCat/Catmandu/wiki/Importers/_edit">✎</a></a></li>
+<li><a href="#exporters"><span class="toc-section-number">5</span> Exporters <a href="https://github.com/LibreCat/Catmandu/wiki/Exporters/_edit">✎</a></a></li>
+<li><a href="#stores"><span class="toc-section-number">6</span> Stores <a href="https://github.com/LibreCat/Catmandu/wiki/Stores/_edit">✎</a></a><ul>
 <li><a href="#using-stores-on-command-line"><span class="toc-section-number">6.1</span> Using stores on command line</a><ul>
 <li><a href="#import-1"><span class="toc-section-number">6.1.1</span> import</a></li>
 <li><a href="#export-1"><span class="toc-section-number">6.1.2</span> export</a></li>
@@ -76,8 +125,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><a href="#using-stores-in-perl-programs"><span class="toc-section-number">6.2</span> Using stores in Perl programs</a></li>
 </ul></li>
-<li><a href="#fixes"><span class="toc-section-number">7</span> Fixes</a><ul>
-<li><a href="#fix-language"><span class="toc-section-number">7.1</span> Fix language</a></li>
+<li><a href="#fixes"><span class="toc-section-number">7</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes/_edit">✎</a></a><ul>
+<li><a href="#fix-language"><span class="toc-section-number">7.1</span> Fix language <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20language/_edit">✎</a></a></li>
 <li><a href="#path"><span class="toc-section-number">7.2</span> Path</a></li>
 <li><a href="#modifying-fields"><span class="toc-section-number">7.3</span> Modifying fields</a></li>
 <li><a href="#strings"><span class="toc-section-number">7.4</span> Strings</a></li>
@@ -86,17 +135,17 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#conditionals"><span class="toc-section-number">7.7</span> Conditionals</a></li>
 <li><a href="#helper-fixes"><span class="toc-section-number">7.8</span> Helper fixes</a></li>
 <li><a href="#external-programs"><span class="toc-section-number">7.9</span> External programs</a></li>
-<li><a href="#fix-packages"><span class="toc-section-number">7.10</span> Fix packages</a></li>
-<li><a href="#fixes-cheat-sheet"><span class="toc-section-number">7.11</span> Fixes Cheat Sheet</a></li>
-<li><a href="#example-fix-script"><span class="toc-section-number">7.12</span> Example Fix Script</a></li>
+<li><a href="#fix-packages"><span class="toc-section-number">7.10</span> Fix packages <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20packages/_edit">✎</a></a></li>
+<li><a href="#fixes-cheat-sheet"><span class="toc-section-number">7.11</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></a></li>
+<li><a href="#example-fix-script"><span class="toc-section-number">7.12</span> Example Fix Script <a href="https://github.com/LibreCat/Catmandu/wiki/Example%20Fix%20Script/_edit">✎</a></a></li>
 </ul></li>
 <li><a href="#extended-features-1"><span class="toc-section-number">8</span> Extended features</a></li>
-<li><a href="#validators"><span class="toc-section-number">9</span> Validators</a></li>
-<li><a href="#binds"><span class="toc-section-number">10</span> Binds</a></li>
-<li><a href="#plugins"><span class="toc-section-number">11</span> Plugins</a></li>
+<li><a href="#validators"><span class="toc-section-number">9</span> Validators <a href="https://github.com/LibreCat/Catmandu/wiki/Validators/_edit">✎</a></a></li>
+<li><a href="#binds"><span class="toc-section-number">10</span> Binds <a href="https://github.com/LibreCat/Catmandu/wiki/Binds/_edit">✎</a></a></li>
+<li><a href="#plugins"><span class="toc-section-number">11</span> Plugins <a href="https://github.com/LibreCat/Catmandu/wiki/Plugins/_edit">✎</a></a></li>
 <li><a href="#beyond-catmandu"><span class="toc-section-number">12</span> Beyond Catmandu</a></li>
-<li><a href="#dancer-catmandu"><span class="toc-section-number">13</span> Dancer &amp; Catmandu</a></li>
-<li><a href="#missing-modules"><span class="toc-section-number">14</span> Missing modules</a><ul>
+<li><a href="#dancer-catmandu"><span class="toc-section-number">13</span> Dancer &amp; Catmandu <a href="https://github.com/LibreCat/Catmandu/wiki/Dancer%20&amp;%20Catmandu/_edit">✎</a></a></li>
+<li><a href="#missing-modules"><span class="toc-section-number">14</span> Missing modules <a href="https://github.com/LibreCat/Catmandu/wiki/Missing%20modules/_edit">✎</a></a><ul>
 <li><a href="#importers-1"><span class="toc-section-number">14.0.1</span> Importers</a></li>
 <li><a href="#exporters-1"><span class="toc-section-number">14.0.2</span> Exporters</a></li>
 <li><a href="#stores-1"><span class="toc-section-number">14.0.3</span> Stores</a></li>
@@ -104,7 +153,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#validators-1"><span class="toc-section-number">14.0.5</span> Validators</a></li>
 <li><a href="#combined-modules"><span class="toc-section-number">14.0.6</span> Combined modules</a></li>
 </ul></li>
-<li><a href="#contribution"><span class="toc-section-number">15</span> Contribution</a><ul>
+<li><a href="#contribution"><span class="toc-section-number">15</span> Contribution <a href="https://github.com/LibreCat/Catmandu/wiki/Contribution/_edit">✎</a></a><ul>
 <li><a href="#ways-to-contribute"><span class="toc-section-number">15.1</span> Ways to contribute</a><ul>
 <li><a href="#publicity"><span class="toc-section-number">15.1.1</span> Publicity</a></li>
 <li><a href="#mailing-list"><span class="toc-section-number">15.1.2</span> Mailing list</a></li>
@@ -119,32 +168,32 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><a href="#acknowledgement"><span class="toc-section-number">15.4</span> Acknowledgement</a></li>
 </ul></li>
-<li><a href="#development-setup"><span class="toc-section-number">16</span> Development Setup</a><ul>
+<li><a href="#development-setup"><span class="toc-section-number">16</span> Development Setup <a href="https://github.com/LibreCat/Catmandu/wiki/Development%20Setup/_edit">✎</a></a><ul>
 <li><a href="#set-up-a-development-environment"><span class="toc-section-number">16.0.1</span> Set up a development environment</a></li>
 <li><a href="#install-dependencies-required"><span class="toc-section-number">16.0.2</span> Install dependencies (required)</a></li>
 <li><a href="#get-catmandu-sources"><span class="toc-section-number">16.0.3</span> Get Catmandu sources</a></li>
 </ul></li>
-<li><a href="#coding-guidelines"><span class="toc-section-number">17</span> Coding guidelines</a><ul>
+<li><a href="#coding-guidelines"><span class="toc-section-number">17</span> Coding guidelines <a href="https://github.com/LibreCat/Catmandu/wiki/Coding%20guidelines/_edit">✎</a></a><ul>
 <li><a href="#compatibility"><span class="toc-section-number">17.1</span> Compatibility</a></li>
 <li><a href="#code-documentation"><span class="toc-section-number">17.2</span> Code documentation</a></li>
 </ul></li>
-<li><a href="#patch-submission"><span class="toc-section-number">18</span> Patch Submission</a></li>
-<li><a href="#cheat-sheets"><span class="toc-section-number">19</span> Cheat sheets</a></li>
-<li><a href="#command-line-client-cheat-sheet-1"><span class="toc-section-number">20</span> Command line client Cheat Sheet</a><ul>
+<li><a href="#patch-submission"><span class="toc-section-number">18</span> Patch Submission <a href="https://github.com/LibreCat/Catmandu/wiki/Patch%20Submission/_edit">✎</a></a></li>
+<li><a href="#cheat-sheets"><span class="toc-section-number">19</span> Cheat sheets <a href="https://github.com/LibreCat/Catmandu/wiki/Cheat%20sheets/_edit">✎</a></a></li>
+<li><a href="#command-line-client-cheat-sheet-1"><span class="toc-section-number">20</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></a><ul>
 <li><a href="#convert-2"><span class="toc-section-number">20.0.1</span> Convert</a></li>
 <li><a href="#importexport-1"><span class="toc-section-number">20.0.2</span> Import/Export</a></li>
 <li><a href="#configuration-2"><span class="toc-section-number">20.0.3</span> Configuration</a></li>
 </ul></li>
-<li><a href="#fixes-cheat-sheet-1"><span class="toc-section-number">21</span> Fixes Cheat Sheet</a></li>
-<li><a href="#cookbook"><span class="toc-section-number">22</span> Cookbook</a></li>
-<li><a href="#related-projects"><span class="toc-section-number">23</span> Related Projects</a><ul>
+<li><a href="#fixes-cheat-sheet-1"><span class="toc-section-number">21</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></a></li>
+<li><a href="#cookbook"><span class="toc-section-number">22</span> Cookbook <a href="https://github.com/LibreCat/Catmandu/wiki/Cookbook/_edit">✎</a></a></li>
+<li><a href="#related-projects"><span class="toc-section-number">23</span> Related Projects <a href="https://github.com/LibreCat/Catmandu/wiki/Related%20Projects/_edit">✎</a></a><ul>
 <li><a href="#selected-formats"><span class="toc-section-number">23.1</span> selected formats</a></li>
 <li><a href="#general-frameworks"><span class="toc-section-number">23.2</span> general frameworks</a></li>
 </ul></li>
 </ul>
 </nav>
 <section id="introduction" class="level1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
+<h1><span class="header-section-number">1</span> Introduction <a href="https://github.com/LibreCat/Catmandu/wiki/Introduction/_edit">✎</a></h1>
 <p><strong>Catmandu</strong> is a data processing toolkit developed as part of the <a href="#librecat">LibreCat</a> project. Catmandu provides a <a href="#command-line-client">command line client</a> and a suite of Perl modules to ease the import, storage, retrieval, export and transformation of data.</p>
 <p>With Catmandu we want to make it easier to extract, transform data such as: JSON, YAML, CSV, MARC, MAB, OAI-PMH, Z39.50, SRU, RDF and much more. Using small transformation language called <a href="#fix-language">Fix language</a>, we want to ease the communication between domain specialists and programmers how data should be transformed.</p>
 <p>Combine Catmandu modules with web application frameworks such as <a href="http://plackperl.org/">PSGI/Plack</a> document stores such as <a href="http://www.mongodb.org/">MongoDB</a> and full text indexes as <a href="http://www.elasticsearch.com">ElasticSearch</a> to create a rapid development environment for digital library services such as institutional repositories and search engines.</p>
@@ -270,7 +319,7 @@ remove_field(record&quot;)</code></pre>
 </section>
 </section>
 <section id="installation" class="level2">
-<h2><span class="header-section-number">1.1</span> Installation</h2>
+<h2><span class="header-section-number">1.1</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation/_edit">✎</a></h2>
 <p>To get Catmandu running on your system you need to download and install the CPAN <a href="http://search.cpan.org/search?query=Catmandu&amp;mode=all">Catmandu</a> module. See also the overview Catmandu-related modules on <a href="https://metacpan.org/release/Catmandu">MetaCPAN</a>.</p>
 <p>As Catmandu has numerous dependencies, we recommend installing them fully automatically, which can be done as follows.</p>
 <pre><code>$ cpanm Task::Catmandu</code></pre>
@@ -328,7 +377,7 @@ remove_field(record&quot;)</code></pre>
 </section>
 </section>
 <section id="concepts" class="level2">
-<h2><span class="header-section-number">1.2</span> Concepts</h2>
+<h2><span class="header-section-number">1.2</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></h2>
 <p><em>This page shall explain the basic concepts of Catmandu</em></p>
 <p>To better make use of Catmandu is helps to first understand its <strong>core concepts</strong>:</p>
 <p><strong><a href="#items">Items</a></strong> are the basic unit of data processing in Catmandu. Items may be read, stored, and accessed in many forms.</p>
@@ -347,7 +396,7 @@ remove_field(record&quot;)</code></pre>
 </section>
 </section>
 <section id="items" class="level2">
-<h2><span class="header-section-number">1.3</span> Items</h2>
+<h2><span class="header-section-number">1.3</span> Items <a href="https://github.com/LibreCat/Catmandu/wiki/Items/_edit">✎</a></h2>
 <p><strong>Items</strong> can be imported in many forms and by many methods. The easiest source of data is a file. For instance the following JSON file contains one object with two fields:</p>
 <pre class="cmd"><code>$ cat data/object.json
 {
@@ -361,7 +410,7 @@ remove_field(record&quot;)</code></pre>
 </section>
 </section>
 <section id="command-line-client" class="level1">
-<h1><span class="header-section-number">2</span> Command line client</h1>
+<h1><span class="header-section-number">2</span> Command line client <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client/_edit">✎</a></h1>
 <p>The command line client <a href="https://metacpan.org/pod/distribution/Catmandu/bin/catmandu"><code>catmandu</code></a> in installed with the main Catmandu package for easy data processing. The <a href="#command-line-client-cheat-sheet">Command line client Cheat Sheet</a> contains a comprehensive overview.</p>
 <p>Calling <code>catmandu</code> without any arguments list the available commands:</p>
 <pre class="cmd"><code>$ catmandu
@@ -380,7 +429,7 @@ remove_field(record&quot;)</code></pre>
           move: move objects to another store</code></pre>
 <p>The command <code>help</code> can be used to show more information about some command, for instance by calling <code>catmandu help convert</code>. A brief help message is shown with option <code>--help</code>, <code>-h</code> or <code>-?</code>, for instance <code>catmandu convert -?</code>.</p>
 <section id="configuration" class="level2">
-<h2><span class="header-section-number">2.1</span> Configuration</h2>
+<h2><span class="header-section-number">2.1</span> Configuration <a href="https://github.com/LibreCat/Catmandu/wiki/Configuration/_edit">✎</a></h2>
 <p>Catmandu <strong>configuration options</strong> can be stored in a file in the local directory. The file can be YAML, JSON or Perl format and is called <code>catmandu.yml</code>, <code>catmandu.json</code> or <code>catmandu.pl</code>. In this file you can set the default Catmandu stores and exporters to be used. Here is an example of a <code>catmandu.yml</code> file:</p>
 <pre><code>---
 exporter:
@@ -401,7 +450,7 @@ catmandu.foo.bar.json</code></pre>
 <p>Config files are processed in alphabetical order. To keep things simple, values are not merged. The contents of <code>catmandu.store.yml</code> will overwrite configuration value <code>store</code> if it already exists.</p>
 </section>
 <section id="command-line-client-cheat-sheet" class="level2">
-<h2><span class="header-section-number">2.2</span> Command line client Cheat Sheet</h2>
+<h2><span class="header-section-number">2.2</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></h2>
 <p>This cheat sheet summarizes the <a href="#command-line-client">command line client</a> capabilities.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">catmandu</span> help
  $ <span class="kw">catmandu</span> help convert</code></pre>
@@ -472,7 +521,7 @@ catmandu.foo.bar.json</code></pre>
 </section>
 </section>
 <section id="iterables" class="level1">
-<h1><span class="header-section-number">3</span> Iterables</h1>
+<h1><span class="header-section-number">3</span> Iterables <a href="https://github.com/LibreCat/Catmandu/wiki/Iterables/_edit">✎</a></h1>
 <p>The Iterable package provides many list methods to process large streams of <a href="#items">items</a>. Most of the methods are lazy if the underlying datastream supports it. While all of the data in Catmandu are native Perl hashes and arrays it can be impratical to load a result set of thousands of records into memory. Most Catmandu packages such as <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, and <a href="#stores">Stores</a> provide therefor an Iterable implementation.</p>
 <p>Using a ‘Mock’ importer we can generate some Perl hashes on-the-fly and show the functionality provided by Iterable:</p>
 <pre><code>use Catmandu::Importer::Mock;
@@ -508,7 +557,7 @@ printf &quot;SUM [ Iterator * 2] = %d\n&quot; , $result;</code></pre>
 <p>The Iterable package provides many more functions such as: to_array, count, each, first, slice, take, group, tap, detect, select, reject, any, many, all, map, reduce and invoke.</p>
 </section>
 <section id="importers" class="level1">
-<h1><span class="header-section-number">4</span> Importers</h1>
+<h1><span class="header-section-number">4</span> Importers <a href="https://github.com/LibreCat/Catmandu/wiki/Importers/_edit">✎</a></h1>
 <p>Importers are Catmandu packages to read data into an application. We provide importers for MARC, JSON, YAML, CSV, Excel, and other input formats. One can also import from remote sources for instance via Atom and OAI-PMH endpoints. For writing data see <a href="#exporters">Exporters</a>.</p>
 <p>As an example, lets create a Perl script to read a YAML file containing an array of values. We use the <code>each</code> function to loop through all the items</p>
 <pre><code>#!/usr/bin/env perl
@@ -537,7 +586,7 @@ my $count = $importer-&gt;take(10)-&gt;each(sub {
 print &quot;Read sample of $count OAI items\n&quot;;</code></pre>
 </section>
 <section id="exporters" class="level1">
-<h1><span class="header-section-number">5</span> Exporters</h1>
+<h1><span class="header-section-number">5</span> Exporters <a href="https://github.com/LibreCat/Catmandu/wiki/Exporters/_edit">✎</a></h1>
 <p><strong>Exporters</strong> are Catmandu packages to export data from an application. See <a href="#importers">Importers</a> for the opposite action.</p>
 <p>As input exporters can can get native Perl hashes or arrays but also Iterators to stream huge data sets.</p>
 <p>Here is an example using our Mock importer to stream 1 million Perl hashes through an Exporter:</p>
@@ -560,7 +609,7 @@ $exporter-&gt;add_many($data);</code></pre>
 &lt;/character&gt;</code></pre>
 </section>
 <section id="stores" class="level1">
-<h1><span class="header-section-number">6</span> Stores</h1>
+<h1><span class="header-section-number">6</span> Stores <a href="https://github.com/LibreCat/Catmandu/wiki/Stores/_edit">✎</a></h1>
 <p><em>this page should introduce to stores</em></p>
 <section id="using-stores-on-command-line" class="level2">
 <h2><span class="header-section-number">6.1</span> Using stores on command line</h2>
@@ -795,7 +844,7 @@ $hits-&gt;each(sub {
 </section>
 </section>
 <section id="fixes" class="level1">
-<h1><span class="header-section-number">7</span> Fixes</h1>
+<h1><span class="header-section-number">7</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes/_edit">✎</a></h1>
 <p>Fixes can be used for easy data manipulation by non programmers. Using a small <a href="#fix-language">Fix language</a> non-programmers can manipulate data objects. A plain text file of fixes can be created to specify all the data manipulations that need to be executed to ‘massage’ the data in the desired format.</p>
 <p>As an example we will import data from a MARC file and change some metadata fields using Fix functions.</p>
 <p>First, make sure that you have Catmandu::MARC installed on your system.</p>
@@ -860,7 +909,7 @@ year
 <li>If you are a programmer and want to create your own Fixes, then go to our <a href="#fix-packages">Fix packages</a>.</li>
 </ul>
 <section id="fix-language" class="level2">
-<h2><span class="header-section-number">7.1</span> Fix language</h2>
+<h2><span class="header-section-number">7.1</span> Fix language <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20language/_edit">✎</a></h2>
 <p>Catmandu comes with a small domain specific language for manipulation of data <a href="#items">items</a>. The fix language consists of</p>
 <ul>
 <li><em>pathes</em> to refer to particular parts of an item</li>
@@ -1039,7 +1088,7 @@ select all_match(include,true)</code></pre>
 cmd(&quot;java MyClass&quot;)</code></pre>
 </section>
 <section id="fix-packages" class="level2">
-<h2><span class="header-section-number">7.10</span> Fix packages</h2>
+<h2><span class="header-section-number">7.10</span> Fix packages <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20packages/_edit">✎</a></h2>
 <p>For an extended introduction into creating Fix packages read the two blog posts at:</p>
 <ul>
 <li><a href="#-http://librecat.org/catmandu/2014/03/14/create-a-fixer.html">Create a fixer - Part 1</a></li>
@@ -1097,7 +1146,7 @@ Hello, World?
 </section>
 </section>
 <section id="fixes-cheat-sheet" class="level2">
-<h2><span class="header-section-number">7.11</span> Fixes Cheat Sheet</h2>
+<h2><span class="header-section-number">7.11</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></h2>
 <p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
 <span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
@@ -1282,7 +1331,7 @@ Hello, World?
 <span class="kw">end</span></code></pre>
 </section>
 <section id="example-fix-script" class="level2">
-<h2><span class="header-section-number">7.12</span> Example Fix Script</h2>
+<h2><span class="header-section-number">7.12</span> Example Fix Script <a href="https://github.com/LibreCat/Catmandu/wiki/Example%20Fix%20Script/_edit">✎</a></h2>
 <p>Here is an example Fix script taken from a production system at Ghent University Library that can be used for inspiration. This script is used to feed data from a MongoDB store of MARC records to a <a href="http://projectblacklight.org/">Black Light</a> Solr installation.</p>
 <pre><code>
 #-
@@ -1627,13 +1676,13 @@ remove_field('version')
 <h1><span class="header-section-number">8</span> Extended features</h1>
 </section>
 <section id="validators" class="level1">
-<h1><span class="header-section-number">9</span> Validators</h1>
+<h1><span class="header-section-number">9</span> Validators <a href="https://github.com/LibreCat/Catmandu/wiki/Validators/_edit">✎</a></h1>
 <p><strong>Validators</strong> are Catmandu modules to validate items, for instance to check whether items contain required fields. Validators can also make use of schemas to validate items against.</p>
 <p>Basic documentation is included at the base class <a href="https://metacpan.org/pod/Catmandu::Validator">Catmandu::Validator</a>.</p>
 <p>Validators are available since Catmandu 0.9 but support of validators in the <a href="#command-line-client">command line client</a> and in the <a href="#fix-language">fix language</a> has not been implemented yet.</p>
 </section>
 <section id="binds" class="level1">
-<h1><span class="header-section-number">10</span> Binds</h1>
+<h1><span class="header-section-number">10</span> Binds <a href="https://github.com/LibreCat/Catmandu/wiki/Binds/_edit">✎</a></h1>
 <p>Bind functions are part of the <a href="#fix-language">fix language</a>, introduced to Catmandu version 0.91 [?]. They are used to provide processing hooks around <a href="#fixes">Fix</a> functions.</p>
 <p>As a reminder, Fix functions are used to manipulate <a href="#items">items</a>. Perl hashes get in and Perl hashes get out. The ‘meow’ fix below will add a field to an incoming Perl hash:</p>
 <pre><code>package Catmandu::Fix::meow;
@@ -1732,7 +1781,7 @@ end</code></pre>
 </section>
 </section>
 <section id="plugins" class="level1">
-<h1><span class="header-section-number">11</span> Plugins</h1>
+<h1><span class="header-section-number">11</span> Plugins <a href="https://github.com/LibreCat/Catmandu/wiki/Plugins/_edit">✎</a></h1>
 <p><em>Plugins to be documented here</em></p>
 <p>See also <a href="http://librecat.org/catmandu/2013/12/18/versioning-using-catmandu-plugin.html">http://librecat.org/catmandu/2013/12/18/versioning-using-catmandu-plugin.html</a></p>
 </section>
@@ -1740,7 +1789,7 @@ end</code></pre>
 <h1><span class="header-section-number">12</span> Beyond Catmandu</h1>
 </section>
 <section id="dancer-catmandu" class="level1">
-<h1><span class="header-section-number">13</span> Dancer &amp; Catmandu</h1>
+<h1><span class="header-section-number">13</span> Dancer &amp; Catmandu <a href="https://github.com/LibreCat/Catmandu/wiki/Dancer%20&amp;%20Catmandu/_edit">✎</a></h1>
 <p>Catmandu integrates very well with Perl frameworks such as <a href="http://www.perldancer.org/">Dancer</a> for <i>easy and fun webapp development</i>. In the text below we will use our Catmandu tools to create small demo application: a web search engine that can be fed with CSV files.</p>
 <p>This second part of the tutorial assumes some familiarity with Catmandu. If you have not yet read part 1, now would be a good time to do so: <a href="Introduction">Introduction</a>.</p>
 <p>Dancer provides an intuitive and minimalistic approach to create web applications. The software package can be easily installed if you have <a href="http://search.cpan.org/dist/App-cpanminus/lib/App/cpanminus.pm">cpanminus</a> on your server:</p>
@@ -1887,7 +1936,7 @@ sub importer {
 <p>This concludes our very short introduction into Catmandu and Dancer. We hope we have provided you with enough material and inspiration for new and exciting projects ;). Please find in the included <a href="files/DemoApp.zip">DemoApp.zip</a> ZIP file an elaborate example of the code used in this tutorial.</p>
 </section>
 <section id="missing-modules" class="level1">
-<h1><span class="header-section-number">14</span> Missing modules</h1>
+<h1><span class="header-section-number">14</span> Missing modules <a href="https://github.com/LibreCat/Catmandu/wiki/Missing%20modules/_edit">✎</a></h1>
 <p>This page summarizes ideas and plans for additional Catmandu modules with <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, <a href="#stores">Stores</a>, <a href="#fix-packages">Fix packages</a>, <a href="#validators">Validators</a>, and <a href="#binds">Binds</a>. Feel free to add more suggestions! Please include links to existing code repositories or descriptions, if available!</p>
 <section id="importers-1" class="level3">
 <h3><span class="header-section-number">14.0.1</span> Importers</h3>
@@ -1940,7 +1989,7 @@ end</code></pre>
 </section>
 </section>
 <section id="contribution" class="level1">
-<h1><span class="header-section-number">15</span> Contribution</h1>
+<h1><span class="header-section-number">15</span> Contribution <a href="https://github.com/LibreCat/Catmandu/wiki/Contribution/_edit">✎</a></h1>
 <p>This guide has been written to help anyone interested in contributing to the development of Catmandu. Please read this guide before contributing to Catmandu or related projects, to avoid wasted effort and maximizing the chances of your contributions being used.</p>
 <section id="ways-to-contribute" class="level2">
 <h2><span class="header-section-number">15.1</span> Ways to contribute</h2>
@@ -2003,7 +2052,7 @@ end</code></pre>
 </section>
 </section>
 <section id="development-setup" class="level1">
-<h1><span class="header-section-number">16</span> Development Setup</h1>
+<h1><span class="header-section-number">16</span> Development Setup <a href="https://github.com/LibreCat/Catmandu/wiki/Development%20Setup/_edit">✎</a></h1>
 <p>The following guidelines describe how to set up a development environment for <a href="#contribution">contribution</a> of code.</p>
 <section id="set-up-a-development-environment" class="level3">
 <h3><span class="header-section-number">16.0.1</span> Set up a development environment</h3>
@@ -2055,7 +2104,7 @@ $ ./Build install</code></pre>
 </section>
 </section>
 <section id="coding-guidelines" class="level1">
-<h1><span class="header-section-number">17</span> Coding guidelines</h1>
+<h1><span class="header-section-number">17</span> Coding guidelines <a href="https://github.com/LibreCat/Catmandu/wiki/Coding%20guidelines/_edit">✎</a></h1>
 <p>The following guidelines are no strict rules but they should be considered as best practice for <a href="#contribution">contribution</a>.</p>
 <section id="compatibility" class="level2">
 <h2><span class="header-section-number">17.1</span> Compatibility</h2>
@@ -2077,7 +2126,7 @@ $ ./Build install</code></pre>
 </section>
 </section>
 <section id="patch-submission" class="level1">
-<h1><span class="header-section-number">18</span> Patch Submission</h1>
+<h1><span class="header-section-number">18</span> Patch Submission <a href="https://github.com/LibreCat/Catmandu/wiki/Patch%20Submission/_edit">✎</a></h1>
 <p>The Catmandu development team uses GitHub to collaborate. We greatly appreciate <a href="Contribution">contributions</a> submitted via GitHub, as it makes tracking these contributions and applying them much, much easier. This gives your contribution a much better chance of being integrated into Catmandu quickly!</p>
 <p>To help us achieve high-quality, stable releases, git-flow workflow is used to handle pull-requests, that means contributors must work on their <code>dev</code> branch rather than on their <code>master</code>. (Master should be touched only by the core dev team when preparing a release to CPAN; all ongoing development happens in branches which are merged to the <code>dev</code> branch.)</p>
 <p>Here is the workflow for submitting a patch:</p>
@@ -2121,7 +2170,7 @@ git push origin dev</code></pre></li>
 <p>You’re now ready to start working on a new pull request!</p>
 </section>
 <section id="cheat-sheets" class="level1">
-<h1><span class="header-section-number">19</span> Cheat sheets</h1>
+<h1><span class="header-section-number">19</span> Cheat sheets <a href="https://github.com/LibreCat/Catmandu/wiki/Cheat%20sheets/_edit">✎</a></h1>
 <ul>
 <li><a href="#-command-line-client-cheat-sheet|-">Command Line Cheat Sheet</a></li>
 <li><a href="#fixes-cheat-sheet">Fixes Cheat Sheet</a></li>
@@ -2129,7 +2178,7 @@ git push origin dev</code></pre></li>
 </ul>
 </section>
 <section id="command-line-client-cheat-sheet-1" class="level1">
-<h1><span class="header-section-number">20</span> Command line client Cheat Sheet</h1>
+<h1><span class="header-section-number">20</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></h1>
 <p>This cheat sheet summarizes the <a href="#command-line-client">command line client</a> capabilities.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">catmandu</span> help
  $ <span class="kw">catmandu</span> help convert</code></pre>
@@ -2199,7 +2248,7 @@ git push origin dev</code></pre></li>
 </section>
 </section>
 <section id="fixes-cheat-sheet-1" class="level1">
-<h1><span class="header-section-number">21</span> Fixes Cheat Sheet</h1>
+<h1><span class="header-section-number">21</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></h1>
 <p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
 <span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
@@ -2384,7 +2433,7 @@ git push origin dev</code></pre></li>
 <span class="kw">end</span></code></pre>
 </section>
 <section id="cookbook" class="level1">
-<h1><span class="header-section-number">22</span> Cookbook</h1>
+<h1><span class="header-section-number">22</span> Cookbook <a href="https://github.com/LibreCat/Catmandu/wiki/Cookbook/_edit">✎</a></h1>
 <section id="install-catmandu-oai-processing-on-your-computer" class="level4 unnumbered">
 <h4>Install Catmandu OAI processing on your computer</h4>
 <p>Make sure you have <code>cpanm</code> (hint: <code>$ cpan App::cpanminus</code>) installed.</p>
@@ -2594,7 +2643,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 </section>
 </section>
 <section id="related-projects" class="level1">
-<h1><span class="header-section-number">23</span> Related Projects</h1>
+<h1><span class="header-section-number">23</span> Related Projects <a href="https://github.com/LibreCat/Catmandu/wiki/Related%20Projects/_edit">✎</a></h1>
 <p>Here we provide a list of related projects that also provide library data processing tools.</p>
 <section id="selected-formats" class="level2">
 <h2><span class="header-section-number">23.1</span> selected formats</h2>
@@ -2619,5 +2668,8 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 </ul>
 </section>
 </section>
+
+</div>
+
 </body>
 </html>
