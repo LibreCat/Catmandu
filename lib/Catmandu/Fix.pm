@@ -41,7 +41,7 @@ sub _trigger_fixes {
     for my $fix (@$fixes) {
         if (ref $fix) {
             push @$parsed_fixes, $fix;
-        } elsif(-X $fix) {
+        } elsif($fix !~ /\n/ and -X $fix) {
             push @$parsed_fixes, require_package('Catmandu::Fix::cmd')->new($fix);
         } else {
             push @$parsed_fixes, @{$self->parser->parse($fix)};
