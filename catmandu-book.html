@@ -1,0 +1,2623 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Catmandu</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="layout.css">
+</head>
+<body>
+<header>
+<h1 class="title">Catmandu</h1>
+<h1 class="subtitle">a data toolkit</h1>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a><ul>
+<li><a href="#where-do-we-use-it"><span class="toc-section-number">1.0.1</span> Where do we use it?</a></li>
+<li><a href="#why-do-we-use-it"><span class="toc-section-number">1.0.2</span> Why do we use it?</a></li>
+<li><a href="#before-you-start"><span class="toc-section-number">1.0.3</span> Before you start</a></li>
+<li><a href="#command-line"><span class="toc-section-number">1.0.4</span> Command line</a></li>
+<li><a href="#installation"><span class="toc-section-number">1.1</span> Installation</a><ul>
+<li><a href="#centos-6.4"><span class="toc-section-number">1.1.1</span> CentOS 6.4</a></li>
+<li><a href="#debian-7-stable-wheezy"><span class="toc-section-number">1.1.2</span> Debian 7 (stable, “Wheezy”)</a></li>
+<li><a href="#opensuse-12.3"><span class="toc-section-number">1.1.3</span> openSUSE 12.3</a></li>
+<li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.1.4</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
+<li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">1.1.5</span> Ubuntu Server 12.04.4 LTS</a></li>
+<li><a href="#openbsd-53"><span class="toc-section-number">1.1.6</span> OpenBSD 53</a></li>
+</ul></li>
+<li><a href="#concepts"><span class="toc-section-number">1.2</span> Concepts</a><ul>
+<li><a href="#extended-features"><span class="toc-section-number">1.2.1</span> Extended features</a></li>
+</ul></li>
+<li><a href="#items"><span class="toc-section-number">1.3</span> Items</a></li>
+</ul></li>
+<li><a href="#command-line-client"><span class="toc-section-number">2</span> Command line client</a><ul>
+<li><a href="#configuration"><span class="toc-section-number">2.1</span> Configuration</a></li>
+<li><a href="#command-line-client-cheat-sheet"><span class="toc-section-number">2.2</span> Command line client Cheat Sheet</a><ul>
+<li><a href="#convert-1"><span class="toc-section-number">2.2.1</span> Convert</a></li>
+<li><a href="#importexport"><span class="toc-section-number">2.2.2</span> Import/Export</a></li>
+<li><a href="#configuration-1"><span class="toc-section-number">2.2.3</span> Configuration</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#iterables"><span class="toc-section-number">3</span> Iterables</a></li>
+<li><a href="#importers"><span class="toc-section-number">4</span> Importers</a></li>
+<li><a href="#exporters"><span class="toc-section-number">5</span> Exporters</a></li>
+<li><a href="#stores"><span class="toc-section-number">6</span> Stores</a><ul>
+<li><a href="#using-stores-on-command-line"><span class="toc-section-number">6.1</span> Using stores on command line</a><ul>
+<li><a href="#import-1"><span class="toc-section-number">6.1.1</span> import</a></li>
+<li><a href="#export-1"><span class="toc-section-number">6.1.2</span> export</a></li>
+<li><a href="#count"><span class="toc-section-number">6.1.3</span> count</a></li>
+<li><a href="#deleting"><span class="toc-section-number">6.1.4</span> deleting</a></li>
+<li><a href="#move"><span class="toc-section-number">6.1.5</span> move</a></li>
+</ul></li>
+<li><a href="#using-stores-in-perl-programs"><span class="toc-section-number">6.2</span> Using stores in Perl programs</a></li>
+</ul></li>
+<li><a href="#fixes"><span class="toc-section-number">7</span> Fixes</a><ul>
+<li><a href="#fix-language"><span class="toc-section-number">7.1</span> Fix language</a></li>
+<li><a href="#path"><span class="toc-section-number">7.2</span> Path</a></li>
+<li><a href="#modifying-fields"><span class="toc-section-number">7.3</span> Modifying fields</a></li>
+<li><a href="#strings"><span class="toc-section-number">7.4</span> Strings</a></li>
+<li><a href="#search-and-replace"><span class="toc-section-number">7.5</span> Search and replace</a></li>
+<li><a href="#lookup"><span class="toc-section-number">7.6</span> Lookup</a></li>
+<li><a href="#conditionals"><span class="toc-section-number">7.7</span> Conditionals</a></li>
+<li><a href="#helper-fixes"><span class="toc-section-number">7.8</span> Helper fixes</a></li>
+<li><a href="#external-programs"><span class="toc-section-number">7.9</span> External programs</a></li>
+<li><a href="#fix-packages"><span class="toc-section-number">7.10</span> Fix packages</a></li>
+<li><a href="#fixes-cheat-sheet"><span class="toc-section-number">7.11</span> Fixes Cheat Sheet</a></li>
+<li><a href="#example-fix-script"><span class="toc-section-number">7.12</span> Example Fix Script</a></li>
+</ul></li>
+<li><a href="#extended-features-1"><span class="toc-section-number">8</span> Extended features</a></li>
+<li><a href="#validators"><span class="toc-section-number">9</span> Validators</a></li>
+<li><a href="#binds"><span class="toc-section-number">10</span> Binds</a></li>
+<li><a href="#plugins"><span class="toc-section-number">11</span> Plugins</a></li>
+<li><a href="#beyond-catmandu"><span class="toc-section-number">12</span> Beyond Catmandu</a></li>
+<li><a href="#dancer-catmandu"><span class="toc-section-number">13</span> Dancer &amp; Catmandu</a></li>
+<li><a href="#missing-modules"><span class="toc-section-number">14</span> Missing modules</a><ul>
+<li><a href="#importers-1"><span class="toc-section-number">14.0.1</span> Importers</a></li>
+<li><a href="#exporters-1"><span class="toc-section-number">14.0.2</span> Exporters</a></li>
+<li><a href="#stores-1"><span class="toc-section-number">14.0.3</span> Stores</a></li>
+<li><a href="#fixes-and-binds"><span class="toc-section-number">14.0.4</span> Fixes and binds</a></li>
+<li><a href="#validators-1"><span class="toc-section-number">14.0.5</span> Validators</a></li>
+<li><a href="#combined-modules"><span class="toc-section-number">14.0.6</span> Combined modules</a></li>
+</ul></li>
+<li><a href="#contribution"><span class="toc-section-number">15</span> Contribution</a><ul>
+<li><a href="#ways-to-contribute"><span class="toc-section-number">15.1</span> Ways to contribute</a><ul>
+<li><a href="#publicity"><span class="toc-section-number">15.1.1</span> Publicity</a></li>
+<li><a href="#mailing-list"><span class="toc-section-number">15.1.2</span> Mailing list</a></li>
+<li><a href="#documentation"><span class="toc-section-number">15.1.3</span> Documentation</a></li>
+<li><a href="#code"><span class="toc-section-number">15.1.4</span> Code</a></li>
+</ul></li>
+<li><a href="#quality-supervision-and-reporting-bugs"><span class="toc-section-number">15.2</span> Quality Supervision and Reporting Bugs</a></li>
+<li><a href="#resources-for-developers"><span class="toc-section-number">15.3</span> RESOURCES FOR DEVELOPERS</a><ul>
+<li><a href="#website"><span class="toc-section-number">15.3.1</span> Website</a></li>
+<li><a href="#mailing-lists"><span class="toc-section-number">15.3.2</span> Mailing Lists</a></li>
+<li><a href="#repositories"><span class="toc-section-number">15.3.3</span> Repositories</a></li>
+</ul></li>
+<li><a href="#acknowledgement"><span class="toc-section-number">15.4</span> Acknowledgement</a></li>
+</ul></li>
+<li><a href="#development-setup"><span class="toc-section-number">16</span> Development Setup</a><ul>
+<li><a href="#set-up-a-development-environment"><span class="toc-section-number">16.0.1</span> Set up a development environment</a></li>
+<li><a href="#install-dependencies-required"><span class="toc-section-number">16.0.2</span> Install dependencies (required)</a></li>
+<li><a href="#get-catmandu-sources"><span class="toc-section-number">16.0.3</span> Get Catmandu sources</a></li>
+</ul></li>
+<li><a href="#coding-guidelines"><span class="toc-section-number">17</span> Coding guidelines</a><ul>
+<li><a href="#compatibility"><span class="toc-section-number">17.1</span> Compatibility</a></li>
+<li><a href="#code-documentation"><span class="toc-section-number">17.2</span> Code documentation</a></li>
+</ul></li>
+<li><a href="#patch-submission"><span class="toc-section-number">18</span> Patch Submission</a></li>
+<li><a href="#cheat-sheets"><span class="toc-section-number">19</span> Cheat sheets</a></li>
+<li><a href="#command-line-client-cheat-sheet-1"><span class="toc-section-number">20</span> Command line client Cheat Sheet</a><ul>
+<li><a href="#convert-2"><span class="toc-section-number">20.0.1</span> Convert</a></li>
+<li><a href="#importexport-1"><span class="toc-section-number">20.0.2</span> Import/Export</a></li>
+<li><a href="#configuration-2"><span class="toc-section-number">20.0.3</span> Configuration</a></li>
+</ul></li>
+<li><a href="#fixes-cheat-sheet-1"><span class="toc-section-number">21</span> Fixes Cheat Sheet</a></li>
+<li><a href="#cookbook"><span class="toc-section-number">22</span> Cookbook</a></li>
+<li><a href="#related-projects"><span class="toc-section-number">23</span> Related Projects</a><ul>
+<li><a href="#selected-formats"><span class="toc-section-number">23.1</span> selected formats</a></li>
+<li><a href="#general-frameworks"><span class="toc-section-number">23.2</span> general frameworks</a></li>
+</ul></li>
+</ul>
+</nav>
+<section id="introduction" class="level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><strong>Catmandu</strong> is a data processing toolkit developed as part of the <a href="#librecat">LibreCat</a> project. Catmandu provides a <a href="#command-line-client">command line client</a> and a suite of Perl modules to ease the import, storage, retrieval, export and transformation of data.</p>
+<p>With Catmandu we want to make it easier to extract, transform data such as: JSON, YAML, CSV, MARC, MAB, OAI-PMH, Z39.50, SRU, RDF and much more. Using small transformation language called <a href="#fix-language">Fix language</a>, we want to ease the communication between domain specialists and programmers how data should be transformed.</p>
+<p>Combine Catmandu modules with web application frameworks such as <a href="http://plackperl.org/">PSGI/Plack</a> document stores such as <a href="http://www.mongodb.org/">MongoDB</a> and full text indexes as <a href="http://www.elasticsearch.com">ElasticSearch</a> to create a rapid development environment for digital library services such as institutional repositories and search engines.</p>
+<p>In other words, Catmandu facilitates processing of open data, big data, data science, data journalism, and other buzzwords!</p>
+<section id="where-do-we-use-it" class="level3">
+<h3><span class="header-section-number">1.0.1</span> Where do we use it?</h3>
+<p>Catmandu is used in the <a href="#librecat">LibreCat</a> project for several applications.</p>
+<p>We have more than 60 Catmandu projects available at <a href="https://github.com/organizations/LibreCat">GitHub LibreCat</a>.</p>
+</section>
+<section id="why-do-we-use-it" class="level3">
+<h3><span class="header-section-number">1.0.2</span> Why do we use it?</h3>
+<figure>
+<img src="files/catmandu.png" />
+</figure>
+<section id="extract-transform-and-load" class="level4 unnumbered">
+<h4>Extract, Transform and Load</h4>
+<p>Create a search engine, one of your first tasks will to import data from various sources, map the fields to a common data model and post it to a full-text search engine. Modules such as <a href="http://search.cpan.org/~bricas/WebService-Solr-0.17/lib/WebService/Solr.pm">WebService::Solr</a> or <a href="http://search.cpan.org/~drtech/ElasticSearch-0.52/lib/ElasticSearch.pm">ElasticSearch</a> provide easy access to your favorite document stores, but you keep writing a lot of boilerplate code to create the connections, massaging the incoming data into the correct format, validating and uploading and indexing the data in the database. Next morning you are asked to provide a fast dump of records into an Excel worksheet. After some fixes are applied you are asked to upload it into your database. Again you hit Emacs or Vi and provide an ad-hoc script. In our LibreCat group we saw this workflow over and over. We tried to abstract this problem to a set of tools which can work with library data such as MARC, Dublin Core, EndNote protocols such as OAI-PMH, SRU and repositories such as DSpace and Fedora. In data warehouses these processes are called ETL, <em>Extract</em>, <em>Transform</em>, <em>Load</em>. Many tools currenty exist for ETL processing but none adress typical library data models and services.</p>
+</section>
+<section id="copy-and-paste" class="level4 unnumbered">
+<h4>Copy and Paste</h4>
+<p>As programmers, we would like to reuse our code and algorithms as easy as possible. In fast application development you typically want to copy and paste parts of existing code in a new project. In Catmandu we use a functional style of programming to keep our code tight and clean and suitable for copy and pasting. When working with library data models we use native Perl hashes and arrays to pass data around. In this way adhere to the rationale of Alan J. Perlis: “It is better to have 100 functions operate on one data structure than to have 10 functions operate on 10 data structures.” Our functions are all based on a few primary data structures on which we define many functions (map, count, each, first, take, …)</p>
+</section>
+<section id="schemaless-databases" class="level4 unnumbered">
+<h4>Schemaless databases</h4>
+<p>In the past it was a nuisance to create database schemas and indexes to store and search your data. Certainly in institutional repositories this can be a ongoing job for a programmer because the metadata schemas are not fixed in time. Any new report will require you to add new data fields and new relations for which you need to change your database schema. With the introduction of schemaless databases the storage of complex records is really easy. With our <em>ElasticSearch</em> Store we even can provide you a CQL style query language for retrieval.</p>
+</section>
+</section>
+<section id="before-you-start" class="level3">
+<h3><span class="header-section-number">1.0.3</span> Before you start</h3>
+<p>See <a href="#installation">Installation</a> for installation and <a href="#concepts">Concepts</a> for basic terms.</p>
+</section>
+<section id="command-line" class="level3">
+<h3><span class="header-section-number">1.0.4</span> Command line</h3>
+<p>Most of the Catmandu processing doesn’t require you to write any code. With our command line tools you can store data files into databases, index your data, export data in various formats and provide basic data cleanup operations.</p>
+<section id="convert" class="level4 unnumbered">
+<h4>convert</h4>
+<p>For example, if you have a YAML file <code>test.yml</code> like:</p>
+<pre><code>---
+first: Charly
+last: Parker
+job: Artist
+---
+first: Albert
+last: Einstein
+job: Physicist
+---
+first: Bruce
+last: Wayne
+job: Superhero
+...</code></pre>
+<p>and you are required to transform it into JSON. Using the ‘<code>catmandu</code>’ command you can do this with these options:</p>
+<pre><code>$ catmandu convert YAML to JSON &lt; test.yml</code></pre>
+<p>Basically you connect a YAML importer to a JSON exporter (see <a href="#concepts">Concepts</a> if you don’t know what importers and exporters are).</p>
+<p>Need some fancy export? Then use the Template exporter which uses a template file like ‘test.xml.tt’ below to render the output.</p>
+<pre><code>&lt;foo&gt;
+ &lt;first&gt;[% first %]&lt;/first&gt;
+ &lt;last&gt;[% last %]&lt;/last&gt;
+ &lt;job&gt;[% job %]&lt;/job&gt;
+&lt;/foo&gt;</code></pre>
+<p>To run the <code>catmandu</code> command you need to provide ‘Template’ as the exporter to write into and a full path to the template file (without the <code>.tt</code> extension):</p>
+<pre><code>$ catmandu convert YAML to Template --template `pwd`/test.xml &lt; test.yml</code></pre>
+<p>Which produces the output:</p>
+<pre><code>&lt;foo&gt;
+ &lt;first&gt;Charly&lt;/first&gt;
+ &lt;last&gt;Parker&lt;/last&gt;
+ &lt;job&gt;Artist&lt;/job&gt;
+&lt;/foo&gt;
+&lt;foo&gt;
+ &lt;first&gt;Albert&lt;/first&gt;
+ &lt;last&gt;Einstein&lt;/last&gt;
+ &lt;job&gt;Physicist&lt;/job&gt;
+&lt;/foo&gt;
+&lt;foo&gt;
+ &lt;first&gt;Bruce&lt;/first&gt;
+ &lt;last&gt;Wayne&lt;/last&gt;
+ &lt;job&gt;Superhero&lt;/job&gt;
+&lt;/foo&gt;</code></pre>
+</section>
+<section id="import" class="level4 unnumbered">
+<h4>import</h4>
+<p>Using this command line tools indexing data becomes also very easy. Boot up a ElasticSearch and run the command below to index the <code>test.yml</code> file:</p>
+<pre><code>$ catmandu import YAML to ElasticSearch --index_name demo &lt; test.yml</code></pre>
+<p>To show the results from your hard work we can export all the records from the ElasticSearch store:</p>
+<pre><code>$ catmandu export ElasticSearch --index_name demo to JSON
+{&quot;first&quot;:&quot;Albert&quot;,&quot;_id&quot;:&quot;3A07B0F8-0973-11E2-98F8-F84380C42756&quot;,&quot;last&quot;:&quot;Einstein&quot;,&quot;job&quot;:&quot;Physicist&quot;}
+{&quot;first&quot;:&quot;Charly&quot;,&quot;_id&quot;:&quot;3A0792D0-0973-11E2-8724-A22A2812F5B2&quot;,&quot;last&quot;:&quot;Parker&quot;,&quot;job&quot;:&quot;Artist&quot;}
+{&quot;first&quot;:&quot;Bruce&quot;,&quot;_id&quot;:&quot;3A07B5EE-0973-11E2-97BF-E053E6A92BE5&quot;,&quot;last&quot;:&quot;Wayne&quot;,&quot;job&quot;:&quot;Superhero&quot;}</code></pre>
+<p>We can even be more lazy by creating a catmandu.yml file containing the connection parameters to the ElasticSearch:</p>
+<pre><code>---
+store:
+ Demo:
+  package: ElasticSearch
+  options:
+    index_name: demo</code></pre>
+<p>Using the configuration file above indexation of YAML data can be done like this:</p>
+<pre><code>$ catmandu import YAML to Demo &lt; ~/Desktop/test.yaml</code></pre>
+</section>
+<section id="export" class="level4 unnumbered">
+<h4>export</h4>
+<p>And exporting all data can be done like this:</p>
+<pre><code>$ catmandu export Demo</code></pre>
+<p>For Catmandu stores that support a query language, exporting data can be very powerfull using the ‘–query’ option. E.g. we can export all records about ‘Einstein’ from our ElasticSearch store using:</p>
+<pre><code>$ catmandu export Demo --query &quot;Einstein&quot;</code></pre>
+</section>
+<section id="cleanup" class="level4 unnumbered">
+<h4>cleanup</h4>
+<p>The previous examples were all pretty easy. In real life we, as librarians, have to deal with data formats such as: MARC, MAB, DublinCore, RDF and more. With Catmandu you can process all these formats with the same commands as shown above.</p>
+<p>You were given a MARC file and were asked to extract all the titles from the file? With our command line tools that can be as easy as:</p>
+<pre><code>$ catmandu convert MARC --fix &#39;marc_map(&quot;245&quot;,&quot;title&quot;) remove_field(record&quot;)&#39; &lt; marc.mrc</code></pre>
+<p>This will produce a JSON output containing all the titles. The ‘–fix’ option on the command line will execute these fixes:</p>
+<pre><code>marc_map(&quot;245&quot;,&quot;title&quot;) 
+remove_field(record&quot;)</code></pre>
+<p>‘’Fix’’ is a tiny language we invented to manipulate data. Fixes should be easy to read or create even if you don’t have any programming skills!</p>
+<p>When you know how to extract data from a MARC file, it is very easy to import it into ElasticSearch:</p>
+<pre><code>$ catmandu import MARC --fix &#39;marc_map(&quot;245&quot;,&quot;title&quot;) remove_field(record&quot;)&#39; to Demo &lt; marc.mrc</code></pre>
+<p>Notice how we made use of the ‘Demo’ shortcut as explained above.</p>
+<hr />
+<ul>
+<li>If you like to learn more about these commands, then proceed to the chapter about the <a href="#command-line-client">command line client</a>.</li>
+<li>If you need to cleanup your data, then proceed to the chapter about the <a href="#fixes">Fixes</a>.</li>
+<li>If you are interested in writing web applications, then please proceed to the chapter about <a href="#dancer-&amp;-catmandu">Dancer &amp; Catmandu</a>.</li>
+</ul>
+</section>
+</section>
+<section id="installation" class="level2">
+<h2><span class="header-section-number">1.1</span> Installation</h2>
+<p>To get Catmandu running on your system you need to download and install the CPAN <a href="http://search.cpan.org/search?query=Catmandu&amp;mode=all">Catmandu</a> module. See also the overview Catmandu-related modules on <a href="https://metacpan.org/release/Catmandu">MetaCPAN</a>.</p>
+<p>As Catmandu has numerous dependencies, we recommend installing them fully automatically, which can be done as follows.</p>
+<pre><code>$ cpanm Task::Catmandu</code></pre>
+<p>Here are some Catmandu installation hints for various platforms.</p>
+<section id="centos-6.4" class="level3">
+<h3><span class="header-section-number">1.1.1</span> CentOS 6.4</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> groupinstall <span class="st">&quot;Development Tools&quot;</span>
+<span class="kw">yum</span> install perl-ExtUtils-MakeMaker
+<span class="kw">yum</span> install perl-CPAN -y
+<span class="kw">yum</span> install gcc -y
+<span class="kw">yum</span> install tcp_wrappers-devel -y
+<span class="kw">yum</span> install expat expat-devel -y
+<span class="kw">yum</span> install libxml2 libxml2-devel -y
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
+<span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="debian-7-stable-wheezy" class="level3">
+<h3><span class="header-section-number">1.1.2</span> Debian 7 (stable, “Wheezy”)</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev
+<span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
+<span class="kw">cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="opensuse-12.3" class="level3">
+<h3><span class="header-section-number">1.1.3</span> openSUSE 12.3</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
+<span class="kw">sudo</span> zypper install libxml2-devel xsltproc
+<span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
+<span class="kw">cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
+<h3><span class="header-section-number">1.1.4</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
+<p>Since Raspbian is based on Debian stable, you could follow the <a href="#debian-7-stable-wheezy">instructions there</a>. Unfortunately, you will run into timeouts, so it is advisable to install some prerequisites via apt-get first:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install libboolean-perl libdevel-repl-perl libnet-twitter-perl libxml-easy-perl libxslt1-dev libgdbm-dev</code></pre>
+</section>
+<section id="ubuntu-server-12.04.4-lts" class="level3">
+<h3><span class="header-section-number">1.1.5</span> Ubuntu Server 12.04.4 LTS</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">apt-get</span> install make
+<span class="kw">apt-get</span> install libmodule-install-perl
+<span class="kw">apt-get</span> install libyaz-dev
+<span class="kw">apt-get</span> install libwrap0-dev
+<span class="kw">apt-get</span> install libxml2-dev zlib1g zlib1g-dev
+<span class="kw">apt-get</span> install libexpat1-dev
+<span class="kw">apt-get</span> install libxslt1-dev
+<span class="kw">apt-get</span> install libssl-dev
+<span class="kw">apt-get</span> install perl-doc
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
+<span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="openbsd-53" class="level3">
+<h3><span class="header-section-number">1.1.6</span> OpenBSD 53</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpan</span> App::cpanminus
+<span class="kw">cpanm</span> Catmandu</code></pre>
+</section>
+</section>
+<section id="concepts" class="level2">
+<h2><span class="header-section-number">1.2</span> Concepts</h2>
+<p><em>This page shall explain the basic concepts of Catmandu</em></p>
+<p>To better make use of Catmandu is helps to first understand its <strong>core concepts</strong>:</p>
+<p><strong><a href="#items">Items</a></strong> are the basic unit of data processing in Catmandu. Items may be read, stored, and accessed in many forms.</p>
+<p><strong><a href="#importers">Importers</a></strong> are Catmandu packages to read items into an application. We provide importers for MARC, JSON, YAML, CSV, Excel, and other input formats. One can also import from remote sources for instance via Atom and OAI-PMH endpoints.</p>
+<p><strong><a href="#fixes">Fixes</a></strong> transforms items, massage the data into any format you like. See <a href="#fix-language">Fix language</a> and <a href="#fix-packages">Fix packages</a> for details.</p>
+<p><strong><a href="#stores">Stores</a></strong> are database to store your data. With database such MongoDB and ElasticSearch it becomes really, really easy to store quite complicated, deeply nested, items.</p>
+<p><strong><a href="#exporters">Exporters</a></strong> are used to transform items back into JSON, YAML, CSV, Excel or any format you like.</p>
+<p><strong><a href="#iterables">Iterables</a></strong> are the bread and butter of Catmandu. Every stream of data, if it comes from Iterators, Fixes or Stores is an iterator. Iterators can be connected to other iterators to make processing chains. With Iterators the memory consumption of your program is low: you can process Gigabytes, Terabytes of input data without ever running out of memory.</p>
+<section id="extended-features" class="level3">
+<h3><span class="header-section-number">1.2.1</span> Extended features</h3>
+<ul>
+<li><a href="#plugins">Plugins</a></li>
+<li><a href="#validators">Validators</a></li>
+<li><a href="#binds">Binds</a></li>
+</ul>
+</section>
+</section>
+<section id="items" class="level2">
+<h2><span class="header-section-number">1.3</span> Items</h2>
+<p><strong>Items</strong> can be imported in many forms and by many methods. The easiest source of data is a file. For instance the following JSON file contains one object with two fields:</p>
+<pre class="cmd"><code>$ cat data/object.json
+{
+  &quot;author&quot;: &quot;Goldman, Emma&quot;,
+  &quot;title&quot;: &quot;Living My Life&quot;
+}</code></pre>
+<p>File may also contain multiple items. The default JSON importer expects one JSON object on each line:</p>
+<pre><code>{ &quot;author&quot;: &quot;Gabriel, Mary&quot;, &quot;title&quot;: &quot;Notorious Victoria&quot; }
+{ &quot;author&quot;: &quot;Goldman, Emma&quot;, &quot;title&quot;: &quot;Living My Life&quot; }</code></pre>
+<p>See <a href="#importers">Importers</a> and <a href="#exporters">Exporters</a> for details how to read and write items sequentially. Items can also be stored with random access – see <a href="#stores">Stores</a> for details and examples.</p>
+</section>
+</section>
+<section id="command-line-client" class="level1">
+<h1><span class="header-section-number">2</span> Command line client</h1>
+<p>The command line client <a href="https://metacpan.org/pod/distribution/Catmandu/bin/catmandu"><code>catmandu</code></a> in installed with the main Catmandu package for easy data processing. The <a href="#command-line-client-cheat-sheet">Command line client Cheat Sheet</a> contains a comprehensive overview.</p>
+<p>Calling <code>catmandu</code> without any arguments list the available commands:</p>
+<pre class="cmd"><code>$ catmandu
+    Available commands:
+
+      commands: list the application&#39;s commands
+          help: display a command&#39;s help screen
+
+        config: print the Catmandu config as JSON
+       convert: convert objects
+         count: count the number of objects in a store
+          data: store, index, search, import, export or convert objects
+        delete: delete objects from a store
+        export: export objects from a store
+        import: import objects into a store
+          move: move objects to another store</code></pre>
+<p>The command <code>help</code> can be used to show more information about some command, for instance by calling <code>catmandu help convert</code>. A brief help message is shown with option <code>--help</code>, <code>-h</code> or <code>-?</code>, for instance <code>catmandu convert -?</code>.</p>
+<section id="configuration" class="level2">
+<h2><span class="header-section-number">2.1</span> Configuration</h2>
+<p>Catmandu <strong>configuration options</strong> can be stored in a file in the local directory. The file can be YAML, JSON or Perl format and is called <code>catmandu.yml</code>, <code>catmandu.json</code> or <code>catmandu.pl</code>. In this file you can set the default Catmandu stores and exporters to be used. Here is an example of a <code>catmandu.yml</code> file:</p>
+<pre><code>---
+exporter:
+  JSON:
+  package: JSON
+  options:
+    pretty: 1
+store:
+  mo:
+   package: MongoDB
+   options:
+    database_name: bibliographic
+    bag: marc</code></pre>
+<p>For large configs it’s more convenient to <strong>split the config</strong> into several files. You can do so by including the config hash key in the file name.</p>
+<pre><code>catmandu.yaml
+catmandu.store.yaml
+catmandu.foo.bar.json</code></pre>
+<p>Config files are processed in alphabetical order. To keep things simple, values are not merged. The contents of <code>catmandu.store.yml</code> will overwrite configuration value <code>store</code> if it already exists.</p>
+</section>
+<section id="command-line-client-cheat-sheet" class="level2">
+<h2><span class="header-section-number">2.2</span> Command line client Cheat Sheet</h2>
+<p>This cheat sheet summarizes the <a href="#command-line-client">command line client</a> capabilities.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">catmandu</span> help
+ $ <span class="kw">catmandu</span> help convert</code></pre>
+<section id="convert-1" class="level3">
+<h3><span class="header-section-number">2.2.1</span> Convert</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Importers to read data into your environment</span>
+ $ <span class="kw">catmandu</span> convert MARC to JSON <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to YAML <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to JSON --pretty 1 <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to JSON --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;);remove_field(&quot;record&quot;)&#39;</span> <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to CSV --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;); remove_field(&quot;record&quot;);&#39;</span> <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert OAI --url http://biblio.ugent.be/oai --set allFtxt to JSON
+ $ <span class="kw">catmandu</span> convert OAI --url http://biblio.ugent.be/oai --set allFtxt to JSON --fix <span class="st">&#39;retain_field(&quot;title&quot;)&#39;</span>
+ $ <span class="kw">catmandu</span> convert SRU --base http://www.unicat.be/sru --query dna 
+ $ <span class="kw">catmandu</span> convert ArXiv --query <span class="st">&#39;all:electron&#39;</span>
+ $ <span class="kw">catmandu</span> convert PubMed --term <span class="st">&#39;hochstenbach&#39;</span>
+ $ <span class="kw">cat</span> test.tt
+[<span class="kw">%-</span> FOREACH f IN record %]
+[<span class="kw">%</span> _id %] [% f.shift %][% f.shift %][% f.shift %][% f.join(<span class="st">&quot;:&quot;</span>) <span class="kw">%</span>]
+[<span class="kw">%-</span> END %]
+ $ <span class="kw">catmandu</span> convert MARC to Template --template <span class="kw">`pwd`</span>/test.tt <span class="kw">&lt;</span> records.mrc </code></pre>
+</section>
+<section id="importexport" class="level3">
+<h3><span class="header-section-number">2.2.2</span> Import/Export</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Store to store/retrieve data from a database</span>
+ $ <span class="kw">catmandu</span> import JSON to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.json
+ $ <span class="kw">catmandu</span> import MARC to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> import MARC to ElasticSearch --index_name mydb --bag data <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> import MARC to ElasticSearch --index_name mydb --bag data --fix <span class="st">&#39;marc_map(&quot;245a&quot;,&quot;title&quot;)&#39;</span> <span class="kw">&lt;</span> records.mrc
+
+ $ <span class="kw">catmandu</span> export MongoDB --database_name mydb --bag data to JSON
+ $ <span class="kw">catmandu</span> export MongoDB --database_name mydb --bag data to JSON --fix <span class="st">&#39;retain_field(&quot;_id&quot;)&#39;</span>
+ $ <span class="kw">catmandu</span> export Solr --url http://localhost:8983/solr to JSON
+ $ <span class="kw">catmandu</span> export ElasticSearch --index_name mydb to JSON</code></pre>
+</section>
+<section id="configuration-1" class="level3">
+<h3><span class="header-section-number">2.2.3</span> Configuration</h3>
+<p>See <a href="#configuration">Configuration</a> for details.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">cat</span> catmandu.yml
+<span class="kw">---</span>
+<span class="kw">store</span>:
+  <span class="kw">test1</span>:
+   <span class="kw">package</span>: MongoDB
+   <span class="kw">options</span>:
+    <span class="kw">database_name</span>: mydb
+  <span class="kw">test2</span>:
+   <span class="kw">package</span>: ElasticSearch
+   <span class="kw">options</span>:
+    <span class="kw">index_name</span>: mydb
+  <span class="kw">test3</span>:
+   <span class="kw">package</span>: Solr
+   <span class="kw">options</span>:
+    <span class="kw">url</span>: http://localhost:8983/solr
+
+  $ <span class="kw">catmandu</span> import JSON to test1 <span class="kw">&lt;</span> records.json <span class="co"># Mongo</span>
+  $ <span class="kw">catmandu</span> import MARC to test2 <span class="kw">&lt;</span> records.mrc  <span class="co"># ElasticSearch</span>
+  $ <span class="kw">catmandu</span> import YAML to test3 <span class="kw">&lt;</span> records.yaml <span class="co"># Solr</span>
+  $ <span class="kw">catmandu</span> export test1 to JSON                <span class="co"># Mongo</span>
+  $ <span class="kw">catmandu</span> export test2 to JSON                <span class="co"># ElasticSearch</span>
+  $ <span class="kw">catmandy</span> export test3                        <span class="co"># Solr very lazy JSON is the default exporter and importer</span>
+  $ <span class="kw">cat</span> fixes.txt
+<span class="kw">marc_map</span>(<span class="st">&quot;245a&quot;</span>,<span class="st">&quot;title&quot;</span>);
+<span class="kw">marc_map</span>(<span class="st">&quot;100&quot;</span>,<span class="st">&quot;author.</span><span class="ot">$append</span><span class="st">&quot;</span>);
+<span class="kw">join_field</span>(<span class="st">&quot;author&quot;</span>,<span class="st">&quot;;&quot;</span>);
+<span class="kw">marc_map</span>(<span class="st">&quot;008_/10-13&quot;</span>,<span class="st">&quot;language&quot;</span>);
+  $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></pre>
+</section>
+</section>
+</section>
+<section id="iterables" class="level1">
+<h1><span class="header-section-number">3</span> Iterables</h1>
+<p>The Iterable package provides many list methods to process large streams of <a href="#items">items</a>. Most of the methods are lazy if the underlying datastream supports it. While all of the data in Catmandu are native Perl hashes and arrays it can be impratical to load a result set of thousands of records into memory. Most Catmandu packages such as <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, and <a href="#stores">Stores</a> provide therefor an Iterable implementation.</p>
+<p>Using a ‘Mock’ importer we can generate some Perl hashes on-the-fly and show the functionality provided by Iterable:</p>
+<pre><code>use Catmandu::Importer::Mock;
+my $it = Catmandu::Importer::Mock-&gt;new(size =&gt; 10);</code></pre>
+<p>With <code>each</code> you can loop over all the items in an iterator:</p>
+<pre><code>$it-&gt;each(sub {
+     printf &quot;My n is %d\n&quot; , shift-&gt;{n};
+});</code></pre>
+<p>Using <code>any</code>, <code>many</code>, <code>all</code> you can test for the existence of items in an Iterator:</p>
+<pre><code>my $answer = $it-&gt;any(sub { shift-&gt;{n} &gt; 4});
+printf &quot;Iterator contains n &gt; 4 = %s\n&quot; , $answer ? &#39;TRUE&#39; : &#39;FALSE&#39;;
+
+my $answer = $it-&gt;many(sub { shift-&gt;{n} &gt; 8});
+printf &quot;Iterator contains n &gt; 8 = %s\n&quot; , $answer ? &#39;TRUE&#39; : &#39;FALSE&#39;;
+
+my $answer = $it-&gt;all(sub { shift-&gt;{n} =~ /^\d+$/});
+printf &quot;Iterator contains only digits = %s\n&quot; , $answer ? &#39;TRUE&#39; : &#39;FALSE&#39;;</code></pre>
+<p><code>map</code> and <code>reduce</code> are functions that evaluate a function on all the items in an iterator to procude a new iterator or a summary of the results:</p>
+<pre><code># $it contains: [ { n =&gt; 1 } , { n =&gt; 2 } , ... ];
+my $ret = $it-&gt;map(sub {
+   my $hash = shift;
+   { n =&gt; $hash-&gt;{n} * 2 }
+});
+
+# $ret contains : [ { n =&gt; 2 } , { n =&gt; 4 } , ... ];
+
+my $result = $it-&gt;reduce(0,sub {
+   my $prev = shift;
+   my $this = shift-&gt;{n} * 2;
+   $prev + $this;
+});
+printf &quot;SUM [ Iterator * 2] = %d\n&quot; , $result;</code></pre>
+<p>The Iterable package provides many more functions such as: to_array, count, each, first, slice, take, group, tap, detect, select, reject, any, many, all, map, reduce and invoke.</p>
+</section>
+<section id="importers" class="level1">
+<h1><span class="header-section-number">4</span> Importers</h1>
+<p>Importers are Catmandu packages to read data into an application. We provide importers for MARC, JSON, YAML, CSV, Excel, and other input formats. One can also import from remote sources for instance via Atom and OAI-PMH endpoints. For writing data see <a href="#exporters">Exporters</a>.</p>
+<p>As an example, lets create a Perl script to read a YAML file containing an array of values. We use the <code>each</code> function to loop through all the items</p>
+<pre><code>#!/usr/bin/env perl
+use Catmandu::Importer::YAML;
+my $importer = Catmandu::Importer::YAML-&gt;new(file =&gt; &quot;./test.yaml&quot;);
+
+my $count = $importer-&gt;each(sub {
+    my $obj = shift;
+    # .. your code ..
+});
+
+print &quot;Read: $count YAML items\n&quot;;</code></pre>
+<p>Running this script using this <a href="files/test.yaml">test.yaml</a> file you should see as output</p>
+<pre><code>Read: 3 YAML items</code></pre>
+<p>Here is an example script to read 10 records from an OAI-PMH endpoint into an application:</p>
+<pre><code>#!/usr/bin/env perl
+use Catmandu::Importer::OAI;
+
+my $importer = Catmandu::Importer::OAI-&gt;new(url =&gt; &#39;http://biblio.ugent.be/oai&#39;);
+
+my $count = $importer-&gt;take(10)-&gt;each(sub {
+   my $obj = shift;
+   # .. your code ..
+});
+
+print &quot;Read sample of $count OAI items\n&quot;;</code></pre>
+</section>
+<section id="exporters" class="level1">
+<h1><span class="header-section-number">5</span> Exporters</h1>
+<p><strong>Exporters</strong> are Catmandu packages to export data from an application. See <a href="#importers">Importers</a> for the opposite action.</p>
+<p>As input exporters can can get native Perl hashes or arrays but also Iterators to stream huge data sets.</p>
+<p>Here is an example using our Mock importer to stream 1 million Perl hashes through an Exporter:</p>
+<pre><code>use Catmandu::Exporter::YAML;
+my $exporter = Catmandu::Exporter::YAML-&gt;new();
+$exporter-&gt;add_many(Catmandu::Importer::Mock-&gt;new(size =&gt; 1000000));</code></pre>
+<p>Catmandu provides exporters for BibTeX, CSV, JSON, RIS, XLS and YAML. If you need a special exporter for your own format you could use the Template exporter which uses <a href="http://template-toolkit.org/">Template Toolkit</a>.</p>
+<p>As an example lets create an exporter for an Perl array of hashes <tt>$data</tt> using a template:</p>
+<pre><code>use Catmandu::Exporter::Template;
+my $data     = [
+   { name =&gt; { first =&gt; &#39;James&#39; , last =&gt; &#39;Bond&#39; } , occupation =&gt; &#39;Secret Agent&#39; } ,
+   { name =&gt; { first =&gt; &#39;Ernst&#39; , last =&gt; &#39;Blofeld&#39; } , occupation =&gt; &#39;Supervillain&#39; } ,
+];
+my $exporter = Catmandu::Exporter::Template-&gt;new(template =&gt; &#39;/home/phochste/example.tt&#39;);
+$exporter-&gt;add_many($data);</code></pre>
+<p>The template <a href="files/example.tt">example.tt</a> will be rendered for every hash in the array <code>$data</code> (or for every item in an Iterable <code>$data</code>).</p>
+<pre><code>&lt;character&gt;
+  &lt;name&gt;[% name.last %], [% name.first %]&lt;/name&gt;
+  &lt;occupation&gt;[% occupation %]&lt;/occupation&gt;
+&lt;/character&gt;</code></pre>
+</section>
+<section id="stores" class="level1">
+<h1><span class="header-section-number">6</span> Stores</h1>
+<p><em>this page should introduce to stores</em></p>
+<section id="using-stores-on-command-line" class="level2">
+<h2><span class="header-section-number">6.1</span> Using stores on command line</h2>
+<p>Stores can be used with the <a href="#command-line-client">command line client</a> to import, export, count, delete, and move records.</p>
+<pre><code>catmandu import [-?hLv] [long options...]
+
+examples:
+
+catmandu import YAML --file books.yml to MongoDB 
+    --database_name items --bag book
+
+options:
+
+        -? -h --help        this usage screen
+        -L --load_path
+        -v --verbose</code></pre>
+<section id="import-1" class="level3">
+<h3><span class="header-section-number">6.1.1</span> import</h3>
+<pre><code>$ catmandu import MARC --type USMARC
+    to CouchDB --database_name marc --bag marc 
+    &lt; ./data/camel.mrc
+
+$ catmandu import MAB2 --fix ./fix/zdb_bibliographic.fix
+    to MongoDB --database_name mab --bag mab 
+    &lt; ./data/journals_mab2.dat
+
+$ catmandu import MAB2 --fix ./fix/zdb_bibliographic.fix
+     to ElasticSearch --index_name mab --bag mab
+     &lt; ./data/journals_mab2.dat</code></pre>
+</section>
+<section id="export-1" class="level3">
+<h3><span class="header-section-number">6.1.2</span> export</h3>
+<pre><code>catmandu export [-?hLqv] [long options...]
+
+examples:
+
+catmandu export MongoDB --database_name items --bag book to YAML
+
+options:
+
+        -? -h --help        this usage screen
+        -L --load_path
+        -v --verbose
+        -q --query
+        --limit</code></pre>
+<p>Examples:</p>
+<pre><code>$ catmandu export CouchDB --database_name marc --bag marc to JSON
+
+$ catmandu export MongoDB --database_name mab --bag mab to JSON
+
+$ catmandu export ElasticSearch --index_name mab --bag mab to JSON</code></pre>
+</section>
+<section id="count" class="level3">
+<h3><span class="header-section-number">6.1.3</span> count</h3>
+<pre><code>catmandu count [-?hLq] [long options...]
+
+examples:
+
+catmandu count ElasticSearch --index_name shop --bag products 
+    --query &#39;brand:Acme&#39;
+
+options:
+
+        -? -h --help        this usage screen
+        -L --load_path
+        -q --query</code></pre>
+<p>Examples:</p>
+<pre><code>$ catmandu count CouchDB --database_name marc --bag marc
+
+$ catmandu count MongoDB --database_name mab --bag mab
+
+$ catmandu count MongoDB --database_name mab --bag mab 
+    --query &quot;{\&quot;dc.publisher\&quot;: \&quot;Heise\&quot;}&quot;
+
+$ catmandu count ElasticSearch --index_name mab --bag mab
+
+$ catmandu count ElasticSearch --index_name mab --bag mab 
+    --query &#39;dc.publisher:&quot;Heise&quot;&#39;</code></pre>
+</section>
+<section id="deleting" class="level3">
+<h3><span class="header-section-number">6.1.4</span> deleting</h3>
+<pre><code>catmandu delete [-?hLq] [long options...]
+
+examples:
+
+catmandu delete ElasticSearch --index_name items 
+    --bag book -q &#39;title:&quot;Programming Perl&quot;&#39;
+
+options:
+
+        -? -h --help        this usage screen
+        -L --load_path
+        -q --query</code></pre>
+<p>Examples:</p>
+<pre><code>$ catmandu delete CouchDB --database_name marc --bag marc
+
+$ catmandu delete MongoDB --database_name mab --bag mab
+
+$ catmandu delete ElasticSearch --index_name mab --bag mab
+
+$ catmandu delete MongoDB --database_name mab --bag mab 
+    --q &#39;{&quot;_id&quot;:&quot;1262750&quot;}&#39;
+
+$ catmandu delete ElasticSearch --index_name mab --bag mab 
+    --q &#39;_id:&quot;1262750&quot;&#39;</code></pre>
+</section>
+<section id="move" class="level3">
+<h3><span class="header-section-number">6.1.5</span> move</h3>
+<pre><code>catmandu move [-?hLqv] [long options...]
+
+examples:
+
+catmandu move MongoDB --database_name items --bag book 
+    to ElasticSearch --index_name items --bag book
+
+options:
+
+        -? -h --help        this usage screen
+        -L --load_path
+        -v --verbose
+        -q --query
+        --limit</code></pre>
+<p>Examples:</p>
+<pre><code>$ catmandu move MongoDB --database_name mab --bag mab 
+    to ElasticSearch --index_name mab --bag mab
+
+$ catmandu move MongoDB --database_name mab --bag mab 
+    to CouchDB --database_name mab --bag mab
+
+$ catmandu move CouchDB --database_name marc --bag marc
+    to MongoDB --database_name marc --bag marc
+
+$ catmandu move MongoDB --database_name mab --bag mab 
+    --query &quot;{\&quot;dcterms.spatial\&quot;: \&quot;XA-DE\&quot;}&quot; 
+    to ElasticSearch --index_name moved --bag moved
+
+$ catmandu move ElasticSearch --index_name moved --bag moved 
+    --query &quot;dc.identifier:\&quot;47918-4\&quot;&quot; 
+    to ElasticSearch --index_name selected --bag selected</code></pre>
+</section>
+</section>
+<section id="using-stores-in-perl-programs" class="level2">
+<h2><span class="header-section-number">6.2</span> Using stores in Perl programs</h2>
+<p>As explained in the introduction, one of the rationales for creating Catmandu is to ease the serialization of records in our database of choice. The introduction of schemaless databases made the storage of complex records quite easy. Before we delve into this type of database we need to show you what syntax Catmandu is using to store data.</p>
+<p>As example lets create the most simple storage mechanism possible, an in memory hash. We use this mock ‘database’ to show some of the features that any Catmandu::Store has. First we will create a YAML importer as shown above to import records into an in memory hash store:</p>
+<pre><code>use Catmandu::Importer::YAML;
+use Catmandu::Store::Hash;
+use Data::Dumper;
+
+my $importer = Catmandu::Importer::YAML-&gt;new(file =&gt; &quot;./test.yaml&quot;);
+my $store    = Catmandu::Store::Hash-&gt;new();
+
+# Store an iterable
+$store-&gt;bag-&gt;add_many($importer);
+
+# Store an array of hashes
+$store-&gt;bag-&gt;add_many([ { name =&gt; &#39;John&#39; } , { name =&gt; &#39;Peter&#39; }]);
+
+# Store one hash
+$store-&gt;bag-&gt;add( { name =&gt; &#39;Patrick&#39; });
+
+# Commit all changes
+$store-&gt;bag-&gt;commit;</code></pre>
+<p>Each Catmandu::Store have one or more compartments (e.g. tables) to store data called ‘bag’. We use the function ‘add_many’ to store each item in the importer Iterable into the Store. We can also store an array of Perl hashes with the same command. Or store a single hash with the ‘add’ method.</p>
+<p>Each bag is an Iterator so you can apply any of the ‘each’,‘any’,‘all’,… methods shown above to read data from a bag.</p>
+<pre><code>$store-&gt;bag-&gt;take(3)-&gt;each(sub {
+ my $obj = shift;
+ #.. your code
+});</code></pre>
+<p>When you store a perl Hash into a Catmandu::Store then an identifier field ’_id’ gets added to your perl Hash that can be used to retrieve the item at a later stage. Lets take a look at the identifier and how it can be used.</p>
+<pre><code># First store a perl hash and return the stored item which includes the stored identifier
+my $item = $store-&gt;bag-&gt;add( { name =&gt; &#39;Patrick&#39; });
+
+# This will show you an UUID like &#39;414003DC-9AD0-11E1-A3AD-D6BEE5345D14&#39;...
+print $item-&gt;{_id} , &quot;\n&quot;;
+
+# Now you can use this identifier to retrieve the object from the store
+my $item2 = $store-&gt;bag-&gt;get(&#39;414003DC-9AD0-11E1-A3AD-D6BEE5345D14&#39;);</code></pre>
+<p>And that is how it works. Catmandu::Store has some more functionality to delete items and query the store (if the backend supports it), but this is how you can store very complex Perl structures in memory or on disk with just a few lines of code. As a complete example we can show how easy it is to store data in a fulltext search engine like ElasticSearch.</p>
+<p>In this example we will download ElasticSearch version 0.19.3 from <a href="http://www.elasticsearch.org/download/">this</a> website and install it on our system:</p>
+<pre><code>$ wget https://github.com/downloads/elasticsearch/elasticsearch/elasticsearch-0.19.3.tar.gz
+$ tar zxvf elasticsearch-0.19.3.tar.gz
+$ cd elasticsearch-0.19.3
+$ bin/elasticsearch</code></pre>
+<p>After running the last command <tt>bin/elasticsearch</tt> we have started the search daemon. Now we can index some data with Catmandu:</p>
+<pre><code>use Catmandu::Importer::YAML;
+use Catmandu::Store::ElasticSearch;
+
+my $importer = Catmandu::Importer::YAML-&gt;new(file =&gt; &#39;./test.yaml&#39;);
+my $store    = Catmandu::Store::ElasticSearch-&gt;new(index_name =&gt; &#39;demo&#39;);
+
+$store-&gt;bag-&gt;add_many($importer);
+
+$store-&gt;bag-&gt;commit;</code></pre>
+<p>All records in the file ‘test.yaml’ should be available now index. We can test this by executing a new script to read all records stored in the store:</p>
+<pre><code>use Catmandu::Store::ElasticSearch;
+use Data::Dumper;
+
+my $store = Catmandu::Store::ElasticSearch-&gt;new(index_name =&gt; &#39;demo&#39;);
+
+$store-&gt;bag-&gt;each(sub {
+   my $obj = shift;
+   print Dumper($obj);
+});</code></pre>
+<p>If everything work correct you should something like this:</p>
+<pre><code>$VAR1 = {
+        &#39;first&#39; =&gt; &#39;Charly&#39;,
+        &#39;_id&#39; =&gt; &#39;96CA6692-9AD2-11E1-8800-92A3DA44A36C&#39;,
+        &#39;last&#39; =&gt; &#39;Parker&#39;,
+        &#39;job&#39; =&gt; &#39;Artist&#39;
+      };
+$VAR1 = {
+        &#39;first&#39; =&gt; &#39;Joseph&#39;,
+        &#39;_id&#39; =&gt; &#39;96CA87F8-9AD2-11E1-B760-84F8F47D3A65&#39;,
+        &#39;last&#39; =&gt; &#39;Ratzinger&#39;,
+        &#39;job&#39; =&gt; &#39;Pope&#39;
+      };
+$VAR1 = {
+        &#39;first&#39; =&gt; &#39;Albert&#39;,
+        &#39;_id&#39; =&gt; &#39;96CA83AC-9AD2-11E1-B1CD-CC6B8E6A771E&#39;,
+        &#39;last&#39; =&gt; &#39;Einstein&#39;,
+        &#39;job&#39; =&gt; &#39;Physicist&#39;
+      };</code></pre>
+<p>The ElasticSearch store even provides an implementation of the Lucene and CQL query language:</p>
+<pre><code>my $hits = $store-&gt;bag-&gt;searcher(query =&gt; &#39;first:Albert&#39;);
+
+$hits-&gt;each(sub {
+   my $obj = shift;
+   printf &quot;%s %s\n&quot; , $obj-&gt;{first} , $obj-&gt;{last};
+});</code></pre>
+<p>This last example will print ‘Albert Einstein’ as result. Clinton Gormley did some great work in providing a Perl client for ElasticSearch. Searching complex objects can be done by using a dot syntax e.g. ‘record.titles.0.subtitle:“My Funny Valentine”’. The beauty of ElasticSearch is that it is completely painless to setup and requires no schema: indexing data is simply done by using JSON over HTTP. All your fields are indexed automatically.</p>
+</section>
+</section>
+<section id="fixes" class="level1">
+<h1><span class="header-section-number">7</span> Fixes</h1>
+<p>Fixes can be used for easy data manipulation by non programmers. Using a small <a href="#fix-language">Fix language</a> non-programmers can manipulate data objects. A plain text file of fixes can be created to specify all the data manipulations that need to be executed to ‘massage’ the data in the desired format.</p>
+<p>As an example we will import data from a MARC file and change some metadata fields using Fix functions.</p>
+<p>First, make sure that you have Catmandu::MARC installed on your system.</p>
+<pre><code> $ cpanm Catmandu::MARC</code></pre>
+<p>We will use the Catmandu <a href="#command-line-client">command line client</a> to extract data from an example USMARC file you can download via this: <a href="#-files/camel.usmarc">link</a> - <tt>camel.usmarc</tt>.</p>
+<p>With the <tt>convert</tt> command you can read data from a MARC <a href="#-importers">Importer</a> and convert it into a new format. By default, convert will output JSON:</p>
+<pre><code>$ catmandu convert MARC &lt; camel.usmarc
+{&quot;record&quot;:[[&quot;LDR&quot;,null,null,&quot;_&quot;,&quot;00755cam  22002414a 4500&quot;],[&quot;001&quot;,null,null...
+...
+[&quot;650&quot;,&quot; &quot;,&quot;0&quot;,&quot;a&quot;,&quot;Cross-platform software development.&quot;]],&quot;_id&quot;:&quot;fol05882032 &quot;}</code></pre>
+<p>You can make this conversion explicit:</p>
+<pre><code>$ catmandu convert MARC to JSON &lt; camel.usmarc</code></pre>
+<p>To ‘massage’ this MARC data we first will create a Fix file which contains all the Fix commands we will use. Create a text file ‘fixes.txt’ on your system with this input:</p>
+<pre><code>remove_field(&#39;record&#39;);</code></pre>
+<p>and execute the following command:</p>
+<pre><code>$ catmandu convert MARC --fix fixes.txt &lt; camel.usmarc
+{&quot;_id&quot;:&quot;fol05731351 &quot;}
+{&quot;_id&quot;:&quot;fol05754809 &quot;}
+{&quot;_id&quot;:&quot;fol05843555 &quot;}
+{&quot;_id&quot;:&quot;fol05843579 &quot;}</code></pre>
+<p>We have removed the field ‘record’ (containing the MARC data) from the JSON record. This is what the ‘remove_field’ Fix does: remove one field in a JSON record. We will use this remove_field(‘record’) to make our output a bit more terse and easier readable.</p>
+<p>With the ‘marc_map’ Fix from the Catmandu::MARC package we can extract MARC (sub)fields from the record. Add these to the fixes.txt file:</p>
+<pre><code>marc_map(&#39;245&#39;,&#39;title&#39;);
+remove_field(&#39;record&#39;);</code></pre>
+<p>When we run our previous catmandu command we get the following output:</p>
+<pre><code>$ catmandu convert MARC --fix fixes.txt &lt; camel.usmarc
+{&quot;_id&quot;:&quot;fol05731351 &quot;,&quot;title&quot;:&quot;ActivePerl with ASP and ADO /Tobias Martinsson.&quot;}
+{&quot;_id&quot;:&quot;fol05754809 &quot;,&quot;title&quot;:&quot;Programming the Perl DBI /Alligator Descartes and Tim Bunce.&quot;}
+{&quot;_id&quot;:&quot;fol05843555 &quot;,&quot;title&quot;:&quot;Perl :programmer&#39;s reference /Martin C. Brown.&quot;}</code></pre>
+<p>We know that in the 650-a field of MARC we can find subjects. Lets add them to the fixes.txt:</p>
+<pre><code>marc_map(&#39;245&#39;,&#39;title&#39;);
+marc_map(&#39;650a&#39;,&#39;subject&#39;);
+remove_field(&#39;record&#39;);</code></pre>
+<p>and run the command again:</p>
+<pre><code>$ catmandu convert MARC --fix fixes.txt &lt; camel.usmarc
+{&quot;subject&quot;:&quot;Perl (Computer program language)&quot;,&quot;_id&quot;:&quot;fol05731351 &quot;,&quot;title&quot;:&quot;ActivePerl with ASP and ADO /Tobias Martinsson.&quot;}
+{&quot;subject&quot;:&quot;Perl (Computer program language)Database management.&quot;,&quot;_id&quot;:&quot;fol05754809 &quot;,&quot;title&quot;:&quot;Programming the Perl DBI /Alligator Descartes and Tim Bunce.&quot;}
+{&quot;subject&quot;:&quot;Perl (Computer program language)&quot;,&quot;_id&quot;:&quot;fol05843555 &quot;,&quot;title&quot;:&quot;Perl :programmer&#39;s reference /Martin C. Brown.&quot;}</code></pre>
+<p>The MARC 008 field from position 7 to 10 contains publication years. We can also add these to the ‘fixes.txt’ file:</p>
+<pre><code>marc_map(&#39;245&#39;,&#39;title&#39;);
+marc_map(&#39;650a&#39;,&#39;subject&#39;);
+marc_map(&#39;008/7-10,&#39;year&#39;);
+remove_field(&#39;record&#39;);</code></pre>
+<p>and run the command:</p>
+<pre><code>$ catmandu convert MARC --fix fixes.txt &lt; camel.usmarc
+{&quot;subject&quot;:&quot;Perl (Computer program language)&quot;,&quot;_id&quot;:&quot;fol05731351 &quot;,&quot;title&quot;:&quot;ActivePerl with ASP and ADO /Tobias Martinsson.&quot;,&quot;year&quot;:&quot;2000&quot;}
+{&quot;subject&quot;:&quot;Perl (Computer program language)Database management.&quot;,&quot;_id&quot;:&quot;fol05754809 &quot;,&quot;title&quot;:&quot;Programming the Perl DBI /Alligator Descartes and Tim Bunce.&quot;,&quot;year&quot;:&quot;2000&quot;}
+{&quot;subject&quot;:&quot;Perl (Computer program language)&quot;,&quot;_id&quot;:&quot;fol05843555 &quot;,&quot;title&quot;:&quot;Perl :programmer&#39;s reference /Martin C. Brown.&quot;,&quot;year&quot;:&quot;1999&quot;}</code></pre>
+<p>You don’t need to write fixes into a file to use them. E.g. if we want to have some statistic on the publication year in the camel.usmarc file we can do something like:</p>
+<pre><code>$ catmandu convert MARC --fix &quot;marc_map(&#39;008/7-10&#39;,&#39;year&#39;); retain_field(&#39;year&#39;)&quot; to CSV &lt; camel.usmarc
+year
+2000
+2000
+1999
+.
+.</code></pre>
+<p>With marc_map we extracted the year form the 008 field. With retain_field we deleted everything in the output except for the field ‘year’. We used the CSV <a href="#-exporters">Exporter</a> to present the results in an easy format.</p>
+<hr />
+<ul>
+<li>If you want to learn more about Fixess, then procees to our chapter about the <a href="#fix-language">Fix language</a>.</li>
+<li>If you want an overview of all available Fixes, then browse our <a href="#fixes-cheat-sheet">Fixes Cheat Sheet</a>.</li>
+<li>If you are a programmer and want to create your own Fixes, then go to our <a href="#fix-packages">Fix packages</a>.</li>
+</ul>
+<section id="fix-language" class="level2">
+<h2><span class="header-section-number">7.1</span> Fix language</h2>
+<p>Catmandu comes with a small domain specific language for manipulation of data <a href="#items">items</a>. The fix language consists of</p>
+<ul>
+<li><em>pathes</em> to refer to particular parts of an item</li>
+<li><em>functions</em> to manipulate (parts of) an item</li>
+<li><em>conditionals</em> to control when to apply which fix functions</li>
+<li><em><a href="#binds">binds</a></em> to manipulate the execution of fix functions</li>
+</ul>
+<p>The formal fix language grammar is defined in module <a href="https://metacpan.org/pod/Catmandu::Fix::Parser">Catmandu::Fix::Parser</a>.</p>
+<p>The <a href="#fixes-cheat-sheet">Fixes Cheat Sheet</a> contains a condense summary of the fix language.</p>
+</section>
+<section id="path" class="level2">
+<h2><span class="header-section-number">7.2</span> Path</h2>
+<pre><code># Remove field test in a deeply nested hash
+remove_field(&#39;foo.bar.test&#39;)
+
+# Remove field test in a deeply nested array &#39;bar&#39;
+remove_field(&#39;foo.bar.3.test&#39;)
+
+# Special path elements
+*         - a wildcard 
+$append   - Add a new item at the end of an array
+$prepend  - Add a new item at the start of an array
+$first    - Syntactic sugar for index &#39;0&#39; (the head of the array)
+$last     - Syntactic sugar for index &#39;-1&#39; (the tail of the array)
+
+# E.g.
+remove_field(&#39;foo.bar.*&#39;) # remove all the elements of &#39;bar&#39;
+remove_field(&#39;foo.bar.$first&#39;) # remove the first element of &#39;bar&#39;
+remove_field(&#39;foo.bar.$last&#39;) # remove the last element of &#39;bar&#39;</code></pre>
+</section>
+<section id="modifying-fields" class="level2">
+<h2><span class="header-section-number">7.3</span> Modifying fields</h2>
+<pre><code># Add a new field
+add_field(&#39;name&#39;,&#39;Smith&#39;)  # {name =&gt; &#39;Smith&#39;}
+
+# Change a value
+set_field(&#39;name&#39;,&#39;Doe&#39;)  # {name =&gt; &#39;Doe&#39;}
+
+# Append to a value
+append(&#39;name&#39;, &#39;, John&#39;)  # {name =&gt; &#39;Doe, John&#39;}
+
+# Prepend to a value
+prepend(&#39;name&#39;, &#39;, Mr. &#39;)  # {name =&gt; &#39;Mr. Doe, John&#39;}
+
+# Extract a substring from the value
+substring(&#39;name&#39;,0,3)  # {name =&gt; &#39;Mr.&#39;}   
+
+
+# {format =&gt; &#39;print&#39;}                    
+# Copy field
+copy_field(&#39;format&#39;,&#39;dc.format&#39;)
+
+# Delete field
+remove_field(&#39;format&#39;)
+
+# Move field
+move_field(&#39;format&#39;,&#39;dc.format&#39;)
+
+# Delete every field except named field
+retain_field(&#39;dc.format&#39;)
+
+
+# {ddc =&gt; [&#39;000&#39;, &#39;004&#39;, &#39;600&#39;]}
+# Join elements of a field
+join_field(&#39;ddc&#39;,&#39;,&#39;)  # {ddc =&gt; &#39;001,004,600&#39;}
+
+# Split string to array
+split_field(&#39;ddc&#39;, &#39;,&#39;)  # {ddc =&gt; [&#39;000&#39;, &#39;004&#39;, &#39;600&#39;]}
+
+# Count elements in array
+count(&#39;ddc&#39;)  # 3</code></pre>
+</section>
+<section id="strings" class="level2">
+<h2><span class="header-section-number">7.4</span> Strings</h2>
+<pre><code># {format =&gt; &#39;marc&#39;}
+# Capitalize a value
+capitalize(&#39;format&#39;)  # {format =&gt; &#39;Marc&#39;}
+
+# Uppercase a value
+upcase(&#39;format&#39;)  # {format =&gt; &#39;MARC&#39;}
+
+# Downcase a value
+downcase(&#39;format&#39;)  # {format =&gt; &#39;marc&#39;}   
+
+# {foo =&gt; &#39;   abc   &#39;}
+# Trim whitespace
+trim(&#39;foo&#39;)  # {foo =&gt; &#39;abc&#39;}
+trim(&#39;foo&#39;, &#39;whitespace&#39;)  # {foo =&gt; &#39;abc&#39;};
+
+# trim non-word characters
+# {foo =&gt; &#39;   abc  / : .&#39;}
+trim(&#39;foo&#39;, &#39;nonword&#39;)  # {foo =&gt; &#39;abc&#39;};</code></pre>
+</section>
+<section id="search-and-replace" class="level2">
+<h2><span class="header-section-number">7.5</span> Search and replace</h2>
+<pre><code># {format =&gt; &#39;MAB&#39;}
+# Search and replace using regex expressions
+# Replace characters in string
+replace_all(&#39;format&#39;, &#39;a&#39;, &#39;x&#39;)  # {format =&gt; &#39;MxB&#39;}    
+
+# {id =&gt; [&#39;123-4&#39;, &#39;567-X&#39;]}
+# Search and replace in array
+replace_all(&#39;identifier.*&#39;, &#39;-[0-9xX]$&#39;, &#39;&#39;) # {id =&gt; [&#39;123&#39;, &#39;567&#39;]}</code></pre>
+</section>
+<section id="lookup" class="level2">
+<h2><span class="header-section-number">7.6</span> Lookup</h2>
+<pre><code># lookup value of &#39;ddc&#39; in dict.csv and 
+# replace the value or set it to &#39;000&#39;
+lookup(&#39;ddc&#39;, &#39;dict.csv&#39;, -default=&gt;&#39;000&#39;)
+
+# lookup value of &#39;ddc&#39; in dict.csv and 
+# replace the value or delete nothing found
+lookup(&#39;ddc&#39;, &#39;dict.csv&#39;, -delete=&gt;&#39;1&#39;)   
+
+# lookup value of &#39;ddc&#39; in MongoDB and
+# replace it with the data found
+lookup_in_store(&#39;ddc&#39;, &#39;MongoDB&#39;, -database_name =&gt; &#39;lookups&#39;) 
+lookup_in_store(&#39;ddc&#39;, &#39;MongoDB&#39;, -delete =&gt; 1)</code></pre>
+</section>
+<section id="conditionals" class="level2">
+<h2><span class="header-section-number">7.7</span> Conditionals</h2>
+<pre><code># set value of field &#39;ddc&#39; to &#39;Informatik&#39; 
+# if field &#39;ddc&#39; has the value &#39;004&#39;
+if any_match(&#39;ddc&#39;, &#39;004&#39;)
+  set_field(&#39;ddc&#39;, &#39;Informatik&#39;)
+end
+
+# inverted
+unless any_match(&#39;ddc&#39;, &#39;000&#39;)
+  lookup(&#39;ddc&#39;, &#39;dict.csv&#39;,  -delete=&gt;&#39;1&#39;)
+end
+
+# lookup &#39;ddc&#39; value in dict.csv
+if exists(&#39;ddc&#39;)
+  lookup(&#39;ddc&#39;, &#39;dict.csv&#39;,  -delete=&gt;&#39;1&#39;)
+end
+
+# inverted
+unless exists(&#39;ddc&#39;)
+  add_field(&#39;ddc&#39;, &#39;000&#39;)
+end</code></pre>
+</section>
+<section id="helper-fixes" class="level2">
+<h2><span class="header-section-number">7.8</span> Helper fixes</h2>
+<pre><code># Collapse deep nested hash to a flat hash
+collapse()
+
+# Expand flat hash to deep nested hash
+expand()               
+
+# Clone the perl hash and work on the clone
+clone()
+
+# Reject all items from from the output
+reject()
+
+# Reject all items with have an &#39;igore_me&#39; field
+reject exists(ignore_me)
+
+# Reject all items with have a &#39;ignore&#39; field with value &#39;true&#39;
+reject all_match(ignore,true)
+
+# Select all items 
+select()
+
+# Select only those items that have an &#39;include_me&#39; field
+select exists(include_me)
+
+# Select only those items that have an &#39;include&#39; field with value &#39;true&#39;
+select all_match(include,true)</code></pre>
+</section>
+<section id="external-programs" class="level2">
+<h2><span class="header-section-number">7.9</span> External programs</h2>
+<pre><code># Use an external program that can read JSON 
+# from stdin and write JSON to stdout
+cmd(&quot;java MyClass&quot;)</code></pre>
+</section>
+<section id="fix-packages" class="level2">
+<h2><span class="header-section-number">7.10</span> Fix packages</h2>
+<p>For an extended introduction into creating Fix packages read the two blog posts at:</p>
+<ul>
+<li><a href="#-http://librecat.org/catmandu/2014/03/14/create-a-fixer.html">Create a fixer - Part 1</a></li>
+<li><a href="#-http://librecat.org/catmandu/2014/03/26/creating-a-fixer-2.html">Create a fixer - Part 2</a></li>
+</ul>
+<section id="create-a-fix-short-version" class="level4 unnumbered">
+<h4>Create a Fix (short version)</h4>
+<p>The easiest way to create a new ‘Fix’ is by creating a Perl package in the Catmandu::Fix namespace that has a ‘fix’ instance method. For example:</p>
+<pre><code>package Catmandu::Fix::foo;
+
+use Moo;
+
+sub fix {
+    my ($self,$data) = @_;
+
+    # Fix your data here...
+
+    $data;
+}
+
+1;</code></pre>
+<p>When this code is installed in your PERL5LIB path as <tt>Catmandu/Fix/foo.pm</tt> then you fix scripts can execute this fix by running:</p>
+<pre><code>foo()</code></pre>
+<p>Or, from the command line:</p>
+<pre><code>$ catmandu convert JSON --fix &quot;foo()&quot; &lt; data.json</code></pre>
+<hr />
+<p><em>The following instruction seems to be outdated:</em></p>
+<p>If you want pass arguments to your fix, you can make use of Moo and Catmandu::Fix::Has to read in required and optional parameters.</p>
+<pre><code>package Catmandu::Fix::foo;
+
+use Moo;
+
+has greeting =&gt; (fix_arg =&gt; 1);  # required first argument
+has message  =&gt; (fix_arg =&gt; 1);  # required second argument
+has eol      =&gt; (fix_opt =&gt; &#39;!&#39;);  # optional argument , default &#39;!&#39;
+
+sub fix {
+    my ($self,$data) = @_;
+
+    print STDERR $self-&gt;greeting . &quot;, &quot; . $self-&gt;message .  $self-&gt;eol. &quot;\n&quot;;
+
+    # Fix your data here...
+
+    $data;
+}
+
+1;</code></pre>
+<p>Now you can write log messages in your Fixes:</p>
+<pre><code>$ echo &#39;{}&#39; | catmandu convert --fix &#39;foo(Hello,World)&#39;
+Hello, World!
+{}
+$ echo &#39;{}&#39; | catmandu convert --fix &#39;foo(Hello,World, eol: ?)&#39;
+Hello, World?
+{}</code></pre>
+</section>
+</section>
+<section id="fixes-cheat-sheet" class="level2">
+<h2><span class="header-section-number">7.11</span> Fixes Cheat Sheet</h2>
+<p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
+<span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
+<span class="co"># complex data structures such as MARC.</span>
+<span class="kw">set_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;patrick&quot;</span>)             <span class="co"># { my =&gt; { name =&gt; &#39;Patrick&#39;} }</span>
+<span class="kw">add_field</span>(<span class="st">&quot;my.name2&quot;</span>,<span class="st">&quot;nicolas&quot;</span>)
+<span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
+<span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
+<span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+
+<span class="kw">upcase</span>(<span class="st">&quot;title&quot;</span>)                            <span class="co"># marc -&gt; MARC</span>
+<span class="kw">downcase</span>(<span class="st">&quot;title&quot;</span>)                          <span class="co"># MARC -&gt; marc</span>
+<span class="kw">capitalize</span>(<span class="st">&quot;my.deeply.nested.field.0&quot;</span>)     <span class="co"># marc -&gt; Marc</span>
+<span class="kw">trim</span>(<span class="st">&quot;field_with_spaces&quot;</span>)                  <span class="co"># &quot;  marc  &quot; -&gt; marc</span>
+<span class="kw">substring</span>(<span class="st">&quot;title&quot;</span>,0,1)                     <span class="co"># marc -&gt; m</span>
+<span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
+<span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
+
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-sep_char=<span class="kw">&gt;</span><span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-default=<span class="kw">&gt;</span><span class="st">&#39;test&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-delete=<span class="kw">&gt;</span><span class="st">&#39;1&#39;</span>)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
+
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -database_name =<span class="kw">&gt;</span> <span class="st">&#39;lookups&#39;</span>)  <span class="co"># lookup the (id)-value of title in &#39;lookups&#39; and</span>
+                                           <span class="co"># replace it with the data found</span>
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -default =<span class="kw">&gt;</span> <span class="st">&#39;default value&#39;</span> , -delete =<span class="kw">&gt;</span> 1) 
+
+<span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, <span class="st">&#39;-bag&#39;</span>, <span class="st">&#39;authors&#39;</span>, <span class="st">&#39;-database_name&#39;</span>, <span class="st">&#39;catalog&#39;</span>)  <span class="co"># add matching values to a store as a side effect</span>
+
+
+<span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
+<span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>)                         <span class="co"># sort the values of an array</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-unique =<span class="kw">&gt;</span> 1)            <span class="co"># sort the values plus keep unique values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
+<span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
+<span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
+                                           <span class="co"># from stdin and write JSON to stdout</span>
+<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>)                             <span class="co"># Send a message to Log::Any (new in Catmandu 0.92)</span>
+<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>,-level =<span class="kw">&gt;</span> DEBUG)             <span class="co"># Send a message to Log::Any of log level &#39;DEBUG&#39;</span>
+
+<span class="kw">split_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                     <span class="co"># marc:must:die -&gt; [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;]</span>
+<span class="kw">join_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                      <span class="co"># [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;] -&gt; marc:must:die</span>
+<span class="kw">retain_field</span>(<span class="st">&quot;id&quot;</span>)                         <span class="co"># delete any field except &#39;id&#39;</span>
+<span class="kw">replace_all</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)               <span class="co"># marc -&gt; mxrc</span>
+
+<span class="co"># Create hashes from arrays and arrays from hashes</span>
+<span class="kw">array</span>(tags)                                <span class="co"># { &#39;name&#39; =&gt; &#39;Peter&#39;, age =&gt; &#39;12&#39; } =&gt; [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12]</span>
+<span class="kw">hash</span>(tags)                                 <span class="co"># [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12] =&gt; {name =&gt; &#39;Peter&#39;, age =&gt; 12}</span>
+
+<span class="co"># Most functions can work also work on arrays. E.g.</span>
+<span class="kw">replace_all</span>(<span class="st">&quot;author.*&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)            <span class="co"># [ &#39;marc&#39;,&#39;jan&#39;] =&gt; [&#39;mxrc&#39;,&#39;jxn&#39;]</span>
+<span class="co"># Use:</span>
+<span class="co">#   authors.$end (last entry)</span>
+<span class="co">#   authors.$start (first entry)</span>
+<span class="co">#   authors.$append (last + 1)</span>
+<span class="co">#   authors.$prepend (first - 1)</span>
+<span class="co">#   authors.* (all authors)</span>
+<span class="co">#   authors.2 (3rd author)</span>
+
+<span class="fu">collapse()</span>                                 <span class="co"># collapse deep nested hash to a flat hash</span>
+<span class="fu">expand()</span>                                   <span class="co"># expand flat hash to deep nested hash</span>
+<span class="fu">clone()</span>                                    <span class="co"># clone the perl hash and work on the clone</span>
+<span class="fu">reject()</span>                                   <span class="co"># Reject (skip) a record</span>
+<span class="kw">reject</span> [condition]                         <span class="co"># Reject a record on some condition:</span>
+                                           <span class="co">#   reject all_match(...)</span>
+                                           <span class="co">#   reject any_match(...)</span>
+                                           <span class="co">#   reject exists(...)</span>
+<span class="fu">select()</span>                                   <span class="co"># Select a record</span>
+<span class="kw">select</span> [<span class="kw">condition</span>]                         <span class="co"># Select only those records that match a condition (see reject)</span>
+
+<span class="kw">to_json</span>(<span class="st">&#39;my.field&#39;</span>)                        <span class="co"># convert a value of a field to json</span>
+<span class="kw">from_json</span>(<span class="st">&#39;my.field&#39;</span>)                      <span class="co"># replace the json field with the parsed value</span>
+
+<span class="fu">nothing()</span>                                  <span class="co"># do nothing (used in benchmarking)</span>
+
+<span class="co"># Copy all 245 subfields into the my.title hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
+<span class="co"># Copy the 245-$a$b$c subfields into the my.title hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245abc&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
+<span class="co"># Copy the 100 subfields into the my.authors array</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;100&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>) 
+<span class="co"># Add the 710 subfields into the my.authors array</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;710&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>)
+<span class="co"># Copy the 600-$x subfields into the my.subjects array while packing each into a genre.text hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;600x&#39;</span>,<span class="st">&#39;my.subjects.$append.genre.text&#39;</span>)
+<span class="co"># Copy the 008 characters 35-35 into the my.language hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;008_/35-35&#39;</span>,<span class="st">&#39;my.language&#39;</span>)
+<span class="co"># Copy all the 600 fields into a my.stringy hash joining them by &#39;; &#39;</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;600&#39;</span>,<span class="st">&#39;my.stringy&#39;</span>, -join =<span class="kw">&gt;</span> <span class="st">&#39;; &#39;</span>)
+<span class="co"># When 024 field exists create the my.has024 hash with value &#39;found&#39;</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;024&#39;</span>,<span class="st">&#39;my.has024&#39;</span>, -value =<span class="kw">&gt;</span> <span class="st">&#39;found&#39;</span>)
+<span class="co"># Do the same examples now with the marc fields in &#39;record2&#39;</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>, -record =<span class="kw">&gt;</span> <span class="st">&#39;record2&#39;</span>)
+<span class="co"># Remove the 900 fields</span>
+<span class="kw">marc_remove</span>(<span class="st">&#39;900&#39;</span>)
+<span class="co"># Add a marc field (in Catmandu::MARC 0.110)</span>
+<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1 =<span class="kw">&gt;</span> <span class="st">&#39; &#39;</span> , ind2 =<span class="kw">&gt;</span> <span class="st">&#39;1&#39;</span> , a =<span class="kw">&gt;</span> <span class="st">&#39;test123&#39;</span>)
+<span class="co"># Set a marc value of one (sub)field to a new value</span>
+<span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+<span class="kw">marc_set</span>(<span class="st">&#39;650p&#39;</span>,<span class="st">&#39;test&#39;</span>)
+<span class="kw">marc_set</span>(<span class="st">&#39;100[3]a&#39;</span>,<span class="st">&#39;Farquhar family.&#39;</span>)
+
+<span class="co"># Map all 650 subjects into an array </span>
+<span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>,join:<span class="st">&#39;###&#39;</span>) 
+<span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
+
+<span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
+<span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># inverted</span>
+<span class="kw">unless</span> all_match(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end;</span>
+
+<span class="co"># uppercase the value of field &#39;foo&#39; if field &#39;oogly&#39; has the value &#39;doogly&#39;</span>
+<span class="kw">if</span> <span class="kw">any_match</span>(<span class="st">&#39;oogly&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># inverted</span>
+<span class="kw">unless</span> any_match(<span class="st">&#39;oogly&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># uppercase the value of field &#39;foo&#39; if the field &#39;oogly&#39; exists</span>
+<span class="kw">if</span> <span class="kw">exists</span>(<span class="st">&#39;oogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># inverted</span>
+<span class="kw">unless</span> exists(<span class="st">&#39;oogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;bar&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># compare things (needs Catmandu 0.92 or better)</span>
+<span class="kw">if</span> <span class="kw">greater_than</span>(<span class="st">&#39;year&#39;</span>,2000)
+  <span class="kw">add_field</span>(<span class="st">&#39;recent&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
+<span class="kw">if</span> <span class="kw">less_than</span>(<span class="st">&#39;year&#39;</span>,1970)
+  <span class="kw">add_field</span>(<span class="st">&#39;ancient&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># Evaludates true when a marc (sub)field matches a regular expression</span>
+<span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;My funny title&#39;</span>)
+  <span class="kw">add_field</span>(<span class="st">&#39;funny.title&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+<span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
+    <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co">## Binds (needs Catmandu 0.92 or better)</span>
+
+<span class="co"># The identity binder doesn&#39;t embody any computational strategy. It simply </span>
+<span class="co"># applies the bound fix functions sequentially to its input without any </span>
+<span class="co"># modification.</span>
+<span class="kw">do</span> <span class="fu">identity()</span>
+    <span class="kw">add_field</span>(foo,bar)
+    <span class="kw">add_field</span>(foo2,bar2)
+<span class="kw">end</span>
+
+<span class="co"># Maybe, computes all the fix functions and ignores fixes once they throw errors</span>
+<span class="co"># or return undef.</span>
+<span class="kw">do</span> <span class="fu">maybe()</span>
+   <span class="fu">foo()</span>
+   <span class="fu">return_undef()</span> <span class="co"># rest will be ignored</span>
+   <span class="fu">bar()</span>
+<span class="kw">end</span>
+
+<span class="co"># List over all items in demo and add a foo =&gt; bar field</span>
+<span class="co"># { demo =&gt; [{},{},{}] } =&gt; { demo =&gt; [{foo=&gt;bar},{foo=&gt;bar},{foo=&gt;bar}]}</span>
+<span class="kw">do</span> <span class="kw">list</span>(path =<span class="kw">&gt;</span> demo)
+    <span class="kw">add_field</span>(foo,bar)
+<span class="kw">end</span>
+
+<span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
+<span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
+    <span class="fu">foo()</span>
+<span class="kw">end</span></code></pre>
+</section>
+<section id="example-fix-script" class="level2">
+<h2><span class="header-section-number">7.12</span> Example Fix Script</h2>
+<p>Here is an example Fix script taken from a production system at Ghent University Library that can be used for inspiration. This script is used to feed data from a MongoDB store of MARC records to a <a href="http://projectblacklight.org/">Black Light</a> Solr installation.</p>
+<pre><code>
+#-
+#- LLUDSS - Data cleaning fixes. Using MARC records as input
+#-
+#- 2013 Patrick.Hochstenbach@UGent.be
+#-
+
+copy_field('merge.source','source')
+copy_field('merge.id','id')
+set_field('is_deleted','false')
+
+set_field('is_hidden','false')
+copy_field('merge.hidden','is_hidden')
+
+if exists('merge.related_desc')
+    copy_field('merge.related_desc','json.merge_related_desc')
+end
+
+if exists('merge.deleted')
+    set_field('is_deleted','true')
+else
+    #- Document Type
+    unless exists('type')
+        marc_map('920a','type')
+        lookup("type","/opt/lludss-import/etc/material_types.csv",-default=>"other")
+    end
+
+    #- ISBN/ISSN
+    marc_map('020a','isbn.$append', -join=>'==')
+    marc_map('022a','issn.$append', -join=>'==')
+    join_field('isbn','==')
+    split_field('isbn','==')
+    join_field('issn','==')
+    split_field('issn','==')
+    replace_all('isbn.*','^([0-9xX-]+).*$','$1')
+    replace_all('issn.*','^([0-9xX-]+).*','$1')
+
+    #- Title
+    marc_map('245ab','title', -join => ' ')
+    replace_all('title','\[(.*)\]','$1')
+    replace_all('title','((\s+\W\s*)+|\.)$','')
+    copy_field('title','title_sort')
+    replace_all('title_sort','\W+','')
+    substring('title_sort',0,50)
+    downcase('title_sort')
+    copy_field('title','json.title')
+    marc_map('246','json.title_remainder', -join => ' ')
+    marc_map('245a','title_short')
+    replace_all('title_short','((\s+\W\s*)+|\.)$','')
+
+    #- Author
+    marc_map('100ab','author.$append', -join=>' ')
+    marc_map('700ab','author.$append', -join=>' ')
+    unless all_match('type','phd|master|bachelor')
+        marc_map('720ab','author.$append', -join=>' ')
+    end
+    author_names()
+    copy_field('author','json.author')
+
+    #- Imprint
+    marc_map('008_/7-10','year')
+    if all_match('year','[u^?-]{4}')
+       remove_field('year')
+    end
+    replace_all('year','\D','0')
+
+    if greater_than('2018','year')
+        remove_field('year')
+    end
+
+    if marc_match('008_/6-6','b')
+        prepend('year','-')
+    end
+
+    #- Edition
+    marc_map('250a','json.edition')
+
+    #- Description
+    marc_map('300a','json.desc_extend')
+
+    #- Summary
+    marc_map('505a','json.summary.$append', -join => "\n")
+    marc_map('520a','json.summary.$append', -join => "\n")
+
+    #- Als we een dissertation hebben dan is 502 de summary met 720 als promotor.
+    #- Dit is dan ook automatisch een UGent publiaction
+    if all_match('type','phd|master')
+        marc_map('502a','summary.$append')
+
+        if exists('summary');
+            join_field('summary','')
+            move_field('summary','json.summary.$append')
+        end
+
+        add_field('only.$append','ugent')
+    end
+
+    unless exists('json.summary')
+        weave_by_id('summary')
+        if exists('_weave.summary.data.summary')
+            copy_field('_weave.summary.data.summary','json.summary.$append')
+        end
+        remove_field('_weave')
+    end
+
+    #- Boost
+    unless exists('_boost')
+        weave_by_id('boost')
+        if exists('_weave.boost.data.boost')
+            copy_field('_weave.boost.data.boost','_boost')
+        end
+        remove_field('_weave')
+    end
+
+    #- Language
+    marc_map('008_/35-37','lang')
+    if all_match('lang','\W+')
+        set_field('lang','und')
+    end
+
+    #- Subject
+    marc_map('6**^0123456789','subject.$append', -join => ' ')
+    replace_all('subject.*','\.$','')
+    sort_field('subject',-uniq=>1)
+    copy_field('subject','json.subject')
+
+    #- Library, Faculty, Location
+    marc_map('852c','library.$append')
+    sort_field('library',-uniq=>1)
+    marc_map('852x','faculty.$append')
+    sort_field('faculty',-uniq=>1)
+    marc_map('852j','location.$append')
+    sort_field('location',-uniq=>1)
+
+     #- Host publication
+    host_publication()
+    move_field('host_publication','json.host_publication.$append')
+
+    #- Holding
+    if exists('p_holding')
+        copy_field('p_holding','year')
+        replace_all('year',' .*','')
+        move_field('p_holding','json.p_holding')
+        move_field('p_holding_txt','json.host_publication.$append')
+    end
+    if exists('e_holding')
+        copy_field('e_holding','year')
+        replace_all('year',' .*','')
+        move_field('e_holding','json.e_holding')
+        move_field('e_holding_txt','json.host_publication.$append')
+    end
+
+    join_field('json.host_publication','<br>');
+
+    #- Year cleanup
+    replace_all('year','^(?<=-)?0+','')
+    unless all_match('year','^-?([0-9]|[123456789][0-9]+)$')
+        remove_field('year')
+    end
+
+    #- Wikipedia
+    weave_by_id('wikipedia')
+    copy_field('_weave.wikipedia.data.wikipedia_url','json.wikipedia_url')
+    remove_field('_weave')
+
+    #- Cover Image
+    if all_match('merge.source','rug01|pug01|ebk01')
+        weave_by_id('cover')
+        copy_field('_weave.cover.data.cover_remote','json.cover_remote')
+        remove_field('_weave')
+    end
+
+    #- Cover card-catalog
+    if  exists(cid)
+        add_field('json.cover_remote.$append','http://search.ugent.be/meercat/x/stream?source=rug02&id=')
+        move_field('cid','json.cover_remote.$append')
+        join_field('json.cover_remote','')
+    end
+
+    #- Fulltext
+    fulltext()
+    move_field('fulltext','json.fulltext')
+
+    #- Remove record without items or fulltext
+    unless exists('items')
+        unless exists('json.fulltext')
+            set_field('is_deleted','true')
+        end
+    end
+
+    #- CATEGORY
+    if exists('json.fulltext')
+        add_field('only.$append','online')
+    end
+    if exists('items')
+        add_field('only.$append','print')
+    end
+
+    if all_match('merge.source','pug01')
+       add_field('only.$append','ugent')
+    end
+
+    sort_field("only",-uniq=>1, -reverse=>0)
+
+    #- ALL Field
+    all()
+
+    #- Identifier indexes rug01, ser01, ...
+    ids()
+
+    #- Set
+    marc_map('005','updated_at')
+    #- Warning: Aleph doesn't do zulu-time...
+    datetime_format('updated_at','time_zone' => 'Europe/Brussels','set_time_zone' => 'UTC','source_pattern' => '%Y%m%d%H%M%S.%N','destination_pattern' => '%Y-%m-%dT%H:%M:%SZ','delete' =>1)
+    add_field('is_oai','false')
+    if exists('updated_at')
+        add_field('set.$append','all')
+        set_field('is_oai','true')
+    end
+    sort_field('set',-unique=>1)
+
+    #- MARC Display
+    marc_map('245','marc_display.$append.title', -join => ' ')
+    marc_map('246','marc_display.$append.other-title', -join => ' ')
+    marc_map('765','marc_display.$append.orig-title', -join => ' ')
+    marc_map('210','marc_display.$append.abbrev-title', -join => ' ')
+    marc_map('240','marc_display.$append.other-title', -join => ' ')
+    marc_map('020','marc_display.$append.isbn', -join => ' ')
+    marc_map('022','marc_display.$append.issn', -join => ' ')
+    marc_map('028','marc_display.$append.publisher-no', -join => ' ')
+    marc_map('048','marc_display.$append.voices-code', -join => ' ')
+    marc_map('100','marc_display.$append.author', -join => ' ')
+    marc_map('110','marc_display.$append.corp-author', -join => ' ')
+    marc_map('700','marc_display.$append.author', -join => ' ')
+    marc_map('720','marc_display.$append.other-name', -join => ' ')
+    marc_map('111','marc_display.$append.conference', -join => ' ')
+    marc_map('130','marc_display.$append.other-title', -join => ' ')
+    marc_map('250','marc_display.$append.edition', -join => ' ')
+    marc_map('255','marc_display.$append.scale', -join => ' ')
+    marc_map('256','marc_display.$append.edition', -join => ' ')
+    marc_map('260','marc_display.$append.publisher', -join => ' ')
+    marc_map('261','marc_display.$append.publisher', -join => ' ')
+    marc_map('263','marc_display.$append.publisher', -join => ' ')
+    marc_map('300','marc_display.$append.description', -join => ' ')
+    marc_map('310','marc_display.$append.frequency', -join => ' ')
+    marc_map('321','marc_display.$append.prior-freq', -join => ' ')
+    marc_map('340','marc_display.$append.description', -join => ' ')
+    marc_map('362','marc_display.$append.pub-history', -join => ' ')
+    marc_map('400','marc_display.$append.series', -join => ' ')
+    marc_map('410','marc_display.$append.series', -join => ' ')
+    marc_map('440','marc_display.$append.series', -join => ' ')
+    marc_map('490','marc_display.$append.series', -join => ' ')
+    marc_map('500','marc_display.$append.note', -join => ' ')
+    marc_map('501','marc_display.$append.note', -join => ' ')
+    marc_map('502','marc_display.$append.thesis', -join => ' ')
+    marc_map('504','marc_display.$append.bibliography', -join => ' ')
+    marc_map('505','marc_display.$append.content', -join => ' ')
+    marc_map('508','marc_display.$append.credits', -join => ' ')
+    marc_map('510','marc_display.$append.note', -join => ' ')
+    marc_map('511','marc_display.$append.performers', -join => ' ')
+    marc_map('515','marc_display.$append.note', -join => ' ')
+    marc_map('518','marc_display.$append.note', -join => ' ')
+    marc_map('520','marc_display.$append.summary', -join => ' ')
+    marc_map('521','marc_display.$append.note', -join => ' ')
+    marc_map('525','marc_display.$append.note', -join => ' ')
+    marc_map('530','marc_display.$append.note', -join => ' ')
+    marc_map('533','marc_display.$append.note', -join => ' ')
+    marc_map('534','marc_display.$append.note', -join => ' ')
+    marc_map('540','marc_display.$append.note', -join => ' ')
+    marc_map('541','marc_display.$append.note', -join => ' ')
+    marc_map('544','marc_display.$append.note', -join => ' ')
+    marc_map('545','marc_display.$append.note', -join => ' ')
+    marc_map('546','marc_display.$append.note', -join => ' ')
+    marc_map('550','marc_display.$append.note', -join => ' ')
+    marc_map('555','marc_display.$append.note', -join => ' ')
+    marc_map('561','marc_display.$append.note', -join => ' ')
+    marc_map('580','marc_display.$append.note', -join => ' ')
+    marc_map('581','marc_display.$append.publication', -join => ' ')
+    marc_map('583','marc_display.$append.note', -join => ' ')
+    marc_map('586','marc_display.$append.note', -join => ' ')
+    marc_map('591','marc_display.$append.note', -join => ' ')
+    marc_map('598','marc_display.$append.classification', -join => ' ')
+    marc_map('080','marc_display.$append.udc-no', -join => ' ')
+    marc_map('082','marc_display.$append.dewey-no', -join => ' ')
+    marc_map('084','marc_display.$append.other-call-no', -join => ' ')
+    marc_map('600','marc_display.$append.subject', -join => ' ')
+    marc_map('610','marc_display.$append.subject', -join => ' ')
+    marc_map('611','marc_display.$append.subject', -join => ' ')
+    marc_map('630','marc_display.$append.subject', -join => ' ')
+    marc_map('650','marc_display.$append.subject', -join => ' ')
+    marc_map('651','marc_display.$append.subject', -join => ' ')
+    marc_map('653','marc_display.$append.subject', -join => ' ')
+    marc_map('655','marc_display.$append.subject', -join => ' ')
+    marc_map('662','marc_display.$append.subject', -join => ' ')
+    marc_map('690','marc_display.$append.subject', -join => ' ')
+    marc_map('692','marc_display.$append.subject', -join => ' ')
+    marc_map('693','marc_display.$append.subject', -join => ' ')
+    marc_map('710','marc_display.$append.corp-author', -join => ' ')
+    marc_map('711','marc_display.$append.conference', -join => ' ')
+    marc_map('730','marc_display.$append.other-title', -join => ' ')
+    marc_map('749','marc_display.$append.title-local', -join => ' ')
+    marc_map('752','marc_display.$append.other-info', -join => ' ')
+    marc_map('753','marc_display.$append.other-info', -join => ' ')
+    marc_map('772','marc_display.$append.parent-rec-ent', -join => ' ')
+    marc_map('776','marc_display.$append.add-phys-form-e', -join => ' ')
+    marc_map('777','marc_display.$append.issu-with-entry', -join => ' ')
+    marc_map('780','marc_display.$append.preceding-entry', -join => ' ')
+    marc_map('785','marc_display.$append.succeed-entry', -join => ' ')
+    marc_map('LKR','marc_display.$append.note', -join => ' ')
+    marc_map('024','marc_display.$append.object-id', -join => ' ')
+    marc_map('856','marc_display.$append.e-location', -join => ' ')
+    #-if_all_match('merge.source','ser01')
+    #-    marc_map('852jhaz','marc_display.$append.location', -join => ' | ')
+    #-end
+    #-if_all_match('merge.source','rug01')
+    #-    marc_map('Z303haz','marc_display.$append.location', -join => ' | ')
+    #-end
+    to_json('marc_display')
+
+    #- Europeana Magic
+    europeana()
+
+    #- MARCXML
+    marc_xml('record')
+    move_field('record','fXML')
+end
+
+#- JSON
+to_json('json')
+
+add_field('_bag','data')
+
+remove_field('record')
+remove_field('merge')
+remove_field('version')
+</code></pre>
+
+</section>
+</section>
+<section id="extended-features-1" class="level1">
+<h1><span class="header-section-number">8</span> Extended features</h1>
+</section>
+<section id="validators" class="level1">
+<h1><span class="header-section-number">9</span> Validators</h1>
+<p><strong>Validators</strong> are Catmandu modules to validate items, for instance to check whether items contain required fields. Validators can also make use of schemas to validate items against.</p>
+<p>Basic documentation is included at the base class <a href="https://metacpan.org/pod/Catmandu::Validator">Catmandu::Validator</a>.</p>
+<p>Validators are available since Catmandu 0.9 but support of validators in the <a href="#command-line-client">command line client</a> and in the <a href="#fix-language">fix language</a> has not been implemented yet.</p>
+</section>
+<section id="binds" class="level1">
+<h1><span class="header-section-number">10</span> Binds</h1>
+<p>Bind functions are part of the <a href="#fix-language">fix language</a>, introduced to Catmandu version 0.91 [?]. They are used to provide processing hooks around <a href="#fixes">Fix</a> functions.</p>
+<p>As a reminder, Fix functions are used to manipulate <a href="#items">items</a>. Perl hashes get in and Perl hashes get out. The ‘meow’ fix below will add a field to an incoming Perl hash:</p>
+<pre><code>package Catmandu::Fix::meow;
+use Moo;
+
+sub fix {
+    my ($self,$data) = @_;
+    $data-&gt;{&#39;meow&#39;} = &#39;Prrr&#39;;
+    $data;
+}
+
+1;</code></pre>
+<p>Using the Fix you can do something like:</p>
+<pre><code>$ echo &quot;{}&quot; | catmandu convert --fix &#39;meow()&#39;
+$ { &quot;meow&quot;: &quot;Prrr&quot; }</code></pre>
+<p>Binds can be used to manipulate Fix functions. A Perl hash, a code reference (representing the Fix function) and a Fix function name get in, a manipulated Perl hash gets out. As an easy example, let’s create a ‘bark’ Bind which barks every time a ‘meow’ Fix gets executed.</p>
+<pre><code>package Catmandu::Fix::Bind::bark;
+use Moo;
+with &#39;Catmandu::Fix::Bind&#39;;
+
+sub bind {
+    my ($self,$data,$coderef,$fix_name) = @_;
+    if ($fix_name eq &#39;Catmandu::Fix::meow&#39;) {
+        warn &quot;woof! woof!&quot;;
+    }
+    # execute the fix
+    return $coderef-&gt;($data);
+}
+
+1;</code></pre>
+<p>We can execute this ‘bark’ Bind by using the new ‘do’ keyword in the Fix language:</p>
+<pre><code>$ echo &quot;{}&quot; | catmandu convert --fix &#39;do bark() meow() end&#39;
+woof! woof!
+{ &quot;meow&quot;: &quot;Prrr&quot; }
+$ echo &quot;{}&quot; | catmandu convert --fix &#39;do bark() meow() meow() meow() end&#39;
+woof! woof!
+woof! woof!
+woof! woof!
+{ &quot;meow&quot;: &quot;Prrr&quot; }
+$ echo &quot;{}\n{}\n{}\n&quot; | catmandu convert --fix &#39;do bark() meow() end&#39;
+woof! woof!
+woof! woof!
+woof! woof!
+{ &quot;meow&quot;: &quot;Prrr&quot; }
+{ &quot;meow&quot;: &quot;Prrr&quot; }
+{ &quot;meow&quot;: &quot;Prrr&quot; }</code></pre>
+<p>You can use Bind to manipulate the data, execute code before or after a Fix function, and are generally used to cope with side effects. Catmandu 0.91 will provide four Bind functions as examples.</p>
+<section id="identity" class="level4 unnumbered">
+<h4>identity</h4>
+<p>The identity Bind doesn’t do anything really to manipulate the incoming data or Fix functions. You can use identity binds to group Fix functions for other binds. E.g.:</p>
+<pre><code>do identity()
+  foo()
+  bar()
+end</code></pre>
+<p>has the same effect as:</p>
+<pre><code>foo()
+bar()</code></pre>
+</section>
+<section id="maybe" class="level4 unnumbered">
+<h4>maybe</h4>
+<p>The maybe Bind can be used around Fix functions that can throw errors. The Bind will catch errors and start ignoring all Fix functions that succeed the Fix which threw the error. E.g.:</p>
+<pre><code>do maybe()
+   foo()
+   aargh_bad_fix() # throws an error
+   bar()
+end</code></pre>
+<p>has the same effect as:</p>
+<pre><code>foo()</code></pre>
+</section>
+<section id="list" class="level4 unnumbered">
+<h4>list</h4>
+<p>The list Bind can be used to execute Fix functions (or nested Binds) multiple times on every element in a list. E.g.:</p>
+<pre><code>add_field(demo.$append.test,1)
+add_field(demo.$append.test,2)
+
+do list(path =&gt; demo)
+add_field(foo,bar)
+end</code></pre>
+<p>has the same effect as:</p>
+<pre><code>add_field(demo.$append.test,1)
+add_field(demo.$append.test,2)
+
+add_field(demo.0.foo , bar)
+add_field(demo.1.foo , bar)</code></pre>
+</section>
+<section id="benchmark" class="level4 unnumbered">
+<h4>benchmark</h4>
+<p>The Benchmark Bind can be used to calculate benchmark statistics for Fixes over all records in the input. E.g. if we have as input 1000 records this fix:</p>
+<pre><code>do benchmark(output =&gt; /dev/stderr)
+foo()
+end</code></pre>
+<p>will produce on the STDERR:</p>
+<pre><code> elapsed    command                                     calls       sec/comm
+ ----------------------------------------------------------------------------------------------------
+ 0.006000   Catmandu::Fix::foo                          1000 times  0.000006 secs/command</code></pre>
+</section>
+</section>
+<section id="plugins" class="level1">
+<h1><span class="header-section-number">11</span> Plugins</h1>
+<p><em>Plugins to be documented here</em></p>
+<p>See also <a href="http://librecat.org/catmandu/2013/12/18/versioning-using-catmandu-plugin.html">http://librecat.org/catmandu/2013/12/18/versioning-using-catmandu-plugin.html</a></p>
+</section>
+<section id="beyond-catmandu" class="level1">
+<h1><span class="header-section-number">12</span> Beyond Catmandu</h1>
+</section>
+<section id="dancer-catmandu" class="level1">
+<h1><span class="header-section-number">13</span> Dancer &amp; Catmandu</h1>
+<p>Catmandu integrates very well with Perl frameworks such as <a href="http://www.perldancer.org/">Dancer</a> for <i>easy and fun webapp development</i>. In the text below we will use our Catmandu tools to create small demo application: a web search engine that can be fed with CSV files.</p>
+<p>This second part of the tutorial assumes some familiarity with Catmandu. If you have not yet read part 1, now would be a good time to do so: <a href="Introduction">Introduction</a>.</p>
+<p>Dancer provides an intuitive and minimalistic approach to create web applications. The software package can be easily installed if you have <a href="http://search.cpan.org/dist/App-cpanminus/lib/App/cpanminus.pm">cpanminus</a> on your server:</p>
+<pre><code>cpanm Dancer</code></pre>
+<p>Creating a web application is as easy as running the command line <tt>dancer</tt> command</p>
+<pre><code>dancer -a DemoApp</code></pre>
+<p>Change your working directory to <tt>DemoApp</tt> and boot up the build-in web server.</p>
+<pre><code>cd DemoApp
+perl bin/app.pl</code></pre>
+<p>Now you should have a running server on <a href="http://0.0.0.0:3000">http://0.0.0.0:3000</a>.</p>
+<p>In the following section we are going to create a web form to upload a CSV file to the webserver. Open your editor and load the file ‘lib/DemoApp.pm’ which contains all the controller code of your application.</p>
+<pre><code>package DemoApp;
+use Dancer &#39;:syntax&#39;;
+
+our $VERSION = &#39;0.1&#39;;
+
+get &#39;/&#39; =&gt; sub {
+    template &#39;index&#39;;
+};
+
+true;</code></pre>
+<p>We add a new route ‘/upload’ to the application which will display the content of the <tt>views/upload.tt</tt> template using the following code snippet.</p>
+<pre><code>get &#39;/upload&#39; =&gt; sub {
+   template &#39;upload&#39;;
+};</code></pre>
+<p>For this route to work we need to add a new template file <tt>views/upload.tt</tt>:</p>
+<pre><code>&lt;form action=&quot;/upload&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+ &lt;p&gt; 
+   &lt;input type=&quot;file&quot; name=&quot;file&quot;&gt;
+ &lt;/p&gt;
+ &lt;button type=&quot;submit&quot; class=&quot;btn btn-large&quot;&gt;
+   Upload
+ &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<p>Restart your webapplication (<tt>perl bin/app.pl</tt>) and view your web form at <a href="http://localhost:3000/upload">http://localhost:3000/upload</a>.</p>
+<p>When you click on the submit button a file of your choice will be uploaded via a HTTP POST to the webserver. The contents of this file can be easily displayed by adding the following code to the <tt>DemoApp.pm</tt> controller:</p>
+<pre><code>post &#39;/upload&#39; =&gt; sub {
+   my $file = request-&gt;upload(&#39;file&#39;);
+
+   $file-&gt;content;   
+};</code></pre>
+<p>Restart your webapplication (<tt>perl bin/app.pl</tt>) and try it out. Your complete code should look now like this:</p>
+<pre><code>package DemoApp;
+use Dancer &#39;:syntax&#39;;
+
+our $VERSION = &#39;0.1&#39;;
+
+get &#39;/&#39; =&gt; sub {
+  template &#39;index&#39;;
+};
+
+get &#39;/upload&#39; =&gt; sub {
+  template &#39;upload&#39;;
+};
+
+post &#39;/upload&#39; =&gt; sub {
+  my $file = request-&gt;upload(&#39;file&#39;);
+
+  $file-&gt;content;
+};
+
+true;</code></pre>
+<p>Now that we are able to upload a file to the webserver we can add Catmandu code to parse this data and send it to a Solr search engine. We first create a file <tt>catmandu.yml</tt> in the home directory of the DemoApp which contains the location of our Solr engine and the parameters for the Catmandu importer we are going to use to parse the data (CSV-files in our case)</p>
+<pre><code>store:
+    default:
+        package: &quot;Solr&quot;
+        options:
+            url: &quot;http://localhost:8983/solr&quot;
+
+importer:
+    default:
+        package: CSV
+        options:
+            sep_char: &quot;;&quot;</code></pre>
+<p>Reading from a CSV importer and indexing into a Solr Store can be easily added to the DemoApp.pm controller by adding the following lines at the top of the DemoApp.pm module:</p>
+<pre><code>use Catmandu -load;
+use Catmandu::Sane;
+
+sub store {
+    state $bag = Catmandu-&gt;store(&#39;default&#39;)-&gt;bag;
+}
+
+sub importer {
+    my $file = $_[0];
+
+    Catmandu-&gt;importer(&#39;default&#39;, file =&gt; $file);
+}</code></pre>
+<p>It is now very easy to parse CSV data. We change our POST <tt>/upload</tt> route into:</p>
+<pre><code>post &#39;/upload&#39; =&gt; sub {
+    my $file = request-&gt;upload(&#39;file&#39;);
+
+    to_dumper( importer($file-&gt;tempname)-&gt;to_array );
+};</code></pre>
+<p>If you restart the web server and upload a <a href="files/test.csv">CSV</a>CSV file you should see a Data::Dumper output of all the fields. What we did in the code was to send the path of the uploaded file (<tt>$file-&gt;tempname</tt>) to a CSV importer configured in the <tt>catmandu.yml</tt> file. Every importer has a <tt>to_array</tt> method to read all the data into a Perl array. This array is then converted to a Data::Dumper string by the <tt>to_dumper</tt> call.</p>
+<p>Indexing all the fields in the CSV file into a Solr index is straight forward (read your Solr manual how to setup a Solr search engine with your own indexable fields (hint: (schema.xml)[files/schema.xml] file]). All we need is to send the importer to a Solr Catmandu Store with the <tt>add_many</tt> command and commit the results.</p>
+<pre><code>post &#39;/upload&#39; =&gt; sub {
+    my $file = request-&gt;upload(&#39;file&#39;);
+
+    store-&gt;delete_all;
+
+    store-&gt;add_many( importer($file-&gt;tempname) );
+
+    store-&gt;commit;
+
+    redirect &#39;/&#39;;
+};</code></pre>
+<p>Add this stage you’ll have a basic website where you can upload a CSV-file into a Solr search engine. Next we are going to add a <tt>/search</tt> route to query the Solr index.</p>
+<p>We start by creating a GET route <tt>/search</tt> in <tt>DemoApp.pm</tt> and provide it with a template to display a search box</p>
+<pre><code>get &#39;/search&#39; =&gt; sub {
+    template &#39;search&#39;;
+}</code></pre>
+<p>Here is the <tt>views/search.tt</tt> template it will read:</p>
+<pre><code>&lt;form method=&quot;GET&quot; action=&quot;/results&quot;&gt;
+ &lt;input type=&quot;text&quot; name=&quot;q&quot;&gt;
+ &lt;button type=&quot;submit&quot; class=&quot;btn btn-large&quot;&gt;
+  Search
+ &lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<p>Next we are going to provide a GET route <tt>/results</tt> which will query the Solr index and display all the results:</p>
+<pre><code>get &#39;/results&#39; =&gt; sub {
+    my $q     = param &quot;q&quot;;
+    my $start = param &quot;start&quot; // 0;
+    my $limit = 10;
+
+    my $results = [];
+
+    if ($q) {
+       $results = store-&gt;search(query =&gt; $q, start =&gt; $start, limit =&gt; $limit)-&gt;to_array;
+    }
+
+    template &#39;results&#39; , { results =&gt; $results };
+};</code></pre>
+<p>In the first lines we read the query parameters from the request. In case we have a query string we execute a Solr query and read all the results into a Catmandu::Hits iterator which will be converted into an array. We use the <tt>views/results.tt</tt> template to display all the results:</p>
+<pre><code>&lt;%FOREACH hit IN results%&gt;
+   &lt;dl&gt;
+    &lt;dt&gt;Title&lt;/dt&gt;
+    &lt;dd&gt;&lt;% hit.title %&gt;&lt;/dd&gt;
+   &lt;/dl&gt;
+&lt;%END%&gt;</code></pre>
+<p>To run this code we need a little change in the Dancer configuration file <tt>config.yml</tt> to activate the Template Toolkit language for all template files:</p>
+<pre><code>template: &quot;template_toolkit&quot;</code></pre>
+<p>Restart the webserver and browse to <a href="http://0.0.0.0:3000/search">http://0.0.0.0:3000/search</a> to view the search box. When you execute the query <tt><em>:</em></tt> you should see a list of all your documents:</p>
+<p><img src="files/DemoApp.jpg"></p>
+<p>This concludes our very short introduction into Catmandu and Dancer. We hope we have provided you with enough material and inspiration for new and exciting projects ;). Please find in the included <a href="files/DemoApp.zip">DemoApp.zip</a> ZIP file an elaborate example of the code used in this tutorial.</p>
+</section>
+<section id="missing-modules" class="level1">
+<h1><span class="header-section-number">14</span> Missing modules</h1>
+<p>This page summarizes ideas and plans for additional Catmandu modules with <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, <a href="#stores">Stores</a>, <a href="#fix-packages">Fix packages</a>, <a href="#validators">Validators</a>, and <a href="#binds">Binds</a>. Feel free to add more suggestions! Please include links to existing code repositories or descriptions, if available!</p>
+<section id="importers-1" class="level3">
+<h3><span class="header-section-number">14.0.1</span> Importers</h3>
+<p><strong>Catmandu::Importer::Europeana</strong>: See also http://www.theeuropeanlibrary.org/tel4/access</p>
+<p><strong>Catmandu::Importer::Sleep</strong>: See also http://dataprotocols.org/sleep/</p>
+<p><strong>Catmandu::Importer::ONIX</strong></p>
+<p><strong>Catmandu::Importer::EAD</strong></p>
+<p><strong>Catmandu::Importer::METS</strong></p>
+<p><strong>Catmandu::Importer::ResourceSync</strong>: See also http://www.niso.org/workrooms/resourcesync/</p>
+<p>And all the <a href="http://en.wikipedia.org/wiki/Metadata_standards">rest</a></p>
+<p><strong>Catmandu::Importer::RDF</strong></p>
+<p><strong>Catmandu::Importer::SPARQL</strong></p>
+<p><strong>Catmandu::Importer::MQ</strong> (import from a message queue..e.g using Net::Stomp)</p>
+<p>…</p>
+</section>
+<section id="exporters-1" class="level3">
+<h3><span class="header-section-number">14.0.2</span> Exporters</h3>
+<p><strong><a href="https://github.com/nichtich/Catmandu-Exporter-Table">Catmandu::Exporter::Table</a></strong> (draft): export ASCII table such as implemented by <a href="http://csvkit.readthedocs.org/en/0.7.3/scripts/csvlook.html">csvlook</a> (see <a href="http://csvkit.readthedocs.org/en/latest/tutorial/examining_the_data.html#reading-through-data-with-csvlook-and-less">this example</a>. The exporter may be configured for more table formats, such as <a href="http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html#tables">described here</a>.</p>
+<p><strong>Catmandu::Exporter::SPARUL or Catmandu::Exporter::SPARQL</strong></p>
+<p><strong>Catmandu::Exporter::RDFPatch</strong></p>
+</section>
+<section id="stores-1" class="level3">
+<h3><span class="header-section-number">14.0.3</span> Stores</h3>
+<p><strong>Catmandu::Store::Directory</strong>: use the file system as simple read/write/delete store.</p>
+<p><strong>Catmandu::Store::GoogleSpreadsheet</strong>: use A Google Drive/Docs Spreadsheet as store for reading and writing tabular data. See <a href="https://developers.google.com/google-apps/spreadsheets/">API documentation</a> and <a href="https://metacpan.org/pod/Net::GoogleDrive">Net::GoogleDrive</a> for a very basic interface.</p>
+<p><strong>Catmandu::Store::S3</strong>: use Amazon S3 as a backend store</p>
+</section>
+<section id="fixes-and-binds" class="level3">
+<h3><span class="header-section-number">14.0.4</span> Fixes and binds</h3>
+<p><strong>Catmandu::Fix::jq</strong>: filter records as implemented by the <a href="https://stedolan.github.io/jq/">jq</a> command line tool. An easy implementation could pass JSON to <code>jq</code> and parse the result.</p>
+<p><strong>Catmandu::Fix::Bind::validate</strong>: validate a record inside the Fix language. E.g.</p>
+<pre><code># This will reject the record if it the resulting fixes create an invalid record
+do validate(JSONSchema)
+ fix()
+ fix()
+ fix()
+end</code></pre>
+<p><strong>Catmandu::Fix::Lua</strong>: use Lua as efficient and safe (sandboxed) fix language.</p>
+</section>
+<section id="validators-1" class="level3">
+<h3><span class="header-section-number">14.0.5</span> Validators</h3>
+<p><strong>Catmandu::Validator::JSONSchema</strong>: validate based on a <a href="http://json-schema.org/">JSON Schema</a>. See <a href="https://github.com/LibreCat/Catmandu-Validator-JSONSchema">https://github.com/LibreCat/Catmandu-Validator-JSONSchema</a> for a draft.</p>
+<p><strong>Catmandu::Validator::Entails</strong>: validate by entailed record, as implemented by <a href="https://metacpan.org/pod/Test::JSON::Entails">Test::JSON::Entails</a></p>
+<p><strong>Catmandu::Validator::Moose</strong>: validate with a given Moose class <a href="http://blogs.perl.org/users/samuel_kaufman/2014/05/validating-nested-json-hashes-with-moose.html">as described here</a></p>
+<p><strong>Catmandu::Validator::cmd</strong>: validate with an external command. See https://github.com/LibreCat/Catmandu-Fix-cmd/issues/2</p>
+</section>
+<section id="combined-modules" class="level3">
+<h3><span class="header-section-number">14.0.6</span> Combined modules</h3>
+<p><strong>Catmandu::Zotero</strong> to use <a href="https://www.zotero.org/support/dev/web_api/v2/start">Zotero Web</a> as Store and or Importer/Exporter, so Zotero can be used as bibliographic database.</p>
+</section>
+</section>
+<section id="contribution" class="level1">
+<h1><span class="header-section-number">15</span> Contribution</h1>
+<p>This guide has been written to help anyone interested in contributing to the development of Catmandu. Please read this guide before contributing to Catmandu or related projects, to avoid wasted effort and maximizing the chances of your contributions being used.</p>
+<section id="ways-to-contribute" class="level2">
+<h2><span class="header-section-number">15.1</span> Ways to contribute</h2>
+<p>There are many ways to contribute to the project. Catmandu is a young yet active project and any kind of help is very much appreciated!</p>
+<section id="publicity" class="level3">
+<h3><span class="header-section-number">15.1.1</span> Publicity</h3>
+<p>You don’t have to start by hacking the code, spreading the word is very valuable as well!</p>
+<p>If you have a blog, just feel free to speak about Catmandu.</p>
+<p>Of course, it doesn’t have to be limited to blogs or Twitter. Feel free to spread the word in whatever way you consider fit and drop us a line on the Catmandu user mailing list noted below.</p>
+<p>Also, if you’re using and enjoying Catmandu, <a href="http://cpanratings.perl.org/dist/Catmandu">rating us on cpanratings.perl.org</a>, explaining what you like about Catmandu is another very valuable contribution that helps other new users find us!</p>
+</section>
+<section id="mailing-list" class="level3">
+<h3><span class="header-section-number">15.1.2</span> Mailing list</h3>
+<p>Subscribing to the mailing list and providing assistance to new users is incredibly valuable.</p>
+<ul>
+<li>Mailing list: <code>librecat-dev@mail.librecat.org</code></li>
+<li>Subscribe or view archives here: <a href="http://mail.librecat.org/mailman/listinfo/librecat-dev">http://mail.librecat.org/mailman/listinfo/librecat-dev</a></li>
+</ul>
+</section>
+<section id="documentation" class="level3">
+<h3><span class="header-section-number">15.1.3</span> Documentation</h3>
+<p>We value documentation very much, but it’s difficult to keep it up-to-date. If you find a typo or an error in the documentation please do let us know - ideally by submitting a patch (pull request) with your fix or suggestion (see <a href="#patch-submission">Patch Submission</a>).</p>
+</section>
+<section id="code" class="level3">
+<h3><span class="header-section-number">15.1.4</span> Code</h3>
+<p>To can contribute to Catmandu’s core code or extend the functionality by new <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, <a href="#stores">Stores</a>, <a href="#fix-packages">Fix packages</a>, <a href="#validators">Validators</a>, <a href="#binds">Binds</a>, or <a href="#plugins">Plugins</a>. Have a look at the list of <a href="#missing-modules">missing modules</a> for existing ideas and resources for new Catmandu modules. Feel also free to add new ideas and links there.</p>
+<p>For more detailed guidelines, see:</p>
+<ul>
+<li><a href="#development-setup">development setup</a> for how to set up a development environment</li>
+<li><a href="#patch-submission">patch submission</a> for how to submit patches using the GitHub workflow</li>
+<li><a href="#coding-guidelines">coding guidelines</a> for how to write readable code and documentation</li>
+</ul>
+</section>
+</section>
+<section id="quality-supervision-and-reporting-bugs" class="level2">
+<h2><span class="header-section-number">15.2</span> Quality Supervision and Reporting Bugs</h2>
+<p>We can measure our quality using the CPAN testers platform: <a href="http://www.cpantesters.org">http://www.cpantesters.org</a>.</p>
+<p>A good way to help the project is to find a failing build log on the CPAN testers: <a href="http://www.cpantesters.org/distro/D/Catmandu.html">http://www.cpantesters.org/distro/D/Catmandu.html</a></p>
+<p>If you find a failing test report or another kind of bug, feel free to report it as a GitHub issue: <a href="http://github.com/LibreCat/Catmandu/issues">http://github.com/LibreCat/Catmandu/issues</a>. Please make sure the bug you’re reporting does not yet exist.</p>
+</section>
+<section id="resources-for-developers" class="level2">
+<h2><span class="header-section-number">15.3</span> RESOURCES FOR DEVELOPERS</h2>
+<section id="website" class="level3">
+<h3><span class="header-section-number">15.3.1</span> Website</h3>
+<p>The official website is here: <a href="http://librecat.org/">http://librecat.org/</a></p>
+</section>
+<section id="mailing-lists" class="level3">
+<h3><span class="header-section-number">15.3.2</span> Mailing Lists</h3>
+<p>A mailing list is available here: <code>librecat-dev@mail.librecat.org</code></p>
+</section>
+<section id="repositories" class="level3">
+<h3><span class="header-section-number">15.3.3</span> Repositories</h3>
+<p>The official repository is hosted on GitHub at <a href="http://github.com:LibreCat/Catmandu">http://github.com:LibreCat/Catmandu</a>.</p>
+<p>Official developers have write access to this repository, contributors are invited to fork the dev branch (!) and submit a pull request, as described at <a href="#patch-submission">patch submission</a>.</p>
+</section>
+</section>
+<section id="acknowledgement" class="level2">
+<h2><span class="header-section-number">15.4</span> Acknowledgement</h2>
+<p>This guide was based on <Dancer2::Development>.</p>
+</section>
+</section>
+<section id="development-setup" class="level1">
+<h1><span class="header-section-number">16</span> Development Setup</h1>
+<p>The following guidelines describe how to set up a development environment for <a href="#contribution">contribution</a> of code.</p>
+<section id="set-up-a-development-environment" class="level3">
+<h3><span class="header-section-number">16.0.1</span> Set up a development environment</h3>
+<p>If you want to submit a patch for Catmandu, you need git and very likely also <tt>milla</tt> (<Dist::Milla>). We also recommend perlbrew (see below) to test and develop Catmandu on a recent version of perl. We also suggest <App::cpanminus>) to quickly and comfortably install perl modules under perlbrew.</p>
+<p>In the following sections we provide tips for the installation of some of these tools together with Catmandu. Please also see the documentation that comes with these tools for more info.</p>
+<section id="perlbrew-tips-optional" class="level4 unnumbered">
+<h4>Perlbrew tips (Optional)</h4>
+<p>Install perlbrew for example with</p>
+<pre><code>cpanm App::perlbrew</code></pre>
+<p>Check which perls are available</p>
+<pre><code>perlbrew available</code></pre>
+<p>At the time of writing it looks like this</p>
+<pre><code>perl-5.18.0
+perl-5.16.3
+perl-5.14.4
+perl-5.12.5
+perl-5.10.1
+perl-5.8.9
+perl-5.6.2
+perl5.005_04
+perl5.004_05
+perl5.003_07</code></pre>
+<p>Then go on and install a version inside Perlbrew. I recommend you give a name to the installation (<code>--as</code> option), as well as compiling without the tests (<code>--n</code> option) to speed it up.</p>
+<pre><code>perlbrew install -n perl-5.16.3 --as catmandu_dev -j 3</code></pre>
+<p>Wait a while, and it should be done. Switch to your new Perl with:</p>
+<pre><code>perlbrew switch catmandu_dev</code></pre>
+<p>Now you are using the fresh Perl, you can check it with:</p>
+<pre><code>which perl</code></pre>
+<p>Install cpanm on your brewed version of perl.</p>
+<pre><code>perlbrew install-cpanm</code></pre>
+</section>
+</section>
+<section id="install-dependencies-required" class="level3">
+<h3><span class="header-section-number">16.0.2</span> Install dependencies (required)</h3>
+<p><em>this section needs to be rewritten to reflect the change to <a href="https://metacpan.org/pod/Dist::Milla">Dist::Milla</a></em></p>
+</section>
+<section id="get-catmandu-sources" class="level3">
+<h3><span class="header-section-number">16.0.3</span> Get Catmandu sources</h3>
+<p>Get the Catmandu sources from github (for a more complete git workflow see below):</p>
+<p>Clone your fork to have a local copy using the following command:</p>
+<pre><code>$ git clone git@github.com:LibreCat/Catmandu.git</code></pre>
+<p>The installation is then straight forward:</p>
+<pre><code>$ cd Catmandu
+$ perl Build.PL
+$ ./Build
+$ ./Build test
+$ ./Build install</code></pre>
+<p>You can now start with hacking Catmandu and <a href="#patch-submission">patch submission</a>!</p>
+</section>
+</section>
+<section id="coding-guidelines" class="level1">
+<h1><span class="header-section-number">17</span> Coding guidelines</h1>
+<p>The following guidelines are no strict rules but they should be considered as best practice for <a href="#contribution">contribution</a>.</p>
+<section id="compatibility" class="level2">
+<h2><span class="header-section-number">17.1</span> Compatibility</h2>
+<p>Catmandu should be able to install for all Perl versions since 5.10.1, on any platform for which Perl exists. We focus mainly on GNU/Linux (any distribution).</p>
+<p>You should avoid regressions as much as possible and keep backwards compatibility in mind when refactoring. Stable releases should not break functionality and new releases should provide an upgrade path and upgrade tips such as warning the user about deprecated functionality.</p>
+</section>
+<section id="code-documentation" class="level2">
+<h2><span class="header-section-number">17.2</span> Code documentation</h2>
+<p>Document your module with</p>
+<ul>
+<li>a meaningful abstract</li>
+<li>a SYNOPSIS with usage example</li>
+<li>a short DESCRIPTION giving an introduction, including explicit links to other modules (e.g. roles)</li>
+<li>a CONFIGURATION section listing all constructor arguments</li>
+<li>a METHODS section listing all public methods. Methods derived from other modules should not be included but the modules should be mentioned explicitly.</li>
+<li>a SEE ALSO section listing related modules</li>
+</ul>
+<p>Names of other moduless should be linked (e.g. <code>L&lt;Catmandu::Importer&gt;</code>)</p>
+</section>
+</section>
+<section id="patch-submission" class="level1">
+<h1><span class="header-section-number">18</span> Patch Submission</h1>
+<p>The Catmandu development team uses GitHub to collaborate. We greatly appreciate <a href="Contribution">contributions</a> submitted via GitHub, as it makes tracking these contributions and applying them much, much easier. This gives your contribution a much better chance of being integrated into Catmandu quickly!</p>
+<p>To help us achieve high-quality, stable releases, git-flow workflow is used to handle pull-requests, that means contributors must work on their <code>dev</code> branch rather than on their <code>master</code>. (Master should be touched only by the core dev team when preparing a release to CPAN; all ongoing development happens in branches which are merged to the <code>dev</code> branch.)</p>
+<p>Here is the workflow for submitting a patch:</p>
+<ol type="1">
+<li><p>Fork the repository <a href="http://github.com/LibreCat/Catmandu">http://github.com/LibreCat/Catmandu</a> (click “Fork”)</p></li>
+<li><p>Clone your fork to have a local copy using the following command:</p>
+<pre><code>$ git clone git://github.com/$myname/Catmandu.git</code></pre></li>
+<li><p>As a contributor, you should <strong>always</strong> work on the <code>dev</code> branch of your clone (<code>master</code> is used only for building releases).</p>
+<pre><code>$ git remote add upstream https://github.com/LibreCat/Catmandu.git
+$ git fetch upstream
+$ git checkout -b dev upstream/dev</code></pre></li>
+</ol>
+<p>This will create a local branch in your clone named <code>dev</code> and that will track the official <code>dev</code> branch. That way, if you have more or less commits than the upstream repo, you’ll be immediately notified by git.</p>
+<ol start="4" type="1">
+<li>You want to isolate all your commits in a <code>topic</code> branch, this will make the reviewing much easier for the core team and will allow you to continue working on your clone without worrying about different commits mixing together.</li>
+</ol>
+<p>To do that, first create a local branch to build your pull request:</p>
+<pre><code>    # you should be in dev branch here
+    git checkout -b pr/$name</code></pre>
+<p>Now you have created a local branch named <code>pr/$name</code> where I&lt;$name&gt; is the name you want (it should describe the purpose of the pull request you’re preparing).</p>
+<ol start="5" type="1">
+<li><p>In that branch, do all the commits you need (the more the better) and when done, push the branch to your fork:</p>
+<p># … commits … git push origin pr/$name</p></li>
+</ol>
+<p>You are now ready to send a pull request.</p>
+<ol start="6" type="1">
+<li>Send a <code>pull request</code> via the GitHub interface. Make sure your pull request is based on the <code>pr/$name</code> branch you’ve just pushed, so that it incorporates the appropriate commits only.</li>
+</ol>
+<p>It’s also a good idea to summarize your work in a report sent to the users mailing list (see below), in order to make sure the team is aware of it.</p>
+<p>When the core team reviews your pull request, it will either accept (and then merge into <code>dev</code>) or refuse your request.</p>
+<p>If it’s refused, try to understand the reasons explained by the team for the denial. Most of the time, communicating with the core team is enough to understand what the mistake was. Above all, please don’t be offended.</p>
+<ol start="7" type="1">
+<li><p>If your pull-request is merged into <code>dev</code>, then all you have to do is to remove your local and remote <code>pr/$name</code> branch:</p>
+<pre><code>git checkout dev
+git branch -D pr/$name
+git push origin :pr/$name</code></pre></li>
+<li><p>And then, of course, you need to sync your local dev branch with the upstream:</p>
+<pre><code>git pull upstream dev
+git push origin dev</code></pre></li>
+</ol>
+<p>You’re now ready to start working on a new pull request!</p>
+</section>
+<section id="cheat-sheets" class="level1">
+<h1><span class="header-section-number">19</span> Cheat sheets</h1>
+<ul>
+<li><a href="#-command-line-client-cheat-sheet|-">Command Line Cheat Sheet</a></li>
+<li><a href="#fixes-cheat-sheet">Fixes Cheat Sheet</a></li>
+<li><a href="#cookbook">Cookbook</a></li>
+</ul>
+</section>
+<section id="command-line-client-cheat-sheet-1" class="level1">
+<h1><span class="header-section-number">20</span> Command line client Cheat Sheet</h1>
+<p>This cheat sheet summarizes the <a href="#command-line-client">command line client</a> capabilities.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">catmandu</span> help
+ $ <span class="kw">catmandu</span> help convert</code></pre>
+<section id="convert-2" class="level3">
+<h3><span class="header-section-number">20.0.1</span> Convert</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Importers to read data into your environment</span>
+ $ <span class="kw">catmandu</span> convert MARC to JSON <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to YAML <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to JSON --pretty 1 <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to JSON --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;);remove_field(&quot;record&quot;)&#39;</span> <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert MARC to CSV --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;); remove_field(&quot;record&quot;);&#39;</span> <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> convert OAI --url http://biblio.ugent.be/oai --set allFtxt to JSON
+ $ <span class="kw">catmandu</span> convert OAI --url http://biblio.ugent.be/oai --set allFtxt to JSON --fix <span class="st">&#39;retain_field(&quot;title&quot;)&#39;</span>
+ $ <span class="kw">catmandu</span> convert SRU --base http://www.unicat.be/sru --query dna 
+ $ <span class="kw">catmandu</span> convert ArXiv --query <span class="st">&#39;all:electron&#39;</span>
+ $ <span class="kw">catmandu</span> convert PubMed --term <span class="st">&#39;hochstenbach&#39;</span>
+ $ <span class="kw">cat</span> test.tt
+[<span class="kw">%-</span> FOREACH f IN record %]
+[<span class="kw">%</span> _id %] [% f.shift %][% f.shift %][% f.shift %][% f.join(<span class="st">&quot;:&quot;</span>) <span class="kw">%</span>]
+[<span class="kw">%-</span> END %]
+ $ <span class="kw">catmandu</span> convert MARC to Template --template <span class="kw">`pwd`</span>/test.tt <span class="kw">&lt;</span> records.mrc </code></pre>
+</section>
+<section id="importexport-1" class="level3">
+<h3><span class="header-section-number">20.0.2</span> Import/Export</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Store to store/retrieve data from a database</span>
+ $ <span class="kw">catmandu</span> import JSON to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.json
+ $ <span class="kw">catmandu</span> import MARC to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> import MARC to ElasticSearch --index_name mydb --bag data <span class="kw">&lt;</span> records.mrc
+ $ <span class="kw">catmandu</span> import MARC to ElasticSearch --index_name mydb --bag data --fix <span class="st">&#39;marc_map(&quot;245a&quot;,&quot;title&quot;)&#39;</span> <span class="kw">&lt;</span> records.mrc
+
+ $ <span class="kw">catmandu</span> export MongoDB --database_name mydb --bag data to JSON
+ $ <span class="kw">catmandu</span> export MongoDB --database_name mydb --bag data to JSON --fix <span class="st">&#39;retain_field(&quot;_id&quot;)&#39;</span>
+ $ <span class="kw">catmandu</span> export Solr --url http://localhost:8983/solr to JSON
+ $ <span class="kw">catmandu</span> export ElasticSearch --index_name mydb to JSON</code></pre>
+</section>
+<section id="configuration-2" class="level3">
+<h3><span class="header-section-number">20.0.3</span> Configuration</h3>
+<p>See <a href="#configuration">Configuration</a> for details.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">cat</span> catmandu.yml
+<span class="kw">---</span>
+<span class="kw">store</span>:
+  <span class="kw">test1</span>:
+   <span class="kw">package</span>: MongoDB
+   <span class="kw">options</span>:
+    <span class="kw">database_name</span>: mydb
+  <span class="kw">test2</span>:
+   <span class="kw">package</span>: ElasticSearch
+   <span class="kw">options</span>:
+    <span class="kw">index_name</span>: mydb
+  <span class="kw">test3</span>:
+   <span class="kw">package</span>: Solr
+   <span class="kw">options</span>:
+    <span class="kw">url</span>: http://localhost:8983/solr
+
+  $ <span class="kw">catmandu</span> import JSON to test1 <span class="kw">&lt;</span> records.json <span class="co"># Mongo</span>
+  $ <span class="kw">catmandu</span> import MARC to test2 <span class="kw">&lt;</span> records.mrc  <span class="co"># ElasticSearch</span>
+  $ <span class="kw">catmandu</span> import YAML to test3 <span class="kw">&lt;</span> records.yaml <span class="co"># Solr</span>
+  $ <span class="kw">catmandu</span> export test1 to JSON                <span class="co"># Mongo</span>
+  $ <span class="kw">catmandu</span> export test2 to JSON                <span class="co"># ElasticSearch</span>
+  $ <span class="kw">catmandy</span> export test3                        <span class="co"># Solr very lazy JSON is the default exporter and importer</span>
+  $ <span class="kw">cat</span> fixes.txt
+<span class="kw">marc_map</span>(<span class="st">&quot;245a&quot;</span>,<span class="st">&quot;title&quot;</span>);
+<span class="kw">marc_map</span>(<span class="st">&quot;100&quot;</span>,<span class="st">&quot;author.</span><span class="ot">$append</span><span class="st">&quot;</span>);
+<span class="kw">join_field</span>(<span class="st">&quot;author&quot;</span>,<span class="st">&quot;;&quot;</span>);
+<span class="kw">marc_map</span>(<span class="st">&quot;008_/10-13&quot;</span>,<span class="st">&quot;language&quot;</span>);
+  $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></pre>
+</section>
+</section>
+<section id="fixes-cheat-sheet-1" class="level1">
+<h1><span class="header-section-number">21</span> Fixes Cheat Sheet</h1>
+<p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
+<span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
+<span class="co"># complex data structures such as MARC.</span>
+<span class="kw">set_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;patrick&quot;</span>)             <span class="co"># { my =&gt; { name =&gt; &#39;Patrick&#39;} }</span>
+<span class="kw">add_field</span>(<span class="st">&quot;my.name2&quot;</span>,<span class="st">&quot;nicolas&quot;</span>)
+<span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
+<span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
+<span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+
+<span class="kw">upcase</span>(<span class="st">&quot;title&quot;</span>)                            <span class="co"># marc -&gt; MARC</span>
+<span class="kw">downcase</span>(<span class="st">&quot;title&quot;</span>)                          <span class="co"># MARC -&gt; marc</span>
+<span class="kw">capitalize</span>(<span class="st">&quot;my.deeply.nested.field.0&quot;</span>)     <span class="co"># marc -&gt; Marc</span>
+<span class="kw">trim</span>(<span class="st">&quot;field_with_spaces&quot;</span>)                  <span class="co"># &quot;  marc  &quot; -&gt; marc</span>
+<span class="kw">substring</span>(<span class="st">&quot;title&quot;</span>,0,1)                     <span class="co"># marc -&gt; m</span>
+<span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
+<span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
+
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-sep_char=<span class="kw">&gt;</span><span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-default=<span class="kw">&gt;</span><span class="st">&#39;test&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-delete=<span class="kw">&gt;</span><span class="st">&#39;1&#39;</span>)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
+
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -database_name =<span class="kw">&gt;</span> <span class="st">&#39;lookups&#39;</span>)  <span class="co"># lookup the (id)-value of title in &#39;lookups&#39; and</span>
+                                           <span class="co"># replace it with the data found</span>
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -default =<span class="kw">&gt;</span> <span class="st">&#39;default value&#39;</span> , -delete =<span class="kw">&gt;</span> 1) 
+
+<span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, <span class="st">&#39;-bag&#39;</span>, <span class="st">&#39;authors&#39;</span>, <span class="st">&#39;-database_name&#39;</span>, <span class="st">&#39;catalog&#39;</span>)  <span class="co"># add matching values to a store as a side effect</span>
+
+
+<span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
+<span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>)                         <span class="co"># sort the values of an array</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-unique =<span class="kw">&gt;</span> 1)            <span class="co"># sort the values plus keep unique values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
+<span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
+<span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
+                                           <span class="co"># from stdin and write JSON to stdout</span>
+<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>)                             <span class="co"># Send a message to Log::Any (new in Catmandu 0.92)</span>
+<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>,-level =<span class="kw">&gt;</span> DEBUG)             <span class="co"># Send a message to Log::Any of log level &#39;DEBUG&#39;</span>
+
+<span class="kw">split_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                     <span class="co"># marc:must:die -&gt; [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;]</span>
+<span class="kw">join_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                      <span class="co"># [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;] -&gt; marc:must:die</span>
+<span class="kw">retain_field</span>(<span class="st">&quot;id&quot;</span>)                         <span class="co"># delete any field except &#39;id&#39;</span>
+<span class="kw">replace_all</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)               <span class="co"># marc -&gt; mxrc</span>
+
+<span class="co"># Create hashes from arrays and arrays from hashes</span>
+<span class="kw">array</span>(tags)                                <span class="co"># { &#39;name&#39; =&gt; &#39;Peter&#39;, age =&gt; &#39;12&#39; } =&gt; [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12]</span>
+<span class="kw">hash</span>(tags)                                 <span class="co"># [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12] =&gt; {name =&gt; &#39;Peter&#39;, age =&gt; 12}</span>
+
+<span class="co"># Most functions can work also work on arrays. E.g.</span>
+<span class="kw">replace_all</span>(<span class="st">&quot;author.*&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)            <span class="co"># [ &#39;marc&#39;,&#39;jan&#39;] =&gt; [&#39;mxrc&#39;,&#39;jxn&#39;]</span>
+<span class="co"># Use:</span>
+<span class="co">#   authors.$end (last entry)</span>
+<span class="co">#   authors.$start (first entry)</span>
+<span class="co">#   authors.$append (last + 1)</span>
+<span class="co">#   authors.$prepend (first - 1)</span>
+<span class="co">#   authors.* (all authors)</span>
+<span class="co">#   authors.2 (3rd author)</span>
+
+<span class="fu">collapse()</span>                                 <span class="co"># collapse deep nested hash to a flat hash</span>
+<span class="fu">expand()</span>                                   <span class="co"># expand flat hash to deep nested hash</span>
+<span class="fu">clone()</span>                                    <span class="co"># clone the perl hash and work on the clone</span>
+<span class="fu">reject()</span>                                   <span class="co"># Reject (skip) a record</span>
+<span class="kw">reject</span> [condition]                         <span class="co"># Reject a record on some condition:</span>
+                                           <span class="co">#   reject all_match(...)</span>
+                                           <span class="co">#   reject any_match(...)</span>
+                                           <span class="co">#   reject exists(...)</span>
+<span class="fu">select()</span>                                   <span class="co"># Select a record</span>
+<span class="kw">select</span> [<span class="kw">condition</span>]                         <span class="co"># Select only those records that match a condition (see reject)</span>
+
+<span class="kw">to_json</span>(<span class="st">&#39;my.field&#39;</span>)                        <span class="co"># convert a value of a field to json</span>
+<span class="kw">from_json</span>(<span class="st">&#39;my.field&#39;</span>)                      <span class="co"># replace the json field with the parsed value</span>
+
+<span class="fu">nothing()</span>                                  <span class="co"># do nothing (used in benchmarking)</span>
+
+<span class="co"># Copy all 245 subfields into the my.title hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
+<span class="co"># Copy the 245-$a$b$c subfields into the my.title hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245abc&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
+<span class="co"># Copy the 100 subfields into the my.authors array</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;100&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>) 
+<span class="co"># Add the 710 subfields into the my.authors array</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;710&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>)
+<span class="co"># Copy the 600-$x subfields into the my.subjects array while packing each into a genre.text hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;600x&#39;</span>,<span class="st">&#39;my.subjects.$append.genre.text&#39;</span>)
+<span class="co"># Copy the 008 characters 35-35 into the my.language hash</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;008_/35-35&#39;</span>,<span class="st">&#39;my.language&#39;</span>)
+<span class="co"># Copy all the 600 fields into a my.stringy hash joining them by &#39;; &#39;</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;600&#39;</span>,<span class="st">&#39;my.stringy&#39;</span>, -join =<span class="kw">&gt;</span> <span class="st">&#39;; &#39;</span>)
+<span class="co"># When 024 field exists create the my.has024 hash with value &#39;found&#39;</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;024&#39;</span>,<span class="st">&#39;my.has024&#39;</span>, -value =<span class="kw">&gt;</span> <span class="st">&#39;found&#39;</span>)
+<span class="co"># Do the same examples now with the marc fields in &#39;record2&#39;</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>, -record =<span class="kw">&gt;</span> <span class="st">&#39;record2&#39;</span>)
+<span class="co"># Remove the 900 fields</span>
+<span class="kw">marc_remove</span>(<span class="st">&#39;900&#39;</span>)
+<span class="co"># Add a marc field (in Catmandu::MARC 0.110)</span>
+<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1 =<span class="kw">&gt;</span> <span class="st">&#39; &#39;</span> , ind2 =<span class="kw">&gt;</span> <span class="st">&#39;1&#39;</span> , a =<span class="kw">&gt;</span> <span class="st">&#39;test123&#39;</span>)
+<span class="co"># Set a marc value of one (sub)field to a new value</span>
+<span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+<span class="kw">marc_set</span>(<span class="st">&#39;650p&#39;</span>,<span class="st">&#39;test&#39;</span>)
+<span class="kw">marc_set</span>(<span class="st">&#39;100[3]a&#39;</span>,<span class="st">&#39;Farquhar family.&#39;</span>)
+
+<span class="co"># Map all 650 subjects into an array </span>
+<span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>,join:<span class="st">&#39;###&#39;</span>) 
+<span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
+
+<span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
+<span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># inverted</span>
+<span class="kw">unless</span> all_match(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end;</span>
+
+<span class="co"># uppercase the value of field &#39;foo&#39; if field &#39;oogly&#39; has the value &#39;doogly&#39;</span>
+<span class="kw">if</span> <span class="kw">any_match</span>(<span class="st">&#39;oogly&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># inverted</span>
+<span class="kw">unless</span> any_match(<span class="st">&#39;oogly&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># uppercase the value of field &#39;foo&#39; if the field &#39;oogly&#39; exists</span>
+<span class="kw">if</span> <span class="kw">exists</span>(<span class="st">&#39;oogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># inverted</span>
+<span class="kw">unless</span> exists(<span class="st">&#39;oogly&#39;</span>)
+  <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;bar&#39;</span>
+<span class="kw">end</span>
+
+<span class="co"># compare things (needs Catmandu 0.92 or better)</span>
+<span class="kw">if</span> <span class="kw">greater_than</span>(<span class="st">&#39;year&#39;</span>,2000)
+  <span class="kw">add_field</span>(<span class="st">&#39;recent&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
+<span class="kw">if</span> <span class="kw">less_than</span>(<span class="st">&#39;year&#39;</span>,1970)
+  <span class="kw">add_field</span>(<span class="st">&#39;ancient&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># Evaludates true when a marc (sub)field matches a regular expression</span>
+<span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;My funny title&#39;</span>)
+  <span class="kw">add_field</span>(<span class="st">&#39;funny.title&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+<span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
+    <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co">## Binds (needs Catmandu 0.92 or better)</span>
+
+<span class="co"># The identity binder doesn&#39;t embody any computational strategy. It simply </span>
+<span class="co"># applies the bound fix functions sequentially to its input without any </span>
+<span class="co"># modification.</span>
+<span class="kw">do</span> <span class="fu">identity()</span>
+    <span class="kw">add_field</span>(foo,bar)
+    <span class="kw">add_field</span>(foo2,bar2)
+<span class="kw">end</span>
+
+<span class="co"># Maybe, computes all the fix functions and ignores fixes once they throw errors</span>
+<span class="co"># or return undef.</span>
+<span class="kw">do</span> <span class="fu">maybe()</span>
+   <span class="fu">foo()</span>
+   <span class="fu">return_undef()</span> <span class="co"># rest will be ignored</span>
+   <span class="fu">bar()</span>
+<span class="kw">end</span>
+
+<span class="co"># List over all items in demo and add a foo =&gt; bar field</span>
+<span class="co"># { demo =&gt; [{},{},{}] } =&gt; { demo =&gt; [{foo=&gt;bar},{foo=&gt;bar},{foo=&gt;bar}]}</span>
+<span class="kw">do</span> <span class="kw">list</span>(path =<span class="kw">&gt;</span> demo)
+    <span class="kw">add_field</span>(foo,bar)
+<span class="kw">end</span>
+
+<span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
+<span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
+    <span class="fu">foo()</span>
+<span class="kw">end</span></code></pre>
+</section>
+<section id="cookbook" class="level1">
+<h1><span class="header-section-number">22</span> Cookbook</h1>
+<section id="install-catmandu-oai-processing-on-your-computer" class="level4 unnumbered">
+<h4>Install Catmandu OAI processing on your computer</h4>
+<p>Make sure you have <code>cpanm</code> (hint: <code>$ cpan App::cpanminus</code>) installed.</p>
+<p>$ cpanm Catmandu::OAI</p>
+</section>
+<section id="read-dublin-core-records-from-an-oai-repository-from-the-command-line" class="level4 unnumbered">
+<h4>Read Dublin Core records from an OAI repository from the command line</h4>
+<ol type="1">
+<li>Goto: http://www.opendoar.org/</li>
+<li>Find a repository of choice</li>
+<li>Read the base URL of the repository from the ‘OAI-PMH’</li>
+<li>Execute in a terminal the <code>catmandu import</code> command with the URL found in the OAI-PPMH field</li>
+</ol>
+<p>E.g.</p>
+<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai</code></pre>
+</section>
+<section id="read-dublin-core-records-from-an-oai-repository-in-your-perl-code" class="level4 unnumbered">
+<h4>Read Dublin Core records from an OAI repository in your Perl code</h4>
+<pre><code>use Catmandu;
+
+Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;)-&gt;each(sub {
+   my $record = shift;
+   print &quot;$record\n&quot;;
+});</code></pre>
+</section>
+<section id="convert-dublin-core-records-from-an-oai-repository-into-yaml-from-the-command-line" class="level4 unnumbered">
+<h4>Convert Dublin Core records from an OAI repository into YAML from the command line</h4>
+<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai to YAML</code></pre>
+</section>
+<section id="convert-dublin-core-records-from-an-oai-repository-into-yaml-in-your-perl-code" class="level4 unnumbered">
+<h4>Convert Dublin Core records from an OAI repository into YAML in your Perl code</h4>
+<pre><code>use Catmandu -all;
+
+my $importer = importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
+my $exporter = exporter(&#39;YAML&#39;);
+
+$exporter-&gt;add_many($importer);
+$exporter-&gt;commit;</code></pre>
+</section>
+<section id="extract-all-identifiers-from-an-oai-repository-from-the-command-line" class="level4 unnumbered">
+<h4>Extract all identifiers from an OAI repository from the command line</h4>
+<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai --fix &#39;retain_field(&quot;_id&quot;)&#39;</code></pre>
+<p>or if you like an CSV file</p>
+<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain_field(&quot;_id&quot;)&#39;</code></pre>
+</section>
+<section id="extract-all-identifiers-from-an-oai-repository-into-csv-in-your-perl-code" class="level4 unnumbered">
+<h4>Extract all identifiers from an OAI repository into CSV in your Perl code</h4>
+<pre><code>use Catmandu;
+
+my $importer = Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
+my $fixer    = Catmandu-&gt;fixer(&#39;retain_field(&quot;_id&quot;)&#39;);
+my $exporter = Catmandu-&gt;exporter(&#39;CSV&#39;);
+
+$exporter-&gt;add_many(
+     $fixer-&gt;fix($importer)
+);
+
+$exporter-&gt;commit;</code></pre>
+</section>
+<section id="show-the-speed-of-importing-records-from-the-command-line" class="level4 unnumbered">
+<h4>Show the speed of importing records from the command line</h4>
+<p>Hint: use the <code>-v</code> option</p>
+<pre><code>$ catmandu convert -v OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain_field(&quot;_id&quot;)&#39; &gt; /dev/null</code></pre>
+<p>Here we send the output to the /dev/null to show the verbose messages.</p>
+</section>
+<section id="show-the-speed-of-importing-records-from-your-perl-program" class="level4 unnumbered">
+<h4>Show the speed of importing records from your Perl program</h4>
+<pre><code>use Catmandu;
+
+my $importer = Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
+my $fixer    = Catmandu-&gt;fixer(&#39;retain_field(&quot;_id&quot;)&#39;);
+my $exporter = Catmandu-&gt;exporter(&#39;CSV&#39;);
+
+$exporter-&gt;add_many(
+     $fixer-&gt;fix($importer-&gt;benchmark)
+);
+
+$exporter-&gt;commit;</code></pre>
+</section>
+<section id="see-some-debug-messages" class="level4 unnumbered">
+<h4>See some debug messages</h4>
+<p>Make sure you have <code>Log::Log4perl</code> installed (hint: <code>$ cpan Log::Log4perl</code>).</p>
+<p>In your main program do:</p>
+<pre><code>use Catmandu;
+use Log::Any::Adapter;
+use Log::Log4perl;
+
+Log::Any::Adapter-&gt;set(&#39;Log4perl&#39;);
+Log::Log4perl::init(&#39;./log4perl.conf&#39;);
+
+# The lines above should be enough to activate logging for Catmandu.
+# Include the lines below to activate logging for your main program.
+my $logger = Log::Log4perl-&gt;get_logger(&#39;myprog&#39;);
+
+$logger-&gt;info(&quot;Starting main program&quot;);
+
+...your code...</code></pre>
+<p>with log4perl.conf like:</p>
+<pre><code># Send a copy of all logging messages to STDERR
+log4perl.rootLogger=DEBUG,STDERR
+
+# Logging specific for your main program
+log4perl.category.myprog=INFO,STDERR
+
+# Logging specific for on part of Catmandu
+log4perl.category.Catmandu::Fix=DEBUG,STDERR
+
+# Where to send the STDERR output
+log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
+log4perl.appender.STDERR.stderr=1
+log4perl.appender.STDERR.utf8=1
+
+log4perl.appender.STDERR.layout=PatternLayout
+log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n</code></pre>
+<p>You will see now Catmandu log messages (e.g. for Fixes).</p>
+<p>If you want to add logging functionality in your own Perl modules you have two options;</p>
+<ol type="1">
+<li><p>Your package is a Catmandu::Importer or Catmandu::Exporter. In this case you are lucky because you have a logger as part of your instance:</p>
+<p><span class="math">$self-&gt;log-&gt;debug('blablabla');  # where $</span>self is an Importer,Fix or Exporter instance</p></li>
+<li><p>You need to create the logger yourself.</p>
+<p>package Foo::Bar;</p>
+<p>use Moo;</p>
+<p>with ‘Catmandu::Logger’;</p>
+<p>sub bar { my <span class="math"><em>s</em><em>e</em><em>l</em><em>f</em> = <em>s</em><em>h</em><em>i</em><em>f</em><em>t</em>; </span>self-&gt;log-&gt;debug(‘tadaah’); }</p></li>
+</ol>
+<p>If you want to see the logging messages only of your package, then use a this type of line in your log4perl.conf:</p>
+<pre><code>log4perl.category.Foo::Bar=DEBUG,STDOUT</code></pre>
+<p>or if you want to see all the log messages for Foo packages:</p>
+<pre><code>log4perl.category.Foo=DEBUG,STDOUT </code></pre>
+</section>
+<section id="how-to-create-a-new-catmandustore" class="level4 unnumbered">
+<h4>How to create a new Catmandu::Store</h4>
+<p>A Catmandu::Store is used to store items. Stores can have one or more compartments where to store the items. Each such compartment is a Catmandu::Bag. You can compare a Store with a database and a Bag with a table in a database. Like tables, Bags have names. When no name is provided for a Bag, then ‘data’ is used.</p>
+<p>To implement a Catmandu store you need to create at least two packages:</p>
+<ol type="1">
+<li>A ‘Catmandu::Store’, defining the general parameters, possible connection parameters and actions for the whole store.</li>
+<li>A ‘Catmandu::Bag’, which is used to list, add,fetch and delete items from a Bag.</li>
+</ol>
+<p>As example, this is a skeleton for a ‘Foo’ Catmandu::Store which requires at least one ‘foo’ connection parameter:</p>
+<pre><code>package Catmandu::Store::Foo;
+use Moo;
+
+with &#39;Catmandu::Store&#39;;
+
+has &#39;foo&#39; =&gt; (is =&gt; &#39;ro&#39; , required =&gt; 1);
+
+1;</code></pre>
+<p>For this Catmandu::Store::Foo we can define a module ‘Catmandu::Store::Foo::Bag’ to implement the Bag functions. Notice how in the generator the bag can access the Catmandu::Store instance:</p>
+<pre><code>package Catmandu::Store::Foo::Bag;
+use Moo;
+
+with &#39;Catmandu::Bag&#39;;
+
+sub generator {
+    my $self = shift;
+    sub {
+        # This subroutine is used to loop over all items
+        # in a store and should return a item HASH for
+        # every call
+        return { 
+             name =&gt; $self-&gt;name,
+             foo =&gt; $self-&gt;store-&gt;foo 
+       };
+    };
+}
+
+sub get {
+    my ($self,$id) = @_;
+    # return a item HASH given an $id
+    return {};
+}
+
+sub add {
+    my ($self,$data) = @_;
+    # add/update an item HASH to the bag and return the item with an _id field set
+    return $data;
+}
+
+sub delete {
+    my ($self,$id) = @_;
+    # delete an item from the bag given an $id
+    1;
+}
+
+sub delete_all {
+    my ($self) = @_;
+    # delete all items
+    $self-&gt;each(sub {
+        $self-&gt;delete($_[0]-&gt;{_id});
+    });
+}
+
+1;</code></pre>
+<p>With this skeleton Store you have enough code to run basic tests. Save these package in a lib directory:</p>
+<p>lib/Catmandu/Store/Foo.pm lib/Catmandu/Store/Foo/Bag.pm</p>
+<p>and a <tt>catmandu</tt> command to test your implementation:</p>
+<p>$ catmandu -I lib export Foo –foo bar</p>
+<p>{“foo”:“bar”,“name”:“data”} {“foo”:“bar”,“name”:“data”} {“foo”:“bar”,“name”:“data”} . . .</p>
+<p>Or create a test.pl script to access your new Store via Perl:</p>
+<pre><code>#!/usr/bin/env perl
+use lib qw(./lib);
+use Catmandu;
+
+my $store = Catmandu-&gt;store(&#39;Foo&#39;, foo =&gt; &#39;bar&#39;);
+
+$store-&gt;add({ test =&gt; 123});</code></pre>
+</section>
+</section>
+<section id="related-projects" class="level1">
+<h1><span class="header-section-number">23</span> Related Projects</h1>
+<p>Here we provide a list of related projects that also provide library data processing tools.</p>
+<section id="selected-formats" class="level2">
+<h2><span class="header-section-number">23.1</span> selected formats</h2>
+<ul>
+<li>easyM2R - https://github.com/cKlee/easyM2R</li>
+<li>MARCspec - http://cklee.github.io/marc-spec/marc-spec.html (mapping language for MARC)</li>
+<li>solrmarc - https://code.google.com/p/solrmarc/</li>
+<li>marc2rdf - https://github.com/digibib/marc2rdf (uses JSON mappings <a href="https://github.com/digibib/marc2rdf/blob/master/config/templates/mappings.json">such as this</a>)</li>
+</ul>
+</section>
+<section id="general-frameworks" class="level2">
+<h2><span class="header-section-number">23.2</span> general frameworks</h2>
+<ul>
+<li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
+<li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a></li>
+<li>Metadata Interoperability Framework (MIF) - http://elag2014.org/programme/elag-workshops-list-page/11-5/ <a href="https://elag2014.files.wordpress.com/2014/06/11-5-alloing-s-mif.pptx">PPT</a></li>
+<li><a href="http://mint.image.ece.ntua.gr/redmine/projects/mint/wiki">MINT</a> - Metadata Interoperability Services</li>
+<li><a href="https://github.com/culturegraph/metafacture-core/wiki">metafacture</a> - used in <a href="http://culturegraph.github.io">culturegraph</a></li>
+<li><a href="https://code.google.com/p/xcmetadataservicestoolkit/">Metadata Services Toolkit</a> - part of the eXtensible Catalog (XC)</li>
+<li><a href="http://repox.ist.utl.pt/">REPOX</a> - Data Aggregation and Interoperability Manager</li>
+<li><a href="http://openrefine.org/">OpenRefine</a> - (formerly Google Refine) a toolkit to work with tabular data.</li>
+</ul>
+</section>
+</section>
+</body>
+</html>
