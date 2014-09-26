@@ -25,11 +25,11 @@ sub _build_serializer {
     $pkg->new;
 }
 
-# Needs to be implemeted by a serializer
-sub serialize {}
+# Implementer needs to be create a serializer
+# sub serialize {}
 
-# Needs to be implemeted by a serializer
-sub deserialize {}
+# Implementers needs to be create a deserializer
+# sub deserialize {}
 
 =head1 NAME
 
