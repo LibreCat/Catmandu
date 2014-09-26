@@ -65,7 +65,7 @@ Catmandu::Serializer - Base class for all Catmandu Serializers
     my $perl   = $pkg->deserialize($string);
 
     # Using Catmandu::Serializer::Foo 
-    my $pkg = MyPackage->new( serialize => 'Foo' );
+    my $pkg = MyPackage->new( serialization_format => 'Foo' );
 
     my $string = $pkg->serialize({ foo => 'bar' });
     my $perl   = $pkg->deserialize($string);
@@ -75,6 +75,26 @@ Catmandu::Serializer - Base class for all Catmandu Serializers
 This is a convience class to send Perl hashes easily over the wire without having to
 instantiate a L<Catmandu::Importer> and L<Catmandu::Exporter> which are more suited for
 processing IO streams.
+
+=head1 ATTRIBUTES
+
+=head1 serialization_format
+
+The name of the package that serializes data.
+
+=head1 serializer
+
+An instance of the package that serializes.
+
+=head1 METHODS
+
+=head2 serialize($perl)
+
+Serialize a perl data structure into a string.
+
+=head2 deserialize($bytes)
+
+Deserialize bytes into a perl data structure.
 
 =head1 SEE ALSO
 
