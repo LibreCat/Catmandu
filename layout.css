@@ -1,1 +1,6 @@
-/* CSS in addition to bootstrap.css */>
+/* CSS in addition to bootstrap.css */
+a:before { content: "" }
+a[href^='#'] { border-bottom: 1px dotted #428bca }
+#TOC a[href^='#'] { border-bottom: none }
+h1 { border-bottom: 1px solid #666 }
+h1, h2, h3, h4 { margin-top: 25px }
