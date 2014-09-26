@@ -94,11 +94,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#command-line"><span class="toc-section-number">1.1.4</span> Command line</a></li>
 </ul></li>
 <li><a href="#installation"><span class="toc-section-number">1.2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation/_edit">✎</a></a><ul>
-<li><a href="#centos-6.4"><span class="toc-section-number">1.2.1</span> CentOS 6.4</a></li>
-<li><a href="#debian-7-stable-wheezy"><span class="toc-section-number">1.2.2</span> Debian 7 (stable, “Wheezy”)</a></li>
-<li><a href="#opensuse-12.3"><span class="toc-section-number">1.2.3</span> openSUSE 12.3</a></li>
-<li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.4</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
-<li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">1.2.5</span> Ubuntu Server 12.04.4 LTS</a></li>
+<li><a href="#debian"><span class="toc-section-number">1.2.1</span> Debian</a></li>
+<li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</a></li>
+<li><a href="#centos-6.4"><span class="toc-section-number">1.2.3</span> CentOS 6.4</a></li>
+<li><a href="#opensuse-12.3"><span class="toc-section-number">1.2.4</span> openSUSE 12.3</a></li>
+<li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
 <li><a href="#openbsd-53"><span class="toc-section-number">1.2.6</span> OpenBSD 53</a></li>
 </ul></li>
 <li><a href="#concepts"><span class="toc-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></a><ul>
@@ -169,6 +169,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#website"><span class="toc-section-number">10.3.1</span> Website</a></li>
 <li><a href="#mailing-lists"><span class="toc-section-number">10.3.2</span> Mailing Lists</a></li>
 <li><a href="#repositories"><span class="toc-section-number">10.3.3</span> Repositories</a></li>
+<li><a href="#core-maintainers"><span class="toc-section-number">10.3.4</span> Core Maintainers</a></li>
 </ul></li>
 <li><a href="#acknowledgement"><span class="toc-section-number">10.4</span> Acknowledgement</a></li>
 <li><a href="#development-setup"><span class="toc-section-number">10.5</span> Development Setup <a href="https://github.com/LibreCat/Catmandu/wiki/Development%20Setup/_edit">✎</a></a><ul>
@@ -327,43 +328,21 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 <section id="installation" class="level2">
 <h2><span class="header-section-number">1.2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation/_edit">✎</a></h2>
-<p>To get Catmandu running on your system you need to download and install the CPAN <a href="http://search.cpan.org/search?query=Catmandu&amp;mode=all">Catmandu</a> module. See also the overview Catmandu-related modules on <a href="https://metacpan.org/release/Catmandu">MetaCPAN</a>.</p>
-<p>As Catmandu has numerous dependencies, we recommend installing them fully automatically, which can be done as follows.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cpanm</span> Task::Catmandu</code></pre>
+<p>To get Catmandu running on your system you need to download and install at least the CPAN <a href="https://metacpan.org/pod/Catmandu">Catmandu</a> module. Additional modules add support for more input and output formats, databases, and processing options.</p>
+<p>To install all recommended modules and select optional extension just install <a href="https://metacpan.org/release/Task-Catmandu">Task::Catmandu</a>:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
 <p>Here are some Catmandu installation hints for various platforms.</p>
-<section id="centos-6.4" class="level3">
-<h3><span class="header-section-number">1.2.1</span> CentOS 6.4</h3>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> groupinstall <span class="st">&quot;Development Tools&quot;</span>
-<span class="kw">yum</span> install perl-ExtUtils-MakeMaker
-<span class="kw">yum</span> install perl-CPAN -y
-<span class="kw">yum</span> install gcc -y
-<span class="kw">yum</span> install tcp_wrappers-devel -y
-<span class="kw">yum</span> install expat expat-devel -y
-<span class="kw">yum</span> install libxml2 libxml2-devel -y
-<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
-<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
-<span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
-</section>
-<section id="debian-7-stable-wheezy" class="level3">
-<h3><span class="header-section-number">1.2.2</span> Debian 7 (stable, “Wheezy”)</h3>
+<section id="debian" class="level3">
+<h3><span class="header-section-number">1.2.1</span> Debian</h3>
+<p>Several Catmandu packages are being packages as Debian packages but not in the stable branch yet (see <a href="#voting-catmandu-packages-to-be-included-in-debian">Voting Catmandu packages to be included in Debian</a>).</p>
+<p>Try <a href="https://packages.debian.org/search?keywords=libcatmandu&amp;searchon=names&amp;suite=all&amp;section=all">this search</a> to get a list of all current Catmandu packages in Debian unstable and testing.</p>
+<p>At Debian 7 (stable, “Wheezy”) Catmandu can be installed this way:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev
 <span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
-<span class="kw">cpanm</span> Task::Catmandu</code></pre>
-</section>
-<section id="opensuse-12.3" class="level3">
-<h3><span class="header-section-number">1.2.3</span> openSUSE 12.3</h3>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
-<span class="kw">sudo</span> zypper install libxml2-devel xsltproc
-<span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
-<span class="kw">cpanm</span> Task::Catmandu</code></pre>
-</section>
-<section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
-<h3><span class="header-section-number">1.2.4</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
-<p>Since Raspbian is based on Debian stable, you could follow the <a href="#debian-7-stable-wheezy">instructions there</a>. Unfortunately, you will run into timeouts, so it is advisable to install some prerequisites via apt-get first:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install libboolean-perl libdevel-repl-perl libnet-twitter-perl libxml-easy-perl libxslt1-dev libgdbm-dev</code></pre>
+<span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
 </section>
 <section id="ubuntu-server-12.04.4-lts" class="level3">
-<h3><span class="header-section-number">1.2.5</span> Ubuntu Server 12.04.4 LTS</h3>
+<h3><span class="header-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">apt-get</span> install make
 <span class="kw">apt-get</span> install libmodule-install-perl
 <span class="kw">apt-get</span> install libyaz-dev
@@ -376,6 +355,31 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
 <span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="centos-6.4" class="level3">
+<h3><span class="header-section-number">1.2.3</span> CentOS 6.4</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> groupinstall <span class="st">&quot;Development Tools&quot;</span>
+<span class="kw">yum</span> install perl-ExtUtils-MakeMaker
+<span class="kw">yum</span> install perl-CPAN -y
+<span class="kw">yum</span> install gcc -y
+<span class="kw">yum</span> install tcp_wrappers-devel -y
+<span class="kw">yum</span> install expat expat-devel -y
+<span class="kw">yum</span> install libxml2 libxml2-devel -y
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
+<span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="opensuse-12.3" class="level3">
+<h3><span class="header-section-number">1.2.4</span> openSUSE 12.3</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
+<span class="kw">sudo</span> zypper install libxml2-devel xsltproc
+<span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
+<span class="kw">cpanm</span> Task::Catmandu</code></pre>
+</section>
+<section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
+<h3><span class="header-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
+<p>Since Raspbian is based on Debian stable, you could follow the <a href="#debian">instructions there</a>. Unfortunately, you will run into timeouts, so it is advisable to install some prerequisites via apt-get first:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install libboolean-perl libdevel-repl-perl libnet-twitter-perl libxml-easy-perl libxslt1-dev libgdbm-dev</code></pre>
 </section>
 <section id="openbsd-53" class="level3">
 <h3><span class="header-section-number">1.2.6</span> OpenBSD 53</h3>
@@ -2049,6 +2053,59 @@ end</code></pre>
 <h3><span class="header-section-number">10.3.3</span> Repositories</h3>
 <p>The official repository is hosted on GitHub at <a href="http://github.com:LibreCat/Catmandu">http://github.com:LibreCat/Catmandu</a>.</p>
 <p>Official developers have write access to this repository, contributors are invited to fork the dev branch (!) and submit a pull request, as described at <a href="#patch-submission">patch submission</a>.</p>
+</section>
+<section id="core-maintainers" class="level3">
+<h3><span class="header-section-number">10.3.4</span> Core Maintainers</h3>
+<ul>
+<li><strong>LibreCat/Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Cmd-repl</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
+<li><strong>LibreCat/Catmandu-Cmd-fuse</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-Store-MongoDB</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-MARC</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
+<li><strong>LibreCat/Catmandu-OAI</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-Store-Lucy</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-LDAP</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-Z3950</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
+<li><strong>LibreCat/Catmandu-SRU</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
+<li><strong>LibreCat/Catmandu-PubMed</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-PLoS</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-DOI</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-ArXiv</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-Inspire</strong> - <span class="citation" data-cites="vpeil">@vpeil</span><br /></li>
+<li><strong>LibreCat/Catmandu-Store-Solr</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span> , <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-Elasticsearch</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Plack-Session-Store-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Dancer-Session-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Dancer-Plugin-Catmandu-OAI</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/Dancer-Plugin-Catmandu-SRU</strong> - <span class="citation" data-cites="nics">@nics</span>, phochste</li>
+<li><strong>LibreCat/Catmandu-Exporter-ODS</strong> - <span class="citation" data-cites="snorri">@snorri</span><br /></li>
+<li><strong>LibreCat/Catmandu-Exporter-RTF</strong> - <span class="citation" data-cites="petrakohorst">@petrakohorst</span><br /></li>
+<li><strong>LibreCat/Catmandu-Plack-REST</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-AWS</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Task-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-FedoraCommons</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
+<li><strong>LibreCat/Catmandu-AlephX</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/Catmandu-DSpace</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/LibreCat-Sitemap</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-Twitter</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
+<li><strong>LibreCat/Catmandu-MediaMosa</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/Dancer-Plugin-Auth-RBAC-Credentials-Catmandu</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/Catmandu-Fix-cmd</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
+<li><strong>LibreCat/WWW-ORCID</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-Store-CouchDB</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
+<li><strong>LibreCat/Catmandu-ORCID</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
+<li><strong>LibreCat/Catmandu-BibTeX</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
+<li><strong>LibreCat/Catmandu-Atom</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
+<li><strong>LibreCat/Catmandu-XLS</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-DBI</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/MODS-Record</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-EuropePMC</strong> - <span class="citation" data-cites="vpeil">@vpeil</span><br /></li>
+<li><strong>LibreCat/Catmandu-Importer-DBI</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
+<li><strong>LibreCat/Catmandu-Serializer-storable</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Serializer-messagepack</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
+<li><strong>LibreCat/Catmandu-Exporter-Template</strong> - <span class="citation" data-cites="vpeil">@vpeil</span><br /></li>
+<li><strong>LibreCat/Catmandu-Fix-XML</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
+</ul>
 </section>
 </section>
 <section id="acknowledgement" class="level2">
