@@ -1,17 +1,5 @@
 package Catmandu::Serializer::json;
 
-use Catmandu::Sane;
-use JSON ();
-use Moo;
-
-sub serialize {
-    JSON::encode_json($_[1]);
-}
-
-sub deserialize {
-    JSON::decode_json($_[1]);
-}
-
 =head1 NAME
 
 Catmandu::Serializer - A (de)serializer from and to json
@@ -39,5 +27,17 @@ Catmandu::Serializer - A (de)serializer from and to json
 L<Catmandu::Serializer>
 
 =cut
+
+use Catmandu::Sane;
+use JSON ();
+use Moo;
+
+sub serialize {
+    JSON::encode_json($_[1]);
+}
+
+sub deserialize {
+    JSON::decode_json($_[1]);
+}
 
 1;

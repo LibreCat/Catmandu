@@ -1,15 +1,5 @@
 package Catmandu::Fix::reject;
 
-use Catmandu::Sane;
-use Moo;
-
-with 'Catmandu::Fix::Base';
-
-sub emit {
-    my ($self, $fixer) = @_;
-    $fixer->emit_reject;
-}
-
 =head1 NAME
 
 Catmandu::Fix::reject - remove a record form the data
@@ -39,6 +29,16 @@ Catmandu::Fix::reject - remove a record form the data
 L<Catmandu::Fix>
 
 =cut
+
+use Catmandu::Sane;
+use Moo;
+
+with 'Catmandu::Fix::Base';
+
+sub emit {
+    my ($self, $fixer) = @_;
+    $fixer->emit_reject;
+}
 
 1;
 
