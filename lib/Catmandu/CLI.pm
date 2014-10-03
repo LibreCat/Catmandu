@@ -1,5 +1,15 @@
 package Catmandu::CLI;
 
+=head1 NAME
+
+Catmandu::CLI - The App::Cmd application class for the catmandu command line script
+
+=head1 SEE ALSO
+
+L<catmandu>
+
+=cut
+
 use Catmandu::Sane;
 use App::Cmd::Setup -app;
 use Catmandu::Util;
