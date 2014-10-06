@@ -1,6 +1,9 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - more pod
+  - combine the various info modules in Importer::Modules
+  - Bind::hashmap fix
 
 0.9204  2014-06-13 09:44:48 CEST
   - fix issue #93 octal number bug
