@@ -101,6 +101,8 @@ are in field values are escaped as C<\n>, C<\r>, and C<\t>.
 
 =head1 CONFIGURATION
 
+=over 4
+
 =item sep_char
 
 Column separator (C<,> by default>)
