@@ -2,6 +2,9 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+0.9206  2014-10-07 09:06:43 CEST
+  - remove orphan test
+
 0.9205  2014-10-06 14:09:06 CEST
   - more pod
   - combine the various info modules in Importer::Modules
