@@ -29,7 +29,7 @@ Catmandu - a data toolkit
         $fixer->fix($store)
     );
     $exporter->commit;
-    
+
     # Or be very lazy and do this via the command line
     $ catmandu import OAI --url https://biblio.ugent.be/oai to MongoDB --database_name test
     $ catmandu export MongoDB --database_name test --fix myfixes.txt to YAML
@@ -393,11 +393,3 @@ under the terms of either: the GNU General Public License as published
 by the Free Software Foundation; or the Artistic License.
 
 See [http://dev.perl.org/licenses/](http://dev.perl.org/licenses/) for more information.
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 379:
-
-    You forgot a '=back' before '=head1'
