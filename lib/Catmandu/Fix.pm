@@ -38,8 +38,11 @@ sub _trigger_fixes {
     my ($self) = @_;
     my $fixes = $self->fixes;
     my $parsed_fixes = [];
+
     for my $fix (@$fixes) {
-        if (ref $fix) {
+        if (is_code_ref($fix)) {
+            push @$parsed_fixes, require_package('Catmandu::Fix::code')->new($fix); 
+        } elsif (ref $fix) {
             push @$parsed_fixes, $fix;
         } elsif($fix !~ /[\n()]/ and -X $fix) {
             push @$parsed_fixes, require_package('Catmandu::Fix::cmd')->new($fix);
