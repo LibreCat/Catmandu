@@ -1,19 +1,5 @@
 package Catmandu::Iterator;
 
-use namespace::clean;
-use Catmandu::Sane;
-use Role::Tiny::With;
-
-with 'Catmandu::Iterable';
-
-sub new {
-    bless $_[1], $_[0];
-}
-
-sub generator {
-    goto &{$_[0]};
-}
-
 =head1 NAME
 
 Catmandu::Iterator - Base class for all Catmandu iterators
@@ -30,7 +16,7 @@ Catmandu::Iterator - Base class for all Catmandu iterators
     sub {
         # Generator some random data
         +{ random => rand };
-   	}
+    }
   } 
 
   package main;
@@ -40,9 +26,9 @@ Catmandu::Iterator - Base class for all Catmandu iterators
   my first = $it->first;
 
   $it->each(sub {
-	my $item = shift;
+  my $item = shift;
 
-	print $item->{random} , "\n";
+  print $item->{random} , "\n";
   });
 
   my $it2 = $it->map(sub { shift->{random} * 2 });
@@ -62,5 +48,19 @@ If you provide a generator, then the class will generator all methods from L<Cat
 L<Catmandu::Iterable>
 
 =cut
+
+use namespace::clean;
+use Catmandu::Sane;
+use Role::Tiny::With;
+
+with 'Catmandu::Iterable';
+
+sub new {
+    bless $_[1], $_[0];
+}
+
+sub generator {
+    goto &{$_[0]};
+}
 
 1;

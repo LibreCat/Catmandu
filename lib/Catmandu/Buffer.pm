@@ -1,5 +1,72 @@
 package Catmandu::Buffer;
 
+=head1 NAME
+
+Catmandu::Buffer - A base class for modules that need an array buffer
+
+=head1 SYNOPSIS
+
+    package MyPackage;
+
+    use Moo;
+
+    with 'Catmandu::Buffer';
+
+    # Print only when the buffer is full...
+    sub print {
+        my ($self,$str) = @_;
+
+        if ($self->buffer_is_full) {
+           print join "\n" , @{ $self->buffer };
+
+           $self->clear_buffer; 
+        } 
+
+        $self->buffer_add($str);
+    }
+
+    package main;
+
+    my $x = MyPackage->new;
+
+    for (my $i = 0 ; $i < 1000 ; $i++) {
+        $x->print($x);
+    }
+
+=head1 ATTRIBUTES
+
+=head2 buffer
+
+A ARRAY reference to the content of the buffer.
+
+=head2 buffer_size(MAX)
+
+The maximum size of a buffer.
+
+=head1 METHODS
+
+=head2 clear_buffer()
+
+Empty the buffer.
+
+=head2 buffer_used()
+
+Returns a true value when there is content in the buffer.
+
+=head2 buffer_is_full()
+
+Returns a true value when the buffer has reached its maximum capacity.
+
+=head2 buffer_add($x)
+
+Adds $x to the buffer.
+
+=head1 SEE ALSO
+
+L<Catmandu::Solr::Bag>
+
+=cut
+
 use namespace::clean;
 use Catmandu::Sane;
 use Moo::Role;

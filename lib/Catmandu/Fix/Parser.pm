@@ -1,5 +1,74 @@
 package Catmandu::Fix::Parser;
 
+=head1 NAME
+
+Catmandu::Fix::Parser - the parser of the Catmandu::Fix language
+
+=head1 SYNOPSIS
+
+    use Catmandu::Sane;
+    use Catmandu::Fix::Parser;
+    use Catmandu::Fix;
+
+    use Data::Dumper;
+
+    my $parser = Catmandu::Fix::Parser->new;
+
+    my $fixes;
+
+    try {
+        $fixes = $parser->parse(<<EOF);
+    add_field(test,123)
+    EOF
+    }
+    catch {
+        printf "[%s]\nscript:\n%s\nerror: %s\n" 
+                , ref($_) 
+                , $_->source
+                , $_->message;
+    };
+
+    my $fixer = Catmandu::Fix->new(fixes => $fixes);
+
+    print Dumper($fixer->fix({}));
+
+=head1 DESCRIPTION
+
+Programmers are discouraged to use the Catmandu::Parser directly in code but use the Catmandu package that
+provides the same functionality:
+
+    use Catmandu;
+
+    my $fixer = Catmandu->fixer(<<EOF);
+    add_field(test,123)
+    EOF
+
+    print Dumper($fixer->fix({}));
+
+=head1 METHODS
+
+=head2 new()
+
+Create a new Catmandu::Fix parser
+
+=head2 parse($string)
+
+=head2 parse($file)
+
+Reads a string or a file and returns a blessed object with parsed Catmandu::Fixes. Throws an Catmandu::ParseError
+on failure.
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix>
+
+Or consult the webpages below for more information on the Catmandu::Fix language
+
+http://librecat.org/Catmandu/#fixes
+http://librecat.org/Catmandu/#fix-language
+
+=cut
+
 use Catmandu::Sane;
 use Marpa::R2;
 use Data::Dumper;

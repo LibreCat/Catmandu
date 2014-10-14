@@ -1,18 +1,8 @@
 package Catmandu::Logger;
 
-use namespace::clean;
-use Catmandu::Sane;
-use Moo::Role;
-use Log::Any ();
+=head1 NAME
 
-local $| = 1;
-
-has 'log' => (is => 'lazy');
-
-sub _build_log {
-    my ($self) = @_;
-    Log::Any->get_logger(category => ref($self));
-}
+Catmandu::Logger - A role for classes that need logging capabilities
 
 =head1 SYNOPSIS
 
@@ -95,5 +85,19 @@ L<Log::Any>
 Code and documentation blatantly stolen from C<MooX::Log::Any>.
 
 =cut
+
+use namespace::clean;
+use Catmandu::Sane;
+use Moo::Role;
+use Log::Any ();
+
+local $| = 1;
+
+has 'log' => (is => 'lazy');
+
+sub _build_log {
+    my ($self) = @_;
+    Log::Any->get_logger(category => ref($self));
+}
 
 1;

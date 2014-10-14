@@ -1,5 +1,49 @@
 package Catmandu::Paged;
 
+=head1 NAME
+
+Catmandu::Pages - Adds page calculation to a package
+
+=head1 SYNOPSIS
+
+    package MyPackage;
+
+    use Moo;
+
+    with 'Catmandu::Pages';
+
+    sub start {
+        12; # Starting result
+    }
+
+    sub limit  {
+        10; # Number of results per page
+    }
+
+    sub total {
+        131237128371; # Total number of results;
+    }
+
+    package main;
+
+    my $x = MyPackage->new;
+
+    $x->first_page;
+    $x->last_page;
+    $x->page_size;
+    $x->page; # current page
+    $x->previous_page;
+    $x->next_page;
+    $x->first_on_page;
+    $x->next;
+    $x->page_ranges;
+    $x->pages_in_spread;
+
+=head1 SEE ALSO
+
+L<Catmandu::Hits>
+
+=cut
 use namespace::clean;
 use Catmandu::Sane;
 use Moo::Role;

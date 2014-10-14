@@ -5,7 +5,7 @@ use Catmandu::Env;
 use Catmandu::Util qw(:is);
 use File::Spec;
 
-our $VERSION = '0.9204';
+our $VERSION = '0.9206';
 
 =head1 NAME
 
@@ -38,7 +38,7 @@ Catmandu - a data toolkit
         $fixer->fix($store)
     );
     $exporter->commit;
-    
+
     # Or be very lazy and do this via the command line
     $ catmandu import OAI --url https://biblio.ugent.be/oai to MongoDB --database_name test
     $ catmandu export MongoDB --database_name test --fix myfixes.txt to YAML
@@ -548,6 +548,8 @@ L<Catmandu::Iterable>
 =item extended features
 
 L<Catmandu::Validator>
+
+=back
 
 =head1 AUTHOR
 

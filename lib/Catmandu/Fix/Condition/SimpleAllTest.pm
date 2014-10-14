@@ -1,5 +1,50 @@
 package Catmandu::Fix::Condition::SimpleAllTest;
 
+=head1 NAME
+
+Catmandu::Fix::Condition::SimpleAllTest - Base class to ease the construction of all match conditionals
+
+=head1 SYNOPSIS
+
+   package Catmandu::Fix::Condition::is_even
+
+   use Catmandu::Sane;
+   use Moo;
+   use Catmandu::Fix::Has;
+
+   has path    => (fix_arg => 1);
+
+   with 'Catmandu::Fix::Condition::SimpleAllTest';
+ 
+   sub emit_test {
+       my ($self, $var) = @_;
+       my $value = $self->value;
+       "is_value(${var}) && ${var} % 2 == 0";
+   }
+
+   1;
+
+   # Now you can write in your fixes
+   is_even('my_field')    # True when my_field is 0,2,4,6,...
+   is_even('my_field.*')  # True when all my_field's are 0,2,4,6,...
+
+=head1 DESCRIPTION
+
+The is a base class to ease the construction of Catmandu::Fix::Conditional-s. An 'all' test matches
+when all node on a path match a condition. E.g.
+
+   all_match('title','abc')    # true when the title field contains 'abc'
+
+   all_match('title.*','abc')  # true when all title fields contain 'abc'
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix::Condition::all_match>,
+L<Catmandu::Fix::Condition::greater_than>,
+L<Catmandu::Fix::Condition::less_than>
+
+=cut
+
 use Catmandu::Sane;
 use Moo::Role;
 

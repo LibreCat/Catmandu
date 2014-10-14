@@ -6,7 +6,7 @@ Catmandu - a data toolkit
 
     use Catmandu -all;
     use Catmandu qw(config store);
-    use Catmandu -load;
+    use Catmandu -load; # loads default configuration file
     use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
 
     # If you have Catmandu::OAI and Catmandu::MongoDB installed
@@ -29,7 +29,7 @@ Catmandu - a data toolkit
         $fixer->fix($store)
     );
     $exporter->commit;
-    
+
     # Or be very lazy and do this via the command line
     $ catmandu import OAI --url https://biblio.ugent.be/oai to MongoDB --database_name test
     $ catmandu export MongoDB --database_name test --fix myfixes.txt to YAML
@@ -274,6 +274,14 @@ Export data using a default or named exporter to a string.
 
     Same as `Catmandu->export_to_string`.
 
+- fixer
+
+    Same as `Catmandu->fixer`.
+
+- log
+
+    Same as `Catmandu->log`.
+
 - -all/:all
 
     Import everything.
@@ -340,11 +348,25 @@ See [Config::Onion](https://metacpan.org/pod/Config::Onion) for more information
 
 # SEE ALSO
 
-[https://github.com/LibreCat/Catmandu/wiki](https://github.com/LibreCat/Catmandu/wiki),
-[Catmandu::Importer](https://metacpan.org/pod/Catmandu::Importer),
-[Catmandu::Exporter](https://metacpan.org/pod/Catmandu::Exporter),
-[Catmandu::Store](https://metacpan.org/pod/Catmandu::Store),
-[Catmandu::Fix](https://metacpan.org/pod/Catmandu::Fix)
+- documentation
+
+    [https://github.com/LibreCat/Catmandu/wiki](https://github.com/LibreCat/Catmandu/wiki)
+
+- command line client
+
+    [catmandu](https://metacpan.org/pod/catmandu)
+
+- core modules
+
+    [Catmandu::Importer](https://metacpan.org/pod/Catmandu::Importer)
+    [Catmandu::Exporter](https://metacpan.org/pod/Catmandu::Exporter),
+    [Catmandu::Store](https://metacpan.org/pod/Catmandu::Store),
+    [Catmandu::Fix](https://metacpan.org/pod/Catmandu::Fix),
+    [Catmandu::Iterable](https://metacpan.org/pod/Catmandu::Iterable)
+
+- extended features
+
+    [Catmandu::Validator](https://metacpan.org/pod/Catmandu::Validator)
 
 # AUTHOR
 
