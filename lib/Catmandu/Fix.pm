@@ -24,7 +24,7 @@ has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 
 has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
-has fixes        => (is => 'ro', required => 1, trigger => 1);
+has fixes        => (is => 'ro', trigger => 1, default => sub { [] });
 has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
 has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
