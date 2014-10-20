@@ -65,7 +65,7 @@ sub generator {
                 my $info = Module::Info->new_from_file($file);
 
                 my $data = {
-                    file => $file,
+                    file => File::Spec->rel2abs($file),
                     name => $name,
                 };
                 $data->{version} = $info->version if defined $info->version;
