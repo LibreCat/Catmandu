@@ -43,7 +43,19 @@ is $ref->() , undef;
 can_ok $fixer , 'log';
 isa_ok $fixer->log , 'Log::Any::Adapter::Null';
 
-done_testing 22;
+{
+    package MyFix;
+    use parent 'Catmandu::Fix';
+    sub fix {
+        my ($self, $data) = @_;
+        $data->{hello} = 'world';
+        $data;
+    }
+}
+$fixer = MyFix->new;
+is_deeply $fixer->fix({}), { hello => 'world' }, 'simple custom fixer package';
+
+done_testing 23;
 
 sub generator {
 	my $size = 3;

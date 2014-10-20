@@ -12,6 +12,7 @@ sub add {
     my $yaml = YAML::XS::Dump($data);
     utf8::decode($yaml);
     $self->fh->print($yaml);
+    $self->fh->print("...\n");
 }
 
 =head1 NAME
