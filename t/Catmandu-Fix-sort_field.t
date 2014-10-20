@@ -71,4 +71,4 @@ is_deeply
     {nums => [ 1, 10, 100]},
     "sort numeric";
 
-done_testing 9;
+done_testing 13;

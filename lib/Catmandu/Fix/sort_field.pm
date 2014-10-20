@@ -1,8 +1,8 @@
 package Catmandu::Fix::sort_field;
 
 use Catmandu::Sane;
-use Moo;
 use List::MoreUtils ();
+use Moo;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
