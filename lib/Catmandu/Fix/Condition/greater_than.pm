@@ -34,7 +34,7 @@ with 'Catmandu::Fix::Condition::SimpleAllTest';
 sub emit_test {
     my ($self, $var) = @_;
     my $value = $self->value;
-    "is_value(${var}) && ${var} > $value";
+    "is_value(${var}) && ${var} > int('$value')";
 }
 
 1;
