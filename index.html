@@ -194,49 +194,50 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#related-projects"><span class="toc-section-number">12</span> Related Projects <a href="https://github.com/LibreCat/Catmandu/wiki/Related%20Projects/_edit">✎</a></a><ul>
 <li><a href="#selected-formats"><span class="toc-section-number">12.1</span> selected formats</a></li>
 <li><a href="#general-frameworks"><span class="toc-section-number">12.2</span> general frameworks</a></li>
+<li><a href="#section"><span class="toc-section-number">12.3</span> …</a></li>
 </ul></li>
 </ul>
 </nav>
 <section id="introduction" class="level1">
-<h1><span class="header-section-number">1</span> Introduction <a href="https://github.com/LibreCat/Catmandu/wiki/Introduction/_edit">✎</a></h1>
+<h1><a href="#introduction"><span class="header-section-number">1</span> Introduction <a href="https://github.com/LibreCat/Catmandu/wiki/Introduction/_edit">✎</a></a></h1>
 <p><strong>Catmandu</strong> is a data processing toolkit developed as part of the <a href="#librecat">LibreCat</a> project. Catmandu provides a <a href="#command-line-client">command line client</a> and a suite of Perl modules to ease the import, storage, retrieval, export and transformation of data.</p>
 <p>With Catmandu we want to make it easier to extract, transform data such as: JSON, YAML, CSV, MARC, MAB, OAI-PMH, Z39.50, SRU, RDF and much more. Using small transformation language called <a href="#fix-language">Fix language</a>, we want to ease the communication between domain specialists and programmers how data should be transformed.</p>
 <p>Combine Catmandu modules with web application frameworks such as <a href="http://plackperl.org/">PSGI/Plack</a> document stores such as <a href="http://www.mongodb.org/">MongoDB</a> and full text indexes as <a href="http://www.elasticsearch.com">ElasticSearch</a> to create a rapid development environment for digital library services such as institutional repositories and search engines.</p>
 <p>In other words, Catmandu facilitates processing of open data, big data, data science, data journalism, and other buzzwords!</p>
 <section id="overview" class="level2">
-<h2><span class="header-section-number">1.1</span> Overview</h2>
+<h2><a href="#overview"><span class="header-section-number">1.1</span> Overview</a></h2>
 <section id="where-do-we-use-it" class="level3">
-<h3><span class="header-section-number">1.1.1</span> Where do we use it?</h3>
+<h3><a href="#where-do-we-use-it"><span class="header-section-number">1.1.1</span> Where do we use it?</a></h3>
 <p>Catmandu is used in the <a href="#librecat">LibreCat</a> project for several applications.</p>
 <p>We have more than 60 Catmandu projects available at <a href="https://github.com/organizations/LibreCat">GitHub LibreCat</a>.</p>
 </section>
 <section id="why-do-we-use-it" class="level3">
-<h3><span class="header-section-number">1.1.2</span> Why do we use it?</h3>
+<h3><a href="#why-do-we-use-it"><span class="header-section-number">1.1.2</span> Why do we use it?</a></h3>
 <figure>
 <img src="files/catmandu.png" />
 </figure>
 <section id="extract-transform-and-load" class="level4 unnumbered">
-<h4>Extract, Transform and Load</h4>
+<h4><a href="#extract-transform-and-load">Extract, Transform and Load</a></h4>
 <p>Create a search engine, one of your first tasks will to import data from various sources, map the fields to a common data model and post it to a full-text search engine. Modules such as <a href="http://search.cpan.org/~bricas/WebService-Solr-0.17/lib/WebService/Solr.pm">WebService::Solr</a> or <a href="http://search.cpan.org/~drtech/ElasticSearch-0.52/lib/ElasticSearch.pm">ElasticSearch</a> provide easy access to your favorite document stores, but you keep writing a lot of boilerplate code to create the connections, massaging the incoming data into the correct format, validating and uploading and indexing the data in the database. Next morning you are asked to provide a fast dump of records into an Excel worksheet. After some fixes are applied you are asked to upload it into your database. Again you hit Emacs or Vi and provide an ad-hoc script. In our LibreCat group we saw this workflow over and over. We tried to abstract this problem to a set of tools which can work with library data such as MARC, Dublin Core, EndNote protocols such as OAI-PMH, SRU and repositories such as DSpace and Fedora. In data warehouses these processes are called ETL, <em>Extract</em>, <em>Transform</em>, <em>Load</em>. Many tools currenty exist for ETL processing but none adress typical library data models and services.</p>
 </section>
 <section id="copy-and-paste" class="level4 unnumbered">
-<h4>Copy and Paste</h4>
+<h4><a href="#copy-and-paste">Copy and Paste</a></h4>
 <p>As programmers, we would like to reuse our code and algorithms as easy as possible. In fast application development you typically want to copy and paste parts of existing code in a new project. In Catmandu we use a functional style of programming to keep our code tight and clean and suitable for copy and pasting. When working with library data models we use native Perl hashes and arrays to pass data around. In this way adhere to the rationale of Alan J. Perlis: “It is better to have 100 functions operate on one data structure than to have 10 functions operate on 10 data structures.” Our functions are all based on a few primary data structures on which we define many functions (map, count, each, first, take, …)</p>
 </section>
 <section id="schemaless-databases" class="level4 unnumbered">
-<h4>Schemaless databases</h4>
+<h4><a href="#schemaless-databases">Schemaless databases</a></h4>
 <p>In the past it was a nuisance to create database schemas and indexes to store and search your data. Certainly in institutional repositories this can be a ongoing job for a programmer because the metadata schemas are not fixed in time. Any new report will require you to add new data fields and new relations for which you need to change your database schema. With the introduction of schemaless databases the storage of complex records is really easy. With our <em>ElasticSearch</em> Store we even can provide you a CQL style query language for retrieval.</p>
 </section>
 </section>
 <section id="before-you-start" class="level3">
-<h3><span class="header-section-number">1.1.3</span> Before you start</h3>
+<h3><a href="#before-you-start"><span class="header-section-number">1.1.3</span> Before you start</a></h3>
 <p>See <a href="#installation">Installation</a> for installation and <a href="#concepts">Concepts</a> for basic terms.</p>
 </section>
 <section id="command-line" class="level3">
-<h3><span class="header-section-number">1.1.4</span> Command line</h3>
+<h3><a href="#command-line"><span class="header-section-number">1.1.4</span> Command line</a></h3>
 <p>Most of the Catmandu processing doesn’t require you to write any code. With our command line tools you can store data files into databases, index your data, export data in various formats and provide basic data cleanup operations.</p>
 <section id="convert" class="level4 unnumbered">
-<h4>convert</h4>
+<h4><a href="#convert">convert</a></h4>
 <p>For example, if you have a YAML file <code>test.yml</code> like:</p>
 <pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
 <span class="fu">first:</span> Charly
@@ -280,14 +281,14 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <span class="kw">&lt;/foo&gt;</span></code></pre>
 </section>
 <section id="import" class="level4 unnumbered">
-<h4>import</h4>
+<h4><a href="#import">import</a></h4>
 <p>Using this command line tools indexing data becomes also very easy. Boot up a ElasticSearch and run the command below to index the <code>test.yml</code> file:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> import YAML to ElasticSearch --index_name demo <span class="kw">&lt;</span> test.yml</code></pre>
 <p>To show the results from your hard work we can export all the records from the ElasticSearch store:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> export ElasticSearch --index_name demo to JSON</code></pre>
-<pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span><span class="dt">&quot;first&quot;</span><span class="fu">:</span><span class="st">&quot;Albert&quot;</span><span class="fu">,</span><span class="dt">&quot;_id&quot;</span><span class="fu">:</span><span class="st">&quot;3A07B0F8-0973-11E2-98F8-F84380C42756&quot;</span><span class="fu">,</span><span class="dt">&quot;last&quot;</span><span class="fu">:</span><span class="st">&quot;Einstein&quot;</span><span class="fu">,</span><span class="dt">&quot;job&quot;</span><span class="fu">:</span><span class="st">&quot;Physicist&quot;</span><span class="fu">}</span>
-<span class="fu">{</span><span class="dt">&quot;first&quot;</span><span class="fu">:</span><span class="st">&quot;Charly&quot;</span><span class="fu">,</span><span class="dt">&quot;_id&quot;</span><span class="fu">:</span><span class="st">&quot;3A0792D0-0973-11E2-8724-A22A2812F5B2&quot;</span><span class="fu">,</span><span class="dt">&quot;last&quot;</span><span class="fu">:</span><span class="st">&quot;Parker&quot;</span><span class="fu">,</span><span class="dt">&quot;job&quot;</span><span class="fu">:</span><span class="st">&quot;Artist&quot;</span><span class="fu">}</span>
-<span class="fu">{</span><span class="dt">&quot;first&quot;</span><span class="fu">:</span><span class="st">&quot;Bruce&quot;</span><span class="fu">,</span><span class="dt">&quot;_id&quot;</span><span class="fu">:</span><span class="st">&quot;3A07B5EE-0973-11E2-97BF-E053E6A92BE5&quot;</span><span class="fu">,</span><span class="dt">&quot;last&quot;</span><span class="fu">:</span><span class="st">&quot;Wayne&quot;</span><span class="fu">,</span><span class="dt">&quot;job&quot;</span><span class="fu">:</span><span class="st">&quot;Superhero&quot;</span><span class="fu">}</span></code></pre>
+<pre class="sourceCode json"><code class="sourceCode json">{<span class="dt">&quot;first&quot;</span>:<span class="st">&quot;Albert&quot;</span>,<span class="dt">&quot;_id&quot;</span>:<span class="st">&quot;3A07B0F8-0973-11E2-98F8-F84380C42756&quot;</span>,<span class="dt">&quot;last&quot;</span>:<span class="st">&quot;Einstein&quot;</span>,<span class="dt">&quot;job&quot;</span>:<span class="st">&quot;Physicist&quot;</span>}
+{<span class="dt">&quot;first&quot;</span>:<span class="st">&quot;Charly&quot;</span>,<span class="dt">&quot;_id&quot;</span>:<span class="st">&quot;3A0792D0-0973-11E2-8724-A22A2812F5B2&quot;</span>,<span class="dt">&quot;last&quot;</span>:<span class="st">&quot;Parker&quot;</span>,<span class="dt">&quot;job&quot;</span>:<span class="st">&quot;Artist&quot;</span>}
+{<span class="dt">&quot;first&quot;</span>:<span class="st">&quot;Bruce&quot;</span>,<span class="dt">&quot;_id&quot;</span>:<span class="st">&quot;3A07B5EE-0973-11E2-97BF-E053E6A92BE5&quot;</span>,<span class="dt">&quot;last&quot;</span>:<span class="st">&quot;Wayne&quot;</span>,<span class="dt">&quot;job&quot;</span>:<span class="st">&quot;Superhero&quot;</span>}</code></pre>
 <p>We can even be more lazy by creating a catmandu.yml file containing the connection parameters to the ElasticSearch:</p>
 <pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
 <span class="fu">store:</span>
@@ -299,20 +300,20 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> import YAML to Demo <span class="kw">&lt;</span> ~/Desktop/test.yaml</code></pre>
 </section>
 <section id="export" class="level4 unnumbered">
-<h4>export</h4>
+<h4><a href="#export">export</a></h4>
 <p>And exporting all data can be done like this:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> export Demo</code></pre>
 <p>For Catmandu stores that support a query language, exporting data can be very powerfull using the ‘–query’ option. E.g. we can export all records about ‘Einstein’ from our ElasticSearch store using:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> export Demo --query <span class="st">&quot;Einstein&quot;</span></code></pre>
 </section>
 <section id="cleanup" class="level4 unnumbered">
-<h4>cleanup</h4>
+<h4><a href="#cleanup">cleanup</a></h4>
 <p>The previous examples were all pretty easy. In real life we, as librarians, have to deal with data formats such as: MARC, MAB, DublinCore, RDF and more. With Catmandu you can process all these formats with the same commands as shown above.</p>
 <p>You were given a MARC file and were asked to extract all the titles from the file? With our command line tools that can be as easy as:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert MARC --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;) remove_field(record&quot;)&#39;</span> <span class="kw">&lt;</span> marc.mrc</code></pre>
 <p>This will produce a JSON output containing all the titles. The ‘–fix’ option on the command line will execute these fixes:</p>
 <pre class="sourceCode lua"><code class="sourceCode lua">marc_map<span class="ot">(</span><span class="st">&quot;245&quot;</span><span class="ot">,</span><span class="st">&quot;title&quot;</span><span class="ot">)</span> 
-remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre>
+remove_field<span class="ot">(</span><span class="kw">record</span><span class="ot">)</span></code></pre>
 <p>The <a href="#fix-language">Fix language</a> is a tiny language we invented to manipulate data. Fixes should be easy to read or create even if you don’t have any programming skills!</p>
 <p>When you know how to extract data from a MARC file, it is very easy to import it into ElasticSearch:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> import MARC --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;) remove_field(record&quot;)&#39;</span> to Demo <span class="kw">&lt;</span> marc.mrc</code></pre>
@@ -327,13 +328,13 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 </section>
 <section id="installation" class="level2">
-<h2><span class="header-section-number">1.2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation/_edit">✎</a></h2>
+<h2><a href="#installation"><span class="header-section-number">1.2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation/_edit">✎</a></a></h2>
 <p>To get Catmandu running on your system you need to download and install at least the CPAN <a href="https://metacpan.org/pod/Catmandu">Catmandu</a> module. Additional modules add support for more input and output formats, databases, and processing options.</p>
 <p>To install all recommended modules and select optional extension just install <a href="https://metacpan.org/release/Task-Catmandu">Task::Catmandu</a>:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
 <p>Here are some Catmandu installation hints for various platforms.</p>
 <section id="debian" class="level3">
-<h3><span class="header-section-number">1.2.1</span> Debian</h3>
+<h3><a href="#debian"><span class="header-section-number">1.2.1</span> Debian</a></h3>
 <p>Several Catmandu packages are being packages as Debian packages but not in the stable branch yet (see <a href="#voting-catmandu-packages-to-be-included-in-debian">Voting Catmandu packages to be included in Debian</a>).</p>
 <p>Try <a href="https://packages.debian.org/search?keywords=libcatmandu&amp;searchon=names&amp;suite=all&amp;section=all">this search</a> to get a list of all current Catmandu packages in Debian unstable and testing.</p>
 <p>At Debian 7 (stable, “Wheezy”) Catmandu can be installed this way:</p>
@@ -342,7 +343,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
 </section>
 <section id="ubuntu-server-12.04.4-lts" class="level3">
-<h3><span class="header-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</h3>
+<h3><a href="#ubuntu-server-12.04.4-lts"><span class="header-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">apt-get</span> install make
 <span class="kw">apt-get</span> install libmodule-install-perl
 <span class="kw">apt-get</span> install libyaz-dev
@@ -357,38 +358,39 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
 </section>
 <section id="centos-6.4" class="level3">
-<h3><span class="header-section-number">1.2.3</span> CentOS 6.4</h3>
+<h3><a href="#centos-6.4"><span class="header-section-number">1.2.3</span> CentOS 6.4</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> groupinstall <span class="st">&quot;Development Tools&quot;</span>
 <span class="kw">yum</span> install perl-ExtUtils-MakeMaker
 <span class="kw">yum</span> install perl-CPAN -y
 <span class="kw">yum</span> install gcc -y
+<span class="kw">yum</span> install openssl-devel -y
 <span class="kw">yum</span> install tcp_wrappers-devel -y
 <span class="kw">yum</span> install expat expat-devel -y
-<span class="kw">yum</span> install libxml2 libxml2-devel -y
+<span class="kw">yum</span> install libxml2 libxml2-devel libxslt-devel -y
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
 <span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
 </section>
 <section id="opensuse-12.3" class="level3">
-<h3><span class="header-section-number">1.2.4</span> openSUSE 12.3</h3>
+<h3><a href="#opensuse-12.3"><span class="header-section-number">1.2.4</span> openSUSE 12.3</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
 <span class="kw">sudo</span> zypper install libxml2-devel xsltproc
 <span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
 <span class="kw">cpanm</span> Task::Catmandu</code></pre>
 </section>
 <section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
-<h3><span class="header-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
+<h3><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="header-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></h3>
 <p>Since Raspbian is based on Debian stable, you could follow the <a href="#debian">instructions there</a>. Unfortunately, you will run into timeouts, so it is advisable to install some prerequisites via apt-get first:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install libboolean-perl libdevel-repl-perl libnet-twitter-perl libxml-easy-perl libxslt1-dev libgdbm-dev</code></pre>
 </section>
 <section id="openbsd-53" class="level3">
-<h3><span class="header-section-number">1.2.6</span> OpenBSD 53</h3>
+<h3><a href="#openbsd-53"><span class="header-section-number">1.2.6</span> OpenBSD 53</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpan</span> App::cpanminus
 <span class="kw">cpanm</span> Catmandu</code></pre>
 </section>
 </section>
 <section id="concepts" class="level2">
-<h2><span class="header-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></h2>
+<h2><a href="#concepts"><span class="header-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></a></h2>
 <p><em>This page shall explain the basic concepts of Catmandu</em></p>
 <p>To better make use of Catmandu is helps to first understand its <strong>core concepts</strong>:</p>
 <p><strong><a href="#items">Items</a></strong> are the basic unit of data processing in Catmandu. Items may be read, stored, and accessed in many forms.</p>
@@ -398,7 +400,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <p><strong><a href="#exporters">Exporters</a></strong> are used to transform items back into JSON, YAML, CSV, Excel or any format you like.</p>
 <p><strong><a href="#iterables">Iterables</a></strong> are the bread and butter of Catmandu. Every stream of data, if it comes from Iterators, Fixes or Stores is an iterator. Iterators can be connected to other iterators to make processing chains. With Iterators the memory consumption of your program is low: you can process Gigabytes, Terabytes of input data without ever running out of memory.</p>
 <section id="extended-features" class="level3">
-<h3><span class="header-section-number">1.3.1</span> Extended features</h3>
+<h3><a href="#extended-features"><span class="header-section-number">1.3.1</span> Extended features</a></h3>
 <ul>
 <li><a href="#plugins">Plugins</a></li>
 <li><a href="#validators">Validators</a></li>
@@ -407,13 +409,13 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 </section>
 <section id="items" class="level2">
-<h2><span class="header-section-number">1.4</span> Items <a href="https://github.com/LibreCat/Catmandu/wiki/Items/_edit">✎</a></h2>
+<h2><a href="#items"><span class="header-section-number">1.4</span> Items <a href="https://github.com/LibreCat/Catmandu/wiki/Items/_edit">✎</a></a></h2>
 <p>An <strong>item</strong> is the basic unit of data processing in Catmandu. Items are data structures build of key-value-pairs (aka objects), lists (aka arrays), strings, numbers, and null-values. All items can be expressed in <a href="http://json.org">JSON</a> and YAML, among other formats. The following item consists of one object with two keys.</p>
 <p>Serialized in JSON:</p>
-<pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
-  <span class="dt">&quot;author&quot;</span><span class="fu">:</span> <span class="st">&quot;Goldman, Emma&quot;</span><span class="fu">,</span>
-  <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Living My Life&quot;</span>
-<span class="fu">}</span></code></pre>
+<pre class="sourceCode json"><code class="sourceCode json">{
+  <span class="dt">&quot;author&quot;</span>: <span class="st">&quot;Goldman, Emma&quot;</span>,
+  <span class="dt">&quot;title&quot;</span>: <span class="st">&quot;Living My Life&quot;</span>
+}</code></pre>
 <p>Serialized in YAML:</p>
 <pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
 <span class="fu">author:</span> Goldman, Emma
@@ -425,7 +427,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 </section>
 <section id="command-line-client" class="level1">
-<h1><span class="header-section-number">2</span> Command line client <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client/_edit">✎</a></h1>
+<h1><a href="#command-line-client"><span class="header-section-number">2</span> Command line client <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client/_edit">✎</a></a></h1>
 <p>The command line client <a href="https://metacpan.org/pod/distribution/Catmandu/bin/catmandu"><code>catmandu</code></a> in installed with the main Catmandu package for easy data processing. The <a href="#command-line-client-cheat-sheet">Command line client Cheat Sheet</a> contains a comprehensive overview.</p>
 <p>Calling <code>catmandu</code> without any arguments list the available commands:</p>
 <pre class="cmd"><code>$ catmandu
@@ -444,7 +446,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
           move: move objects to another store</code></pre>
 <p>The command <code>help</code> can be used to show more information about some command, for instance by calling <code>catmandu help convert</code>. A brief help message is shown with option <code>--help</code>, <code>-h</code> or <code>-?</code>, for instance <code>catmandu convert -?</code>.</p>
 <section id="configuration" class="level2">
-<h2><span class="header-section-number">2.1</span> Configuration <a href="https://github.com/LibreCat/Catmandu/wiki/Configuration/_edit">✎</a></h2>
+<h2><a href="#configuration"><span class="header-section-number">2.1</span> Configuration <a href="https://github.com/LibreCat/Catmandu/wiki/Configuration/_edit">✎</a></a></h2>
 <p>Catmandu <strong>configuration options</strong> can be stored in a file in the local directory. The file can be YAML, JSON or Perl format and is called <code>catmandu.yml</code>, <code>catmandu.json</code> or <code>catmandu.pl</code>. In this file you can set the default Catmandu stores and exporters to be used. Here is an example of a <code>catmandu.yml</code> file:</p>
 <pre><code>---
 exporter:
@@ -465,12 +467,12 @@ catmandu.foo.bar.json</code></pre>
 <p>Config files are processed in alphabetical order. To keep things simple, values are not merged. The contents of <code>catmandu.store.yml</code> will overwrite configuration value <code>store</code> if it already exists.</p>
 </section>
 <section id="command-line-client-cheat-sheet" class="level2">
-<h2><span class="header-section-number">2.2</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></h2>
+<h2><a href="#command-line-client-cheat-sheet"><span class="header-section-number">2.2</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></a></h2>
 <p>This cheat sheet summarizes the <a href="#command-line-client">command line client</a> capabilities.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">catmandu</span> help
  $ <span class="kw">catmandu</span> help convert</code></pre>
 <section id="convert-1" class="level3">
-<h3><span class="header-section-number">2.2.1</span> Convert</h3>
+<h3><a href="#convert-1"><span class="header-section-number">2.2.1</span> Convert</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Importers to read data into your environment</span>
  $ <span class="kw">catmandu</span> convert MARC to JSON <span class="kw">&lt;</span> records.mrc
  $ <span class="kw">catmandu</span> convert MARC to YAML <span class="kw">&lt;</span> records.mrc
@@ -489,7 +491,7 @@ catmandu.foo.bar.json</code></pre>
  $ <span class="kw">catmandu</span> convert MARC to Template --template <span class="kw">`pwd`</span>/test.tt <span class="kw">&lt;</span> records.mrc </code></pre>
 </section>
 <section id="importexport" class="level3">
-<h3><span class="header-section-number">2.2.2</span> Import/Export</h3>
+<h3><a href="#importexport"><span class="header-section-number">2.2.2</span> Import/Export</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Store to store/retrieve data from a database</span>
  $ <span class="kw">catmandu</span> import JSON to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.json
  $ <span class="kw">catmandu</span> import MARC to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.mrc
@@ -502,7 +504,7 @@ catmandu.foo.bar.json</code></pre>
  $ <span class="kw">catmandu</span> export ElasticSearch --index_name mydb to JSON</code></pre>
 </section>
 <section id="configuration-1" class="level3">
-<h3><span class="header-section-number">2.2.3</span> Configuration</h3>
+<h3><a href="#configuration-1"><span class="header-section-number">2.2.3</span> Configuration</a></h3>
 <p>See <a href="#configuration">Configuration</a> for details.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">cat</span> catmandu.yml
 <span class="kw">---</span>
@@ -536,7 +538,7 @@ catmandu.foo.bar.json</code></pre>
 </section>
 </section>
 <section id="iterables" class="level1">
-<h1><span class="header-section-number">3</span> Iterables <a href="https://github.com/LibreCat/Catmandu/wiki/Iterables/_edit">✎</a></h1>
+<h1><a href="#iterables"><span class="header-section-number">3</span> Iterables <a href="https://github.com/LibreCat/Catmandu/wiki/Iterables/_edit">✎</a></a></h1>
 <p>The Iterable package provides many list methods to process large streams of <a href="#items">items</a>. Most of the methods are lazy if the underlying datastream supports it. While all of the data in Catmandu are native Perl hashes and arrays it can be impratical to load a result set of thousands of records into memory. Most Catmandu packages such as <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, and <a href="#stores">Stores</a> provide therefor an Iterable implementation.</p>
 <p>Using a <code>Mock</code> importer we can generate some Perl hashes on-the-fly and show the functionality provided by Iterable:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl"><span class="fu">use</span> <span class="fu">Catmandu::Importer</span>::<span class="fu">Mock</span>;
@@ -572,8 +574,8 @@ catmandu.foo.bar.json</code></pre>
 <p>The Iterable package provides many more functions such as: to_array, count, each, first, slice, take, group, tap, detect, select, reject, any, many, all, map, reduce and invoke.</p>
 </section>
 <section id="importers" class="level1">
-<h1><span class="header-section-number">4</span> Importers <a href="https://github.com/LibreCat/Catmandu/wiki/Importers/_edit">✎</a></h1>
-<p>Importers are Catmandu packages to read data into an application. We provide importers for MARC, JSON, YAML, CSV, Excel, and other input formats. One can also import from remote sources for instance via Atom and OAI-PMH endpoints. For writing data see <a href="#exporters">Exporters</a>.</p>
+<h1><a href="#importers"><span class="header-section-number">4</span> Importers <a href="https://github.com/LibreCat/Catmandu/wiki/Importers/_edit">✎</a></a></h1>
+<p>Importers are Catmandu packages to read data into an application. We provide importers for MARC, JSON, YAML, CSV, Excel, and other input formats. One can also import from remote sources for instance via generic protocols Atom and OAI-PMH endpoints. We also provide importers for different sources as arXiv.org, eurpopmc.org, inspirehet.net or crossref.org. For writing data see <a href="#exporters">Exporters</a>.</p>
 <p>As an example, lets create a Perl script to read a YAML file containing an array of values. We use the <code>each</code> function to loop through all the items</p>
 <pre class="sourceCode perl"><code class="sourceCode perl"><span class="fu">use</span> Catmandu <span class="kw">qw(</span>importer<span class="kw">)</span>;
 <span class="kw">my</span> <span class="dt">$importer</span> = importer(<span class="kw">&#39;</span><span class="st">YAML</span><span class="kw">&#39;</span>, file =&gt; <span class="kw">&quot;</span><span class="st">./test.yaml</span><span class="kw">&quot;</span>);
@@ -599,7 +601,7 @@ catmandu.foo.bar.json</code></pre>
 <span class="fu">print</span> <span class="kw">&quot;</span><span class="st">Read sample of </span><span class="dt">$count</span><span class="st"> OAI items</span><span class="ch">\n</span><span class="kw">&quot;</span>;</code></pre>
 </section>
 <section id="exporters" class="level1">
-<h1><span class="header-section-number">5</span> Exporters <a href="https://github.com/LibreCat/Catmandu/wiki/Exporters/_edit">✎</a></h1>
+<h1><a href="#exporters"><span class="header-section-number">5</span> Exporters <a href="https://github.com/LibreCat/Catmandu/wiki/Exporters/_edit">✎</a></a></h1>
 <p><strong>Exporters</strong> are Catmandu packages to export data from an application. See <a href="#importers">Importers</a> for the opposite action.</p>
 <p>As input exporters can can get native Perl hashes or arrays but also Iterators to stream huge data sets.</p>
 <p>Here is an example using our Mock importer to stream 1 million Perl hashes through an Exporter:</p>
@@ -621,10 +623,10 @@ exporter(<span class="kw">&#39;</span><span class="st">Template</span><span clas
 <span class="kw">&lt;/character&gt;</span></code></pre>
 </section>
 <section id="stores" class="level1">
-<h1><span class="header-section-number">6</span> Stores <a href="https://github.com/LibreCat/Catmandu/wiki/Stores/_edit">✎</a></h1>
+<h1><a href="#stores"><span class="header-section-number">6</span> Stores <a href="https://github.com/LibreCat/Catmandu/wiki/Stores/_edit">✎</a></a></h1>
 <p><em>this page should introduce to stores</em></p>
 <section id="using-stores-on-command-line" class="level2">
-<h2><span class="header-section-number">6.1</span> Using stores on command line</h2>
+<h2><a href="#using-stores-on-command-line"><span class="header-section-number">6.1</span> Using stores on command line</a></h2>
 <p>Stores can be used with the <a href="#command-line-client">command line client</a> to import, export, count, delete, and move records.</p>
 <pre><code>catmandu import [-?hLv] [long options...]
 
@@ -639,7 +641,7 @@ options:
         -L --load_path
         -v --verbose</code></pre>
 <section id="import-1" class="level3">
-<h3><span class="header-section-number">6.1.1</span> import</h3>
+<h3><a href="#import-1"><span class="header-section-number">6.1.1</span> import</a></h3>
 <pre><code>$ catmandu import MARC --type USMARC
     to CouchDB --database_name marc --bag marc 
     &lt; ./data/camel.mrc
@@ -653,7 +655,7 @@ $ catmandu import MAB2 --fix ./fix/zdb_bibliographic.fix
      &lt; ./data/journals_mab2.dat</code></pre>
 </section>
 <section id="export-1" class="level3">
-<h3><span class="header-section-number">6.1.2</span> export</h3>
+<h3><a href="#export-1"><span class="header-section-number">6.1.2</span> export</a></h3>
 <pre><code>catmandu export [-?hLqv] [long options...]
 
 examples:
@@ -675,7 +677,7 @@ $ catmandu export MongoDB --database_name mab --bag mab to JSON
 $ catmandu export ElasticSearch --index_name mab --bag mab to JSON</code></pre>
 </section>
 <section id="count" class="level3">
-<h3><span class="header-section-number">6.1.3</span> count</h3>
+<h3><a href="#count"><span class="header-section-number">6.1.3</span> count</a></h3>
 <pre><code>catmandu count [-?hLq] [long options...]
 
 examples:
@@ -702,7 +704,7 @@ $ catmandu count ElasticSearch --index_name mab --bag mab
     --query &#39;dc.publisher:&quot;Heise&quot;&#39;</code></pre>
 </section>
 <section id="deleting" class="level3">
-<h3><span class="header-section-number">6.1.4</span> deleting</h3>
+<h3><a href="#deleting"><span class="header-section-number">6.1.4</span> deleting</a></h3>
 <pre><code>catmandu delete [-?hLq] [long options...]
 
 examples:
@@ -729,7 +731,7 @@ $ catmandu delete ElasticSearch --index_name mab --bag mab
     --q &#39;_id:&quot;1262750&quot;&#39;</code></pre>
 </section>
 <section id="move" class="level3">
-<h3><span class="header-section-number">6.1.5</span> move</h3>
+<h3><a href="#move"><span class="header-section-number">6.1.5</span> move</a></h3>
 <pre><code>catmandu move [-?hLqv] [long options...]
 
 examples:
@@ -764,7 +766,7 @@ $ catmandu move ElasticSearch --index_name moved --bag moved
 </section>
 </section>
 <section id="using-stores-in-perl-programs" class="level2">
-<h2><span class="header-section-number">6.2</span> Using stores in Perl programs</h2>
+<h2><a href="#using-stores-in-perl-programs"><span class="header-section-number">6.2</span> Using stores in Perl programs</a></h2>
 <p>As explained in the introduction, one of the rationales for creating Catmandu is to ease the serialization of records in our database of choice. The introduction of schemaless databases made the storage of complex records quite easy. Before we delve into this type of database we need to show you what syntax Catmandu is using to store data.</p>
 <p>As example lets create the most simple storage mechanism possible, an in memory hash. We use this mock ‘database’ to show some of the features that any Catmandu::Store has. First we will create a YAML importer as shown above to import records into an in memory hash store:</p>
 <pre><code>use Catmandu::Importer::YAML;
@@ -856,7 +858,7 @@ $hits-&gt;each(sub {
 </section>
 </section>
 <section id="fixes" class="level1">
-<h1><span class="header-section-number">7</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes/_edit">✎</a></h1>
+<h1><a href="#fixes"><span class="header-section-number">7</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes/_edit">✎</a></a></h1>
 <p>Fixes can be used for easy data manipulation by non programmers. Using a small <a href="#fix-language">Fix language</a> non-programmers can manipulate data objects. A plain text file of fixes can be created to specify all the data manipulations that need to be executed to ‘massage’ the data in the desired format.</p>
 <p>As an example we will import data from a MARC file and change some metadata fields using Fix functions.</p>
 <p>First, make sure that you have Catmandu::MARC installed on your system.</p>
@@ -921,7 +923,7 @@ year
 <li>If you are a programmer and want to create your own Fixes, then go to our <a href="#fix-packages">Fix packages</a>.</li>
 </ul>
 <section id="fix-language" class="level2">
-<h2><span class="header-section-number">7.1</span> Fix language <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20language/_edit">✎</a></h2>
+<h2><a href="#fix-language"><span class="header-section-number">7.1</span> Fix language <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20language/_edit">✎</a></a></h2>
 <p>Catmandu comes with a small domain specific language for manipulation of data <a href="#items">items</a>. The fix language consists of</p>
 <ul>
 <li><em>pathes</em> to refer to particular parts of an item</li>
@@ -933,7 +935,7 @@ year
 <p>The <a href="#fixes-cheat-sheet">Fixes Cheat Sheet</a> contains a condense summary of the fix language.</p>
 </section>
 <section id="path" class="level2">
-<h2><span class="header-section-number">7.2</span> Path</h2>
+<h2><a href="#path"><span class="header-section-number">7.2</span> Path</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Remove field test in a deeply nested hash</span>
 <span class="kw">remove_field</span>(<span class="st">&#39;foo.bar.test&#39;</span>)
 
@@ -953,7 +955,7 @@ year
 <span class="kw">remove_field</span>(<span class="st">&#39;foo.bar.$last&#39;</span>) <span class="co"># remove the last element of &#39;bar&#39;</span></code></pre>
 </section>
 <section id="modifying-fields" class="level2">
-<h2><span class="header-section-number">7.3</span> Modifying fields</h2>
+<h2><a href="#modifying-fields"><span class="header-section-number">7.3</span> Modifying fields</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Add a new field</span>
 <span class="kw">add_field</span>(<span class="st">&#39;name&#39;</span>,<span class="st">&#39;Smith&#39;</span>)  <span class="co"># {name =&gt; &#39;Smith&#39;}</span>
 
@@ -995,7 +997,7 @@ year
 <span class="kw">count</span>(<span class="st">&#39;ddc&#39;</span>)  <span class="co"># 3</span></code></pre>
 </section>
 <section id="strings" class="level2">
-<h2><span class="header-section-number">7.4</span> Strings</h2>
+<h2><a href="#strings"><span class="header-section-number">7.4</span> Strings</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># {format =&gt; &#39;marc&#39;}</span>
 <span class="co"># Capitalize a value</span>
 <span class="kw">capitalize</span>(<span class="st">&#39;format&#39;</span>)  <span class="co"># {format =&gt; &#39;Marc&#39;}</span>
@@ -1016,7 +1018,7 @@ year
 <span class="kw">trim</span>(<span class="st">&#39;foo&#39;</span>, <span class="st">&#39;nonword&#39;</span>)  <span class="co"># {foo =&gt; &#39;abc&#39;};</span></code></pre>
 </section>
 <section id="search-and-replace" class="level2">
-<h2><span class="header-section-number">7.5</span> Search and replace</h2>
+<h2><a href="#search-and-replace"><span class="header-section-number">7.5</span> Search and replace</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># {format =&gt; &#39;MAB&#39;}</span>
 <span class="co"># Search and replace using regex expressions</span>
 <span class="co"># Replace characters in string</span>
@@ -1027,7 +1029,7 @@ year
 <span class="kw">replace_all</span>(<span class="st">&#39;identifier.*&#39;</span>, <span class="st">&#39;-[0-9xX]$&#39;</span>, <span class="st">&#39;&#39;</span>) <span class="co"># {id =&gt; [&#39;123&#39;, &#39;567&#39;]}</span></code></pre>
 </section>
 <section id="lookup" class="level2">
-<h2><span class="header-section-number">7.6</span> Lookup</h2>
+<h2><a href="#lookup"><span class="header-section-number">7.6</span> Lookup</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># lookup value of &#39;ddc&#39; in dict.csv and </span>
 <span class="co"># replace the value or set it to &#39;000&#39;</span>
 <span class="kw">lookup</span>(<span class="st">&#39;ddc&#39;</span>, <span class="st">&#39;dict.csv&#39;</span>, -default=<span class="kw">&gt;</span><span class="st">&#39;000&#39;</span>)
@@ -1042,7 +1044,7 @@ year
 <span class="kw">lookup_in_store</span>(<span class="st">&#39;ddc&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -delete =<span class="kw">&gt;</span> 1)</code></pre>
 </section>
 <section id="conditionals" class="level2">
-<h2><span class="header-section-number">7.7</span> Conditionals</h2>
+<h2><a href="#conditionals"><span class="header-section-number">7.7</span> Conditionals</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># set value of field &#39;ddc&#39; to &#39;Informatik&#39; </span>
 <span class="co"># if field &#39;ddc&#39; has the value &#39;004&#39;</span>
 <span class="kw">if</span> <span class="kw">any_match</span>(<span class="st">&#39;ddc&#39;</span>, <span class="st">&#39;004&#39;</span>)
@@ -1065,7 +1067,7 @@ year
 <span class="kw">end</span></code></pre>
 </section>
 <section id="helper-fixes" class="level2">
-<h2><span class="header-section-number">7.8</span> Helper fixes</h2>
+<h2><a href="#helper-fixes"><span class="header-section-number">7.8</span> Helper fixes</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Collapse deep nested hash to a flat hash</span>
 <span class="fu">collapse()</span>
 
@@ -1094,20 +1096,20 @@ year
 <span class="kw">select</span> <span class="kw">all_match</span>(include,true)</code></pre>
 </section>
 <section id="external-programs" class="level2">
-<h2><span class="header-section-number">7.9</span> External programs</h2>
+<h2><a href="#external-programs"><span class="header-section-number">7.9</span> External programs</a></h2>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Use an external program that can read JSON </span>
 <span class="co"># from stdin and write JSON to stdout</span>
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)</code></pre>
 </section>
 <section id="fix-packages" class="level2">
-<h2><span class="header-section-number">7.10</span> Fix packages <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20packages/_edit">✎</a></h2>
+<h2><a href="#fix-packages"><span class="header-section-number">7.10</span> Fix packages <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20packages/_edit">✎</a></a></h2>
 <p>For an extended introduction into creating Fix packages read the two blog posts at:</p>
 <ul>
 <li><a href="#-http://librecat.org/catmandu/2014/03/14/create-a-fixer.html">Create a fixer - Part 1</a></li>
 <li><a href="#-http://librecat.org/catmandu/2014/03/26/creating-a-fixer-2.html">Create a fixer - Part 2</a></li>
 </ul>
 <section id="create-a-fix-short-version" class="level4 unnumbered">
-<h4>Create a Fix (short version)</h4>
+<h4><a href="#create-a-fix-short-version">Create a Fix (short version)</a></h4>
 <p>The easiest way to create a new ‘Fix’ is by creating a Perl package in the Catmandu::Fix namespace that has a ‘fix’ instance method. For example:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">package</span> <span class="fu">Catmandu::Fix</span>::<span class="fu">foo</span>;
 
@@ -1156,7 +1158,7 @@ Hello, World?
 </section>
 </section>
 <section id="fixes-cheat-sheet" class="level2">
-<h2><span class="header-section-number">7.11</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></h2>
+<h2><a href="#fixes-cheat-sheet"><span class="header-section-number">7.11</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></a></h2>
 <p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
 <span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
@@ -1189,7 +1191,7 @@ Hello, World?
 <span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
 <span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>)                         <span class="co"># sort the values of an array</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-unique =<span class="kw">&gt;</span> 1)            <span class="co"># sort the values plus keep unique values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-uniq =<span class="kw">&gt;</span> 1)              <span class="co"># sort the values plus keep unique values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
 <span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
@@ -1235,8 +1237,10 @@ Hello, World?
 
 <span class="co"># Copy all 245 subfields into the my.title hash</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
-<span class="co"># Copy the 245-$a$b$c subfields into the my.title hash</span>
+<span class="co"># Copy the 245-$a$b$c subfields into the my.title hash in the order of the record</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245abc&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
+<span class="co"># Copy the 245-$c$b$a subfields into the my.title hash in the order of the mapping</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245cba&#39;</span>,<span class="st">&#39;my.title&#39;</span> , -pluck =<span class="kw">&gt;</span> 1) 
 <span class="co"># Copy the 100 subfields into the my.authors array</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;100&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>) 
 <span class="co"># Add the 710 subfields into the my.authors array</span>
@@ -1341,7 +1345,7 @@ Hello, World?
 <span class="kw">end</span></code></pre>
 </section>
 <section id="example-fix-script" class="level2">
-<h2><span class="header-section-number">7.12</span> Example Fix Script <a href="https://github.com/LibreCat/Catmandu/wiki/Example%20Fix%20Script/_edit">✎</a></h2>
+<h2><a href="#example-fix-script"><span class="header-section-number">7.12</span> Example Fix Script <a href="https://github.com/LibreCat/Catmandu/wiki/Example%20Fix%20Script/_edit">✎</a></a></h2>
 <p>Here is an example Fix script taken from a production system at Ghent University Library that can be used for inspiration. This script is used to feed data from a MongoDB store of MARC records to a <a href="http://projectblacklight.org/">Black Light</a> Solr installation.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#-</span>
 <span class="co">#- LLUDSS - Data cleaning fixes. Using MARC records as input</span>
@@ -1680,15 +1684,15 @@ Hello, World?
 </section>
 </section>
 <section id="extended-features-1" class="level1">
-<h1><span class="header-section-number">8</span> Extended features</h1>
+<h1><a href="#extended-features-1"><span class="header-section-number">8</span> Extended features</a></h1>
 <section id="validators" class="level2">
-<h2><span class="header-section-number">8.1</span> Validators <a href="https://github.com/LibreCat/Catmandu/wiki/Validators/_edit">✎</a></h2>
+<h2><a href="#validators"><span class="header-section-number">8.1</span> Validators <a href="https://github.com/LibreCat/Catmandu/wiki/Validators/_edit">✎</a></a></h2>
 <p><strong>Validators</strong> are Catmandu modules to validate items, for instance to check whether items contain required fields. Validators can also make use of schemas to validate items against.</p>
 <p>Basic documentation is included at the base class <a href="https://metacpan.org/pod/Catmandu::Validator">Catmandu::Validator</a>.</p>
 <p>Validators are available since Catmandu 0.9 but support of validators in the <a href="#command-line-client">command line client</a> and in the <a href="#fix-language">fix language</a> has not been implemented yet.</p>
 </section>
 <section id="binds" class="level2">
-<h2><span class="header-section-number">8.2</span> Binds <a href="https://github.com/LibreCat/Catmandu/wiki/Binds/_edit">✎</a></h2>
+<h2><a href="#binds"><span class="header-section-number">8.2</span> Binds <a href="https://github.com/LibreCat/Catmandu/wiki/Binds/_edit">✎</a></a></h2>
 <p>Bind functions are part of the <a href="#fix-language">fix language</a>, introduced to Catmandu version 0.91 [?]. They are used to provide processing hooks around <a href="#fixes">Fix</a> functions.</p>
 <p>As a reminder, Fix functions are used to manipulate <a href="#items">items</a>. Perl hashes get in and Perl hashes get out. The ‘meow’ fix below will add a field to an incoming Perl hash:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">package</span> <span class="fu">Catmandu::Fix</span>::<span class="fu">meow</span>;
@@ -1737,7 +1741,7 @@ woof! woof!
 { &quot;meow&quot;: &quot;Prrr&quot; }</code></pre>
 <p>You can use Bind to manipulate the data, execute code before or after a Fix function, and are generally used to cope with side effects. Catmandu 0.91 will provide four Bind functions as examples.</p>
 <section id="identity" class="level4 unnumbered">
-<h4>identity</h4>
+<h4><a href="#identity">identity</a></h4>
 <p>The identity Bind doesn’t do anything really to manipulate the incoming data or Fix functions. You can use identity binds to group Fix functions for other binds. E.g.:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">do</span> <span class="fu">identity()</span>
   <span class="fu">foo()</span>
@@ -1748,7 +1752,7 @@ woof! woof!
 <span class="fu">bar()</span></code></pre>
 </section>
 <section id="maybe" class="level4 unnumbered">
-<h4>maybe</h4>
+<h4><a href="#maybe">maybe</a></h4>
 <p>The maybe Bind can be used around Fix functions that can throw errors. The Bind will catch errors and start ignoring all Fix functions that succeed the Fix which threw the error. E.g.:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">do</span> <span class="fu">maybe()</span>
    <span class="fu">foo()</span>
@@ -1759,7 +1763,7 @@ woof! woof!
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">foo()</span></code></pre>
 </section>
 <section id="list" class="level4 unnumbered">
-<h4>list</h4>
+<h4><a href="#list">list</a></h4>
 <p>The list Bind can be used to execute Fix functions (or nested Binds) multiple times on every element in a list. E.g.:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">add_field</span>(demo.<span class="ot">$append</span>.test,1)
 <span class="kw">add_field</span>(demo.<span class="ot">$append</span>.test,2)
@@ -1775,7 +1779,7 @@ woof! woof!
 <span class="kw">add_field</span>(demo.1.foo , bar)</code></pre>
 </section>
 <section id="benchmark" class="level4 unnumbered">
-<h4>benchmark</h4>
+<h4><a href="#benchmark">benchmark</a></h4>
 <p>The Benchmark Bind can be used to calculate benchmark statistics for Fixes over all records in the input. E.g. if we have as input 1000 records this fix:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
   <span class="fu">foo()</span>
@@ -1787,15 +1791,15 @@ woof! woof!
 </section>
 </section>
 <section id="plugins" class="level2">
-<h2><span class="header-section-number">8.3</span> Plugins <a href="https://github.com/LibreCat/Catmandu/wiki/Plugins/_edit">✎</a></h2>
+<h2><a href="#plugins"><span class="header-section-number">8.3</span> Plugins <a href="https://github.com/LibreCat/Catmandu/wiki/Plugins/_edit">✎</a></a></h2>
 <p><em>Plugins to be documented here</em></p>
 <p>See also <a href="http://librecat.org/catmandu/2013/12/18/versioning-using-catmandu-plugin.html">http://librecat.org/catmandu/2013/12/18/versioning-using-catmandu-plugin.html</a></p>
 </section>
 </section>
 <section id="beyond-catmandu" class="level1">
-<h1><span class="header-section-number">9</span> Beyond Catmandu</h1>
+<h1><a href="#beyond-catmandu"><span class="header-section-number">9</span> Beyond Catmandu</a></h1>
 <section id="dancer-catmandu" class="level2">
-<h2><span class="header-section-number">9.1</span> Dancer &amp; Catmandu <a href="https://github.com/LibreCat/Catmandu/wiki/Dancer%20&amp;%20Catmandu/_edit">✎</a></h2>
+<h2><a href="#dancer-catmandu"><span class="header-section-number">9.1</span> Dancer &amp; Catmandu <a href="https://github.com/LibreCat/Catmandu/wiki/Dancer%20&amp;%20Catmandu/_edit">✎</a></a></h2>
 <p>Catmandu integrates very well with Perl frameworks such as <a href="http://www.perldancer.org/">Dancer</a> for <i>easy and fun webapp development</i>. In the text below we will use our Catmandu tools to create small demo application: a web search engine that can be fed with CSV files.</p>
 <p>This second part of the tutorial assumes some familiarity with Catmandu. If you have not yet read part 1, now would be a good time to do so: <a href="Introduction">Introduction</a>.</p>
 <p>Dancer provides an intuitive and minimalistic approach to create web applications. The software package can be easily installed if you have <a href="http://search.cpan.org/dist/App-cpanminus/lib/App/cpanminus.pm">cpanminus</a> on your server:</p>
@@ -1861,15 +1865,15 @@ true;</code></pre>
 <p>Now that we are able to upload a file to the webserver we can add Catmandu code to parse this data and send it to a Solr search engine. We first create a file <code>catmandu.yml</code> in the home directory of the DemoApp which contains the location of our Solr engine and the parameters for the Catmandu importer we are going to use to parse the data (CSV-files in our case)</p>
 <pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="fu">store:</span>
     <span class="fu">default:</span>
-        <span class="fu">package:</span> <span class="st">&quot;Solr&quot;</span>
+        <span class="fu">package:</span> &quot;Solr&quot;
         <span class="fu">options:</span>
-            <span class="fu">url:</span> <span class="st">&quot;http://localhost:8983/solr&quot;</span>
+            <span class="fu">url:</span> &quot;http://localhost:8983/solr&quot;
 
 <span class="fu">importer:</span>
     <span class="fu">default:</span>
         <span class="fu">package:</span> CSV
         <span class="fu">options:</span>
-            <span class="fu">sep_char:</span> <span class="st">&quot;;&quot;</span></code></pre>
+            <span class="fu">sep_char:</span> &quot;;&quot;</code></pre>
 <p>Reading from a CSV importer and indexing into a Solr Store can be easily added to the DemoApp.pm controller by adding the following lines at the top of the DemoApp.pm module:</p>
 <pre class="sourceCode perl"><code class="sourceCode perl"><span class="fu">use</span> Catmandu -load;
 <span class="fu">use</span> <span class="fu">Catmandu::Sane</span>;
@@ -1944,10 +1948,10 @@ true;</code></pre>
 <p>This concludes our very short introduction into Catmandu and Dancer. We hope we have provided you with enough material and inspiration for new and exciting projects ;). Please find in the included <a href="files/DemoApp.zip">DemoApp.zip</a> ZIP file an elaborate example of the code used in this tutorial.</p>
 </section>
 <section id="missing-modules" class="level2">
-<h2><span class="header-section-number">9.2</span> Missing modules <a href="https://github.com/LibreCat/Catmandu/wiki/Missing%20modules/_edit">✎</a></h2>
+<h2><a href="#missing-modules"><span class="header-section-number">9.2</span> Missing modules <a href="https://github.com/LibreCat/Catmandu/wiki/Missing%20modules/_edit">✎</a></a></h2>
 <p>This page summarizes ideas and plans for additional Catmandu modules with <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, <a href="#stores">Stores</a>, <a href="#fix-packages">Fix packages</a>, <a href="#validators">Validators</a>, and <a href="#binds">Binds</a>. Feel free to add more suggestions! Please include links to existing code repositories or descriptions, if available!</p>
 <section id="importers-1" class="level3">
-<h3><span class="header-section-number">9.2.1</span> Importers</h3>
+<h3><a href="#importers-1"><span class="header-section-number">9.2.1</span> Importers</a></h3>
 <p><strong>Catmandu::Importer::Europeana</strong>: See also http://www.theeuropeanlibrary.org/tel4/access</p>
 <p><strong>Catmandu::Importer::Sleep</strong>: See also http://dataprotocols.org/sleep/</p>
 <p><strong>Catmandu::Importer::ONIX</strong></p>
@@ -1961,19 +1965,19 @@ true;</code></pre>
 <p>…</p>
 </section>
 <section id="exporters-1" class="level3">
-<h3><span class="header-section-number">9.2.2</span> Exporters</h3>
+<h3><a href="#exporters-1"><span class="header-section-number">9.2.2</span> Exporters</a></h3>
 <p><strong><a href="https://github.com/nichtich/Catmandu-Exporter-Table">Catmandu::Exporter::Table</a></strong> (draft): export ASCII table such as implemented by <a href="http://csvkit.readthedocs.org/en/0.7.3/scripts/csvlook.html">csvlook</a> (see <a href="http://csvkit.readthedocs.org/en/latest/tutorial/examining_the_data.html#reading-through-data-with-csvlook-and-less">this example</a>. The exporter may be configured for more table formats, such as <a href="http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html#tables">described here</a>.</p>
 <p><strong>Catmandu::Exporter::SPARUL or Catmandu::Exporter::SPARQL</strong></p>
 <p><strong>Catmandu::Exporter::RDFPatch</strong></p>
 </section>
 <section id="stores-1" class="level3">
-<h3><span class="header-section-number">9.2.3</span> Stores</h3>
+<h3><a href="#stores-1"><span class="header-section-number">9.2.3</span> Stores</a></h3>
 <p><strong>Catmandu::Store::Directory</strong>: use the file system as simple read/write/delete store.</p>
 <p><strong>Catmandu::Store::GoogleSpreadsheet</strong>: use A Google Drive/Docs Spreadsheet as store for reading and writing tabular data. See <a href="https://developers.google.com/google-apps/spreadsheets/">API documentation</a> and <a href="https://metacpan.org/pod/Net::GoogleDrive">Net::GoogleDrive</a> for a very basic interface.</p>
 <p><strong>Catmandu::Store::S3</strong>: use Amazon S3 as a backend store</p>
 </section>
 <section id="fixes-and-binds" class="level3">
-<h3><span class="header-section-number">9.2.4</span> Fixes and binds</h3>
+<h3><a href="#fixes-and-binds"><span class="header-section-number">9.2.4</span> Fixes and binds</a></h3>
 <p><strong>Catmandu::Fix::jq</strong>: filter records as implemented by the <a href="https://stedolan.github.io/jq/">jq</a> command line tool. An easy implementation could pass JSON to <code>jq</code> and parse the result.</p>
 <p><strong>Catmandu::Fix::Bind::validate</strong>: validate a record inside the Fix language. E.g.</p>
 <pre><code># This will reject the record if it the resulting fixes create an invalid record
@@ -1985,33 +1989,33 @@ end</code></pre>
 <p><strong>Catmandu::Fix::Lua</strong>: use Lua as efficient and safe (sandboxed) fix language.</p>
 </section>
 <section id="validators-1" class="level3">
-<h3><span class="header-section-number">9.2.5</span> Validators</h3>
+<h3><a href="#validators-1"><span class="header-section-number">9.2.5</span> Validators</a></h3>
 <p><strong>Catmandu::Validator::JSONSchema</strong>: validate based on a <a href="http://json-schema.org/">JSON Schema</a>. See <a href="https://github.com/LibreCat/Catmandu-Validator-JSONSchema">https://github.com/LibreCat/Catmandu-Validator-JSONSchema</a> for a draft.</p>
 <p><strong>Catmandu::Validator::Entails</strong>: validate by entailed record, as implemented by <a href="https://metacpan.org/pod/Test::JSON::Entails">Test::JSON::Entails</a></p>
 <p><strong>Catmandu::Validator::Moose</strong>: validate with a given Moose class <a href="http://blogs.perl.org/users/samuel_kaufman/2014/05/validating-nested-json-hashes-with-moose.html">as described here</a></p>
 <p><strong>Catmandu::Validator::cmd</strong>: validate with an external command. See https://github.com/LibreCat/Catmandu-Fix-cmd/issues/2</p>
 </section>
 <section id="combined-modules" class="level3">
-<h3><span class="header-section-number">9.2.6</span> Combined modules</h3>
+<h3><a href="#combined-modules"><span class="header-section-number">9.2.6</span> Combined modules</a></h3>
 <p><strong>Catmandu::Zotero</strong> to use <a href="https://www.zotero.org/support/dev/web_api/v2/start">Zotero Web</a> as Store and or Importer/Exporter, so Zotero can be used as bibliographic database.</p>
 </section>
 </section>
 </section>
 <section id="contribution" class="level1">
-<h1><span class="header-section-number">10</span> Contribution <a href="https://github.com/LibreCat/Catmandu/wiki/Contribution/_edit">✎</a></h1>
+<h1><a href="#contribution"><span class="header-section-number">10</span> Contribution <a href="https://github.com/LibreCat/Catmandu/wiki/Contribution/_edit">✎</a></a></h1>
 <p>This guide has been written to help anyone interested in contributing to the development of Catmandu. Please read this guide before contributing to Catmandu or related projects, to avoid wasted effort and maximizing the chances of your contributions being used.</p>
 <section id="ways-to-contribute" class="level2">
-<h2><span class="header-section-number">10.1</span> Ways to contribute</h2>
+<h2><a href="#ways-to-contribute"><span class="header-section-number">10.1</span> Ways to contribute</a></h2>
 <p>There are many ways to contribute to the project. Catmandu is a young yet active project and any kind of help is very much appreciated!</p>
 <section id="publicity" class="level3">
-<h3><span class="header-section-number">10.1.1</span> Publicity</h3>
+<h3><a href="#publicity"><span class="header-section-number">10.1.1</span> Publicity</a></h3>
 <p>You don’t have to start by hacking the code, spreading the word is very valuable as well!</p>
 <p>If you have a blog, just feel free to speak about Catmandu.</p>
 <p>Of course, it doesn’t have to be limited to blogs or Twitter. Feel free to spread the word in whatever way you consider fit and drop us a line on the Catmandu user mailing list noted below.</p>
 <p>Also, if you’re using and enjoying Catmandu, <a href="http://cpanratings.perl.org/dist/Catmandu">rating us on cpanratings.perl.org</a>, explaining what you like about Catmandu is another very valuable contribution that helps other new users find us!</p>
 </section>
 <section id="mailing-list" class="level3">
-<h3><span class="header-section-number">10.1.2</span> Mailing list</h3>
+<h3><a href="#mailing-list"><span class="header-section-number">10.1.2</span> Mailing list</a></h3>
 <p>Subscribing to the mailing list and providing assistance to new users is incredibly valuable.</p>
 <ul>
 <li>Mailing list: <code>librecat-dev@mail.librecat.org</code></li>
@@ -2019,11 +2023,11 @@ end</code></pre>
 </ul>
 </section>
 <section id="documentation" class="level3">
-<h3><span class="header-section-number">10.1.3</span> Documentation</h3>
+<h3><a href="#documentation"><span class="header-section-number">10.1.3</span> Documentation</a></h3>
 <p>We value documentation very much, but it’s difficult to keep it up-to-date. If you find a typo or an error in the documentation please do let us know - ideally by submitting a patch (pull request) with your fix or suggestion (see <a href="#patch-submission">Patch Submission</a>).</p>
 </section>
 <section id="code" class="level3">
-<h3><span class="header-section-number">10.1.4</span> Code</h3>
+<h3><a href="#code"><span class="header-section-number">10.1.4</span> Code</a></h3>
 <p>To can contribute to Catmandu’s core code or extend the functionality by new <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, <a href="#stores">Stores</a>, <a href="#fix-packages">Fix packages</a>, <a href="#validators">Validators</a>, <a href="#binds">Binds</a>, or <a href="#plugins">Plugins</a>. Have a look at the list of <a href="#missing-modules">missing modules</a> for existing ideas and resources for new Catmandu modules. Feel also free to add new ideas and links there.</p>
 <p>For more detailed guidelines, see:</p>
 <ul>
@@ -2034,93 +2038,95 @@ end</code></pre>
 </section>
 </section>
 <section id="quality-supervision-and-reporting-bugs" class="level2">
-<h2><span class="header-section-number">10.2</span> Quality Supervision and Reporting Bugs</h2>
+<h2><a href="#quality-supervision-and-reporting-bugs"><span class="header-section-number">10.2</span> Quality Supervision and Reporting Bugs</a></h2>
 <p>We can measure our quality using the CPAN testers platform: <a href="http://www.cpantesters.org">http://www.cpantesters.org</a>.</p>
 <p>A good way to help the project is to find a failing build log on the CPAN testers: <a href="http://www.cpantesters.org/distro/D/Catmandu.html">http://www.cpantesters.org/distro/D/Catmandu.html</a></p>
 <p>If you find a failing test report or another kind of bug, feel free to report it as a GitHub issue: <a href="http://github.com/LibreCat/Catmandu/issues">http://github.com/LibreCat/Catmandu/issues</a>. Please make sure the bug you’re reporting does not yet exist.</p>
 </section>
 <section id="resources-for-developers" class="level2">
-<h2><span class="header-section-number">10.3</span> RESOURCES FOR DEVELOPERS</h2>
+<h2><a href="#resources-for-developers"><span class="header-section-number">10.3</span> RESOURCES FOR DEVELOPERS</a></h2>
 <section id="website" class="level3">
-<h3><span class="header-section-number">10.3.1</span> Website</h3>
+<h3><a href="#website"><span class="header-section-number">10.3.1</span> Website</a></h3>
 <p>The official website is here: <a href="http://librecat.org/">http://librecat.org/</a></p>
 </section>
 <section id="mailing-lists" class="level3">
-<h3><span class="header-section-number">10.3.2</span> Mailing Lists</h3>
+<h3><a href="#mailing-lists"><span class="header-section-number">10.3.2</span> Mailing Lists</a></h3>
 <p>A mailing list is available here: <code>librecat-dev@mail.librecat.org</code></p>
 </section>
 <section id="repositories" class="level3">
-<h3><span class="header-section-number">10.3.3</span> Repositories</h3>
+<h3><a href="#repositories"><span class="header-section-number">10.3.3</span> Repositories</a></h3>
 <p>The official repository is hosted on GitHub at <a href="http://github.com:LibreCat/Catmandu">http://github.com:LibreCat/Catmandu</a>.</p>
 <p>Official developers have write access to this repository, contributors are invited to fork the dev branch (!) and submit a pull request, as described at <a href="#patch-submission">patch submission</a>.</p>
 </section>
 <section id="core-maintainers" class="level3">
-<h3><span class="header-section-number">10.3.4</span> Core Maintainers</h3>
+<h3><a href="#core-maintainers"><span class="header-section-number">10.3.4</span> Core Maintainers</a></h3>
 <ul>
 <li><strong>LibreCat/Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
-<li><strong>LibreCat/Catmandu-Cmd-repl</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
-<li><strong>LibreCat/Catmandu-Cmd-fuse</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-Store-MongoDB</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-MARC</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
-<li><strong>LibreCat/Catmandu-OAI</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="phochste">@phochste</span></li>
-<li><strong>LibreCat/Catmandu-Store-Lucy</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-LDAP</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-Z3950</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
-<li><strong>LibreCat/Catmandu-SRU</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
-<li><strong>LibreCat/Catmandu-PubMed</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
-<li><strong>LibreCat/Catmandu-PLoS</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
-<li><strong>LibreCat/Catmandu-DOI</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
-<li><strong>LibreCat/Catmandu-ArXiv</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
-<li><strong>LibreCat/Catmandu-Inspire</strong> - <span class="citation" data-cites="vpeil">@vpeil</span><br /></li>
-<li><strong>LibreCat/Catmandu-Store-Solr</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span> , <span class="citation" data-cites="nics">@nics</span></li>
-<li><strong>LibreCat/Catmandu-Store-Elasticsearch</strong> - <span class="citation" data-cites="nics">@nics</span></li>
-<li><strong>LibreCat/Plack-Session-Store-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
-<li><strong>LibreCat/Dancer-Session-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Dancer-Plugin-Catmandu-OAI</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/Dancer-Plugin-Catmandu-SRU</strong> - <span class="citation" data-cites="nics">@nics</span>, phochste</li>
-<li><strong>LibreCat/Catmandu-Exporter-ODS</strong> - <span class="citation" data-cites="snorri">@snorri</span><br /></li>
-<li><strong>LibreCat/Catmandu-Exporter-RTF</strong> - <span class="citation" data-cites="petrakohorst">@petrakohorst</span><br /></li>
-<li><strong>LibreCat/Catmandu-Plack-REST</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
 <li><strong>LibreCat/Catmandu-AWS</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
-<li><strong>LibreCat/Task-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-FedoraCommons</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
-<li><strong>LibreCat/Catmandu-AlephX</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/Catmandu-DSpace</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/LibreCat-Sitemap</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
-<li><strong>LibreCat/Catmandu-Twitter</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
-<li><strong>LibreCat/Catmandu-MediaMosa</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/Dancer-Plugin-Auth-RBAC-Credentials-Catmandu</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/Catmandu-Fix-cmd</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
-<li><strong>LibreCat/WWW-ORCID</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-Store-CouchDB</strong> - <span class="citation" data-cites="nics">@nics</span><br /></li>
-<li><strong>LibreCat/Catmandu-ORCID</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
-<li><strong>LibreCat/Catmandu-BibTeX</strong> - <span class="citation" data-cites="pietsch">@pietsch</span><br /></li>
-<li><strong>LibreCat/Catmandu-Atom</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
-<li><strong>LibreCat/Catmandu-XLS</strong> - <span class="citation" data-cites="nics">@nics</span></li>
-<li><strong>LibreCat/Catmandu-Store-DBI</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/MODS-Record</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
-<li><strong>LibreCat/Catmandu-EuropePMC</strong> - <span class="citation" data-cites="vpeil">@vpeil</span><br /></li>
-<li><strong>LibreCat/Catmandu-Importer-DBI</strong> - <span class="citation" data-cites="phochste">@phochste</span><br /></li>
-<li><strong>LibreCat/Catmandu-Serializer-storable</strong> - <span class="citation" data-cites="nics">@nics</span></li>
-<li><strong>LibreCat/Catmandu-Serializer-messagepack</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span><br /></li>
-<li><strong>LibreCat/Catmandu-Exporter-Template</strong> - <span class="citation" data-cites="vpeil">@vpeil</span><br /></li>
+<li><strong>LibreCat/Catmandu-AlephX</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Catmandu-ArXiv</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-Atom</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-BibTeX</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-Cmd-fuse</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Cmd-repl</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
+<li><strong>LibreCat/Catmandu-CrossRef</strong> <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-DBI</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Catmandu-DSpace</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Catmandu-EuropePMC</strong> - <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-Exporter-ODS</strong> - <span class="citation" data-cites="snorri">@snorri</span></li>
+<li><strong>LibreCat/Catmandu-Exporter-RTF</strong> - <span class="citation" data-cites="petrakohorst">@petrakohorst</span></li>
+<li><strong>LibreCat/Catmandu-Exporter-Template</strong> - <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-FedoraCommons</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
 <li><strong>LibreCat/Catmandu-Fix-XML</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
+<li><strong>LibreCat/Catmandu-Fix-cmd</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
+<li><strong>LibreCat/Catmandu-Importer-CPAN</strong> - <span class="citation" data-cites="nichtich">@nichtich</span> <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-Importer-Parltrack</strong> - <span class="citation" data-cites="jonas">@jonas</span></li>
+<li><strong>LibreCat/Catmandu-Inspire</strong> - <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-LDAP</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-MARC</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-MediaMosa</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Catmandu-OAI</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-ORCID</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
+<li><strong>LibreCat/Catmandu-PLoS</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-Plack-REST</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Catmandu-PubMed</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-RDF</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
+<li><strong>LibreCat/Catmandu-SRU</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
+<li><strong>LibreCat/Catmandu-Serializer-messagepack</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Catmandu-Serializer-storable</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-CouchDB</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-Elasticsearch</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-Lucy</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-MongoDB</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Store-Solr</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span> , <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Twitter</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
+<li><strong>LibreCat/Catmandu-XLS</strong> - <span class="citation" data-cites="jorol">@jorol</span>, <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Catmandu-Z3950</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
+<li><strong>LibreCat/Dancer-Plugin-Auth-RBAC-Credentials-Catmandu</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Dancer-Plugin-Catmandu-OAI</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
+<li><strong>LibreCat/Dancer-Plugin-Catmandu-SRU</strong> - <span class="citation" data-cites="nics">@nics</span>, phochste</li>
+<li><strong>LibreCat/Dancer-Session-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/LibreCat-Sitemap</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/MODS-Record</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
+<li><strong>LibreCat/Plack-Session-Store-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/Task-Catmandu</strong> - <span class="citation" data-cites="nics">@nics</span></li>
+<li><strong>LibreCat/WWW-ORCID</strong> - <span class="citation" data-cites="nics">@nics</span></li>
 </ul>
 </section>
 </section>
 <section id="acknowledgement" class="level2">
-<h2><span class="header-section-number">10.4</span> Acknowledgement</h2>
+<h2><a href="#acknowledgement"><span class="header-section-number">10.4</span> Acknowledgement</a></h2>
 <p>This guide was based on <Dancer2::Development>.</p>
 </section>
 <section id="development-setup" class="level2">
-<h2><span class="header-section-number">10.5</span> Development Setup <a href="https://github.com/LibreCat/Catmandu/wiki/Development%20Setup/_edit">✎</a></h2>
+<h2><a href="#development-setup"><span class="header-section-number">10.5</span> Development Setup <a href="https://github.com/LibreCat/Catmandu/wiki/Development%20Setup/_edit">✎</a></a></h2>
 <p>The following guidelines describe how to set up a development environment for <a href="#contribution">contribution</a> of code.</p>
 <section id="set-up-a-development-environment" class="level3">
-<h3><span class="header-section-number">10.5.1</span> Set up a development environment</h3>
+<h3><a href="#set-up-a-development-environment"><span class="header-section-number">10.5.1</span> Set up a development environment</a></h3>
 <p>If you want to submit a patch for Catmandu, you need git and very likely also <code>milla</code> (<Dist::Milla>). We also recommend perlbrew (see below) to test and develop Catmandu on a recent version of perl. We also suggest <App::cpanminus>) to quickly and comfortably install perl modules under perlbrew.</p>
 <p>In the following sections we provide tips for the installation of some of these tools together with Catmandu. Please also see the documentation that comes with these tools for more info.</p>
 <section id="perlbrew-tips-optional" class="level4 unnumbered">
-<h4>Perlbrew tips (Optional)</h4>
+<h4><a href="#perlbrew-tips-optional">Perlbrew tips (Optional)</a></h4>
 <p>Install perlbrew for example with</p>
 <pre><code>cpanm App::perlbrew</code></pre>
 <p>Check which perls are available</p>
@@ -2147,11 +2153,11 @@ perl5.003_07</code></pre>
 </section>
 </section>
 <section id="install-dependencies-required" class="level3">
-<h3><span class="header-section-number">10.5.2</span> Install dependencies (required)</h3>
+<h3><a href="#install-dependencies-required"><span class="header-section-number">10.5.2</span> Install dependencies (required)</a></h3>
 <p><em>this section needs to be rewritten to reflect the change to <a href="https://metacpan.org/pod/Dist::Milla">Dist::Milla</a></em></p>
 </section>
 <section id="get-catmandu-sources" class="level3">
-<h3><span class="header-section-number">10.5.3</span> Get Catmandu sources</h3>
+<h3><a href="#get-catmandu-sources"><span class="header-section-number">10.5.3</span> Get Catmandu sources</a></h3>
 <p>Get the Catmandu sources from github (for a more complete git workflow see below):</p>
 <p>Clone your fork to have a local copy using the following command:</p>
 <pre><code>$ git clone git@github.com:LibreCat/Catmandu.git</code></pre>
@@ -2165,16 +2171,16 @@ $ ./Build install</code></pre>
 </section>
 </section>
 <section id="coding-guidelines" class="level2">
-<h2><span class="header-section-number">10.6</span> Coding guidelines <a href="https://github.com/LibreCat/Catmandu/wiki/Coding%20guidelines/_edit">✎</a></h2>
+<h2><a href="#coding-guidelines"><span class="header-section-number">10.6</span> Coding guidelines <a href="https://github.com/LibreCat/Catmandu/wiki/Coding%20guidelines/_edit">✎</a></a></h2>
 <p>The following guidelines are no strict rules but they should be considered as best practice for <a href="#contribution">contribution</a>.</p>
 </section>
 <section id="compatibility" class="level2">
-<h2><span class="header-section-number">10.7</span> Compatibility</h2>
+<h2><a href="#compatibility"><span class="header-section-number">10.7</span> Compatibility</a></h2>
 <p>Catmandu should be able to install for all Perl versions since 5.10.1, on any platform for which Perl exists. We focus mainly on GNU/Linux (any distribution).</p>
 <p>You should avoid regressions as much as possible and keep backwards compatibility in mind when refactoring. Stable releases should not break functionality and new releases should provide an upgrade path and upgrade tips such as warning the user about deprecated functionality.</p>
 </section>
 <section id="code-documentation" class="level2">
-<h2><span class="header-section-number">10.8</span> Code documentation</h2>
+<h2><a href="#code-documentation"><span class="header-section-number">10.8</span> Code documentation</a></h2>
 <p>Document your module with</p>
 <ul>
 <li>a meaningful abstract</li>
@@ -2187,7 +2193,7 @@ $ ./Build install</code></pre>
 <p>Names of other moduless should be linked (e.g. <code>L&lt;Catmandu::Importer&gt;</code>)</p>
 </section>
 <section id="patch-submission" class="level2">
-<h2><span class="header-section-number">10.9</span> Patch Submission <a href="https://github.com/LibreCat/Catmandu/wiki/Patch%20Submission/_edit">✎</a></h2>
+<h2><a href="#patch-submission"><span class="header-section-number">10.9</span> Patch Submission <a href="https://github.com/LibreCat/Catmandu/wiki/Patch%20Submission/_edit">✎</a></a></h2>
 <p>The Catmandu development team uses GitHub to collaborate. We greatly appreciate <a href="Contribution">contributions</a> submitted via GitHub, as it makes tracking these contributions and applying them much, much easier. This gives your contribution a much better chance of being integrated into Catmandu quickly!</p>
 <p>To help us achieve high-quality, stable releases, git-flow workflow is used to handle pull-requests, that means contributors must work on their <code>dev</code> branch rather than on their <code>master</code>. (Master should be touched only by the core dev team when preparing a release to CPAN; all ongoing development happens in branches which are merged to the <code>dev</code> branch.)</p>
 <p>Here is the workflow for submitting a patch:</p>
@@ -2232,19 +2238,19 @@ git push origin dev</code></pre></li>
 </section>
 </section>
 <section id="cheat-sheets" class="level1">
-<h1><span class="header-section-number">11</span> Cheat sheets <a href="https://github.com/LibreCat/Catmandu/wiki/Cheat%20sheets/_edit">✎</a></h1>
+<h1><a href="#cheat-sheets"><span class="header-section-number">11</span> Cheat sheets <a href="https://github.com/LibreCat/Catmandu/wiki/Cheat%20sheets/_edit">✎</a></a></h1>
 <ul>
 <li><a href="#-command-line-client-cheat-sheet|-">Command Line Cheat Sheet</a></li>
 <li><a href="#fixes-cheat-sheet">Fixes Cheat Sheet</a></li>
 <li><a href="#cookbook">Cookbook</a></li>
 </ul>
 <section id="command-line-client-cheat-sheet-1" class="level2">
-<h2><span class="header-section-number">11.1</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></h2>
+<h2><a href="#command-line-client-cheat-sheet-1"><span class="header-section-number">11.1</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet/_edit">✎</a></a></h2>
 <p>This cheat sheet summarizes the <a href="#command-line-client">command line client</a> capabilities.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">catmandu</span> help
  $ <span class="kw">catmandu</span> help convert</code></pre>
 <section id="convert-2" class="level3">
-<h3><span class="header-section-number">11.1.1</span> Convert</h3>
+<h3><a href="#convert-2"><span class="header-section-number">11.1.1</span> Convert</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Importers to read data into your environment</span>
  $ <span class="kw">catmandu</span> convert MARC to JSON <span class="kw">&lt;</span> records.mrc
  $ <span class="kw">catmandu</span> convert MARC to YAML <span class="kw">&lt;</span> records.mrc
@@ -2263,7 +2269,7 @@ git push origin dev</code></pre></li>
  $ <span class="kw">catmandu</span> convert MARC to Template --template <span class="kw">`pwd`</span>/test.tt <span class="kw">&lt;</span> records.mrc </code></pre>
 </section>
 <section id="importexport-1" class="level3">
-<h3><span class="header-section-number">11.1.2</span> Import/Export</h3>
+<h3><a href="#importexport-1"><span class="header-section-number">11.1.2</span> Import/Export</a></h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"> <span class="co"># Use Catmandu Store to store/retrieve data from a database</span>
  $ <span class="kw">catmandu</span> import JSON to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.json
  $ <span class="kw">catmandu</span> import MARC to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.mrc
@@ -2276,7 +2282,7 @@ git push origin dev</code></pre></li>
  $ <span class="kw">catmandu</span> export ElasticSearch --index_name mydb to JSON</code></pre>
 </section>
 <section id="configuration-2" class="level3">
-<h3><span class="header-section-number">11.1.3</span> Configuration</h3>
+<h3><a href="#configuration-2"><span class="header-section-number">11.1.3</span> Configuration</a></h3>
 <p>See <a href="#configuration">Configuration</a> for details.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"> $ <span class="kw">cat</span> catmandu.yml
 <span class="kw">---</span>
@@ -2309,7 +2315,7 @@ git push origin dev</code></pre></li>
 </section>
 </section>
 <section id="fixes-cheat-sheet-1" class="level2">
-<h2><span class="header-section-number">11.2</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></h2>
+<h2><a href="#fixes-cheat-sheet-1"><span class="header-section-number">11.2</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet/_edit">✎</a></a></h2>
 <p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
 <span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
@@ -2342,7 +2348,7 @@ git push origin dev</code></pre></li>
 <span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
 <span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>)                         <span class="co"># sort the values of an array</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-unique =<span class="kw">&gt;</span> 1)            <span class="co"># sort the values plus keep unique values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-uniq =<span class="kw">&gt;</span> 1)              <span class="co"># sort the values plus keep unique values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
 <span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
@@ -2388,8 +2394,10 @@ git push origin dev</code></pre></li>
 
 <span class="co"># Copy all 245 subfields into the my.title hash</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
-<span class="co"># Copy the 245-$a$b$c subfields into the my.title hash</span>
+<span class="co"># Copy the 245-$a$b$c subfields into the my.title hash in the order of the record</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245abc&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
+<span class="co"># Copy the 245-$c$b$a subfields into the my.title hash in the order of the mapping</span>
+<span class="kw">marc_map</span>(<span class="st">&#39;245cba&#39;</span>,<span class="st">&#39;my.title&#39;</span> , -pluck =<span class="kw">&gt;</span> 1) 
 <span class="co"># Copy the 100 subfields into the my.authors array</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;100&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>) 
 <span class="co"># Add the 710 subfields into the my.authors array</span>
@@ -2494,14 +2502,14 @@ git push origin dev</code></pre></li>
 <span class="kw">end</span></code></pre>
 </section>
 <section id="cookbook" class="level2">
-<h2><span class="header-section-number">11.3</span> Cookbook <a href="https://github.com/LibreCat/Catmandu/wiki/Cookbook/_edit">✎</a></h2>
+<h2><a href="#cookbook"><span class="header-section-number">11.3</span> Cookbook <a href="https://github.com/LibreCat/Catmandu/wiki/Cookbook/_edit">✎</a></a></h2>
 <section id="install-catmandu-oai-processing-on-your-computer" class="level4 unnumbered">
-<h4>Install Catmandu OAI processing on your computer</h4>
+<h4><a href="#install-catmandu-oai-processing-on-your-computer">Install Catmandu OAI processing on your computer</a></h4>
 <p>Make sure you have <code>cpanm</code> (hint: <code>$ cpan App::cpanminus</code>) installed.</p>
 <p>$ cpanm Catmandu::OAI</p>
 </section>
 <section id="read-dublin-core-records-from-an-oai-repository-from-the-command-line" class="level4 unnumbered">
-<h4>Read Dublin Core records from an OAI repository from the command line</h4>
+<h4><a href="#read-dublin-core-records-from-an-oai-repository-from-the-command-line">Read Dublin Core records from an OAI repository from the command line</a></h4>
 <ol type="1">
 <li>Goto: http://www.opendoar.org/</li>
 <li>Find a repository of choice</li>
@@ -2512,7 +2520,7 @@ git push origin dev</code></pre></li>
 <pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai</code></pre>
 </section>
 <section id="read-dublin-core-records-from-an-oai-repository-in-your-perl-code" class="level4 unnumbered">
-<h4>Read Dublin Core records from an OAI repository in your Perl code</h4>
+<h4><a href="#read-dublin-core-records-from-an-oai-repository-in-your-perl-code">Read Dublin Core records from an OAI repository in your Perl code</a></h4>
 <pre><code>use Catmandu;
 
 Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;)-&gt;each(sub {
@@ -2521,11 +2529,11 @@ Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#
 });</code></pre>
 </section>
 <section id="convert-dublin-core-records-from-an-oai-repository-into-yaml-from-the-command-line" class="level4 unnumbered">
-<h4>Convert Dublin Core records from an OAI repository into YAML from the command line</h4>
+<h4><a href="#convert-dublin-core-records-from-an-oai-repository-into-yaml-from-the-command-line">Convert Dublin Core records from an OAI repository into YAML from the command line</a></h4>
 <pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai to YAML</code></pre>
 </section>
 <section id="convert-dublin-core-records-from-an-oai-repository-into-yaml-in-your-perl-code" class="level4 unnumbered">
-<h4>Convert Dublin Core records from an OAI repository into YAML in your Perl code</h4>
+<h4><a href="#convert-dublin-core-records-from-an-oai-repository-into-yaml-in-your-perl-code">Convert Dublin Core records from an OAI repository into YAML in your Perl code</a></h4>
 <pre><code>use Catmandu -all;
 
 my $importer = importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
@@ -2535,13 +2543,13 @@ $exporter-&gt;add_many($importer);
 $exporter-&gt;commit;</code></pre>
 </section>
 <section id="extract-all-identifiers-from-an-oai-repository-from-the-command-line" class="level4 unnumbered">
-<h4>Extract all identifiers from an OAI repository from the command line</h4>
+<h4><a href="#extract-all-identifiers-from-an-oai-repository-from-the-command-line">Extract all identifiers from an OAI repository from the command line</a></h4>
 <pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai --fix &#39;retain_field(&quot;_id&quot;)&#39;</code></pre>
 <p>or if you like an CSV file</p>
 <pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain_field(&quot;_id&quot;)&#39;</code></pre>
 </section>
 <section id="extract-all-identifiers-from-an-oai-repository-into-csv-in-your-perl-code" class="level4 unnumbered">
-<h4>Extract all identifiers from an OAI repository into CSV in your Perl code</h4>
+<h4><a href="#extract-all-identifiers-from-an-oai-repository-into-csv-in-your-perl-code">Extract all identifiers from an OAI repository into CSV in your Perl code</a></h4>
 <pre><code>use Catmandu;
 
 my $importer = Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
@@ -2555,13 +2563,13 @@ $exporter-&gt;add_many(
 $exporter-&gt;commit;</code></pre>
 </section>
 <section id="show-the-speed-of-importing-records-from-the-command-line" class="level4 unnumbered">
-<h4>Show the speed of importing records from the command line</h4>
+<h4><a href="#show-the-speed-of-importing-records-from-the-command-line">Show the speed of importing records from the command line</a></h4>
 <p>Hint: use the <code>-v</code> option</p>
 <pre><code>$ catmandu convert -v OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain_field(&quot;_id&quot;)&#39; &gt; /dev/null</code></pre>
 <p>Here we send the output to the /dev/null to show the verbose messages.</p>
 </section>
 <section id="show-the-speed-of-importing-records-from-your-perl-program" class="level4 unnumbered">
-<h4>Show the speed of importing records from your Perl program</h4>
+<h4><a href="#show-the-speed-of-importing-records-from-your-perl-program">Show the speed of importing records from your Perl program</a></h4>
 <pre><code>use Catmandu;
 
 my $importer = Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
@@ -2575,7 +2583,7 @@ $exporter-&gt;add_many(
 $exporter-&gt;commit;</code></pre>
 </section>
 <section id="see-some-debug-messages" class="level4 unnumbered">
-<h4>See some debug messages</h4>
+<h4><a href="#see-some-debug-messages">See some debug messages</a></h4>
 <p>Make sure you have <code>Log::Log4perl</code> installed (hint: <code>$ cpan Log::Log4perl</code>).</p>
 <p>In your main program do:</p>
 <pre><code>use Catmandu;
@@ -2626,7 +2634,7 @@ log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
 <pre><code>log4perl.category.Foo=DEBUG,STDOUT </code></pre>
 </section>
 <section id="how-to-create-a-new-catmandustore" class="level4 unnumbered">
-<h4>How to create a new Catmandu::Store</h4>
+<h4><a href="#how-to-create-a-new-catmandustore">How to create a new Catmandu::Store</a></h4>
 <p>A Catmandu::Store is used to store items. Stores can have one or more compartments where to store the items. Each such compartment is a Catmandu::Bag. You can compare a Store with a database and a Bag with a table in a database. Like tables, Bags have names. When no name is provided for a Bag, then ‘data’ is used.</p>
 <p>To implement a Catmandu store you need to create at least two packages:</p>
 <ol type="1">
@@ -2705,10 +2713,10 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 </section>
 </section>
 <section id="related-projects" class="level1">
-<h1><span class="header-section-number">12</span> Related Projects <a href="https://github.com/LibreCat/Catmandu/wiki/Related%20Projects/_edit">✎</a></h1>
+<h1><a href="#related-projects"><span class="header-section-number">12</span> Related Projects <a href="https://github.com/LibreCat/Catmandu/wiki/Related%20Projects/_edit">✎</a></a></h1>
 <p>Here we provide a list of related projects that also provide library data processing tools.</p>
 <section id="selected-formats" class="level2">
-<h2><span class="header-section-number">12.1</span> selected formats</h2>
+<h2><a href="#selected-formats"><span class="header-section-number">12.1</span> selected formats</a></h2>
 <ul>
 <li>easyM2R - https://github.com/cKlee/easyM2R</li>
 <li>MARCspec - http://cklee.github.io/marc-spec/marc-spec.html (mapping language for MARC)</li>
@@ -2717,7 +2725,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 </ul>
 </section>
 <section id="general-frameworks" class="level2">
-<h2><span class="header-section-number">12.2</span> general frameworks</h2>
+<h2><a href="#general-frameworks"><span class="header-section-number">12.2</span> general frameworks</a></h2>
 <ul>
 <li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
 <li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a></li>
@@ -2728,6 +2736,9 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li><a href="http://repox.ist.utl.pt/">REPOX</a> - Data Aggregation and Interoperability Manager</li>
 <li><a href="http://openrefine.org/">OpenRefine</a> - (formerly Google Refine) a toolkit to work with tabular data.</li>
 </ul>
+</section>
+<section id="section" class="level2">
+<h2><a href="#section"><span class="header-section-number">12.3</span> …</a></h2>
 </section>
 </section>
 
