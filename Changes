@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix bug in Paged
 
 0.9206  2014-10-07 09:06:43 CEST
   - remove orphan test

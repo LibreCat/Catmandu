@@ -200,11 +200,11 @@ sub first_on_page {
         : ( return ( ( $self->page - 1 ) * $self->limit ) + 1 );
 }
 
-sub last {
+sub last_on_page {
     my $self = shift;
 
     ( $self->page == $self->last_page )
-        ? ( return $self->total_entries )
+        ? ( return $self->total )
         : ( return ( $self->page * $self->limit ) );
 }
 
