@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - greater_than, less_than fix conditions
+  - Dockerfile
   - fix bug in Paged
 
 0.9206  2014-10-07 09:06:43 CEST
