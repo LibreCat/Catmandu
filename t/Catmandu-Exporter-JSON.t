@@ -26,4 +26,9 @@ is_deeply $data, [ map { JSON::decode_json($_) } split /[\r\n]+/, $file ];
 
 is($exporter->count, 3, "Count ok");
 
-done_testing 5;
+$file = "";
+Catmandu::Exporter::JSON->new( file => \$file, canonical => 1 )
+    ->add( { map { chr(ord('z')-$_) => $_ } (0..25) } );
+is_deeply [ $file =~ /(\d+)/g ], [ map { "".(25-$_) } (0..25) ], 'canonical'; 
+
+done_testing 6;

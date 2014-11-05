@@ -59,15 +59,24 @@ sub commit {
     }
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Exporter::JSON - a JSON exporter
 
 =head1 SYNOPSIS
 
-    use Catmandu::Exporter::JSON;
+Command line interface:
 
-    my $exporter = Catmandu::Exporter::JSON->new(fix => 'myfix.txt');
+    catmandu convert YAML to JSON --pretty 1 < input.yml
+
+In Perl code:
+
+    use Catmandu -all;
+
+    my $exporter = exporter('JSON', fix => 'myfix.txt');
 
     $exporter->add_many($arrayref);
     $exporter->add_many($iterator);
@@ -77,16 +86,47 @@ Catmandu::Exporter::JSON - a JSON exporter
 
     printf "exported %d objects\n" , $exporter->count;
 
+=head1 DESCRIPTION
+
+This L<Catmandu::Exporter> exports items serialized in JSON format. By default
+each item is printed condensed on one line.
+
+=head1 CONFIGURATION
+
+=over
+
+=item file
+
+=item fh
+
+=item fix
+
+=item encoding
+
+Default options of L<Catmandu::Exporter>.
+
+=item pretty
+
+=item indent
+
+=item space_before
+
+=item space_after
+
+=item canonical
+
+L<JSON> serialization options.
+
+=item array
+
+Seralize items as one JSON array instead of concatenated JSON objects.
+
 =head1 METHODS
 
-=head2 new(file => PATH, fh => HANDLE, fix => STRING|ARRAY, pretty => 0|1, array => 0|1)
-
-Create a new JSON exporter optionally providing a file path, a file handle, a fix file or array and a pretty printing option.
+See L<Catmandu::Exporter>
 
 =head1 SEE ALSO
 
-L<Catmandu::Exporter>
+L<Catmandu::Exporter::YAML>
 
 =cut
-
-1;
