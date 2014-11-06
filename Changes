@@ -3,6 +3,8 @@ Revision history for Catmandu
 {{$NEXT}}
   - greater_than, less_than fix conditions
   - fix bug in Paged
+  - Exporter::JSON pod
+  - sort_field fix handles undef values
 
 0.9206  2014-10-07 09:06:43 CEST
   - remove orphan test
