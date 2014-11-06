@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9207  2014-11-06 09:53:08 CET
   - greater_than, less_than fix conditions
   - fix bug in Paged
   - Exporter::JSON pod
