@@ -121,6 +121,8 @@ L<JSON> serialization options.
 
 Seralize items as one JSON array instead of concatenated JSON objects.
 
+=back
+
 =head1 METHODS
 
 See L<Catmandu::Exporter>
