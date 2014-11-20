@@ -27,6 +27,9 @@ after add => sub {
 
 sub encoding { ':utf8' }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Exporter - Namespace for packages that can export
@@ -43,6 +46,7 @@ Catmandu::Exporter - Namespace for packages that can export
     sub add {
         my ($self, $data) = @_;
         my $fh = $self->fh;
+        $fh->print( ... );
     }
 
     package main;
@@ -56,16 +60,16 @@ Catmandu::Exporter - Namespace for packages that can export
 
 =head1 DESCRIPTION
 
-A Catmandu::Exporter is a Perl package the can export data. 
-When no options are given exported data is written to
-the stdout. Optionally provide a "file" pathname or a "fh" file handle to redirect the
-ouput.
+A Catmandu::Exporter is a Perl package that can export data. By default, data
+items are written to STDOUT. Optionally provide a C<file> or C<fh> parameter to
+write to a file, string, or handle. New exporter modules are expected to use the 
+C<print> method of C<fh>.
 
-Every Catmandu::Exporter is a L<Catmandu::Fixable> and thus provides a "fix" parameter that
-can be set in the constructor. For every "add" or for every item in "add_many" the given
-fixes will be applied first. E.g.
+Every Catmandu::Exporter is a L<Catmandu::Fixable> thus provides a C<fix>
+parameter and method to apply fixes to exported items.
 
-Every Catmandu::Exporter is a L<Catmandu::Addable> and inherits the methods "add" and "add_many".
+Every Catmandu::Exporter is a L<Catmandu::Addable> thus inherits the methods
+C<add> and C<add_many>.
 
 =head1 CONFIGURATION
 
@@ -73,21 +77,23 @@ Every Catmandu::Exporter is a L<Catmandu::Addable> and inherits the methods "add
 
 =item file
 
-Write output to a local file given by its path.
-Alternatively a scalar reference can be passed to write to a string.
+Write output to a local file given by its path or file handle.  Alternatively a
+scalar reference can be passed to write to a string and a code reference can be
+used to write to a callback function.
 
 =item fh
 
-Write the output to an IO::Handle. If not specified, Catmandu::Util::io is
-used to create the output stream from the "file" argument or by using STDOUT.
+Write the output to an L<IO::Handle>. If not specified,
+L<Catmandu::Util::io|Catmandu::Util/IO-functions> is used to create the output
+handle from the C<file> argument or by using STDOUT.
 
 =item encoding
 
-Binmode of the output stream "fh". Set to ":utf8" by default.
+Binmode of the output stream C<fh>. Set to "C<:utf8>" by default.
 
 =item fix
 
-An ARRAY of one or more fixes or file scripts to be applied  to exported items.
+An ARRAY of one or more fixes or file scripts to be applied to exported items.
 
 =back
 
@@ -113,9 +119,13 @@ Returns the current logger.
 
 =head1 SEE ALSO
 
-L<Catmandu::Addable>, L<Catmandu::Fix>,L<Catmandu::JSON>,
-L<Catmandu::YAML>, L<Catmandu::CSV>, L<Catmandu::RIS>
+See function L<export_to_string|Catmandu/export_to_string> in module
+L<Catmandu>.
+
+The exporters L<Catmandu::Exporter::JSON>, L<Catmandu::Exporter::YAML>,
+L<Catmandu::Exporter::CSV>, and L<Catmandu::Exporter::RIS> are included in
+Catmandu core.
+
+See L<Catmandu::Importer> for the opposite action.
 
 =cut
-
-1;
