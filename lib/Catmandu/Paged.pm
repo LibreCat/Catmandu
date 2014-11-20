@@ -2,7 +2,7 @@ package Catmandu::Paged;
 
 =head1 NAME
 
-Catmandu::Pages - Adds page calculation to a package
+Catmandu::Paged - Adds page calculation to a package
 
 =head1 SYNOPSIS
 
@@ -10,7 +10,7 @@ Catmandu::Pages - Adds page calculation to a package
 
     use Moo;
 
-    with 'Catmandu::Pages';
+    with 'Catmandu::Paged';
 
     sub start {
         12; # Starting result
