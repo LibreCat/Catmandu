@@ -24,7 +24,8 @@ has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 
 has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
 has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
 has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
-has fixes        => (is => 'ro', trigger => 1, default => sub { [] });
+has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
+has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
 has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
 has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
@@ -34,23 +35,24 @@ sub _build_parser {
     Catmandu::Fix::Parser->new;
 }
 
-sub _trigger_fixes {
+sub _build_fixes {
     my ($self) = @_;
-    my $fixes = $self->fixes;
-    my $parsed_fixes = [];
+    my $fixes_arg = $self->_fixes;
+    my $fixes = [];
 
-    for my $fix (@$fixes) {
+    for my $fix (@$fixes_arg) {
         if (is_code_ref($fix)) {
-            push @$parsed_fixes, require_package('Catmandu::Fix::code')->new($fix); 
+            push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
         } elsif (ref $fix) {
-            push @$parsed_fixes, $fix;
-        } elsif($fix !~ /[\n()]/ and -X $fix) {
-            push @$parsed_fixes, require_package('Catmandu::Fix::cmd')->new($fix);
-        } else {
-            push @$parsed_fixes, @{$self->parser->parse($fix)};
+            push @$fixes, $fix;
+        } elsif (is_string($fix) && $fix !~ /[\n()]/ and -X $fix) {
+            push @$fixes, require_package('Catmandu::Fix::cmd')->new($fix);
+        } elsif (is_string($fix)) {
+            push @$fixes, @{$self->parser->parse($fix)};
         }
     }
-    splice(@$fixes, 0, @$fixes, @$parsed_fixes);
+
+    $fixes;
 }
 
 sub _build_fixer {

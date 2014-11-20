@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - lazy and more robust fix building in Fix.pm
 
 0.9207  2014-11-06 09:53:08 CET
   - greater_than, less_than fix conditions
