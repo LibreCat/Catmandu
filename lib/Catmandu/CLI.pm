@@ -20,6 +20,16 @@ sub VERSION {
     $Catmandu::VERSION;
 }
 
+sub deleted_commands {
+    [qw(
+        Catmandu::Cmd::exporter_info
+        Catmandu::Cmd::fix_info
+        Catmandu::Cmd::importer_info
+        Catmandu::Cmd::module_info
+        Catmandu::Cmd::store_info
+    )];
+}
+
 sub default_command { 'commands' }
 
 sub plugin_search_path { 'Catmandu::Cmd' }
@@ -158,7 +168,7 @@ sub run {
             say STDERR "Oops! Syntax error in your fixes...";
             say STDERR "\n\t$message\n";
             say STDERR "Source:\n";
-            
+
             for (split(/\n/,$source)) {
                 print STDERR "\t$_\n";
             }
@@ -169,10 +179,10 @@ sub run {
             my $message = $_->message;
             my $data    = $_->data;
             my $fix     = $_->fix;
-        
+
             say STDERR "Oops! One of your fixes threw an error...";
             say STDERR "Source: " . $_->fix;
-            say STDERR "Error: $message";    
+            say STDERR "Error: $message";
 
             use Data::Dumper;
             say STDERR "Input:\n" . Dumper($data) if defined $data;
@@ -188,6 +198,14 @@ sub run {
 
     ERROR:
         return undef;
+}
+
+sub should_ignore {
+    my ($self, $cmd_class) = @_;
+    for my $cmd (@{$self->deleted_commands}) {
+        return 1 if $cmd_class->isa($cmd);
+    }
+    return;
 }
 
 1;
