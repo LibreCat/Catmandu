@@ -12,10 +12,10 @@ Catmandu::Fix::Condition::SimpleAllTest - Base class to ease the construction of
    use Moo;
    use Catmandu::Fix::Has;
 
-   has path    => (fix_arg => 1);
+   has path => (fix_arg => 1);
 
    with 'Catmandu::Fix::Condition::SimpleAllTest';
- 
+
    sub emit_test {
        my ($self, $var) = @_;
        my $value = $self->value;
@@ -77,7 +77,7 @@ sub emit {
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
             my $perl = "${has_match_var} ||= 1;";
-            $perl .= "unless (" . $self->emit_test($var) . ") {";
+            $perl .= "unless (" . $self->emit_test($var, $fixer) . ") {";
             if (@$fail_fixes) {
                 $perl .= "goto ${fail_label};";
             } else {

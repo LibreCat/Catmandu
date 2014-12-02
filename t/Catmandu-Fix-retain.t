@@ -7,7 +7,7 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Fix::retain_field';
+    $pkg = 'Catmandu::Fix::retain';
     use_ok $pkg;
 }
 

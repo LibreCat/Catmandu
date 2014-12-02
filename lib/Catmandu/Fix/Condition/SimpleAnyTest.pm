@@ -60,7 +60,7 @@ sub emit {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
-            my $perl = "if (" . $self->emit_test($var) . ") {";
+            my $perl = "if (" . $self->emit_test($var, $fixer) . ") {";
 
             $perl .= $fixer->emit_fixes($self->pass_fixes);
 
