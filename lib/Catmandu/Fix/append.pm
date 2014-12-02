@@ -4,15 +4,15 @@ use Catmandu::Sane;
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::SimpleSetValue';
-
 has path  => (fix_arg => 1);
 has value => (fix_arg => 1);
 
-sub emit_value {
+with 'Catmandu::Fix::SimpleChangeValue';
+
+sub emit_change_value {
     my ($self, $var, $fixer) = @_;
     my $value = $fixer->emit_string($self->value);
-    "join('', ${var}, $value) if is_value(${var});";
+    "${var} = join('', ${var}, $value) if is_value(${var});";
 }
 
 =head1 NAME
