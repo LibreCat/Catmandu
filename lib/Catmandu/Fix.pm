@@ -232,6 +232,11 @@ sub emit_block {
     $perl;
 }
 
+sub emit_clear_hash_ref {
+    my ($self, $var) = @_;
+    "undef %{${var}} if is_hash_ref(${var});";
+}
+
 sub emit_value {
     my ($self, $val) = @_;
     # Number should look like number and don't start with a 0 (no support for octals)
@@ -735,6 +740,8 @@ be understood by reading the code of existing fix packages.
 
 =item emit_clone
 
+=item emit_clear_hash_ref
+
 =item emit_create_path
 
 =item emit_declare_vars
@@ -745,11 +752,17 @@ be understood by reading the code of existing fix packages.
 
 =item emit_fixes
 
+=item emit_foreach
+
+=item emit_foreach_key
+
 =item emit_get_key
 
 =item emit_reject
 
 =item emit_retain_key
+
+this method is DEPRECATED.
 
 =item emit_set_key
 

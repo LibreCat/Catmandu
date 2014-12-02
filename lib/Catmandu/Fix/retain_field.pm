@@ -23,6 +23,10 @@ sub emit {
 
 Catmandu::Fix::retain_field - delete everything from a field except 
 
+=head1 DEPRECIATION NOTICE
+
+This fix is deprecated, Please use L<Catmandu::Fix::retain> instead.
+
 =head1 SYNOPSIS
 
    # Delete every key from foo except bar
