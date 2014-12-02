@@ -36,7 +36,7 @@ catmandu - LibreCat command line tools
 
  # export
  catmandu export MongoDB --database_name mydb --bag data to JSON
- catmandu export MongoDB --database_name mydb --bag data to JSON --fix 'retain_field("_id")'
+ catmandu export MongoDB --database_name mydb --bag data to JSON --fix 'retain("_id")'
  catmandu export Solr --url http://localhost:8983/solr to JSON
  catmandu export ElasticSearch --index_name mydb to JSON
 
