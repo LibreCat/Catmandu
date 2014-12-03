@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use JSON ();
+use JSON::XS ();
 
 my $pkg;
 BEGIN {
@@ -12,7 +12,7 @@ BEGIN {
     use_ok $pkg;
 }
 
-my $json = JSON->new->utf8(0)->allow_nonref(1);
+my $json = JSON::XS->new->utf8(0)->allow_nonref(1);
 
 is_deeply
     $pkg->new('name')->fix({name => ["Joe"]}),

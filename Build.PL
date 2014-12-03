@@ -22,7 +22,6 @@ my %module_build_args = (
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
-    "JSON::XS" => "2.3",
     "Log::Any::Adapter::Log4perl" => "0.06",
     "Log::Log4perl" => "1.44"
   },
@@ -37,7 +36,7 @@ my %module_build_args = (
     "Data::Util" => "0.59",
     "File::Find::Rule" => "0.33",
     "IO::Handle::Util" => "0.01",
-    "JSON" => "2.51",
+    "JSON::XS" => "2.3",
     "List::MoreUtils" => "0.33",
     "Log::Any" => "0.15",
     "Log::Any::Adapter" => "0.11",

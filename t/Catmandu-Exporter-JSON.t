@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use JSON ();
+use JSON::XS ();
 
 my $pkg;
 BEGIN {
@@ -22,7 +22,7 @@ isa_ok $exporter, $pkg;
 
 $exporter->add($_) for @$data;
 $exporter->commit;
-is_deeply $data, [ map { JSON::decode_json($_) } split /[\r\n]+/, $file ];
+is_deeply $data, [ map { JSON::XS::decode_json($_) } split /[\r\n]+/, $file ];
 
 is($exporter->count, 3, "Count ok");
 

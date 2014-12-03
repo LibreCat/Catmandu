@@ -2,7 +2,7 @@ package Catmandu::Importer::JSON;
 
 use namespace::clean;
 use Catmandu::Sane;
-use JSON ();
+use JSON::XS ();
 use Moo;
 
 with 'Catmandu::Importer';
@@ -12,7 +12,7 @@ has multiline => (is => 'ro', default => sub { 0 });
 
 sub _build_json {
     my ($self) = @_;
-    JSON->new->utf8($self->encoding eq ':raw');
+    JSON::XS->new->utf8($self->encoding eq ':raw');
 }
 
 sub default_encoding { ':raw' }

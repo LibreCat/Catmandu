@@ -18,7 +18,7 @@ requires 'Data::UUID', '1.217';
 requires 'Data::Util', '0.59';
 requires 'File::Find::Rule', '0.33';
 requires 'IO::Handle::Util', '0.01';
-requires 'JSON', '2.51';
+requires 'JSON::XS', '2.3';
 requires 'List::MoreUtils', '0.33';
 requires 'Log::Any', '0.15';
 requires 'Log::Any::Adapter', '0.11';
@@ -35,7 +35,6 @@ requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
 requires 'YAML::XS', '0.41';
 
-recommends 'JSON::XS', '2.3';
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';
 

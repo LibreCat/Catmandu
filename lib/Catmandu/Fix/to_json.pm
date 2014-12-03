@@ -1,7 +1,7 @@
 package Catmandu::Fix::to_json;
 
 use Catmandu::Sane;
-use JSON ();
+use JSON::XS ();
 use Moo;
 use Catmandu::Fix::Has;
 
@@ -14,7 +14,7 @@ sub emit {
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
 
-    my $json_var = $fixer->capture(JSON->new->utf8(0)->pretty(0)->allow_nonref(1));
+    my $json_var = $fixer->capture(JSON::XS->new->utf8(0)->pretty(0)->allow_nonref(1));
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;

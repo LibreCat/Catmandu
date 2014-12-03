@@ -5,7 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use App::Cmd::Tester::CaptureExternal;
-use JSON;
+use JSON::XS;
 
 my $pkg;
 BEGIN {
@@ -18,7 +18,7 @@ use Catmandu::CLI;
 
 my $result = test_app(qq|Catmandu::CLI| => [ qw(convert YAML --file t/catmandu.yml to JSON) ]);
 
-my $perl = from_json($result->stdout);
+my $perl = decode_json($result->stdout);
 
 ok $perl, 'got JSON';
 is $perl->{importer}->{default}->{package} , 'YAML' , 'got data';

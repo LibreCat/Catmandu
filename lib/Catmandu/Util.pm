@@ -11,7 +11,7 @@ use IO::File;
 use IO::Handle::Util ();
 use File::Spec;
 use YAML::XS ();
-use JSON ();
+use JSON::XS ();
 
 our %EXPORT_TAGS = (
     io     => [qw(io read_file write_file read_yaml read_json join_path
@@ -139,7 +139,7 @@ sub read_yaml {
 sub read_json {
     my $text = read_file($_[0]);
     # dies on error
-    JSON::decode_json(read_file($_[0]));
+    JSON::XS::decode_json(read_file($_[0]));
 }
 
 sub join_path {

@@ -2,7 +2,7 @@ package Catmandu::Exporter::JSON;
 
 use namespace::clean;
 use Catmandu::Sane;
-use JSON ();
+use JSON::XS ();
 use Moo;
 
 with 'Catmandu::Exporter';
@@ -17,14 +17,14 @@ has json         => (is => 'ro', lazy => 1, builder => '_build_json');
 
 sub _build_json {
     my ($self) = @_;
-    JSON->new
-        ->utf8(0)
-        ->allow_nonref
-        ->pretty($self->pretty)
-        ->indent($self->pretty || $self->indent)
-        ->space_before($self->pretty || $self->space_before)
-        ->space_after($self->pretty || $self->space_after)
-        ->canonical($self->canonical);
+    JSON::XS->new
+            ->utf8(0)
+            ->allow_nonref
+            ->pretty($self->pretty)
+            ->indent($self->pretty || $self->indent)
+            ->space_before($self->pretty || $self->space_before)
+            ->space_after($self->pretty || $self->space_after)
+            ->canonical($self->canonical);
 }
 
 sub add {
