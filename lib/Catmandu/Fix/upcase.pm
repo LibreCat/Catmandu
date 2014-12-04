@@ -6,9 +6,9 @@ use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleChangeValue';
+with 'Catmandu::Fix::SimpleGetValue';
 
-sub emit_change_value {
+sub emit_value {
     my ($self, $var) = @_;
     "${var} = uc(as_utf8(${var})) if is_string(${var});";
 }

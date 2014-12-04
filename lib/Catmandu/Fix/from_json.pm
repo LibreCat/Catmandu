@@ -8,9 +8,9 @@ use Catmandu::Fix::Has;
 has path => (fix_arg => 1);
 has _json_var => (is => 'rwp', writer => '_set_json_var', init_arg => undef);
 
-with 'Catmandu::Fix::SimpleChangeValue';
+with 'Catmandu::Fix::SimpleGetValue';
 
-sub emit_change_value {
+sub emit_value {
     my ($self, $var, $fixer) = @_;
 
     # memoize in case called multiple times

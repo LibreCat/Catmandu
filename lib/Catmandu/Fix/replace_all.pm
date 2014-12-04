@@ -8,9 +8,9 @@ has path    => (fix_arg => 1);
 has search  => (fix_arg => 1);
 has replace => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleChangeValue';
+with 'Catmandu::Fix::SimpleGetValue';
 
-sub emit_change_value {
+sub emit_value {
     my ($self, $var) = @_;
     my $search = $self->search;
     my $replace = $self->replace;

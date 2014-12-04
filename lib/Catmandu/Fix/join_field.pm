@@ -7,9 +7,9 @@ use Catmandu::Fix::Has;
 has path      => (fix_arg => 1);
 has join_char => (fix_arg => 1, default => sub { '' });
 
-with 'Catmandu::Fix::SimpleChangeValue';
+with 'Catmandu::Fix::SimpleGetValue';
 
-sub emit_change_value {
+sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $join_char = $fixer->emit_string($self->join_char);
 

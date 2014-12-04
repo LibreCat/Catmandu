@@ -7,9 +7,9 @@ use Catmandu::Fix::Has;
 has path => (fix_arg => 1);
 has mode => (fix_arg => 1, default => sub { 'whitespace' });
 
-with 'Catmandu::Fix::SimpleChangeValue';
+with 'Catmandu::Fix::SimpleGetValue';
 
-sub emit_change_value {
+sub emit_value {
     my ($self, $var) = @_;
 
     my $perl = "if (is_string(${var})) {";

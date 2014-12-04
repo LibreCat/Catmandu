@@ -1,4 +1,4 @@
-package Catmandu::Fix::SimpleChangeValue;
+package Catmandu::Fix::SimpleGetValue;
 
 use Catmandu::Sane;
 use Moo::Role;
@@ -6,7 +6,7 @@ use Moo::Role;
 with 'Catmandu::Fix::Base';
 
 requires 'path';
-requires 'emit_change_value';
+requires 'emit_value';
 
 sub emit {
     my ($self, $fixer) = @_;
@@ -17,7 +17,7 @@ sub emit {
         my $var = shift;
         $fixer->emit_get_key($var, $key, sub {
             my $var = shift;
-            $self->emit_change_value($var, $fixer);
+            $self->emit_value($var, $fixer);
         });
     });
 }
