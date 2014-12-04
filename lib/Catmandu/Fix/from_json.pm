@@ -12,7 +12,6 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-
     # memoize in case called multiple times
     my $json_var = $self->_json_var ||
                    $self->_set_json_var($fixer->capture(JSON::XS->new->utf8(0)->pretty(0)->allow_nonref(1)));

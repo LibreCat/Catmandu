@@ -1,6 +1,12 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - info comand
+  - ignore installed but depreciated commands
+  - improved retain fix will replace retain_field
+  - simple emitting fixes required a bit less boilerplate
+  - JSON::XS is now required to avoid bugs in other
+    implementations
 
 0.9208  2014-11-20 09:50:56 CET
   - lazy and more robust fix building in Fix.pm
