@@ -4,32 +4,24 @@ use Catmandu::Sane;
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
-
 has path => (fix_arg => 1);
 has args => (fix_arg => 'collect');
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+with 'Catmandu::Fix::SimpleGetValue';
+
+sub emit_value {
+    my ($self, $var, $fixer) = @_;
     my $args = $self->args;
     my $str_args = @$args > 1 ? join(", ", @$args[0, 1]) : $args->[0];
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $var = shift;
-            if (@$args < 3) {
-                return "eval { ${var} = substr(as_utf8(${var}), ${str_args}) } if is_value(${var});";
-            }
-            my $replace = $fixer->emit_string($args->[2]);
-            "if (is_value(${var})) {"
-                ."utf8::upgrade(${var});"
-                ."eval { substr(${var}, ${str_args}) = ${replace} };"
-                ."}";
-        });
-    });
+    if (@$args < 3) {
+        return "eval { ${var} = substr(as_utf8(${var}), ${str_args}) } if is_value(${var});";
+    }
+    my $replace = $fixer->emit_string($args->[2]);
+    "if (is_value(${var})) {"
+        ."utf8::upgrade(${var});"
+        ."eval { substr(${var}, ${str_args}) = ${replace} };"
+        ."}";
 }
 
 =head1 NAME

@@ -5,14 +5,15 @@ use Catmandu;
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
-
 has path       => (fix_arg => 1);
 has store_name => (fix_arg => 1);
 has bag_name   => (fix_opt => 1, init_arg => 'bag');
 has store_args => (fix_opt => 'collect');
 has store      => (is => 'lazy', init_arg => undef);
 has bag        => (is => 'lazy', init_arg => undef);
+has _bag_var   => (is => 'rwp', writer => '_set_bag_var', init_arg => undef);
+
+with 'Catmandu::Fix::SimpleGetValue';
 
 sub _build_store {
     my ($self) = @_;
@@ -26,21 +27,15 @@ sub _build_bag {
         : $self->store->bag;
 }
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path    = $fixer->split_path($self->path);
-    my $key     = pop @$path;
-    my $bag_var = $fixer->capture($self->bag);
+sub emit_value {
+    my ($self, $var, $fixer) = @_;
+    # memoize in case called multiple times
+    my $bag_var = $self->_bag_var ||
+                  $self->_set_bag_var($fixer->capture($self->bag));
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $val_var = shift;
-            "if (is_hash_ref(${val_var})) {" .
-                "${bag_var}->add(${val_var});" .
-            "}";
-        });
-    });
+    "if (is_hash_ref(${var})) {" .
+        "${bag_var}->add(${var});" .
+    "}";
 }
 
 =head1 NAME

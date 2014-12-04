@@ -4,24 +4,16 @@ use Catmandu::Sane;
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
-
 has path       => (fix_arg => 1);
 has split_char => (fix_arg => 1, default => sub { qr'\s+' });
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+with 'Catmandu::Fix::SimpleGetValue';
+
+sub emit_value {
+    my ($self, $var, $fixer) = @_;
     my $split_char = $fixer->emit_string($self->split_char);
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $var = shift;
-            "${var} = [split ${split_char}, ${var}] if is_value(${var});";
-        });
-    });
+    "${var} = [split ${split_char}, ${var}] if is_value(${var});";
 }
 
 =head1 NAME

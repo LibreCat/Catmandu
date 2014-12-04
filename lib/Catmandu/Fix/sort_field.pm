@@ -5,68 +5,59 @@ use List::MoreUtils ();
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
-
 has path    => (fix_arg => 1);
 has uniq    => (fix_opt => 1);
 has reverse => (fix_opt => 1);
 has numeric => (fix_opt => 1);
-has undef_position => (fix_opt => 1, default => sub { "last"; });
+has undef_position => (fix_opt => 1, default => sub { 'last' });
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+with 'Catmandu::Fix::SimpleGetValue';
+
+sub emit_value {
+    my ($self, $var, $fixer) = @_;
     my $comparer = $self->numeric ? "<=>" : "cmp";
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $var = shift;
-            my $perl = "if (is_array_ref(${var})) {";
+    my $perl = "if (is_array_ref(${var})) {";
 
-            #filter out undef
-            my $undef_values = $fixer->generate_var();
-            $perl .= "my ${undef_values} = [ grep { !defined(\$_) } \@{${var}} ];";
-            $perl .= "${var} = [ grep { defined(\$_) } \@{${var}} ];";
+    #filter out undef
+    my $undef_values = $fixer->generate_var;
+    $perl .= "my ${undef_values} = [ grep { !defined(\$_) } \@{${var}} ];";
+    $perl .= "${var} = [ grep { defined(\$_) } \@{${var}} ];";
 
-            #uniq
-            if ($self->uniq) {
-                $perl .= "${var} = [List::MoreUtils::uniq(\@{${var}})];";
-            }
+    #uniq
+    if ($self->uniq) {
+        $perl .= "${var} = [List::MoreUtils::uniq(\@{${var}})];";
+    }
 
-            #sort
-            if ($self->reverse) {
-                $perl .= "${var} = [sort { \$b $comparer \$a } \@{${var}}];";
-            } else {
-                $perl .= "${var} = [sort { \$a $comparer \$b } \@{${var}}];";
-            }
+    #sort
+    if ($self->reverse) {
+        $perl .= "${var} = [sort { \$b $comparer \$a } \@{${var}}];";
+    } else {
+        $perl .= "${var} = [sort { \$a $comparer \$b } \@{${var}}];";
+    }
 
-            #insert undef at the end
-            if($self->undef_position eq "last"){
-                if($self->uniq){
-                    $perl .= "push \@{${var}},undef if scalar(\@{${undef_values}});";
-                }
-                else{
-                    $perl .= "push \@{${var}},\@{${undef_values}};";
-                }
-            }
-            #insert undef at the beginning
-            elsif($self->undef_position eq "first"){
-                if($self->uniq){
-                    $perl .= "unshift \@{${var}},undef if scalar(\@{${undef_values}});";
-                }
-                else{
-                    $perl .= "unshift \@{${var}},\@{${undef_values}};";
-                }
-            }
-            #leave undef out of the list
+    #insert undef at the end
+    if($self->undef_position eq "last"){
+        if($self->uniq){
+            $perl .= "push \@{${var}},undef if scalar(\@{${undef_values}});";
+        }
+        else{
+            $perl .= "push \@{${var}},\@{${undef_values}};";
+        }
+    }
+    #insert undef at the beginning
+    elsif($self->undef_position eq "first"){
+        if($self->uniq){
+            $perl .= "unshift \@{${var}},undef if scalar(\@{${undef_values}});";
+        }
+        else{
+            $perl .= "unshift \@{${var}},\@{${undef_values}};";
+        }
+    }
+    #leave undef out of the list
 
-            $perl .= "}";
-            $perl;
-        });
-    });
-
+    $perl .= "}";
+    $perl;
 }
 
 =head1 NAME
