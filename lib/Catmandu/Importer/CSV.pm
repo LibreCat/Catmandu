@@ -70,6 +70,15 @@ Catmandu::Importer::CSV - Package that imports CSV data
         # ...
     });
 
+Convert CSV to other formats with the catmandu command line client:
+
+    # convert CSV file to JSON
+    catmandu convert CSV to JSON < journals.csv
+    # set column names if CSV file has no header line
+    echo '12157,"The Journal of Headache and Pain",2193-1801' | catmandu convert CSV --header 0 --fields 'id,title,issn' to YAML
+    # set field separator and quote character 
+    echo '12157;$The Journal of Headache and Pain$;2193-1801' | catmandu convert CSV --header 0 --fields 'id,title,issn' --sep_char ';' --quote_char '$' to XLSX --file journal.xlsx
+
 =head1 METHODS
 
 =head2 new(file => $filename, fh = $fh, fields => \@fields, quote_char => "\"", sep_char => ",", fix => [...])
