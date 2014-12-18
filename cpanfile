@@ -9,7 +9,7 @@ on 'test', sub {
   requires 'Log::Any::Adapter', '0.11';
 };
 
-requires 'App::Cmd', '0.323';
+requires 'App::Cmd', '0.326';
 requires 'CGI::Expand', '2.02';
 requires 'Clone', '0.31';
 requires 'Config::Onion', '1.004';
