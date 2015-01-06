@@ -1,6 +1,9 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix log tests
+
+0.9209  2014-12-04 13:58:02 CET
   - info command
   - ignore installed but depreciated commands
   - improved retain fix will replace retain_field
