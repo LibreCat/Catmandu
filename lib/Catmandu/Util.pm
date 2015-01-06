@@ -93,20 +93,20 @@ sub io {
 
     if (is_scalar_ref($arg)) {
         $io = IO::Handle::Util::io_from_scalar_ref($arg);
-        binmode $io, $binmode;
+        defined($io) && binmode $io, $binmode;
     } elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
         $io = IO::Handle->new_from_fd($arg, $mode) // $arg;
-        binmode $io, $binmode;
+        defined($io) && binmode $io, $binmode;
     } elsif (is_string($arg)) {
         $io = IO::File->new($arg, $mode);
-        binmode $io, $binmode;
+        defined($io) && binmode $io, $binmode;
     } elsif (is_code_ref($arg) && $mode eq 'r') {
         $io = IO::Handle::Util::io_from_getline($arg);
     } elsif (is_code_ref($arg) && $mode eq 'w') {
         $io = IO::Handle::Util::io_from_write_cb($arg);
     } elsif (is_instance($arg, 'IO::Handle')) {
         $io = $arg;
-        binmode $io, $binmode;
+        defined($io) && binmode $io, $binmode;
     } else {
         Catmandu::BadArg->throw("can't make io from argument");
     }
