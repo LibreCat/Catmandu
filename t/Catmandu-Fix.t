@@ -41,7 +41,8 @@ is $ref->()->{n} , 0;
 is $ref->() , undef;
 
 can_ok $fixer , 'log';
-isa_ok $fixer->log , 'Log::Any::Adapter::Null';
+isa_ok $fixer->log , 'Log::Any::Proxy';
+isa_ok $fixer->log->adapter , 'Log::Any::Adapter::Null';
 
 {
     package MyFix;
@@ -55,12 +56,12 @@ isa_ok $fixer->log , 'Log::Any::Adapter::Null';
 $fixer = MyFix->new;
 is_deeply $fixer->fix({}), { hello => 'world' }, 'simple custom fixer package';
 
-done_testing 23;
+done_testing 24;
 
 sub generator {
-	my $size = 3;
-	sub {
-		return undef unless $size--;
-		return {n => $size};
-	}	
+    my $size = 3;
+    sub {
+        return undef unless $size--;
+        return {n => $size};
+    }
 }

@@ -5,8 +5,7 @@ on 'test', sub {
   requires 'Test::Exception', '0.32';
   requires 'Test::More', '1.001003';
   requires 'Test::Pod', 0;
-  requires 'Log::Any::Test', '0.15';
-  requires 'Log::Any::Adapter', '0.11';
+  requires 'Log::Any::Test', '1.03';
 };
 
 requires 'App::Cmd', '0.326';
@@ -20,8 +19,8 @@ requires 'File::Find::Rule', '0.33';
 requires 'IO::Handle::Util', '0.01';
 requires 'JSON::XS', '2.3';
 requires 'List::MoreUtils', '0.33';
-requires 'Log::Any', '0.15';
-requires 'Log::Any::Adapter', '0.11';
+requires 'Log::Any', '1.03';
+requires 'Log::Any::Adapter', '1.03';
 requires 'Time::Piece', 0; # undeclared Marpa dependency
 requires 'Marpa::R2', '2.084000';
 requires 'Module::Info', 0;

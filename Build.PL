@@ -27,7 +27,7 @@ my %module_build_args = (
   },
   "recursive_test_files" => 1,
   "requires" => {
-    "App::Cmd" => "0.323",
+    "App::Cmd" => "0.326",
     "CGI::Expand" => "2.02",
     "Clone" => "0.31",
     "Config::Onion" => "1.004",
@@ -38,8 +38,8 @@ my %module_build_args = (
     "IO::Handle::Util" => "0.01",
     "JSON::XS" => "2.3",
     "List::MoreUtils" => "0.33",
-    "Log::Any" => "0.15",
-    "Log::Any::Adapter" => "0.11",
+    "Log::Any" => "1.03",
+    "Log::Any::Adapter" => "1.03",
     "Marpa::R2" => "2.084000",
     "Module::Info" => 0,
     "Moo" => "1.004006",
@@ -58,8 +58,7 @@ my %module_build_args = (
     "bin/catmandu"
   ],
   "test_requires" => {
-    "Log::Any::Adapter" => "0.11",
-    "Log::Any::Test" => "0.15",
+    "Log::Any::Test" => "1.03",
     "Test::Deep" => "0.112",
     "Test::Exception" => "0.32",
     "Test::More" => "1.001003",
@@ -69,8 +68,7 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
-  "Log::Any::Adapter" => "0.11",
-  "Log::Any::Test" => "0.15",
+  "Log::Any::Test" => "1.03",
   "Module::Build" => "0.3601",
   "Test::Deep" => "0.112",
   "Test::Exception" => "0.32",

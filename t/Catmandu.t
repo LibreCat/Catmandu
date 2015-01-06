@@ -17,15 +17,16 @@ require_ok $pkg;
 # Logging ----------------------------
 Log::Any::Adapter->set('Test');
 
-isa_ok(Catmandu->log,'Log::Any::Adapter::Test', 'logger test');
+isa_ok(Catmandu->log,'Log::Any::Proxy', 'logger test');
+isa_ok(Catmandu->log->adapter,'Log::Any::Adapter::Test', 'logger test');
 
 Catmandu->log->debug('debug test');
 Catmandu->log->info('info test');
 Catmandu->log->warn('warn test');
 
-Catmandu->log->contains_ok(qr/debug test/,'debug log');
-Catmandu->log->contains_ok(qr/info test/,'info log');
-Catmandu->log->contains_ok(qr/warn test/,'info log');
+Catmandu->log->adapter->contains_ok(qr/debug test/,'debug log');
+Catmandu->log->adapter->contains_ok(qr/info test/,'info log');
+Catmandu->log->adapter->contains_ok(qr/warn test/,'info log');
 
 # Default_load_path ------------------
 ok(my $curr_path = Catmandu->default_load_path, 'get current path');
@@ -55,4 +56,4 @@ isa_ok(Catmandu->fixer,'Catmandu::Fix','fixer test');
 
 like(Catmandu->export_to_string({ foo => 'bar'}, 'JSON'),qr/{"foo":"bar"}/,'export_to_string');
 
-done_testing 22;
+done_testing 23;
