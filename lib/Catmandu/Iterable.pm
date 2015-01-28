@@ -418,12 +418,12 @@ Catmandu::Iterable - Base class for all iterable Catmandu classes
 
     my $it3 = $it->group(2)->invoke('to_array');
 
-    # Caculate maximum of 'n' field
+    # Calculate maximum of 'n' field
     my $max = $it->max(sub {
             shift->{n};
     });
 
-    # Caculate minimum of 'n' field
+    # Calculate minimum of 'n' field
     my $in = $it->min(sub {
             shift->{n};
     });
