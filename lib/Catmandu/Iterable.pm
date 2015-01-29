@@ -66,6 +66,18 @@ sub each {
     $n;
 }
 
+sub each_until {
+    my ($self, $sub) = @_;
+    my $next = $self->generator;
+    my $n = 0;
+    my $data;
+    while (defined($data = $next->())) {
+        $sub->($data) || last;
+        $n++;
+    }
+    $n;
+}
+
 sub tap {
     my ($self, $sub) = @_;
     Catmandu::Iterator->new(sub { sub {
@@ -348,6 +360,16 @@ sub format {
     for my $row (@$rows) {
         printf $pattern, @$row;
     }
+}
+
+sub stop_if {
+    my ($self, $sub) = @_;
+    Catmandu::Iterator->new(sub { sub {
+        state $next = $self->generator;
+        my $data = $next->() // return;
+        $sub->($data) && return;
+        $data;
+    }});
 }
 
 1;
@@ -657,6 +679,21 @@ Print the iterator data formatted as a spreadsheet like table. Note that this
 method will load the whole dataset in memory to calculate column widths. See
 also L<Catmandu::Exporter::Table> for a more elaborated method of printing
 iterators in tabular form.
+
+=head2 stop_if(\&callback)
+
+Returns a new iterator thats stops processing if the callback returns false.
+
+    # stop after encountering 3 frobnitzes
+    my $frobnitzes = 0;
+    $iterator->stop_if(sub {
+        my $rec = shift;
+        $frobnitzes++ if $rec->{title} =~ /frobnitz/;
+        $frobnitzes > 3;
+    })->each(sub {
+        my $rec = shift;
+        ...
+    });
 
 =head1 SEE ALSO
 
