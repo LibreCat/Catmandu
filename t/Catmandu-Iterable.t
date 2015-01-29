@@ -152,5 +152,11 @@ $iter->data([{n=>10},{n=>9},{n=>1}]);
 is $iter->min(sub {shift->{n}}), 1;
 is $iter->max(sub {shift->{n}}), 10;
 
-done_testing 58;
+$iter->data([{n=>10},{n=>9},{n=>1}]);
+is_deeply $iter->stop_if(sub { shift->{n} == 9 })->to_array,
+   [{n=>10}];
+is_deeply $iter->stop_if(sub { shift->{n} == 1 })->to_array,
+   [{n=>10},{n=>9}];
+
+done_testing 60;
 
