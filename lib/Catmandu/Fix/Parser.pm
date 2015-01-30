@@ -301,17 +301,7 @@ sub Catmandu::Fix::Parser::SingleQuotedString::reify {
 
     $str = substr($str, 1, length($str) - 2);
 
-    if (index($str, '\\') != -1) {
-        $str =~ s/\\u([0-9A-Fa-f]{4})/chr(hex($1))/egxms;
-        $str =~ s/\\n/\n/gxms;
-        $str =~ s/\\r/\r/gxms;
-        $str =~ s/\\b/\b/gxms;
-        $str =~ s/\\f/\f/gxms;
-        $str =~ s/\\t/\t/gxms;
-        $str =~ s/\\\\/\\/gxms;
-        $str =~ s{\\/}{/}gxms;
-        $str =~ s{\\'}{'}gxms;
-    }
+    $str =~ s{\\'}{'}gxms;
 
     $str;
 }

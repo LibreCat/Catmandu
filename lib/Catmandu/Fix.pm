@@ -248,6 +248,22 @@ sub emit_string {
     B::perlstring($str);
 }
 
+sub emit_match {
+    my ($self, $pattern) = @_;
+    $pattern =~ s/\//\\\//g;
+    $pattern =~ s/\\$/\\\\/;
+    "m/$pattern/";
+}
+
+sub emit_substitution {
+    my ($self, $pattern, $replace) = @_;
+    $pattern =~ s/\//\\\//g;
+    $pattern =~ s/\\$/\\\\/;
+    $replace =~ s/\//\\\//g;
+    $replace =~ s/\\$/\\\\/;
+    "s/$pattern/$replace/";
+}
+
 sub emit_declare_vars {
     my ($self, $var, $val) = @_;
     $var = "(".join(", ", @$var).")" if ref $var;

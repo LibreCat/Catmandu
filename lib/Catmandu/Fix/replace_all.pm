@@ -11,13 +11,11 @@ has replace => (fix_arg => 1);
 with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
-    my ($self, $var) = @_;
-    my $search = $self->search;
-    my $replace = $self->replace;
+    my ($self, $var, $fixer) = @_;
 
     "if (is_value(${var})) {"
         ."utf8::upgrade(${var});"
-        ."${var} =~ s{$search}{$replace}g;"
+        ."${var} =~ ".$fixer->emit_substitution($self->search, $self->replace)."g;"
         ."}";
 }
 

@@ -374,6 +374,8 @@ Nicolas Steenlant, `<nicolas.steenlant at ugent.be>`
 
 # CONTRIBUTORS
 
+Magnus Enger, `magnus at enger.priv.no`
+
 Nicolas Franck, `nicolas.franck at ugent.be`
 
 Patrick Hochstenbach, `patrick.hochstenbach at ugent.be`

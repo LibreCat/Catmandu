@@ -10,9 +10,8 @@ has pattern => (fix_arg => 1);
 with 'Catmandu::Fix::Condition::SimpleAnyTest';
 
 sub emit_test {
-    my ($self, $var) = @_;
-    my $pattern = $self->pattern;
-    "is_value(${var}) && ${var} =~ /${pattern}/";
+    my ($self, $var, $parser) = @_;
+    "is_value(${var}) && ${var} =~ ".$parser->emit_match($self->pattern);
 }
 
 =head1 NAME
