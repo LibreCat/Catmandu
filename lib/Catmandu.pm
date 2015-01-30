@@ -557,6 +557,8 @@ Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
 
 =head1 CONTRIBUTORS
 
+Magnus Enger, C<< magnus at enger.priv.no >>
+
 Nicolas Franck, C<< nicolas.franck at ugent.be >>
 
 Patrick Hochstenbach, C<< patrick.hochstenbach at ugent.be >>
