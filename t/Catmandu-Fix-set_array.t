@@ -14,21 +14,26 @@ BEGIN {
 is_deeply
     $pkg->new('job')->fix({}),
     {job => []},
-    "set field at root";
+    "set array at root";
 
 is_deeply
     $pkg->new('deeply.nested.$append.job')->fix({}),
     {},
-    "set field doesn't create intermediate path";
+    "set array doesn't create intermediate path";
 
 is_deeply
     $pkg->new('deeply.nested.*.job')->fix({deeply => {nested => [undef, {}]}}),
     {deeply => {nested => [undef, {job => []}]}},
-    "set deeply nested field";
+    "set deeply nested array";
 
 is_deeply
     $pkg->new('deeply.nested.$append.job')->fix({deeply => {nested => {}}}),
     {deeply => {nested => {}}},
-    "only set field if the path matches";
+    "only set array if the path matches";
 
-done_testing 5;
+is_deeply
+    $pkg->new('job', 1, "foo", 2)->fix({}),
+    {job => [1, "foo", 2]},
+    "set array with initial contents";
+
+done_testing 6;

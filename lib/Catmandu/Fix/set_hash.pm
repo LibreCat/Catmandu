@@ -5,22 +5,24 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path  => (fix_arg => 1);
+has path   => (fix_arg => 1);
+has values => (fix_arg => 'collect', default => sub { [] });
 
 sub emit {
     my ($self, $fixer) = @_;
     my $path = $fixer->split_path($self->path);
     my $key = pop @$path;
+    my $values = $self->values;
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
-        $fixer->emit_set_key($var, $key, "{}");
+        $fixer->emit_set_key($var, $key, "{".join(',', map { $fixer->emit_value($_) } @$values)."}");
     });
 }
 
 =head1 NAME
 
-Catmandu::Fix::set_hash - add or change the value of a HASH key or ARRAY index to an empty hash
+Catmandu::Fix::set_hash - add or change the value of a HASH key or ARRAY index to a hash
 
 =head1 DESCRIPTION
 
@@ -31,6 +33,8 @@ if they are missing.
 
    # Change the value of 'foo' to an empty hash
    set_hash(foo)
+   # Or a hash with initial contents
+   set_hash(a: b, c: d)
 
 =head1 SEE ALSO
 

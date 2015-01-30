@@ -14,21 +14,27 @@ BEGIN {
 is_deeply
     $pkg->new('job')->fix({}),
     {job => {}},
-    "set field at root";
+    "set hash at root";
 
 is_deeply
     $pkg->new('deeply.nested.$append.job')->fix({}),
     {},
-    "set field doesn't create intermediate path";
+    "set hash doesn't create intermediate path";
 
 is_deeply
     $pkg->new('deeply.nested.*.job')->fix({deeply => {nested => [undef, {}]}}),
     {deeply => {nested => [undef, {job => {}}]}},
-    "set deeply nested field";
+    "set deeply nested hash";
 
 is_deeply
     $pkg->new('deeply.nested.$append.job')->fix({deeply => {nested => {}}}),
     {deeply => {nested => {}}},
-    "only set field if the path matches";
+    "only set hash if the path matches";
 
-done_testing 5;
+is_deeply
+    $pkg->new('job', 'a', 'b', 'c', 'd')->fix({}),
+    {job => {'a' => 'b', 'c' => 'd'}},
+    "set hash with initial contents";
+
+
+done_testing 6;
