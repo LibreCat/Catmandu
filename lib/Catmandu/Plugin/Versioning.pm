@@ -167,7 +167,7 @@ Catmandu::Plugin::Versioning - Automatically adds versioning to Catmandu::Store 
 
 =head1 DESCRIPTION
 
-The Catmandu::Plugin::Versioning plugin automatically adds a new 'version' bag to your Catmandy::Store
+The Catmandu::Plugin::Versioning plugin automatically adds a new 'version' bag to your Catmandu::Store
 containing previous versions of newly created records. The name of the version is created by appending 
 '_version' to your original bag name. E.g. when add the Versioning plugin to a 'test' bag then 'test_version'
 will contain the previous version of all your records.
