@@ -19,7 +19,7 @@ Catmandu::Env - A catmandu configuration file loader
 
 =head1 DESCRIPTION
 
-This class loads the catmandu.*.pl, catmandy.*.json, catmandy.*.yml and catmandy.*.yaml file from
+This class loads the catmandu.*.pl, catmandu.*.json, catmandu.*.yml and catmandu.*.yaml file from
 all provided load_paths. Programmers are adviced *not* to use this class directly 
 but use the equivalent functionality provided in the Catmandu package:
 
