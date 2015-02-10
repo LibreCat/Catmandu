@@ -43,6 +43,7 @@ my %module_build_args = (
     "Marpa::R2" => "2.084000",
     "Module::Info" => 0,
     "Moo" => "1.004006",
+    "MooX::Aliases" => "0.001006",
     "Sub::Exporter" => "0.982",
     "Sub::Quote" => 0,
     "Text::CSV" => "1.21",

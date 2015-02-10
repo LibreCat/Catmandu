@@ -4,10 +4,11 @@ use namespace::clean;
 use Catmandu::Sane;
 use JSON::XS ();
 use Moo;
+use MooX::Aliases;
 
 with 'Catmandu::Exporter';
 
-has pretty       => (is => 'ro', default => sub { 0 });
+has pretty       => (is => 'ro', alias => 'multiline', default => sub { 0 });
 has indent       => (is => 'ro', default => sub { 0 });
 has space_before => (is => 'ro', default => sub { 0 });
 has space_after  => (is => 'ro', default => sub { 0 });
@@ -106,6 +107,10 @@ each item is printed condensed on one line.
 Default options of L<Catmandu::Exporter>.
 
 =item pretty
+
+=item multiline
+
+Alias for C<pretty>.
 
 =item indent
 

@@ -9,6 +9,7 @@ with 'Catmandu::Importer';
 
 has json      => (is => 'ro', lazy => 1, builder => '_build_json');
 has multiline => (is => 'ro', default => sub { 0 });
+has array     => (is => 'ro', default => sub { 0 });
 
 sub _build_json {
     my ($self) = @_;
@@ -20,7 +21,7 @@ sub default_encoding { ':raw' }
 sub generator {
     my ($self) = @_;
 
-    $self->multiline ? sub {
+    $self->multiline || $self->array ? sub {
         state $json = $self->json;
         state $fh   = $self->fh;
 
@@ -78,7 +79,8 @@ The defaults assume a newline delimited JSON file:
     { "recordno": 2, "name": "Beta" }
     { "recordno": 3, "name": "Gamma" }
 
-Use the C<multiline> option to parse pretty-printed JSON or JSON arrays.
+Use the C<multiline> or C<array> options to parse pretty-printed JSON or JSON
+arrays.
 
 =head1 METHODS
 

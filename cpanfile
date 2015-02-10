@@ -25,6 +25,7 @@ requires 'Time::Piece', 0; # undeclared Marpa dependency
 requires 'Marpa::R2', '2.084000';
 requires 'Module::Info', 0;
 requires 'Moo', '1.004006';
+requires 'MooX::Aliases', '0.001006';
 requires 'namespace::clean', '0.24';
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;
