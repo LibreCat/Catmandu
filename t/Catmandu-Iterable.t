@@ -158,5 +158,18 @@ is_deeply $iter->stop_if(sub { shift->{n} == 9 })->to_array,
 is_deeply $iter->stop_if(sub { shift->{n} == 1 })->to_array,
    [{n=>10},{n=>9}];
 
-done_testing 60;
+# external iteration
+{
+    $iter->data([{n=>1},{n=>2},{n=>3}]);
+    my $iter_data = [];
+    while (my $data = $iter->next) {
+        push @$iter_data, $data;
+    }
+    is_deeply $iter->data, $iter_data;
+    is $iter->next, undef;
+    $iter->rewind;
+    is_deeply $iter->next, {n=>1};
+}
+
+done_testing 63;
 

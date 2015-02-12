@@ -11,7 +11,7 @@ BEGIN {
     use_ok $pkg;
 }
 
-my $arr = [{n => 1}, {n => 2}, {n => 3}];
+my $arr = [{n=>1}, {n=>2}, {n=>3}];
 my $it = $pkg->new($arr);
 
 ok $it->does('Catmandu::Iterable');
@@ -22,8 +22,14 @@ is $it->count, 3;
 
 is_deeply $it->first, $arr->[0];
 
-is ( $it->contains({n=>2}),1);
+is $it->contains({n=>2}), 1;
 
-is ($it->contains(10),0);
+is $it->contains(10), 0;
 
-done_testing 7;
+# test external iteration again because of circular dependency
+is_deeply $it->next, {n=>1};
+is_deeply $it->next, {n=>2};
+$it->rewind;
+is_deeply $it->next, {n=>1};
+
+done_testing 10;

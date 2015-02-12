@@ -4,22 +4,28 @@ use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
+use Hash::Util::FieldHash qw(fieldhash);
+use Role::Tiny;
+
+# delay loading these because of circular dependency
 require Catmandu::Iterator;
 require Catmandu::ArrayIterator;
-use Moo::Role;
 
 requires 'generator';
 
-has _next_generator => (
-    is => 'ro',
-    lazy => 1,
-    init_arg => undef,
-    builder => 'generator',
-);
+{
+    # can't use Moo attribute because of circular dependency
+    fieldhash my %_generators;
 
-sub next {
-    my ($self) = @_;
-    $self->_next_generator->();
+    sub next {
+        my ($self) = @_;
+        ($_generators{$self} ||= $self->generator)->();
+    }
+
+    sub rewind {
+        my ($self) = @_;
+        $_generators{$self} = $self->generator;
+    }
 }
 
 sub to_array {
@@ -628,17 +634,32 @@ $key is NOT equal to any of the vals given.
 
 =head3 EXTERNAL ITERATOR
 
+L<Catmandu::Iterable> behaves like an internal iterator. C<next> and C<rewind>
+allow you to use it like an external iterator.
+
 =head2 next
 
-L<Catmandu::Iterable> behaves like an internal iterator. C<next> allows you to
-use it like an external iterator. Each call to C<next> will return the next
-item until the iterator is exhausted, then it will keep returning C<undef>.
+Each call to C<next> will return the next item until the iterator is exhausted,
+then it will keep returning C<undef>.
 
     while (my $data = $it->next) {
       # do stuff
     }
 
     $it->next; # returns undef
+
+=head2 rewind
+
+Rewind the external iterator to the first item.
+
+    $it->next; # => {n => 1}
+    $it->next; # => {n => 2}
+    $it->next; # => {n => 3}
+    $it->rewind
+    $it->next; # => {n => 1}
+
+Note the the iterator must support this behavior. Many importers are not
+rewindable.
 
 =head3 BOOLEAN FUNCTIONS
 
