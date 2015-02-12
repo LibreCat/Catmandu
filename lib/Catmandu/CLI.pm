@@ -11,10 +11,11 @@ L<catmandu>
 =cut
 
 use Catmandu::Sane;
-use App::Cmd::Setup -app;
 use Catmandu::Util;
 use Catmandu;
 use Log::Any::Adapter;
+
+use parent qw(App::Cmd);
 
 sub VERSION {
     $Catmandu::VERSION;

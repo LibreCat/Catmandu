@@ -6,9 +6,21 @@ use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
 require Catmandu::Iterator;
 require Catmandu::ArrayIterator;
-use Role::Tiny;
+use Moo::Role;
 
 requires 'generator';
+
+has _next_generator => (
+    is => 'ro',
+    lazy => 1,
+    init_arg => undef,
+    builder => 'generator',
+);
+
+sub next {
+    my ($self) = @_;
+    $self->_next_generator->();
+}
 
 sub to_array {
     my ($self) = @_;
@@ -516,7 +528,7 @@ something like:
 
    $it->each(sub {
       # Very complicated routine
-      ....
+      ...
    });
 
 Now you would like to benchmark this piece of code (how fast are we processing).
@@ -526,7 +538,7 @@ execution time.
 
    $it->tap(\&benchmark)->each(sub {
       # Very complicated routine
-      ....
+      ...
    });
 
    sub benchmark {
@@ -613,6 +625,20 @@ $key is NOT equal to val.
 
 If the iterator contains HASH values, then return each item where the value of
 $key is NOT equal to any of the vals given.
+
+=head3 EXTERNAL ITERATOR
+
+=head2 next
+
+L<Catmandu::Iterable> behaves like an internal iterator. C<next> allows you to
+use it like an external iterator. Each call to C<next> will return the next
+item until the iterator is exhausted, then it will keep returning C<undef>.
+
+    while (my $data = $it->next) {
+      # do stuff
+    }
+
+    $it->next; # returns undef
 
 =head3 BOOLEAN FUNCTIONS
 
