@@ -649,6 +649,9 @@ A collection of functions that operate on hash references.
 Merge <hash1> through <hashN>,  with the nth-most (rightmost) hash taking precedence.
 Returns a new hash reference representing the merge.
 
+    hash_merge({a => 1}, {b => 2}, {a => 3});
+    # => { a => 3 , b => 2}
+
 =back
 
 =head2 Array functions
