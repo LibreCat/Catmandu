@@ -29,6 +29,8 @@ require_ok $pkg;
     use Catmandu::Util qw(:data);
     package T::ImportArray;
     use Catmandu::Util qw(:array);
+    package T::ImportHash;
+    use Catmandu::Util qw(:hash);
     package T::ImportString;
     use Catmandu::Util qw(:string);
     package T::ImportHuman;
@@ -98,6 +100,12 @@ for my $sym (qw(array_exists array_group_by array_pluck array_to_sentence
     can_ok 'T::ImportAll', $sym;
     can_ok 'T::ImportArray', $sym;
 }
+for my $sym (qw(hash_merge)) {
+    can_ok $pkg, $sym;
+    ok !T::ImportNothing->can($sym);
+    can_ok 'T::ImportAll', $sym;
+    can_ok 'T::ImportHash', $sym;
+}
 for my $sym (qw(as_utf8 trim capitalize)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
@@ -117,5 +125,5 @@ for my $sym (qw(xml_declaration xml_escape)) {
     can_ok 'T::ImportXML', $sym;
 }
 
-done_testing 450;
+done_testing 454;
 
