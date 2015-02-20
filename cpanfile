@@ -16,6 +16,7 @@ requires 'Data::Compare', '1.22';
 requires 'Data::UUID', '1.217';
 requires 'Data::Util', '0.59';
 requires 'File::Find::Rule', '0.33';
+requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
 requires 'JSON::XS', '2.3';
 requires 'List::MoreUtils', '0.33';
