@@ -28,7 +28,9 @@ use Catmandu::Sane;
 use Moo;
 extends 'Catmandu::Error';
 
-package Catmandu::ParseError;
+has package_name => (is => 'ro');
+
+package Catmandu::FixParseError;
 use namespace::clean;
 use Catmandu::Sane;
 use Moo;
@@ -36,14 +38,33 @@ extends 'Catmandu::Error';
 
 has source => (is => 'ro');
 
+package Catmandu::NoSuchFixPackage;
+use namespace::clean;
+use Catmandu::Sane;
+use Moo;
+extends 'Catmandu::NoSuchPackage';
+
+has fix_name => (is => 'ro');
+has source => (is => 'rw', writer => 'set_source');
+
+package Catmandu::BadFixArg;
+use namespace::clean;
+use Catmandu::Sane;
+use Moo;
+extends 'Catmandu::BadArg';
+
+has package_name => (is => 'ro');
+has fix_name => (is => 'ro');
+has source => (is => 'rw', writer => 'set_source');
+
 package Catmandu::FixError;
 use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 extends 'Catmandu::Error';
 
-has data   => (is => 'ro');
-has fix    => (is => 'ro');
+has data => (is => 'ro');
+has fix => (is => 'ro');
 
 =head1 NAME
 
@@ -70,9 +91,11 @@ Catmandu::Error - Catmandu error hierarchy
         Catmandu::Error
             Catmandu::BadVal
                 Catmandu::BadArg
+                    Catmandu::BadFixArg
             Catmandu::NotImplemented
             Catmandu::NoSuchPackage
-            Catmandu::ParseError
+                Catmandu::NoSuchFixPackage
+            Catmandu::FixParseError
             Catmandu::FixError
 
 =head1 SEE ALSO

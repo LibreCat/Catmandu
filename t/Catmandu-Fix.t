@@ -32,7 +32,11 @@ my $it = $fixer->fix(Catmandu::Importer::Mock->new(size=>13));
 can_ok $it , 'count';
 is $it->count , 13;
 
-my $ref =$fixer->fix(generator());
+my $gen_n = 3;
+my $ref =$fixer->fix(sub {
+    return undef unless $gen_n--;
+    return {n => $gen_n};
+});
 ok $ref, 'fixing a coderef';
 ok is_code_ref($ref);
 is $ref->()->{n} , 2;
@@ -40,28 +44,22 @@ is $ref->()->{n} , 1;
 is $ref->()->{n} , 0;
 is $ref->() , undef;
 
+# test logging
 can_ok $fixer , 'log';
 isa_ok $fixer->log , 'Log::Any::Proxy';
 isa_ok $fixer->log->adapter , 'Log::Any::Adapter::Null';
 
+# test error handling
 {
-    package MyFix;
-    use parent 'Catmandu::Fix';
-    sub fix {
-        my ($self, $data) = @_;
-        $data->{hello} = 'world';
-        $data;
-    }
+    package DieFix;
+    use Moo;
+    with 'Catmandu::Fix::Base';
+    sub emit { 'die;' }
 }
-$fixer = MyFix->new;
-is_deeply $fixer->fix({}), { hello => 'world' }, 'simple custom fixer package';
+
+$fixer = Catmandu::Fix->new(fixes => [DieFix->new]);
+throws_ok {
+    $fixer->fix({});
+} 'Catmandu::FixError';
 
 done_testing 24;
-
-sub generator {
-    my $size = 3;
-    sub {
-        return undef unless $size--;
-        return {n => $size};
-    }
-}

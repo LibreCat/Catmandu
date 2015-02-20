@@ -94,7 +94,7 @@ sub fix {
 
     if (is_code_ref($data)) {
         return sub {
-            for (;;) {
+            while (1) {
                 my $d = $fixer->($data->() // return);
                 next if $d == $self->_reject;
                 return $d;
@@ -144,11 +144,9 @@ sub emit {
     $perl .= "__FIX_REJECT__: return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
-    # TODO throw Catmandu::Error
     $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
     $perl .= "};";
     $perl .= "};";
-
 
     if (%$captures) {
         my @captured_vars = map {

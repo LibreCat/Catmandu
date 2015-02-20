@@ -34,8 +34,8 @@ Catmandu::Fix::Parser - the parser of the Catmandu::Fix language
 
 =head1 DESCRIPTION
 
-Programmers are discouraged to use the Catmandu::Parser directly in code but use the Catmandu package that
-provides the same functionality:
+Programmers are discouraged to use the Catmandu::Parser directly in code but
+use the Catmandu package that provides the same functionality:
 
     use Catmandu;
 
@@ -55,8 +55,8 @@ Create a new Catmandu::Fix parser
 
 =head2 parse($file)
 
-Reads a string or a file and returns a blessed object with parsed Catmandu::Fixes. Throws an Catmandu::ParseError
-on failure.
+Reads a string or a file and returns a blessed object with parsed
+Catmandu::Fixes. Throws an Catmandu::ParseError on failure.
 
 =head1 SEE ALSO
 
@@ -73,7 +73,7 @@ use Catmandu::Sane;
 use Marpa::R2;
 use Data::Dumper;
 use Catmandu;
-use Catmandu::Util qw(check_value read_file);
+use Catmandu::Util qw(check_value is_instance is_able require_package read_file);
 use Moo;
 
 with 'Catmandu::Logger';
@@ -188,19 +188,42 @@ sub parse {
         $recognizer->read(\$source);
         $val = ${$recognizer->value};
 
-        $self->log->debugf(Dumper($val)) if $self->log->is_debug();
+        $self->log->debugf(Dumper($val)) if $self->log->is_debug;
 
-        [ map {$_->reify} @$val ];
-    }
-    catch {
-         my $message = "parse error";
-
-         if ($_ =~ /coercion for "_fixer"/) {
-            $message .= " - wrong number of arguments in your fix command";
-         }
-
-         Catmandu::ParseError->throw(message => $message, source => $source);
+        [map {$_->reify} @$val];
+    } catch {
+       if (is_instance($_, 'Catmandu::Error')) {
+           $_->set_source($source) if is_able($_, 'set_source');
+           $_->throw;
+       }
+       Catmandu::FixParseError->throw(message => $_, source => $source);
     };
+}
+
+sub _build_fix {
+   my ($name, $ns, @args) = @_;
+   my $pkg;
+   try {
+    $pkg = require_package($name, $ns); 
+   } catch_case [
+       'Catmandu::NoSuchPackage' => sub {
+           Catmandu::NoSuchFixPackage->throw(
+               message      => "No such fix package: $name",
+               package_name => $_->package_name,
+               fix_name     => $name,
+           );
+       },
+   ];
+   try {
+       $pkg->new(@args); 
+   } catch {
+       $_->throw if is_instance($_, 'Catmandu::Error');
+       Catmandu::BadFixArg->throw(
+           message      => $_,
+           package_name => $pkg,
+           fix_name     => $name,
+       );
+   };
 }
 
 sub Catmandu::Fix::Parser::IfElse::reify {
@@ -234,23 +257,23 @@ sub Catmandu::Fix::Parser::Reject::reify {
 sub Catmandu::Fix::Parser::Fix::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
-    Catmandu::Util::require_package($name, 'Catmandu::Fix')
-        ->new(map { $_->reify } @$args);
+    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix',
+        map { $_->reify } @$args);
 }
 
 sub Catmandu::Fix::Parser::Condition::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
-    Catmandu::Util::require_package($name, 'Catmandu::Fix::Condition')
-        ->new(map { $_->reify } @$args);
+    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Condition',
+        map { $_->reify } @$args);
 }
 
 sub Catmandu::Fix::Parser::OldCondition::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
     $name =~ s/^(?:if|unless)_//;
-    Catmandu::Util::require_package($name, 'Catmandu::Fix::Condition')
-        ->new(map { $_->reify } @$args);
+    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Condition',
+        map { $_->reify } @$args);
 }
 
 sub Catmandu::Fix::Parser::DoSet::reify {
@@ -272,8 +295,8 @@ sub Catmandu::Fix::Parser::Do::reify {
 sub Catmandu::Fix::Parser::Bind::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
-    Catmandu::Util::require_package($name, 'Catmandu::Fix::Bind')
-        ->new(map { $_->reify } @$args);
+    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Bind',
+        map { $_->reify } @$args);
 }
 
 sub Catmandu::Fix::Parser::DoubleQuotedString::reify {
@@ -315,4 +338,3 @@ sub Catmandu::Fix::Parser::Int::reify {
 }
 
 1;
-

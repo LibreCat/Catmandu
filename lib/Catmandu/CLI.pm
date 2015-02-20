@@ -11,9 +11,10 @@ L<catmandu>
 =cut
 
 use Catmandu::Sane;
-use Catmandu::Util;
+use Catmandu::Util qw(is_instance is_able is_string);
 use Catmandu;
 use Log::Any::Adapter;
+use Data::Dumper;
 
 use parent qw(App::Cmd);
 
@@ -138,45 +139,49 @@ sub run {
     try {
         $self->execute_command($cmd, $opts, @args);
     } catch {
-        if (ref $_ eq 'Catmandu::NoSuchPackage') {
-            my $message = $_->message;
+        if (is_instance $_, 'Catmandu::NoSuchPackage') {
+            my $pkg_name = $_->package_name;
 
-            if ($message =~ /Catmandu::Importer::help/) {
+            if ($pkg_name eq 'Catmandu::Importer::help') {
                 say STDERR "Oops! Did you mean 'catmandu $ARGV[1] $ARGV[0]'?";
             }
-            elsif ($message =~ /Catmandu::Importer::(\S+)/) {
-                say STDERR "Oops! Can not find the importer '$1' in your configuration file or Catmandu::Importer::$1 is not installed.";
+            elsif (my ($type, $name) = $pkg_name =~ /^Catmandu::(Importer|Exporter|Store)::(\S+)/) {
+                say STDERR "Oops! Can't find the ".lc($type)." '$name' in your configuration file or $pkg_name is not installed.";
             }
-            elsif ($message =~ /Catmandu::Exporter::(\S+)/) {
-                say STDERR "Oops! Can not find the exporter '$1' in your configuration file or Catmandu::Exporter::$1 is not installed.";
-            }
-            elsif ($message =~ /Catmandu::Store::(\S+)/) {
-                say STDERR "Oops! Can not find the store '$1' in your configuration file or Catmandu::Store::$1 is not installed.";
-            }
-            elsif ($message =~ /Catmandu::Fix::(\S+)/) {
-                say STDERR "Oops! Tried to execute the fix '$1' but can't find Catmandu::Fix::$1 on your system.";
+            elsif ($pkg_name =~ /^Catmandu::Fix::\S+/) {
+                my ($fix_name) = $pkg_name =~ /([^:]+)$/;
+                if ($fix_name =~ /^[a-z]/) {
+                    say STDERR "Oops! Tried to execute the fix '$fix_name' but can't find $pkg_name on your system.";
+                } else { # not a fix
+                    say STDERR "Oops! Failed to load $pkg_name";
+                }
             }
             else {
-                say STDERR "Oops! Failed to load $message";
+                say STDERR "Oops! Failed to load $pkg_name";
+            }
+
+            if (is_able $_, 'source') {
+                $self->print_source($_->source);
             }
 
             goto ERROR;
         }
-        elsif (ref $_ eq 'Catmandu::ParseError') {
+        elsif (is_instance $_, 'Catmandu::BadFixArg') {
+            my $fix_name = $_->fix_name;
+            my $source = $_->source;
+            say STDERR "Oops! The fix '$fix_name' was called with missing or wrong arguments.";
+            $self->print_source($_->source);
+        }
+        elsif (is_instance $_, 'Catmandu::FixParseError') {
             my $message = $_->message;
-            my $source  = $_->source;
 
             say STDERR "Oops! Syntax error in your fixes...";
             say STDERR "\n\t$message\n";
-            say STDERR "Source:\n";
-
-            for (split(/\n/,$source)) {
-                print STDERR "\t$_\n";
-            }
+            $self->print_source($_->source);
 
             goto ERROR;
         }
-        elsif (ref $_ eq 'Catmandu::FixError') {
+        elsif (is_instance $_, 'Catmandu::FixError') {
             my $message = $_->message;
             my $data    = $_->data;
             my $fix     = $_->fix;
@@ -185,13 +190,14 @@ sub run {
             say STDERR "Source: " . $_->fix;
             say STDERR "Error: $message";
 
-            use Data::Dumper;
             say STDERR "Input:\n" . Dumper($data) if defined $data;
 
             goto ERROR;
         }
         else {
-            die $_;
+            say STDERR "Oops! $_";
+
+            goto ERROR;
         }
     };
 
@@ -199,6 +205,16 @@ sub run {
 
     ERROR:
         return undef;
+}
+
+sub print_source {
+    my ($self, $source) = @_;
+    if (is_string $source) {
+        say STDERR "Source:\n";
+        for (split(/\n/,$source)) {
+            print STDERR "\t$_\n";
+        }
+    }
 }
 
 sub should_ignore {

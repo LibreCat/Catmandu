@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 use Test::Deep;
 use Test::Exception;
+use Catmandu::Fix;
 use Catmandu::Fix::upcase;
 use Catmandu::Fix::downcase;
 use Catmandu::Fix::Condition::exists;
@@ -109,4 +110,19 @@ cmp_deeply $parser->parse("reject exists(foo)"), [
     $foo_exists,
 ];
 
-done_testing 25;
+throws_ok {
+  $parser->parse('unknown_fix()');
+} 'Catmandu::NoSuchFixPackage',
+  'using unknown fixes throws NoSuchFixPackage';
+
+throws_ok {
+  $parser->parse('copy_field()');
+} 'Catmandu::BadFixArg',
+  'missing or bad fix arguments throw BadFixArg';
+
+throws_ok {
+  $parser->parse('syntax_error((((((');
+} 'Catmandu::FixParseError',
+  'syntax errors throw FixParseError';
+
+done_testing 28;
