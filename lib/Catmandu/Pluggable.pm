@@ -2,7 +2,7 @@ package Catmandu::Pluggable;
 
 =head1 NAME
 
-Catmandu::Pluggable - A role for claases that need plugin capabilities
+Catmandu::Pluggable - A role for classes that need plugin capabilities
 
 =head1 SYNOPSIS
 
@@ -71,7 +71,7 @@ L<Catmandu::Plugin::Versioning>
 =cut
 
 use Catmandu::Sane;
-use Role::Tiny;
+use Moo::Role;
 use namespace::clean;
 
 sub plugin_namespace { 'Catmandu::Plugin' }
@@ -83,7 +83,7 @@ sub with_plugins {
     @plugins = split /,/, join ',', @plugins;
     @plugins || return $class;
     my $ns = $class->plugin_namespace;
-    Role::Tiny->create_class_with_roles($class, map {
+    Moo::Role->create_class_with_roles($class, map {
         my $pkg = $_;
         if ($pkg !~ s/^\+// && $pkg !~ /^$ns/) {
             $pkg = "${ns}::${pkg}";

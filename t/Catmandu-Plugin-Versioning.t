@@ -48,4 +48,27 @@ is $store->bag->get('001')->{name} , 'Polar Bear' , 'check change';
 ok $store->bag->restore_previous_version('001') , 'restore_previous_version';
 is $store->bag->get('001')->{name} , 'Penguin' , 'check restore version';
 
-done_testing 21;
+$store = Catmandu::Store::Hash->new(bags => { data => {
+    plugins => [qw(Versioning)],
+    version_compare_ignore => [qw(stamp)],
+} });
+$store->bag->add({_id => '1', name => 'Penguin', stamp => 1});
+$store->bag->add({_id => '1', name => 'Penguin', stamp => 2});
+is_deeply $store->bag->get('1'),
+    {_id => '1', _version => 1, name => 'Penguin', stamp => 1};
+
+$store = Catmandu::Store::Hash->new(bags => { data => {
+    plugins => [qw(Versioning)],
+    version_compare_ignore => [qw(stamp)],
+    version_transfer => [qw(stamp)],
+} });
+$store->bag->add({_id => '1', name => 'Penguin', stamp => 1});
+$store->bag->add({_id => '1', name => 'El Penguino', stamp => 2});
+is_deeply $store->bag->get('1'),
+    {_id => '1', _version => 2, name => 'El Penguino', stamp => 2};
+$store->bag->add({_id => '2', name => 'Penguin', stamp => 1});
+$store->bag->add({_id => '2', name => 'El Penguino'});
+is_deeply $store->bag->get('2'),
+    {_id => '2', _version => 2, name => 'El Penguino', stamp => 1};
+
+done_testing 24;

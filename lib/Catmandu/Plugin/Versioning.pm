@@ -2,34 +2,30 @@ package Catmandu::Plugin::Versioning;
 
 use namespace::clean;
 use Catmandu::Sane;
-use Catmandu::Util qw(is_value check_value check_positive);
+use Catmandu::Util qw(is_value is_array_ref check_value check_positive);
 use Data::Compare;
 use Moo::Role;
 
 has version_bag => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build_version_bag'
+    is => 'lazy',
 );
 
 has version_compare_ignore => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub { [qw(_version)] },
-    coerce  => sub {
+    is     => 'lazy',
+    coerce => sub {
         my $keys = $_[0];
+        $keys = [@$keys]           if is_array_ref $keys;
         $keys = [split /,/, $keys] if is_value $keys;
-        push @$keys, '_version';
+        push @$keys, '_version' unless grep /^_version$/, @$keys;
         $keys;
     },
 );
 
 has version_transfer => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub { [] },
-    coerce  => sub {
+    is     => 'lazy',
+    coerce => sub {
         my $keys = $_[0];
+        $keys = [@$keys]           if is_array_ref $keys;
         $keys = [split /,/, $keys] if is_value $keys;
         $keys;
     },
@@ -37,6 +33,14 @@ has version_transfer => (
 
 sub _build_version_bag {
     $_[0]->store->bag($_[0]->name . '_version');
+}
+
+sub _build_version_compare_ignore {
+    [qw(_version)];
+}
+
+sub _build_version_transfer {
+    [];
 }
 
 around add => sub {
