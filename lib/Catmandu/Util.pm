@@ -12,6 +12,7 @@ use IO::Handle::Util ();
 use File::Spec;
 use YAML::XS ();
 use JSON::XS ();
+use Hash::Merge::Simple ();
 
 our %EXPORT_TAGS = (
     io     => [qw(io read_file write_file read_yaml read_json join_path
@@ -19,6 +20,7 @@ our %EXPORT_TAGS = (
     data   => [qw(parse_data_path get_data set_data delete_data data_at)],
     array  => [qw(array_exists array_group_by array_pluck array_to_sentence
         array_sum array_includes array_any array_rest array_uniq)],
+    hash   => [qw(hash_merge)],
     string => [qw(as_utf8 trim capitalize)],
     is     => [qw(is_same is_different)],
     check  => [qw(check_same check_different)],
@@ -321,6 +323,8 @@ sub array_uniq {
     my @vals = grep { not $seen{$_}++ } @$arr;
     \@vals;
 }
+
+*hash_merge = \&Hash::Merge::Simple::merge;
 
 sub as_utf8 {
     my $str = $_[0];
@@ -630,6 +634,24 @@ Normalizes a relative path to an absolute path.
     # => "FB41/144C/F0ED/11E1/A9DE/61C8/94A0/A6B4"
     segmented_path($id, segment_size => 2, base_path => "/files");
     # => "/files/FB/41/14/4C/F0/ED/11/E1/A9/DE/61/C8/94/A0/A6/B4"
+
+=back
+
+=head2 Hash functions
+
+    use Catmandu::Util qw(:hash);
+
+A collection of functions that operate on hash references.
+
+=over 4
+
+=item hash_merge($hash1, $hash2, ... , $hashN)
+
+Merge <hash1> through <hashN>,  with the nth-most (rightmost) hash taking precedence.
+Returns a new hash reference representing the merge.
+
+    hash_merge({a => 1}, {b => 2}, {a => 3});
+    # => { a => 3 , b => 2}
 
 =back
 
