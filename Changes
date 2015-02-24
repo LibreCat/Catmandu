@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.93  2015-02-24 09:54:04 CET
   - Iterable can now behave like an external iterator (see next and rewind
     methods)
   - better Fix::Parser error handling
