@@ -1,6 +1,11 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Iterable can now behave like an external iterator (see next and rewind
+    methods)
+  - better Fix::Parser error handling
+  - new hash_merge fix
+  - fix Versioning bugs
 
 0.9210  2015-01-06 09:28:23 CET
   - fix log tests
