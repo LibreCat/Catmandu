@@ -17,19 +17,21 @@ use Catmandu::CLI;
 
 my $result = test_app(qq|Catmandu::CLI| => [ qw() ]);
 
-like $result->stdout , qr/Available commands:/, 'printed what we expected';
+use Data::Dumper;say STDERR Dumper($result->stdout);
+
+like $result->stdout , qr/commands:/, 'printed what we expected';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
 $result = test_app('Catmandu::CLI' => [ qw(help) ]);
 
-like $result->stdout , qr/Available commands:/, 'printed what we expected';
+like $result->stdout , qr/commands:/, 'printed what we expected';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
 $result = test_app('Catmandu::CLI' => [ qw(-h) ]);
 
-like $result->stdout , qr/Available commands:/, 'printed what we expected';
+like $result->stdout , qr/commands:/, 'printed what we expected';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
