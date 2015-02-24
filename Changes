@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9301  2015-02-24 11:17:36 CET
   - Cmd output test failed sometimes
 
 0.93  2015-02-24 09:54:04 CET
