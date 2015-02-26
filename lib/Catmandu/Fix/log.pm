@@ -8,6 +8,13 @@ Catmandu::Fix::log - Log::Any logger as fix
 
   log('hello world' , level => 'DEBUG');
 
+=head1 DESCRIPTION
+
+This fix add debugging capabilities to fixes. To use it via the command line you need to add the
+'-D' option to your script. E.g.
+
+  echo '{}' | catmandu convert -D to YAML --fix 'log("help!", level =>WARN)'
+
 =head1 SEE ALSO
 
 L<Catmandu::Fix>
