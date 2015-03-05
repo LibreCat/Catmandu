@@ -10,7 +10,7 @@ BEGIN {
 }
 require_ok $pkg;
 
-my $data = [{'a' => 'moose', b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
+my $data = [{b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
 my $out = "";
 
 my $exporter = $pkg->new(file => \$out);
@@ -21,14 +21,14 @@ $exporter->commit;
 
 my $csv = <<EOF;
 a,b
-moose,1
+,1
 pony,2
 shrimp,3
 EOF
 
 is $out, $csv, "CSV strings ok";
 is $exporter->count,3, "Count ok";
- 
+
 $out = "";
 $exporter = $pkg->new( fields => { a => 'Longname', x => 'X' }, file => \$out );
 $exporter->add( { a => 'Hello', b => 'World' } );
