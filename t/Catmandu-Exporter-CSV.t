@@ -10,7 +10,7 @@ BEGIN {
 }
 require_ok $pkg;
 
-my $data = [{b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
+my $data = [{'a' => 'moose', b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
 my $out = "";
 
 my $exporter = $pkg->new(file => \$out);
@@ -21,7 +21,7 @@ $exporter->commit;
 
 my $csv = <<EOF;
 a,b
-,1
+moose,1
 pony,2
 shrimp,3
 EOF
