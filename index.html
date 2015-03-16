@@ -100,7 +100,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#debian"><span class="toc-section-number">1.2.1</span> Debian</a></li>
 <li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</a></li>
 <li><a href="#centos-6.4"><span class="toc-section-number">1.2.3</span> CentOS 6.4</a></li>
-<li><a href="#opensuse-12.3"><span class="toc-section-number">1.2.4</span> openSUSE 12.3</a></li>
+<li><a href="#opensuse"><span class="toc-section-number">1.2.4</span> openSUSE</a></li>
 <li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
 <li><a href="#openbsd-53"><span class="toc-section-number">1.2.6</span> OpenBSD 53</a></li>
 </ul></li>
@@ -375,10 +375,10 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
 <span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
 </section>
-<section id="opensuse-12.3" class="level3">
-<h3><span class="header-section-number">1.2.4</span> openSUSE 12.3</h3>
+<section id="opensuse" class="level3">
+<h3><span class="header-section-number">1.2.4</span> openSUSE</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
-<span class="kw">sudo</span> zypper install libxml2-devel xsltproc
+<span class="kw">sudo</span> zypper install libxml2-devel libxslt-devel
 <span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
 <span class="kw">cpanm</span> Task::Catmandu</code></pre>
 </section>
@@ -1275,6 +1275,8 @@ Hello, World?
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
 <span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
   <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">else</span>
+  <span class="kw">downcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;bar&#39;</span>
 <span class="kw">end</span>
 
 <span class="co"># inverted</span>
@@ -2431,6 +2433,8 @@ git push origin dev</code></pre></li>
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
 <span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
   <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;BAR&#39;</span>
+<span class="kw">else</span>
+  <span class="kw">downcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;bar&#39;</span>
 <span class="kw">end</span>
 
 <span class="co"># inverted</span>
@@ -2729,6 +2733,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li><a href="https://metacpan.org/release/App-YAML-Filter">App::YAML::Filter</a></li>
 <li>MARCEdit - http://marcedit.reeset.net/</li>
 <li><a href="http://stedolan.github.io/jq/">jq</a></li>
+<li><a href="http://cocoon.apache.org/2.2/1290_1_1.html">Cocoon</a> - Apache Cocoon XML pipeline</li>
 </ul>
 </section>
 <section id="general-frameworks" class="level2">
@@ -2743,6 +2748,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li><a href="http://repox.ist.utl.pt/">REPOX</a> - Data Aggregation and Interoperability Manager</li>
 <li><a href="http://openrefine.org/">OpenRefine</a> - (formerly Google Refine) a toolkit to work with tabular data.</li>
 <li><a href="https://github.com/dpla/KriKri">Krikri</a> - DPLA Ruby on Rails engine for metadata aggregation, enhancement and quality control.</li>
+<li><a href="http://pig.apache.org/">Pig</a> - Apache Pig is a platform for analyzing large data sets that consists of a high-level language for expressing data analysis programs, coupled with infrastructure for evaluating these programs.</li>
 </ul>
 </section>
 <section id="section" class="level2">
