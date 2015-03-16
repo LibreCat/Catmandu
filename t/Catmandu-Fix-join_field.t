@@ -31,4 +31,9 @@ is_deeply
     {joinme => "J,I,N"},
     "only join array values";
 
-done_testing 5;
+is_deeply
+    $pkg->new('joinme', '/')->fix({joinme => ['J', 'O', 'I', 'N']}),
+    {joinme => "J/O/I/N"},
+    "join value";
+
+done_testing 6;
