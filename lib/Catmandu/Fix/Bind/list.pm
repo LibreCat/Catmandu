@@ -42,7 +42,7 @@ sub bind {
 sub plus {
 	my ($self,$prev,$next) = @_;
 
-	Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next ] ;
+	Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next] ;
 }
 
 =head1 NAME

@@ -28,6 +28,7 @@ has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
 has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
 has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
 has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
+has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
 has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
 
@@ -121,6 +122,14 @@ sub generate_var {
     "\$__$n";
 }
 
+sub generate_label {
+    my ($self) = @_;
+    my $n = $self->_num_labels;
+    $self->_num_labels($n + 1);
+    my $addr = Scalar::Util::refaddr($self);
+    "__FIX__${addr}__${n}";
+}
+
 sub capture {
     my ($self, $capture) = @_;
     my $var = $self->generate_var;
@@ -146,7 +155,7 @@ sub emit {
     $perl .= $self->emit_fixes($self->fixes);
 
     $perl .= "return ${var};";
-    $perl .= "__FIX_REJECT__: return ${reject_var};";
+    $perl .= $self->_reject_label . ": return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
@@ -202,7 +211,7 @@ sub emit_fixes {
 
 sub emit_reject {
     my ($self) = @_;
-    "goto __FIX_REJECT__;";
+    "goto " .  $self->_reject_label . ";";
 }
 
 sub emit_fix {

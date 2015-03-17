@@ -27,7 +27,7 @@ sub unit {
 }
 
 sub bind {
-    my ($self,$data,$code,$name,$perl) = @_;
+    my ($self,$data,$code,$name,$fixes) = @_;
 	  return $code->($data);
 }
 
@@ -47,8 +47,10 @@ sub emit_bind {
 
     my $perl = "";
 
-    my $bind_var = $fixer->capture($self);
-    my $unit     = $fixer->generate_var;
+    my $bind_var  = $fixer->capture($self);
+    my $unit      = $fixer->generate_var;
+    my $sub_fixer = Catmandu::Fix->new(fixes => $self->fixes);
+    my $sub_fixer_var = $fixer->capture($sub_fixer);
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
@@ -59,7 +61,7 @@ sub emit_bind {
         $perl .= "my ${var} = shift;";
         $perl .= $code;
         $perl .= "${var}";
-        $perl .= "},'$name');"
+        $perl .= "},'$name',${sub_fixer_var});"
     }
     
     if ($self->can('result')) {
