@@ -1,0 +1,2 @@
+# For use in t/Catmandu-Fix.t
+add_field(utf8_name,'काठमाडौं')
