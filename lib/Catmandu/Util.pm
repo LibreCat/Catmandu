@@ -116,6 +116,7 @@ sub io {
     $io;
 }
 
+# Deprecated use tools like File::Slurp::Tiny
 sub read_file {
     my ($path) = @_;
     local $/;
@@ -125,6 +126,7 @@ sub read_file {
     $str;
 }
 
+# Deprecated use tools like File::Slurp::Tiny
 sub write_file {
     my ($path, $str) = @_;
     open my $fh, ">", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
@@ -583,6 +585,8 @@ Alias for C<binmode>.
 
 =item read_file($path);
 
+[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
+
 Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
@@ -590,6 +594,8 @@ Reads the file at C<$path> into a string.
 Throws a Catmandu::Error on failure. 
 
 =item write_file($path, $str);
+
+[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
 
 Writes the string C<$str> to a file at C<$path>.
 
