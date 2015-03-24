@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use strict;
+use utf8;
 use warnings;
 use Test::More;
 use Test::Exception;
