@@ -17,7 +17,9 @@ sub emit {
     my $perl = $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var  = shift;
         my $perl = "if (";
-        if ($key =~ /^\d+$/) {
+        if ($key eq '$first' $key eq '$last') {
+            $perl .= "is_array_ref(${var}) && \@{${var}}";
+        | elsif ($key =~ /^\d+$/) {
             $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
         } else {
             $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
