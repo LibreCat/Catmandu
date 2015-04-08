@@ -35,4 +35,13 @@ $exporter->add( { a => 'Hello', b => 'World' } );
 $csv = "Longname,X\nHello,\n";
 is $out, $csv, "custom column names as HASH";
 
+$out="";
+my $fixer    = Catmandu->fixer('if exists(foo) reject() end');
+my $importer = Catmandu->importer('JSON', file => 't/csv_test.json');
+
+$exporter = $pkg->new(file => \$out);
+$exporter->add_many($fixer->fix($importer));
+$csv = "fob\ntest\n";
+is $out, $csv, "custom column names as HASH with reject fix";
+
 done_testing;
