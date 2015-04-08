@@ -48,6 +48,7 @@ sub _build_csv {
 
 sub add {
     my ($self, $data) = @_;
+    return undef unless defined $data;
     $self->fields([ sort keys %$data ]) unless $self->fields;
     my $fields = $self->fields;
     my $row = [map {
