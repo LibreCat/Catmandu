@@ -12,7 +12,8 @@ Catmandu::Fix::Condition::SimpleCompareTest - Base class to ease the constructio
    use Moo;
    use Catmandu::Fix::Has;
 
-   has path => (fix_arg => 1);
+   has path  => (fix_arg => 1);
+   has path2 => (fix_arg => 1);
 
    with 'Catmandu::Fix::Condition::SimpleCompareTest';
 
