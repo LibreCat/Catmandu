@@ -18,7 +18,6 @@ Catmandu::Fix::Condition::SimpleAllTest - Base class to ease the construction of
 
    sub emit_test {
        my ($self, $var) = @_;
-       my $value = $self->value;
        "is_value(${var}) && ${var} % 2 == 0";
    }
 
