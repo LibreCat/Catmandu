@@ -21,10 +21,11 @@ Catmandu::Fix::Condition::is_equal - only execute fixes if both paths contain th
 =head1 SYNOPSIS
 
    # uppercase the value of field 'foo' if 'foo' equals the value of field 'bar'
+   # foo => [1,2,3] , bar => [1,2,3]
    if is_equal(foo, bar)
-     upcase(foo) # foo => 'BAR'
+     add_field(same, yes) # foo => [1,2,3] , bar => [1,2,3] , same => 'yes'
    end
-
+   
 
 =head1 SEE ALSO
 
