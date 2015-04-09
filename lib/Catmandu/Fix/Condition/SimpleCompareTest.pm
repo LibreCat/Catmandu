@@ -18,7 +18,7 @@ Catmandu::Fix::Condition::SimpleCompareTest - Base class to ease the constructio
 
    sub emit_test {
        my ($self, $var, $var2, $fixer) = @_;
-       "is_value(${var}) && is_value(${var2}) && ref ${var} eq ref ${var2};";
+       "is_value(${var}) && is_value(${var2}) && ref ${var} eq ref ${var2}";
    }
 
    1;
