@@ -1348,6 +1348,21 @@ Hello, World?
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
 <span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
     <span class="fu">foo()</span>
+<span class="kw">end</span>
+
+<span class="co"># Filter out an array (needs Catmandu 0.9302 or better)</span>
+<span class="co">#    data:</span>
+<span class="co">#       - name: patrick</span>
+<span class="co">#       - name: nicolas</span>
+<span class="co"># to:</span>
+<span class="co">#    data:</span>
+<span class="co">#       - name: patrick</span>
+<span class="kw">do</span> <span class="kw">with</span>(path =<span class="kw">&gt;</span> data)
+    <span class="kw">reject</span> all_match(name,nicolas)
+    <span class="co"># Or:</span>
+    <span class="co"># if all_match(name,nicolas)</span>
+    <span class="co">#  reject()</span>
+    <span class="co"># end</span>
 <span class="kw">end</span></code></pre>
 </section>
 <section id="example-fix-script" class="level2">
@@ -1965,15 +1980,14 @@ true;</code></pre>
 <p><strong>Catmandu::Importer::METS</strong></p>
 <p><strong>Catmandu::Importer::ResourceSync</strong>: See also http://www.niso.org/workrooms/resourcesync/</p>
 <p>And all the <a href="http://en.wikipedia.org/wiki/Metadata_standards">rest</a></p>
-<p><strong>Catmandu::Importer::SPARQL</strong></p>
 <p><strong>Catmandu::Importer::MQ</strong> (import from a message queue..e.g using Net::Stomp)</p>
 <p>…</p>
 </section>
 <section id="exporters-1" class="level3">
 <h3><span class="header-section-number">9.2.2</span> Exporters</h3>
 <p><strong><a href="https://github.com/nichtich/Catmandu-Exporter-Table">Catmandu::Exporter::Table</a></strong> (draft): export ASCII table such as implemented by <a href="http://csvkit.readthedocs.org/en/0.7.3/scripts/csvlook.html">csvlook</a> (see <a href="http://csvkit.readthedocs.org/en/latest/tutorial/examining_the_data.html#reading-through-data-with-csvlook-and-less">this example</a>. The exporter may be configured for more table formats, such as <a href="http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html#tables">described here</a>.</p>
-<p><strong>Catmandu::Exporter::SPARUL or Catmandu::Exporter::SPARQL</strong></p>
-<p><strong>Catmandu::Exporter::RDFPatch</strong></p>
+<p>**Catmandu::Exporter::SPARUL (see https://github.com/LibreCat/Catmandu-RDF/issues/16)</p>
+<p><strong>Catmandu::Exporter::LDPatch</strong> (see https://github.com/LibreCat/Catmandu-RDF/issues/17)</p>
 </section>
 <section id="stores-1" class="level3">
 <h3><span class="header-section-number">9.2.3</span> Stores</h3>
@@ -1995,10 +2009,9 @@ end</code></pre>
 </section>
 <section id="validators-1" class="level3">
 <h3><span class="header-section-number">9.2.5</span> Validators</h3>
-<p><strong>Catmandu::Validator::JSONSchema</strong>: validate based on a <a href="http://json-schema.org/">JSON Schema</a>. See <a href="https://github.com/LibreCat/Catmandu-Validator-JSONSchema" class="uri">https://github.com/LibreCat/Catmandu-Validator-JSONSchema</a> for a draft.</p>
 <p><strong>Catmandu::Validator::Entails</strong>: validate by entailed record, as implemented by <a href="https://metacpan.org/pod/Test::JSON::Entails">Test::JSON::Entails</a></p>
 <p><strong>Catmandu::Validator::Moose</strong>: validate with a given Moose class <a href="http://blogs.perl.org/users/samuel_kaufman/2014/05/validating-nested-json-hashes-with-moose.html">as described here</a></p>
-<p><strong>Catmandu::Validator::cmd</strong>: validate with an external command. See https://github.com/LibreCat/Catmandu-Fix-cmd/issues/2</p>
+<p><strong>Catmandu::Validator::cmd</strong>: validate with an external command (see https://github.com/LibreCat/Catmandu-Fix-cmd/issues/2)</p>
 </section>
 <section id="combined-modules" class="level3">
 <h3><span class="header-section-number">9.2.6</span> Combined modules</h3>
@@ -2506,6 +2519,21 @@ git push origin dev</code></pre></li>
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
 <span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
     <span class="fu">foo()</span>
+<span class="kw">end</span>
+
+<span class="co"># Filter out an array (needs Catmandu 0.9302 or better)</span>
+<span class="co">#    data:</span>
+<span class="co">#       - name: patrick</span>
+<span class="co">#       - name: nicolas</span>
+<span class="co"># to:</span>
+<span class="co">#    data:</span>
+<span class="co">#       - name: patrick</span>
+<span class="kw">do</span> <span class="kw">with</span>(path =<span class="kw">&gt;</span> data)
+    <span class="kw">reject</span> all_match(name,nicolas)
+    <span class="co"># Or:</span>
+    <span class="co"># if all_match(name,nicolas)</span>
+    <span class="co">#  reject()</span>
+    <span class="co"># end</span>
 <span class="kw">end</span></code></pre>
 </section>
 <section id="cookbook" class="level2">
@@ -2739,16 +2767,22 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <section id="general-frameworks" class="level2">
 <h2><span class="header-section-number">12.2</span> general frameworks</h2>
 <ul>
+<li><a href="http://akara.info/">Akara</a> - Akara is a platform for developing data services available on the Web, using REST architecture. Akara is open source software written in Python and C</li>
+<li><a href="https://github.com/benbernard/RecordStream">App::RecordStream</a> - App::RecordStream - recs - A system for command-line analysis of data</li>
 <li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
 <li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a></li>
+<li><a href="https://github.com/dpla/heidrun">Heiðrún</a> - Heiðrún is the DPLA metadata ingestion and QA system, and is an implementation of the Kri-kri Rails engine.</li>
+<li><a href="https://github.com/dpla/KriKri">Krikri</a> - DPLA Ruby on Rails engine for metadata aggregation, enhancement and quality control.</li>
 <li>Metadata Interoperability Framework (MIF) - http://elag2014.org/programme/elag-workshops-list-page/11-5/ <a href="https://elag2014.files.wordpress.com/2014/06/11-5-alloing-s-mif.pptx">PPT</a></li>
 <li><a href="http://mint.image.ece.ntua.gr/redmine/projects/mint/wiki">MINT</a> - Metadata Interoperability Services</li>
+<li><a href="https://github.com/seecr?query=meresco">Meresco</a> - Under the Meresco name Dutch public institutions share quality software components related to metadata management and search.</li>
 <li><a href="https://github.com/culturegraph/metafacture-core/wiki">metafacture</a> - used in <a href="http://culturegraph.github.io">culturegraph</a></li>
 <li><a href="https://code.google.com/p/xcmetadataservicestoolkit/">Metadata Services Toolkit</a> - part of the eXtensible Catalog (XC)</li>
-<li><a href="http://repox.ist.utl.pt/">REPOX</a> - Data Aggregation and Interoperability Manager</li>
 <li><a href="http://openrefine.org/">OpenRefine</a> - (formerly Google Refine) a toolkit to work with tabular data.</li>
-<li><a href="https://github.com/dpla/KriKri">Krikri</a> - DPLA Ruby on Rails engine for metadata aggregation, enhancement and quality control.</li>
 <li><a href="http://pig.apache.org/">Pig</a> - Apache Pig is a platform for analyzing large data sets that consists of a high-level language for expressing data analysis programs, coupled with infrastructure for evaluating these programs.</li>
+<li><a href="http://repox.ist.utl.pt/">REPOX</a> - Data Aggregation and Interoperability Manager</li>
+<li><a href="https://www.assembla.com/wiki/show/silk/Silk_Single_Machine">Silk</a> - The Silk framework provides a declarative language for specifying which types of RDF links should be discovered between data sources as well as which conditions data items must fulfil in order to be interlinked.</li>
+<li><a href="http://digitalnz.github.io/supplejack/about.html">Supplejack</a> - Supplejack was designed to provide assurance to the quality of data management activities when working at scale.</li>
 </ul>
 </section>
 <section id="section" class="level2">
