@@ -62,7 +62,7 @@ sub emit {
         $fixer->emit_fixes($fail_fixes);
     });
 
-    my $perl = "no warnings 'experimental::smartmatch';";
+    my $perl = "no if ($] >= 5.018), 'warnings' => 'experimental';";
 
     my $has_match_var = $fixer->generate_var;
     $perl .= $fixer->emit_declare_vars($has_match_var, '0');

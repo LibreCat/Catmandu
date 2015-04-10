@@ -16,7 +16,7 @@ sub emit_test {
 
 =head1 NAME
 
-Catmandu::Fix::Condition::is_equal - only execute fixes if both paths contain the same sdata
+Catmandu::Fix::Condition::is_equal - only execute fixes if both paths contain the same data
 
 =head1 SYNOPSIS
 
