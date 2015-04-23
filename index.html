@@ -100,9 +100,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#debian"><span class="toc-section-number">1.2.1</span> Debian</a></li>
 <li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</a></li>
 <li><a href="#centos-6.4"><span class="toc-section-number">1.2.3</span> CentOS 6.4</a></li>
-<li><a href="#opensuse"><span class="toc-section-number">1.2.4</span> openSUSE</a></li>
-<li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
-<li><a href="#openbsd-53"><span class="toc-section-number">1.2.6</span> OpenBSD 53</a></li>
+<li><a href="#centos-7"><span class="toc-section-number">1.2.4</span> CentOS 7</a></li>
+<li><a href="#opensuse"><span class="toc-section-number">1.2.5</span> openSUSE</a></li>
+<li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.6</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
+<li><a href="#openbsd-53"><span class="toc-section-number">1.2.7</span> OpenBSD 53</a></li>
 </ul></li>
 <li><a href="#concepts"><span class="toc-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></a><ul>
 <li><a href="#extended-features"><span class="toc-section-number">1.3.1</span> Extended features</a></li>
@@ -357,6 +358,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">apt-get</span> install libxslt1-dev
 <span class="kw">apt-get</span> install libssl-dev
 <span class="kw">apt-get</span> install perl-doc
+<span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> Test::More
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
 <span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
@@ -375,20 +377,26 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
 <span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
 </section>
+<section id="centos-7" class="level3">
+<h3><span class="header-section-number">1.2.4</span> CentOS 7</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> install perl-devel perl-YAML perl-CPAN perl-App-cpanminus -y
+<span class="kw">yum</span> install openssl-devel tcp_wrappers-devel expat expat-devel libxml2 libxml2-devel libxslt-devel -y
+<span class="kw">cpanm</span> Test::More Task::Catmandu</code></pre>
+</section>
 <section id="opensuse" class="level3">
-<h3><span class="header-section-number">1.2.4</span> openSUSE</h3>
+<h3><span class="header-section-number">1.2.5</span> openSUSE</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
 <span class="kw">sudo</span> zypper install libxml2-devel libxslt-devel
 <span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
 <span class="kw">cpanm</span> Task::Catmandu</code></pre>
 </section>
 <section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
-<h3><span class="header-section-number">1.2.5</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
+<h3><span class="header-section-number">1.2.6</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
 <p>Since Raspbian is based on Debian stable, you could follow the <a href="#debian">instructions there</a>. Unfortunately, you will run into timeouts, so it is advisable to install some prerequisites via apt-get first:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install libboolean-perl libdevel-repl-perl libnet-twitter-perl libxml-easy-perl libxslt1-dev libgdbm-dev</code></pre>
 </section>
 <section id="openbsd-53" class="level3">
-<h3><span class="header-section-number">1.2.6</span> OpenBSD 53</h3>
+<h3><span class="header-section-number">1.2.7</span> OpenBSD 53</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpan</span> App::cpanminus
 <span class="kw">cpanm</span> Catmandu</code></pre>
 </section>
@@ -2762,6 +2770,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li>MARCEdit - http://marcedit.reeset.net/</li>
 <li><a href="http://stedolan.github.io/jq/">jq</a></li>
 <li><a href="http://cocoon.apache.org/2.2/1290_1_1.html">Cocoon</a> - Apache Cocoon XML pipeline</li>
+<li><a href="https://github.com/libris/librisxl/">Librisxl</a> - Tools for conversion of libris.kb.se data</li>
 </ul>
 </section>
 <section id="general-frameworks" class="level2">
