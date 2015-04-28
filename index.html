@@ -379,7 +379,8 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 <section id="centos-7" class="level3">
 <h3><span class="header-section-number">1.2.4</span> CentOS 7</h3>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> install perl-devel perl-YAML perl-CPAN perl-App-cpanminus -y
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> group install <span class="st">&quot;Development Tools&quot;</span>
+<span class="kw">yum</span> install perl-devel perl-YAML perl-CPAN perl-App-cpanminus -y
 <span class="kw">yum</span> install openssl-devel tcp_wrappers-devel expat expat-devel libxml2 libxml2-devel libxslt-devel -y
 <span class="kw">cpanm</span> Test::More Task::Catmandu</code></pre>
 </section>
@@ -1180,6 +1181,10 @@ Hello, World?
 <span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
 <span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
 <span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+<span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>)                           <span class="co"># Create an empty array foo =&gt; []</span>
+<span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>)               <span class="co"># Create an array with three values foo =&gt; [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
+<span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>)                            <span class="co"># Create an empty hash foo =&gt; {}</span>
+<span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>,a: b,c: d)                  <span class="co"># Create an hash with two values foo =&gt; { a =&gt; &#39;b&#39; , c =&gt; &#39;d&#39; }</span>
 
 <span class="kw">upcase</span>(<span class="st">&quot;title&quot;</span>)                            <span class="co"># marc -&gt; MARC</span>
 <span class="kw">downcase</span>(<span class="st">&quot;title&quot;</span>)                          <span class="co"># MARC -&gt; marc</span>
@@ -1206,6 +1211,7 @@ Hello, World?
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-uniq =<span class="kw">&gt;</span> 1)              <span class="co"># sort the values plus keep unique values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
+<span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
 <span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
@@ -2351,6 +2357,10 @@ git push origin dev</code></pre></li>
 <span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
 <span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
 <span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+<span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>)                           <span class="co"># Create an empty array foo =&gt; []</span>
+<span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>)               <span class="co"># Create an array with three values foo =&gt; [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
+<span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>)                            <span class="co"># Create an empty hash foo =&gt; {}</span>
+<span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>,a: b,c: d)                  <span class="co"># Create an hash with two values foo =&gt; { a =&gt; &#39;b&#39; , c =&gt; &#39;d&#39; }</span>
 
 <span class="kw">upcase</span>(<span class="st">&quot;title&quot;</span>)                            <span class="co"># marc -&gt; MARC</span>
 <span class="kw">downcase</span>(<span class="st">&quot;title&quot;</span>)                          <span class="co"># MARC -&gt; marc</span>
@@ -2377,6 +2387,7 @@ git push origin dev</code></pre></li>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-uniq =<span class="kw">&gt;</span> 1)              <span class="co"># sort the values plus keep unique values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
+<span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
 <span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
