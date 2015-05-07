@@ -36,4 +36,9 @@ is_deeply
     {test => '0123'},
     "add a number";
 
+is_deeply
+    $pkg->new('test')->fix({}),
+    {test => undef},
+    "set key to undef";
+
 done_testing 6;
