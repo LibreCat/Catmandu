@@ -7,12 +7,13 @@ use Catmandu::Fix::Has;
 with 'Catmandu::Fix::Base';
 
 has path  => (fix_arg => 1);
-has value => (fix_arg => 1);
+has value => (fix_arg => 1,default => sub { undef; });
 
 sub emit {
     my ($self, $fixer) = @_;
     my $path = $fixer->split_path($self->path);
-    my $value = $fixer->emit_value($self->value);
+    #B:perlstring($var) translated from undef to 0
+    my $value = defined($self->value) ? $fixer->emit_value($self->value) : 'undef';
 
     $fixer->emit_create_path($fixer->var, $path, sub {
         my $var = shift;
