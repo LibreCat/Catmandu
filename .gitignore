@@ -14,3 +14,4 @@ MYMETA.*
 Catmandu-*
 !*.t
 .perl-version
+local
