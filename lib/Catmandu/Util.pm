@@ -377,6 +377,16 @@ sub check_different {
 *is_number = \&Data::Util::is_number;
 *is_integer = \&Data::Util::is_integer;
 
+sub is_bool {
+    Scalar::Util::blessed($_[0]) && (
+        $_[0]->isa('boolean') ||
+        $_[0]->isa('Types::Serialiser::Boolean') ||
+        $_[0]->isa('JSON::XS::Boolean') ||
+        $_[0]->isa('Cpanel::JSON::XS::Boolean') ||
+        $_[0]->isa('JSON::PP::Boolean')
+    ); 
+}
+
 sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;
 }
@@ -429,7 +439,7 @@ sub check_maybe_instance {
 
 for my $sym (qw(able instance invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
-        value string number integer natural positive)) {
+        bool value string number integer natural positive)) {
     my $pkg = __PACKAGE__;
     my $err_name = $sym;
     $err_name =~ s/_/ /;
