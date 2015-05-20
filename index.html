@@ -975,12 +975,6 @@ year
 <span class="co"># Change a value</span>
 <span class="kw">set_field</span>(<span class="st">&#39;name&#39;</span>,<span class="st">&#39;Doe&#39;</span>)  <span class="co"># {name =&gt; &#39;Doe&#39;}</span>
 
-<span class="co"># Append to a value</span>
-<span class="kw">append</span>(<span class="st">&#39;name&#39;</span>, <span class="st">&#39;, John&#39;</span>)  <span class="co"># {name =&gt; &#39;Doe, John&#39;}</span>
-
-<span class="co"># Prepend to a value</span>
-<span class="kw">prepend</span>(<span class="st">&#39;name&#39;</span>, <span class="st">&#39;, Mr. &#39;</span>)  <span class="co"># {name =&gt; &#39;Mr. Doe, John&#39;}</span>
-
 <span class="co"># Extract a substring from the value</span>
 <span class="kw">substring</span>(<span class="st">&#39;name&#39;</span>,0,3)  <span class="co"># {name =&gt; &#39;Mr.&#39;}   </span>
 
@@ -1011,7 +1005,13 @@ year
 </section>
 <section id="strings" class="level2">
 <h2><span class="header-section-number">7.4</span> Strings</h2>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># {format =&gt; &#39;marc&#39;}</span>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Append to a value</span>
+<span class="kw">append</span>(<span class="st">&#39;name&#39;</span>, <span class="st">&#39;, John&#39;</span>)  <span class="co"># {name =&gt; &#39;Doe, John&#39;}</span>
+
+<span class="co"># Prepend to a value</span>
+<span class="kw">prepend</span>(<span class="st">&#39;name&#39;</span>, <span class="st">&#39;, Mr. &#39;</span>)  <span class="co"># {name =&gt; &#39;Mr. Doe, John&#39;}</span>
+
+<span class="co"># {format =&gt; &#39;marc&#39;}</span>
 <span class="co"># Capitalize a value</span>
 <span class="kw">capitalize</span>(<span class="st">&#39;format&#39;</span>)  <span class="co"># {format =&gt; &#39;Marc&#39;}</span>
 
@@ -1362,6 +1362,20 @@ Hello, World?
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
 <span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
     <span class="fu">foo()</span>
+<span class="kw">end</span>
+
+<span class="co"># Find all ISBN in a stream</span>
+<span class="kw">do</span> <span class="kw">hashmap</span>(exporter =<span class="kw">&gt;</span> JSON, join =<span class="kw">&gt;</span> <span class="st">&#39;,&#39;</span>)
+  <span class="co"># Need an identity binder to group all operations that calculate key_value pairs</span>
+  <span class="kw">do</span> <span class="fu">identity()</span>
+   <span class="kw">copy_field</span>(isbn,key)
+   <span class="kw">copy_field</span>(_id,value)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="co"># Count the number of ISBN occurrences in a stream</span>
+<span class="kw">do</span> <span class="kw">hashmap</span>(count: 1)
+   <span class="kw">copy_field</span>(isbn,key)
 <span class="kw">end</span>
 
 <span class="co"># Filter out an array (needs Catmandu 0.9302 or better)</span>
@@ -2540,6 +2554,20 @@ git push origin dev</code></pre></li>
     <span class="fu">foo()</span>
 <span class="kw">end</span>
 
+<span class="co"># Find all ISBN in a stream</span>
+<span class="kw">do</span> <span class="kw">hashmap</span>(exporter =<span class="kw">&gt;</span> JSON, join =<span class="kw">&gt;</span> <span class="st">&#39;,&#39;</span>)
+  <span class="co"># Need an identity binder to group all operations that calculate key_value pairs</span>
+  <span class="kw">do</span> <span class="fu">identity()</span>
+   <span class="kw">copy_field</span>(isbn,key)
+   <span class="kw">copy_field</span>(_id,value)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="co"># Count the number of ISBN occurrences in a stream</span>
+<span class="kw">do</span> <span class="kw">hashmap</span>(count: 1)
+   <span class="kw">copy_field</span>(isbn,key)
+<span class="kw">end</span>
+
 <span class="co"># Filter out an array (needs Catmandu 0.9302 or better)</span>
 <span class="co">#    data:</span>
 <span class="co">#       - name: patrick</span>
@@ -2782,6 +2810,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li><a href="http://stedolan.github.io/jq/">jq</a></li>
 <li><a href="http://cocoon.apache.org/2.2/1290_1_1.html">Cocoon</a> - Apache Cocoon XML pipeline</li>
 <li><a href="https://github.com/libris/librisxl/">Librisxl</a> - Tools for conversion of libris.kb.se data</li>
+<li><a href="https://csvkit.readthedocs.org/en/0.9.1/">csvkit</a> - Csvkit is a suite of utilities for converting to and working with CSV, the king of tabular file formats.</li>
 </ul>
 </section>
 <section id="general-frameworks" class="level2">
