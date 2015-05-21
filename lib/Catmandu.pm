@@ -32,7 +32,7 @@ Catmandu - a data toolkit
     #   join_field(creator,'; ')
     #   join_field(subject,'-- ')
     my $fixer    = Catmandu->fixer('myfixes.txt');
-    my $exporter = Catmandu->exporter('YAML'); 
+    my $exporter = Catmandu->exporter('YAML');
 
     $exporter->add_many(
         $fixer->fix($store)
@@ -54,24 +54,26 @@ such as MongoDB and full text indexes such as Solr to create a rapid
 development environment for digital library services such as institutional
 repositories and search engines.
 
-In the L<http://librecat.org/> project it is our goal to provide an 
-open source set of programming components to build up digital libraries 
+In the L<http://librecat.org/> project it is our goal to provide an
+open source set of programming components to build up digital libraries
 services suited to your local needs.
 
 Read an in depth introduction into Catmandu programming at
 L<https://github.com/LibreCat/Catmandu/wiki/Introduction>.
 
-=head1 ONE STEP INSTALL
+=head1 INSTALLATION
 
-To install all Catmandu components in one step:
+To install Catmandu just run:
 
-    cpan Task::Catmandu
-    # or
-    cpanm --interactive Task::Catmandu
+  cpanm Catmandu
 
-Read our wiki for more installation hints:
+To install a whole bunch of Catmandu* modules run
 
- https://github.com/LibreCat/Catmandu/wiki/Install
+  cpanm --interactive Task::Catmandu
+
+Read our documentation for more installation hints and OS specific requirements:
+
+http://librecat.org/Catmandu/#installation
 
 =cut
 use Sub::Exporter::Util qw(curry_method);
@@ -113,7 +115,7 @@ sub _env {
 
 Return the current logger (the L<Log::Any::Adapter> for category
 L<Catmandu::Env>). See L<Log::Any#Logging> for how to send messages to the
-logger. Read our L<https://github.com/LibreCat/Catmandu/wiki/Cookbook> 
+logger. Read our L<https://github.com/LibreCat/Catmandu/wiki/Cookbook>
 "See some debug messages" for some hints on logging.
 
 =cut
@@ -228,7 +230,7 @@ then in your program:
     my $store = Catmandu->store('ElasticSearch', index_name => 'blog');
 
     # or because we have a 'default' set in the configuration file
-    
+
     my $store = Catmandu->store('default');
 
     # or because 'default' will be used when no name was provided
@@ -263,7 +265,7 @@ sub default_fixer { $_[0]->_env->default_fixer }
 
 =head2 fixer([FIX])
 
-Return an instance of L<Catmandu::Fix>. NAME can be the name of a fixer section 
+Return an instance of L<Catmandu::Fix>. NAME can be the name of a fixer section
 in a catmandu.yml file. Or, one or more L<Catmandu::Fix>-es can be provided inline.
 
 E.g. if the configuration file 'catmandu.yml' contains:
@@ -531,7 +533,7 @@ See L<Config::Onion> for more information on how this works.
 
 =item documentation
 
-L<https://github.com/LibreCat/Catmandu/wiki>
+L<http://librecat.org/Catmandu/>
 
 =item command line client
 
@@ -544,6 +546,10 @@ L<Catmandu::Exporter>,
 L<Catmandu::Store>,
 L<Catmandu::Fix>,
 L<Catmandu::Iterable>
+
+=item install all modules
+
+L<Task::Catmandu>
 
 =item extended features
 
