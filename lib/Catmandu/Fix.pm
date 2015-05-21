@@ -28,6 +28,7 @@ has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
 has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
 has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
 has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
+has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
 has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
 
@@ -66,6 +67,11 @@ sub _build_reject_var {
     $self->capture($self->_reject);
 }
 
+sub _is_reject {
+    my ($self, $data) = @_;
+    ref $data && $data == $self->_reject;
+}
+
 sub _build_fixes_var {
     my ($self) = @_;
     $self->capture($self->fixes);
@@ -83,27 +89,27 @@ sub fix {
 
     if (is_hash_ref($data)) {
         my $d = $fixer->($data);
-        return if $d == $self->_reject;
+        return if $self->_is_reject($d);
         return $d;
     }
 
     if (is_instance($data)) {
         return $data->map(sub { $fixer->($_[0]) })
-                    ->reject(sub { $_[0] == $self->_reject });
+                    ->reject(sub { $self->_is_reject($_[0]) });
     }
 
     if (is_code_ref($data)) {
         return sub {
             while (1) {
                 my $d = $fixer->($data->() // return);
-                next if $d == $self->_reject;
+                next if $self->_is_reject($d);
                 return $d;
             }
         };
     }
 
     if (is_array_ref($data)) {
-        return [ grep { $_ != $self->_reject } map { $fixer->($_) } @$data ];
+        return [ grep { !$self->_is_reject($_) } map { $fixer->($_) } @$data ];
     }
 
     Catmandu::BadArg->throw("must be hashref, arrayref, coderef or iterable object");
@@ -114,6 +120,14 @@ sub generate_var {
     my $n = $self->_num_vars;
     $self->_num_vars($n + 1);
     "\$__$n";
+}
+
+sub generate_label {
+    my ($self) = @_;
+    my $n = $self->_num_labels;
+    $self->_num_labels($n + 1);
+    my $addr = Scalar::Util::refaddr($self);
+    "__FIX__${addr}__${n}";
 }
 
 sub capture {
@@ -141,7 +155,7 @@ sub emit {
     $perl .= $self->emit_fixes($self->fixes);
 
     $perl .= "return ${var};";
-    $perl .= "__FIX_REJECT__: return ${reject_var};";
+    $perl .= $self->_reject_label . ": return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
@@ -197,7 +211,7 @@ sub emit_fixes {
 
 sub emit_reject {
     my ($self) = @_;
-    "goto __FIX_REJECT__;";
+    "goto " .  $self->_reject_label . ";";
 }
 
 sub emit_fix {
@@ -437,6 +451,8 @@ sub _emit_create_path {
 sub emit_get_key {
     my ($self, $var, $key, $cb) = @_;
 
+    return $cb->($var) unless defined $key;
+
     my $str_key = $self->emit_string($key);
     my $perl = "";
 
@@ -475,6 +491,9 @@ sub emit_get_key {
 
 sub emit_set_key {
     my ($self, $var, $key, $val) = @_;
+
+    return "${var} = $val;" unless defined $key;
+
     my $perl = "";
     my $str_key = $self->emit_string($key);
 
@@ -616,12 +635,12 @@ sub emit_retain_key {
 
 sub emit_clone {
     my ($self, $var) = @_;
-    "${var} = clone(${var});";
+    "$var = clone($var);";
 }
 
 sub split_path {
     my ($self, $path) = @_;
-    return [ split /[\/\.]/, $path ];
+    return [split /[\/\.]/, trim($path)];
 }
 
 =head1 NAME

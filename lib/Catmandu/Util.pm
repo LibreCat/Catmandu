@@ -116,6 +116,7 @@ sub io {
     $io;
 }
 
+# Deprecated use tools like File::Slurp::Tiny
 sub read_file {
     my ($path) = @_;
     local $/;
@@ -125,6 +126,7 @@ sub read_file {
     $str;
 }
 
+# Deprecated use tools like File::Slurp::Tiny
 sub write_file {
     my ($path, $str) = @_;
     open my $fh, ">", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
@@ -375,6 +377,16 @@ sub check_different {
 *is_number = \&Data::Util::is_number;
 *is_integer = \&Data::Util::is_integer;
 
+sub is_bool {
+    Scalar::Util::blessed($_[0]) && (
+        $_[0]->isa('boolean') ||
+        $_[0]->isa('Types::Serialiser::Boolean') ||
+        $_[0]->isa('JSON::XS::Boolean') ||
+        $_[0]->isa('Cpanel::JSON::XS::Boolean') ||
+        $_[0]->isa('JSON::PP::Boolean')
+    ); 
+}
+
 sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;
 }
@@ -427,7 +439,7 @@ sub check_maybe_instance {
 
 for my $sym (qw(able instance invocant ref
         scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
-        value string number integer natural positive)) {
+        bool value string number integer natural positive)) {
     my $pkg = __PACKAGE__;
     my $err_name = $sym;
     $err_name =~ s/_/ /;
@@ -583,6 +595,8 @@ Alias for C<binmode>.
 
 =item read_file($path);
 
+[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
+
 Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
@@ -590,6 +604,8 @@ Reads the file at C<$path> into a string.
 Throws a Catmandu::Error on failure. 
 
 =item write_file($path, $str);
+
+[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
 
 Writes the string C<$str> to a file at C<$path>.
 

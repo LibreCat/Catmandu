@@ -73,7 +73,8 @@ use Catmandu::Sane;
 use Marpa::R2;
 use Data::Dumper;
 use Catmandu;
-use Catmandu::Util qw(check_value is_instance is_able require_package read_file);
+use Catmandu::Util qw(check_value is_instance is_able require_package);
+use File::Slurp::Tiny;
 use Moo;
 
 with 'Catmandu::Logger';
@@ -178,7 +179,7 @@ sub parse {
     check_value($source);
 
     if ($source =~ /[^\s]/ && $source !~ /\(/) {
-        $source = read_file($source);
+        $source = File::Slurp::Tiny::read_file($source,binmode => ':encoding(UTF-8)');
     }
 
     my $val;

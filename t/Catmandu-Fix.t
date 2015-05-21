@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use strict;
+use utf8;
 use warnings;
 use Test::More;
 use Test::Exception;
@@ -62,4 +63,9 @@ throws_ok {
     $fixer->fix({});
 } 'Catmandu::FixError';
 
-done_testing 24;
+
+$fixer = Catmandu::Fix->new(fixes => ['t/myfixes.fix']);
+ok $fixer;
+is_deeply $fixer->fix({}), {utf8_name => 'काठमाडौं'} , 'fixing utf8';
+
+done_testing 26;

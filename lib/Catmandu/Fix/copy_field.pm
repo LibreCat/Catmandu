@@ -16,7 +16,10 @@ sub emit {
     my $new_path = $fixer->split_path($self->new_path);
 
     my $vals = $fixer->generate_var;
-    my $perl = $fixer->emit_declare_vars($vals, '[]');
+    my $current_val = $fixer->generate_var;
+    my $perl = "";
+    $perl .= $fixer->emit_declare_vars($vals, '[]');
+    $perl .= $fixer->emit_declare_vars($current_val);
 
     $perl .= $fixer->emit_walk_path($fixer->var, $old_path, sub {
         my $var = shift;
@@ -25,23 +28,14 @@ sub emit {
             "push(\@{${vals}}, ${var});";
         });
     });
-    if (@$new_path && ($new_path->[-1] eq '$prepend' || $new_path->[-1] eq '$append')) {
-        my $new_key = pop @$new_path;
-        $perl .= $fixer->emit_create_path($fixer->var, $new_path, sub {
+
+    $perl .= "while (\@{${vals}}) {" .
+        "${current_val} = clone(shift(\@{${vals}}));" .
+        $fixer->emit_create_path($fixer->var, $new_path, sub {
             my $var = shift;
-            my $sym = $new_key eq '$prepend' ? 'unshift' : 'push';
-            "if (\@{${vals}} && is_array_ref(${var} //= [])) {" .
-                "${sym}(\@{${var}}, map { clone(\$_) } \@{${vals}});" .
-            "}";
-        });
-    } else {
-        $perl .= $fixer->emit_create_path($fixer->var, $new_path, sub {
-            my $var = shift;
-            "if (\@{${vals}}) {".
-                "${var} = clone(shift(\@{${vals}}));".
-            "}";
-       });
-    }
+            "${var} = ${current_val};";
+        }).
+    "}";
 
     $perl;
 }

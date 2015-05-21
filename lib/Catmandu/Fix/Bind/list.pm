@@ -31,7 +31,7 @@ sub bind {
 	my ($self,$mvar,$func,$name) = @_;
 
 	if (Catmandu::Util::is_array_ref($mvar)) {
-		concat ( [ map { $func->($_) } @$mvar ] );
+		[ map { $func->($_) } @$mvar ];
 	}
 	else {
 		return $self->zero;
@@ -39,8 +39,10 @@ sub bind {
 }
 
 # Flatten an array: [ [A] , [A] , [A] ] -> [ A, A, A ]
-sub concat {
-	[ map { Catmandu::Util::is_array_ref($_) ? @$_ : $_ } @{$_[0]} ];
+sub plus {
+	my ($self,$prev,$next) = @_;
+
+	Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next] ;
 }
 
 =head1 NAME

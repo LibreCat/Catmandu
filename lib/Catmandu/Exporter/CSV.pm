@@ -48,6 +48,7 @@ sub _build_csv {
 
 sub add {
     my ($self, $data) = @_;
+    return undef unless defined $data;
     $self->fields([ sort keys %$data ]) unless $self->fields;
     my $fields = $self->fields;
     my $row = [map {
@@ -58,9 +59,12 @@ sub add {
         $val;
     } @$fields];
     my $fh = $self->fh;
-    if ($self->count == 0 && $self->header) {
+    # We need to wait for the first row that can be printed to provide us
+    # with an header...
+    if (!defined($self->{__seen_header__}) && $self->header) {
         $self->csv->print($fh, ref $self->header ? $self->header : $fields);
     }
+    $self->{__seen_header__} = 1;
     $self->csv->print($fh, $row);
 }
 
