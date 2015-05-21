@@ -104,7 +104,7 @@ these two fixes are equal:
 
     add_field(my.deep.field.style, funk)
 
-    do with(my.deep.field)
+    do with(path => my.deep.field)
         add_field(style,funk)
     end
 
