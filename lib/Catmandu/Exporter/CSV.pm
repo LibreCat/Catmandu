@@ -77,12 +77,12 @@ Catmandu::Exporter::CSV - a CSV exporter
     use Catmandu::Exporter::CSV;
 
     my $exporter = Catmandu::Exporter::CSV->new(
-				fix => 'myfix.txt',
-				quote_char => '"',
-				sep_char => ',',
+                fix => 'myfix.txt',
+                quote_char => '"',
+                sep_char => ',',
                 escape_char => '"' ,
                 always_quote => 1,
-				header => 1);
+                header => 1);
 
     $exporter->fields("f1,f2,f3");
     $exporter->fields([qw(f1 f2 f3)]);
@@ -127,7 +127,7 @@ string, or hash reference.
 =item header
 
 Include a header line with the column names, if set to C<1> (the default).
-Custom field names can be supplied as has reference. By default field names
+Custom field names can be supplied as hash reference. By default field names
 are used as as column names.
 
 =back
