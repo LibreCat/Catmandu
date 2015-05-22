@@ -23,7 +23,7 @@ Catmandu - a data toolkit
     #   join_field(creator,'; ')
     #   join_field(subject,'-- ')
     my $fixer    = Catmandu->fixer('myfixes.txt');
-    my $exporter = Catmandu->exporter('YAML'); 
+    my $exporter = Catmandu->exporter('YAML');
 
     $exporter->add_many(
         $fixer->fix($store)
@@ -45,24 +45,26 @@ such as MongoDB and full text indexes such as Solr to create a rapid
 development environment for digital library services such as institutional
 repositories and search engines.
 
-In the [http://librecat.org/](http://librecat.org/) project it is our goal to provide an 
-open source set of programming components to build up digital libraries 
+In the [http://librecat.org/](http://librecat.org/) project it is our goal to provide an
+open source set of programming components to build up digital libraries
 services suited to your local needs.
 
 Read an in depth introduction into Catmandu programming at
 [https://github.com/LibreCat/Catmandu/wiki/Introduction](https://github.com/LibreCat/Catmandu/wiki/Introduction).
 
-# ONE STEP INSTALL
+# INSTALLATION
 
-To install all Catmandu components in one step:
+To install Catmandu just run:
 
-    cpan Task::Catmandu
-    # or
+    cpanm Catmandu
+
+To install a whole bunch of Catmandu\* modules run
+
     cpanm --interactive Task::Catmandu
 
-Read our wiki for more installation hints:
+Read our documentation for more installation hints and OS specific requirements:
 
-    https://github.com/LibreCat/Catmandu/wiki/Install
+http://librecat.org/Catmandu/#installation
 
 # METHODS
 
@@ -70,7 +72,7 @@ Read our wiki for more installation hints:
 
 Return the current logger (the [Log::Any::Adapter](https://metacpan.org/pod/Log::Any::Adapter) for category
 [Catmandu::Env](https://metacpan.org/pod/Catmandu::Env)). See [Log::Any#Logging](https://metacpan.org/pod/Log::Any#Logging) for how to send messages to the
-logger. Read our [https://github.com/LibreCat/Catmandu/wiki/Cookbook](https://github.com/LibreCat/Catmandu/wiki/Cookbook) 
+logger. Read our [https://github.com/LibreCat/Catmandu/wiki/Cookbook](https://github.com/LibreCat/Catmandu/wiki/Cookbook)
 "See some debug messages" for some hints on logging.
 
 ## default\_load\_path('/default/path')
@@ -130,7 +132,7 @@ then in your program:
     my $store = Catmandu->store('ElasticSearch', index_name => 'blog');
 
     # or because we have a 'default' set in the configuration file
-    
+
     my $store = Catmandu->store('default');
 
     # or because 'default' will be used when no name was provided
@@ -154,7 +156,7 @@ Return the name of the default fixer.
 
 ## fixer(\[FIX\])
 
-Return an instance of [Catmandu::Fix](https://metacpan.org/pod/Catmandu::Fix). NAME can be the name of a fixer section 
+Return an instance of [Catmandu::Fix](https://metacpan.org/pod/Catmandu::Fix). NAME can be the name of a fixer section
 in a catmandu.yml file. Or, one or more [Catmandu::Fix](https://metacpan.org/pod/Catmandu::Fix)-es can be provided inline.
 
 E.g. if the configuration file 'catmandu.yml' contains:
@@ -350,7 +352,7 @@ See [Config::Onion](https://metacpan.org/pod/Config::Onion) for more information
 
 - documentation
 
-    [https://github.com/LibreCat/Catmandu/wiki](https://github.com/LibreCat/Catmandu/wiki)
+    [http://librecat.org/Catmandu/](http://librecat.org/Catmandu/)
 
 - command line client
 
@@ -363,6 +365,10 @@ See [Config::Onion](https://metacpan.org/pod/Config::Onion) for more information
     [Catmandu::Store](https://metacpan.org/pod/Catmandu::Store),
     [Catmandu::Fix](https://metacpan.org/pod/Catmandu::Fix),
     [Catmandu::Iterable](https://metacpan.org/pod/Catmandu::Iterable)
+
+- install all modules
+
+    [Task::Catmandu](https://metacpan.org/pod/Task::Catmandu)
 
 - extended features
 
