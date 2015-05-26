@@ -11,6 +11,16 @@ our $VERSION = '0.9301';
 
 Catmandu - a data toolkit
 
+=begin markdown
+
+# STATUS
+
+[![Build Status](https://travis-ci.org/LibreCat/Catmandu.svg?branch=master)](https://travis-ci.org/LibreCat/Catmandu)
+[![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.png?branch=master)](https://coveralls.io/r/LibreCat/Catmandu)
+[![CPANTS kwalitee](http://cpants.cpanauthors.org/dist/Catmandu.png)](http://cpants.cpanauthors.org/dist/Catmandu)
+
+=end markdown
+
 =head1 SYNOPSIS
 
     use Catmandu -all;
