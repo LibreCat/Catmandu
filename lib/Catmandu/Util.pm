@@ -26,7 +26,7 @@ our %EXPORT_TAGS = (
     check  => [qw(check_same check_different)],
     human  => [qw(human_number human_content_type human_byte_size)],
     xml    => [qw(xml_declaration xml_escape)],
-    misc   => [qw(require_package use_lib)],
+    misc   => [qw(require_package use_lib pod_section)],
 );
 
 our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
@@ -514,6 +514,35 @@ sub use_lib {
     Catmandu::Error->throw($@) if $@;
 
     1;
+}
+
+sub pod_section {
+    my $class = ref $_[0] ? ref(shift) : shift;
+    my $section = uc(shift);
+
+    (my $pm_file = $class) =~ s!::!/!g;
+    $pm_file .= '.pm';
+    $pm_file = $INC{$pm_file} or return '';
+
+    my $text = "";
+    open my $input, "<", $pm_file or return '';
+    open my $output, ">", \$text;
+
+    require Pod::Usage; # lazy load only if needed
+    Pod::Usage::pod2usage(
+       -input    => $input,
+       -output   => $output,
+       -sections => $section,
+       -exit     => "NOEXIT",
+       -verbose  => 99,
+       -indent   => 0,
+       @_
+    );
+    $section = ucfirst(lc($section));
+    $text =~ s/$section:\n//m;
+    chomp $text;
+
+    return $text;
 }
 
 sub require_package {
@@ -1066,6 +1095,11 @@ Throws a Catmandu::Error on failure.
 Add directories to C<@INC> at runtime.
 
 Throws a Catmandu::Error on failure.
+
+=item pod_section($package, $section [, @options] )
+
+Get documentation of a package for a selected section. Additional options are
+passed to L<Pod::Usage>.
 
 =back
 
