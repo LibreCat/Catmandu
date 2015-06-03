@@ -82,7 +82,7 @@ sub generator {
 
 Catmandu::Importer::Modules - list installed perl modules in a given namespace
 
-=head1 OPTIONS
+=head1 CONFIGURATION
 
 =over
 

@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - help command now shows importer/exporter options
+  - new utility function pod_section 
 
 0.9301  2015-02-24 11:17:36 CET
   - Cmd output test failed sometimes

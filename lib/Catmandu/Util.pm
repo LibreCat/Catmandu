@@ -520,12 +520,14 @@ sub pod_section {
     my $class = ref $_[0] ? ref(shift) : shift;
     my $section = uc(shift);
 
-    (my $pm_file = $class) =~ s!::!/!g;
-    $pm_file .= '.pm';
-    $pm_file = $INC{$pm_file} or return '';
+    unless (-r $class) {
+        $class =~ s!::!/!g;
+        $class .= '.pm';
+        $class = $INC{$class} or return '';
+    }
 
     my $text = "";
-    open my $input, "<", $pm_file or return '';
+    open my $input, "<", $class or return '';
     open my $output, ">", \$text;
 
     require Pod::Usage; # lazy load only if needed
@@ -1096,7 +1098,7 @@ Add directories to C<@INC> at runtime.
 
 Throws a Catmandu::Error on failure.
 
-=item pod_section($package, $section [, @options] )
+=item pod_section($package_or_file, $section [, @options] )
 
 Get documentation of a package for a selected section. Additional options are
 passed to L<Pod::Usage>.
