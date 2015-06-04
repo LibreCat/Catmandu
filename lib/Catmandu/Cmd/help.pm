@@ -84,7 +84,7 @@ sub help_about {
   my $options = pod_section($class,"configuration");
   if ($options) {
     $options =~ s/^([a-z0-9_-]+)\s*\n?/--$1, /mgi;
-    $options =~ s/^(--.*),(\s*([^-]))/ $1\n    $3/mgi;
+    $options =~ s/^(--[a-z0-9_-]+(,\s*--[a-z0-9_-]+)*),\s*([^-])/" $1\n    $3"/emgi;
     print "\nOptions:\n$options";
   }
 }

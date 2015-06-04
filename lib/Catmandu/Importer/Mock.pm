@@ -17,6 +17,9 @@ sub generator {
     };
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Importer::Mock - Mock importer used for testing purposes
@@ -32,28 +35,33 @@ Catmandu::Importer::Mock - Mock importer used for testing purposes
         # ...
     });
 
+=head1 CONFIGURATION
+
+=over
+
+=item file
+
+=item fh
+
+=item encoding
+
+=item fix
+
+Default options of L<Catmandu::Importer>
+
+=item size
+
+Number of items. If not set, an endless stream is imported.
+
+=back
+
 =head1 METHODS
-
-=head2 new(size => $n, fix => [...])
-
-Create a new Mock importer. Optionally provide a size parameter.
-
-The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
-then each fix or fix script will be applied to imported items.
-
-=head2 count
-
-=head2 each(&callback)
-
-=head2 ...
 
 Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
 inherited.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>
+L<Catmandu::Exporter::Null>
 
 =cut
-
-1;

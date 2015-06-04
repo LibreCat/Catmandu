@@ -104,13 +104,13 @@ each item is printed condensed on one line.
 
 =item encoding
 
-Default options of L<Catmandu::Exporter>.
+Default options of L<Catmandu::Exporter>
 
 =item pretty
 
 =item multiline
 
-Alias for C<pretty>.
+Pretty-print JSON
 
 =item indent
 
@@ -120,11 +120,11 @@ Alias for C<pretty>.
 
 =item canonical
 
-L<JSON> serialization options.
+L<JSON> serialization options
 
 =item array
 
-Seralize items as one JSON array instead of concatenated JSON objects.
+Seralize items as one JSON array instead of concatenated JSON objects
 
 =back
 

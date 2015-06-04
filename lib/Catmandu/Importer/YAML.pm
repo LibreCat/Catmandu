@@ -40,6 +40,9 @@ sub generator {
     };
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Importer::YAML - Package that imports YAML data
@@ -67,20 +70,25 @@ Catmandu::Importer::YAML - Package that imports YAML data
 
     where '---' is the record separator and '...' the EOF indicator.
 
+=head1 CONFIGURATION
+
+=over
+
+=item file
+
+=item fh
+
+=item encoding
+
+=item fix
+
+Default options of L<Catmandu::Importer>
+
+=item
+
+=back
+
 =head1 METHODS
-
-=head2 new(file => $filename, fh => $fh , fix => [...])
-
-Create a new YAML importer for $filename. Use STDIN when no filename is given.
-
-The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
-then any fix or fix script will be applied to imported items.
-
-=head2 count
-
-=head2 each(&callback)
-
-=head2 ...
 
 Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
 inherited. The Catmandu::Importer::YAML methods are not idempotent: YAML feeds
@@ -88,8 +96,6 @@ can only be read once.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>
+L<Catmandu::Exporter::YAML>
 
 =cut
-
-1;
