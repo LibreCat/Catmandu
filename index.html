@@ -104,6 +104,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#opensuse"><span class="toc-section-number">1.2.5</span> openSUSE</a></li>
 <li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.6</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
 <li><a href="#openbsd-53"><span class="toc-section-number">1.2.7</span> OpenBSD 53</a></li>
+<li><a href="#windows-mac-osx-linux"><span class="toc-section-number">1.2.8</span> Windows, Mac OSX, Linux</a></li>
 </ul></li>
 <li><a href="#concepts"><span class="toc-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts/_edit">✎</a></a><ul>
 <li><a href="#extended-features"><span class="toc-section-number">1.3.1</span> Extended features</a></li>
@@ -400,6 +401,11 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <h3><span class="header-section-number">1.2.7</span> OpenBSD 53</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpan</span> App::cpanminus
 <span class="kw">cpanm</span> Catmandu</code></pre>
+</section>
+<section id="windows-mac-osx-linux" class="level3">
+<h3><span class="header-section-number">1.2.8</span> Windows, Mac OSX, Linux</h3>
+<p>via <a href="http://www.activestate.com/activeperl/downloads">ActivePerl</a></p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ppm</span> install Catmandu</code></pre>
 </section>
 </section>
 <section id="concepts" class="level2">
@@ -2001,27 +2007,28 @@ true;</code></pre>
 <p>This page summarizes ideas and plans for additional Catmandu modules with <a href="#importers">Importers</a>, <a href="#exporters">Exporters</a>, <a href="#stores">Stores</a>, <a href="#fix-packages">Fix packages</a>, <a href="#validators">Validators</a>, and <a href="#binds">Binds</a>. Feel free to add more suggestions! Please include links to existing code repositories or descriptions, if available!</p>
 <section id="importers-1" class="level3">
 <h3><span class="header-section-number">9.2.1</span> Importers</h3>
-<p><strong>Catmandu::Importer::Europeana</strong>: See also http://www.theeuropeanlibrary.org/tel4/access</p>
-<p><strong>Catmandu::Importer::Sleep</strong>: See also http://dataprotocols.org/sleep/</p>
+<p><strong>Catmandu::Importer::Europeana</strong> (see <a href="http://www.theeuropeanlibrary.org/tel4/access" class="uri">http://www.theeuropeanlibrary.org/tel4/access</a>)</p>
+<p><strong>Catmandu::Importer::Sleep</strong> (see also http://dataprotocols.org/sleep/)</p>
 <p><strong>Catmandu::Importer::ONIX</strong></p>
 <p><strong>Catmandu::Importer::EAD</strong></p>
 <p><strong>Catmandu::Importer::METS</strong></p>
-<p><strong>Catmandu::Importer::ResourceSync</strong>: See also http://www.niso.org/workrooms/resourcesync/</p>
-<p>And all the <a href="http://en.wikipedia.org/wiki/Metadata_standards">rest</a></p>
+<p><strong>Catmandu::Importer::ResourceSync</strong> (see <a href="http://www.niso.org/workrooms/resourcesync/" class="uri">http://www.niso.org/workrooms/resourcesync/</a>)</p>
+<p>…and many more <a href="http://en.wikipedia.org/wiki/Metadata_standards">metadata standards</a>.</p>
 <p><strong>Catmandu::Importer::MQ</strong> (import from a message queue..e.g using Net::Stomp)</p>
 <p>…</p>
 </section>
 <section id="exporters-1" class="level3">
 <h3><span class="header-section-number">9.2.2</span> Exporters</h3>
-<p><strong><a href="https://github.com/nichtich/Catmandu-Exporter-Table">Catmandu::Exporter::Table</a></strong> (draft): export ASCII table such as implemented by <a href="http://csvkit.readthedocs.org/en/0.7.3/scripts/csvlook.html">csvlook</a> (see <a href="http://csvkit.readthedocs.org/en/latest/tutorial/examining_the_data.html#reading-through-data-with-csvlook-and-less">this example</a>. The exporter may be configured for more table formats, such as <a href="http://johnmacfarlane.net/pandoc/demo/example9/pandocs-markdown.html#tables">described here</a>.</p>
-<p>**Catmandu::Exporter::SPARUL (see https://github.com/LibreCat/Catmandu-RDF/issues/16)</p>
-<p><strong>Catmandu::Exporter::LDPatch</strong> (see https://github.com/LibreCat/Catmandu-RDF/issues/17)</p>
+<p><strong>Catmandu::Exporter::SPARUL</strong> (see <a href="https://github.com/LibreCat/Catmandu-RDF/issues/16" class="uri">https://github.com/LibreCat/Catmandu-RDF/issues/16</a>)</p>
+<p><strong>Catmandu::Exporter::LDPatch</strong> (see <a href="https://github.com/LibreCat/Catmandu-RDF/issues/17" class="uri">https://github.com/LibreCat/Catmandu-RDF/issues/17</a>)</p>
+<p>…</p>
 </section>
 <section id="stores-1" class="level3">
 <h3><span class="header-section-number">9.2.3</span> Stores</h3>
 <p><strong>Catmandu::Store::Directory</strong>: use the file system as simple read/write/delete store.</p>
 <p><strong>Catmandu::Store::GoogleSpreadsheet</strong>: use A Google Drive/Docs Spreadsheet as store for reading and writing tabular data. See <a href="https://developers.google.com/google-apps/spreadsheets/">API documentation</a> and <a href="https://metacpan.org/pod/Net::GoogleDrive">Net::GoogleDrive</a> for a very basic interface.</p>
 <p><strong>Catmandu::Store::S3</strong>: use Amazon S3 as a backend store</p>
+<p>…</p>
 </section>
 <section id="fixes-and-binds" class="level3">
 <h3><span class="header-section-number">9.2.4</span> Fixes and binds</h3>
@@ -2034,12 +2041,14 @@ do validate(JSONSchema)
  fix()
 end</code></pre>
 <p><strong>Catmandu::Fix::Lua</strong>: use Lua as efficient and safe (sandboxed) fix language.</p>
+<p>…</p>
 </section>
 <section id="validators-1" class="level3">
 <h3><span class="header-section-number">9.2.5</span> Validators</h3>
 <p><strong>Catmandu::Validator::Entails</strong>: validate by entailed record, as implemented by <a href="https://metacpan.org/pod/Test::JSON::Entails">Test::JSON::Entails</a></p>
 <p><strong>Catmandu::Validator::Moose</strong>: validate with a given Moose class <a href="http://blogs.perl.org/users/samuel_kaufman/2014/05/validating-nested-json-hashes-with-moose.html">as described here</a></p>
 <p><strong>Catmandu::Validator::cmd</strong>: validate with an external command (see https://github.com/LibreCat/Catmandu-Fix-cmd/issues/2)</p>
+<p>…</p>
 </section>
 <section id="combined-modules" class="level3">
 <h3><span class="header-section-number">9.2.6</span> Combined modules</h3>
@@ -2821,6 +2830,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
 <li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a></li>
 <li><a href="https://github.com/dpla/heidrun">Heiðrún</a> - Heiðrún is the DPLA metadata ingestion and QA system, and is an implementation of the Kri-kri Rails engine.</li>
+<li><a href="https://code.google.com/p/jaql/">JAQL</a> - Query Language for JavaScript(r) Object Notation (JSON)</li>
 <li><a href="https://github.com/dpla/KriKri">Krikri</a> - DPLA Ruby on Rails engine for metadata aggregation, enhancement and quality control.</li>
 <li><a href="https://github.com/flaxsearch/luwak">Luwak</a> - A Lucene extention to search data streams. See also <a href="http://blog.confluent.io/2015/04/13/real-time-full-text-search-with-luwak-and-samza/">this</a> blog entry.</li>
 <li>Metadata Interoperability Framework (MIF) - http://elag2014.org/programme/elag-workshops-list-page/11-5/ <a href="https://elag2014.files.wordpress.com/2014/06/11-5-alloing-s-mif.pptx">PPT</a></li>
