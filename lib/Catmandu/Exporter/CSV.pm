@@ -80,12 +80,12 @@ Catmandu::Exporter::CSV - a CSV exporter
     use Catmandu::Exporter::CSV;
 
     my $exporter = Catmandu::Exporter::CSV->new(
-				fix => 'myfix.txt',
-				quote_char => '"',
-				sep_char => ',',
+                fix => 'myfix.txt',
+                quote_char => '"',
+                sep_char => ',',
                 escape_char => '"' ,
                 always_quote => 1,
-				header => 1);
+                header => 1);
 
     $exporter->fields("f1,f2,f3");
     $exporter->fields([qw(f1 f2 f3)]);
