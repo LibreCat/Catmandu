@@ -15,6 +15,9 @@ sub add {
     $self->fh->print("...\n");
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Exporter::YAML - a YAML exporter
@@ -38,10 +41,20 @@ Catmandu::Exporter::YAML - a YAML exporter
 
     printf "exported %d objects\n" , $exporter->count;
 
+=head1 CONFIGURATION
+
+=item file
+
+=item fh
+
+=item fix
+
+=item encoding
+
+Default options of L<Catmandu::Exporter>
+
 =head1 SEE ALSO
 
 L<Catmandu::Exporter>
 
 =cut
-
-1;

@@ -78,34 +78,54 @@ sub generator {
     };
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Importer::Modules - list installed perl modules in a given namespace
 
-=head1 OPTIONS
+=head1 CONFIGURATION
 
 =over
 
+=item file
+
+=item fh
+
+=item encoding
+
+=item fix
+
+Default options of L<Catmandu::Importer>
+
 =item namespace
 
-namespace for the packages to list
+Namespace for the packages to list
 
 =item inc
 
-list of library paths (defaults to C<@INC>)
+List of library paths (defaults to C<@INC>)
 
 =item max_depth
 
-maximum depth to recurse into the namespace e.g. if the namespace is
+Maximum depth to recurse into the namespace e.g. if the namespace is
 Catmandu::Fix then Catmandu::Fix::add_field has a depth of 1 and
 Catmandu::Fix::Condition::exists a depth of 2
 
 =item pattern
 
-filter modules by the given regex pattern
+Filter modules by the given regex pattern
 
 =back
 
-=cut
+=head1 METHODS
 
-1;
+Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
+inherited.
+
+=head1 SEE ALSO
+
+L<Catmandu::Importer::CPAN>, L<Catmandu::Cmd::info>
+
+=cut

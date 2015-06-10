@@ -68,6 +68,9 @@ sub add {
     $self->csv->print($fh, $row);
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Exporter::CSV - a CSV exporter
@@ -105,15 +108,25 @@ are in field values are escaped as C<\n>, C<\r>, and C<\t>.
 
 =head1 CONFIGURATION
 
-=over 4
+=over
+
+=item file
+
+=item fh
+
+=item fix
+
+=item encoding
+
+Default options of L<Catmandu::Exporter>
 
 =item sep_char
 
-Column separator (C<,> by default>)
+Column separator (C<,> by default)
 
 =item quote_char
 
-Quotation character (C<"> by default>)
+Quotation character (C<"> by default)
 
 =item escape_char
 
@@ -139,8 +152,7 @@ L<Catmandu::Counter>, and L<Catmandu::Logger> for a full list of methods.
 
 =head1 SEE ALSO
 
-L<Catmandu::Exporter::Table>
+L<Catmandu::Importer::CSV>, L<Catmandu::Exporter::Table>
+L<Catmandu::Exporter::XLS>
 
 =cut
-
-1;

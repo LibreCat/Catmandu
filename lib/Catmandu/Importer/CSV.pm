@@ -55,6 +55,9 @@ sub generator {
     };
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Importer::CSV - Package that imports CSV data
@@ -75,35 +78,70 @@ Convert CSV to other formats with the catmandu command line client:
     # convert CSV file to JSON
     catmandu convert CSV to JSON < journals.csv
     # set column names if CSV file has no header line
-    echo '12157,"The Journal of Headache and Pain",2193-1801' | catmandu convert CSV --header 0 --fields 'id,title,issn' to YAML
+    echo '12157,"The Journal of Headache and Pain",2193-1801' | \
+      catmandu convert CSV --header 0 --fields 'id,title,issn' to YAML
     # set field separator and quote character 
-    echo '12157;$The Journal of Headache and Pain$;2193-1801' | catmandu convert CSV --header 0 --fields 'id,title,issn' --sep_char ';' --quote_char '$' to XLSX --file journal.xlsx
+    echo '12157;$The Journal of Headache and Pain$;2193-1801' | \
+      catmandu convert CSV --header 0 --fields 'id,title,issn' --sep_char ';' --quote_char '$' to XLSX --file journal.xlsx
+
+=head1 DESCRIPTION
+
+This L<Catmandu::Importer> imports comma-separated values (CSV).  The object
+fields are read from the CSV header line or given via the C<fields> parameter.
+Strings in CSV are quoted by C<quote_char> and fields are separated by
+C<sep_char>.
+
+=head1 CONFIGURATION
+
+=over
+
+=item file
+
+=item fh
+
+=item encoding
+
+=item fix
+
+Default options of L<Catmandu::Importer>
+
+=item fields
+
+List of fields to be used as columns, given as array reference, comma-separated
+string, or hash reference.
+
+=item header
+
+Read fields from a header line with the column names, if set to C<1> (the
+default).
+
+=item sep_char
+
+Column separator (C<,> by default)
+
+=item quote_char
+
+Quotation character (C<"> by default)
+
+=item escape_char
+
+Character for escaping inside quoted field (C<"> by default)
+
+=item allow_loose_quotes
+
+=item allow_loose_escapes
+
+Allow common bad-practice in CSV escaping
+
+=back
 
 =head1 METHODS
 
-=head2 new(file => $filename, fh = $fh, fields => \@fields, quote_char => "\"", sep_char => ",", fix => [...])
-
-Create a new CSV importer for $filename. Use STDIN when no filename is given. The
-object fields are read from the CSV header line or given via the 'fields' parameter.
-Strings in CSV are quoted by 'quote_char' and fields are separated by 'sep_char'.
-
-The constructor inherits the fix parameter from L<Catmandu::Fixable>. When given,
-then ech fix or fix script will be applied to imported items.
-
-=head2 count
-
-=head2 each(&callback)
-
-=head2 ...
-
 Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
-inherited. The Catmandu::Importer::CSV methods are not idempotent: CSV streams
-can only be read once.
+inherited.  The methods are not idempotent: CSV streams can only be read once.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>
+L<Catmandu::Exporter::CSV>, L<Catmandu::Importer::XLS>
 
 =cut
-
-1;
