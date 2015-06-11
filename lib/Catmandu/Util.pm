@@ -19,7 +19,7 @@ our %EXPORT_TAGS = (
         normalize_path segmented_path)],
     data   => [qw(parse_data_path get_data set_data delete_data data_at)],
     array  => [qw(array_exists array_group_by array_pluck array_to_sentence
-        array_sum array_includes array_any array_rest array_uniq)],
+        array_sum array_includes array_any array_rest array_uniq array_split)],
     hash   => [qw(hash_merge)],
     string => [qw(as_utf8 trim capitalize)],
     is     => [qw(is_same is_different)],
@@ -324,6 +324,11 @@ sub array_uniq {
     my %seen = ();
     my @vals = grep { not $seen{$_}++ } @$arr;
     \@vals;
+}
+
+sub array_split {
+    my ($arr) = @_;
+    (ref $arr and ref $arr eq 'ARRAY') ? $arr : [split ',', $arr];
 }
 
 *hash_merge = \&Hash::Merge::Simple::merge;
@@ -781,6 +786,10 @@ Returns a copy of C<$array> without the head.
 
 Returns a copy of C<$array> with all duplicates removed. Comparison is done
 with C<is_same()>.
+
+=item array_split($array | $string)
+
+Returns C<$array> or a new array by splitting C<$string> at commas. 
 
 =back
 
