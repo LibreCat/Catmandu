@@ -6,6 +6,7 @@ use Module::Info;
 use File::Spec;
 use File::Find::Rule;
 use Moo;
+use Catmandu::Util 'array_split';
 
 with 'Catmandu::Importer';
 
@@ -13,16 +14,13 @@ has inc => (
     is      => 'ro',
     lazy    => 1,
     default => sub { [@INC] },
-    coerce  => sub {
-        my $inc = $_[0];
-        return $inc if ref $inc eq 'ARRAY';
-        return [split ',', $inc];
-    },
+    coerce  => \&array_split,
 );
 
 has namespace => (
     is      => 'ro',
-    default => sub { "" },
+    default => sub { [""] },
+    coerce  => \&array_split,
 );
 
 has max_depth => (
@@ -40,25 +38,28 @@ sub generator {
     sub {
         state $pattern = $self->pattern;
 
-        state $dirs = do {
-            my @ns  = grep length, split(/::/, $self->namespace);
-            my $inc = $self->inc;
-            [ map { File::Spec->catdir($_, @ns) } @$inc ];
-        };
+        # array of [ $directory => $namespace ]
+        state $search = [ map {
+            my $ns = $_;
+            my $parts = [ map { grep length, split(/::/, $_) } $ns ];
+            [ map { File::Spec->catdir($_, @$parts) => $ns } @{$self->inc} ];
+        } @{$self->namespace} ];
 
-        state $dir = shift(@$dirs) // return;
+        state $cur = shift(@$search) // return;
 
         state $rule = do {
             my $r = File::Find::Rule->new->file->name('*.pm');
             $r->maxdepth($self->max_depth) if $self->has_max_depth;
-            $r->start($dir);
+            $r->start($cur->[0]);
         };
 
         while (1) {
+            my ($dir,$ns) = @$cur;
+
             if (defined(my $file = $rule->match)) {
                 my $name = join('::', File::Spec->splitdir(File::Spec->abs2rel($file, $dir)));
                 $name =~ s/\.pm$//;
-                $name = join('::', $self->namespace, $name) if $self->namespace;
+                $name = join('::', $ns, $name) if $ns;
 
                 next if defined $pattern && $name !~ $pattern;
 
@@ -71,8 +72,8 @@ sub generator {
                 $data->{version} = $info->version if defined $info->version;
                 return $data;
             } else {
-                $dir = shift(@$dirs) // return;
-                $rule->start($dir);
+                $cur = shift(@$search) // return;
+                $rule->start($cur->[0]);
             }
         }
     };
@@ -101,7 +102,7 @@ Default options of L<Catmandu::Importer>
 
 =item namespace
 
-Namespace for the packages to list
+Namespace(s) for the packages to list, given as array or comma-separated list
 
 =item inc
 
