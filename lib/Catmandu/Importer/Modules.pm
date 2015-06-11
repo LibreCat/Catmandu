@@ -6,7 +6,7 @@ use Module::Info;
 use File::Spec;
 use File::Find::Rule;
 use Moo;
-use Catmandu::Util 'array_split';
+use Catmandu::Util qw(array_split pod_section);
 
 with 'Catmandu::Importer';
 
@@ -32,17 +32,23 @@ has pattern => (
     is => 'ro',
 );
 
+has primary => (
+    is => 'ro',
+);
+
 sub generator {
     my ($self) = @_;
 
     sub {
         state $pattern = $self->pattern;
+        state $files = { };
+        state $names = { };
 
         # array of [ $directory => $namespace ]
         state $search = [ map {
             my $ns = $_;
             my $parts = [ map { grep length, split(/::/, $_) } $ns ];
-            [ map { File::Spec->catdir($_, @$parts) => $ns } @{$self->inc} ];
+            map { [ File::Spec->catdir($_, @$parts) => $ns ] } @{$self->inc};
         } @{$self->namespace} ];
 
         state $cur = shift(@$search) // return;
@@ -57,19 +63,35 @@ sub generator {
             my ($dir,$ns) = @$cur;
 
             if (defined(my $file = $rule->match)) {
-                my $name = join('::', File::Spec->splitdir(File::Spec->abs2rel($file, $dir)));
+                my $path = File::Spec->abs2rel($file, $dir);
+                my $name = join('::', File::Spec->splitdir($path));
                 $name =~ s/\.pm$//;
                 $name = join('::', $ns, $name) if $ns;
 
                 next if defined $pattern && $name !~ $pattern;
 
                 my $info = Module::Info->new_from_file($file);
+                my $file = File::Spec->rel2abs($file);
+
+                next if $files->{$file};
+                $files->{$file} = 1;
+
+                if ($self->primary) {
+                    next if $names->{$name};
+                    $names->{$name} = 1;
+                }
 
                 my $data = {
-                    file => File::Spec->rel2abs($file),
+                    file => $file,
                     name => $name,
+                    path => $dir,
                 };
-                $data->{version} = $info->version if defined $info->version;
+                $data->{version} = "".$info->version if defined $info->version;
+
+                my $about = pod_section($file, 'NAME');
+                $about =~ s/^[^-]+(\s*-?\s*)?|\n.*$//sg;
+                $data->{about} = $about if $about ne ''; 
+
                 return $data;
             } else {
                 $cur = shift(@$search) // return;
@@ -85,6 +107,12 @@ __END__
 =head1 NAME
 
 Catmandu::Importer::Modules - list installed perl modules in a given namespace
+
+=head1 DESCRIPTION
+
+This L<Catmandu::Importer> list perl modules from all perl library paths with
+their C<name>, C<version>, absolute C<file>, library C<path>, and short
+description (C<about>).
 
 =head1 CONFIGURATION
 
@@ -102,7 +130,7 @@ Default options of L<Catmandu::Importer>
 
 =item namespace
 
-Namespace(s) for the packages to list, given as array or comma-separated list
+Namespace(s) for the modules to list, given as array or comma-separated list
 
 =item inc
 
@@ -117,6 +145,10 @@ Catmandu::Fix::Condition::exists a depth of 2
 =item pattern
 
 Filter modules by the given regex pattern
+
+=item primary
+
+Filter modules to the first module of each name
 
 =back
 

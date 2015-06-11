@@ -20,7 +20,8 @@ lives_ok sub{
 };
 
 ok @modules > 0, 'imported with options';
-is $modules[0]->{name},"Catmandu::Fix::add_field";
+is $modules[0]->{name}, 'Catmandu::Fix::add_field', 'name';
+like $modules[0]->{about}, qr/^add or change the value of a HASH key/, 'about';
 
 lives_ok sub{
     @modules = @{ Catmandu::Importer::Modules->new(

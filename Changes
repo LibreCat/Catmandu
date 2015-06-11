@@ -1,7 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - support multiple namespaces in Catmandu::Importer::Modules
+  - support multiple namespaces and module description in Catmandu::Importer::Modules
   - help command now shows importer/exporter options
   - new utility functions pod_section and array_split 
 

@@ -543,6 +543,7 @@ sub pod_section {
        -exit     => "NOEXIT",
        -verbose  => 99,
        -indent   => 0,
+       -utf8     => 1,
        @_
     );
     $section = ucfirst(lc($section));
