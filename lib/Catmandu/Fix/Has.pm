@@ -60,7 +60,7 @@ get collected into the C<options> array:
 
     use Catmandu::Fix::Has;
 
-    has options => (fix_opt => 'collect'); # required parameter
+    has options => (fix_opt => 'collect'); # optional parameter
 
 =back
 
