@@ -53,7 +53,7 @@ Catmandu::Timer - package for timing of events
 This package implements a stopwatch. Once created,
 you can register 'events' by calling the method 'tick'.
 It counts the number and the global elapsed time
-of alle events.
+of all events.
 
 You can also get benchmarking information.
 
