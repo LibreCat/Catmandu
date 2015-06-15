@@ -2,12 +2,13 @@ package Catmandu::Fix::Bind::benchmark;
 
 use Moo;
 use Data::Dumper;
-use Time::HiRes qw(gettimeofday tv_interval);
+use Catmandu::Timer;
 
 with 'Catmandu::Fix::Bind';
 
 has output => (is => 'ro' , required => 1);
 has stats  => (is => 'lazy');
+has _timer => (is => 'ro',lazy => 1, default => sub { Catmandu::Timer->new(); });
 
 sub _build_stats {
 	+{};
@@ -16,9 +17,10 @@ sub _build_stats {
 sub bind {
    my ($self,$data,$code,$name) = @_;
    $name = '<undef>' unless defined $name;
-   my $t0 = [gettimeofday];
+   my $timer = $self->_timer();
+   $timer->reset();
    $data = $code->($data);
-   my $elapsed = tv_interval ( $t0 );
+   my $elapsed = $timer->elapsed();
 
    $self->stats->{$name}->{count}   += 1;
    $self->stats->{$name}->{elapsed} += $elapsed;
@@ -40,9 +42,9 @@ sub DESTROY {
 
 	for my $key (sort { $self->stats->{$b}->{elapsed} cmp $self->stats->{$a}->{elapsed} } keys %{$self->stats} ) {
 		my $speed = $self->stats->{$key}->{elapsed} / $self->stats->{$key}->{count};
-		printf OUT "%f\t%-40.40s\t%d times\t%f secs/command\n" 
+		printf OUT "%f\t%-40.40s\t%d times\t%f secs/command\n"
 					, $self->stats->{$key}->{elapsed}
-					, $key 
+					, $key
 					, $self->stats->{$key}->{count}
 					, $speed;
 	}
@@ -74,7 +76,7 @@ of all wrapped functions over all input records.
 
 =head1 CONFIGURATION
 
-=head2 output 
+=head2 output
 
 Required. The path of a file to which the benchmark statistics will be written.
 
