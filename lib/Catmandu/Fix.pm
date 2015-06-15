@@ -797,7 +797,7 @@ Using L<Moo> these arguments can be catched with L<Catmandu::Fix::Has> package:
     use Moo;
 
     has msg   => (fix_arg => 1); # required parameter 1
-    has count => (fix_opt => 4); # optional parameter 'count' with default value 4
+    has count => (fix_opt => 1, default => sub { 4 }); # optional parameter 'count' with default value 4
 
     sub fix {
         my ($self,$data) = @_;
@@ -861,7 +861,7 @@ Use L<Catmandu::Fix::Has> to add more arguments to this fix:
     use Catmandu::Fix::Has;
 
     has path => (fix_arg => 1);
-    has msg  => (fix_opt => 'purrrrr');
+    has msg  => (fix_opt => 1 , default => sub { 'purrrrr' });
 
     with 'Catmandu::Fix::SimpleGetValue';
 
