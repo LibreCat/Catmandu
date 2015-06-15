@@ -837,7 +837,7 @@ to 'purrrrr':
 
     sub emit_value {
         my ($self, $var, $fixer) = @_;
-        "${var} = 'purrrrr'";
+        "${var} = 'purrrrr';";
     }
 
     1;
@@ -868,7 +868,7 @@ Use L<Catmandu::Fix::Has> to add more arguments to this fix:
     sub emit_value {
         my ($self, $var, $fixer) = @_;
         my $msg = $fixer->emit_string($self->msg);
-        "${var} = $msg";
+        "${var} = ${msg};";
     }
 
     1;
