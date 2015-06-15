@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use Test::More;
-use Test::Exception;
 use Catmandu::Fix::set_field;
 
 my $pkg;
