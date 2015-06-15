@@ -743,7 +743,23 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 
 =head2 log
 
-Return the current logger. Can be used when creating your own Fix commands, e.g.
+Return the current logger. See L<Catmandu> for activating the logger in your main code.
+
+=head1 EXTEND
+
+One can extend the Fix language by creating own custom-made fixes. Two methods are
+available to create an own Fix function:
+
+  * Quick and easy: create a class that implements a C<fix> method.
+  * Advanced: create a class that emits Perl code that will be evaled by the Fix module.
+
+Both methods will be explained shortly.
+
+=head2 Quick and easy
+
+A Fix function is a Perl class in the C<Catmandu::Fix> namespace that implements a C<fix> method.
+The C<fix> methods accepts a Perl hash as input and returns a (fixed) Perl hash as output. As
+an example, the code belows implements the C<meow> Fix which inserts a 'meow' field with value 'purrrrr'.
 
     package Catmandu::Fix::meow;
 
@@ -751,14 +767,119 @@ Return the current logger. Can be used when creating your own Fix commands, e.g.
 
     sub fix {
         my ($self,$data) = @_;
-
-        $self->log->debug("Setting meow");
         $data->{meow} = 'purrrrr';
-
         $data;
     }
 
-See L<Catmandu> for activating the logger in your main code.
+    1;
+
+Given this Perl class, the following fix statement can be used in your application:
+
+    # Will add 'meow' = 'purrrrr' to the data
+    meow()
+
+Use the quick and easy method when your fixes are not dependent on reading or writing data
+from/to a JSON path. Your Perl classes need to implement their own logic to read or write data
+into the given Perl hash.
+
+Fix arguments are passed as arguments to the C<new> function of the Perl class. As in 
+
+    # In the fix file...
+    meow('test123', -count => 4)
+
+    # ...will be translated into this pseudo code
+    my $fix = Catmandu::Fix::meow->new('test123', '-count', 4);
+
+Using L<Moo> these arguments can be catched with L<Catmandu::Fix::Has> package:
+
+    package Catmandu::Fix::meow;
+
+    use Moo;
+
+    has msg   => (fix_arg => 1); # required parameter 1
+    has count => (fix_opt => 4); # optional parameter 'count' with default value 4
+
+    sub fix {
+        my ($self,$data) = @_;
+        $data->{meow} = $self->msg x $self->count;
+        $data;
+    }
+
+    1;
+
+Using this code the fix statement can be used like:
+
+    # Will add 'meow' = 'purrpurrpurrpurr'
+    meow('purr', -count => 4)
+
+=head2 Advanced
+
+The advanced method is required when one needs to read or write values from/to deeply nested JSON paths. 
+One could parse JSON paths using the quick and easy Perl class above, but this would require a
+lot of inefficient for-while loops. The advanced method emits Perl code that gets compiled. 
+This compiled code is evaled against all Perl hashes in the unput.The best 
+way to learn this method is by inspecting some example Fix commands.
+
+To ease the implementation of Fixed that emit Perl code some helper methods are created. Many Fix functions
+require a transformation of one or more values on a JSON Path. The L<Catmandu::Fix::SimpleGetValue>
+provides an easy way to create such as script. In the example below we'll set the value at a JSON Path
+to 'purrrrr':
+
+    package Catmandu::Fix::purrrrr;
+
+    use Catmandu::Sane;
+    use Moo;
+    use Catmandu::Fix::Has;
+
+    has path => (fix_arg => 1);
+
+    with 'Catmandu::Fix::SimpleGetValue';
+
+    sub emit_value {
+        my ($self, $var, $fixer) = @_;
+        "${var} = 'purrrrr'";
+    }
+
+    1;
+
+Run this command as:
+
+    # Set the value(s) of an existing path to 'purrr'
+    purrrrr(my.deep.nested.path)
+    purrrrr(all.my.values.*)
+
+Notice how the C<emit_value> of the Catmandu::Fix::purrrrr package returns Perl code and doesn't
+operate directy on the Perl data. The parameter C<$var> contains only the name of a temporary variable
+that will hold the value of the JSON path after compiling the code into Perl.
+
+Use L<Catmandu::Fix::Has> to add more arguments to this fix:
+
+    package Catmandu::Fix::purrrrr;
+
+    use Catmandu::Sane;
+    use Moo;
+    use Catmandu::Fix::Has;
+
+    has path => (fix_arg => 1);
+    has msg  => (fix_opt => 'purrrrr');
+
+    with 'Catmandu::Fix::SimpleGetValue';
+
+    sub emit_value {
+        my ($self, $var, $fixer) = @_;
+        my $msg = $fixer->emit_string($self->msg);
+        "${var} = $msg";
+    }
+
+    1;
+
+Run this command as:
+
+    # Set the value(s) of an existing path to 'okido'
+    purrrrr(my.deep.nested.path, -msg => 'okido')
+    purrrrr(all.my.values.*, -msg => 'okido')
+
+Notice how the C<emit_value> needs to quote the C<msg> option using the emit_string function.
 
 =head1 INTERNAL METHODS
 
