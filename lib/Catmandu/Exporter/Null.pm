@@ -25,18 +25,6 @@ Catmandu::Exporter::Null - a expoter that doesn't export anything
 This exporter exports nothing and can be used as in situations where you e.g. export
 data from a fix.
 
-=head1 CONFIGURATION
-
-=item file
-
-=item fh
-
-=item fix
-
-=item encoding
-
-Default options of L<Catmandu::Exporter>
-
 =head1 SEE ALSO
 
 L<Catmandu::Importer::Mock>

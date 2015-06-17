@@ -120,13 +120,21 @@ description (C<about>).
 
 =item file
 
+Read input from a local file given by its path. Alternatively a scalar
+reference can be passed to read from a string.
+
 =item fh
+
+Read input from an L<IO::Handle>. If not specified, L<Catmandu::Util::io> is used to
+create the input stream from the C<file> argument or by using STDIN.
 
 =item encoding
 
+Binmode of the input stream C<fh>. Set to C<:utf8> by default.
+
 =item fix
 
-Default options of L<Catmandu::Importer>
+An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
 =item namespace
 

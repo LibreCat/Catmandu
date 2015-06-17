@@ -1,4 +1,4 @@
-package Catmandu::Importer::Mock;
+package Catmandu::Importer::Text;
 
 use namespace::clean;
 use Catmandu::Sane;
@@ -6,14 +6,14 @@ use Moo;
 
 with 'Catmandu::Importer';
 
-has size => (is => 'ro');
-
 sub generator {
     my ($self) = @_;
-    my $n = 0;
     sub {
-        return if defined $self->size && $n == $self->size;
-        return { n => $n++ };
+        state $fh = $self->fh;
+        state $cnt = 0;
+        state $line;
+
+        defined($line = <$fh>) ? { _id => ++$cnt , text => $line } : undef;
     };
 }
 
@@ -22,17 +22,18 @@ __END__
 
 =head1 NAME
 
-Catmandu::Importer::Mock - Mock importer used for testing purposes
+Catmandu::Importer::Text - Package that imports textual data
 
 =head1 SYNOPSIS
 
-    use Catmandu::Importer::Mock;
+    use Catmandu::Importer::Text;
 
-    my $importer = Catmandu::Importer::Mock->new();
+    my $importer = Catmandu::Importer::text->new(file => "/foo/bar.yaml");
 
     my $n = $importer->each(sub {
         my $hashref = $_[0];
-        # ...
+        
+        printf "line %d: text: %s" , $hashref->{_id} , $hashref->{text};  
     });
 
 =head1 CONFIGURATION
@@ -57,19 +58,16 @@ Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 
 An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
-=item size
-
-Number of items. If not set, an endless stream is imported.
-
 =back
 
 =head1 METHODS
 
 Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
-inherited.
+inherited. The Catmandu::Importer::YAML methods are not idempotent: YAML feeds
+can only be read once.
 
 =head1 SEE ALSO
 
-L<Catmandu::Exporter::Null>
+L<Catmandu::Exporter::Text>
 
 =cut
