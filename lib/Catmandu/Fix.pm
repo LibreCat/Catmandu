@@ -794,7 +794,9 @@ Using L<Moo> these arguments can be catched with L<Catmandu::Fix::Has> package:
 
     package Catmandu::Fix::meow;
 
+    use Catmandu::Sane;
     use Moo;
+    use Catmandu::Fix::Has;
 
     has msg   => (fix_arg => 1); # required parameter 1
     has count => (fix_opt => 1, default => sub { 4 }); # optional parameter 'count' with default value 4
