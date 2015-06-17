@@ -10,7 +10,7 @@ Catmandu::Fix::Has - helper class for creating Fix-es with (optional) parameters
 
     has greeting => (fix_arg => 1);   # required parameter 1
     has message  => (fix_arg => 1);   # required parameter 2
-    has eol      => (fix_opt => '!'); # optional parameter 'eol' with default '!'
+    has eol      => (fix_opt => 1 , default => sub {'!'} ); # optional parameter 'eol' with default '!'
 
     sub fix {
         my ($self,$data) = @_;
@@ -21,6 +21,48 @@ Catmandu::Fix::Has - helper class for creating Fix-es with (optional) parameters
     }
 
     1;
+
+=head1 PARAMETERS
+
+=over 4
+
+=item fix_arg 
+
+Required argument when set to 1. The Fix containing the code fragment below needs 
+two arguments.
+
+    use Catmandu::Fix::Has;
+
+    has message => (fix_arg => 1); # required parameter 1
+    has number  => (fix_arg => 1); # required parameter 2
+
+When the fix_arg is set to 'collect', then all arguments are read into an array. The Fix
+containing the code fragment below needs at least 1 or more arguments. All arguments will
+get collected into the C<messages> array:
+
+    use Catmandu::Fix::Has;
+
+    has messages => (fix_arg => 'collect'); # required parameter
+
+=item fix_opt
+
+Optional named argument when set to 1. The Fix containing the code fragment below can
+have two optional arguments C<message: ...>, C<number: ...>:
+
+    use Catmandu::Fix::Has;
+
+    has message => (fix_opt => 1); # optional parameter 1
+    has number  => (fix_opt => 1); # optional parameter 2
+
+When the fix_opt is set to 'collect', then all optional argument are read into an array. The Fix
+containing the code fragment below needs at least 1 or more arguments. All arguments will
+get collected into the C<options> array:
+
+    use Catmandu::Fix::Has;
+
+    has options => (fix_opt => 'collect'); # optional parameter
+
+=back
 
 =head1 SEE ALSO
 
