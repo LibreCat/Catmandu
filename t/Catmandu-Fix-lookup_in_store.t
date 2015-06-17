@@ -35,4 +35,9 @@ is_deeply
     $pkg->new('planet', 'test', 'default', 'Mars')->fix({planet => 'Bartledan'}),
     {planet => 'Mars'};
 
-done_testing 7;
+is_deeply
+    $pkg->new('planets.*', 'test', 'default', 'Mars')->fix({planets => ['Bartledan', 'Earth']}),
+    {planets => ['Mars', { _id => 'Earth' , value => 'Terra' }]},
+    'default with wildcard';
+
+done_testing 8;

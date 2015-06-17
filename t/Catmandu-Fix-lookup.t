@@ -32,8 +32,13 @@ is_deeply
     {planet => 'Mars'};
 
 is_deeply
+    $pkg->new('planets.*', 't/planets.csv', 'default', 'Mars')->fix({planets => ['Bartledan', 'Earth']}),
+    {planets => ['Mars', 'Terra']},
+    'default with wildcard';
+
+is_deeply
     $pkg->new('planet', 't/planets.tab', 'sep_char', "\t")->fix({planet => 'Earth'}),
     {planet => 'Terra'},
     "pass csv options";
 
-done_testing 7;
+done_testing 8;

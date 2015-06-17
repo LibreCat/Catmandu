@@ -55,7 +55,7 @@ sub emit {
                 $perl .= "}";
             } elsif (defined $default) {
                 $perl .= "else {" .
-                    $fixer->emit_set_key($var, $key, $fixer->emit_value($default)) .
+                    "${val_var} = " . $fixer->emit_value($default) . ";" .
                 "}";
             }
             $perl;
