@@ -94,7 +94,7 @@ for my $sym (qw(parse_data_path get_data set_data delete_data data_at)) {
     can_ok 'T::ImportData', $sym;
 }
 for my $sym (qw(array_exists array_group_by array_pluck array_to_sentence
-        array_sum array_includes array_any array_uniq)) {
+        array_sum array_includes array_any array_uniq array_split)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
     can_ok 'T::ImportAll', $sym;
@@ -125,5 +125,4 @@ for my $sym (qw(xml_declaration xml_escape)) {
     can_ok 'T::ImportXML', $sym;
 }
 
-done_testing 454;
-
+done_testing 458;

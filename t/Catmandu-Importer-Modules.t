@@ -1,34 +1,39 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
 
-my $pkg;
-BEGIN {
-    $pkg = 'Catmandu::Importer::Modules';
-    use_ok $pkg;
-}
-require_ok $pkg;
+use_ok 'Catmandu::Importer::Modules';
+require_ok 'Catmandu::Importer::Modules';
 
-my $importer;
-my $modules;
+my @modules;
 
-lives_ok(sub{
-    $importer = Catmandu::Importer::Modules->new(
+ok Catmandu::Importer::Modules->new->first, 'default importer';
+
+lives_ok sub{
+    @modules = @{ Catmandu::Importer::Modules->new(
         inc => ["lib"],
         namespace => "Catmandu::Fix",
         max_depth => 1,
         pattern => qr/add_field/
-    );
-});
-lives_ok(sub{
-    $modules = $importer->to_array();
-});
+    )->to_array }
+};
 
-ok(ref($modules) && ref($modules) eq "ARRAY" && scalar(@$modules) > 0);
+ok @modules > 0, 'imported with options';
+is $modules[0]->{name}, 'Catmandu::Fix::add_field', 'name';
+like $modules[0]->{about}, qr/^add or change the value of a HASH key/, 'about';
 
-is $modules->[0]->{name},"Catmandu::Fix::add_field";
+lives_ok sub{
+    @modules = @{ Catmandu::Importer::Modules->new(
+        inc => ["lib"],
+        namespace => "Catmandu::Importer,Catmandu::Exporter",
+        max_depth => 1,
+        pattern => qr/JSON/
+    )->to_array }
+};
 
-done_testing 6;
+is_deeply [ map { $_->{name} } @modules ], 
+          [qw(Catmandu::Importer::JSON Catmandu::Exporter::JSON)],
+          "multiple namespaces";
+
+done_testing;
