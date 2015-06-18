@@ -1,24 +1,9 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 use Test::More;
-use Test::Exception;
-use utf8;
 
-my $pkg;
-BEGIN {
-    $pkg = 'Catmandu::Importer::Text';
-    use_ok $pkg;
-}
-require_ok $pkg;
-
-my $data = [
-   {_id => 1 , text => "Roses are red,\n"} ,
-   {_id => 2 , text => "Violets are blue,\n"},
-   {_id => 3 , text => "Sugar is sweet,\n"},
-   {_id => 4 , text => "And so are you.\n"},
-];
+use_ok 'Catmandu::Importer::Text';
+require_ok 'Catmandu::Importer::Text';
 
 my $text = <<EOF;
 Roses are red,
@@ -27,11 +12,41 @@ Sugar is sweet,
 And so are you.
 EOF
 
-my $importer = $pkg->new(file => \$text);
+sub text {
+    Catmandu::Importer::Text->new( file => \$text, @_ )->to_array;
+}
 
-isa_ok $importer, $pkg;
+is_deeply text(), [
+       {_id => 1 , text => "Roses are red,"} ,
+       {_id => 2 , text => "Violets are blue,"},
+       {_id => 3 , text => "Sugar is sweet,"},
+       {_id => 4 , text => "And so are you."},
+    ], 'simple text import';
 
-my $arr = $importer->to_array;
-is_deeply $arr, $data, 'checking correct import';
+is_deeply text( pattern => 'are' ), [
+       {_id => 1 , text => "Roses are red,"} ,
+       {_id => 2 , text => "Violets are blue,"},
+       {_id => 3 , text => "And so are you."},
+    ], 'simple pattern match';
 
-done_testing 4;
+is_deeply text( pattern => '(\w+)(.).*\.$' ), [
+       {_id => 1 , _1 => "And", _2 => ' '},
+    ], 'numbered capturing group';
+
+is_deeply text( pattern => '^(?<first>\w+) (?<second>are).*\,$' ), [
+       {_id => 1 , first => "Roses", second => "are"},
+       {_id => 2 , first => "Violets", second => "are"},
+    ], 'named capturing group';
+
+my $pattern = <<'PAT';
+    ^(?<first>   \w+)   # first word
+    \                   # space
+    (?<second>   are )  # second word = 'are'
+PAT
+
+is_deeply text( pattern => $pattern ), [
+       {_id => 1 , first => "Roses", second => "are"},
+       {_id => 2 , first => "Violets", second => "are"},
+    ], 'more legible pattern';
+
+done_testing;
