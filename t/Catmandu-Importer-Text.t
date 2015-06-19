@@ -30,13 +30,14 @@ is_deeply text( pattern => 'are' ), [
     ], 'simple pattern match';
 
 is_deeply text( pattern => '(\w+)(.).*\.$' ), [
-       {_id => 1 , _1 => "And", _2 => ' '},
-    ], 'numbered capturing group';
+       {_id => 1 , match => ["And"," "]},
+    ], 'numbered capturing groups';
 
-is_deeply text( pattern => '^(?<first>\w+) (?<second>are).*\,$' ), [
-       {_id => 1 , first => "Roses", second => "are"},
-       {_id => 2 , first => "Violets", second => "are"},
-    ], 'named capturing group';
+my $items = [ {_id => 1 , match => {first => "Roses", second => "are"}},
+              {_id => 2 , match => {first => "Violets", second => "are"}} ];
+
+is_deeply text( pattern => '^(?<first>\w+) (?<second>are).*\,$' ), 
+    $items, 'named capturing groups';
 
 my $pattern = <<'PAT';
     ^(?<first>   \w+)   # first word
@@ -44,9 +45,19 @@ my $pattern = <<'PAT';
     (?<second>   are )  # second word = 'are'
 PAT
 
-is_deeply text( pattern => $pattern ), [
-       {_id => 1 , first => "Roses", second => "are"},
-       {_id => 2 , first => "Violets", second => "are"},
-    ], 'more legible pattern';
+is_deeply text( pattern => $pattern ), 
+    $items, 'multiline pattern';
+
+is_deeply [ map { $_->{text} } @{ text( split => ' ' ) } ],
+    [ map { [ split ' ', $_ ] } split "\n", $text ],
+    'split by character';
+
+is_deeply [ map { $_->{text} } @{ text( split => 'is|are' ) } ],
+    [ map { [ split /is|are/, $_ ] } split "\n", $text ],
+    'split by regexp';
+
+is_deeply text( split => ' is | are ', pattern => '^And so (.*)' ),
+    [ { _id => 1, text => ['And so','you.'], match => ['are you.'] } ],
+    'split and pattern';
 
 done_testing;

@@ -8,36 +8,46 @@ with 'Catmandu::Importer';
 
 has pattern => (
     is => 'ro',
-    coerce => sub {
-        my ($p) = @_;  
-        return $p if ref $p;
-        $p =~ /\n/m ? qr{$p}x : qr{$p}; 
+    coerce => sub { 
+        $_[0] =~ /\n/m ? qr{$_[0]}x : qr{$_[0]} 
     },
-    default => sub { qr/^(?<text>.*$)/ },
+);
+
+has split => (
+    is => 'ro',
+    coerce => sub {
+        length $_[0] == 1 ? $_[0] : qr{$_[0]}
+    } 
 );
 
 sub generator {
     my ($self) = @_;
     sub {
         state $pattern = $self->pattern;
-        state $cnt = 0;
+        state $split   = $self->split;
+        state $count   = 0;
         state $line;
 
         while ( defined($line = $self->readline) ) {
             chomp $line;
-            next if $line !~ $pattern;
+            next if $pattern and $line !~ $pattern;
 
-            if (scalar %+) { # named capturing groups
-                return { _id => ++$cnt , %+ };
-            } else {         # numbered capturing groups
+            my $data = { _id => ++$count };
+
+            if (@+ < 2) {       # no capturing groups
+                $data->{text} = $line;
+            } elsif (%+) {      # named capturing groups
+                $data->{match} = { %+ };
+            } else {            # numbered capturing groups
                 no strict 'refs';
-                my $data = {
-                    _id => ++$cnt,
-                    map { '_'.$_ => $$_ } grep { defined $$_ } 1..@+-1
-                };
-                $data->{text} = $line if keys %$data == 1;
-                return $data;
+                $data->{match} = [ map { $$_ } 1..@+-1 ]; 
             }
+            
+            if ($split) {
+                $data->{text} = [ split $split, $line ];
+            }
+
+            return $data;
         }
 
         return;
@@ -92,21 +102,27 @@ Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 
 An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
+=item split
+
+Character or regular expression, given as string, to split each line. Imported
+field C<text> will contain an array.
+
 =item pattern
 
-An regular expression to only import matching lines. If the pattern contains
-capturing groups, only these groups are imported as field C<_1>, C<_2>, ...
-(numbered capturing groups) or with named capturing groups. If at least one
-named capturing group matches, all unnamed capturing groups are ignored.  If
-the pattern consists of multiple lines, whitespace is ignored for better
-readability. For instance dates in C<YYYY-MM-DD> format can be imported with
-one of the following patterns:
+An regular expression, given as string, to only import matching lines.
+Whitespaces in patterns are ignored or must be escaped if patterns consists of
+multiple lines. If the pattern contains capturing groups, captured values are
+imported in field C<match> instead of C<text>.
+
+For instance dates in C<YYYY-MM-DD> format can be imported as named fields with
 
    (?<year>\d\d\d\d)-(?<month>\d\d)-(?<day>\d\d)
 
-   (\d\d\d\d)-  # year:  _1
-   (\d\d)-      # month: _2
-   (\d\d)       # day:   _3
+or as array with
+
+   (\d\d\d\d)-  # year
+   (\d\d)-      # month
+   (\d\d)       # day
 
 =back
 
@@ -119,5 +135,8 @@ can only be read once.
 =head1 SEE ALSO
 
 L<Catmandu::Exporter::Text>
+
+L<awk|https://en.wikipedia.org/wiki/AWK> and
+L<sed|https://en.wikipedia.org/wiki/Sed>
 
 =cut

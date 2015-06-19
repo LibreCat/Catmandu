@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new Text importer to import data similar to sed and awk
   - support multiple namespaces and module description in Catmandu::Importer::Modules
   - help command now shows importer/exporter options
   - new utility functions pod_section and array_split 
