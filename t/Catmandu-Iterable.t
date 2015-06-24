@@ -83,18 +83,22 @@ is $iter->detect(sub { $_[0] == 4 }), undef;
 
 is_deeply $iter->select(sub { $_[0] < 1 })->to_array, [];
 is_deeply $iter->select(sub { $_[0] > 1 })->to_array, [2,3];
+is_deeply $iter->grep  (sub { $_[0] < 1 })->to_array, [];
+is_deeply $iter->grep  (sub { $_[0] > 1 })->to_array, [2,3];
 
 is_deeply $iter->reject(sub { $_[0] < 2 })->to_array, [2,3];
 is_deeply $iter->reject(sub { $_[0] > 0 })->to_array, [];
 
 is $iter->detect(qr'[12]'), 1;
 is_deeply $iter->select(qr'[12]')->to_array, [1,2];
+is_deeply $iter->grep  (qr'[12]')->to_array, [1,2];
 is_deeply $iter->reject(qr'[12]')->to_array, [3];
 
 $iter->data([{num=>1},{num=>2},{num=>3}]);
 
 is_deeply $iter->detect(num => qr'[12]'), {num=>1};
 is_deeply $iter->select(num => qr'[12]')->to_array, [{num=>1},{num=>2}];
+is_deeply $iter->grep  (num => qr'[12]')->to_array, [{num=>1},{num=>2}];
 is_deeply $iter->reject(num => qr'[12]')->to_array, [{num=>3}];
 
 is_deeply $iter->pluck('num')->to_array, $iter->map(sub { $_[0]->{num} })->to_array;
@@ -171,5 +175,4 @@ is_deeply $iter->stop_if(sub { shift->{n} == 1 })->to_array,
     is_deeply $iter->next, {n=>1};
 }
 
-done_testing 63;
-
+done_testing;

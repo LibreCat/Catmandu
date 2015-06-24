@@ -236,6 +236,8 @@ sub take {
         }});
     }
 
+    sub grep { goto &select }
+    
     sub reject {
         my $self = shift; my $sub = $to_sub->(@_);
         Catmandu::Iterator->new(sub { sub {
@@ -607,6 +609,10 @@ matches the regex.
 
 If the iterator contains HASH values, then return each item where the value of
 $key is equal to any of the vals given.
+
+=head2 grep( ... )
+
+Alias for C<select( ... )>.
 
 =head2 reject(\&callback)
 
