@@ -44,6 +44,7 @@ throws_ok { Role::Tiny->apply_role_to_package('T::IterableWithoutGenerator', $pk
 my $iter = T::Iterable->new(data => [1,2,3]);
 
 is_deeply $iter->to_array, [1,2,3];
+is_deeply $iter->to_sorted(sub { $_[1] <=> $_[0] }), [3,2,1];
 
 is $iter->count, 3;
 

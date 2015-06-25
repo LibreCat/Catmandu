@@ -39,6 +39,11 @@ sub to_array {
     \@a;
 }
 
+sub to_sorted {
+    my ($self, $sort) = @_;
+    [ sort $sort @{ $self->to_array } ]
+}
+
 sub count {
     my ($self) = @_;
     my $next = $self->generator;
@@ -482,6 +487,15 @@ a second invocation.
 =head2 to_array
 
 Return all the items in the Iterator as an ARRAY ref.
+
+=head2 to_sorted( CODE )
+
+Return all the items in the Iterator as a sorted ARRAY ref. The sort routine is passed to
+items to compare with return value C<-1>, C<0>, or C<1>. The following are equivalent: 
+
+    [ sort { $a cmp $b } @{ $importer->to_array } ]
+    
+    $importer->to_sorted( sub { $_[0] cmp $_[1] } )
 
 =head2 count
 
