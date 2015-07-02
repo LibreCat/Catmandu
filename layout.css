@@ -16,3 +16,13 @@ a[href^='https://metacpan.org'] {
 /* section headings */
 h1 { border-bottom: 1px solid #666 }
 h1, h2, h3, h4 { margin-top: 25px }
+
+body { padding-top: 70px; }
+
+section[id]:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -30px; 
+  height: 30px; 
+  visibility: hidden; 
+}
