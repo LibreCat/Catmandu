@@ -134,9 +134,27 @@ for fast retrieval combined with a doubly linked list for fast traversal.
 
 =head1 METHODS
 
-=head2 new()
+=head2 new([init_data => [...] ])
 
-Create a new Catmandu::Store::Hash
+Create a new Catmandu::Store::Hash. Optionally provide as init_data an array ref of data:
+
+    my $store = Catmandu->store('Hash', init_data => [ 
+           { _id => 1, data => foo } ,
+           { _id => 2, data => bar }
+    ]);
+
+    # or in a catmandu.yml configuration file:
+    
+    ---
+    store:
+       hash:
+         package: Hash
+         options:
+            init_data:
+               - _id: 1
+                 data: foo
+               - _id: 2
+                 data: bar
 
 =head2 bag($name)
 
