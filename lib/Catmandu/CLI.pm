@@ -18,9 +18,7 @@ use Data::Dumper;
 
 use parent qw(App::Cmd);
 
-sub VERSION {
-    $Catmandu::VERSION;
-}
+our $VERSION = $Catmandu::VERSION;
 
 sub deleted_commands {
     [qw(
