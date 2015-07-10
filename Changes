@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.94  2015-07-10 13:26:34 CEST
   - lots more pod and many typos corrected
   - more fix tests
   - new Text importer to import data similar to sed and awk
