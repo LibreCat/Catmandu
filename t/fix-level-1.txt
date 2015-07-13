@@ -1,0 +1,5 @@
+#fixes-level-1
+add_field('name','Franck')
+add_field('first_name','Nicolas')
+
+include('t/fix-level-2.txt')
