@@ -152,7 +152,7 @@ Process a Fix on every scalar value. E.g.
 
 Process a Fix on every array value. E.g.
 
-   sort(array)
+   sort_field(array)
 
 Values need to be put in the 'array' field to be available for fixes. The scope of 
 the array is limited to the array visited.
