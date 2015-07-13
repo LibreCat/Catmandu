@@ -1,10 +1,31 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.94  2015-07-10 13:26:34 CEST
+  - lots more pod and many typos corrected
+  - more fix tests
   - new Text importer to import data similar to sed and awk
-  - support multiple namespaces and module description in Catmandu::Importer::Modules
-  - help command now shows importer/exporter options
-  - new utility functions pod_section and array_split 
+  - Modules importer supports multiple namespaces and module description
+  - 'help' command now shows importer and exporter options
+  - new utility functions 'pod_section' and 'array_split'
+  - empty path now refers to the root in fixes
+  - new 'assoc' fix
+  - new 'perlcode' fix
+  - new 'with' and 'visitor' binds
+  - new 'in' fix condition
+  - new 'any_equal', 'all_equal' fix conditions
+  - new 'is_bool', 'is_true', 'is_false' fix conditions
+  - utf8 support tests
+  - more robust header detection in CSV exporter
+  - more robust 'copy_field' fix
+  - 'expand' and 'collapse' fixes have a new 'sep_char' option
+  - add .dockerignore file
+  - fix travis.yml
+  - more robust 'lookup' and 'lookup_in_store' fixes
+  - Iterable 'select' method aliased as 'grep'
+  - Hash store has a new 'init_data' option
+  - remove conflicting VERSION sub from CLI
 
 0.9301  2015-02-24 11:17:36 CET
   - Cmd output test failed sometimes

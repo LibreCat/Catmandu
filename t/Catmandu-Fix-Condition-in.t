@@ -8,7 +8,7 @@ use Catmandu::Fix::set_field;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Fix::Condition::is_equal';
+    $pkg = 'Catmandu::Fix::Condition::in';
     use_ok $pkg;
 }
 
