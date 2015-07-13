@@ -63,14 +63,24 @@ Catmandu::Importer::Text - Package that imports textual data
 
 =head1 SYNOPSIS
 
+With L<catmandu> command line client:
+
+    # separate fields by whitespace sequences just like awk
+    catmandu convert Text --split '\s+' 
+
+    # import all lines starting with '#', omitting this character 
+    catmandu convert Text --pattern '^#(.*)'
+
+In Perl code:
+
     use Catmandu::Importer::Text;
 
-    my $importer = Catmandu::Importer::text->new(file => "/foo/bar.yaml");
+    my $importer = Catmandu::Importer::text->new( file => "/foo/bar.txt" );
 
-    my $n = $importer->each(sub {
-        my $hashref = $_[0];
-        
-        printf "line %d: text: %s" , $hashref->{_id} , $hashref->{text};  
+    # print all lines with line number
+    $importer->each(sub {
+        my $item = $_[0];
+        printf "%d: %s" , $item->{_id} , $item->{text};  
     });
 
 =head1 DESCRIPTION
@@ -104,12 +114,12 @@ An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
 =item split
 
-Character or regular expression, given as string, to split each line. Imported
-field C<text> will contain an array.
+Character or regular expression (given as string with a least two characters),
+to split each line.  Resulting parts are imported in field C<text> as array.
 
 =item pattern
 
-An regular expression, given as string, to only import matching lines.
+Regular expression, given as string, to only import matching lines.
 Whitespaces in patterns are ignored or must be escaped if patterns consists of
 multiple lines. If the pattern contains capturing groups, captured values are
 imported in field C<match> instead of C<text>.
@@ -129,8 +139,7 @@ or as array with
 =head1 METHODS
 
 Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
-inherited. The Catmandu::Importer::YAML methods are not idempotent: YAML feeds
-can only be read once.
+inherited.
 
 =head1 SEE ALSO
 
