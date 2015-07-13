@@ -94,6 +94,9 @@ Returns the result index of the first result on the page.
 
 =item pages_in_spread
 
+Returns the previous pages and next pages, depending on the current position
+in the result set.
+
 =back
 
 =head1 SEE ALSO
@@ -273,6 +276,7 @@ sub page_size {
 sub page_ranges {
     my $self = shift;
 
+    $self->_do_pagination;
     return @{ $self->{PAGE_RANGES} };
 }
 
