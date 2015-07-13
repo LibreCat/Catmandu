@@ -184,12 +184,12 @@ Provides access to the key on which the scalar,array or hash value is found. Eg.
 A path in the data to visit:
 
   # Visit any field
-  do visit()
+  do visitor()
     ...
   end
 
   # Visit only the fields at my.deep.field
-  do visit(-path => my.deep.field )
+  do visitor(-path => my.deep.field )
     ...
   end
 
