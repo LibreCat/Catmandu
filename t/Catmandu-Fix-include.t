@@ -15,7 +15,8 @@ my $object = {};
 my $intended_object = {
     name => "Franck",
     first_name => "Nicolas",
-    working_place => "University Library of Ghent"
+    working_place => "University Library of Ghent" ,
+    hobbies => [ 'cooking' , 'art' , 'hiking']
 };
 my $fix_file = "t/fix-level-1.txt";
 
