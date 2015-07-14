@@ -1,0 +1,123 @@
+=head1 NAME
+
+Catmandu::Introdction - a Catmandu HOW TO
+
+=head1 Introduction
+
+Catmandu is a data processing toolkit developed as part of the L<LibreCat|http://librecat.org> project. 
+Catmandu provides a command line client and a suite of tools to ease the import, storage, retrieval, 
+export and transformation of data. For instance, to transform a CSV file into JSON you can use the
+command:
+
+    $ catmandu convert JSON to CSV < data.json
+
+Or, to store a YAML file into an ElasticSearch database you can use the command:
+
+    $ catmandu import YAML to ElasticSearch --index_name demo < test.yml
+
+Or, to export all the data from an Solr search engine into JSON you type:
+
+    $ catmandu export Solr --url http://localhost:8983/solr to JSON
+
+With Catmandu you can import OAI-PMH records in your application:
+
+    $ catmandu convert OAI --url http://biblio.ugent.be/oai --set allFtxt
+
+and export records into formats such as JSON, YAML, CSV, XLS, RDF and many more.
+
+Catmandu also provides a small scripting language to manipulate data, extract parts of your dataset and
+transform records. For instance, you can rename fields  with the 'move_field' command:
+
+    $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
+
+In the example above, we renamed all the 'title' fields in the dataset into the 'my_title' field.
+
+You can also work on deeply nested data. E.g. create a deeply nested data structure with the
+'move_field' command:
+
+    $ catmandu convert JSON --fix 'move_field(title,my.deeply.nested.title)' < data.json
+
+In this example we moved the field 'title' into the field 'my', which contains a (sub)field 'deeply',
+which contains a (sub)field 'nested'.
+
+Catmandu was created by librarians for librarians. We process a lot of metadata especially 
+library metadata in formats such as MARC, MAB2 and MODS. With the following command we can extract
+data from a marc record and to store it into the title field:
+
+    $ catmandu convert MARC --fix 'marc_map(245,title)' < data.mrc
+
+Or, in case you only want the 245a subfield write:
+
+    $ catmandu convert MARC --fix 'marc_map(245a,title)' < data.mrc
+
+When processing a lot of data you will need a lot of Fix commands. It wouldn't be very practical to
+type them all on the command line. By creating a Fix script which contains all the fix commands complicated
+data transformations can be created. For instance, if the file C<myfixes.txt> contains:
+
+     marc_map(245a,title)
+     marc_map(100a,author.$append)
+     marc_map(700a,author.$append)
+     marc_map(020a,isbn)
+     replace_all(isbn,'[^0-9-]+','')
+
+then they can be executed on a MARC file using this command:
+
+    $ catmandu convert MARC --fix myfixes.txt < data.mrc
+
+Catmandu contains many powerfull fixes. Visit L<http://librecat.org/Catmandu/#fixes-cheat-sheet to get 
+an overview what is possible>
+
+=head1 Documentation
+
+For more information read our L<documentation pages|http://librecat.org/Catmandu/> 
+and L<blog|https://librecatproject.wordpress.com/>
+for a complete introduction and update into all Catmandu features.
+
+=head1 Installation
+
+There are several ways to get a working version of Catmandu on your computer. 
+For a quick and demo installation visit our L<blog|https://librecatproject.wordpress.com/get-catmandu/>
+where a VirtualBox image is available containing all the Catmandu modules, including
+ElasticSearch and MongoDB.
+
+On our L<website|http://librecat.org/Catmandu/> we provide installation instructions for:
+
+ * Debian
+ * Ubuntu Server
+ * CentOS
+ * openSUSE
+ * OpenBSD
+ * Windows
+
+and even a generic installation using L<Docker|https://www.docker.com/>.
+
+=head1 Open Source
+
+Catmandu software published at https://github.com/LibreCat/Catmandu is free software without warranty, liabilities 
+or support; you can redistribute it and/or modify it under the terms of the GNU General Public License as 
+published by the Free Software Foundation; either version 2 or any later version. Every contributor is free 
+to state her/his copyright.
+
+=head1 Developers & Support
+
+Catmandu has a very active international developer community. We welcome all feedback, bug reports and
+feature enhancement. 
+
+Join our mailing list to receive more information:  C<< librecat-dev@librecat.org >>
+
+Are a developer and want to contribute to the project? Feel free to submit pull requests or create new
+Catmandu packages!
+
+=head1 Kudos
+
+Catmandu is created in a cooperation with many developers world wide. Without them this project isn't possible.
+We would like to thank our core maintainer: Nicolas Steenlant and all contributors: Christian Pietsch , 
+Dave Sherohman , Friedrich Summann , Jakob Voss , Johann Rolschewski  , Jorgen Eriksson  , Magnus Enger , 
+Maria Hedberg , Mathias Loeqsch , Najko Jahn , Nicolas Franck , Patrick Hochstenbach , Petra Kohorst  , 
+Snorri Briem , Upasana Shukla and Vitali Peil 
+
+=head1 SEE ALSO
+ 
+L<Catmandu>
+ 
+=cut
