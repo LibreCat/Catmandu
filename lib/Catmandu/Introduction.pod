@@ -19,20 +19,20 @@ To export all the data from an Solr search engine into JSON type:
 
     $ catmandu export Solr --url http://localhost:8983/solr to JSON
 
-With Catmandu you can import OAI-PMH records in your application:
+With Catmandu one can import OAI-PMH records in your application:
 
     $ catmandu convert OAI --url http://biblio.ugent.be/oai --set allFtxt
 
 and export records into formats such as JSON, YAML, CSV, XLS, RDF and many more.
 
 Catmandu also provides a small scripting language to manipulate data, extract parts of your dataset and
-transform records. For instance, you can rename fields  with the 'move_field' command:
+transform records. For instance, rename fields  with the 'move_field' command:
 
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
 
 In the example above, we renamed all the 'title' fields in the dataset into the 'my_title' field.
 
-You can also work on deeply nested data. E.g. create a deeply nested data structure with the
+One can also work on deeply nested data. E.g. create a deeply nested data structure with the
 'move_field' command:
 
     $ catmandu convert JSON --fix 'move_field(title,my.deeply.nested.title)' < data.json
@@ -46,11 +46,11 @@ data from a marc record and to store it into the title field:
 
     $ catmandu convert MARC --fix 'marc_map(245,title)' < data.mrc
 
-Or, in case you only want the 245a subfield write:
+Or, in case only the 245a subfield is needed write:
 
     $ catmandu convert MARC --fix 'marc_map(245a,title)' < data.mrc
 
-When processing a lot of data you will need a lot of Fix commands. It wouldn't be very practical to
+When processing data a lot of Fix commands could be required. It wouldn't be very practical to
 type them all on the command line. By creating a Fix script which contains all the fix commands complicated
 data transformations can be created. For instance, if the file C<myfixes.txt> contains:
 
@@ -72,6 +72,14 @@ an overview what is possible>
 For more information read our L<documentation pages|http://librecat.org/Catmandu/> 
 and L<blog|https://librecatproject.wordpress.com/>
 for a complete introduction and update into all Catmandu features.
+
+In the winter of 2014 a Advent calendar tutorial was created to provide a day by
+day introduction into the UNIX command line and Catmandu:
+
+L<https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/>
+
+If you need extra training, our developers regulary host workshops at library 
+conferences and events: L<http://librecat.org/events.html>
 
 =head1 Installation
 
