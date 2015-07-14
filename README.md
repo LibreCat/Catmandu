@@ -1,6 +1,6 @@
 # NAME
 
-Catmandu::Introdction - a Catmandu HOW TO
+Catmandu::Introduction - a Catmandu HOW TO
 
 # Introduction
 
@@ -73,7 +73,7 @@ For more information read our [documentation pages](http://librecat.org/Catmandu
 and [blog](https://librecatproject.wordpress.com/)
 for a complete introduction and update into all Catmandu features.
 
-In the winter of 2014 a Advent calendar tutorial was created to provide a day by
+In the winter of 2014 an Advent calendar tutorial was created to provide a day by
 day introduction into the UNIX command line and Catmandu:
 
 [https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/](https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/)
