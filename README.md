@@ -6,16 +6,16 @@ Catmandu::Introdction - a Catmandu HOW TO
 
 Catmandu is a data processing toolkit developed as part of the [LibreCat](http://librecat.org) project. 
 Catmandu provides a command line client and a suite of tools to ease the import, storage, retrieval, 
-export and transformation of data. For instance, to transform a CSV file into JSON you can use the
+export and transformation of data. For instance, to transform a CSV file into JSON use the
 command:
 
     $ catmandu convert JSON to CSV < data.json
 
-Or, to store a YAML file into an ElasticSearch database you can use the command:
+Or, to store a YAML file into an ElasticSearch database type:
 
     $ catmandu import YAML to ElasticSearch --index_name demo < test.yml
 
-Or, to export all the data from an Solr search engine into JSON you type:
+To export all the data from an Solr search engine into JSON type:
 
     $ catmandu export Solr --url http://localhost:8983/solr to JSON
 
