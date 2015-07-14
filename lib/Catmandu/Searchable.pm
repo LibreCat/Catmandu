@@ -66,10 +66,10 @@ Catmandu::Searchable - Base class for all searchable Catmandu classes
 
     # Return one page of search results (page size = 1000)
     my $hits  = $store->bag->search(
-		   query => 'dna' ,
-	           start => 0 ,
-		   limit => 100 ,
-		   sort  => 'title desc',
+           query => 'dna' ,
+           start => 0 ,
+           limit => 100 ,
+           sort  => 'title desc',
                 );
 
     # Return all the search results as iterator
@@ -80,12 +80,16 @@ Catmandu::Searchable - Base class for all searchable Catmandu classes
 
 =head1 METHODS
 
-=head2 search(query => $query, start => $start, limit => $num, sort => $sort, cql_query => $cql)
+=head2 search(query => $query, start => $start, page => $page, limit => $num, sort => $sort, cql_query => $cql)
 
 Search the database and returns a L<Catmandu::Hits> on success. The Hits represents one
 result page of at most $num results. The $query and $sort should implement the
 query and sort syntax of the underlying search engine. If the CQL language is supported
 by the Store, then optionally a $cql_query search can be excuted on the Searchable.
+
+Optionally provide the index of the first result using the C<start> option, or the starting page using
+the C<page> option. The number of records in a result page can be set using the C<limit> option. Sorting
+options are being sent verbatim to the underlying search engine.
 
 =head2 searcher(query => $query, start => $start, limit => $num, sort => $sort, cql_query => $cql)
 
@@ -94,12 +98,16 @@ used to loop over the complete result set. The $query and $sort should implement
 query and sort syntax of the underlying search engine. If the CQL language is supported
 by the Store, then optionally a $cql_query search can be excuted on the Searchable.
 
+Optionally provide the index of the first result using the C<start> option. The number of records in 
+a page can be set using the C<limit> option. Sorting options are being sent verbatim to the underlying 
+search engine.
+
 =head2 delete_by_query(query => $query)
 
 Delete items from the database that match $query
 
 =head1 SEE ALSO
 
-L<Catmandu::Hits>
+L<Catmandu::Hits>, L<Catmandu::Paged>
 
 =cut
