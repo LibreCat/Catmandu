@@ -19,7 +19,7 @@ requires 'File::Find::Rule', '0.33';
 requires 'File::Slurp::Tiny', '0.003';
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
-requires 'JSON::XS', '2.3';
+requires 'JSON::MaybeXS', '1.003005';
 requires 'List::MoreUtils', '0.33';
 requires 'Log::Any', '1.03';
 requires 'Log::Any::Adapter', '1.03';
@@ -39,10 +39,10 @@ requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';
+recommends 'JSON::XS', '2.3';
 
 feature 'tidy',
     "Support pretty printing compiled fix code",
     sub {
         requires 'Perl::Tidy', 0;
     };
-

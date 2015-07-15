@@ -11,7 +11,7 @@ Catmandu::Serializer - A (de)serializer from and to json
     use Moo;
 
     with 'Catmandu::Serializer';
-    
+
     # You have now  serialize and deserialize methods available
 
     package main;
@@ -19,7 +19,7 @@ Catmandu::Serializer - A (de)serializer from and to json
     my $obj = MyPackage->new;
     my $obj = MyPackage->new(serializer => 'json');
 
-    $obj->serialize( { foo => 'bar' } );  # JSON 
+    $obj->serialize( { foo => 'bar' } );  # JSON
     $obj->deserialize( "{'foo':'bar'}" );  # Perl
 
 =head1 SEE ALSO
@@ -29,15 +29,15 @@ L<Catmandu::Serializer>
 =cut
 
 use Catmandu::Sane;
-use JSON::XS ();
+use JSON::MaybeXS ();
 use Moo;
 
 sub serialize {
-    JSON::XS::encode_json($_[1]);
+    JSON::MaybeXS::encode_json($_[1]);
 }
 
 sub deserialize {
-    JSON::XS::decode_json($_[1]);
+    JSON::MaybeXS::decode_json($_[1]);
 }
 
 1;
