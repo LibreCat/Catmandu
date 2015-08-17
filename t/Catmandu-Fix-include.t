@@ -17,7 +17,7 @@ my $intended_object = {
     first_name => "Nicolas",
     working_place => "University Library of Ghent"
 };
-my $fix_file = "t/fix-level-1.txt";
+my $fix_file = "fix-level-1.txt";
 
 is_deeply(
     $pkg->new($fix_file)->fix($object),
