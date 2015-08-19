@@ -2,19 +2,35 @@ package Catmandu::Importer;
 
 use namespace::clean;
 use Catmandu::Sane;
-use Catmandu::Util qw(io);
+use Catmandu::Util qw(io data_at);
 use Moo::Role;
 
 with 'Catmandu::Logger';
 with 'Catmandu::Iterable';
 with 'Catmandu::Fixable';
 
+has data_path => (is => 'ro');
+
 around generator => sub {
     my ($orig, $self) = @_;
     my $generator = $orig->($self);
+
     if (my $fixer = $self->_fixer) {
-        return $fixer->fix($generator);
+        $generator = $fixer->fix($generator);
     }
+
+    if (defined(my $path = $self->data_path)) {
+        return sub {
+            state @buf;
+            while (1) {
+                return shift @buf if @buf;
+                # TODO use something faster than data_at
+                @buf = data_at($path, $generator->() // return);
+                next;        
+            }
+        };    
+    }
+
     $generator;
 };
 
@@ -133,6 +149,19 @@ Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 =item fix
 
 An ARRAY of one or more fixes or file scripts to be applied to imported items.
+
+=item data_path
+
+The data at C<data_path> is imported instead of the original data.
+
+   # given this imported item:
+   {abc => [{a=>1},{b=>2},{c=>3}]}
+   # with data_path 'abc', this item gets imported instead:
+   [{a=>1},{b=>2},{c=>3}]
+   # with data_path 'abc.*', 3 items get imported:
+   {a=>1}
+   {b=>2}
+   {c=>3}
 
 =back
 
