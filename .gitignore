@@ -5,6 +5,7 @@
 _build
 blib
 Build
+Build.PL
 cover_db
 LICENSE
 Makefile.PL
