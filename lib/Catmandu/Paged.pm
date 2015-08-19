@@ -2,10 +2,11 @@ package Catmandu::Paged;
 
 =head1 NAME
 
-Catmandu::Paged - Adds page calculation to a package
+Catmandu::Paged - Base class for packages that need paging result sets 
 
 =head1 SYNOPSIS
 
+    # Create a package that needs page calculation
     package MyPackage;
 
     use Moo;
@@ -28,16 +29,75 @@ Catmandu::Paged - Adds page calculation to a package
 
     my $x = MyPackage->new;
 
-    $x->first_page;
-    $x->last_page;
-    $x->page_size;
-    $x->page; # current page
-    $x->previous_page;
-    $x->next_page;
-    $x->first_on_page;
-    $x->next;
-    $x->page_ranges;
-    $x->pages_in_spread;
+    printf "Start page: %s\n" , $x->first_page;
+    printf "Last page: %s\n" , $x->last_page;
+    printf "Current page: %s\n" , $x->page;
+    printf "Next page: %s\n" , $x->next_page;
+
+=head1 DESCRIPTION
+
+Packages that use L<Catmandu::Paged> as base class and implement the methods 
+C<start>, C<limit> and C<total> get for free methods that can be used to do 
+page calculation.
+
+=head1 OVERWRITE METHODS
+
+=over 4
+
+=item start() 
+
+Returns the index of the first item in a result page.
+
+=item limit()
+
+Returns the number of results in a page.
+
+=item total()
+
+Returns the total number of search results.
+
+=back
+
+=head1 INSTANCE METHODS
+
+=over 4 
+
+=item first_page
+
+Returns the index the first page in a search result containing 0 or more pages.
+
+=item last_page
+
+Returns the index of the last page in a search result containing 0 or more pages.
+
+=item page_size
+
+Returns the number items on the current page.
+
+=item page
+
+Returns the current page index.
+
+=item previous_page
+
+Returns the previous page index.
+
+=item next_page
+
+Returns the next page index.
+
+=item first_on_page
+
+Returns the result index of the first result on the page.
+
+=item page_ranges
+
+=item pages_in_spread
+
+Returns the previous pages and next pages, depending on the current position
+in the result set.
+
+=back
 
 =head1 SEE ALSO
 
@@ -216,6 +276,7 @@ sub page_size {
 sub page_ranges {
     my $self = shift;
 
+    $self->_do_pagination;
     return @{ $self->{PAGE_RANGES} };
 }
 

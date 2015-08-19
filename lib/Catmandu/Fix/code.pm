@@ -22,6 +22,9 @@ sub fix {
     $self->code->($data);
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Fix::code - run arbitrary code as fix
@@ -36,8 +39,6 @@ Catmandu::Fix::code - run arbitrary code as fix
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix::cmd>
+L<Catmandu::Fix::perlcode>, L<Catmandu::Fix::cmd>
 
 =cut
-
-1;

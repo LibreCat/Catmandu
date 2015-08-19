@@ -152,7 +152,7 @@ Process a Fix on every scalar value. E.g.
 
 Process a Fix on every array value. E.g.
 
-   sort(array)
+   sort_field(array)
 
 Values need to be put in the 'array' field to be available for fixes. The scope of 
 the array is limited to the array visited.
@@ -184,12 +184,12 @@ Provides access to the key on which the scalar,array or hash value is found. Eg.
 A path in the data to visit:
 
   # Visit any field
-  do visit()
+  do visitor()
     ...
   end
 
   # Visit only the fields at my.deep.field
-  do visit(-path => my.deep.field )
+  do visitor(-path => my.deep.field )
     ...
   end
 
