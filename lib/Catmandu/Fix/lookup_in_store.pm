@@ -70,13 +70,73 @@ by looking up it's value in a store
 
 =head1 SYNOPSIS
 
-   lookup_in_store(foo.bar, MongoDB, bag: bars, database_name: lookups)
-   # using the default bag and a default value
-   lookup_in_store(foo.bar, store_name, default: 'default value')
+   # Lookup in a SQLLite database
+   lookup_in_store(foo.bar, DBI, data_source: "dbi:SQLite:path/data.sqlite")
+
+   # Lookup in a MongoDB database
+   lookup_in_store(foo.bar, MongoDB, database_name: lookups, bag: mydata)
+
+   # Lookup in a MongoDB database, using the default bag and a default value when nothing found
+   lookup_in_store(foo.bar, MongoDB, database_name: lookups, default: 'default value')
+
+   # Lookup in a MongoDB database, using the default bag and delete the foo.bar field when nothing found
+   lookup_in_store(foo.bar, MongoDB, database_name: lookups, delete: 1)
+
+=head1 DESCRIPTION
+
+=head2 lookup_in_store(PATH,STORE[,store_param: store_val, ...][,delete:1][,default:value])
+
+Use the lookup_in_store fix to match a field in a record to the "_id" field in a Catmandu::Store of choice.
+For instance, if a Catmandu::Store contains these records:
+
+    ---
+    _id: water
+    fr: l'eau
+    de: wasser
+    en: water
+    nl: water
+    ---
+    _id: tree
+    fr: arbre
+    de: baum
+    en: tree
+    nl: boom
+
+And you data contains these fields:
+
+    ---
+    _id: 001
+    tag: tree
+    ---
+    _id: 002
+    tag: water
+
+Then, the fix below will lookup a tag in the Catmandu::Store and replace it with the database value:
+
+    lookup_in_store(tag, DBI, data_source: "dbi:SQLite:path/data.sqlite")
+
+The resulting data will contain:
+
+    ---
+    _id: 001
+    tag:
+      _id: tree
+      fr: arbre
+      de: baum
+      en: tree
+      nl: boom
+    ---
+    _id: 002
+    tag:
+      _id: water
+      fr: l'eau
+      de: wasser
+      en: water
+      nl: water
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix>
+L<Catmandu::Fix>, L<Catmandu::Store>
 
 =cut
 
