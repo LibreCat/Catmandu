@@ -84,7 +84,7 @@ by looking up it's value in a store
 
 =head1 DESCRIPTION
 
-=head2 lookup_in_store(PATH,STORE[,store_param: store_val, ...][,delete:1][,default:value])
+=head2 lookup_in_store(PATH,STORE[,store_param: store_val, ...][,bag: bag_name][,delete:1][,default:value])
 
 Use the lookup_in_store fix to match a field in a record to the "_id" field in a Catmandu::Store of choice.
 For instance, if a Catmandu::Store contains these records:
