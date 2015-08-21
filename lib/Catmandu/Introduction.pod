@@ -64,8 +64,8 @@ then they can be executed on a MARC file using this command:
 
     $ catmandu convert MARC --fix myfixes.txt < data.mrc
 
-Catmandu contains many powerfull fixes. Visit L<http://librecat.org/Catmandu/#fixes-cheat-sheet to get 
-an overview what is possible>
+Catmandu contains many powerfull fixes. Visit L<http://librecat.org/Catmandu/#fixes-cheat-sheet> to get 
+an overview what is possible.
 
 =head1 Documentation
 
