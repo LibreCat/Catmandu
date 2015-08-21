@@ -34,7 +34,7 @@ sub result {
 
     delete $mvar->{$field};
 
-    $mvar;
+    $state;
 }
 
 =head1 NAME
@@ -49,11 +49,18 @@ Catmandu::Fix::Bind::state - a binder that keeps a global state
         copy_field(global.name, result)       # read from the global record
     end
 
+
+
 =head1 DESCRIPTION
 
 The state binder will create a global record for reference. Based on a field name one can read and write
 to this global record. The content of this global record will not be exported if not explicitly imported
-into the record.
+into the record. Use the 'doset' notation to overwrite the record with the global state:
+
+    doset state(field => 'global')
+        copy_field(name,state2.name.$append)
+        copy_field(state2.name,global2)
+    end
 
 =head1 CONFIGURATION
 
