@@ -35,10 +35,6 @@ Catmandu::Fix::Bind::identity - a binder that doesn't influence computation
 The identity binder doesn't embody any computational strategy. It simply 
 applies the bound fix functions to its input without any modification.
 
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
-
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind>

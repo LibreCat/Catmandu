@@ -192,10 +192,6 @@ A path in the data to visit:
     ...
   end
 
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
-
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind>

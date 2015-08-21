@@ -125,10 +125,6 @@ these two fixes are equal:
 
 The path to a list in the data.
 
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
-
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind>

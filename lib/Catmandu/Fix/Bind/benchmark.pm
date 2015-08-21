@@ -78,10 +78,6 @@ of all wrapped functions over all input records.
 
 Required. The path of a file to which the benchmark statistics will be written.
 
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
-
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind>
