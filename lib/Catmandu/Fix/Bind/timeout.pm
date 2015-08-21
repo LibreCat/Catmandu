@@ -89,7 +89,7 @@ Catmandu::Fix::Bind::timeout - run fixes that should run within a time limit
 
     # The following bind will run fix1(), fix2(), ... fixN() only if the
     # action can be done in 5 seconds
-    do timeout(5, seconds)
+    do timeout(time => 5, units => seconds)
        fix1()
        fix2()
        fix3()
@@ -106,6 +106,22 @@ Catmandu::Fix::Bind::timeout - run fixes that should run within a time limit
 The timeout binder will run the supplied block only when all the fixes can be
 run within a time limit. All fixes (except side-effects) are ignored when the 
 block can't be executed within the time limit. 
+
+=head1 CONFIGURATION
+
+=head2 timeout(time => VALUE , units => MICROSECOND|MILLISECONDS|SECONDS|MINUTES|HOURS)
+
+Set a timeout to VALUE. This timeout doesn't prevent a fix script to run longer than the
+specified value, but it does prevent fixes to have any effect when the timeout has been reached.
+
+    # This script will run 10 seconds
+    do timeout(time => 5, seconds)
+       reject() # This will be ignored
+       sleep(10,seconds)
+       add_field(foo,bar) # This will be ignored
+    end
+    
+At timeout a log message of level WARN will be generated.
 
 =head1 SEE ALSO
 
