@@ -1,7 +1,6 @@
 package Catmandu::Fix::Bind::visitor;
 
 use Moo;
-use Data::Dumper;
 use Catmandu::Util;
 
 with 'Catmandu::Fix::Bind';

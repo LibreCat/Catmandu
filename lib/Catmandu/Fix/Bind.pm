@@ -3,6 +3,8 @@ package Catmandu::Fix::Bind;
 use Moo::Role;
 use namespace::clean;
 
+with 'Catmandu::Logger';
+
 requires 'unit';
 requires 'bind';
 
@@ -22,8 +24,8 @@ around bind => sub {
 };
 
 sub unit {
-	my ($self,$data) = @_;
-	return $data;
+  	my ($self,$data) = @_;
+  	return $data;
 }
 
 sub bind {
