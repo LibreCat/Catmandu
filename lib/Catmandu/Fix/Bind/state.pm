@@ -58,8 +58,7 @@ to this global record. The content of this global record will not be exported if
 into the record. Use the 'doset' notation to overwrite the record with the global state:
 
     doset state(field => 'global')
-        copy_field(name,state2.name.$append)
-        copy_field(state2.name,global2)
+        copy_field(name,global.name.$append)
     end
 
 =head1 CONFIGURATION
