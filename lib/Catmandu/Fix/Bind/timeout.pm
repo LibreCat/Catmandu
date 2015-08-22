@@ -66,7 +66,7 @@ sub result {
       inline_replace($mvar->[0],$mvar->[1]);
     }
 
-    $self->sleep >= 0 ? $mvar->[1] : $mvar->[0];
+    $self->sleep < 0 ? $mvar->[1] : $mvar->[0];
 }
 
 sub inline_replace {
