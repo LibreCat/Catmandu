@@ -51,7 +51,7 @@ Catmandu::Fix::format - replace the value with a formatted (sprintf-like) versio
 
 =head1 DESCRIPTION
 
-Created a string formatted by the usual printf conventions of the C library function sprintf. 
+Create a string formatted by the usual printf conventions of the C library function sprintf. 
 See L<http://perldoc.perl.org/functions/sprintf.html> for a complete description.
 
 =head1 SEE ALSO
