@@ -214,10 +214,6 @@ in 3  monadic laws:
 
 L<Catmandu::Fix::Bind::identity>, L<Catmandu::Fix::Bind::benchmark>
 
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
-
 =cut
 
 1;
