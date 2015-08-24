@@ -13,6 +13,10 @@ sub unit {
 
     my $field = $self->field;
 
+    # Create a state field as part of the current record. In the
+    # result method these state field gets deleted. It would be
+    # a much cleaner solution when the current record wasn't touched.
+    # Fixes such as expand() and visitor() see these state fields...
     unless (exists $state->{$field}) {
         $state->{$field} = {};
     }
@@ -48,6 +52,8 @@ Catmandu::Fix::Bind::state - a binder that keeps a global state
     
         copy_field(global.name, result)       # read from the global record
     end
+
+
 
 =head1 DESCRIPTION
 
