@@ -49,8 +49,6 @@ Catmandu::Fix::Bind::state - a binder that keeps a global state
         copy_field(global.name, result)       # read from the global record
     end
 
-
-
 =head1 DESCRIPTION
 
 The state binder will create a global record for reference. Based on a field name one can read and write
