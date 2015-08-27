@@ -1,8 +1,8 @@
 package Catmandu::Exporter::Null;
 
-use namespace::clean;
 use Catmandu::Sane;
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Exporter';
 

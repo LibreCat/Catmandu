@@ -1,4 +1,5 @@
-package Catmandu::Id::Generator;
+package Catmandu::IdGenerator;
+
 use Catmandu::Sane;
 use Moo::Role;
 use namespace::clean;

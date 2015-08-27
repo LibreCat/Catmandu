@@ -13,7 +13,6 @@ BEGIN {
 }
 require_ok $pkg;
 
-
 {
     my $bag;
 
@@ -41,9 +40,10 @@ require_ok $pkg;
         $_->{_id} = $i++ for(@$objects);
     }
 
-    is_deeply $bag->to_array,$objects,"created objects contain expected identifiers";
+    is_deeply $bag->to_array, $objects,
+        "created objects contain expected identifiers";
 }
 
 
-done_testing 5;
+done_testing;
 

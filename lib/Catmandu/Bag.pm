@@ -1,9 +1,10 @@
 package Catmandu::Bag;
 
-use namespace::clean;
 use Catmandu::Sane;
-use Catmandu::Util qw(:check require_package);
+use Catmandu::Util qw(:check is_string require_package);
+use Catmandu::IdGenerator::UUID;
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Logger';
 with 'Catmandu::Pluggable'; # TODO
@@ -17,20 +18,18 @@ requires 'delete_all';
 has store => (is => 'ro'); # TODO
 has name  => (is => 'ro'); # TODO
 has id_generator => (
-    is => 'ro',
-    isa => sub { check_string($_[0]); },
-    lazy => 1,
-    default => sub { "Catmandu::Id::Generator::UUID" }
+    is => 'lazy',
+    coerce => sub {
+        if (is_string($_[0])) {
+            require_package($_[0], 'Catmandu::IdGenerator');
+        } else {
+            $_[0];
+        }
+    },
 );
-has _id_generator => (
-    is => 'ro',
-    lazy => 1,
-    builder => '_build_id_generator'
-);
+
 sub _build_id_generator {
-    my $ig = $_[0]->id_generator();
-    $ig = $ig =~ /^Catmandu::Id::Generator::/o ? $ig : "Catmandu::Id::Generator::${ig}";
-    require_package($ig)->new();
+    state $uuid = Catmandu::IdGenerator::UUID->new;
 }
 
 before get => sub {
@@ -48,7 +47,7 @@ before delete => sub {
 };
 
 sub generate_id {
-    $_[0]->_id_generator()->generate();
+    $_[0]->id_generator->generate;
 }
 
 sub get_or_add {
