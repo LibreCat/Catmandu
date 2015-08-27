@@ -19,7 +19,7 @@ require_ok $pkg;
     isa_ok $id_generator, $pkg;
     ok $id_generator->does("Catmandu::IdGenerator"),
         "an object of class '$pkg' does 'Catmandu::IdGenerator'";
-    push @$generated, $id_generator->generate for @$expected;
+    push @$generated, map { $id_generator->generate } @$expected;
     is_deeply $generated, $expected,
         "generated ids correct (default first_id)";
 }
@@ -31,7 +31,7 @@ require_ok $pkg;
     isa_ok $id_generator, $pkg;
     ok $id_generator->does("Catmandu::IdGenerator"),
         "an object of class '$pkg' does 'Catmandu::IdGenerator'";
-    push @$generated, $id_generator->generate for @$expected;
+    push @$generated, map { $id_generator->generate } @$expected;
     is_deeply $generated, $expected, 
         "generated ids correct (custom first_id)";
 }

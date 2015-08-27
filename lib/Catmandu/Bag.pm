@@ -21,7 +21,7 @@ has id_generator => (
     is => 'lazy',
     coerce => sub {
         if (is_string($_[0])) {
-            require_package($_[0], 'Catmandu::IdGenerator');
+            require_package($_[0], 'Catmandu::IdGenerator')->new;
         } else {
             $_[0];
         }

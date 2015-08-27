@@ -9,7 +9,7 @@ with 'Catmandu::IdGenerator';
 
 has first_id => (
     is => 'ro',
-    isa => \&check_natural,
+    isa => sub { check_natural($_[0]) },
     default => sub { 0 },
 );
 
