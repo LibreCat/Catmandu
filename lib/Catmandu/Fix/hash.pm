@@ -15,6 +15,9 @@ sub emit_value {
     "}";
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Catmandu::Fix::hash - creates a hash out of an array
@@ -25,10 +28,14 @@ Catmandu::Fix::hash - creates a hash out of an array
    hash(tags)
    # tags => {name => 'Peter', age => 12}
 
+=head1 DESCRIPTION
+
+This fix functions transforms array fields to hashes. The number of array
+elements must be even and fields to be used as field values must be simple
+strings. String fields and hash fields are left unchanged.
+
 =head1 SEE ALSO
 
-L<Catmandu::Fix>
+L<Catmandu::Fix::array>, L<Catmandu::Fix>
 
 =cut
-
-1;

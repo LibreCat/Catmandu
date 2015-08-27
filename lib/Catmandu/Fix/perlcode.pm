@@ -78,6 +78,6 @@ To indicate the end processing, return C<undef>.
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix::cmd>
+L<Catmandu::Fix::code>, L<Catmandu::Fix::cmd>
 
 =cut

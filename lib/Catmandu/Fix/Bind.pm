@@ -3,6 +3,8 @@ package Catmandu::Fix::Bind;
 use Moo::Role;
 use namespace::clean;
 
+with 'Catmandu::Logger';
+
 requires 'unit';
 requires 'bind';
 
@@ -22,8 +24,8 @@ around bind => sub {
 };
 
 sub unit {
-	my ($self,$data) = @_;
-	return $data;
+  	my ($self,$data) = @_;
+  	return $data;
 }
 
 sub bind {
@@ -55,13 +57,15 @@ sub emit_bind {
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
     for my $pair (@$code) { 
-        my $name = $pair->[0];
-        my $code = $pair->[1]; 
-        $perl .= "${unit} = ${bind_var}->bind(${unit}, sub {";
-        $perl .= "my ${var} = shift;";
-        $perl .= $code;
-        $perl .= "${var}";
-        $perl .= "},'$name',${sub_fixer_var});"
+        my $name           = $pair->[0];
+        my $original_code  = $pair->[1]; 
+        my $generated_code = "sub {" .
+                                "my ${var} = shift;" .
+                                $original_code .
+                                "${var}" .
+                             "}";
+
+        $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name',${sub_fixer_var});"
     }
     
     if ($self->can('result')) {
@@ -209,10 +213,6 @@ in 3  monadic laws:
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind::identity>, L<Catmandu::Fix::Bind::benchmark>
-
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
 
 =cut
 

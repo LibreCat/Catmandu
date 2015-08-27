@@ -251,6 +251,23 @@ sub take {
     }
 };
 
+sub sort {
+    my ($self, $cmp) = @_;
+    if (!defined $cmp) {
+        Catmandu::ArrayIterator->new([ sort @{$self->to_array} ]);
+    } elsif (ref $cmp) {
+        Catmandu::ArrayIterator->new([ 
+            sort { $cmp->($a,$b) }
+            @{$self->to_array} 
+        ]);
+    } else {
+        # TODO: use Schwartzian transform for more complex key
+        Catmandu::ArrayIterator->new([ 
+            sort { $a->{$cmp} cmp $b->{$cmp} } @{$self->to_array}
+        ]);
+    }
+}
+
 sub pluck {
     my ($self, $key) = @_;
     $self->map(sub {
@@ -637,6 +654,27 @@ $key is NOT equal to val.
 
 If the iterator contains HASH values, then return each item where the value of
 $key is NOT equal to any of the vals given.
+
+=head2 sort
+
+Returns an Iterator with items sorted lexically. Note that sorting requires
+memory because all items are buffered in a L<Catmandu::ArrayIterator>.
+
+=head2 sort(\&callback)
+
+Returns an Iterator with items sorted by a callback. The callback is expected to
+returns an integer less than, equal to, or greater than C<0>. The following code
+snippets result in the equal arrays:
+
+    $iterator->sort(\&callback)->to_array
+    [ sort \&callback @{ $iterator->to_array } ] 
+
+=head2 sort($key) 
+
+Returns an Iterator with items lexically sorted by a key. This is equivalent to
+sorting with the following callback:
+
+    $iterator->sort(sub { $_[0]->{$key} cmp $_[1]->{$key} })
 
 =head3 EXTERNAL ITERATOR
 

@@ -1,6 +1,8 @@
-# NAME
+=head1 NAME
 
 Catmandu::Introduction - a Catmandu HOW TO
+
+=begin markdown
 
 # STATUS
 
@@ -8,9 +10,11 @@ Catmandu::Introduction - a Catmandu HOW TO
 [![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.png?branch=master)](https://coveralls.io/r/LibreCat/Catmandu)
 [![CPANTS kwalitee](http://cpants.cpanauthors.org/dist/Catmandu.png)](http://cpants.cpanauthors.org/dist/Catmandu)
 
-# Introduction
+=end markdown
 
-Catmandu is a data processing toolkit developed as part of the [LibreCat](http://librecat.org) project. 
+=head1 Introduction
+
+Catmandu is a data processing toolkit developed as part of the L<LibreCat|http://librecat.org> project. 
 Catmandu provides a command line client and a suite of tools to ease the import, storage, retrieval, 
 export and transformation of data. For instance, to transform a CSV file into JSON use the
 command:
@@ -32,14 +36,14 @@ With Catmandu one can import OAI-PMH records in your application:
 and export records into formats such as JSON, YAML, CSV, XLS, RDF and many more.
 
 Catmandu also provides a small scripting language to manipulate data, extract parts of your dataset and
-transform records. For instance, rename fields  with the 'move\_field' command:
+transform records. For instance, rename fields  with the 'move_field' command:
 
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
 
-In the example above, we renamed all the 'title' fields in the dataset into the 'my\_title' field.
+In the example above, we renamed all the 'title' fields in the dataset into the 'my_title' field.
 
 One can also work on deeply nested data. E.g. create a deeply nested data structure with the
-'move\_field' command:
+'move_field' command:
 
     $ catmandu convert JSON --fix 'move_field(title,my.deeply.nested.title)' < data.json
 
@@ -58,7 +62,7 @@ Or, in case only the 245a subfield is needed write:
 
 When processing data a lot of Fix commands could be required. It wouldn't be very practical to
 type them all on the command line. By creating a Fix script which contains all the fix commands complicated
-data transformations can be created. For instance, if the file `myfixes.txt` contains:
+data transformations can be created. For instance, if the file C<myfixes.txt> contains:
 
      marc_map(245a,title)
      marc_map(100a,author.$append)
@@ -70,59 +74,59 @@ then they can be executed on a MARC file using this command:
 
     $ catmandu convert MARC --fix myfixes.txt < data.mrc
 
-Catmandu contains many powerfull fixes. Visit [http://librecat.org/Catmandu/#fixes-cheat-sheet](http://librecat.org/Catmandu/#fixes-cheat-sheet) to get 
+Catmandu contains many powerfull fixes. Visit L<http://librecat.org/Catmandu/#fixes-cheat-sheet> to get 
 an overview what is possible.
 
-# Documentation
+=head1 Documentation
 
-For more information read our [documentation pages](http://librecat.org/Catmandu/) 
-and [blog](https://librecatproject.wordpress.com/)
+For more information read our L<documentation pages|http://librecat.org/Catmandu/> 
+and L<blog|https://librecatproject.wordpress.com/>
 for a complete introduction and update into all Catmandu features.
 
 In the winter of 2014 an Advent calendar tutorial was created to provide a day by
 day introduction into the UNIX command line and Catmandu:
 
-[https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/](https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/)
+L<https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/>
 
 If you need extra training, our developers regulary host workshops at library 
-conferences and events: [http://librecat.org/events.html](http://librecat.org/events.html)
+conferences and events: L<http://librecat.org/events.html>
 
-# Installation
+=head1 Installation
 
 There are several ways to get a working version of Catmandu on your computer. 
-For a quick and demo installation visit our [blog](https://librecatproject.wordpress.com/get-catmandu/)
+For a quick and demo installation visit our L<blog|https://librecatproject.wordpress.com/get-catmandu/>
 where a VirtualBox image is available containing all the Catmandu modules, including
 ElasticSearch and MongoDB.
 
-On our [website](http://librecat.org/Catmandu/) we provide installation instructions for:
+On our L<website|http://librecat.org/Catmandu/> we provide installation instructions for:
 
-    * Debian
-    * Ubuntu Server
-    * CentOS
-    * openSUSE
-    * OpenBSD
-    * Windows
+ * Debian
+ * Ubuntu Server
+ * CentOS
+ * openSUSE
+ * OpenBSD
+ * Windows
 
-and even a generic installation using [Docker](https://www.docker.com/).
+and even a generic installation using L<Docker|https://www.docker.com/>.
 
-# Open Source
+=head1 Open Source
 
 Catmandu software published at https://github.com/LibreCat/Catmandu is free software without warranty, liabilities 
 or support; you can redistribute it and/or modify it under the terms of the GNU General Public License as 
 published by the Free Software Foundation; either version 2 or any later version. Every contributor is free 
 to state her/his copyright.
 
-# Developers & Support
+=head1 Developers & Support
 
 Catmandu has a very active international developer community. We welcome all feedback, bug reports and
 feature enhancement. 
 
-Join our mailing list to receive more information:  `librecat-dev@librecat.org`
+Join our mailing list to receive more information:  C<< librecat-dev@librecat.org >>
 
 Are a developer and want to contribute to the project? Feel free to submit pull requests or create new
 Catmandu packages!
 
-# Kudos
+=head1 Kudos
 
 Catmandu is created in a cooperation with many developers world wide. Without them this project isn't possible.
 We would like to thank our core maintainer: Nicolas Steenlant and all contributors: Christian Pietsch , 
@@ -130,6 +134,8 @@ Dave Sherohman , Friedrich Summann , Jakob Voss , Johann Rolschewski  , Jorgen E
 Maria Hedberg , Mathias Loeqsch , Najko Jahn , Nicolas Franck , Patrick Hochstenbach , Petra Kohorst  , 
 Snorri Briem , Upasana Shukla and Vitali Peil 
 
-# SEE ALSO
-
-[Catmandu](https://metacpan.org/pod/Catmandu)
+=head1 SEE ALSO
+ 
+L<Catmandu>
+ 
+=cut

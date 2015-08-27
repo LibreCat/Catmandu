@@ -1,0 +1,3 @@
+add_field('hobbies.$append','cooking')
+add_field('hobbies.$append','art')
+add_field('hobbies.$append','hiking')
