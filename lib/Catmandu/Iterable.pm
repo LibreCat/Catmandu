@@ -1,11 +1,11 @@
 package Catmandu::Iterable;
 
-use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
 use Hash::Util::FieldHash qw(fieldhash);
 use Role::Tiny;
+use namespace::clean;
 
 # delay loading these because of circular dependency
 require Catmandu::Iterator;
