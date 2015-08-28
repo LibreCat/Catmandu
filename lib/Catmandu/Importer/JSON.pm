@@ -1,7 +1,7 @@
 package Catmandu::Importer::JSON;
 
 use Catmandu::Sane;
-use JSON::XS ();
+use JSON::MaybeXS ();
 use Moo;
 use namespace::clean;
 
@@ -13,7 +13,7 @@ has array     => (is => 'ro', default => sub { 0 });
 
 sub _build_json {
     my ($self) = @_;
-    JSON::XS->new->utf8($self->encoding eq ':raw');
+    JSON::MaybeXS->new->utf8($self->encoding eq ':raw');
 }
 
 sub default_encoding { ':raw' }
@@ -47,7 +47,7 @@ sub generator {
         }
 
         return;
- 
+
     } : sub {
         state $json = $self->json;
         state $fh   = $self->fh;

@@ -1,7 +1,7 @@
 package Catmandu::Exporter::JSON;
 
 use Catmandu::Sane;
-use JSON::XS ();
+use JSON::MaybeXS ();
 use Moo;
 use MooX::Aliases;
 use namespace::clean;
@@ -18,7 +18,7 @@ has json         => (is => 'ro', lazy => 1, builder => '_build_json');
 
 sub _build_json {
     my ($self) = @_;
-    JSON::XS->new
+    JSON::MaybeXS->new
             ->utf8(0)
             ->allow_nonref
             ->pretty($self->pretty)

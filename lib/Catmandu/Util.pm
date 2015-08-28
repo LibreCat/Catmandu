@@ -11,7 +11,7 @@ use IO::File;
 use IO::Handle::Util ();
 use File::Spec;
 use YAML::XS ();
-use JSON::XS ();
+use JSON::MaybeXS ();
 use Hash::Merge::Simple ();
 
 our %EXPORT_TAGS = (
@@ -143,7 +143,7 @@ sub read_yaml {
 sub read_json {
     my $text = read_file($_[0]);
     # dies on error
-    JSON::XS::decode_json(read_file($_[0]));
+    JSON::MaybeXS::decode_json(read_file($_[0]));
 }
 
 sub join_path {
@@ -386,10 +386,10 @@ sub is_bool {
     Scalar::Util::blessed($_[0]) && (
         $_[0]->isa('boolean') ||
         $_[0]->isa('Types::Serialiser::Boolean') ||
-        $_[0]->isa('JSON::XS::Boolean') ||
+        $_[0]->isa('JSON::MaybeXS::Boolean') ||
         $_[0]->isa('Cpanel::JSON::XS::Boolean') ||
         $_[0]->isa('JSON::PP::Boolean')
-    ); 
+    );
 }
 
 sub is_natural {
@@ -638,7 +638,7 @@ Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
 
-Throws a Catmandu::Error on failure. 
+Throws a Catmandu::Error on failure.
 
 =item write_file($path, $str);
 
@@ -648,7 +648,7 @@ Writes the string C<$str> to a file at C<$path>.
 
     write_file('/path/to/file.txt', "contents");
 
-Throws a Catmandu::Error on failure. 
+Throws a Catmandu::Error on failure.
 
 =item read_yaml($path);
 
@@ -790,7 +790,7 @@ with C<is_same()>.
 
 =item array_split($array | $string)
 
-Returns C<$array> or a new array by splitting C<$string> at commas. 
+Returns C<$array> or a new array by splitting C<$string> at commas.
 
 =back
 
@@ -1120,4 +1120,3 @@ passed to L<Pod::Usage>.
 L<Data::Util>.
 
 =cut
-
