@@ -64,10 +64,10 @@ L<Catmandu::Fixable>, L<Catmandu::Exporter> , L<Catmandu::Store>
 
 =cut
 
-use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Fixable';
 

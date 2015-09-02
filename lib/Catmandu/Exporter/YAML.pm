@@ -1,9 +1,9 @@
 package Catmandu::Exporter::YAML;
 
-use namespace::clean;
 use Catmandu::Sane;
 use YAML::XS ();
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Exporter';
 
