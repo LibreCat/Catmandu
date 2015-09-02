@@ -8,7 +8,6 @@ has path          => (fix_arg => 1);
 has exporter_name => (fix_arg => 1);
 has exporter_args => (fix_opt => 'collect');
 has exporter      => (is => 'lazy', init_arg => undef);
-has _exporter_var => (is => 'rwp', writer => '_set_exporter_var', init_arg => undef);
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -19,9 +18,7 @@ sub _build_exporter {
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    # memoize in case called multiple times
-    my $exporter_var = $self->_exporter_var ||
-                       $self->_set_exporter_var($fixer->capture($self->exporter));
+    my $exporter_var = $fixer->capture($self->exporter);
 
     "${exporter_var}->add(${var});"
 }
