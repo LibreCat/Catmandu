@@ -46,8 +46,6 @@ sub _build_fixes {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
         } elsif (ref $fix) {
             push @$fixes, $fix;
-        } elsif (is_string($fix) && $fix !~ /[\n()]/ and -X $fix) {
-            push @$fixes, require_package('Catmandu::Fix::cmd')->new($fix);
         } elsif (is_string($fix)) {
             push @$fixes, @{$self->parser->parse($fix)};
         }
