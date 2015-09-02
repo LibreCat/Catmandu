@@ -1,9 +1,9 @@
 package Catmandu::Serializer;
 
-use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(require_package);
 use Moo::Role;
+use namespace::clean;
 
 has serialization_format => (
     is      => 'ro',

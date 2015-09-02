@@ -1,10 +1,10 @@
 package Catmandu::Exporter::JSON;
 
-use namespace::clean;
 use Catmandu::Sane;
 use JSON::XS ();
 use Moo;
 use MooX::Aliases;
+use namespace::clean;
 
 with 'Catmandu::Exporter';
 
