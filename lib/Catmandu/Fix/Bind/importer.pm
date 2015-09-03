@@ -7,10 +7,11 @@ use Catmandu::Fix::Has;
 with 'Catmandu::Fix::Bind';
 
 has importer_name => (fix_arg => 1);
+has step          => (fix_opt => 1);
 has importer_args => (fix_opt => 'collect');
 
-has importer      => (is => 'lazy', init_arg => undef);
-has has_run       => (is => 'rw'  , default => sub { 0 });
+has importer => (is => 'lazy');
+has flag => (is => 'rw'  , default => sub { 0 });
 
 sub _build_importer {
     my ($self) = @_;
@@ -19,21 +20,35 @@ sub _build_importer {
 
 sub unit {
     my ($self,$data) = @_;
-
     $data;
 }
 
 sub bind {
     my ($self,$mvar,$func,$name,$fixer) = @_;
 
-    return if $self->has_run;
+    return if $self->flag;
 
-    $self->importer->each(sub {
-        $fixer->fix($_[0]);
-    });
 
-    $self->has_run(1);
+    if ($self->step) {
+        my $next = $self->importer->next;
+        $fixer->fix($next) if $next;
+    }
+    else {
+        $self->importer->each(sub {
+            $fixer->fix($_[0]);
+        });
+    }
 
+    $self->flag(1);
+
+    $mvar;
+}
+
+sub result {
+    my ($self,$mvar) = @_;
+
+    $self->flag(0);
+    
     $mvar;
 }
 
@@ -57,6 +72,32 @@ Catmandu::Fix::Bind::importer - a binder runs fixes on records from an importer
 The import binder computes all the Fix function on records read from the given importer.
 This importer doesn't change the current importer to the given one! Use the 'catmandu run'
 command line command to control importers solely by the Fix script. 
+
+=head1 CONFIGURATION
+
+=head2 importer(IMPORTER_NAME, step: true|false, IMPORTER_ARGS...)
+
+Load the import IMPORTER_NAME in the current context. When step is 'true' then for
+every execution of do importer() only one item will be read from the importer. This
+latter option can become handy in nested iterators:
+
+    # This will produce:
+    #  {"n":0}
+    #  {"m":0}
+    #  {"n":1}
+    #  {"m":1}
+    #  {"n":2}
+    #  {"m":2}
+    # ...
+    do importer(Mock,size:20) 
+        move_field(n,brol)
+        add_to_exporter(.,JSON)
+
+        do importer(Mock,size:20,step:true)
+            move_field(n,m)
+            add_to_exporter(.,JSON)
+        end
+    end
 
 =head1 SEE ALSO
 
