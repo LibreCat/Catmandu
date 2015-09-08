@@ -13,7 +13,7 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
 
     "if (is_array_ref(${var})) {" .
-        "no warnings 'undefined';" .
+        "no warnings 'uninitialized';" .
         "${var} = [List::MoreUtils::uniq(\@{${var}})];" .
     "}";
 }

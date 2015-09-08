@@ -12,7 +12,7 @@ BEGIN {
 }
 
 is_deeply
-    $pkg->new('tags')->fix({tags => ["foo", "bar","bar"]}),
-    {tags => ["bar","bar","foo"]};
+    $pkg->new('tags')->fix({tags => ["foo","bar","bar","foo"]}),
+    {tags => ["foo","bar"]};
 
 done_testing;
