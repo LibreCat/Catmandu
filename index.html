@@ -374,6 +374,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">yum</span> install perl-ExtUtils-MakeMaker
 <span class="kw">yum</span> install perl-CPAN -y
 <span class="kw">yum</span> install gcc -y
+<span class="kw">yum</span> install gdbm gdbm-devel -y
 <span class="kw">yum</span> install openssl-devel -y
 <span class="kw">yum</span> install tcp_wrappers-devel -y
 <span class="kw">yum</span> install expat expat-devel -y
@@ -1206,10 +1207,20 @@ Hello, World?
 <span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
 <span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
 <span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+
 <span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>)                           <span class="co"># Create an empty array foo =&gt; []</span>
 <span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>)               <span class="co"># Create an array with three values foo =&gt; [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
 <span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>)                            <span class="co"># Create an empty hash foo =&gt; {}</span>
 <span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>,a: b,c: d)                  <span class="co"># Create an hash with two values foo =&gt; { a =&gt; &#39;b&#39; , c =&gt; &#39;d&#39; }</span>
+
+<span class="kw">array</span>(<span class="st">&quot;foo&quot;</span>)                               <span class="co"># Create an array from a hash :</span>
+                                           <span class="co"># foo =&gt; {&quot;name&quot;:&quot;value&quot;} =&gt; [ &quot;name&quot; , &quot;value&quot; ]</span>
+<span class="kw">hash</span>(<span class="st">&quot;foo&quot;</span>)                                <span class="co"># Create a hash from an array</span>
+                                           <span class="co"># foo =&gt; [ &quot;name&quot; , &quot;value&quot; ] =&gt; {&quot;name&quot;:&quot;value&quot;}</span>
+
+<span class="kw">assoc</span>(fields, pairs.*.key, pairs.*.val)    <span class="co"># Associate two values as a hash key and value</span>
+                                           <span class="co"># {pairs =&gt; [{key =&gt; &#39;year&#39;, val =&gt; 2009}, {key =&gt; &#39;subject&#39;, val =&gt; &#39;Perl&#39;}]}</span>
+                                           <span class="co"># {fields =&gt; {subject =&gt; &#39;Perl&#39;, year =&gt; 2009}, pairs =&gt; [...]}</span>
 
 <span class="kw">upcase</span>(<span class="st">&quot;title&quot;</span>)                            <span class="co"># marc -&gt; MARC</span>
 <span class="kw">downcase</span>(<span class="st">&quot;title&quot;</span>)                          <span class="co"># MARC -&gt; marc</span>
@@ -1219,38 +1230,34 @@ Hello, World?
 <span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
 <span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
 
-<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-sep_char=<span class="kw">&gt;</span><span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
-<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-default=<span class="kw">&gt;</span><span class="st">&#39;test&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
-<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-delete=<span class="kw">&gt;</span><span class="st">&#39;1&#39;</span>)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, sep_char:<span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, default:test)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, delete:1)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
 
-<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -database_name =<span class="kw">&gt;</span> <span class="st">&#39;lookups&#39;</span>)  <span class="co"># lookup the (id)-value of title in &#39;lookups&#39; and</span>
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, database_name:lookups)  <span class="co"># lookup the (id)-value of title in &#39;lookups&#39; and</span>
                                            <span class="co"># replace it with the data found</span>
-<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -default =<span class="kw">&gt;</span> <span class="st">&#39;default value&#39;</span> , -delete =<span class="kw">&gt;</span> 1) 
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, default:<span class="st">&#39;default value&#39;</span> , delete:1) 
 
-<span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, <span class="st">&#39;-bag&#39;</span>, <span class="st">&#39;authors&#39;</span>, <span class="st">&#39;-database_name&#39;</span>, <span class="st">&#39;catalog&#39;</span>)  <span class="co"># add matching values to a store as a side effect</span>
+<span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, bag:authors, database_name:catalog)  <span class="co"># add matching values to a store as a side effect</span>
 
 
 <span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
 <span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>)                         <span class="co"># sort the values of an array</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-uniq =<span class="kw">&gt;</span> 1)              <span class="co"># sort the values plus keep unique values</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, uniq:1)                 <span class="co"># sort the values plus keep unique values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, reverse:1)              <span class="co"># revese sort</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, numeric:1)              <span class="co"># sort numerical values</span>
 <span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
 <span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
+
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
-<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>)                             <span class="co"># Send a message to Log::Any (new in Catmandu 0.92)</span>
-<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>,-level =<span class="kw">&gt;</span> DEBUG)             <span class="co"># Send a message to Log::Any of log level &#39;DEBUG&#39;</span>
+<span class="kw">perlcode</span>(<span class="st">&quot;myscript.pl&quot;</span>)                    <span class="co"># Execute Perl code as fix function</span>
 
 <span class="kw">split_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                     <span class="co"># marc:must:die -&gt; [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;]</span>
 <span class="kw">join_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                      <span class="co"># [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;] -&gt; marc:must:die</span>
 <span class="kw">retain_field</span>(<span class="st">&quot;id&quot;</span>)                         <span class="co"># delete any field except &#39;id&#39;</span>
 <span class="kw">replace_all</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)               <span class="co"># marc -&gt; mxrc</span>
-
-<span class="co"># Create hashes from arrays and arrays from hashes</span>
-<span class="kw">array</span>(tags)                                <span class="co"># { &#39;name&#39; =&gt; &#39;Peter&#39;, age =&gt; &#39;12&#39; } =&gt; [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12]</span>
-<span class="kw">hash</span>(tags)                                 <span class="co"># [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12] =&gt; {name =&gt; &#39;Peter&#39;, age =&gt; 12}</span>
 
 <span class="co"># Most functions can work also work on arrays. E.g.</span>
 <span class="kw">replace_all</span>(<span class="st">&quot;author.*&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)            <span class="co"># [ &#39;marc&#39;,&#39;jan&#39;] =&gt; [&#39;mxrc&#39;,&#39;jxn&#39;]</span>
@@ -1283,7 +1290,7 @@ Hello, World?
 <span class="co"># Copy the 245-$a$b$c subfields into the my.title hash in the order of the record</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245abc&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
 <span class="co"># Copy the 245-$c$b$a subfields into the my.title hash in the order of the mapping</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;245cba&#39;</span>,<span class="st">&#39;my.title&#39;</span> , -pluck =<span class="kw">&gt;</span> 1) 
+<span class="kw">marc_map</span>(<span class="st">&#39;245cba&#39;</span>,<span class="st">&#39;my.title&#39;</span> , pluck:1) 
 <span class="co"># Copy the 100 subfields into the my.authors array</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;100&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>) 
 <span class="co"># Add the 710 subfields into the my.authors array</span>
@@ -1293,22 +1300,22 @@ Hello, World?
 <span class="co"># Copy the 008 characters 35-35 into the my.language hash</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;008_/35-35&#39;</span>,<span class="st">&#39;my.language&#39;</span>)
 <span class="co"># Copy all the 600 fields into a my.stringy hash joining them by &#39;; &#39;</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;600&#39;</span>,<span class="st">&#39;my.stringy&#39;</span>, -join =<span class="kw">&gt;</span> <span class="st">&#39;; &#39;</span>)
+<span class="kw">marc_map</span>(<span class="st">&#39;600&#39;</span>,<span class="st">&#39;my.stringy&#39;</span>, join:<span class="st">&#39;; &#39;</span>)
 <span class="co"># When 024 field exists create the my.has024 hash with value &#39;found&#39;</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;024&#39;</span>,<span class="st">&#39;my.has024&#39;</span>, -value =<span class="kw">&gt;</span> <span class="st">&#39;found&#39;</span>)
+<span class="kw">marc_map</span>(<span class="st">&#39;024&#39;</span>,<span class="st">&#39;my.has024&#39;</span>, value:found)
 <span class="co"># Do the same examples now with the marc fields in &#39;record2&#39;</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>, -record =<span class="kw">&gt;</span> <span class="st">&#39;record2&#39;</span>)
+<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>, record:record2)
 <span class="co"># Remove the 900 fields</span>
 <span class="kw">marc_remove</span>(<span class="st">&#39;900&#39;</span>)
 <span class="co"># Add a marc field (in Catmandu::MARC 0.110)</span>
-<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1 =<span class="kw">&gt;</span> <span class="st">&#39; &#39;</span> , ind2 =<span class="kw">&gt;</span> <span class="st">&#39;1&#39;</span> , a =<span class="kw">&gt;</span> <span class="st">&#39;test123&#39;</span>)
+<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1:<span class="st">&#39; &#39;</span> , ind2:<span class="st">&#39;1&#39;</span> , a:<span class="st">&#39;test123&#39;</span>)
 <span class="co"># Set a marc value of one (sub)field to a new value</span>
 <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">marc_set</span>(<span class="st">&#39;650p&#39;</span>,<span class="st">&#39;test&#39;</span>)
 <span class="kw">marc_set</span>(<span class="st">&#39;100[3]a&#39;</span>,<span class="st">&#39;Farquhar family.&#39;</span>)
 
 <span class="co"># Map all 650 subjects into an array </span>
-<span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>,join:<span class="st">&#39;###&#39;</span>) 
+<span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>, join:<span class="st">&#39;###&#39;</span>) 
 <span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
 
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
@@ -1380,17 +1387,17 @@ Hello, World?
 
 <span class="co"># List over all items in demo and add a foo =&gt; bar field</span>
 <span class="co"># { demo =&gt; [{},{},{}] } =&gt; { demo =&gt; [{foo=&gt;bar},{foo=&gt;bar},{foo=&gt;bar}]}</span>
-<span class="kw">do</span> <span class="kw">list</span>(path =<span class="kw">&gt;</span> demo)
+<span class="kw">do</span> <span class="kw">list</span>(path: demo)
     <span class="kw">add_field</span>(foo,bar)
 <span class="kw">end</span>
 
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
-<span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
+<span class="kw">do</span> <span class="kw">benchmark</span>(output:/dev/stderr)
     <span class="fu">foo()</span>
 <span class="kw">end</span>
 
 <span class="co"># Find all ISBN in a stream</span>
-<span class="kw">do</span> <span class="kw">hashmap</span>(exporter =<span class="kw">&gt;</span> JSON, join =<span class="kw">&gt;</span> <span class="st">&#39;,&#39;</span>)
+<span class="kw">do</span> <span class="kw">hashmap</span>(exporter: JSON, join:<span class="st">&#39;,&#39;</span>)
   <span class="co"># Need an identity binder to group all operations that calculate key_value pairs</span>
   <span class="kw">do</span> <span class="fu">identity()</span>
    <span class="kw">copy_field</span>(isbn,key)
@@ -1410,7 +1417,7 @@ Hello, World?
 <span class="co"># to:</span>
 <span class="co">#    data:</span>
 <span class="co">#       - name: patrick</span>
-<span class="kw">do</span> <span class="kw">with</span>(path =<span class="kw">&gt;</span> data)
+<span class="kw">do</span> <span class="kw">with</span>(path:data)
     <span class="kw">reject</span> all_match(name,nicolas)
     <span class="co"># Or:</span>
     <span class="co"># if all_match(name,nicolas)</span>
@@ -2399,10 +2406,20 @@ git push origin dev</code></pre></li>
 <span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
 <span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
 <span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+
 <span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>)                           <span class="co"># Create an empty array foo =&gt; []</span>
 <span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>)               <span class="co"># Create an array with three values foo =&gt; [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
 <span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>)                            <span class="co"># Create an empty hash foo =&gt; {}</span>
 <span class="kw">set_hash</span>(<span class="st">&quot;foo&quot;</span>,a: b,c: d)                  <span class="co"># Create an hash with two values foo =&gt; { a =&gt; &#39;b&#39; , c =&gt; &#39;d&#39; }</span>
+
+<span class="kw">array</span>(<span class="st">&quot;foo&quot;</span>)                               <span class="co"># Create an array from a hash :</span>
+                                           <span class="co"># foo =&gt; {&quot;name&quot;:&quot;value&quot;} =&gt; [ &quot;name&quot; , &quot;value&quot; ]</span>
+<span class="kw">hash</span>(<span class="st">&quot;foo&quot;</span>)                                <span class="co"># Create a hash from an array</span>
+                                           <span class="co"># foo =&gt; [ &quot;name&quot; , &quot;value&quot; ] =&gt; {&quot;name&quot;:&quot;value&quot;}</span>
+
+<span class="kw">assoc</span>(fields, pairs.*.key, pairs.*.val)    <span class="co"># Associate two values as a hash key and value</span>
+                                           <span class="co"># {pairs =&gt; [{key =&gt; &#39;year&#39;, val =&gt; 2009}, {key =&gt; &#39;subject&#39;, val =&gt; &#39;Perl&#39;}]}</span>
+                                           <span class="co"># {fields =&gt; {subject =&gt; &#39;Perl&#39;, year =&gt; 2009}, pairs =&gt; [...]}</span>
 
 <span class="kw">upcase</span>(<span class="st">&quot;title&quot;</span>)                            <span class="co"># marc -&gt; MARC</span>
 <span class="kw">downcase</span>(<span class="st">&quot;title&quot;</span>)                          <span class="co"># MARC -&gt; marc</span>
@@ -2412,38 +2429,34 @@ git push origin dev</code></pre></li>
 <span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
 <span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
 
-<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-sep_char=<span class="kw">&gt;</span><span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
-<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-default=<span class="kw">&gt;</span><span class="st">&#39;test&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
-<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>,-delete=<span class="kw">&gt;</span><span class="st">&#39;1&#39;</span>)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, sep_char:<span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, default:test)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
+<span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, delete:1)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
 
-<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -database_name =<span class="kw">&gt;</span> <span class="st">&#39;lookups&#39;</span>)  <span class="co"># lookup the (id)-value of title in &#39;lookups&#39; and</span>
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, database_name:lookups)  <span class="co"># lookup the (id)-value of title in &#39;lookups&#39; and</span>
                                            <span class="co"># replace it with the data found</span>
-<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, -default =<span class="kw">&gt;</span> <span class="st">&#39;default value&#39;</span> , -delete =<span class="kw">&gt;</span> 1) 
+<span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, default:<span class="st">&#39;default value&#39;</span> , delete:1) 
 
-<span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, <span class="st">&#39;-bag&#39;</span>, <span class="st">&#39;authors&#39;</span>, <span class="st">&#39;-database_name&#39;</span>, <span class="st">&#39;catalog&#39;</span>)  <span class="co"># add matching values to a store as a side effect</span>
+<span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, bag:authors, database_name:catalog)  <span class="co"># add matching values to a store as a side effect</span>
 
 
 <span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
 <span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>)                         <span class="co"># sort the values of an array</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-uniq =<span class="kw">&gt;</span> 1)              <span class="co"># sort the values plus keep unique values</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-reverse =<span class="kw">&gt;</span> 1)           <span class="co"># revese sort</span>
-<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>,-numeric =<span class="kw">&gt;</span> 1)           <span class="co"># sort numerical values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, uniq:1)                 <span class="co"># sort the values plus keep unique values</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, reverse:1)              <span class="co"># revese sort</span>
+<span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, numeric:1)              <span class="co"># sort numerical values</span>
 <span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
 <span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
+
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
-<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>)                             <span class="co"># Send a message to Log::Any (new in Catmandu 0.92)</span>
-<span class="kw">log</span>(<span class="st">&quot;message&quot;</span>,-level =<span class="kw">&gt;</span> DEBUG)             <span class="co"># Send a message to Log::Any of log level &#39;DEBUG&#39;</span>
+<span class="kw">perlcode</span>(<span class="st">&quot;myscript.pl&quot;</span>)                    <span class="co"># Execute Perl code as fix function</span>
 
 <span class="kw">split_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                     <span class="co"># marc:must:die -&gt; [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;]</span>
 <span class="kw">join_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                      <span class="co"># [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;] -&gt; marc:must:die</span>
 <span class="kw">retain_field</span>(<span class="st">&quot;id&quot;</span>)                         <span class="co"># delete any field except &#39;id&#39;</span>
 <span class="kw">replace_all</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)               <span class="co"># marc -&gt; mxrc</span>
-
-<span class="co"># Create hashes from arrays and arrays from hashes</span>
-<span class="kw">array</span>(tags)                                <span class="co"># { &#39;name&#39; =&gt; &#39;Peter&#39;, age =&gt; &#39;12&#39; } =&gt; [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12]</span>
-<span class="kw">hash</span>(tags)                                 <span class="co"># [&#39;name&#39;, &#39;Peter&#39;, &#39;age&#39;, 12] =&gt; {name =&gt; &#39;Peter&#39;, age =&gt; 12}</span>
 
 <span class="co"># Most functions can work also work on arrays. E.g.</span>
 <span class="kw">replace_all</span>(<span class="st">&quot;author.*&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)            <span class="co"># [ &#39;marc&#39;,&#39;jan&#39;] =&gt; [&#39;mxrc&#39;,&#39;jxn&#39;]</span>
@@ -2476,7 +2489,7 @@ git push origin dev</code></pre></li>
 <span class="co"># Copy the 245-$a$b$c subfields into the my.title hash in the order of the record</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245abc&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
 <span class="co"># Copy the 245-$c$b$a subfields into the my.title hash in the order of the mapping</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;245cba&#39;</span>,<span class="st">&#39;my.title&#39;</span> , -pluck =<span class="kw">&gt;</span> 1) 
+<span class="kw">marc_map</span>(<span class="st">&#39;245cba&#39;</span>,<span class="st">&#39;my.title&#39;</span> , pluck:1) 
 <span class="co"># Copy the 100 subfields into the my.authors array</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;100&#39;</span>,<span class="st">&#39;my.authors.$append&#39;</span>) 
 <span class="co"># Add the 710 subfields into the my.authors array</span>
@@ -2486,22 +2499,22 @@ git push origin dev</code></pre></li>
 <span class="co"># Copy the 008 characters 35-35 into the my.language hash</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;008_/35-35&#39;</span>,<span class="st">&#39;my.language&#39;</span>)
 <span class="co"># Copy all the 600 fields into a my.stringy hash joining them by &#39;; &#39;</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;600&#39;</span>,<span class="st">&#39;my.stringy&#39;</span>, -join =<span class="kw">&gt;</span> <span class="st">&#39;; &#39;</span>)
+<span class="kw">marc_map</span>(<span class="st">&#39;600&#39;</span>,<span class="st">&#39;my.stringy&#39;</span>, join:<span class="st">&#39;; &#39;</span>)
 <span class="co"># When 024 field exists create the my.has024 hash with value &#39;found&#39;</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;024&#39;</span>,<span class="st">&#39;my.has024&#39;</span>, -value =<span class="kw">&gt;</span> <span class="st">&#39;found&#39;</span>)
+<span class="kw">marc_map</span>(<span class="st">&#39;024&#39;</span>,<span class="st">&#39;my.has024&#39;</span>, value:found)
 <span class="co"># Do the same examples now with the marc fields in &#39;record2&#39;</span>
-<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>, -record =<span class="kw">&gt;</span> <span class="st">&#39;record2&#39;</span>)
+<span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>, record:record2)
 <span class="co"># Remove the 900 fields</span>
 <span class="kw">marc_remove</span>(<span class="st">&#39;900&#39;</span>)
 <span class="co"># Add a marc field (in Catmandu::MARC 0.110)</span>
-<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1 =<span class="kw">&gt;</span> <span class="st">&#39; &#39;</span> , ind2 =<span class="kw">&gt;</span> <span class="st">&#39;1&#39;</span> , a =<span class="kw">&gt;</span> <span class="st">&#39;test123&#39;</span>)
+<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1:<span class="st">&#39; &#39;</span> , ind2:<span class="st">&#39;1&#39;</span> , a:<span class="st">&#39;test123&#39;</span>)
 <span class="co"># Set a marc value of one (sub)field to a new value</span>
 <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">marc_set</span>(<span class="st">&#39;650p&#39;</span>,<span class="st">&#39;test&#39;</span>)
 <span class="kw">marc_set</span>(<span class="st">&#39;100[3]a&#39;</span>,<span class="st">&#39;Farquhar family.&#39;</span>)
 
 <span class="co"># Map all 650 subjects into an array </span>
-<span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>,join:<span class="st">&#39;###&#39;</span>) 
+<span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>, join:<span class="st">&#39;###&#39;</span>) 
 <span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
 
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
@@ -2573,17 +2586,17 @@ git push origin dev</code></pre></li>
 
 <span class="co"># List over all items in demo and add a foo =&gt; bar field</span>
 <span class="co"># { demo =&gt; [{},{},{}] } =&gt; { demo =&gt; [{foo=&gt;bar},{foo=&gt;bar},{foo=&gt;bar}]}</span>
-<span class="kw">do</span> <span class="kw">list</span>(path =<span class="kw">&gt;</span> demo)
+<span class="kw">do</span> <span class="kw">list</span>(path: demo)
     <span class="kw">add_field</span>(foo,bar)
 <span class="kw">end</span>
 
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
-<span class="kw">do</span> <span class="kw">benchmark</span>(output =<span class="kw">&gt;</span> /dev/stderr)
+<span class="kw">do</span> <span class="kw">benchmark</span>(output:/dev/stderr)
     <span class="fu">foo()</span>
 <span class="kw">end</span>
 
 <span class="co"># Find all ISBN in a stream</span>
-<span class="kw">do</span> <span class="kw">hashmap</span>(exporter =<span class="kw">&gt;</span> JSON, join =<span class="kw">&gt;</span> <span class="st">&#39;,&#39;</span>)
+<span class="kw">do</span> <span class="kw">hashmap</span>(exporter: JSON, join:<span class="st">&#39;,&#39;</span>)
   <span class="co"># Need an identity binder to group all operations that calculate key_value pairs</span>
   <span class="kw">do</span> <span class="fu">identity()</span>
    <span class="kw">copy_field</span>(isbn,key)
@@ -2603,7 +2616,7 @@ git push origin dev</code></pre></li>
 <span class="co"># to:</span>
 <span class="co">#    data:</span>
 <span class="co">#       - name: patrick</span>
-<span class="kw">do</span> <span class="kw">with</span>(path =<span class="kw">&gt;</span> data)
+<span class="kw">do</span> <span class="kw">with</span>(path:data)
     <span class="kw">reject</span> all_match(name,nicolas)
     <span class="co"># Or:</span>
     <span class="co"># if all_match(name,nicolas)</span>
@@ -2845,7 +2858,7 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <h2><span class="header-section-number">12.2</span> general frameworks</h2>
 <ul>
 <li><a href="http://akara.info/">Akara</a> - Akara is a platform for developing data services available on the Web, using REST architecture. Akara is open source software written in Python and C</li>
-<li><a href="https://github.com/benbernard/RecordStream">App::RecordStream</a> - App::RecordStream - recs - A system for command-line analysis of data</li>
+<li><a href="https://github.com/benbernard/RecordStream">App::RecordStream</a> - App::RecordStream - recs - A system for command-line analysis of data.</li>
 <li><a href="http://www.comsode.eu/">COMSODE</a> - The project COMSODE is an SME-driven RTD project aimed at progressing the capabilities in the field of Open Data re-use.</li>
 <li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
 <li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a> - data management platform for enrichment, normalization and linkage of knowledge data structures.</li>
