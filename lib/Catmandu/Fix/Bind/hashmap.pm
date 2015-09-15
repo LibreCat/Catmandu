@@ -155,10 +155,6 @@ Join all the values of a key using a delimiter.
 
 Don't store the values only count the number of key occurences.
 
-=head1 AUTHOR
-
-Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
-
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind>

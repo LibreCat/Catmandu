@@ -11,7 +11,6 @@ has bag_name   => (fix_opt => 1, init_arg => 'bag');
 has store_args => (fix_opt => 'collect');
 has store      => (is => 'lazy', init_arg => undef);
 has bag        => (is => 'lazy', init_arg => undef);
-has _bag_var   => (is => 'rwp', writer => '_set_bag_var', init_arg => undef);
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -30,8 +29,7 @@ sub _build_bag {
 sub emit_value {
     my ($self, $var, $fixer) = @_;
     # memoize in case called multiple times
-    my $bag_var = $self->_bag_var ||
-                  $self->_set_bag_var($fixer->capture($self->bag));
+    my $bag_var = $fixer->capture($self->bag);
 
     "if (is_hash_ref(${var})) {" .
         "${bag_var}->add(${var});" .
