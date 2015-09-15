@@ -112,7 +112,7 @@ At least provide for every command a NAME documentation
 
 L<Catmandu::Cmd::config> , L<Catmandu::Cmd::convert> , L<Catmandu::Cmd::count> ,
 L<Catmandu::Cmd::data> , L<Catmandu::Cmd::delete> , L<Catmandu::Cmd::export>,
-L<Catmandu::Cmd::import> , L<Catmandu::Cmd::move>
+L<Catmandu::Cmd::import> , L<Catmandu::Cmd::move> , L<Catmandu::Cmd::run>
 
 =cut
 
