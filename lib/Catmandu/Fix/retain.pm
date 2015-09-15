@@ -47,9 +47,9 @@ Catmandu::Fix::retain - delete everything except the paths given
 =head1 SYNOPSIS
 
    # Delete everything except foo.bar and baz.bar
-   retain(foo.bar, bar.baz)
+   retain(foo.bar, baz.bar)
 
-   {bar => { x => 1} , foo => {bar => 1, y => 2}}
+   {bar => 3, foo => {bar => 1, baz => 2}}
    # becomes
    {foo => {bar => 1}}
 

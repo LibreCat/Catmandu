@@ -30,6 +30,7 @@ with 'Catmandu::Logger';
 has message => (fix_arg => 1);
 has level   => (fix_opt => 1);
 
+
 sub fix {
     my ($self,$data) = @_;
     my $id    = $data->{_id} // '<undef>';

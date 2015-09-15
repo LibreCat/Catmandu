@@ -1,10 +1,10 @@
 package Catmandu::Importer::YAML;
 
+use namespace::clean;
 use Catmandu::Sane;
 use YAML::XS ();
 use Moo;
 use Devel::Peek;
-use namespace::clean;
 
 with 'Catmandu::Importer';
 

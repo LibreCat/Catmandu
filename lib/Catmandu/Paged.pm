@@ -104,10 +104,9 @@ in the result set.
 L<Catmandu::Hits>
 
 =cut
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo::Role;
-use namespace::clean;
 
 requires 'start';
 requires 'limit';

@@ -1,12 +1,12 @@
 package Catmandu::Importer::Modules;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Module::Info;
 use File::Spec;
 use File::Find::Rule;
 use Moo;
 use Catmandu::Util qw(array_split pod_section);
-use namespace::clean;
 
 with 'Catmandu::Importer';
 

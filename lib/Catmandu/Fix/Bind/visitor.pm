@@ -1,6 +1,7 @@
 package Catmandu::Fix::Bind::visitor;
 
 use Moo;
+use Data::Dumper;
 use Catmandu::Util;
 
 with 'Catmandu::Fix::Bind';
@@ -191,6 +192,10 @@ A path in the data to visit:
   do visitor(-path => my.deep.field )
     ...
   end
+
+=head1 AUTHOR
+
+Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
 
 =head1 SEE ALSO
 

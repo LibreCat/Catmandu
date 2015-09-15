@@ -1,9 +1,9 @@
 package Catmandu::Importer::JSON;
 
+use namespace::clean;
 use Catmandu::Sane;
 use JSON::XS ();
 use Moo;
-use namespace::clean;
 
 with 'Catmandu::Importer';
 

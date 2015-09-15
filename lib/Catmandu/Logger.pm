@@ -86,10 +86,10 @@ Code and documentation blatantly stolen from C<MooX::Log::Any>.
 
 =cut
 
+use namespace::clean;
 use Catmandu::Sane;
 use Moo::Role;
 use Log::Any ();
-use namespace::clean;
 
 local $| = 1;
 

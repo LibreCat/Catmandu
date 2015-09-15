@@ -1,9 +1,9 @@
 package Catmandu::ArrayIterator;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Catmandu::Util qw(check_array_ref);
 use Role::Tiny::With;
-use namespace::clean;
 
 with 'Catmandu::Iterable';
 

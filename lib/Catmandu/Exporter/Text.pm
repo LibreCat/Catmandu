@@ -1,9 +1,9 @@
 package Catmandu::Exporter::Text;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Util;
-use namespace::clean;
 
 with 'Catmandu::Exporter';
 

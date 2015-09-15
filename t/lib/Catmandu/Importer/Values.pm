@@ -1,8 +1,8 @@
 package Catmandu::Importer::Values;
 
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
 
 with 'Catmandu::Importer';
 

@@ -84,6 +84,10 @@ Catmandu::Fix::Bind::maybe - a binder that skips fixes if one returns undef or d
 
 The maybe binder computes all the Fix function and ignores fixes that throw exceptions.
 
+=head1 AUTHOR
+
+Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
+
 =head1 SEE ALSO
 
 L<Catmandu::Fix::Bind>

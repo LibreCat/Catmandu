@@ -1,72 +1,56 @@
 package Catmandu::Error;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Throwable::Error';
 
 package Catmandu::BadVal;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::Error';
 
 package Catmandu::BadArg;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::BadVal';
 
 package Catmandu::NotImplemented;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::Error';
 
 package Catmandu::NoSuchPackage;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::Error';
 
 has package_name => (is => 'ro');
 
 package Catmandu::FixParseError;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::Error';
 
 has source => (is => 'ro');
 
 package Catmandu::NoSuchFixPackage;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::NoSuchPackage';
 
 has fix_name => (is => 'ro');
 has source => (is => 'rw', writer => 'set_source');
 
 package Catmandu::BadFixArg;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::BadArg';
 
 has package_name => (is => 'ro');
@@ -74,11 +58,9 @@ has fix_name => (is => 'ro');
 has source => (is => 'rw', writer => 'set_source');
 
 package Catmandu::FixError;
-
+use namespace::clean;
 use Catmandu::Sane;
 use Moo;
-use namespace::clean;
-
 extends 'Catmandu::Error';
 
 has data => (is => 'ro');

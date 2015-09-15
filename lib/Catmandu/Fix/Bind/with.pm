@@ -8,7 +8,6 @@ use Catmandu::ArrayIterator;
 with 'Catmandu::Fix::Bind';
 
 has path   => (is => 'ro');
-has flag   => (is => 'rw');
 
 sub zero {
     my ($self) = @_;
@@ -27,19 +26,11 @@ sub unit {
         $ref = $data;
     }
 
-    # Set a flag so that all the bind fixes are only run once...
-    $self->flag(0);
-
     return $ref;
 }
 
 sub bind {
     my ($self,$mvar,$func,$name,$fixer) = @_;
-
-    # The fixer contains all the fixes no every separate fix.
-    # Set a flag so that the fixes are only run once, creating an implicit do identity() ... end block
-
-    return $mvar unless $self->flag == 0;
 
     my $ref;
     
@@ -57,8 +48,6 @@ sub bind {
     }
 
     inline_copy($mvar,$ref);
-
-    $self->flag(1);
 
     $mvar;
 }
@@ -124,6 +113,10 @@ these two fixes are equal:
 =head2 path 
 
 The path to a list in the data.
+
+=head1 AUTHOR
+
+Patrick Hochstenbach - L<Patrick.Hochstenbach@UGent.be>
 
 =head1 SEE ALSO
 
