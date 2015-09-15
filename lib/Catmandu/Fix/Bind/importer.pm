@@ -67,6 +67,22 @@ Catmandu::Fix::Bind::importer - a binder runs fixes on records from an importer
       add_to_exporter(.,YAML)
     end
 
+    # Or in an runnable Fix script:
+
+    #!/usr/bin/env catmandu run
+    add_field(hello,world)
+    add_to_exporter(.,YAML)
+
+
+    # Or:
+
+    #!/usr/bin/env catmandu run
+    do importer(OAI,url: "http://lib.ugent.be/oai") 
+      retain(_id)
+      add_to_exporter(.,YAML)
+    end
+
+
 =head1 DESCRIPTION
 
 The import binder computes all the Fix function on records read from the given importer.
