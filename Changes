@@ -5,6 +5,7 @@ Revision history for Catmandu
   - new 'flatten' fix
   - new 'include' fix to load other fix files
   - Importer has a new 'data_path' option to import data substructure(s) instead
+  - fix emitted null bug in the 'reject' and 'select' fixes
   - more pod and many typos corrected
 
 0.94  2015-07-10 13:26:34 CEST
