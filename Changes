@@ -1,6 +1,11 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new 'uniq' fix
+  - new 'flatten' fix
+  - new 'include' fix to load other fix files
+  - Importer has a new 'data_path' option to import data substructure(s) instead
+  - more pod and many typos corrected
 
 0.94  2015-07-10 13:26:34 CEST
   - lots more pod and many typos corrected
