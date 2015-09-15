@@ -3,8 +3,8 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use Catmandu::Fix;
-use Catmandu::Importer::Mock;
+use Catmandu;
+use Capture::Tiny ':all';
 use Catmandu::Util qw(:is);
 
 my $pkg;
@@ -14,4 +14,13 @@ BEGIN {
 }
 require_ok $pkg;
 
-done_testing 2;
+
+my ($stdout, $stderr, $exit) = capture {
+     my $fixer = Catmandu->fixer('do importer(Mock,size:1) add_to_exporter(.,JSON) end');
+
+     $fixer->fix({});
+};
+
+is $stdout, qq|{"n":0}\n| , 'fixed ok';
+
+done_testing 3;
