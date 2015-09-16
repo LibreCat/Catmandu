@@ -251,7 +251,7 @@ sub take {
     }
 };
 
-sub sort {
+sub sort_by {
     my ($self, $cmp) = @_;
     if (!defined $cmp) {
         Catmandu::ArrayIterator->new([ sort @{$self->to_array} ]);
@@ -261,7 +261,7 @@ sub sort {
             @{$self->to_array} 
         ]);
     } else {
-        # TODO: use Schwartzian transform for more complex key
+        # TODO use Schwartzian transform for more complex key
         Catmandu::ArrayIterator->new([ 
             sort { $a->{$cmp} cmp $b->{$cmp} } @{$self->to_array}
         ]);
