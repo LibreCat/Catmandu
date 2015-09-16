@@ -1,12 +1,14 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - rename Iterable 'sort' to 'sort_by' to avoid name conflict
 
 0.9401  2015-09-15 11:19:57 CEST
   - new 'uniq' fix
   - new 'flatten' fix
   - new 'include' fix to load other fix files
-  - Importer has a new 'data_path' option to import data substructure(s) instead
+  - Importer has a new 'data_path' option to import data substructure(s)
+    instead
   - fix emitted null bug in the 'reject' and 'select' fixes
   - more pod and many typos corrected
 
