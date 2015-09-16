@@ -1,7 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - rename Iterable 'sort' to 'sort_by' to avoid name conflict
+  - rename Iterable 'sort' to 'sorted' to fix name conflict
 
 0.9401  2015-09-15 11:19:57 CEST
   - new 'uniq' fix
