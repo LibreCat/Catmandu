@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9402  2015-09-16 14:30:07 CEST
   - rename Iterable 'sort' to 'sorted' to fix name conflict
 
 0.9401  2015-09-15 11:19:57 CEST
