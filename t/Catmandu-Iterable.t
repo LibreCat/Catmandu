@@ -162,12 +162,12 @@ is_deeply $iter->stop_if(sub { shift->{n} == 9 })->to_array,
 is_deeply $iter->stop_if(sub { shift->{n} == 1 })->to_array,
    [{n=>10},{n=>9}];
 
-is_deeply $iter->sort('n')->to_array, [{n=>1},{n=>10},{n=>9}];
+is_deeply $iter->sorted('n')->to_array, [{n=>1},{n=>10},{n=>9}];
 
 $iter->data([3,21,1]);
 
-is_deeply $iter->sort->to_array, [1,21,3]; 
-is_deeply $iter->sort(sub { $_[1] <=> $_[0] })->to_array, [21,3,1];
+is_deeply $iter->sorted->to_array, [1,21,3]; 
+is_deeply $iter->sorted(sub { $_[1] <=> $_[0] })->to_array, [21,3,1];
 
 # external iteration
 {
