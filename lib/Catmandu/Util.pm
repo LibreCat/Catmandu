@@ -15,7 +15,7 @@ use JSON::XS ();
 use Hash::Merge::Simple ();
 
 our %EXPORT_TAGS = (
-    io     => [qw(io read_file write_file read_yaml read_json join_path
+    io     => [qw(io read_file read_io write_file read_yaml read_json join_path
         normalize_path segmented_path)],
     data   => [qw(parse_data_path get_data set_data delete_data data_at)],
     array  => [qw(array_exists array_group_by array_pluck array_to_sentence
@@ -89,7 +89,7 @@ sub TIESCALAR {};
 
 sub io {
     my ($arg, %opts) = @_;
-    my $binmode = $opts{binmode} || $opts{encoding} || ':utf8';
+    my $binmode = $opts{binmode} || $opts{encoding} || ':encoding(UTF-8)';
     my $mode = $opts{mode} || 'r';
     my $io;
 
@@ -124,6 +124,16 @@ sub read_file {
     my $str = <$fh>;
     close $fh;
     $str;
+}
+
+sub read_io {
+    my ($io) = @_;
+    my @lines = ();
+    while (<$io>) {
+        push @lines, $_;
+    }
+    $io->close();
+    join "", @lines;
 }
 
 # Deprecated use tools like File::Slurp::Tiny
@@ -622,7 +632,7 @@ Default is C<"r">.
 
 =item binmode
 
-Default is C<":utf8">.
+Default is C<":encoding(UTF-8)">.
 
 =item encoding
 
@@ -639,6 +649,12 @@ Reads the file at C<$path> into a string.
     my $str = read_file('/path/to/file.txt');
 
 Throws a Catmandu::Error on failure. 
+
+=item read_io($io)
+
+Reads an IO::Handle into a string.
+
+   my $str = read_file($fh);
 
 =item write_file($path, $str);
 

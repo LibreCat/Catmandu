@@ -24,7 +24,7 @@ EOS
 sub command {
     my ($self, $opts, $args) = @_;
     my $fix_file = $args->[0];
-    $fix_file = '/dev/stdin' unless defined $fix_file;
+    $fix_file = [\*STDIN] unless defined $fix_file;
 
     my $from = Catmandu->importer('Null');
     my $into = Catmandu->exporter('Null', fix => $fix_file);
