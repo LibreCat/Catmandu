@@ -44,15 +44,15 @@ sub _build_fixes {
     for my $fix (@$fixes_arg) {
         if (is_code_ref($fix)) {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
-        } elsif (ref($fix) && ref($fix) =~ /Catmandu::Fix/) {
-            push @$fixes, $fix;
-        } elsif (is_string($fix)) {
-            push @$fixes, @{$self->parser->parse($fix)};
-        } else {
+        } elsif (is_glob_ref($fix)) {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
             push @$fixes, @{$self->parser->parse($txt)};
-        }
+        } elsif (ref $fix) {
+            push @$fixes, $fix;
+        } elsif (is_string($fix)) {
+            push @$fixes, @{$self->parser->parse($fix)};
+        } 
     }
 
     $fixes;
