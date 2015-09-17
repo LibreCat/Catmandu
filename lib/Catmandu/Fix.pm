@@ -48,6 +48,9 @@ sub _build_fixes {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
             push @$fixes, @{$self->parser->parse($txt)};
+        } elsif (ref $fix && ref $fix =~ /^IO::/) {
+            my $txt = Catmandu::Util::read_io($fix);
+            push @$fixes, @{$self->parser->parse($txt)};
         } elsif (ref $fix) {
             push @$fixes, $fix;
         } elsif (is_string($fix)) {
