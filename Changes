@@ -2,6 +2,9 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+0.9402  2015-09-16 14:30:07 CEST
+  - rename Iterable 'sort' to 'sorted' to fix name conflict
+
 0.9401  2015-09-15 11:19:57 CEST
   - new 'uniq' fix
   - new 'flatten' fix
@@ -358,7 +361,7 @@ Revision history for Catmandu
 
 0.03    2012-07-06
   - iterative version of CQL::ElasticSearch
-  - Store::ElasticSearch searcher supports sort
+  - Store::ElasticSearch searcher supports sot
   - faster Datestamps
   - Iterable->interleave()
   - Iterable->detect/select/reject(key => ['val', ...])
