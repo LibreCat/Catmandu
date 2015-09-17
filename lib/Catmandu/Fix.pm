@@ -158,6 +158,7 @@ sub emit {
     $perl .= $self->_reject_label . ": return ${reject_var};";
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
+    $perl .= "${err}->throw if is_instance(${err},'Throwable::Error');";
     $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
     $perl .= "};";
     $perl .= "};";
@@ -782,7 +783,7 @@ Use the quick and easy method when your fixes are not dependent on reading or wr
 from/to a JSON path. Your Perl classes need to implement their own logic to read or write data
 into the given Perl hash.
 
-Fix arguments are passed as arguments to the C<new> function of the Perl class. As in 
+Fix arguments are passed as arguments to the C<new> function of the Perl class. As in
 
     # In the fix file...
     meow('test123', -count => 4)
@@ -816,10 +817,10 @@ Using this code the fix statement can be used like:
 
 =head2 Advanced
 
-The advanced method is required when one needs to read or write values from/to deeply nested JSON paths. 
+The advanced method is required when one needs to read or write values from/to deeply nested JSON paths.
 One could parse JSON paths using the quick and easy Perl class above, but this would require a
-lot of inefficient for-while loops. The advanced method emits Perl code that gets compiled. 
-This compiled code is evaled against all Perl hashes in the unput.The best 
+lot of inefficient for-while loops. The advanced method emits Perl code that gets compiled.
+This compiled code is evaled against all Perl hashes in the unput.The best
 way to learn this method is by inspecting some example Fix commands.
 
 To ease the implementation of Fixed that emit Perl code some helper methods are created. Many Fix functions
@@ -938,7 +939,7 @@ this method is DEPRECATED.
 
 Fixes are used by instances of L<Catmandu::Fixable> to manipulate items
 L<Catmandu::Importer>, L<Catmandu::Exporter>, and L<Catmandu::Bag>.
- 
+
 =cut
 
 1;
