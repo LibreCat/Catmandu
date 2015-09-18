@@ -18,7 +18,7 @@ has exporter_args => (is => 'ro' , default => sub { +{} });
 
 has header   => (is => 'ro' , default => sub { 
     "Catmandu $Catmandu::VERSION interactive mode\n" .
-    "Type: /h for the command history"; 
+    "Type: \\h for the command history"; 
 });
 
 has data     => (is => 'rw' , default => sub { + {} });
@@ -36,7 +36,7 @@ sub run {
     $self->prompt;
 
     while (my $line = $self->in->getline) {
-        if ($line =~ /^\/(.*)/) {
+        if ($line =~ /^\\(.*)/) {
             my ($command,$args) = split(/\s+/,$1,2);
             
             if ($command eq 'h') {
