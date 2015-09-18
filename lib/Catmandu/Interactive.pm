@@ -148,10 +148,9 @@ Catmandu::Interactive - An interactive command line interpreter of the Fix langu
 =head1 SYNOPSIS
 
    # On the command line
-   catmandu run -i
+   catmandu run
 
    # Or, in Perl
-   use Catmandu::Util;
    use Catmandu::Interactive;
    use Getopt::Long;
 
