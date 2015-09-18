@@ -2,6 +2,9 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+0.9403  2015-09-17 16:44:45 CEST
+  - make 'include' fix load path aware
+
 0.9402  2015-09-16 14:30:07 CEST
   - rename Iterable 'sort' to 'sorted' to fix name conflict
 
