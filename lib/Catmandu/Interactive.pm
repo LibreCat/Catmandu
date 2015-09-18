@@ -18,7 +18,10 @@ has exporter_args => (is => 'ro' , default => sub { +{} });
 
 has header   => (is => 'ro' , default => sub { 
     "Catmandu $Catmandu::VERSION interactive mode\n" .
-    "Type: \\h for the command history"; 
+    "Commands:\n" .
+    " \\h - the fix history\n" .
+    " \\r - repeat the previous fix\n" .
+    " \\q - quit\n";
 });
 
 has data     => (is => 'rw' , default => sub { + {} });
@@ -37,20 +40,31 @@ sub run {
 
     while (my $line = $self->in->getline) {
         if ($line =~ /^\\(.*)/) {
+            next if length $buffer;
+
             my ($command,$args) = split(/\s+/,$1,2);
             
             if ($command eq 'h') {
                 $self->cmd_history;
+                $self->prompt('fix');
+                next;
+            }
+            elsif ($command eq 'r') {
+                if (@history > 0) {
+                    $line = $history[-1];
+                } else {
+                    $self->prompt('fix');
+                    next;
+                }
             }
             elsif ($command eq 'q') {
                 last;
             }
             else {
                 $self->error("unknown command $command");
+                $self->prompt('fix');
+                next;
             }
-
-            $self->prompt('fix');
-            next;
         }
 
         $line = "$buffer$line" if length $buffer;

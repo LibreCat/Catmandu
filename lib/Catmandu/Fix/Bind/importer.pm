@@ -28,7 +28,6 @@ sub bind {
 
     return if $self->flag;
 
-
     if ($self->step) {
         my $next = $self->importer->next;
         $fixer->fix($next) if $next;
