@@ -3,7 +3,7 @@ package Catmandu::Cmd::run;
 use Catmandu::Sane;
 use parent 'Catmandu::Cmd';
 use Catmandu;
-use Catmandu::interactive;
+use Catmandu::Interactive;
 use Catmandu::Fix;
 
 sub command_opt_spec {
