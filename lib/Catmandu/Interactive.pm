@@ -9,7 +9,7 @@ has in       => (is => 'ro' , default => sub {
 });
 
 has out      => (is => 'ro' , default => sub { 
-    Catmandu::Util::io \*STDOUT, mode => 'w', binmode => ':crlf';
+    Catmandu::Util::io \*STDOUT, mode => 'w', binmode => ':encoding(utf-8)';
 });
 
 has silent   => (is => 'ro');
@@ -17,7 +17,9 @@ has exporter => (is => 'ro' , default => sub { 'YAML'} );
 has exporter_args => (is => 'ro' , default => sub { +{} });
 
 has header   => (is => 'ro' , default => sub { 
-    "Catmandu $Catmandu::VERSION interactive mode\n" .
+    "\n" .
+    "             \x{1f63a}  ...... Catmandu $Catmandu::VERSION interactive mode ...... \x{1f63a}\n" .
+    "\n" .
     "Commands:\n" .
     " \\h - the fix history\n" .
     " \\r - repeat the previous fix\n" .
