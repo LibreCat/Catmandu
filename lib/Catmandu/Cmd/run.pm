@@ -18,6 +18,7 @@ sub description {
 examples:
 
    # Run an interactive Fix shell
+   \$ catmandu run
 
    # Execute the fix script
    \$ catmandu run myfixes.txt

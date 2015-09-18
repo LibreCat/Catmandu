@@ -127,7 +127,7 @@ Catmandu packages!
 Catmandu is created in a cooperation with many developers world wide. Without them this project isn't possible.
 We would like to thank our core maintainer: Nicolas Steenlant and all contributors: Christian Pietsch , 
 Dave Sherohman , Friedrich Summann , Jakob Voss , Johann Rolschewski  , Jorgen Eriksson  , Magnus Enger , 
-Maria Hedberg , Mathias Loeqsch , Najko Jahn , Nicolas Franck , Patrick Hochstenbach , Petra Kohorst  , 
+Maria Hedberg , Mathias Loesch , Najko Jahn , Nicolas Franck , Patrick Hochstenbach , Petra Kohorst  , 
 Snorri Briem , Upasana Shukla and Vitali Peil 
 
 # SEE ALSO
