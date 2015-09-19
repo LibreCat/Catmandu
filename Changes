@@ -4,6 +4,7 @@ Revision history for Catmandu
   - importer bind
   - catmandu run and executable fixes
   - catmandu interactive fix intepreter
+  - autocommit option on all addables (Exporter,Store,...)
 
 0.9403  2015-09-17 16:44:45 CEST
   - make 'include' fix load path aware

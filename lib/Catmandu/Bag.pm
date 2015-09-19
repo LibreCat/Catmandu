@@ -81,7 +81,13 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
 
     my $store = Catmandu::Store::DBI->new(
             data_source => 'DBI:mysql:database=test',
-            bags => { data => { fixes => [ ... ] } },
+            bags => { journals => { 
+                            fixes => [ ... ] ,
+                            autocommit => 1 ,
+                            plugins => [ ... ] ,
+                            id_generator => Catmandu::IdGenerator::UUID->new ,
+                      } 
+                    },
             bag_class => Catmandu::Bag->with_plugins('Datestamps')
             );
 
@@ -107,11 +113,30 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
 
     $bag->delete_all;
 
+=head1 OPTIONS
+
+=head2 fixes
+
+An array of fixes to apply before importing or exporting data from the bag.
+
+=head2 plugins
+
+An array of Catmandu::Pluggable to apply to the bag items.
+
+=head2 autocommit
+
+When set to a true value an commit automatically gets executed when the bag 
+goes out of scope.
+
+=head2 id_generator
+
+An Catmandu::IdGenerator.
+
 =head1 METHODS
 
-=head2 new(fixes => [...])
+=head2 new(OPTIONS)
 
-Create a new Bag with optionally an array of fixes for each item.
+Create a new Bag.
 
 =head2 add($hash)
 
