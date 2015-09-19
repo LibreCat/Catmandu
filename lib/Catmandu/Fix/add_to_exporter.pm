@@ -13,7 +13,7 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub _build_exporter {
     my ($self) = @_;
-    Catmandu->exporter($self->exporter_name, %{$self->exporter_args});
+    Catmandu->exporter($self->exporter_name, %{$self->exporter_args} , autocommit => 1);
 }
 
 sub emit_value {
@@ -21,11 +21,6 @@ sub emit_value {
     my $exporter_var = $fixer->capture($self->exporter);
 
     "${exporter_var}->add(${var});"
-}
-
-sub DESTROY {
-    my ($self) = @_;
-    $self->exporter->commit;
 }
 
 =head1 NAME

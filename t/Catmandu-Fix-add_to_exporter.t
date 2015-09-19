@@ -14,11 +14,14 @@ BEGIN {
 }
 
 my ($stdout, $stderr, $exit) = capture {
-     my $fixer = Catmandu->fixer('add_to_exporter(.,JSON)');
+     my $fixer = Catmandu->fixer('add_to_exporter(.,JSON,array:1)');
 
      $fixer->fix({hello => 'world'});
 };
 
-is $stdout, qq|{"hello":"world"}\n| , 'fixed ok';
+is $stdout, qq|[{"hello":"world"}]\n| , 'fixed ok';
+
+my $rec = {hello=>'world'};
+$pkg->new('.','JSON','array','1')->fix($rec);
 
 done_testing 2;
