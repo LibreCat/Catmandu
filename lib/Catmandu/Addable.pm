@@ -47,7 +47,7 @@ Catmandu::Addable - Base class for all Catmandu modules need to implement add
 
 =item autocommit
 
-Autocommit after at when the exporter gets out of scope. Default 0.
+Autocommit when the exporter gets out of scope. Default 0.
 
 =head1 METHODS
 
