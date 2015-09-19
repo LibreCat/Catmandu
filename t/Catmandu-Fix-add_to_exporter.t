@@ -21,7 +21,4 @@ my ($stdout, $stderr, $exit) = capture {
 
 is $stdout, qq|[{"hello":"world"}]\n| , 'fixed ok';
 
-my $rec = {hello=>'world'};
-$pkg->new('.','JSON','array','1')->fix($rec);
-
 done_testing 2;
