@@ -88,14 +88,6 @@ sub array_text {
     return $text;
 }
 
-sub scalar_text {
-    my ($self,$text, $scalar) = @_;
-
-    $text .= $self->field_sep if defined $self->field_sep && length($text);
-
-    $text .= $scalar;
-}
-
 1;
 __END__
 
