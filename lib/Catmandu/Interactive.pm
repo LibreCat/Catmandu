@@ -28,7 +28,7 @@ has header   => (is => 'ro' , default => sub {
 
 has data     => (is => 'rw' , default => sub { + {} });
 
-our @history = ();
+has _history => (is => 'ro' , default => sub { [] });
 
 sub run {
     my $self = shift;
@@ -52,8 +52,8 @@ sub run {
                 next;
             }
             elsif ($command eq 'r') {
-                if (@history > 0) {
-                    $line = $history[-1];
+                if (@{$self->_history} > 0) {
+                    $line = $self->_history->[-1];
                 } else {
                     $self->prompt('fix');
                     next;
@@ -83,7 +83,7 @@ sub run {
                 $self->data( $fixer->fix($self->data) );
                 $self->export;
 
-                push(@history,$line);
+                push(@{$self->_history},$line);
 
                 $buffer = '';
             }
@@ -101,7 +101,7 @@ sub run {
 sub cmd_history {
     my ($self) = @_;
 
-    $self->out->printf(join("",@history));
+    $self->out->printf(join("",@{$self->_history}));
 }
 
 sub head {
