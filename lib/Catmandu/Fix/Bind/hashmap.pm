@@ -8,7 +8,7 @@ with 'Catmandu::Fix::Bind';
 
 has exporter => (is => 'ro' , default => sub { 'JSON' });
 has store    => (is => 'ro');
-has unqiue   => (is => 'ro' , default => sub { 0 });
+has uniq     => (is => 'ro' , default => sub { 0 });
 has count    => (is => 'ro');
 has join     => (is => 'ro');
 has hash     => (is => 'lazy');
@@ -22,7 +22,7 @@ sub add_to_hash {
     if ($self->count) {
         $self->hash->{$key} += 1;
     }
-    elsif ($self->unqiue) {
+    elsif ($self->uniq) {
         $self->hash->{$key}->{$val} = 1;
     }
     else {
@@ -74,8 +74,8 @@ sub DESTROY {
         if ($self->count) {
             $v = $h->{$_};
         }
-        elsif ($self->unqiue) {
-            $v = [ keys %{$h->{$_}} ];
+        elsif ($self->uniq) {
+            $v = [ sort keys %{$h->{$_}} ];
         }
         else {
             $v = $h->{$_};
@@ -143,7 +143,7 @@ The name of an exporter to send the results to. Default: JSON
 
 Send the output to a store instead of an exporter.
 
-=head2 unique: 0|1
+=head2 uniq: 0|1
 
 All the values for the a key will be unique.
 
