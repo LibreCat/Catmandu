@@ -56,6 +56,9 @@ sub command {
             query     => $opts->query,
             limit     => $opts->limit,
         );
+    } 
+    elsif (defined $opts->limit) {
+        $from = $from->take($opts->limit);
     }
 
     if ($opts->start || defined $opts->total) {
