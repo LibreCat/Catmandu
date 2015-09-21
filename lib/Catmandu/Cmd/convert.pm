@@ -11,16 +11,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-cat books.json | catmandu convert JSON to CSV --fields id,title
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -59,7 +49,14 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::convert - convert objects
+
+=head1 EXAMPLES
+
+  cat books.json | catmandu convert JSON to CSV --fields id,title
+
+=cut
