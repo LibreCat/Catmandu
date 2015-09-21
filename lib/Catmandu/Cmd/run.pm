@@ -13,27 +13,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-   # Run an interactive Fix shell
-   \$ catmandu run
-
-   # Execute the fix script
-   \$ catmandu run myfixes.txt
-
-   # Or create an execurable fix script:
-
-   #!/usr/bin/env catmandu run
-   do importer(Mock,size:10)
-      add_field(foo,bar)
-   end
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -60,7 +39,25 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::run - run a fix command
+
+=head1 EXAMPLES
+   
+  # Run an interactive Fix shell
+  $ catmandu run
+
+  # Execute the fix script
+  $ catmandu run myfixes.txt
+
+  # Or create an execurable fix script:
+
+  #!/usr/bin/env catmandu run
+  do importer(Mock,size:10)
+    add_field(foo,bar)
+  end
+
+=cut

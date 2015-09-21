@@ -5,8 +5,6 @@ use parent 'Catmandu::Cmd';
 use App::Cmd::Command::help;
 use Catmandu::Util qw(require_package pod_section);
 
-sub description { 'show help' }
-
 sub usage_desc { '%c help [ <command> | ( export | import | store | fix ) <name> ]' }
 
 sub command_names { qw/help --help -h -?/ }
@@ -95,5 +93,11 @@ __END__
 =head1 NAME
 
 Catmandu::Cmd::help - show help
+
+=head1 EXAMPLES
+
+  catmandu help convert
+  catmandu help import JSON
+  catmandu help help
 
 =cut 

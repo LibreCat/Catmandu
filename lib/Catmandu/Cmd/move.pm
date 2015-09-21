@@ -13,16 +13,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-catmandu move MongoDB --database_name items --bag book to ElasticSearch --index_name items --bag book
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -68,7 +58,15 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::move - move objects to another store
+
+=head1 EXAMPLES
+
+  catmandu move MongoDB --database_name items --bag book to \
+                ElasticSearch --index_name items --bag book
+
+=cut

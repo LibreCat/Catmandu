@@ -20,8 +20,6 @@ sub command_opt_spec {
     );
 }
 
-sub description { "list installed Catmandu modules\n\nOptions:" }
-
 sub add_about {
     my $item = shift;
     my $name = pod_section($item->{file}, 'NAME');
@@ -111,5 +109,9 @@ Catmandu::Cmd::info - list installed Catmandu modules
 =head1 DESCRIPTION
 
 This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all modules.
+
+=head1 EXAMPLES
+
+  catmandu info --exporters
 
 =cut

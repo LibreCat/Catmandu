@@ -13,16 +13,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-catmandu export MongoDB --database-name items --bag book to YAML
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -67,7 +57,14 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::export - export objects from a store
+
+=head1 EXAMPLES
+
+  catmandu export MongoDB --database-name items --bag book to YAML
+
+=cut
