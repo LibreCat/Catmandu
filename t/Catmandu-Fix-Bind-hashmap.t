@@ -63,16 +63,6 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'} , 'testing 
 
 $fixes =<<EOF;
 do hashmap()
-  reject exists(foo)
-end
-EOF
-
-$fixer = Catmandu::Fix->new(fixes => [$fixes]);
-
-ok !defined $fixer->fix({foo => 'bar'}) , 'testing reject';
-
-$fixes =<<EOF;
-do hashmap()
   select exists(foo)
 end
 EOF
@@ -193,11 +183,11 @@ EOF
 
     my $exp =<<EOF;
 _id,value
-0987654321,1
 1234567890,2
+0987654321,1
 EOF
 
     is $stdout , $exp , 'grouping isbn count';
 }
 
-done_testing 14;
+done_testing 13;
