@@ -1,5 +1,25 @@
 package Catmandu::IdGenerator::Mock;
 
+=head1 NAME
+
+Catmandu::IdGenerator::Mock - Generator of increasing identifiers
+
+=head1 SYNOPSIS
+
+    use Catmandu::IdGenerator::Mock;
+
+    my $x = Catmandu::IdGenerator::Mock->new(first_id => 10);
+
+    for (1..100) {
+       printf "id: %s\n" m $x->generate;
+    }
+
+=head1 SEE ALSO
+
+L<Catmandu::IdGenerator>
+
+=cut
+
 use Catmandu::Sane;
 use Moo;
 use Catmandu::Util qw(check_natural);

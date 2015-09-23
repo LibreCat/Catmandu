@@ -7,7 +7,7 @@ use Test::Exception;
 use Catmandu::Fix;
 use Catmandu::Importer::Mock;
 use Catmandu::Util qw(:is);
-use Data::Dumper;
+use Capture::Tiny ':all';
 
 my $pkg;
 BEGIN {
@@ -63,16 +63,6 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'} , 'testing 
 
 $fixes =<<EOF;
 do hashmap()
-  reject exists(foo)
-end
-EOF
-
-$fixer = Catmandu::Fix->new(fixes => [$fixes]);
-
-ok !defined $fixer->fix({foo => 'bar'}) , 'testing reject';
-
-$fixes =<<EOF;
-do hashmap()
   select exists(foo)
 end
 EOF
@@ -107,4 +97,97 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'} , 'before/after testing';
 
-done_testing 11;
+# Specific tests
+{
+    my ($stdout, $stderr, $exit) = capture {
+      $fixes =<<EOF;
+  do hashmap(exporter => CSV, join => ',')
+   do identity()
+    copy_field(isbn,key)
+    copy_field(_id,value)
+   end
+  end
+EOF
+    $fixer = Catmandu::Fix->new(fixes => [$fixes]);
+    $fixer->fix([
+        {_id => 1, isbn => '1234567890'},
+        {_id => 2, isbn => '1234567890'},
+        {_id => 3, isbn => '0987654321'},
+    ]);
+    undef($fixer);
+    };
+
+    my $exp =<<EOF;
+_id,value
+0987654321,3
+1234567890,"1,2"
+EOF
+
+    is $stdout , $exp , 'grouping isbn join';
+}
+
+{
+    my ($stdout, $stderr, $exit) = capture {
+      $fixes =<<EOF;
+  do hashmap(exporter => YAML, uniq:1)
+   do identity()
+    copy_field(isbn,key)
+    copy_field(_id,value)
+   end
+  end
+EOF
+    $fixer = Catmandu::Fix->new(fixes => [$fixes]);
+    $fixer->fix([
+        {_id => 1, isbn => '1234567890'},
+        {_id => 2, isbn => '1234567890'},
+        {_id => 3, isbn => '0987654321'},
+    ]);
+    undef($fixer);
+    };
+
+    my $exp =<<EOF;
+---
+_id: '0987654321'
+value:
+- '3'
+...
+---
+_id: '1234567890'
+value:
+- '1'
+- '2'
+...
+EOF
+
+    is $stdout , $exp , 'grouping isbn uniq';
+}
+
+{
+    my ($stdout, $stderr, $exit) = capture {
+      $fixes =<<EOF;
+  do hashmap(exporter => CSV, count: 1)
+   do identity()
+    copy_field(isbn,key)
+    copy_field(_id,value)
+   end
+  end
+EOF
+    $fixer = Catmandu::Fix->new(fixes => [$fixes]);
+    $fixer->fix([
+        {_id => 1, isbn => '1234567890'},
+        {_id => 2, isbn => '1234567890'},
+        {_id => 3, isbn => '0987654321'},
+    ]);
+    undef($fixer);
+    };
+
+    my $exp =<<EOF;
+_id,value
+1234567890,2
+0987654321,1
+EOF
+
+    is $stdout , $exp , 'grouping isbn count';
+}
+
+done_testing 13;

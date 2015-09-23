@@ -31,6 +31,30 @@ sub fix {
 
 Catmandu::Fix::expand_date - expand a date field into year, month and date
 
+=head1 NOTE
+
+This package is DEPRECATED and will probably be removed in the future.
+Please use L<Catmandu::Fix::split_date>.
+
+Reasons:
+
+=over 4
+
+=item
+
+it writes directly in the root of the hash, which is a different
+behaviour compared to all the other fixes (sum, count, hash, array ..)
+
+=item
+
+it adds the new keys in a different location, instead of "in place".
+
+=item
+
+it's behaviour cannot be changed without breaking its current use
+
+=back
+
 =head1 SYNOPSIS
 
     # {date => "2001-09-11"}

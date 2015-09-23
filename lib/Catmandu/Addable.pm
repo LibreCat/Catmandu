@@ -43,6 +43,12 @@ Catmandu::Addable - Base class for all Catmandu modules need to implement add
     # prints a commit statement
     $adder->commit;
 
+=head1 OPTIONS
+
+=item autocommit
+
+Autocommit when the exporter gets out of scope. Default 0.
+
 =head1 METHODS
 
 =head2 add($hash)
@@ -73,12 +79,22 @@ with 'Catmandu::Fixable';
 
 requires 'add';
 
+has autocommit => (is => 'ro' , default => sub { 0 });
+has _commit    => (is => 'rw' , default => sub { 0 });
+
 around add => sub {
     my ($orig, $self, $data) = @_;
     return unless defined $data;
     $data = $self->_fixer->fix($data) if $self->_fixer;
     $orig->($self, $data) if defined $data;
     $data;
+};
+
+around commit => sub {
+    my ($orig, $self) = @_;
+    my $res = $orig->($self);
+    $self->_commit(1);
+    $res;
 };
 
 sub add_many {
@@ -110,5 +126,10 @@ sub add_many {
 }
 
 sub commit {}
+
+sub DESTROY {
+    my ($self) = shift;
+    $self->commit if $self->autocommit && ! $self->_commit;
+}
 
 1;
