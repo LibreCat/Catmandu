@@ -18,12 +18,18 @@ has exporter_args => (is => 'ro' , default => sub { +{} });
 
 has header   => (is => 'ro' , default => sub { 
     "\n" .
-    "             \x{1f63a}  ...... Catmandu $Catmandu::VERSION interactive mode ...... \x{1f63a}\n" .
-    "\n" .
-    "Commands:\n" .
-    " \\h - the fix history\n" .
-    " \\r - repeat the previous fix\n" .
-    " \\q - quit\n";
+    "      A_A    ____      _                             _             \n" .    
+    "     (-.-)  / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _       \n" .
+    "      |-|  | |   / _` | __| '_ ` _ \\ / _` | '_ \\ / _` | | | |    \n" .
+    "     /   \\ | |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |     \n" .
+    "    |     | \\____\\__,_|\\__|_| |_| |_|\\__,_|_| |_|\\__,_|\\__,_|\n" .
+    "    |  || | |  \\___            version: $Catmandu::VERSION        \n" .
+    "    \\_||_/_/                                                      \n" .
+    "                                                                   \n" .
+    "Commands:                     | Interactive support is still       \n" .
+    " \\h - the fix history         | experimental. Run:                \n" .
+    " \\r - repeat the previous fix | \$ catmandu run <your_fix_script> \n" .
+    " \\q - quit                    | to access all Catmandu features   \n";
 });
 
 has data     => (is => 'rw' , default => sub { + {} });
