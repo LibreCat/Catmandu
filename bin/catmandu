@@ -143,7 +143,7 @@ Low level data manipulation command. See DATA OPTIONS below for full documentati
 
 =item -v
 
-Verbose output.
+Verbose output. This includes progress of operations.
 
 =item -h
 

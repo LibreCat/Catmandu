@@ -12,6 +12,7 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Parser;
+use File::Slurp::Tiny ();
 use Data::Dumper ();
 use B ();
 
@@ -54,6 +55,9 @@ sub _build_fixes {
         } elsif (ref $fix) {
             push @$fixes, $fix;
         } elsif (is_string($fix)) {
+            if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
+                $fix = File::Slurp::Tiny::read_file($fix, binmode => ':encoding(UTF-8)');
+            }
             push @$fixes, @{$self->parser->parse($fix)};
         } 
     }
