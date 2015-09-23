@@ -23,8 +23,8 @@ has header   => (is => 'ro' , default => sub {
     "      |-|  | |   / _` | __| '_ ` _ \\ / _` | '_ \\ / _` | | | |    \n" .
     "     /   \\ | |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |     \n" .
     "    |     | \\____\\__,_|\\__|_| |_| |_|\\__,_|_| |_|\\__,_|\\__,_|\n" .
-    "    |  || | |  \\___            version: $Catmandu::VERSION        \n" .
-    "    \\_||_/_/                                                      \n" .
+    "    |  || |  |  \\___            version: $Catmandu::VERSION       \n" .
+    "     \\_||_/_/                                                     \n" .
     "                                                                   \n" .
     "Commands:                     | Interactive support is still       \n" .
     " \\h - the fix history         | experimental. Run:                \n" .
