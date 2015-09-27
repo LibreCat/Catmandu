@@ -51,12 +51,12 @@ if ($^O ne 'MSWin32') { # /dev/null required
 
 {
     my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix testing123() )]);
-    like $result->stderr , qr/Catmandu::Fix::testing123/ , 'wrong fix error';
+    like $result->stderr , qr/Oops/ , 'wrong fix error';
 }
 
 {
     my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix) , "test("]);
-    like $result->stderr , qr/Syntax error/ , 'syntax error';
+    like $result->stderr , qr/Oops/ , 'syntax error';
 }
 
 {
@@ -66,7 +66,7 @@ if ($^O ne 'MSWin32') { # /dev/null required
 
 {
     my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix add_field() )]);
-    like $result->stderr , qr/wrong arguments/ , 'wrong arguments';
+    like $result->stderr , qr/Oops/ , 'wrong arguments';
 }
 
 {
