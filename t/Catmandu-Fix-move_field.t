@@ -21,4 +21,14 @@ is_deeply
     {deeply => {nested => [{new => 'old'}]}},
     "move field creates intermediate path";
 
-done_testing 3;
+is_deeply
+    $pkg->new('old', 'new.$prepend')->fix({old => 'hello',new => ['world']}),
+    {new => ['hello','world']} ,
+    "move field creates intermediate path";
+
+is_deeply
+    $pkg->new('old', 'new.$append')->fix({old => 'hello',new => ['world']}),
+    {new => ['world','hello']} ,
+    "move field creates intermediate path";
+
+done_testing 5;
