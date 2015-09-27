@@ -57,6 +57,11 @@ Catmandu::Cmd::convert - convert objects
 
 =head1 EXAMPLES
 
+  catmandu convert <IMPORTER> <OPTIONS> to <EXPORTER> <OPTIONS>
+
   cat books.json | catmandu convert JSON to CSV --fields id,title
+
+  catmandu help importer JSON
+  catmandu help exporter YAML
 
 =cut

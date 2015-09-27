@@ -65,6 +65,11 @@ Catmandu::Cmd::export - export objects from a store
 
 =head1 EXAMPLES
 
+  catmandu export <STORE> <OPTIONS> to <EXPORTER> <OPTIONS>
+
   catmandu export MongoDB --database-name items --bag book to YAML
+
+  catmandu help store MongoDB
+  catmandu help exporter YAML
 
 =cut

@@ -66,7 +66,12 @@ Catmandu::Cmd::move - move objects to another store
 
 =head1 EXAMPLES
 
+  catmandu move <STORE> <OPTIONS> to <STORE> <OPTIONS>
+
   catmandu move MongoDB --database_name items --bag book to \
                 ElasticSearch --index_name items --bag book
 
+  catmandu help store MongoDB
+  catmandu help store ElasticSearch
+  
 =cut

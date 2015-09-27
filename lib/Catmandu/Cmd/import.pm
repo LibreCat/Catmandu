@@ -58,6 +58,11 @@ Catmandu::Cmd::import - import objects into a store
 
 =head1 EXAMPLES
 
+  catmandu import <IMPORTER> <OPTIONS> to <STORE> <OPTIONS>
+
   catmandu import YAML to MongoDB --database-name items --bag book < books.yml
+
+  catmandu help importer YAML
+  catmandu help importer MongoDB
 
 =cut
