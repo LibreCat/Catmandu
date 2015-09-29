@@ -51,7 +51,11 @@ Catmandu::Cmd::delete - delete objects from a store
 
 =head1 EXAMPLES
 
+  catmandu delete <STORE> <OPTIONS>
+
   catmandu delete ElasticSearch --index-name items --bag book \
                                 --query 'title:"My Rabbit"'
 
+  catmandu help store ElasticSearch
+  
 =cut

@@ -160,7 +160,7 @@ sub emit {
     $perl .= $self->emit_declare_vars($var, '$_[0]');
     $perl .= "eval {";
 
-    # Loop over all the fixes and emit their code, binded to Binds if required
+    # Loop over all the fixes and emit their code
     $perl .= $self->emit_fixes($self->fixes);
 
     $perl .= "return ${var};";

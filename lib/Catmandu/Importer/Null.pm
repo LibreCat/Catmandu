@@ -10,7 +10,7 @@ sub generator {
     my ($self) = @_;
     my $n = 0;
     sub {
-        return if $n++;
+        return undef if $n++;
         +{};
     };
 }

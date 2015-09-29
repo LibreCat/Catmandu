@@ -17,14 +17,14 @@ has exporter => (is => 'ro' , default => sub { 'YAML'} );
 has exporter_args => (is => 'ro' , default => sub { +{} });
 
 has header   => (is => 'ro' , default => sub { 
-    "\n" .
+    "\e[36m\n" .
     "      A_A    ____      _                             _             \n" .    
     "     (-.-)  / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _       \n" .
     "      |-|  | |   / _` | __| '_ ` _ \\ / _` | '_ \\ / _` | | | |    \n" .
     "     /   \\ | |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |     \n" .
     "    |     | \\____\\__,_|\\__|_| |_| |_|\\__,_|_| |_|\\__,_|\\__,_|\n" .
     "    |  || |  |  \\___            version: $Catmandu::VERSION       \n" .
-    "     \\_||_/_/                                                     \n" .
+    "     \\_||_/_/                                                \e[0m\n" .
     "                                                                   \n" .
     "Commands:                     | Interactive support is still       \n" .
     " \\h - the fix history         | experimental. Run:                \n" .
@@ -125,7 +125,7 @@ sub prompt {
     my ($self,$txt) = @_;
     $txt //= 'fix';
 
-    $self->out->printf("%s > " , $txt) unless $self->silent;
+    $self->out->printf("\e[35m%s > \e[0m" , $txt) unless $self->silent;
 }
 
 sub export {
