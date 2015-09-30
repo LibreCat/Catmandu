@@ -2,47 +2,69 @@ package Catmandu::Fix::Bind::list;
 
 use Moo;
 use Data::Dumper;
+use Clone ();
 use Catmandu::Util;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Bind';
 
-has path => (is => 'ro');
+has path   => (fix_opt => 1);
+has var    => (fix_opt => 1);
+
+has _root_ => (is => 'rw');
 
 sub zero {
-	my ($self) = @_;
-	[];
+    my ($self) = @_;
+    [];
 }
 
 sub unit {
-	my ($self,$data) = @_;
+    my ($self,$data) = @_;
 
-	if (defined $self->path) {
-		Catmandu::Util::data_at($self->path,$data);
-	}
-	elsif (Catmandu::Util::is_array_ref($data)) {
-		$data;
-	}
-	else {
-		[$data];
-	}	
+    $self->_root_($data);
+
+    if (defined $self->path) {
+        Catmandu::Util::data_at($self->path,$data);
+    }
+    elsif (Catmandu::Util::is_array_ref($data)) {
+        $data;
+    }
+    else {
+        [$data];
+    }    
 }
 
 sub bind {
-	my ($self,$mvar,$func,$name) = @_;
+    my ($self,$mvar,$func,$name) = @_;
 
-	if (Catmandu::Util::is_array_ref($mvar)) {
-		[ map { $func->($_) } @$mvar ];
-	}
-	else {
-		return $self->zero;
-	}
+    if (Catmandu::Util::is_array_ref($mvar)) {
+        [ map { 
+            my $scope;
+            if ($self->var) {
+                $scope = $self->_root_;
+                $scope->{$self->var} = Clone::clone($_);
+            }
+            else {
+                $scope = $_;
+            }
+            
+            my $res = $func->($scope);
+
+            delete $res->{$self->var} if $self->var; 
+          } 
+          @$mvar 
+         ];
+    }
+    else {
+        return $self->zero;
+    }
 }
 
 # Flatten an array: [ [A] , [A] , [A] ] -> [ A, A, A ]
 sub plus {
-	my ($self,$prev,$next) = @_;
+    my ($self,$prev,$next) = @_;
 
-	Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next] ;
+    Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next] ;
 }
 
 =head1 NAME
@@ -51,19 +73,32 @@ Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a
 
 =head1 SYNOPSIS
 
- add_field(demo.$append.test,1)
- add_field(demo.$append.test,2)
+     # Create an array:
+     #  demo:
+     #    - test: 1
+     #    - test: 2
+     add_field(demo.$append.test,1)
+     add_field(demo.$append.test,2)
 
- do list(path => demo)
-	add_field(foo,bar)
- end
+     # Add a foo field to every item in the demo list, by default all 
+     # fixes will be in context of the iterated path
+     do list(path:demo)
+        add_field(foo,bar)
+     end
 
- # will produce
-   demo:
-   	 - test: 1
-   	   foo: bar
-   	 - test: 2
-   	   foo: bar
+     # Loop over the list but store the values in a temporary 'loop' variable
+     # Use this loop variable to copy the list to the root 'xyz' path
+     do list(path:demo,var:loop)
+        copy_field(loop.test,xyz.$append)
+     end
+
+     # This will result:
+     #  demo:
+     #    - test: 1
+     #    - test: 2
+     #  xyz:
+     #    - 1
+     #    - 2
 
 =head1 DESCRIPTION
 
@@ -74,6 +109,11 @@ The list binder will iterate over all the elements in a list and fixes the value
 =head2 path 
 
 The path to a list in the data.
+
+=head2 var
+
+The loop variable to be iterated over. When used, a magic field will be available
+in the root of the record containing iterated data.
 
 =head1 SEE ALSO
 

@@ -118,4 +118,21 @@ is_deeply $fixer->fix(
           ), {foo => [ {bar => 1 , test => 'bar'} , 
              {bar => 2 , test => 'bar'}]} , 'specific testing';
 
-done_testing 12;
+$fixes =<<EOF;
+add_field(foo.\$append,1)
+add_field(foo.\$append,2)
+add_field(foo.\$append,3)
+add_field(foo.\$append,4)
+
+do list(path:foo,var:loop) 
+ copy_field(loop,test.\$append)
+end
+EOF
+
+$fixer = Catmandu::Fix->new(fixes => [$fixes]);
+
+is_deeply $fixer->fix(
+             {}
+          ), {foo => [1,2,3,4] , test => [1,2,3,4]} , 'specific testing, loop variable';
+
+done_testing 13;

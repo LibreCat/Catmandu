@@ -34,7 +34,7 @@ sub add_to_hash {
 }
 
 sub bind {
-    my ($self,$data,$code,$name, $fixer) = @_;
+    my ($self,$data,$code,$name,$fixer) = @_;
 
     return if $self->flag;
 
