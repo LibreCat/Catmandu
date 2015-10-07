@@ -6,6 +6,22 @@ use namespace::clean;
 
 extends 'Throwable::Error';
 
+with 'Catmandu::Logger';
+
+sub BUILD {
+    my ($self) = @_;
+    my $msg = $self->log_message;
+    if ($self->log->is_debug) {
+        $msg .= "\n\n" . $self->stack_trace->as_string;
+    }
+    $self->log->error($msg);
+}
+
+sub log_message {
+    my ($self) = @_;
+    $self->message;
+}
+
 package Catmandu::BadVal;
 
 use Catmandu::Sane;
@@ -40,6 +56,13 @@ extends 'Catmandu::Error';
 
 has package_name => (is => 'ro');
 
+sub log_message {
+    my ($self) = @_;
+    my $msg = $self->message;
+    $msg .= "\nPackage name: " . $self->package_name;
+    $msg;
+}
+
 package Catmandu::FixParseError;
 
 use Catmandu::Sane;
@@ -60,6 +83,14 @@ extends 'Catmandu::NoSuchPackage';
 
 has fix_name => (is => 'ro');
 has source => (is => 'rw', writer => 'set_source');
+
+sub log_message {
+    my ($self) = @_;
+    my $msg = $self->message;
+    $msg .= "\nFix name: " . $self->fix_name;
+    $msg .= "\nPackage name: " . $self->package_name;
+    $msg;
+}
 
 package Catmandu::BadFixArg;
 
@@ -83,6 +114,54 @@ extends 'Catmandu::Error';
 
 has data => (is => 'ro');
 has fix => (is => 'ro');
+
+package Catmandu::HTTPError;
+use Catmandu::Sane;
+use Catmandu::Util qw(is_string);
+use Moo;
+use namespace::clean;
+
+extends 'Catmandu::Error';
+
+has code => (is => 'ro');
+has url => (is => 'ro');
+has method => (is => 'ro');
+has request_headers => (is => 'ro');
+has request_body => (is => 'ro');
+has response_headers => (is => 'ro');
+has response_body => (is => 'ro');
+
+sub log_message {
+    my ($self) = @_;
+    my $msg = $self->message;
+    $msg .= "\nURL: " . $self->url;
+    $msg .= "\nMethod: " . $self->method;
+    $msg .= "\nRequest headers: " . $self->_headers_to_string($self->request_headers);
+    if (is_string($self->request_body)) {
+        $msg .= "\nRequest body: \n" . $self->_indent($self->request_body);
+    }
+    $msg .= "\nResponse code: " . $self->code;
+    $msg .= "\nResponse headers: " . $self->_headers_to_string($self->response_headers);
+    if (is_string($self->response_body)) {
+        $msg .= "\nResponse body: \n" . $self->_indent($self->response_body);
+    }
+    $msg;
+}
+
+sub _headers_to_string {
+    my ($self, $headers) = @_;
+    my $str = "";
+    for (my $i=0; $i < @$headers; $i++) {
+        $str .= "\n\t" . $headers->[$i++] . ": " . $headers->[$i];
+    }
+    $str;
+}
+
+sub _indent {
+    my ($self, $str) = @_;
+    $str =~ s/([^\r\n]+)/\t$1/g;
+    $str;
+}
 
 =head1 NAME
 

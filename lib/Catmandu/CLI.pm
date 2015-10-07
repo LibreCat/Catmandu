@@ -192,6 +192,26 @@ sub run {
 
             goto ERROR;
         }
+        elsif (is_instance $_, 'Catmandu::HTTPError') {
+            my $message       = $_->message;
+            my $code          = $_->code;
+            my $url           = $_->url;
+            my $method        = $_->method;
+            my $request_body  = $_->request_body;
+            my $response_body = $_->response_body;
+
+            say STDERR "Oops! Got a HTTP error...";
+            say STDERR "Code: $code";
+            say STDERR "Error: $message";
+            say STDERR "URL: $url";
+            say STDERR "Method: $method";
+            say STDERR "Request headers:\n" . Dumper($_->request_headers);
+            say STDERR "Request body:\n$request_body" if is_string $request_body;
+            say STDERR "Response headers:\n" . Dumper($_->response_headers);
+            say STDERR "Response body:\n$response_body" if is_string $response_body;
+
+            goto ERROR;
+        }
         else {
             say STDERR "Oops! $_";
 
