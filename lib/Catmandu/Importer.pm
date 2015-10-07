@@ -110,7 +110,7 @@ sub _build_fh {
             for my $header ($res->header_field_names) {
                 push @$res_headers, $header, $res->header($header);
             }
-            Catmandu::HTTPError->new({
+            Catmandu::HTTPError->throw({
                 code             => $res->code,
                 message          => $res->status_line,
                 url              => $file,

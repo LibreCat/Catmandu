@@ -194,6 +194,7 @@ Catmandu::Error - Catmandu error hierarchy
                 Catmandu::NoSuchFixPackage
             Catmandu::FixParseError
             Catmandu::FixError
+            Catmandu::HTTPError
 
 =head1 SEE ALSO
 
