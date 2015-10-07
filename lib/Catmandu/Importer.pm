@@ -2,14 +2,17 @@ package Catmandu::Importer;
 
 use namespace::clean;
 use Catmandu::Sane;
-use Catmandu::Util qw(io data_at);
+use Catmandu::Util qw(io data_at is_value is_string is_array_ref);
+use LWP::UserAgent;
+use HTTP::Request ();
+use URI ();
+use URI::Template ();
 use Moo::Role;
 
 with 'Catmandu::Logger';
 with 'Catmandu::Iterable';
 with 'Catmandu::Fixable';
-
-has data_path => (is => 'ro');
+with 'Catmandu::Serializer';
 
 around generator => sub {
     my ($orig, $self) = @_;
@@ -34,30 +37,115 @@ around generator => sub {
     $generator;
 };
 
-has file => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub { \*STDIN },
-);
-
-has fh => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => 1,
-);
-
-has encoding => (
-    is       => 'ro',
-    builder  => 1,
-);
+has file => (is => 'lazy', init_arg => undef);
+has _file_template => (is => 'ro', predicate => 'has_file', init_arg => 'file');
+has variables => (is => 'ro', predicate => 1);
+has fh => (is => 'ro', lazy => 1, builder => 1);
+has encoding => (is => 'ro', builder=> 1);
+has data_path => (is => 'ro');
+has http_method => (is => 'lazy');
+has http_headers => (is => 'lazy');
+has http_agent => (is => 'ro', predicate => 1);
+has http_max_redirect => (is => 'ro', predicate => 1);
+has http_timeout => (is => 'ro', predicate => 1);
+has http_verify_hostname => (is => 'ro', default => sub { 1 });
+has http_body => (is => 'ro', predicate => 1);
+has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => undef);
 
 sub _build_encoding {
     ':utf8';
 }
 
+sub _build_file {
+    my ($self) = @_;
+    return \*STDIN unless $self->has_file;
+    my $file = $self->_file_template;
+    if (is_string($file) && $self->has_variables) {
+        my $template = URI::Template->new($file);
+        my $vars = $self->variables;
+        if (is_value($vars)) {
+            $vars = [split ',', $vars];
+        }
+        if (is_array_ref($vars)) {
+            my @keys = $template->variables;
+            my @vals = @$vars;
+            $vars = {};
+            $vars->{shift @keys} = shift @vals while @keys && @vals;
+        }
+        $file = $template->process_to_string(%$vars);
+    }
+    $file;
+}
+
 sub _build_fh {
-    # build from file. may be build from URL in a future version
-    io($_[0]->file, mode => 'r', binmode => $_[0]->encoding);
+    my ($self) = @_;
+    my $file = $self->file;
+    if (is_string($file) && $file =~ m!^https?://!) {
+        my $req = HTTP::Request->new($self->http_method, $file, $self->http_headers);
+
+        if ($self->has_http_body) {
+            my $body = $self->http_body;
+            if (ref $body) {
+                $body = $self->serialize($body);
+            } elsif ($self->has_variables) {
+                my $vars = $self->variables;
+                if (is_hash_ref($vars)) { # named variables
+                    for my $key (keys %$vars) {
+                        my $var = $vars->{$key};
+                        $body =~ s/{$key}/$var/; 
+                    }
+                } else { # positional variables
+                    for my $var (@$vars) {
+                        $body =~ s/{\w+}/$var/; 
+                    }
+                }
+            }
+
+            $req->content($body);
+        }
+
+        my $res = $self->_http_client->request($req);
+        unless ($res->is_success) {
+            my $res_headers = [];
+            for my $header ($res->header_field_names) {
+                push @$res_headers, $header, $res->header($header);
+            }
+            Catmandu::HTTPError->new({
+                code             => $res->code,
+                message          => $res->status_line,
+                url              => $file,
+                method           => $self->http_method,
+                request_headers  => $self->http_headers,
+                request_body     => $self->http_body,
+                response_headers => $res_headers,
+                response_body    => $res->decoded_content,
+            });
+        }
+
+        my $content = $res->decoded_content;
+        return io(\$content, mode => 'r', binmode => $_[0]->encoding);
+    }
+
+    io($file, mode => 'r', binmode => $_[0]->encoding);
+}
+
+sub _build_http_headers {
+    [];
+}
+
+sub _build_http_method {
+    'GET';
+}
+
+sub _build_http_client {
+    my ($self) = @_;
+    my $ua = LWP::UserAgent->new;
+    $ua->agent($self->http_agent) if $self->has_http_agent;
+    $ua->max_redirect($self->http_max_redirect) if $self->has_http_max_redirect;
+    $ua->timeout($self->http_timeout) if $self->has_http_timeout;
+    $ua->ssl_opts(verify_hostname => $self->http_verify_hostname);
+    $ua->protocols_allowed([qw(http https)]);
+    $ua;
 }
 
 sub readline {
