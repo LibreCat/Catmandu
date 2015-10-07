@@ -2,7 +2,7 @@ package Catmandu::Importer;
 
 use namespace::clean;
 use Catmandu::Sane;
-use Catmandu::Util qw(io data_at is_value is_string is_array_ref);
+use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
 use HTTP::Request ();
 use URI ();
@@ -80,11 +80,12 @@ sub _build_file {
 sub _build_fh {
     my ($self) = @_;
     my $file = $self->file;
+    my $body;
     if (is_string($file) && $file =~ m!^https?://!) {
         my $req = HTTP::Request->new($self->http_method, $file, $self->http_headers);
 
         if ($self->has_http_body) {
-            my $body = $self->http_body;
+            $body = $self->http_body;
             if (ref $body) {
                 $body = $self->serialize($body);
             } elsif ($self->has_variables) {
@@ -95,6 +96,9 @@ sub _build_fh {
                         $body =~ s/{$key}/$var/; 
                     }
                 } else { # positional variables
+                    if (is_value($vars)) {
+                        $vars = [split ',', $vars];
+                    }
                     for my $var (@$vars) {
                         $body =~ s/{\w+}/$var/; 
                     }
@@ -116,7 +120,7 @@ sub _build_fh {
                 url              => $file,
                 method           => $self->http_method,
                 request_headers  => $self->http_headers,
-                request_body     => $self->http_body,
+                request_body     => $body,
                 response_headers => $res_headers,
                 response_body    => $res->decoded_content,
             });
