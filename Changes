@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.95  2015-10-08 11:46:02 CEST
   - Importer can now fetch remote data over http(s)
   - catmandu run command and executable fixes
   - catmandu interactive fix interpreter
