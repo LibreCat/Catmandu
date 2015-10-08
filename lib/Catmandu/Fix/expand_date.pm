@@ -33,7 +33,7 @@ Catmandu::Fix::expand_date - expand a date field into year, month and date
 
 =head1 NOTE
 
-This package is DEPRECATED and will probably be removed in the future.
+This package is DEPRECATED and will be removed in the future.
 Please use L<Catmandu::Fix::split_date>.
 
 Reasons:
