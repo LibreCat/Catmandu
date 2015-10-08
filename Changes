@@ -1,10 +1,15 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - importer bind
-  - catmandu run and executable fixes
-  - catmandu interactive fix intepreter
+  - Importer can now fetch remote data over http(s)
+  - catmandu run command and executable fixes
+  - catmandu interactive fix interpreter
+  - 'importer' bind
+  - more powerful 'list' and 'hashmap' bind
   - autocommit option on all addables (Exporter,Store,...)
+  - 'expand_date' fix replaced by 'split_date' in the Catmandu-Fix-Date
+    distribution
+  - more pod and tests
 
 0.9403  2015-09-17 16:44:45 CEST
   - make 'include' fix load path aware
