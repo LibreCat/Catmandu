@@ -52,6 +52,12 @@ sub bind {
     $mvar;
 }
 
+sub result {
+    my ($self,$mvar) = @_;
+    $self->flag(0);
+    $mvar;
+}
+
 sub inline_copy {
     my ($old,$new) = @_;
 

@@ -11,16 +11,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-catmandu count ElasticSearch --index-name shop --bag products --query 'brand:Acme'
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -52,4 +42,13 @@ sub command {
 
 Catmandu::Cmd::count - count the number of objects in a store
 
+=head1 EXAMPLES
 
+  catmandu count <STORE> <OPTIONS>
+
+  catmandu count ElasticSearch --index-name shop --bag products \
+                               --query 'brand:Acme'
+
+  catmandu help store ElasticSearch
+
+=cut

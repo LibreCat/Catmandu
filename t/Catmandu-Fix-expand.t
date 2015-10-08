@@ -16,4 +16,9 @@ is_deeply
     {names => [{name => 'joe'}, {name => 'rick'}]},
     "data is unflattened";
 
-done_testing 2;
+is_deeply
+    $pkg->new('sep','-')->fix({'names-0-name' => "joe", 'names-1-name' => "rick"}),
+    {names => [{name => 'joe'}, {name => 'rick'}]},
+    "data is unflattened";
+
+done_testing 3;

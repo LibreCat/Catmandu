@@ -29,9 +29,7 @@ sub _build_bag {
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    # memoize in case called multiple times
-    my $bag_var = $self->_bag_var ||
-                  $self->_set_bag_var($fixer->capture($self->bag));
+    my $bag_var = $fixer->capture($self->bag);
 
     "if (is_hash_ref(${var})) {" .
         "${bag_var}->add(${var});" .

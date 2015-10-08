@@ -1,6 +1,7 @@
 package Catmandu::Cmd;
 use Catmandu::Sane;
 use parent qw(App::Cmd::Command);
+use Catmandu::Util qw(pod_section);
 
 # Internal required by App::Cmd
 sub opt_spec {
@@ -28,8 +29,23 @@ sub execute {
     $self->command($opts, $args);
 }
 
+# show examples, if available in POD
+sub description {
+    my $class = ref shift;
+
+    my $s = pod_section($class,"name");
+    $s =~ s/.*\s+-\s+//;
+    $s = ucfirst($s);
+    $s.= "\n";
+
+    for (pod_section($class,"examples")) {
+        $s .= "Examples:\n\n$_";
+    }
+
+    "$s\nOptions:";
+}
+
 # These should be implemented by the Catmandu::Cmd's
-sub description {}
 sub command_opt_spec {}
 sub command {}
 
@@ -112,7 +128,7 @@ At least provide for every command a NAME documentation
 
 L<Catmandu::Cmd::config> , L<Catmandu::Cmd::convert> , L<Catmandu::Cmd::count> ,
 L<Catmandu::Cmd::data> , L<Catmandu::Cmd::delete> , L<Catmandu::Cmd::export>,
-L<Catmandu::Cmd::import> , L<Catmandu::Cmd::move>
+L<Catmandu::Cmd::import> , L<Catmandu::Cmd::move> , L<Catmandu::Cmd::run>
 
 =cut
 

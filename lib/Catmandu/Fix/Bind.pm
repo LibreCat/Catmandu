@@ -33,35 +33,22 @@ sub bind {
 
 sub emit {
     my ($self, $fixer, $label) = @_;
-
-    my $code = [ map { [ref($_) , $fixer->emit_fix($_)] } @{$self->fixes} ];
-    my $perl = $self->emit_bind($fixer,$code);
-
-    $perl; 
-}
-
-sub emit_bind {
-    my ($self,$fixer,$code) = @_;
-
-    my $var = $fixer->var;
-
     my $perl = "";
 
-    my $bind_var  = $fixer->capture($self);
-    my $unit      = $fixer->generate_var;
-    my $sub_fixer = Catmandu::Fix->new(fixes => $self->fixes);
+    my $var           = $fixer->var;
+    my $bind_var      = $fixer->capture($self);
+    my $unit          = $fixer->generate_var;
+    my $sub_fixer     = Catmandu::Fix->new(fixes => $self->fixes);
     my $sub_fixer_var = $fixer->capture($sub_fixer);
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-    for my $pair (@$code) { 
-        my $name = $pair->[0];
-        my $code = $pair->[1]; 
-        $perl .= "${unit} = ${bind_var}->bind(${unit}, sub {";
-        $perl .= "my ${var} = shift;";
-        $perl .= $code;
-        $perl .= "${var}";
-        $perl .= "},'$name',${sub_fixer_var});"
+    for my $fix (@{$self->fixes}) { 
+        my $name           = ref($fix);
+        my $original_code  = $fixer->emit_fix($fix);
+        my $generated_code = "sub { my ${var} = shift; $original_code ; ${var} }";
+
+        $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name',${sub_fixer_var});"
     }
     
     if ($self->can('result')) {

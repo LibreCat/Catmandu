@@ -31,7 +31,8 @@ Catmandu::Fix::substring - extract a substring out of the value of a field
 =head1 SYNOPSIS
 
    # Extract a substring out of the value of a field
-   substring(initials, 0, 1)
+   # - Extact from 'initials' the characters at offset 0 (first character) with a length 3
+   substring(initials, 0, 3)
 
 =head1 SEE ALSO
 

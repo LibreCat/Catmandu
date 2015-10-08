@@ -11,16 +11,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-cat books.json | catmandu convert JSON to CSV --fields id,title
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -45,9 +35,7 @@ sub command {
             push @$a, $arg;
         }
     }
-#use Data::Dumper;
-#say STDERR Dumper($from_opts);
-#say STDERR Dumper($into_opts);
+
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
@@ -61,7 +49,19 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::convert - convert objects
+
+=head1 EXAMPLES
+
+  catmandu convert <IMPORTER> <OPTIONS> to <EXPORTER> <OPTIONS>
+
+  cat books.json | catmandu convert JSON to CSV --fields id,title
+
+  catmandu help importer JSON
+  catmandu help exporter YAML
+
+=cut

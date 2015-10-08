@@ -64,8 +64,33 @@ then they can be executed on a MARC file using this command:
 
     $ catmandu convert MARC --fix myfixes.txt < data.mrc
 
-Catmandu contains many powerfull fixes. Visit ["/librecat.org/Catmandu/#fixes-cheat-sheet to get 
-an overview what is possible" in http:](https://metacpan.org/pod/http:#librecat.org-Catmandu-fixes-cheat-sheet-to-get-an-overview-what-is-possible)
+Fixes can also be turned into executable scripts by adding a bash 'shebang' line at the top. E.g.
+to harvest records from an OAI repository write this fix file:
+
+     #!/usr/bin/env catmandu run
+     do importer(OAI,url:"http://lib.ugent.be/oai")
+        add_to_exporter(.,JSON)
+     end
+
+Run this (on Linux) by setting the executable bit:
+
+     $ chmod 755 myfix.fix
+     $ ./myfix.fix
+
+To experiment with the Fix language you can also run the catmandu Fix interpreter in an 
+interactive mode:
+
+     $ catmandu run
+     Catmandu 0.95 interactive mode
+     Type: \h for the command history
+     fix > add_field(hello,world)
+     ---
+     hello: world
+     ...
+     fix >
+
+Catmandu contains many powerful fixes. Visit [http://librecat.org/Catmandu/#fixes-cheat-sheet](http://librecat.org/Catmandu/#fixes-cheat-sheet) to get 
+an overview what is possible.
 
 # Documentation
 
@@ -121,7 +146,7 @@ Catmandu packages!
 Catmandu is created in a cooperation with many developers world wide. Without them this project isn't possible.
 We would like to thank our core maintainer: Nicolas Steenlant and all contributors: Christian Pietsch , 
 Dave Sherohman , Friedrich Summann , Jakob Voss , Johann Rolschewski  , Jorgen Eriksson  , Magnus Enger , 
-Maria Hedberg , Mathias Loeqsch , Najko Jahn , Nicolas Franck , Patrick Hochstenbach , Petra Kohorst  , 
+Maria Hedberg , Mathias Loesch , Najko Jahn , Nicolas Franck , Patrick Hochstenbach , Petra Kohorst  , 
 Snorri Briem , Upasana Shukla and Vitali Peil 
 
 # SEE ALSO

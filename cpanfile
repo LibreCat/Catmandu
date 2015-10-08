@@ -23,6 +23,7 @@ requires 'JSON::XS', '2.3';
 requires 'List::MoreUtils', '0.33';
 requires 'Log::Any', '1.03';
 requires 'Log::Any::Adapter', '1.03';
+requires 'LWP::UserAgent', 0;
 requires 'Time::Piece', 0; # undeclared Marpa dependency
 requires 'Marpa::R2', '2.084000';
 requires 'Module::Info', 0;
@@ -35,6 +36,8 @@ requires 'Text::CSV', '1.21';
 requires 'Time::HiRes', 0; # not always installed?
 requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
+requires 'URI', 0;
+requires 'URI::Template', 0;
 requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';

@@ -11,16 +11,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-catmandu import YAML --file books.yml to MongoDB --database-name items --bag book
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -60,7 +50,19 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::import - import objects into a store
+
+=head1 EXAMPLES
+
+  catmandu import <IMPORTER> <OPTIONS> to <STORE> <OPTIONS>
+
+  catmandu import YAML to MongoDB --database-name items --bag book < books.yml
+
+  catmandu help importer YAML
+  catmandu help importer MongoDB
+
+=cut

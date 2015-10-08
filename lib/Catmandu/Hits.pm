@@ -63,7 +63,7 @@ Catmandu::Hits - Iterable object that wraps Catmandu::Store search hits
 
     my $hits  = $store->bag->search(
 		   query => 'dna' ,
-	           start => 0 ,
+	       start => 0 ,
 		   limit => 100 ,
 		   sort  => 'title desc',
                 );

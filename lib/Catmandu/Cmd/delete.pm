@@ -11,16 +11,6 @@ sub command_opt_spec {
     );
 }
 
-sub description {
-    <<EOS;
-examples:
-
-catmandu delete ElasticSearch --index-name items --bag book -q 'title:"My Rabbit"'
-
-options:
-EOS
-}
-
 sub command {
     my ($self, $opts, $args) = @_;
 
@@ -53,7 +43,19 @@ sub command {
 }
 
 1;
+__END__
 
 =head1 NAME
 
 Catmandu::Cmd::delete - delete objects from a store
+
+=head1 EXAMPLES
+
+  catmandu delete <STORE> <OPTIONS>
+
+  catmandu delete ElasticSearch --index-name items --bag book \
+                                --query 'title:"My Rabbit"'
+
+  catmandu help store ElasticSearch
+  
+=cut

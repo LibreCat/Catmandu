@@ -2,16 +2,19 @@ package Catmandu::Fix::Bind::hashmap;
 
 use Moo;
 use Catmandu::Util qw(:is);
-use namespace::clean;
+use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Bind';
 
-has exporter => (is => 'ro' , default => sub { 'JSON' });
-has store    => (is => 'ro');
-has unqiue   => (is => 'ro' , default => sub { 0 });
-has count    => (is => 'ro');
-has join     => (is => 'ro');
-has hash     => (is => 'lazy');
+has exporter      => (fix_opt => 1 , default => sub { 'JSON' });
+has store         => (fix_opt => 1);
+has uniq          => (fix_opt => 1 , default => sub { 0 });
+has count         => (fix_opt => 1);
+has join          => (fix_opt => 1);
+has extra_args    => (fix_opt => 'collect');
+
+has flag          => (is => 'rw'  , default => sub { 0 });
+has hash          => (is => 'lazy');
 
 sub _build_hash {
     +{};
@@ -22,7 +25,7 @@ sub add_to_hash {
     if ($self->count) {
         $self->hash->{$key} += 1;
     }
-    elsif ($self->unqiue) {
+    elsif ($self->uniq) {
         $self->hash->{$key}->{$val} = 1;
     }
     else {
@@ -31,9 +34,11 @@ sub add_to_hash {
 }
 
 sub bind {
-    my ($self,$data,$code,$name) = @_;
+    my ($self,$data,$code,$name,$fixer) = @_;
 
-    $data = $code->($data);
+    return if $self->flag;
+
+    $data = $fixer->fix($data);
 
     my $key   = $data->{key};
     my $value = $data->{value};
@@ -52,30 +57,45 @@ sub bind {
         }
     }
 
+    $self->flag(1);
+
     $data;
+}
+
+sub result {
+    my ($self,$mvar) = @_;
+
+    $self->flag(0);
+    
+    $mvar;
 }
 
 sub DESTROY {
     my ($self) = @_;
     my $h = $self->hash;
     my $e;
+    my $args = $self->extra_args // {};
 
     if ($self->store) {
-        $e = Catmandu->store($self->store);
+        $e = Catmandu->store($self->store, %$args);
     }
     else {
-        $e = Catmandu->exporter($self->exporter);
+        $e = Catmandu->exporter($self->exporter, %$args);
     }
 
+    my $sorter = $self->count ? 
+                    sub { $h->{$b} <=> $h->{$a} } :
+                    sub { $a cmp $b };
+
     my $id = 0;
-    for (sort keys %$h) {
+    for (sort $sorter keys %$h) {
         my $v;
 
         if ($self->count) {
             $v = $h->{$_};
         }
-        elsif ($self->unqiue) {
-            $v = [ keys %{$h->{$_}} ];
+        elsif ($self->uniq) {
+            $v = [ sort keys %{$h->{$_}} ];
         }
         else {
             $v = $h->{$_};
@@ -99,12 +119,9 @@ Catmandu::Fix::Bind::hashmap - a binder to add key/value pairs to an internal ha
 =head1 SYNOPSIS
 
  # Find all ISBN in a stream
- do hashmap(exporter => JSON, join => ',')
-   # Need an identity binder to group all operations that calculate key_value pairs
-   do identity()
+ do hashmap(exporter: JSON, join: ',')
     copy_field(isbn,key)
     copy_field(_id,value)
-   end
  end
 
  # will export to the YAML exporter a hash map containing all isbn occurrences in the stream
@@ -115,9 +132,7 @@ Catmandu::Fix::Bind::hashmap - a binder to add key/value pairs to an internal ha
  # Count the number of ISBN occurrences in a stream
  # File: count.fix:
  do hashmap(count: 1)
-   do identity()
     copy_field(isbn,key)
-   end
  end
 
  # Use the Null exporter to suppress the normal output
@@ -137,13 +152,21 @@ or more values.
 
 =head2 exporter: EXPORTER
 
-The name of an exporter to send the results to. Default: JSON
+The name of an exporter to send the results to. Default: JSON  Extra parameters can be added:
+
+    do hashmap(exporter: JSON, file:/tmp/data.json, count: 1)
+      ...
+    end
 
 =head2 store: STORE
 
-Send the output to a store instead of an exporter.
+Send the output to a store instead of an exporter. Extra parameters can be added:
 
-=head2 unique: 0|1
+    do hashmap(store: MongoDB, database_name: test, bag: data, count: 1)
+      ...
+    end
+
+=head2 uniq: 0|1
 
 All the values for the a key will be unique.
 

@@ -12,6 +12,7 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Parser;
+use File::Slurp::Tiny ();
 use Data::Dumper ();
 use B ();
 
@@ -44,13 +45,21 @@ sub _build_fixes {
     for my $fix (@$fixes_arg) {
         if (is_code_ref($fix)) {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
+        } elsif (is_glob_ref($fix)) {
+            my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
+            my $txt = Catmandu::Util::read_io($fh);
+            push @$fixes, @{$self->parser->parse($txt)};
+        } elsif (ref $fix && ref $fix =~ /^IO::/) {
+            my $txt = Catmandu::Util::read_io($fix);
+            push @$fixes, @{$self->parser->parse($txt)};
         } elsif (ref $fix) {
             push @$fixes, $fix;
-        } elsif (is_string($fix) && $fix !~ /[\n()]/ and -X $fix) {
-            push @$fixes, require_package('Catmandu::Fix::cmd')->new($fix);
         } elsif (is_string($fix)) {
+            if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
+                $fix = File::Slurp::Tiny::read_file($fix, binmode => ':encoding(UTF-8)');
+            }
             push @$fixes, @{$self->parser->parse($fix)};
-        }
+        } 
     }
 
     $fixes;
@@ -151,7 +160,7 @@ sub emit {
     $perl .= $self->emit_declare_vars($var, '$_[0]');
     $perl .= "eval {";
 
-    # Loop over all the fixes and emit their code, binded to Binds if required
+    # Loop over all the fixes and emit their code
     $perl .= $self->emit_fixes($self->fixes);
 
     $perl .= "return ${var};";
