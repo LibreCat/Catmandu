@@ -198,7 +198,8 @@ Catmandu::Importer - Namespace for packages that can import
 
     # Or on the command line
     $ catmandu convert Hello to YAML < /tmp/names.txt
-
+    # Fetch remote content
+    $ catmandu convert JSON --file http://example.com/data.json to YAML
 
 =head1 DESCRIPTION
 
@@ -226,8 +227,9 @@ C<each>, C<to_array>...) etc.
 
 =item file
 
-Read input from a local file given by its path. Alternatively a scalar
-reference can be passed to read from a string.
+Read input from a local file given by its path. If the path looks like a
+url, the content will be fetched first and then passed to the importer.
+Alternatively a scalar reference can be passed to read from a string.
 
 =item fh
 
@@ -254,6 +256,41 @@ The data at C<data_path> is imported instead of the original data.
    {a=>1}
    {b=>2}
    {c=>3}
+
+=item variables
+
+Variables given here will interpolate the C<file> and C<http_body> options. The
+syntax is the same as L<URI::Template>.
+
+    # named arguments
+    my $importer = Catmandu->importer('Hello',
+        file => 'http://example.com/{id}',
+        variables => {id => 1234},
+    );
+    # positional arguments
+    {variables => "1234,768"}
+    # or
+    {variables => [1234,768]}
+
+=back
+
+=head1 HTTP CONFIGURATION
+
+These options are only relevant if C<file> is a url. See L<LWP::UserAgent> for details about these options.
+
+=over
+
+=item http_method
+
+=item http_headers
+
+=item http_agent
+
+=item http_max_redirect
+
+=item http_timeout 
+
+=item http_verify_hostname
 
 =back
 
