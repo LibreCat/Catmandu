@@ -45,9 +45,13 @@ Catmandu::Addable - Base class for all Catmandu modules need to implement add
 
 =head1 OPTIONS
 
+=over
+
 =item autocommit
 
 Autocommit when the exporter gets out of scope. Default 0.
+
+=back
 
 =head1 METHODS
 
