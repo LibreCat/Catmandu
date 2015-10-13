@@ -56,6 +56,7 @@ my %module_build_args = (
     "Try::Tiny::ByClass" => "0.01",
     "URI" => 0,
     "URI::Template" => 0,
+    "Unicode::Normalize" => 0,
     "YAML::XS" => "0.41",
     "namespace::clean" => "0.24",
     "perl" => "v5.10.1"

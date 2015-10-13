@@ -5,6 +5,8 @@ use warnings;
 use Test::More;
 use Test::Exception;
 
+use utf8;
+
 my $pkg;
 BEGIN {
     $pkg = 'Catmandu::Fix::trim';
@@ -41,5 +43,10 @@ is_deeply
     {names => [{name => "joe"}, {name => "rick"}]},
     "trim wildcard values";
 
-done_testing 7;
+is_deeply
+    $pkg->new('name', 'diacritics')->fix({name => "français"}),
+    {name => "francais"},
+    "trim utf8 string";
+
+done_testing 8;
 

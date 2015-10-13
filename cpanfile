@@ -30,6 +30,7 @@ requires 'Module::Info', 0;
 requires 'Moo', '1.004006';
 requires 'MooX::Aliases', '0.001006';
 requires 'namespace::clean', '0.24';
+requires 'Unicode::Normalize', '0';
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;
 requires 'Text::CSV', '1.21';
