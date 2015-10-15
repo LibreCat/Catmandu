@@ -3,11 +3,32 @@ package Catmandu::Fix::vacuum;
 use Catmandu::Sane;
 use Moo;
 use CGI::Expand ();
+use Catmandu::Fix::Bind::visitor;
 use Catmandu::Fix::Has;
 
 sub fix {
 	my ($self,$data) = @_;
-	my $ref = CGI::Expand->collapse_hash($data);
+
+	my $ref = eval {
+      # This can die with 'Unknown reference type' when the data is blessed
+      CGI::Expand->collapse_hash($data);
+   };
+
+   # Try to unbless data
+   if ($@) {
+      my $bind = Catmandu::Fix::Bind::visitor->new;
+      my $data = $bind->unit($data);
+
+      $data = $bind->bind($data,sub {
+         my $item = $_[0];
+
+         $item->{scalar} = sprintf "%s" , $item->{scalar} if (ref $item->{scalar});
+
+         $item;
+      });
+
+      $ref = CGI::Expand->collapse_hash($data);
+   }
 
 	for my $key (keys %$ref) {
 		my $value = $ref->{$key};

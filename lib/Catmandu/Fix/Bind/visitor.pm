@@ -19,7 +19,7 @@ sub unit {
 }
 
 sub bind {
-    my ($self,$mvar,$func,$name) = @_;
+    my ($self,$mvar,$func) = @_;
 
     if (Catmandu::Util::is_array_ref($mvar)) {
         return $self->bind_array($mvar,$func,'');
