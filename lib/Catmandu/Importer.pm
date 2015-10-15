@@ -149,6 +149,7 @@ sub _build_http_client {
     $ua->timeout($self->http_timeout) if $self->has_http_timeout;
     $ua->ssl_opts(verify_hostname => $self->http_verify_hostname);
     $ua->protocols_allowed([qw(http https)]);
+    $ua->env_proxy;
     $ua;
 }
 
