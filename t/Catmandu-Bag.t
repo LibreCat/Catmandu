@@ -5,7 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use Role::Tiny;
-use Data::Util;
+use Catmandu::Util;
 
 my $pkg;
 BEGIN {
@@ -107,7 +107,7 @@ can_ok $b, 'commit';
 can_ok $b, 'get_or_add';
 can_ok $b, 'to_hash';
 
-ok Data::Util::is_value($b->generate_id);
+ok Catmandu::Util::is_value($b->generate_id);
 
 throws_ok { $b->add(T::BagData->new) } qr/should be hash ref/;
 throws_ok { $b->add([]) } qr/should be hash ref/;
@@ -127,7 +127,7 @@ is $b->count, 0;
 my $data = {a=>{shrimp=>'shrieks'}};
 
 $b->add($data);
-ok Data::Util::is_value($data->{_id});
+ok Catmandu::Util::is_value($data->{_id});
 is_deeply $b->get($data->{_id}), $data;
 
 $b->delete($data->{_id});

@@ -14,7 +14,6 @@ requires 'Clone', '0.31';
 requires 'Config::Onion', '1.004';
 requires 'Data::Compare', '1.22';
 requires 'Data::UUID', '1.217';
-requires 'Data::Util', '0.59';
 requires 'File::Find::Rule', '0.33';
 requires 'File::Slurp::Tiny', '0.003';
 requires 'Hash::Merge::Simple', 0;
