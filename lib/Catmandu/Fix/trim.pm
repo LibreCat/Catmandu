@@ -29,6 +29,8 @@ sub emit_value {
     $perl;
 }
 
+=encoding utf-8
+
 =head1 NAME
 
 Catmandu::Fix::trim - trim leading and ending junk from the value of a field
