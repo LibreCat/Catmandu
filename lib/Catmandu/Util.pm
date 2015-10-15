@@ -1,4 +1,4 @@
-package Catmandu::Util;
+ackage Catmandu::Util;
 
 use Catmandu::Sane;
 use Exporter qw(import);
