@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9501  2015-10-15 16:30:28 CEST
   - remove dependency on Data::Util so we can support perl 5.22
   - 'trim' fix remove diacritics mode 
 
