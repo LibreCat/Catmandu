@@ -409,8 +409,8 @@ sub _get_stash {
 sub _get_code_ref {
     my($pkg, $name, @flags) = @_;
 
-	check_string($pkg);
-	check_string($name);
+    is_string($pkg) || Catmandu::BadVal->throw('should be string');
+    is_string($name) || Catmandu::BadVal->throw('should be string');
 
     my $stash = _get_stash($pkg) or return undef;
 

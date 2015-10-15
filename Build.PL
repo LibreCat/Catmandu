@@ -33,7 +33,6 @@ my %module_build_args = (
     "Config::Onion" => "1.004",
     "Data::Compare" => "1.22",
     "Data::UUID" => "1.217",
-    "Data::Util" => "0.59",
     "File::Find::Rule" => "0.33",
     "File::Slurp::Tiny" => "0.003",
     "Hash::Merge::Simple" => 0,
