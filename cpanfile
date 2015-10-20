@@ -30,7 +30,7 @@ requires 'Module::Info', 0;
 requires 'Moo', '1.004006';
 requires 'MooX::Aliases', '0.001006';
 requires 'namespace::clean', '0.24';
-requires 'Unicode::Normalize', '0';
+requires 'Unicode::Normalize', 0;
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;
 requires 'Text::CSV', '1.21';
@@ -43,6 +43,7 @@ requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';
+recommends 'Class::XSAccessor', 0;
 
 feature 'tidy',
     "Support pretty printing compiled fix code",
