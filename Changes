@@ -1,10 +1,12 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - remove dependency on Data::Util so we can support perl 5.22
+  - fix typos
+  - .mailmap file
 
 0.9501  2015-10-15 16:30:28 CEST
-  - remove dependency on Data::Util so we can support perl 5.22
-  - 'trim' fix remove diacritics mode 
+  - 'trim' fix remove diacritics mode
 
 0.95  2015-10-08 11:46:02 CEST
   - Importer can now fetch remote data over http(s)
