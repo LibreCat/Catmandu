@@ -7,31 +7,17 @@ use Moo;
 use namespace::clean;
 
 with 'Catmandu::Importer';
-
-has importers => (is => 'ro');
+with 'Catmandu::MultiIterable';
 
 sub BUILDARGS {
     my ($class, @importers) = @_;
-    return {importers => [ map {
+    return {iterators => [ map {
         if (is_string($_)) {
             Catmandu->importer($_);
         } else {
             $_;
         }
     } @importers ]};
-}
-
-sub generator {
-    my ($self) = @_;
-    sub {
-        state $generators = [ map { $_->generator } @{$self->importers} ];
-        while (@$generators) {
-            my $data = $generators->[0]->();
-            return $data if defined $data;
-            shift @$generators;
-        }
-        return;
-    };
 }
 
 1;
