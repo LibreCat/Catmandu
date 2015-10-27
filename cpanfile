@@ -8,6 +8,11 @@ on 'test', sub {
   requires 'Log::Any::Test', '1.03';
 };
 
+on 'develop' => sub {
+  requires 'Benchmark, 0;
+  requires 'Perl::Tidy', 0;
+};
+
 requires 'App::Cmd', '0.326';
 requires 'CGI::Expand', '2.02';
 requires 'Clone', '0.31';
@@ -43,10 +48,4 @@ requires 'YAML::XS', '0.41';
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';
 recommends 'Class::XSAccessor', 0;
-
-feature 'tidy',
-    "Support pretty printing compiled fix code",
-    sub {
-        requires 'Perl::Tidy', 0;
-    };
 
