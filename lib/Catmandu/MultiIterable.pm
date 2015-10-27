@@ -1,4 +1,4 @@
-package Catmandu::Importer::MultiIterable;
+package Catmandu::MultiIterable;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(is_string);
@@ -32,12 +32,12 @@ Catmandu::MultiIterable - role to chain multiple iterators together
 
 =head1 SYNOPSIS
 
-    package MultiIterator
+    package MyMultiIterator
     use Moo;
     with 'Catmandu::MultiIterable';
     1;
 
-    my $it = Catmandu::MultiIterator->new(iterators => [
+    my $it = MyMultiIterator->new(iterators => [
         Catmandu::Importer::Mock->new,
         Catmandu::Importer::Mock->new,
     ]);

@@ -6,8 +6,8 @@ use Catmandu;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Importer';
 with 'Catmandu::MultiIterable';
+with 'Catmandu::Importer';
 
 sub BUILDARGS {
     my ($class, @importers) = @_;
