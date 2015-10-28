@@ -1,6 +1,10 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new Store::Multi
+  - new Exporter::Multi
+  - new Importer::Multi
+  - new MultiIterator
   - remove dependency on Data::Util so we can support perl 5.22
   - fix typos
   - .mailmap file
