@@ -15,7 +15,7 @@ my %module_build_args = (
   },
   "dist_abstract" => "a data toolkit",
   "dist_author" => [
-    "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
+    "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
   ],
   "dist_name" => "Catmandu",
   "dist_version" => "0.9503",
@@ -33,7 +33,6 @@ my %module_build_args = (
     "Config::Onion" => "1.004",
     "Data::Compare" => "1.22",
     "Data::UUID" => "1.217",
-    "Data::Util" => "0.59",
     "File::Find::Rule" => "0.33",
     "File::Slurp::Tiny" => "0.003",
     "Hash::Merge::Simple" => 0,

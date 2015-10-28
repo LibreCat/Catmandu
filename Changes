@@ -1,10 +1,16 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new Store::Multi
+  - new Exporter::Multi
+  - new Importer::Multi
+  - new MultiIterator
+  - remove dependency on Data::Util so we can support perl 5.22
+  - fix typos
+  - .mailmap file
 
 0.9501  2015-10-15 16:30:28 CEST
-  - remove dependency on Data::Util so we can support perl 5.22
-  - 'trim' fix remove diacritics mode 
+  - 'trim' fix remove diacritics mode
 
 0.95  2015-10-08 11:46:02 CEST
   - Importer can now fetch remote data over http(s)
@@ -379,7 +385,7 @@ Revision history for Catmandu
 
 0.03    2012-07-06
   - iterative version of CQL::ElasticSearch
-  - Store::ElasticSearch searcher supports sot
+  - Store::ElasticSearch searcher supports sort
   - faster Datestamps
   - Iterable->interleave()
   - Iterable->detect/select/reject(key => ['val', ...])

@@ -1,5 +1,14 @@
 #!/usr/bin/env perl
 
+package T::MyBlessed;
+
+use Moo;
+use overload '""' => 'stringify';
+
+sub stringify { ":-P yuck" }
+
+package main;
+
 use strict;
 use warnings;
 use Test::More;
@@ -19,12 +28,12 @@ my $res = $pkg->new()->fix({
     	nested_arrays  => { arrays => [] } ,
     	nested_hashes  => { hashes => {} } ,
     	keep_me => { arrays => [] , hashes => { foo => [] } , me => 1} ,
-    	keep_me_2 => [ [] , [1] ],
+    	keep_me_2 => [ [] , [T::MyBlessed->new] ],
     });
 
 is_deeply
 	$res,
-    { keep_me => {me => 1} , keep_me_2 => [undef,[1]]},
+    { keep_me => {me => 1} , keep_me_2 => [undef,[":-P yuck"]]},
     "data is vacuumed";
 
 done_testing 2;
