@@ -1,15 +1,31 @@
 package Catmandu::MultiIterator;
 
 use Catmandu::Sane;
-use Moo;
+use Role::Tiny::With;
 use namespace::clean;
 
-with 'Catmandu::MultiIterable';
+with 'Catmandu::Iterable';
 
-sub BUILDARGS {
+sub new {
     my ($class, @iterators) = @_;
-    return {iterators => [ @importers ]};
+    my $self = \@iterators;
+    bless $self, $class;
 }
+
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $generators = [ map { $_->generator } @$self ];
+        while (@$generators) {
+            my $data = $generators->[0]->();
+            return $data if defined $data;
+            shift @$generators;
+        }
+        return;
+    };
+}
+
+1;
 __END__
 
 =head1 NAME

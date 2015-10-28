@@ -3,21 +3,38 @@ package Catmandu::Importer::Multi;
 use Catmandu::Sane;
 use Catmandu::Util qw(is_string);
 use Catmandu;
+use Catmandu::MultiIterator;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::MultiIterable';
 with 'Catmandu::Importer';
 
-sub BUILDARGS {
-    my ($class, @importers) = @_;
-    return {iterators => [ map {
-        if (is_string($_)) {
-            Catmandu->importer($_);
-        } else {
-            $_;
+has importers => (
+    is => 'ro',
+    default => sub { [] },
+    coerce => sub {
+        my $importers = $_[0];
+        return [ map {
+            if (is_string($_)) {
+                Catmandu->importer($_);
+            } else {
+                $_;
+            }
+        } @$importers ];
+    },
+);
+
+sub generator {
+    my ($self) = @_;
+    sub {
+        state $generators = [ map { $_->generator } @{$self->importers} ];
+        while (@$generators) {
+            my $data = $generators->[0]->();
+            return $data if defined $data;
+            shift @$generators;
         }
-    } @importers ]};
+        return;
+    };
 }
 
 1;
@@ -31,10 +48,10 @@ Catmandu::Importer::Multi - Chain multiple importers together
 
     use Catmandu::Importer::Multi;
 
-    my $importer = Catmandu::Importer::Multi->new(
+    my $importer = Catmandu::Importer::Multi->new(importers => [
         Catmandu::Importer::Mock->new,
         Catmandu::Importer::Mock->new,
-    );
+    ]);
 
     my $importer = Catmandu::Importer::Multi->new(
         'importer1',

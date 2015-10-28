@@ -22,7 +22,6 @@ sub add {
     for my $store (@{$self->store->stores}) {
         $store->bag($self->name)->add($data);
     }
-    $data;
 }
 
 sub delete {
