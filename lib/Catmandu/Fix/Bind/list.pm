@@ -26,6 +26,9 @@ sub unit {
 
     $self->_root_($data);
 
+    # Set a flag so that all the bind fixes are only run once...
+    $self->flag(0);
+
     defined $self->path ? Catmandu::Util::data_at($self->path,$data) : $data;
 }
 
