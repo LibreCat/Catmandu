@@ -20,8 +20,8 @@ my $data = [
 ];
 
 my $it = $pkg->new(
-    Catmandu::ArrayIterator->new($data),
-    Catmandu::ArrayIterator->new($data),
+    Catmandu::ArrayIterator->new([@$data]),
+    Catmandu::ArrayIterator->new([@$data]),
 );
 
 isa_ok $it, $pkg;
