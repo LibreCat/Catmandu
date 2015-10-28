@@ -2,7 +2,7 @@ package Catmandu::Iterable;
 
 use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
-use Time::HiRes qw(gettimeofday tv_interval);
+use Catmandu::Timer;
 use Hash::Util::FieldHash qw(fieldhash);
 use Role::Tiny;
 use namespace::clean;
@@ -358,11 +358,13 @@ sub min {
 sub benchmark {
     my ($self) = @_;
     $self->tap(sub {
-        state $n = 0;
-        state $t = [gettimeofday];
-        if (++$n % 100 == 0) {
-            printf STDERR "added %9d (%d/sec)\n", $n, $n/tv_interval($t);
-        }
+        state $t = Catmandu::Timer->new();
+        $t->tick();
+        $t->benchmark_verbose(
+            template => "added %9d (%d/sec)\n",
+            repeat => 100,
+            fh => \*STDERR
+        );
     });
 }
 
