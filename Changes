@@ -7,6 +7,7 @@ Revision history for Catmandu
   - new MultiIterator
   - remove dependency on Data::Util so we can support perl 5.22
   - fix typos
+  - fix Fix::Bind::list single execution bug
   - .mailmap file
 
 0.9501  2015-10-15 16:30:28 CEST
