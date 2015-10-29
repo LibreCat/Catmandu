@@ -112,4 +112,4 @@ __END__
 
 Catmandu::Cmd::data - store, index, search, import, export or convert objects
 
-=end
+=cut
