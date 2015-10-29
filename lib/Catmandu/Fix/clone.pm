@@ -2,7 +2,7 @@ package Catmandu::Fix::clone;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Moo;
 use namespace::clean;

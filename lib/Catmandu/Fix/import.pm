@@ -2,7 +2,7 @@ package Catmandu::Fix::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Catmandu;
 use Moo;

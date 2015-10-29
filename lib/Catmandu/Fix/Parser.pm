@@ -2,7 +2,7 @@ package Catmandu::Fix::Parser;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Marpa::R2;
 use Data::Dumper;

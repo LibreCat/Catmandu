@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::benchmark;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Moo;
 use Time::HiRes qw(gettimeofday tv_interval);

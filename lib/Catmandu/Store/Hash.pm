@@ -2,7 +2,7 @@ package Catmandu::Store::Hash;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Catmandu::Util qw(:is);
 use Catmandu::Store::Hash::Bag;

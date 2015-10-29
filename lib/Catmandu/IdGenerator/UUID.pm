@@ -2,7 +2,7 @@ package Catmandu::IdGenerator::UUID;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Data::UUID;
 use Moo;

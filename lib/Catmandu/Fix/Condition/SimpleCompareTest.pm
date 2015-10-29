@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::SimpleCompareTest;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9502';
+our $VERSION = '0.9503';
 
 use Moo::Role;
 use namespace::clean;
