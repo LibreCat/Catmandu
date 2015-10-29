@@ -1,7 +1,11 @@
 package Catmandu::Fix::retain_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -18,6 +22,12 @@ sub emit {
         $fixer->emit_retain_key($var, $key);
     });
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -37,5 +47,3 @@ This fix is deprecated, Please use L<Catmandu::Fix::retain> instead.
 L<Catmandu::Fix>
 
 =cut
-
-1;

@@ -1,10 +1,14 @@
 package Catmandu::Fix::reverse;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path    => (fix_arg => 1);
+has path => (fix_arg => 1);
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -18,6 +22,12 @@ sub emit_value {
         ."${var} = scalar(reverse(${var}));"
     ."}";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -38,5 +48,3 @@ Catmandu::Fix::reverse - reverse a string or an array
 L<Catmandu::Fix>
 
 =cut
-
-1;

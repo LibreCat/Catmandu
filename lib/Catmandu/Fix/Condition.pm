@@ -1,5 +1,23 @@
 package Catmandu::Fix::Condition;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Moo::Role;
+use namespace::clean;
+
+with 'Catmandu::Fix::Base';
+
+has pass_fixes => (is => 'rw', default => sub { [] });
+has fail_fixes => (is => 'rw', default => sub { [] });
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::Condition - Role for all Catmandu::Fix conditionals
@@ -26,13 +44,3 @@ L<Catmandu::Fix::Condition::any_match>,
 L<Catmandu::Fix::Condition::exists>, 
 
 =cut
-
-use Catmandu::Sane;
-use Moo::Role;
-
-with 'Catmandu::Fix::Base';
-
-has pass_fixes => (is => 'rw', default => sub { [] });
-has fail_fixes => (is => 'rw', default => sub { [] });
-
-1;

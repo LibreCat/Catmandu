@@ -1,10 +1,13 @@
 package Catmandu::Store::Hash::Bag;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Hits;
 use Moo;
 use Clone qw(clone);
+use namespace::clean;
 
 with 'Catmandu::Bag';
 
@@ -79,3 +82,12 @@ sub delete_all {
 
 1;
 
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Store::Hash::Bag - Bag implementation for the Hash store
+
+=cut

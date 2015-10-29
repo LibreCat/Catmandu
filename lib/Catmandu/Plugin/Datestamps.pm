@@ -1,9 +1,12 @@
 package Catmandu::Plugin::Datestamps;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Role::Tiny;
 use POSIX qw(strftime);
+use namespace::clean;
 
 before add => sub {
     my ($self, $data) = @_;
@@ -11,6 +14,12 @@ before add => sub {
     $data->{date_created} ||= $now;
     $data->{date_updated} = $now;
 };
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -75,5 +84,3 @@ predefined (e.g by changing the schema.xml or tables fields).
 L<Catmandu::Store>, L<Catmandu::Bag>
 
 =cut
-
-1;

@@ -1,8 +1,12 @@
 package Catmandu::Fix::set_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Clone qw(clone);
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -21,6 +25,12 @@ sub emit {
         $fixer->emit_set_key($var, $key, $value);
     });
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -44,5 +54,3 @@ if they are missing.
 L<Catmandu::Fix>
 
 =cut
-
-1;

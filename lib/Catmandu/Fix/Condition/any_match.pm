@@ -1,7 +1,11 @@
 package Catmandu::Fix::Condition::any_match;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path    => (fix_arg => 1);
@@ -13,6 +17,12 @@ sub emit_test {
     my ($self, $var, $parser) = @_;
     "is_value(${var}) && ${var} =~ ".$parser->emit_match($self->pattern);
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -30,5 +40,3 @@ Catmandu::Fix::Condition::any_match - only execute fixes if any path value match
 L<Catmandu::Fix>
 
 =cut
-
-1;

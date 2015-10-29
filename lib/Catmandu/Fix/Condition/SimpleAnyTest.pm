@@ -1,5 +1,47 @@
 package Catmandu::Fix::Condition::SimpleAnyTest;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Moo::Role;
+use namespace::clean;
+
+with 'Catmandu::Fix::Condition';
+
+requires 'path';
+requires 'emit_test';
+
+sub emit {
+    my ($self, $fixer, $label) = @_;
+    my $path = $fixer->split_path($self->path);
+    my $key = pop @$path;
+
+    my $perl = $fixer->emit_walk_path($fixer->var, $path, sub {
+        my $var = shift;
+        $fixer->emit_get_key($var, $key, sub {
+            my $var = shift;
+            my $perl = "if (" . $self->emit_test($var, $fixer) . ") {";
+
+            $perl .= $fixer->emit_fixes($self->pass_fixes);
+
+            $perl .= "last $label;";
+            $perl .= "}";
+            $perl;
+        });
+    });
+
+    $perl .= $fixer->emit_fixes($self->fail_fixes);
+
+    $perl;
+}
+
+1;
+
+__END__
+
+=pod;
+
 =head1 NAME
 
 Catmandu::Fix::Condition::SimpleAllTest - Base class to ease the construction of any match conditionals
@@ -42,37 +84,3 @@ when at least one node on a path match a condition. E.g.
 L<Catmandu::Fix::Condition::any_match>
 
 =cut
-
-use Catmandu::Sane;
-use Moo::Role;
-
-with 'Catmandu::Fix::Condition';
-
-requires 'path';
-requires 'emit_test';
-
-sub emit {
-    my ($self, $fixer, $label) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
-
-    my $perl = $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $var = shift;
-            my $perl = "if (" . $self->emit_test($var, $fixer) . ") {";
-
-            $perl .= $fixer->emit_fixes($self->pass_fixes);
-
-            $perl .= "last $label;";
-            $perl .= "}";
-            $perl;
-        });
-    });
-
-    $perl .= $fixer->emit_fixes($self->fail_fixes);
-
-    $perl;
-}
-
-1;

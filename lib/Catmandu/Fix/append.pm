@@ -1,7 +1,11 @@
 package Catmandu::Fix::append;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path  => (fix_arg => 1);
@@ -14,6 +18,12 @@ sub emit_value {
     my $value = $fixer->emit_string($self->value);
     "${var} = join('', ${var}, $value) if is_value(${var});";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -29,5 +39,3 @@ Catmandu::Fix::append - add a suffix to the value of a field
 L<Catmandu::Fix>
 
 =cut
-
-1;

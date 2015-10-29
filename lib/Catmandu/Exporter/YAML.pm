@@ -1,6 +1,9 @@
 package Catmandu::Exporter::YAML;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use YAML::XS ();
 use Moo;
 use namespace::clean;
@@ -16,7 +19,10 @@ sub add {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

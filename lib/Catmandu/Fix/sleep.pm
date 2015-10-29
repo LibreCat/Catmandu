@@ -1,8 +1,12 @@
 package Catmandu::Fix::sleep;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Time::HiRes;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has seconds => (fix_arg => 1);
@@ -36,6 +40,12 @@ sub fix {
     $data;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::sleep - Do nothing for a specified ammount of time
@@ -58,5 +68,3 @@ Catmandu::Fix::sleep - Do nothing for a specified ammount of time
 L<Catmandu::Fix>
 
 =cut
-
-1;

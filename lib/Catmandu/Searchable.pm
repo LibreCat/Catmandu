@@ -1,9 +1,12 @@
 package Catmandu::Searchable;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(:is);
 use Moo::Role;
+use namespace::clean;
 
 requires 'translate_sru_sortkeys';
 requires 'translate_cql_query';
@@ -55,6 +58,10 @@ around delete_by_query => sub {
 };
 
 1;
+
+__END__
+
+=pod
 
 =head1 NAME
 

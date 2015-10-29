@@ -1,8 +1,12 @@
 package Catmandu::Fix::add_to_store;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu;
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path       => (fix_arg => 1);
@@ -35,6 +39,12 @@ sub emit_value {
     "}";
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::add_to_store - add matching values to a store as a side effect
@@ -50,4 +60,3 @@ L<Catmandu::Fix>
 =cut
 
 1;
-

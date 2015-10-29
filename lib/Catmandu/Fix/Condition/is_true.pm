@@ -1,7 +1,11 @@
 package Catmandu::Fix::Condition::is_true;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -12,6 +16,12 @@ sub emit_test {
     my ($self, $var) = @_;
     "(((is_bool(${var}) || is_number(${var})) && ${var} + 0 == 1) || (is_string(${var}) && ${var} eq 'true'))";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -28,5 +38,3 @@ Catmandu::Fix::Condition::is_true - only execute fixes if all path values are th
 L<Catmandu::Fix>
 
 =cut
-
-1;

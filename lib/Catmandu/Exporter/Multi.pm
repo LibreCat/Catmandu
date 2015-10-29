@@ -1,6 +1,9 @@
 package Catmandu::Exporter::Multi;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_string);
 use Catmandu;
 use Moo;
@@ -34,7 +37,10 @@ sub commit {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

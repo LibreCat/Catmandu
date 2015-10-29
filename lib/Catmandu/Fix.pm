@@ -1,6 +1,9 @@
 package Catmandu::Fix;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
 use Clone qw(clone);
@@ -13,7 +16,6 @@ sub _eval_emit {
 use Moo;
 use Catmandu::Fix::Parser;
 use File::Slurp::Tiny ();
-use Data::Dumper ();
 use B ();
 
 with 'Catmandu::Logger';
@@ -653,6 +655,12 @@ sub split_path {
     return [split /[\/\.]/, trim($path)];
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix - a Catmandu class used for data crunching
@@ -950,5 +958,3 @@ Fixes are used by instances of L<Catmandu::Fixable> to manipulate items
 L<Catmandu::Importer>, L<Catmandu::Exporter>, and L<Catmandu::Bag>.
 
 =cut
-
-1;

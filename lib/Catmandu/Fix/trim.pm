@@ -1,8 +1,12 @@
 package Catmandu::Fix::trim;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Unicode::Normalize;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -28,6 +32,12 @@ sub emit_value {
     $perl .= "}";
     $perl;
 }
+
+1;
+
+__END__
+
+=pod
 
 =encoding utf-8
 
@@ -56,5 +66,3 @@ Catmandu::Fix::trim - trim leading and ending junk from the value of a field
 L<Catmandu::Fix>
 
 =cut
-
-1;

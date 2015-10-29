@@ -1,7 +1,11 @@
 package Catmandu::Fix::assoc;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path      => (fix_arg => 1);
@@ -50,6 +54,12 @@ sub emit {
     $perl;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::assoc - associate two values as a hash key and value
@@ -65,5 +75,3 @@ Catmandu::Fix::assoc - associate two values as a hash key and value
 L<Catmandu::Fix>
 
 =cut
-
-1;

@@ -1,5 +1,20 @@
 package Catmandu::IdGenerator;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Moo::Role;
+use namespace::clean;
+
+requires 'generate';
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::IdGenerator - A base class for modules that needs to generate identifiers
@@ -30,10 +45,3 @@ L<Catmandu::IdGenerator::Mock> ,
 L<Catmandu::IdGenerator::UUID>
 
 =cut
-use Catmandu::Sane;
-use Moo::Role;
-use namespace::clean;
-
-requires 'generate';
-
-1;

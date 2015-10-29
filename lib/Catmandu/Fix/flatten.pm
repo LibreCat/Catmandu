@@ -1,7 +1,11 @@
 package Catmandu::Fix::flatten;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -15,6 +19,12 @@ sub emit_value {
         "while grep ref \$_ eq 'ARRAY', \@{${var}};" .
     "}";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -31,5 +41,3 @@ Catmandu::Fix::flatten - flatten a nested array field
 L<Catmandu::Fix>
 
 =cut
-
-1;

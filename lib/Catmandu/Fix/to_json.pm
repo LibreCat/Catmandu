@@ -1,8 +1,12 @@
 package Catmandu::Fix::to_json;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use JSON::XS ();
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -19,6 +23,12 @@ sub emit_value {
     "}";
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::to_json - convert the value of a field to json
@@ -32,6 +42,4 @@ Catmandu::Fix::to_json - convert the value of a field to json
 L<Catmandu::Fix>
 
 =cut
-
-1;
 

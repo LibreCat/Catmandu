@@ -1,5 +1,76 @@
 package Catmandu::Addable;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Catmandu::Util qw(:is :check);
+use Moo::Role;
+use namespace::clean;
+
+with 'Catmandu::Fixable';
+
+requires 'add';
+
+has autocommit => (is => 'ro' , default => sub { 0 });
+has _commit    => (is => 'rw' , default => sub { 0 });
+
+around add => sub {
+    my ($orig, $self, $data) = @_;
+    return unless defined $data;
+    $data = $self->_fixer->fix($data) if $self->_fixer;
+    $orig->($self, $data) if defined $data;
+    $data;
+};
+
+around commit => sub {
+    my ($orig, $self) = @_;
+    my $res = $orig->($self);
+    $self->_commit(1);
+    $res;
+};
+
+sub add_many {
+    my ($self, $many) = @_;
+
+    if (is_hash_ref($many)) {
+        $self->add($many);
+        return 1;
+    }
+
+    if (is_array_ref($many)) {
+        $self->add($_) for @$many;
+        return scalar @$many;
+    }
+
+    if (is_invocant($many)) {
+        $many = check_able($many, 'generator')->generator;
+    }
+
+    check_code_ref($many);
+
+    my $data;
+    my $n = 0;
+    while (defined($data = $many->())) {
+        $self->add($data);
+        $n++;
+    }
+    $n;
+}
+
+sub commit {}
+
+sub DESTROY {
+    my ($self) = shift;
+    $self->commit if $self->autocommit && ! $self->_commit;
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Addable - Base class for all Catmandu modules need to implement add
@@ -73,67 +144,3 @@ a fix attribute which transforms all Perl hashes provided to the add method.
 L<Catmandu::Fixable>, L<Catmandu::Exporter> , L<Catmandu::Store>
 
 =cut
-
-use Catmandu::Sane;
-use Catmandu::Util qw(:is :check);
-use Moo::Role;
-use namespace::clean;
-
-with 'Catmandu::Fixable';
-
-requires 'add';
-
-has autocommit => (is => 'ro' , default => sub { 0 });
-has _commit    => (is => 'rw' , default => sub { 0 });
-
-around add => sub {
-    my ($orig, $self, $data) = @_;
-    return unless defined $data;
-    $data = $self->_fixer->fix($data) if $self->_fixer;
-    $orig->($self, $data) if defined $data;
-    $data;
-};
-
-around commit => sub {
-    my ($orig, $self) = @_;
-    my $res = $orig->($self);
-    $self->_commit(1);
-    $res;
-};
-
-sub add_many {
-    my ($self, $many) = @_;
-
-    if (is_hash_ref($many)) {
-        $self->add($many);
-        return 1;
-    }
-
-    if (is_array_ref($many)) {
-        $self->add($_) for @$many;
-        return scalar @$many;
-    }
-
-    if (is_invocant($many)) {
-        $many = check_able($many, 'generator')->generator;
-    }
-
-    check_code_ref($many);
-
-    my $data;
-    my $n = 0;
-    while (defined($data = $many->())) {
-        $self->add($data);
-        $n++;
-    }
-    $n;
-}
-
-sub commit {}
-
-sub DESTROY {
-    my ($self) = shift;
-    $self->commit if $self->autocommit && ! $self->_commit;
-}
-
-1;

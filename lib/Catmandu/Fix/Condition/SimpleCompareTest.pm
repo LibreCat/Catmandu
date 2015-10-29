@@ -1,42 +1,11 @@
 package Catmandu::Fix::Condition::SimpleCompareTest;
 
-=head1 NAME
-
-Catmandu::Fix::Condition::SimpleCompareTest - Base class to ease the construction of compare conditionals
-
-=head1 SYNOPSIS
-
-   package Catmandu::Fix::Condition::has_equal_type
-
-   use Catmandu::Sane;
-   use Moo;
-   use Catmandu::Fix::Has;
-
-   has path  => (fix_arg => 1);
-   has path2 => (fix_arg => 1);
-
-   with 'Catmandu::Fix::Condition::SimpleCompareTest';
-
-   sub emit_test {
-       my ($self, $var, $var2, $fixer) = @_;
-       "is_value(${var}) && is_value(${var2}) && ref ${var} eq ref ${var2}";
-   }
-
-   1;
-
-   # Now you can write in your fixes
-   has_equal_type(my_field_1,my_field_2)  # True when my_field_1 and my_field_2 have
-                                          # the same refence type (both scalas, arrays, hashes)
-
-=head1 SEE ALSO
-
-L<Catmandu::Fix::Condition::SimpleAllTest>,
-L<Catmandu::Fix::Condition::SimpleAnyTest>
-
-=cut
-
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Fix::Condition';
 
@@ -117,3 +86,42 @@ sub emit {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Fix::Condition::SimpleCompareTest - Base class to ease the construction of compare conditionals
+
+=head1 SYNOPSIS
+
+   package Catmandu::Fix::Condition::has_equal_type
+
+   use Catmandu::Sane;
+   use Moo;
+   use Catmandu::Fix::Has;
+
+   has path  => (fix_arg => 1);
+   has path2 => (fix_arg => 1);
+
+   with 'Catmandu::Fix::Condition::SimpleCompareTest';
+
+   sub emit_test {
+       my ($self, $var, $var2, $fixer) = @_;
+       "is_value(${var}) && is_value(${var2}) && ref ${var} eq ref ${var2}";
+   }
+
+   1;
+
+   # Now you can write in your fixes
+   has_equal_type(my_field_1,my_field_2)  # True when my_field_1 and my_field_2 have
+                                          # the same refence type (both scalas, arrays, hashes)
+
+=head1 SEE ALSO
+
+L<Catmandu::Fix::Condition::SimpleAllTest>,
+L<Catmandu::Fix::Condition::SimpleAnyTest>
+
+=cut

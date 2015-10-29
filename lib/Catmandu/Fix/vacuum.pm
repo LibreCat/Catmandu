@@ -1,15 +1,19 @@
 package Catmandu::Fix::vacuum;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use CGI::Expand ();
 use Catmandu::Fix::Bind::visitor;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 sub fix {
-	my ($self,$data) = @_;
+    my ($self,$data) = @_;
 
-	my $ref = eval {
+    my $ref = eval {
       # This can die with 'Unknown reference type' when the data is blessed
       CGI::Expand->collapse_hash($data);
    };
@@ -30,13 +34,19 @@ sub fix {
       $ref = CGI::Expand->collapse_hash($data);
    }
 
-	for my $key (keys %$ref) {
-		my $value = $ref->{$key};
-		delete $ref->{$key} unless defined($value) && length $value && $value =~ /\S/; 
-	}
-	
-	CGI::Expand->expand_hash($ref);
+    for my $key (keys %$ref) {
+        my $value = $ref->{$key};
+        delete $ref->{$key} unless defined($value) && length $value && $value =~ /\S/; 
+    }
+    
+    CGI::Expand->expand_hash($ref);
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -57,7 +67,7 @@ Catmandu::Fix::vacuum - delete all empty fields from your data
    
    # output:
    #
-   # test: 123 
+   # test: 123
    #
 
 =head1 SEE ALSO
@@ -65,5 +75,3 @@ Catmandu::Fix::vacuum - delete all empty fields from your data
 L<Catmandu::Fix>
 
 =cut
-
-1;

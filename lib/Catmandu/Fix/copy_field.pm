@@ -1,7 +1,11 @@
 package Catmandu::Fix::copy_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -40,6 +44,12 @@ sub emit {
     $perl;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::copy_field - copy the value of one field to a new field
@@ -54,5 +64,3 @@ Catmandu::Fix::copy_field - copy the value of one field to a new field
 L<Catmandu::Fix>
 
 =cut
-
-1;

@@ -1,9 +1,13 @@
 package Catmandu::Cmd::delete;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use parent 'Catmandu::Cmd';
 use Catmandu;
 use Catmandu::Fix;
+use namespace::clean;
 
 sub command_opt_spec {
     (
@@ -43,7 +47,10 @@ sub command {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

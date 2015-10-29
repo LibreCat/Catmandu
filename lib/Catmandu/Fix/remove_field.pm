@@ -1,7 +1,11 @@
 package Catmandu::Fix::remove_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -19,6 +23,12 @@ sub emit {
     });
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::remove_field - remove a field form the data
@@ -33,5 +43,3 @@ Catmandu::Fix::remove_field - remove a field form the data
 L<Catmandu::Fix>
 
 =cut
-
-1;

@@ -1,8 +1,12 @@
 package Catmandu::Fix::import;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu;
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -52,6 +56,12 @@ sub emit {
     });
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::import - change the value of a HASH key or ARRAY index by replacing
@@ -66,5 +76,3 @@ it's value with imported data
 L<Catmandu::Fix>
 
 =cut
-
-1;

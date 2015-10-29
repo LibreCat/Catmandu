@@ -1,5 +1,29 @@
 package Catmandu::IdGenerator::UUID;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Data::UUID;
+use Moo;
+use namespace::clean;
+
+with 'Catmandu::IdGenerator';
+
+has _uuid => (is => 'lazy', builder => '_build_uuid');
+
+sub _build_uuid { Data::UUID->new }
+
+sub generate {
+    $_[0]->_uuid->create_str;
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::IdGenerator::Mock - Generator of UUID identifiers
@@ -19,20 +43,3 @@ Catmandu::IdGenerator::Mock - Generator of UUID identifiers
 L<Catmandu::IdGenerator>
 
 =cut
-
-use Catmandu::Sane;
-use Data::UUID;
-use Moo;
-use namespace::clean;
-
-with 'Catmandu::IdGenerator';
-
-has _uuid => (is => 'lazy', builder => '_build_uuid');
-
-sub _build_uuid { Data::UUID->new }
-
-sub generate {
-    $_[0]->_uuid->create_str;
-}
-
-1;

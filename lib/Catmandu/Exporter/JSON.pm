@@ -1,6 +1,9 @@
 package Catmandu::Exporter::JSON;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use JSON::XS ();
 use Moo;
 use MooX::Aliases;
@@ -61,7 +64,10 @@ sub commit {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

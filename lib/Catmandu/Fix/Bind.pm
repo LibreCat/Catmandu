@@ -1,5 +1,9 @@
 package Catmandu::Fix::Bind;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo::Role;
 use namespace::clean;
 
@@ -24,13 +28,13 @@ around bind => sub {
 };
 
 sub unit {
-  	my ($self,$data) = @_;
-  	return $data;
+    my ($self,$data) = @_;
+    return $data;
 }
 
 sub bind {
     my ($self,$data,$code,$name,$fixes) = @_;
-	  return $code->($data);
+      return $code->($data);
 }
 
 sub emit {
@@ -63,6 +67,12 @@ sub emit {
 
     $perl;
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -200,5 +210,3 @@ in 3  monadic laws:
 L<Catmandu::Fix::Bind::identity>, L<Catmandu::Fix::Bind::benchmark>
 
 =cut
-
-1;

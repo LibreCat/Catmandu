@@ -1,6 +1,11 @@
 package Catmandu::Fix::set_hash;
+
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -16,9 +21,16 @@ sub emit {
 
     $fixer->emit_walk_path($fixer->var, $path, sub {
         my $var = shift;
-        $fixer->emit_set_key($var, $key, "{".join(',', map { $fixer->emit_value($_) } @$values)."}");
+        $fixer->emit_set_key($var, $key,
+            "{".join(',', map { $fixer->emit_value($_) } @$values)."}");
     });
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -41,5 +53,3 @@ if they are missing.
 L<Catmandu::Fix>
 
 =cut
-
-1;

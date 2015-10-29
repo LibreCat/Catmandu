@@ -1,7 +1,11 @@
 package Catmandu::Fix::retain;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -40,6 +44,12 @@ sub emit {
     $perl;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::retain - delete everything except the paths given
@@ -58,5 +68,3 @@ Catmandu::Fix::retain - delete everything except the paths given
 L<Catmandu::Fix>
 
 =cut
-
-1;

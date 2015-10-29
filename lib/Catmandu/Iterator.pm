@@ -1,5 +1,28 @@
 package Catmandu::Iterator;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Role::Tiny::With;
+use namespace::clean;
+
+with 'Catmandu::Iterable';
+
+sub new {
+    bless $_[1], $_[0];
+}
+
+sub generator {
+    goto &{$_[0]};
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Iterator - Base class for all Catmandu iterators
@@ -48,19 +71,3 @@ If you provide a generator, then the class will generator all methods from L<Cat
 L<Catmandu::Iterable>
 
 =cut
-
-use namespace::clean;
-use Catmandu::Sane;
-use Role::Tiny::With;
-
-with 'Catmandu::Iterable';
-
-sub new {
-    bless $_[1], $_[0];
-}
-
-sub generator {
-    goto &{$_[0]};
-}
-
-1;

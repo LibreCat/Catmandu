@@ -1,6 +1,9 @@
 package Catmandu::Error;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -25,6 +28,9 @@ sub log_message {
 package Catmandu::BadVal;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -33,6 +39,9 @@ extends 'Catmandu::Error';
 package Catmandu::BadArg;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -41,6 +50,9 @@ extends 'Catmandu::BadVal';
 package Catmandu::NotImplemented;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -49,6 +61,9 @@ extends 'Catmandu::Error';
 package Catmandu::NoSuchPackage;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -66,6 +81,9 @@ sub log_message {
 package Catmandu::FixParseError;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -76,6 +94,9 @@ has source => (is => 'ro');
 package Catmandu::NoSuchFixPackage;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -95,6 +116,9 @@ sub log_message {
 package Catmandu::BadFixArg;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -107,6 +131,9 @@ has source => (is => 'rw', writer => 'set_source');
 package Catmandu::FixError;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -116,7 +143,11 @@ has data => (is => 'ro');
 has fix => (is => 'ro');
 
 package Catmandu::HTTPError;
+
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_string);
 use Moo;
 use namespace::clean;
@@ -163,6 +194,12 @@ sub _indent {
     $str;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Error - Catmandu error hierarchy
@@ -201,5 +238,3 @@ Catmandu::Error - Catmandu error hierarchy
 L<Throwable>
 
 =cut
-
-1;

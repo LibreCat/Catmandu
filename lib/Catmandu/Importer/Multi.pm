@@ -1,6 +1,9 @@
 package Catmandu::Importer::Multi;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_string);
 use Catmandu;
 use Catmandu::MultiIterator;
@@ -38,7 +41,10 @@ sub generator {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

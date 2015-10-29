@@ -1,10 +1,13 @@
 package Catmandu::Store;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Hash::Util::FieldHash ();
 use Sub::Quote qw(quote_sub);
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Logger';
 
@@ -64,6 +67,10 @@ has bags => (
 }
 
 1;
+
+__END__
+
+=pod
 
 =head1 NAME
 

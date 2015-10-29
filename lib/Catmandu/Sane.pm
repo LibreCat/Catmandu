@@ -20,6 +20,10 @@ sub import {
 
 1;
 
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Sane - Package boilerplate

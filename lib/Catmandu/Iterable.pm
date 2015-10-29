@@ -1,6 +1,9 @@
 package Catmandu::Iterable;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
 use Hash::Util::FieldHash qw(fieldhash);
@@ -411,6 +414,10 @@ sub stop_if {
 
 1;
 
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Iterable - Base class for all iterable Catmandu classes
@@ -791,4 +798,3 @@ Returns a new iterator thats stops processing if the callback returns false.
 L<Catmandu::Iterator>.
 
 =cut
-

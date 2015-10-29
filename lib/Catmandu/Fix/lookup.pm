@@ -1,8 +1,12 @@
 package Catmandu::Fix::lookup;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Importer::CSV;
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -63,9 +67,16 @@ sub emit {
     });
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
-Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by looking up it's value in a dictionary
+Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by
+looking up it's value in a dictionary
 
 =head1 SYNOPSIS
 
@@ -81,5 +92,3 @@ Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by looking
 L<Catmandu::Fix>
 
 =cut
-
-1;

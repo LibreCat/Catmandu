@@ -1,7 +1,11 @@
 package Catmandu::Fix::join_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path      => (fix_arg => 1);
@@ -18,6 +22,12 @@ sub emit_value {
     "}";
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::join_field - join the ARRAY values of a field into a string
@@ -32,5 +42,3 @@ Catmandu::Fix::join_field - join the ARRAY values of a field into a string
 L<Catmandu::Fix>
 
 =cut
-
-1;

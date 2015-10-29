@@ -1,10 +1,13 @@
 package Catmandu::Store::Hash;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(:is);
 use Catmandu::Store::Hash::Bag;
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Store';
 
@@ -22,9 +25,13 @@ sub BUILD {
 
 1;
 
+__END__
+
+=pod
+
 =head1 NAME
 
-Catmandu::Store::Hash - An in-memory Catmandu::Store
+Catmandu::Store::Hash - An in-memory store
 
 =head1 SYNOPSIS
 

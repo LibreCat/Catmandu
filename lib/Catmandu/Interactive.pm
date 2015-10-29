@@ -1,24 +1,30 @@
 package Catmandu::Interactive;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu;
 use Moo;
+use namespace::clean;
 
-has in       => (is => 'ro' , default => sub {
-    Catmandu::Util::io \*STDIN;
+has in => (is => 'ro' , default => sub {
+    Catmandu::Util::io(\*STDIN);
 });
 
-has out      => (is => 'ro' , default => sub { 
-    Catmandu::Util::io \*STDOUT, mode => 'w', binmode => ':encoding(utf-8)';
+has out => (is => 'ro' , default => sub { 
+    Catmandu::Util::io(\*STDOUT, mode => 'w', binmode => ':encoding(utf-8)');
 });
 
-has silent   => (is => 'ro');
+has silent => (is => 'ro');
+
 has exporter => (is => 'ro' , default => sub { 'YAML'} );
+
 has exporter_args => (is => 'ro' , default => sub { +{} });
 
-has header   => (is => 'ro' , default => sub { 
+has header => (is => 'ro' , default => sub {
     "\e[36m\n" .
-    "      A_A    ____      _                             _             \n" .    
+    "      A_A    ____      _                             _             \n" .
     "     (-.-)  / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _       \n" .
     "      |-|  | |   / _` | __| '_ ` _ \\ / _` | '_ \\ / _` | | | |    \n" .
     "     /   \\ | |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |     \n" .
@@ -32,7 +38,7 @@ has header   => (is => 'ro' , default => sub {
     " \\q - quit                    | to access all Catmandu features   \n";
 });
 
-has data     => (is => 'rw' , default => sub { + {} });
+has data => (is => 'rw' , default => sub { + {} });
 
 has _history => (is => 'ro' , default => sub { [] });
 
@@ -163,6 +169,12 @@ sub parse_fixes {
     return ($fixes,$keep_reading,$error);
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Interactive - An interactive command line interpreter of the Fix language
@@ -229,5 +241,3 @@ Run the interactive environment.
 L<Catmandu>
 
 =cut
-
-1;

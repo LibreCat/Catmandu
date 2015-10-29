@@ -1,7 +1,11 @@
 package Catmandu::Fix::format;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -21,6 +25,12 @@ sub emit_value {
         "${var} = sprintf(${spec},${var});" .
     "}";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -59,5 +69,3 @@ See L<http://perldoc.perl.org/functions/sprintf.html> for a complete description
 L<Catmandu::Fix> , L<sprintf>
 
 =cut
-
-1;

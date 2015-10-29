@@ -1,8 +1,12 @@
 package Catmandu::Fix::sort_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use List::MoreUtils ();
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path    => (fix_arg => 1);
@@ -60,6 +64,12 @@ sub emit_value {
     $perl;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::sort_field - sort the values of an array
@@ -89,5 +99,3 @@ Catmandu::Fix::sort_field - sort the values of an array
 L<Catmandu::Fix>
 
 =cut
-
-1;

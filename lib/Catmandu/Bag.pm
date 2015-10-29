@@ -1,6 +1,9 @@
 package Catmandu::Bag;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(:check is_string require_package);
 use Catmandu::IdGenerator::UUID;
 use Moo::Role;
@@ -70,6 +73,10 @@ sub to_hash {
 }
 
 1;
+
+__END__
+
+=pod
 
 =head1 NAME
 

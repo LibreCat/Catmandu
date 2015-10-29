@@ -1,14 +1,19 @@
 package Catmandu::Fix::Bind::timeout;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Clone ();
 use Time::HiRes;
+use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
 
-has time          => (is => 'ro');
-has units         => (is => 'ro' , default => sub {'SECONDS'} );
-has sleep         => (is => 'rw');
+has time  => (is => 'ro');
+has units => (is => 'ro' , default => sub {'SECONDS'} );
+has sleep => (is => 'rw');
 
 sub unit {
     my ($self,$data) = @_;
@@ -43,7 +48,7 @@ sub unit {
 sub bind {
     my ($self,$mvar,$func) = @_;
 
-    my $sleep = $self->sleep();           
+    my $sleep = $self->sleep();
 
     if ($sleep >= 0) {
       my $start  = [Time::HiRes::gettimeofday];
@@ -80,6 +85,12 @@ sub inline_replace {
         $old->{$key} = $new->{$key};
     }   
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -128,5 +139,3 @@ At timeout a log message of level WARN will be generated.
 L<Catmandu::Fix::Bind>
 
 =cut
-
-1;

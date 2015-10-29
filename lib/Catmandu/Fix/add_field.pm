@@ -1,7 +1,11 @@
 package Catmandu::Fix::add_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -19,6 +23,12 @@ sub emit {
         "${var} = ${value};";
     });
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -45,5 +55,3 @@ if they are missing.
 L<Catmandu::Fix>
 
 =cut
-
-1;

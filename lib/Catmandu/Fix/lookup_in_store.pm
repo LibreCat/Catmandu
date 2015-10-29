@@ -1,8 +1,12 @@
 package Catmandu::Fix::lookup_in_store;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu;
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -63,6 +67,12 @@ sub emit {
     });
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::lookup_in_store - change the value of a HASH key or ARRAY index
@@ -86,8 +96,9 @@ by looking up it's value in a store
 
 =head2 lookup_in_store(PATH,STORE[,store_param: store_val, ...][,bag: bag_name][,delete:1][,default:value])
 
-Use the lookup_in_store fix to match a field in a record to the "_id" field in a Catmandu::Store of choice.
-For instance, if a Catmandu::Store contains these records:
+Use the lookup_in_store fix to match a field in a record to the "_id" field in
+a Catmandu::Store of choice.  For instance, if a Catmandu::Store contains these
+records:
 
     ---
     _id: water
@@ -111,7 +122,8 @@ And you data contains these fields:
     _id: 002
     tag: water
 
-Then, the fix below will lookup a tag in the Catmandu::Store and replace it with the database value:
+Then, the fix below will lookup a tag in the Catmandu::Store and replace it
+with the database value:
 
     lookup_in_store(tag, DBI, data_source: "dbi:SQLite:path/data.sqlite")
 
@@ -139,6 +151,4 @@ The resulting data will contain:
 L<Catmandu::Fix>, L<Catmandu::Store>
 
 =cut
-
-1;
 

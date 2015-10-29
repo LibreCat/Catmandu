@@ -1,12 +1,16 @@
 package Catmandu::Fix::include;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Catmandu;
 use Catmandu::Fix;
-use Catmandu::Fix::Has;
 use File::Spec qw();
 use Cwd qw();
+use namespace::clean;
+use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 has _path => (
@@ -21,11 +25,8 @@ has _path => (
         my $load_paths = Catmandu->_env->load_paths;
 
         if( File::Spec->file_name_is_absolute( $path ) ){
-
             $real_path = $path;
-
-        }else{
-
+        } else {
             for my $p(@$load_paths){
                 my $n = File::Spec->catfile($p,$path);
                 if( -f $n ){
@@ -36,10 +37,12 @@ has _path => (
 
         }
 
-        die("unable to find $path in load_path of Catmandu (load_path:  ".join(',',@$load_paths).")") unless defined $real_path;
+        die("unable to find $path in load_path of Catmandu (load_path:  ".
+            join(',',@$load_paths).")") unless defined $real_path;
         $real_path;
     }
 );
+
 has _fixer => (
     is => 'ro',
     lazy => 1,
@@ -51,9 +54,15 @@ has _fixer => (
 );
 
 sub fix {
-	my ($self,$data) = @_;
+    my ($self,$data) = @_;
     $self->_fixer()->fix($data);
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -117,5 +126,3 @@ Catmandu::Fix::include - include fixes from another file
 L<Catmandu::Fix>
 
 =cut
-
-1;

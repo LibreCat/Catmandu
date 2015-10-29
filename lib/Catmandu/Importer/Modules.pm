@@ -1,6 +1,9 @@
 package Catmandu::Importer::Modules;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Module::Info;
 use File::Spec;
 use File::Find::Rule;
@@ -102,7 +105,10 @@ sub generator {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

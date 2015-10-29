@@ -1,6 +1,9 @@
 package Catmandu::Exporter::Null;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use namespace::clean;
 
@@ -11,7 +14,10 @@ has exporters => (is => 'ro', default => sub { [] });
 sub add {}
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

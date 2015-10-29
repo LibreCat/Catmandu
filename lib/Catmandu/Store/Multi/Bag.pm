@@ -1,9 +1,12 @@
 package Catmandu::Store::Multi::Bag;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Hits;
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Bag';
 
@@ -47,3 +50,12 @@ sub commit {
 
 1;
 
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Store::Multi::Bag - Bag implementation for the Multi store
+
+=cut

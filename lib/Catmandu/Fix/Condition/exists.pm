@@ -1,7 +1,11 @@
 package Catmandu::Fix::Condition::exists;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Condition';
@@ -38,6 +42,12 @@ sub emit {
     $perl;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::Condition::exists - only execute fixes if the path exists
@@ -58,5 +68,3 @@ Catmandu::Fix::Condition::exists - only execute fixes if the path exists
 L<Catmandu::Fix>
 
 =cut
-
-1;

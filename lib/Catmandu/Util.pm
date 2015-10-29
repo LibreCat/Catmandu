@@ -1,6 +1,9 @@
 package Catmandu::Util;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Exporter qw(import);
 use Sub::Quote ();
 use Scalar::Util ();
@@ -686,6 +689,8 @@ sub require_package {
 
 __END__
 
+=pod
+
 =head1 NAME
 
 Catmandu::Util - A collection of utility functions
@@ -1233,4 +1238,3 @@ passed to L<Pod::Usage>.
 =back
 
 =cut
-

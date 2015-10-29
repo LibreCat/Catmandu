@@ -1,6 +1,9 @@
 package Catmandu::MultiIterator;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Role::Tiny::With;
 use namespace::clean;
 
@@ -26,7 +29,10 @@ sub generator {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -49,6 +55,3 @@ Catmandu::MultiIterator - chain multiple iterators together
 All L<Catmandu::Iterable> methods are available.
 
 =cut
-
-1;
-

@@ -1,9 +1,13 @@
 package Catmandu::Fix::Bind::with;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
-use Data::Dumper;
 use Catmandu::Util;
 use Catmandu::ArrayIterator;
+use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
 
@@ -21,7 +25,7 @@ sub unit {
     my $ref;
     
     if (defined $self->path) {
-        $ref = Catmandu::Util::data_at($self->path,$data);
+        $ref = Catmandu::Util::data_at($self->path, $data);
     }
     else {
         $ref = $data;
@@ -83,6 +87,12 @@ sub inline_copy {
     }
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::Bind::with - a binder that computes Fix-es in the context of a path
@@ -136,5 +146,3 @@ The path to a list in the data.
 L<Catmandu::Fix::Bind>
 
 =cut
-
-1;

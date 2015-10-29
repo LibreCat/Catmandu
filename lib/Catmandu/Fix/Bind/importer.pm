@@ -1,7 +1,12 @@
 package Catmandu::Fix::Bind::importer;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Catmandu::Util qw(:is);
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Bind';
@@ -50,6 +55,12 @@ sub result {
     
     $mvar;
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -120,5 +131,3 @@ L<Catmandu::Fix::Bind>,
 L<Catmandu::Cmd::run>
 
 =cut
-
-1;

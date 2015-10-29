@@ -1,7 +1,11 @@
 package Catmandu::Fix::clone;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Fix::Base';
 
@@ -9,6 +13,12 @@ sub emit {
     my ($self, $fixer) = @_;
     $fixer->emit_clone($fixer->var);
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -27,5 +37,3 @@ Catmandu::Fix::clone - create a clone of the data object
 L<Catmandu::Fix>
 
 =cut
-
-1;

@@ -1,7 +1,11 @@
 package Catmandu::Fix::perlcode;
 
-use Moo;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
+use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -20,7 +24,7 @@ has code => (
     }
 );
 
-sub emit {    
+sub emit {
     my ($self, $fixer) = @_;
 
     my $code   = $fixer->capture($self->code);
@@ -33,7 +37,10 @@ sub emit {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

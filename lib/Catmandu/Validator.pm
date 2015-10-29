@@ -1,8 +1,12 @@
 package Catmandu::Validator;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(:is);
 use Moo::Role;
+use namespace::clean;
 
 requires 'validate_data';
 
@@ -119,6 +123,12 @@ sub _process_record {
     $data;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Validator - Namespace for packages that can validate records in Catmandu.
@@ -223,5 +233,3 @@ Returns the number of invalid records from the last validate operation.
 L<Catmandu::Validator::Simple>, L<Catmandu::Iterable>
 
 =cut
-
-1;

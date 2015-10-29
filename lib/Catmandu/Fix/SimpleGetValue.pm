@@ -1,7 +1,11 @@
 package Catmandu::Fix::SimpleGetValue;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Fix::Base';
 
@@ -23,6 +27,10 @@ sub emit {
 }
 
 1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -53,16 +61,16 @@ Catmandu::Fix::SimpleGetValue - helper class for creating emit Fix-es
 
 =head1 DESCRIPTION
 
-Catmandu::Fix::SimpleGetValue eases the creation of emit Fixes that transform values
-on a JSON path. A Fix package implementing Catmandu::Fix::SimpleGetValue needs to
-implement a method C<emit_value> which accepts the variable name on which the Fix
-operates and an instance of Catmandu::Fixer. The method should return a string
-containing the Perl code to transform values on a JSON path.
+Catmandu::Fix::SimpleGetValue eases the creation of emit Fixes that transform
+values on a JSON path. A Fix package implementing Catmandu::Fix::SimpleGetValue
+needs to implement a method C<emit_value> which accepts the variable name on
+which the Fix operates and an instance of Catmandu::Fixer. The method should
+return a string containing the Perl code to transform values on a JSON path.
 
-It is not possible to inspect in an emit Fix the actual value on which this Fix runs:
-$var contains a variable name not the actual value. The real values are only available 
-at run time. Emit Fixes are used to compile Perl code into Fix modules which do the 
-actual transformation.
+It is not possible to inspect in an emit Fix the actual value on which this Fix
+runs: $var contains a variable name not the actual value. The real values are
+only available at run time. Emit Fixes are used to compile Perl code into Fix
+modules which do the actual transformation.
 
 For more examples look at the source code of:
 
@@ -80,4 +88,4 @@ For more examples look at the source code of:
 
 L<Catmandu::Fix>
 
-
+=cut

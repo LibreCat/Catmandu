@@ -1,7 +1,11 @@
 package Catmandu::Fix::filter;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path   => (fix_arg => 1);
@@ -17,6 +21,12 @@ sub emit_value {
         "${var} = [ grep { /${search}/ } \@{${var}} ];" .
     "}";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -35,5 +45,3 @@ Catmandu::Fix::filter - Filter values out of an array based on a regular express
 L<Catmandu::Fix>
 
 =cut
-
-1;

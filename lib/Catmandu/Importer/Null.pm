@@ -1,8 +1,11 @@
 package Catmandu::Importer::Null;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Importer';
 
@@ -16,7 +19,10 @@ sub generator {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

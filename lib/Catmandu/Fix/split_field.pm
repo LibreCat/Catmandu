@@ -1,7 +1,11 @@
 package Catmandu::Fix::split_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path       => (fix_arg => 1);
@@ -15,6 +19,12 @@ sub emit_value {
 
     "${var} = [split ${split_char}, ${var}] if is_value(${var});";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -30,5 +40,3 @@ Catmandu::Fix::split_field - split a string value in a field into an ARRAY
 L<Catmandu::Fix>
 
 =cut
-
-1;

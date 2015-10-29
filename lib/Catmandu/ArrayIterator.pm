@@ -1,6 +1,9 @@
 package Catmandu::ArrayIterator;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(check_array_ref);
 use Role::Tiny::With;
 use namespace::clean;
@@ -39,6 +42,10 @@ sub first {
 
 1;
 
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::ArrayIterator - Convert an arrayref to an Iterable object
@@ -52,7 +59,7 @@ Catmandu::ArrayIterator - Convert an arrayref to an Iterable object
     $it->each( sub {
         my $item = $_[0];
         # Very complicated routine
-      ....
+      ...
     });
 
     $it->[0];

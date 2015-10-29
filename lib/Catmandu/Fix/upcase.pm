@@ -1,7 +1,11 @@
 package Catmandu::Fix::upcase;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -12,6 +16,12 @@ sub emit_value {
     my ($self, $var) = @_;
     "${var} = uc(as_utf8(${var})) if is_string(${var});";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -27,5 +37,3 @@ Catmandu::Fix::upcase - uppercase the value of a field
 L<Catmandu::Fix>
 
 =cut
-
-1;

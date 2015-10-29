@@ -1,7 +1,11 @@
 package Catmandu::Fix::count;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -17,6 +21,12 @@ sub emit_value {
     "}";
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::count - replace the value of an array or hash field with it's count
@@ -31,5 +41,3 @@ Catmandu::Fix::count - replace the value of an array or hash field with it's cou
 L<Catmandu::Fix>
 
 =cut
-
-1;

@@ -1,7 +1,11 @@
 package Catmandu::Fix::expand_date;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 my $DATE_REGEX = qr{
@@ -26,6 +30,10 @@ sub fix {
 }
 
 1;
+
+__END__
+
+=pod
 
 =head1 NAME
 

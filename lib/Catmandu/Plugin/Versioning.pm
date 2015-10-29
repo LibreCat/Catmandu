@@ -1,10 +1,13 @@
 package Catmandu::Plugin::Versioning;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_value is_array_ref check_value check_positive);
 use Data::Compare;
 use Moo::Role;
+use namespace::clean;
 
 has version_bag => (
     is => 'lazy',
@@ -109,7 +112,11 @@ sub restore_previous_version {
     return;
 }
 
-no Data::Compare;
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -274,5 +281,3 @@ not be deleted.
 L<Catmandu::Store>, L<Catmandu::Bag>
 
 =cut
-
-1;

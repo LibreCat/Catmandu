@@ -1,9 +1,13 @@
 package Catmandu::Cmd::data;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use parent 'Catmandu::Cmd';
 use Catmandu qw(:all);
 use Catmandu::Fix;
+use namespace::clean;
 
 sub command_opt_spec {
     (
@@ -100,6 +104,12 @@ sub command {
 
 1;
 
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Cmd::data - store, index, search, import, export or convert objects
+
+=end

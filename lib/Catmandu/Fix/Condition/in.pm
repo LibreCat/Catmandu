@@ -1,11 +1,15 @@
 package Catmandu::Fix::Condition::in;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path    => (fix_arg => 1);
-has path2   => (fix_arg => 1);
+has path  => (fix_arg => 1);
+has path2 => (fix_arg => 1);
 
 with 'Catmandu::Fix::Condition::SimpleCompareTest';
 
@@ -13,6 +17,12 @@ sub emit_test {
     my ($self, $var, $var2, $fixer) = @_;
     "${var} ~~ ${var2}";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -59,5 +69,3 @@ Be aware this function is experimental in many perl versions
 L<Catmandu::Fix>
 
 =cut
-
-1;

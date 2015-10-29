@@ -1,10 +1,13 @@
 package Catmandu::Cmd::config;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use parent 'Catmandu::Cmd';
 use Catmandu::Util qw(data_at);
 use Catmandu;
+use namespace::clean;
 
 sub command {
     my ($self, $opts, $args) = @_;
@@ -46,7 +49,10 @@ sub command {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

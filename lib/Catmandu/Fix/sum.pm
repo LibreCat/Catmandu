@@ -1,8 +1,12 @@
 package Catmandu::Fix::sum;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use List::Util ();
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -16,6 +20,12 @@ sub emit_value {
         "${var} = List::Util::sum(\@{${var}}) // 0;" .
     "}";
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -32,6 +42,3 @@ Catmandu::Fix::sum - replace the value of an array field with the sum of it's el
 L<Catmandu::Fix>
 
 =cut
-
-1;
-

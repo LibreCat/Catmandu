@@ -1,11 +1,147 @@
 package Catmandu;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Env;
 use Catmandu::Util qw(:is);
 use File::Spec;
+use namespace::clean;
+use Sub::Exporter::Util qw(curry_method);
+use Sub::Exporter -setup => {
+    exports => [config   => curry_method,
+                log      => curry_method,
+                store    => curry_method,
+                fixer    => curry_method,
+                importer => curry_method,
+                exporter => curry_method,
+                export   => curry_method,
+                export_to_string => curry_method],
+    collectors => {
+        '-load' => \'_import_load',
+        ':load' => \'_import_load',
+    },
+};
 
-our $VERSION = '0.9502';
+sub _import_load {
+    my ($self, $value, $data) = @_;
+    if (is_array_ref $value) {
+        $self->load(@$value);
+    } else {
+        $self->load;
+    }
+    1;
+}
+
+sub _env {
+    my ($class, $env) = @_;
+    state $loaded_env;
+    $loaded_env = $env if defined $env;
+    $loaded_env ||= Catmandu::Env->new(load_paths => $class->default_load_path);
+}
+
+sub log { $_[0]->_env->log }
+
+sub default_load_path { # TODO move to Catmandu::Env
+    my ($class, $path) = @_;
+    state $default_path;
+    $default_path = $path if defined $path;
+    $default_path //= do {
+        my $script = File::Spec->rel2abs($0);
+        my ($script_vol, $script_path, $script_name) = File::Spec->splitpath($script);
+        my @dirs = grep length, File::Spec->splitdir($script_path);
+        if ($dirs[-1] eq 'bin') {
+            pop @dirs;
+            File::Spec->catdir(File::Spec->rootdir, @dirs);
+        } else {
+            $script_path;
+        }
+    };
+}
+
+sub load {
+    my $class = shift;
+    my $paths = [@_ ? @_ : $class->default_load_path];
+    my $env = Catmandu::Env->new(load_paths => $paths);
+    $class->_env($env);
+    $class;
+}
+
+sub roots {
+    $_[0]->_env->roots;
+}
+
+sub root {
+    $_[0]->_env->root;
+}
+
+sub config {
+    $_[0]->_env->config;
+}
+
+sub default_store { $_[0]->_env->default_store }
+
+sub store {
+    my $class = shift;
+    $class->_env->store(@_);
+}
+
+sub default_fixer { $_[0]->_env->default_fixer }
+
+sub fixer {
+    my $class = shift;
+    $class->_env->fixer(@_);
+}
+
+sub default_importer { $_[0]->_env->default_importer }
+
+sub default_importer_package { $_[0]->_env->default_importer_package }
+
+sub importer {
+    my $class = shift;
+    $class->_env->importer(@_);
+}
+
+sub default_exporter { $_[0]->_env->default_exporter }
+
+sub default_exporter_package { $_[0]->_env->default_exporter_package }
+
+sub exporter {
+    my $class = shift;
+    $class->_env->exporter(@_);
+}
+
+sub export {
+    my $class = shift;
+    my $data = shift;
+    my $exporter = $class->_env->exporter(@_);
+    is_hash_ref($data)
+        ? $exporter->add($data)
+        : $exporter->add_many($data);
+    $exporter->commit;
+    return;
+}
+
+sub export_to_string {
+    my $class = shift;
+    my $data = shift;
+    my $name = shift;
+    my %opts = ref $_[0] ? %{$_[0]} : @_;
+    my $str = "";
+    my $exporter = $class->_env->exporter($name, %opts, file => \$str);
+    is_hash_ref($data)
+        ? $exporter->add($data)
+        : $exporter->add_many($data);
+    $exporter->commit;
+    $str;
+}
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -75,40 +211,6 @@ Read our documentation for more installation hints and OS specific requirements:
 
 http://librecat.org/Catmandu/#installation
 
-=cut
-use Sub::Exporter::Util qw(curry_method);
-use Sub::Exporter -setup => {
-    exports => [config   => curry_method,
-                log      => curry_method,
-                store    => curry_method,
-                fixer    => curry_method,
-                importer => curry_method,
-                exporter => curry_method,
-                export   => curry_method,
-                export_to_string => curry_method],
-    collectors => {
-        '-load' => \'_import_load',
-        ':load' => \'_import_load',
-    },
-};
-
-sub _import_load {
-    my ($self, $value, $data) = @_;
-    if (is_array_ref $value) {
-        $self->load(@$value);
-    } else {
-        $self->load;
-    }
-    1;
-}
-
-sub _env {
-    my ($class, $env) = @_;
-    state $loaded_env;
-    $loaded_env = $env if defined $env;
-    $loaded_env ||= Catmandu::Env->new(load_paths => $class->default_load_path);
-}
-
 =head1 METHODS
 
 =head2 log
@@ -118,32 +220,9 @@ L<Catmandu::Env>). See L<Log::Any#Logging> for how to send messages to the
 logger. Read our L<https://github.com/LibreCat/Catmandu/wiki/Cookbook>
 "See some debug messages" for some hints on logging.
 
-=cut
-
-sub log { $_[0]->_env->log }
-
 =head2 default_load_path('/default/path')
 
 Set the location of the default configuration file to a new path.
-
-=cut
-
-sub default_load_path { # TODO move to Catmandu::Env
-    my ($class, $path) = @_;
-    state $default_path;
-    $default_path = $path if defined $path;
-    $default_path //= do {
-        my $script = File::Spec->rel2abs($0);
-        my ($script_vol, $script_path, $script_name) = File::Spec->splitpath($script);
-        my @dirs = grep length, File::Spec->splitdir($script_path);
-        if ($dirs[-1] eq 'bin') {
-            pop @dirs;
-            File::Spec->catdir(File::Spec->rootdir, @dirs);
-        } else {
-            $script_path;
-        }
-    };
-}
 
 =head2 load
 
@@ -158,55 +237,23 @@ A load path C<':up'> will search upwards from your program for configuration.
 
 See CONFIG below for extended examples of configuration options.
 
-=cut
-
-sub load {
-    my $class = shift;
-    my $paths = [@_ ? @_ : $class->default_load_path];
-    my $env = Catmandu::Env->new(load_paths => $paths);
-    $class->_env($env);
-    $class;
-}
-
 =head2 roots
 
 Returns an ARRAYREF of paths where configuration was found. Note that this list
 is empty before C<load>.
-
-=cut
-
-sub roots {
-    $_[0]->_env->roots;
-}
 
 =head2 root
 
 Returns the first path where configuration was found. Note that this is
 C<undef> before C<load>.
 
-=cut
-
-sub root {
-    $_[0]->_env->root;
-}
-
 =head2 config
 
 Returns the current configuration as a HASHREF.
 
-=cut
-
-sub config {
-    $_[0]->_env->config;
-}
-
 =head2 default_store
 
 Return the name of the default store.
-
-=cut
-
-sub default_store { $_[0]->_env->default_store }
 
 =head2 store([NAME])
 
@@ -244,20 +291,9 @@ Configuration settings can be overwritten by the store command:
 
   my $store2 = Catmandu->store('default', index_name => 'test2');
 
-=cut
-
-sub store {
-    my $class = shift;
-    $class->_env->store(@_);
-}
-
 =head2 default_fixer
 
 Return the name of the default fixer.
-
-=cut
-
-sub default_fixer { $_[0]->_env->default_fixer }
 
 =head2 fixer(NAME)
 
@@ -291,29 +327,14 @@ then the above code will even be equivalent to:
 
    my $fixer = Catmandu->fixer('myfixes.txt');
 
-=cut
-
-sub fixer {
-    my $class = shift;
-    $class->_env->fixer(@_);
-}
-
 =head2 default_importer
 
 Return the name of the default importer.
-
-=cut
-
-sub default_importer { $_[0]->_env->default_importer }
 
 =head2 default_importer_package
 
 Return the name of the default importer package if no
 package name is given in the config or as a param.
-
-=cut
-
-sub default_importer_package { $_[0]->_env->default_importer_package }
 
 =head2 importer(NAME)
 
@@ -339,41 +360,19 @@ Configuration settings can be overwritten by the importer command:
 
   my $importer2 = Catmandu->importer('default', url => 'http://other.institute.org');
 
-=cut
-
-sub importer {
-    my $class = shift;
-    $class->_env->importer(@_);
-}
-
 =head2 default_exporter
 
 Return the name of the default exporter.
-
-=cut
-
-sub default_exporter { $_[0]->_env->default_exporter }
 
 =head2 default_exporter_package
 
 Return the name of the default exporter package if no
 package name is given in the config or as a param.
 
-=cut
-
-sub default_exporter_package { $_[0]->_env->default_exporter_package }
-
 =head2 exporter([NAME])
 
 Return an instance of L<Catmandu::Exporter> with name NAME (or the default when
 no name is given).  The NAME is set in the configuration file (see 'importer').
-
-=cut
-
-sub exporter {
-    my $class = shift;
-    $class->_env->exporter(@_);
-}
 
 =head2 export($data,[NAME])
 
@@ -386,19 +385,6 @@ Export data using a default or named exporter.
     Catmandu->export($importer, 'my_exporter');
     Catmandu->export($importer, 'my_exporter', foo => $bar);
 
-=cut
-
-sub export {
-    my $class = shift;
-    my $data = shift;
-    my $exporter = $class->_env->exporter(@_);
-    is_hash_ref($data)
-        ? $exporter->add($data)
-        : $exporter->add_many($data);
-    $exporter->commit;
-    return;
-}
-
 =head2 export_to_string
 
 Export data using a default or named exporter to a string.
@@ -408,22 +394,6 @@ Export data using a default or named exporter to a string.
     # is the same as
     my $yaml = "";
     Catmandu->export($importer, 'YAML', file => \$yaml);
-
-=cut
-
-sub export_to_string {
-    my $class = shift;
-    my $data = shift;
-    my $name = shift;
-    my %opts = ref $_[0] ? %{$_[0]} : @_;
-    my $str = "";
-    my $exporter = $class->_env->exporter($name, %opts, file => \$str);
-    is_hash_ref($data)
-        ? $exporter->add($data)
-        : $exporter->add_many($data);
-    $exporter->commit;
-    $str;
-}
 
 =head1 EXPORTS
 
@@ -586,5 +556,3 @@ by the Free Software Foundation; or the Artistic License.
 See L<http://dev.perl.org/licenses/> for more information.
 
 =cut
-
-1;

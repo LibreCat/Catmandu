@@ -1,20 +1,24 @@
 package Catmandu::Fix::Bind::hashmap;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Catmandu::Util qw(:is);
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Bind';
 
-has exporter      => (fix_opt => 1 , default => sub { 'JSON' });
-has store         => (fix_opt => 1);
-has uniq          => (fix_opt => 1 , default => sub { 0 });
-has count         => (fix_opt => 1);
-has join          => (fix_opt => 1);
-has extra_args    => (fix_opt => 'collect');
-
-has flag          => (is => 'rw'  , default => sub { 0 });
-has hash          => (is => 'lazy');
+has exporter   => (fix_opt => 1 , default => sub { 'JSON' });
+has store      => (fix_opt => 1);
+has uniq       => (fix_opt => 1 , default => sub { 0 });
+has count      => (fix_opt => 1);
+has join       => (fix_opt => 1);
+has extra_args => (fix_opt => 'collect');
+has flag       => (is => 'rw'  , default => sub { 0 });
+has hash       => (is => 'lazy');
 
 sub _build_hash {
     +{};
@@ -112,6 +116,12 @@ sub DESTROY {
     $e->commit;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::Bind::hashmap - a binder to add key/value pairs to an internal hashmap
@@ -183,5 +193,3 @@ Don't store the values only count the number of key occurences.
 L<Catmandu::Fix::Bind>
 
 =cut
-
-1;

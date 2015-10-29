@@ -1,7 +1,11 @@
 package Catmandu::Fix::move_field;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
@@ -40,6 +44,12 @@ sub emit {
     });
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::move_field - move a field to another place in the data structure
@@ -54,5 +64,3 @@ Catmandu::Fix::move_field - move a field to another place in the data structure
 L<Catmandu::Fix>
 
 =cut
-
-1;

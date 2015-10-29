@@ -1,9 +1,12 @@
 package Catmandu::Exporter;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(io);
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Logger';
 with 'Catmandu::Addable';
@@ -28,7 +31,10 @@ after add => sub {
 sub encoding { ':utf8' }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

@@ -1,11 +1,16 @@
 package Catmandu::Fix::Bind::visitor;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Catmandu::Util;
+use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
 
-has path   => (is => 'ro');
+has path  => (is => 'ro');
 
 sub unit {
     my ($self,$data) = @_;
@@ -82,6 +87,12 @@ sub bind_hash {
 
     return $mvar;
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -197,5 +208,3 @@ A path in the data to visit:
 L<Catmandu::Fix::Bind>
 
 =cut
-
-1;

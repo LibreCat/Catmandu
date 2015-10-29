@@ -1,13 +1,16 @@
 package Catmandu::Importer;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
 use HTTP::Request ();
 use URI ();
 use URI::Template ();
 use Moo::Role;
+use namespace::clean;
 
 with 'Catmandu::Logger';
 with 'Catmandu::Iterable';
@@ -160,6 +163,12 @@ sub readline {
 sub readall {
     join '', $_[0]->fh->getlines;
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -315,5 +324,3 @@ L<Catmandu::Iterable> , L<Catmandu::Fix> ,
 L<Catmandu::Importer::CSV>, L<Catmandu::Importer::JSON> , L<Catmandu::Importer::YAML>
 
 =cut
-
-1;

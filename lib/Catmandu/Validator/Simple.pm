@@ -1,9 +1,13 @@
 package Catmandu::Validator::Simple;
 
 use Catmandu::Sane;
-use Moo;
 
-with  'Catmandu::Validator';
+our $VERSION = '0.9502';
+
+use Moo;
+use namespace::clean;
+
+with 'Catmandu::Validator';
 
 has handler => (
     is  => 'rw',
@@ -22,6 +26,12 @@ sub validate_data {
         unless !$error_messages || ref $error_messages eq 'ARRAY';
     return $error_messages;
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -79,5 +89,3 @@ These are methods are inherited from L<Catmandu::Validator>.
 L<Catmandu::Validator>
 
 =cut
-
-1;

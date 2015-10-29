@@ -1,7 +1,12 @@
 package Catmandu::Cmd;
+
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(pod_section);
+use namespace::clean;
 
 # Internal required by App::Cmd
 sub opt_spec {
@@ -49,60 +54,67 @@ sub description {
 sub command_opt_spec {}
 sub command {}
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Cmd - A base class for extending the Catmandu command line
 
 =head1 SYNOPSIS
 
- # To create
- $ catmandu hello_world
+  # to create a command:
+  $ catmandu hello_world
 
- # You need:
- package Catmandu::Cmd::hello_world;
- use parent 'Catmandu::Cmd';
+  # you need a package:
+  package Catmandu::Cmd::hello_world;
+  use parent 'Catmandu::Cmd';
 
- sub command_opt_spec {
-    (
-        [ "greeting|g=s", "provide a greeting text" ],
-    );
- }
+  sub command_opt_spec {
+     (
+         [ "greeting|g=s", "provide a greeting text" ],
+     );
+  }
 
- sub description {
-    <<EOS;
- examples:
+  sub description {
+     <<EOS;
+  examples:
 
- catmandu hello_world --greeting "Hoi"
+  catmandu hello_world --greeting "Hoi"
 
- options:
- EOS
- }
+  options:
+  EOS
+  }
 
- sub command {
-    my ($self, $opts, $args) = @_;
-    my $greeting = $opts->greeting // 'Hello';
-    print "$greeting, World!\n" 
- }
+  sub command {
+     my ($self, $opts, $args) = @_;
+     my $greeting = $opts->greeting // 'Hello';
+     print "$greeting, World!\n" 
+  }
 
- =head1 NAME
+  =head1 NAME
 
- Catmandu::Cmd::hello_world - prints a funny line
+  Catmandu::Cmd::hello_world - prints a funny line
 
- =cut
+  =cut
 
- 1;
+
 
 =head1 DESCRIPTION
 
-Catmandu:Cmd is a base class to extend the commands that can be provided for the 'catmandu' command line tools.
-New catmandu commands should be defined in the Catmandu::Cmd namespace and extend Catmandu::Cmd.
+Catmandu:Cmd is a base class to extend the commands that can be provided for
+the 'catmandu' command line tools.  New catmandu commands should be defined in
+the Catmandu::Cmd namespace and extend Catmandu::Cmd.
 
 Every command needs to implement 4 things:
 
- * command_opt_spec - which should return an array of command options with documentation
- * description - a long description of the command
- * command - the body which is executed 
- * head1 NAME - a short description of the command
+  * command_opt_spec - which should return an array of command options with documentation
+  * description - a long description of the command
+  * command - the body which is executed 
+  * head1 NAME - a short description of the command
 
 =head1 METHODS
 
@@ -131,5 +143,3 @@ L<Catmandu::Cmd::data> , L<Catmandu::Cmd::delete> , L<Catmandu::Cmd::export>,
 L<Catmandu::Cmd::import> , L<Catmandu::Cmd::move> , L<Catmandu::Cmd::run>
 
 =cut
-
-1;

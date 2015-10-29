@@ -1,7 +1,11 @@
 package Catmandu::Fix::add_to_exporter;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path          => (fix_arg => 1);
@@ -22,6 +26,12 @@ sub emit_value {
 
     "${exporter_var}->add(${var});"
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -59,5 +69,3 @@ Catmandu::Fix::add_to_exporter - Export a record as side effect
 L<Catmandu::Fix> , L<Catmandu::Exporter>
 
 =cut
-
-1;

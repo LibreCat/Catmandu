@@ -1,10 +1,14 @@
 package Catmandu::Cmd::info;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use parent 'Catmandu::Cmd';
 use Catmandu::Importer::Modules;
 use Catmandu::Store::Hash;
-use Catmandu::Util 'pod_section';
+use Catmandu::Util qw(pod_section);
+use namespace::clean;
 
 sub command_opt_spec {
     (
@@ -100,7 +104,10 @@ sub command {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

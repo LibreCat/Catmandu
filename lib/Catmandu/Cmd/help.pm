@@ -1,9 +1,13 @@
 package Catmandu::Cmd::help;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use parent 'Catmandu::Cmd';
 use App::Cmd::Command::help;
 use Catmandu::Util qw(require_package pod_section);
+use namespace::clean;
 
 sub usage_desc { '%c help [ <command> | ( export | import | store | fix ) <name> ]' }
 
@@ -12,7 +16,7 @@ sub command_names { qw/help --help -h -?/ }
 my %MODULES = (
     Exporter => {
         re => qr/^export(er)?$/i,
-        usage => [ 
+        usage => [
             "catmandu convert ... to %n [options]",
             "catmandu export  ... to %n [options]",
         ],
@@ -88,7 +92,10 @@ sub help_about {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -100,4 +107,4 @@ Catmandu::Cmd::help - show help
   catmandu help import JSON
   catmandu help help
 
-=cut 
+=cut

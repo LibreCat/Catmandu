@@ -1,6 +1,9 @@
 package Catmandu::Serializer;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(require_package);
 use Moo::Role;
 use namespace::clean;
@@ -30,6 +33,12 @@ sub _build_serializer {
 
 # Implementers needs to be create a deserializer
 # sub deserialize {}
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -104,4 +113,3 @@ L<Catmandu::Serializer::storabe>,
 L<Catmandu::Serializer::messagepack>
 
 =cut
-1;

@@ -1,10 +1,13 @@
 package Catmandu::Fixable;
 
-use namespace::clean;
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_instance);
 use Catmandu;
 use Moo::Role;
+use namespace::clean;
 
 has _fixer => (
     is => 'ro',
@@ -15,7 +18,10 @@ has _fixer => (
 );
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

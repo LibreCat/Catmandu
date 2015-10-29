@@ -1,43 +1,9 @@
 package Catmandu::Env;
 
-=head1 NAME
-
-Catmandu::Env - A catmandu configuration file loader
-
-=head1 SYNOPSIS
-
-    use Catmandu::Env;
-
-    my $env = Catmandu::Env->new(load_paths => [ '/etc/catmandu '] );
-    my $env = Catmandu::Env->new(load_paths => [ ':up'] );
-
-    my $store    = $env->store('mongodb');
-    my $importer = $env->importer('loc');
-    my $exporter = $env->exporter('europeana');
-    my $fixer    = $env->fixer('my_fixes');
-    my $conf     = $env->config;
-
-=head1 DESCRIPTION
-
-This class loads the catmandu.*.pl, catmandu.*.json, catmandu.*.yml and catmandu.*.yaml file from
-all provided load_paths. Programmers are adviced *not* to use this class directly 
-but use the equivalent functionality provided in the Catmandu package:
-
-     Catmandu->load('/etc/catmandu');
-     Catmandu->load(':up');
-
-     my $store    = Catmandu->store('mongodb');
-     my $importer = Catmandu->importer('loc');
-     my $exporter = Catmandu->exporter('europeana');
-     my $fixer    = Catmandu->fixer('my_fixes');
-     my $conf     = Catmandu->config;
-
-=head1 SEE ALSO
-
-L<Catmandu>
-
-=cut
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
 use Catmandu::Fix;
 use Config::Onion;
@@ -234,3 +200,45 @@ sub exporter {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Env - A catmandu configuration file loader
+
+=head1 SYNOPSIS
+
+    use Catmandu::Env;
+
+    my $env = Catmandu::Env->new(load_paths => [ '/etc/catmandu '] );
+    my $env = Catmandu::Env->new(load_paths => [ ':up'] );
+
+    my $store    = $env->store('mongodb');
+    my $importer = $env->importer('loc');
+    my $exporter = $env->exporter('europeana');
+    my $fixer    = $env->fixer('my_fixes');
+    my $conf     = $env->config;
+
+=head1 DESCRIPTION
+
+This class loads the catmandu.*.pl, catmandu.*.json, catmandu.*.yml and catmandu.*.yaml file from
+all provided load_paths. Programmers are adviced *not* to use this class directly 
+but use the equivalent functionality provided in the Catmandu package:
+
+     Catmandu->load('/etc/catmandu');
+     Catmandu->load(':up');
+
+     my $store    = Catmandu->store('mongodb');
+     my $importer = Catmandu->importer('loc');
+     my $exporter = Catmandu->exporter('europeana');
+     my $fixer    = Catmandu->fixer('my_fixes');
+     my $conf     = Catmandu->config;
+
+=head1 SEE ALSO
+
+L<Catmandu>
+
+=cut

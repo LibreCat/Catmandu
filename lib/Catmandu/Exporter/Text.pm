@@ -1,6 +1,9 @@
 package Catmandu::Exporter::Text;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use Catmandu::Util;
 use namespace::clean;
@@ -89,7 +92,10 @@ sub array_text {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 

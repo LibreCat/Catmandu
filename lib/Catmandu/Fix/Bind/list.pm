@@ -1,12 +1,14 @@
 package Catmandu::Fix::Bind::list;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
-use Data::Dumper;
 use Clone ();
 use Catmandu::Util;
+use namespace::clean;
 use Catmandu::Fix::Has;
-
-use Data::Dumper;
 
 with 'Catmandu::Fix::Bind';
 
@@ -85,6 +87,12 @@ sub plus {
     Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next] ;
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a list
@@ -138,5 +146,3 @@ in the root of the record containing iterated data.
 L<Catmandu::Fix::Bind>
 
 =cut
-
-1;

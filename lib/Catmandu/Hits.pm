@@ -1,13 +1,16 @@
 package Catmandu::Hits;
 
-use namespace::clean;
 use Catmandu::Sane;
-use Moo;
 
-has start  => (is => 'ro', required => 1);
-has limit  => (is => 'ro', required => 1);
-has total  => (is => 'ro', required => 1);
-has hits   => (is => 'ro', required => 1);
+our $VERSION = '0.9502';
+
+use Moo;
+use namespace::clean;
+
+has start => (is => 'ro', required => 1);
+has limit => (is => 'ro', required => 1);
+has total => (is => 'ro', required => 1);
+has hits  => (is => 'ro', required => 1);
 
 with 'Catmandu::Iterable';
 with 'Catmandu::Paged';
@@ -52,6 +55,10 @@ sub first {
 }
 
 1;
+
+__END__
+
+=pod
 
 =head1 NAME
 

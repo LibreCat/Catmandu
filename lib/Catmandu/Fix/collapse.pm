@@ -1,28 +1,38 @@
 package Catmandu::Fix::collapse;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
 use CGI::Expand ();
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has sep => (fix_opt => 1, default => sub { undef });
 
 sub fix {
-	my ($self,$data) = @_;
-	my $ref = CGI::Expand->collapse_hash($data);
+    my ($self,$data) = @_;
+    my $ref = CGI::Expand->collapse_hash($data);
 
-	if (defined(my $char = $self->sep)) {
-		my $new_ref = {};
-		for my $key (keys %$ref) {
-			my $val = $ref->{$key};
-			$key =~ s{\.}{$char}g;
-			$new_ref->{$key} = $val;
-		}
-		$ref = $new_ref;
-	}
+    if (defined(my $char = $self->sep)) {
+        my $new_ref = {};
+        for my $key (keys %$ref) {
+            my $val = $ref->{$key};
+            $key =~ s{\.}{$char}g;
+            $new_ref->{$key} = $val;
+        }
+        $ref = $new_ref;
+    }
 
-	$ref;
+    $ref;
 }
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -41,5 +51,3 @@ Catmandu::Fix::collapse - convert nested data into a flat hash using the TT2 dot
 L<Catmandu::Fix>
 
 =cut
-
-1;

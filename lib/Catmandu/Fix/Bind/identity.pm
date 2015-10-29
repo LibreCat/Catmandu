@@ -1,8 +1,19 @@
 package Catmandu::Fix::Bind::identity;
 
+use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
+
+1;
+
+__END__
+
+=pod
 
 =head1 NAME
 
@@ -40,5 +51,3 @@ applies the bound fix functions to its input without any modification.
 L<Catmandu::Fix::Bind>
 
 =cut
-
-1;

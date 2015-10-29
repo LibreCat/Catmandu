@@ -1,7 +1,11 @@
 package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Moo;
+use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
@@ -24,6 +28,12 @@ sub emit_value {
         ."}";
 }
 
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Catmandu::Fix::substring - extract a substring out of the value of a field
@@ -39,5 +49,3 @@ Catmandu::Fix::substring - extract a substring out of the value of a field
 L<Catmandu::Fix>, substr
 
 =cut
-
-1;

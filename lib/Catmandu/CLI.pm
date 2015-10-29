@@ -1,24 +1,15 @@
 package Catmandu::CLI;
 
-=head1 NAME
-
-Catmandu::CLI - The App::Cmd application class for the catmandu command line script
-
-=head1 SEE ALSO
-
-L<catmandu>
-
-=cut
-
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_instance is_able is_string);
 use Catmandu;
 use Log::Any::Adapter;
 use Data::Dumper;
 
 use parent qw(App::Cmd);
-
-our $VERSION = $Catmandu::VERSION;
 
 sub deleted_commands {
     [qw(
@@ -244,3 +235,17 @@ sub should_ignore {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::CLI - The App::Cmd application class for the catmandu command line script
+
+=head1 SEE ALSO
+
+L<catmandu>
+
+=cut

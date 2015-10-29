@@ -1,6 +1,9 @@
 package Catmandu::Fix::code;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9502';
+
 use Catmandu::Util qw(is_code_ref);
 use Moo;
 
@@ -23,7 +26,10 @@ sub fix {
 }
 
 1;
+
 __END__
+
+=pod
 
 =head1 NAME
 
