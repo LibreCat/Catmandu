@@ -6,12 +6,26 @@ our $VERSION = '0.9502';
 
 use Role::Tiny;
 use POSIX qw(strftime);
+use Time::HiRes qw();
 use namespace::clean;
 
 before add => sub {
     my ($self, $data) = @_;
-    my $now = strftime("%Y-%m-%dT%H:%M:%SZ", gmtime(time));
+
+    #POSIX::strftime cannot handle milliseconds
+    my $t = Time::HiRes::time;
+    my $now = strftime("%Y-%m-%dT%H:%M:%S", gmtime($t));
+    $now .= sprintf ".%03d", ($t-int($t))*1000;
+    $now .= "Z";
+
     $data->{date_created} ||= $now;
+
+    #fix date_created for old records
+    unless( $data->{date_created} =~ /\.\d+Z$/o ) {
+        chop($data->{date_created});
+        $data->{date_created} .= ".000Z";
+    }
+
     $data->{date_updated} = $now;
 };
 
@@ -70,7 +84,7 @@ Catmandu::Plugin::Datestamps - Automatically add datestamps to Catmandu::Store r
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::Datestamps plugin automatically adds/updates datestamp fields in your
-records. If you add this plugin to your Catmandu::Store configuration then automatically a 
+records. If you add this plugin to your Catmandu::Store configuration then automatically a
 'date_created' and 'date_updated' field gets added to newly ingested records.
 
 The plugin should be set for every bag defined in your Catmandu::Store. In the examples above we've
