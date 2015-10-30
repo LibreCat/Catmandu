@@ -2,6 +2,9 @@ package Catmandu::Sane;
 
 use strict;
 use warnings;
+
+our $VERSION = '0.9503';
+
 use feature ();
 use utf8;
 use IO::File ();
