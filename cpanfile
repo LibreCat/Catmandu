@@ -8,7 +8,7 @@ on 'test', sub {
   requires 'Log::Any::Test', '1.03';
 };
 
-requires 'App::Cmd', '0.326';
+requires 'App::Cmd', '0.33';
 requires 'CGI::Expand', '2.02';
 requires 'Clone', '0.31';
 requires 'Config::Onion', '1.004';
