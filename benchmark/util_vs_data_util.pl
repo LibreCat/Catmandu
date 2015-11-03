@@ -1,10 +1,15 @@
 #!/usr/bin/env perl
 
-use strict;
-use warnings;
-use Benchmark qw(:all);
-use Catmandu::Util ();
-use Data::Util ();
+BEGIN {
+    use strict;
+    use warnings;
+    use FindBin;
+    use File::Spec ();
+    use Benchmark qw(:all);
+    use Data::Util ();
+    use lib File::Spec->catdir($FindBin::Bin, '..', 'lib');
+    use Catmandu::Util ();
+}
 
 my @names = qw(
     is_invocant 
@@ -21,7 +26,7 @@ my @names = qw(
 );
 
 my @catmandu_util_subs = (
-    \&Catmandu::Util::is_invocant, 
+    \&Catmandu::Util::is_invocant,
     \&Catmandu::Util::is_scalar_ref,
     \&Catmandu::Util::is_array_ref,
     \&Catmandu::Util::is_hash_ref,
@@ -51,15 +56,15 @@ my @data_util_subs = (
 my $str = "a string";
 my $regex = qr//;
 my @data = (
-    'Benchmark', 
-    \$str, 
-    [], 
-    {}, 
-    sub {}, 
-    $regex, 
-    \*STDIN, 
-    "", 
-    $str, 
+    'Benchmark',
+    \$str,
+    [],
+    {},
+    sub {},
+    $regex,
+    \*STDIN,
+    "",
+    $str,
     1.1,
     1,
 );
@@ -69,8 +74,8 @@ for (my $i = 0; $i < @names; $i++) {
     my $catmandu_util_sub = $catmandu_util_subs[$i];
     my $data_util_sub = $data_util_subs[$i];
     cmpthese(1000000, {
-        "Catmandu::Util::$name" => sub { $catmandu_util_sub->($_) for @data }, 
-        "Data::Util::$name" => sub { $data_util_sub->($_) for @data },      
+        "Catmandu::Util::$name" => sub { $catmandu_util_sub->($_) for @data },
+        "Data::Util::$name" => sub { $data_util_sub->($_) for @data },
     });
 }
 
