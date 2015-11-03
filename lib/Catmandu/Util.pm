@@ -466,8 +466,7 @@ sub is_value {
 }
 
 sub is_string {
-    no warnings 'uninitialized';
-    return !ref($_[0]) && ref(\$_[0]) ne 'GLOB' && length($_[0]) > 0;
+    return defined($_[0]) && !ref($_[0]) && ref(\$_[0]) ne 'GLOB' && length($_[0]) > 0;
 }
 
 sub is_number {
