@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix dereferencing bug in Util::is_string
+  - move Dockerfile to it's own repository
 
 0.9503  2015-10-29 16:32:28 CET
   - VERSION for all packages and cleanup

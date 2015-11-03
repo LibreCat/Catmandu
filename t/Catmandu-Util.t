@@ -74,7 +74,19 @@ for my $sym (qw(able instance invocant ref
     can_ok 'T::ImportCheck', "check_maybe_$sym";
     ok !T::ImportIs->can("check_$sym");
     ok !T::ImportIs->can("check_maybe_$sym");
+
+    # autovivication test
+    my $arr_ref  = [];
+    my $hash_ref = { arr_ref => $arr_ref };
+    my $name     = "is_$sym";
+    my $sub_ref  = do {
+        no strict 'refs';
+        \&{"Catmandu::Util::$name"};
+    };
+    $sub_ref->($hash_ref->{arr_ref}->[@$arr_ref]);
+    is_deeply $hash_ref, { arr_ref => [] } , "no autovivication in $name";
 }
+
 for my $sym (qw(require_package use_lib)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
@@ -125,4 +137,4 @@ for my $sym (qw(xml_declaration xml_escape)) {
     can_ok 'T::ImportXML', $sym;
 }
 
-done_testing 458;
+done_testing 474;
