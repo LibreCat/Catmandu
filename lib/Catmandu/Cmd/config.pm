@@ -2,7 +2,7 @@ package Catmandu::Cmd::config;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9503';
+our $VERSION = '0.9504';
 
 use parent 'Catmandu::Cmd';
 use Catmandu::Util qw(data_at);

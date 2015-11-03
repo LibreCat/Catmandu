@@ -15,10 +15,10 @@ my %module_build_args = (
   },
   "dist_abstract" => "a data toolkit",
   "dist_author" => [
-    "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
+    "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "0.9503",
+  "dist_version" => "0.9504",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {

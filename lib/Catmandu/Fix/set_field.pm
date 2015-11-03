@@ -2,7 +2,7 @@ package Catmandu::Fix::set_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9503';
+our $VERSION = '0.9504';
 
 use Clone qw(clone);
 use Moo;

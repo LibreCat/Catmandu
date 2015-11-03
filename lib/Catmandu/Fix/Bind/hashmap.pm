@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::hashmap;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9503';
+our $VERSION = '0.9504';
 
 use Moo;
 use Catmandu::Util qw(:is);

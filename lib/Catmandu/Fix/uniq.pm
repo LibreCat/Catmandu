@@ -2,7 +2,7 @@ package Catmandu::Fix::uniq;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9503';
+our $VERSION = '0.9504';
 
 use List::MoreUtils ();
 use Moo;
