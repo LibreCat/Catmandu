@@ -160,6 +160,11 @@ Add or update one or more items to the store.
 
 Retrieves the item with identifier $id from the store.
 
+=head2 get_or_add($id, $hash)
+
+Retrieves the item with identifier $id from the store or adds C<$hash> with _id
+C<$id> if it's not found.
+
 =head2 delete($id)
 
 Deletes the item with identifier $id from the store.
