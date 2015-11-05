@@ -16,10 +16,8 @@ has init_data => (is => 'ro');
 
 sub BUILD {
     my $self = $_[0];
-    if (defined $self->init_data && is_array_ref($self->init_data) ) {
-        for (@{$self->init_data}) {
-            $self->bag->add($_);
-        }
+    if (my $data = $self->init_data) {
+        $self->bag->add($_) for @$data;
     }
 }
 
