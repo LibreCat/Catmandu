@@ -108,7 +108,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.6</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
 <li><a href="#openbsd-53"><span class="toc-section-number">1.2.7</span> OpenBSD 53</a></li>
 <li><a href="#windows-mac-osx-linux"><span class="toc-section-number">1.2.8</span> Windows, Mac OSX, Linux</a></li>
-<li><a href="#docker"><span class="toc-section-number">1.2.9</span> Docker</a></li>
 </ul></li>
 <li><a href="#concepts"><span class="toc-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts">✎</a></a><ul>
 <li><a href="#extended-features"><span class="toc-section-number">1.3.1</span> Extended features</a></li>
@@ -345,11 +344,49 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <p>Here are some Catmandu installation hints for various platforms.</p>
 <section id="debian" class="level3">
 <h3><span class="header-section-number">1.2.1</span> Debian</h3>
-<p>Several Catmandu packages are being packages as Debian packages but not in the stable branch yet (see <a href="#voting-catmandu-packages-to-be-included-in-debian">Voting Catmandu packages to be included in Debian</a>).</p>
-<p>Try <a href="https://packages.debian.org/search?keywords=libcatmandu&amp;searchon=names&amp;suite=all&amp;section=all">this search</a> to get a list of all current Catmandu packages in Debian unstable and testing.</p>
-<p>At Debian 7 (stable, “Wheezy”) Catmandu can be installed this way:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev
-<span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
+<p>Several Catmandu packages are officially included in Debian but not all (see <a href="#voting-catmandu-packages-to-be-included-in-debian">Voting Catmandu packages to be included in Debian</a> and <a href="https://packages.debian.org/libcatmandu">this search</a> of currently available packages).</p>
+<p>You can install all packages officially included in Debian:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get update
+<span class="kw">sudo</span> apt-get install libcatmandu*-perl</code></pre>
+<p>Alternatively, you can build newest Catmandu as unofficial packages, using most possible official packages:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt update
+<span class="kw">sudo</span> apt install dh-make-perl liblocal-lib-perl apt-file
+<span class="kw">sudo</span> apt-file update
+<span class="kw">sudo</span> apt install libtest-fatal-perl libmodule-build-tiny-perl libmoo-perl libmodule-pluggable-perl libcapture-tiny-perl libclass-load-perl libgetopt-long-descriptive-perl libio-tiecombine-perl libstring-rewriteprefix-perl libio-handle-util-perl
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> MooX::Aliases
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> Log::Any
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> App::Cmd
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> LaTeX::ToUnicode
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> PICA::Data
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> LV
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> MODS::Record
+<span class="kw">sudo</span> dpkg -i lib*-perl_*.deb
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> BibTeX::Parser
+<span class="kw">sudo</span> dpkg -i libbibtex-parser-perl_*.deb
+<span class="kw">sudo</span> apt install libexporter-tiny-perl
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> JSON::Path
+<span class="kw">sudo</span> dpkg -i libjson-path-perl_*.deb
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> JSON::Hyper
+<span class="kw">sudo</span> dpkg -i libjson-hyper-perl_*.deb
+<span class="kw">sudo</span> apt install libhttp-link-parser-perl libautovivification-perl libmatch-simple-perl
+<span class="kw">cpan2deb</span> --vcs <span class="st">&#39;&#39;</span> JSON::Schema
+<span class="kw">sudo</span> dpkg -i libjson-schema-perl_*.deb
+<span class="kw">sudo</span> apt install libjson-xs-perl libtest-exception-perl libtest-deep-perl libfile-slurp-tiny-perl liburi-template-perl libtry-tiny-byclass-perl libdata-util-perl libdata-compare-perl libhash-merge-simple-perl libthrowable-perl libclone-perl libdata-uuid-perl libmarpa-r2-perl libconfig-onion-perl libmodule-info-perl libtext-csv-perl libcgi-expand-perl
+<span class="kw">dh-make-perl</span> --vcs <span class="st">&#39;&#39;</span> --cpan Catmandu
+<span class="kw">perl</span> -i -pe <span class="st">&#39;s/libossp-uuid-perl[^,\n]*/libdata-uuid-perl/g&#39;</span> libcatmandu-perl/debian/control
+<span class="kw">(</span> <span class="kw">cd</span> libcatmandu-perl <span class="kw">&amp;&amp;</span> <span class="kw">dpkg-buildpackage</span> -b -us -uc -d <span class="kw">)</span>
+<span class="kw">sudo</span> dpkg -i libcatmandu-perl_*.deb
+<span class="kw">dh-make-perl</span> --vcs <span class="st">&#39;&#39;</span> --cpan Catmandu::Twitter
+<span class="kw">perl</span> -i -pe <span class="st">&#39;s/liburi-perl\K[^,\n]*//g&#39;</span> libcatmandu-twitter-perl/debian/control
+<span class="kw">(</span> <span class="kw">cd</span> libcatmandu-twitter-perl <span class="kw">&amp;&amp;</span> <span class="kw">dpkg-buildpackage</span> -b -us -uc -d <span class="kw">)</span>
+<span class="kw">sudo</span> apt install libchi-perl libnet-ldap-perl libdatetime-format-strptime-perl libxml-libxslt-perl libxml-struct-perl libnet-twitter-perl libxml-parser-perl libspreadsheet-xlsx-perl libexcel-writer-xlsx-perl libdevel-repl-perl libio-pty-easy-perl
+<span class="kw">cpan2deb</span> --recursive --vcs <span class="st">&#39;&#39;</span> Task::Catmandu
+<span class="kw">sudo</span> apt install <span class="st">&#39;libcatmandu-*&#39;</span>
+<span class="kw">sudo</span> dpkg -i libcatmandu-twitter-perl_*.deb
+<span class="kw">sudo</span> dpkg -i ~/.cpan/build/libcatmandu-*-perl_*.deb</code></pre>
+<p>Alternatively, you can build newest Catmandu and dependencies from source:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get update
+<span class="kw">sudo</span> apt-get install cpanminus build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev
 <span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
 </section>
 <section id="ubuntu-server-12.04.4-lts" class="level3">
@@ -409,15 +446,15 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 <section id="windows-mac-osx-linux" class="level3">
 <h3><span class="header-section-number">1.2.8</span> Windows, Mac OSX, Linux</h3>
+<p>A <a href="https://registry.hub.docker.com/u/librecat/catmandu/">docker image of Catmandu</a> is build with each release. After <a href="https://docs.docker.com/installation/#installation">installation of docker</a> get and use the Catmandu image like this:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Upgrade to the latest version</span>
+<span class="kw">docker</span> pull librecat/catmandu
+
+<span class="co"># Run the docker command</span>
+<span class="kw">docker</span> run -it librecat/catmandu</code></pre>
+<p>Or, in case you want a native install use <strong>ActivePerl</strong></p>
 <p>via <a href="http://www.activestate.com/activeperl/downloads">ActivePerl</a></p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ppm</span> install Catmandu</code></pre>
-</section>
-<section id="docker" class="level3">
-<h3><span class="header-section-number">1.2.9</span> Docker</h3>
-<p>A <a href="https://registry.hub.docker.com/u/librecat/catmandu/">docker image of Catmandu</a> is build with each release. After <a href="https://docs.docker.com/installation/#installation">installation of docker</a> get and use the Catmandu image like this:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">sudo</span> docker pull librecat/catmandu
-$ <span class="kw">sudo</span> docker run -it librecat/catmandu
-<span class="kw">root@</span><span class="dt">{docker-container-id}</span> $ catmandu help</code></pre>
 </section>
 </section>
 <section id="concepts" class="level2">
@@ -1248,7 +1285,7 @@ Hello, World?
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, reverse:1)              <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, numeric:1)              <span class="co"># sort numerical values</span>
 <span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
-<span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
+<span class="kw">flatten</span>(deep)                              <span class="co"># {deep =&gt; [1, [2, 3], 4, [5, [6, 7]]]} =&gt; {deep =&gt; [1, 2, 3, 4, 5, 6, 7]}</span>
 
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
@@ -1350,6 +1387,16 @@ Hello, World?
   <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;bar&#39;</span>
 <span class="kw">end</span>
 
+<span class="co"># add a new field when the &#39;year&#39; field is equal to 2018</span>
+<span class="kw">if</span> <span class="kw">all_equal</span>(<span class="st">&#39;year&#39;</span>,<span class="st">&#39;2018&#39;</span>)
+ <span class="kw">add_field</span>(<span class="st">&#39;my.funny.title&#39;</span>,<span class="st">&#39;true&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># add a new field when at least one of the &#39;year&#39;-s is equal to 2018</span>
+<span class="kw">if</span> <span class="kw">any_equal</span>(<span class="st">&#39;years.*&#39;</span>,<span class="st">&#39;2018&#39;</span>)
+ <span class="kw">add_field</span>(<span class="st">&#39;my.funny.title&#39;</span>,<span class="st">&#39;true&#39;</span>)
+<span class="kw">end</span>
+
 <span class="co"># compare things (needs Catmandu 0.92 or better)</span>
 <span class="kw">if</span> <span class="kw">greater_than</span>(<span class="st">&#39;year&#39;</span>,2000)
   <span class="kw">add_field</span>(<span class="st">&#39;recent&#39;</span>,<span class="st">&#39;yes&#39;</span>)
@@ -1364,7 +1411,7 @@ Hello, World?
   <span class="kw">add_field</span>(<span class="st">&#39;funny.title&#39;</span>,<span class="st">&#39;yes&#39;</span>)
 <span class="kw">end</span>
 <span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
-    <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+  <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">end</span>
 
 <span class="co">## Binds (needs Catmandu 0.92 or better)</span>
@@ -1373,27 +1420,27 @@ Hello, World?
 <span class="co"># applies the bound fix functions sequentially to its input without any </span>
 <span class="co"># modification.</span>
 <span class="kw">do</span> <span class="fu">identity()</span>
-    <span class="kw">add_field</span>(foo,bar)
-    <span class="kw">add_field</span>(foo2,bar2)
+  <span class="kw">add_field</span>(foo,bar)
+  <span class="kw">add_field</span>(foo2,bar2)
 <span class="kw">end</span>
 
 <span class="co"># Maybe, computes all the fix functions and ignores fixes once they throw errors</span>
 <span class="co"># or return undef.</span>
 <span class="kw">do</span> <span class="fu">maybe()</span>
-   <span class="fu">foo()</span>
-   <span class="fu">return_undef()</span> <span class="co"># rest will be ignored</span>
-   <span class="fu">bar()</span>
+  <span class="fu">foo()</span>
+  <span class="fu">return_undef()</span> <span class="co"># rest will be ignored</span>
+  <span class="fu">bar()</span>
 <span class="kw">end</span>
 
 <span class="co"># List over all items in demo and add a foo =&gt; bar field</span>
 <span class="co"># { demo =&gt; [{},{},{}] } =&gt; { demo =&gt; [{foo=&gt;bar},{foo=&gt;bar},{foo=&gt;bar}]}</span>
 <span class="kw">do</span> <span class="kw">list</span>(path: demo)
-    <span class="kw">add_field</span>(foo,bar)
+  <span class="kw">add_field</span>(foo,bar)
 <span class="kw">end</span>
 
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
 <span class="kw">do</span> <span class="kw">benchmark</span>(output:/dev/stderr)
-    <span class="fu">foo()</span>
+  <span class="fu">foo()</span>
 <span class="kw">end</span>
 
 <span class="co"># Find all ISBN in a stream</span>
@@ -1407,7 +1454,7 @@ Hello, World?
 
 <span class="co"># Count the number of ISBN occurrences in a stream</span>
 <span class="kw">do</span> <span class="kw">hashmap</span>(count: 1)
-   <span class="kw">copy_field</span>(isbn,key)
+  <span class="kw">copy_field</span>(isbn,key)
 <span class="kw">end</span>
 
 <span class="co"># Filter out an array (needs Catmandu 0.9302 or better)</span>
@@ -1418,11 +1465,11 @@ Hello, World?
 <span class="co">#    data:</span>
 <span class="co">#       - name: patrick</span>
 <span class="kw">do</span> <span class="kw">with</span>(path:data)
-    <span class="kw">reject</span> all_match(name,nicolas)
-    <span class="co"># Or:</span>
-    <span class="co"># if all_match(name,nicolas)</span>
-    <span class="co">#  reject()</span>
-    <span class="co"># end</span>
+  <span class="kw">reject</span> all_match(name,nicolas)
+  <span class="co"># Or:</span>
+  <span class="co"># if all_match(name,nicolas)</span>
+  <span class="co">#  reject()</span>
+  <span class="co"># end</span>
 <span class="kw">end</span></code></pre>
 </section>
 <section id="example-fix-script" class="level2">
@@ -2447,7 +2494,7 @@ git push origin dev</code></pre></li>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, reverse:1)              <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, numeric:1)              <span class="co"># sort numerical values</span>
 <span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
-<span class="kw">expand_date</span>(<span class="st">&quot;2010-05-07&quot;</span>)                  <span class="co"># Transforms a date to its parts {year =&gt; 2010, month =&gt; &quot;5&quot;, day =&gt; &quot;7&quot;, date =&gt; &quot;2010-05-07&quot;}</span>
+<span class="kw">flatten</span>(deep)                              <span class="co"># {deep =&gt; [1, [2, 3], 4, [5, [6, 7]]]} =&gt; {deep =&gt; [1, 2, 3, 4, 5, 6, 7]}</span>
 
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
@@ -2549,6 +2596,16 @@ git push origin dev</code></pre></li>
   <span class="kw">upcase</span>(<span class="st">&#39;foo&#39;</span>) <span class="co"># foo =&gt; &#39;bar&#39;</span>
 <span class="kw">end</span>
 
+<span class="co"># add a new field when the &#39;year&#39; field is equal to 2018</span>
+<span class="kw">if</span> <span class="kw">all_equal</span>(<span class="st">&#39;year&#39;</span>,<span class="st">&#39;2018&#39;</span>)
+ <span class="kw">add_field</span>(<span class="st">&#39;my.funny.title&#39;</span>,<span class="st">&#39;true&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># add a new field when at least one of the &#39;year&#39;-s is equal to 2018</span>
+<span class="kw">if</span> <span class="kw">any_equal</span>(<span class="st">&#39;years.*&#39;</span>,<span class="st">&#39;2018&#39;</span>)
+ <span class="kw">add_field</span>(<span class="st">&#39;my.funny.title&#39;</span>,<span class="st">&#39;true&#39;</span>)
+<span class="kw">end</span>
+
 <span class="co"># compare things (needs Catmandu 0.92 or better)</span>
 <span class="kw">if</span> <span class="kw">greater_than</span>(<span class="st">&#39;year&#39;</span>,2000)
   <span class="kw">add_field</span>(<span class="st">&#39;recent&#39;</span>,<span class="st">&#39;yes&#39;</span>)
@@ -2563,7 +2620,7 @@ git push origin dev</code></pre></li>
   <span class="kw">add_field</span>(<span class="st">&#39;funny.title&#39;</span>,<span class="st">&#39;yes&#39;</span>)
 <span class="kw">end</span>
 <span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
-    <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+  <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">end</span>
 
 <span class="co">## Binds (needs Catmandu 0.92 or better)</span>
@@ -2572,27 +2629,27 @@ git push origin dev</code></pre></li>
 <span class="co"># applies the bound fix functions sequentially to its input without any </span>
 <span class="co"># modification.</span>
 <span class="kw">do</span> <span class="fu">identity()</span>
-    <span class="kw">add_field</span>(foo,bar)
-    <span class="kw">add_field</span>(foo2,bar2)
+  <span class="kw">add_field</span>(foo,bar)
+  <span class="kw">add_field</span>(foo2,bar2)
 <span class="kw">end</span>
 
 <span class="co"># Maybe, computes all the fix functions and ignores fixes once they throw errors</span>
 <span class="co"># or return undef.</span>
 <span class="kw">do</span> <span class="fu">maybe()</span>
-   <span class="fu">foo()</span>
-   <span class="fu">return_undef()</span> <span class="co"># rest will be ignored</span>
-   <span class="fu">bar()</span>
+  <span class="fu">foo()</span>
+  <span class="fu">return_undef()</span> <span class="co"># rest will be ignored</span>
+  <span class="fu">bar()</span>
 <span class="kw">end</span>
 
 <span class="co"># List over all items in demo and add a foo =&gt; bar field</span>
 <span class="co"># { demo =&gt; [{},{},{}] } =&gt; { demo =&gt; [{foo=&gt;bar},{foo=&gt;bar},{foo=&gt;bar}]}</span>
 <span class="kw">do</span> <span class="kw">list</span>(path: demo)
-    <span class="kw">add_field</span>(foo,bar)
+  <span class="kw">add_field</span>(foo,bar)
 <span class="kw">end</span>
 
 <span class="co"># Print statistical information on the processing speed of fixes to the standaard error.</span>
 <span class="kw">do</span> <span class="kw">benchmark</span>(output:/dev/stderr)
-    <span class="fu">foo()</span>
+  <span class="fu">foo()</span>
 <span class="kw">end</span>
 
 <span class="co"># Find all ISBN in a stream</span>
@@ -2606,7 +2663,7 @@ git push origin dev</code></pre></li>
 
 <span class="co"># Count the number of ISBN occurrences in a stream</span>
 <span class="kw">do</span> <span class="kw">hashmap</span>(count: 1)
-   <span class="kw">copy_field</span>(isbn,key)
+  <span class="kw">copy_field</span>(isbn,key)
 <span class="kw">end</span>
 
 <span class="co"># Filter out an array (needs Catmandu 0.9302 or better)</span>
@@ -2617,11 +2674,11 @@ git push origin dev</code></pre></li>
 <span class="co">#    data:</span>
 <span class="co">#       - name: patrick</span>
 <span class="kw">do</span> <span class="kw">with</span>(path:data)
-    <span class="kw">reject</span> all_match(name,nicolas)
-    <span class="co"># Or:</span>
-    <span class="co"># if all_match(name,nicolas)</span>
-    <span class="co">#  reject()</span>
-    <span class="co"># end</span>
+  <span class="kw">reject</span> all_match(name,nicolas)
+  <span class="co"># Or:</span>
+  <span class="co"># if all_match(name,nicolas)</span>
+  <span class="co">#  reject()</span>
+  <span class="co"># end</span>
 <span class="kw">end</span></code></pre>
 </section>
 <section id="cookbook" class="level2">
@@ -2852,6 +2909,8 @@ $store-&gt;add({ test =&gt; 123});</code></pre>
 <li><a href="http://cocoon.apache.org/2.2/1290_1_1.html">Cocoon</a> - Apache Cocoon XML pipeline</li>
 <li><a href="https://github.com/libris/librisxl/">Librisxl</a> - Tools for conversion of libris.kb.se data</li>
 <li><a href="https://csvkit.readthedocs.org/en/0.9.1/">csvkit</a> - Csvkit is a suite of utilities for converting to and working with CSV, the king of tabular file formats.</li>
+<li><a href="https://github.com/tarql/tarql/wiki/TARQL-Mapping-Language">TARQL</a> - a SPARQL-based data mapping language to convert CSV, XML, JSON to RDF</li>
+<li><a href="http://sourceforge.net/projects/dnb-conv-tools/?source=navbar">DNB-Conv-Tools</a> - Java conversion tools for MARC, ONIX, MAB, Pica and others</li>
 </ul>
 </section>
 <section id="general-frameworks" class="level2">
