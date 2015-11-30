@@ -32,9 +32,9 @@ around generator => sub {
                 return shift @buf if @buf;
                 # TODO use something faster than data_at
                 @buf = data_at($path, $generator->() // return);
-                next;        
+                next;
             }
-        };    
+        };
     }
 
     $generator;
@@ -192,7 +192,7 @@ Catmandu::Importer - Namespace for packages that can import
             my $name = $self->readline;
             return defined $name ? { "hello" => $name } : undef;
         };
-    } 
+    }
 
     package main;
 
