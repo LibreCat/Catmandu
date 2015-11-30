@@ -1,13 +1,3 @@
-package Catmandu::Fix::expand::__Expander;
-
-use Catmandu::Sane;
-
-our $VERSION = '0.9504';
-
-use parent 'CGI::Expand';
-
-sub max_array { 1000000 }
-
 package Catmandu::Fix::expand;
 
 use Catmandu::Sane;
@@ -16,7 +6,7 @@ our $VERSION = '0.9504';
 
 use Moo;
 use namespace::clean;
-use Catmandu::Fix::expand::__Expander ();
+use Catmandu::Fix::expand::Expander ();
 use Catmandu::Fix::Has;
 
 has sep => (fix_opt => 1, default => sub { undef });
@@ -35,7 +25,7 @@ sub fix {
         $data = $new_ref;
     }
 
-    Catmandu::Fix::expand::__Expander->expand_hash($data);
+    Catmandu::Fix::expand::Expander->expand_hash($data);
 }
 
 1;
