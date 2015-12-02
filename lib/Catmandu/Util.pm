@@ -2,7 +2,7 @@ package Catmandu::Util;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Exporter qw(import);
 use Sub::Quote ();

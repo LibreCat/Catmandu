@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+0.9505  2015-12-02 10:36:58 CET
   - expand, collapse and vacuum fixes handle large arrays
   - more pod
 

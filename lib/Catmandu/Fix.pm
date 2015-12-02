@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
