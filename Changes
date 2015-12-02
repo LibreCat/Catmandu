@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - expand, collapse and vacuum fixes handle large arrays
+  - more pod
 
 0.9504  2015-11-03 11:30:48 CET
   - fix dereferencing bug in Util::is_string
