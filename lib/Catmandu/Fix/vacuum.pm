@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '0.9504';
 
 use Moo;
-use CGI::Expand ();
+use Catmandu::Expander ();
 use Catmandu::Fix::Bind::visitor;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -15,7 +15,7 @@ sub fix {
 
     my $ref = eval {
       # This can die with 'Unknown reference type' when the data is blessed
-      CGI::Expand->collapse_hash($data);
+      Catmandu::Expander->collapse_hash($data);
    };
 
    # Try to unbless data
@@ -31,7 +31,7 @@ sub fix {
          $item;
       });
 
-      $ref = CGI::Expand->collapse_hash($data);
+      $ref = Catmandu::Expander->collapse_hash($data);
    }
 
     for my $key (keys %$ref) {
@@ -39,7 +39,7 @@ sub fix {
         delete $ref->{$key} unless defined($value) && length $value && $value =~ /\S/; 
     }
     
-    CGI::Expand->expand_hash($ref);
+    Catmandu::Expander->expand_hash($ref);
 }
 
 1;

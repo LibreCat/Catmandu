@@ -6,7 +6,7 @@ our $VERSION = '0.9504';
 
 use Moo;
 use namespace::clean;
-use Catmandu::Fix::expand::Expander ();
+use Catmandu::Expander ();
 use Catmandu::Fix::Has;
 
 has sep => (fix_opt => 1, default => sub { undef });
@@ -25,7 +25,7 @@ sub fix {
         $data = $new_ref;
     }
 
-    Catmandu::Fix::expand::Expander->expand_hash($data);
+    Catmandu::Expander->expand_hash($data);
 }
 
 1;

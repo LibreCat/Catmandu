@@ -1,4 +1,4 @@
-package Catmandu::Fix::expand::Expander;
+package Catmandu::Expander;
 
 use Catmandu::Sane;
 
