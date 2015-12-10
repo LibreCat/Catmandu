@@ -1,4 +1,4 @@
-package Catmandu::Cmd::move;
+package Catmandu::Cmd::copy;
 
 use Catmandu::Sane;
 
