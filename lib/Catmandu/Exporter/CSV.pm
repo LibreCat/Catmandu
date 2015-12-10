@@ -24,7 +24,7 @@ has fields => (
         $self->{fields} = _coerce_list($fields);
         if (ref $fields and ref $fields eq 'HASH') {
             $self->{header} = [
-                map { $fields->{$_} // $_ } @{$self->{fields}} 
+                map { $fields->{$_} // $_ } @{$self->{fields}}
             ];
         }
     },
@@ -43,7 +43,7 @@ sub _build_csv {
         binary => 1,
         eol => "\n",
         sep_char => $self->sep_char,
-        always_quote => $self->always_quote,        
+        always_quote => $self->always_quote,
         quote_char => $self->quote_char ? $self->quote_char : undef,
         escape_char => $self->escape_char ? $self->escape_char : undef,
     });
@@ -62,12 +62,11 @@ sub add {
         $val;
     } @$fields];
     my $fh = $self->fh;
-    # We need to wait for the first row that can be printed to provide us
-    # with an header...
-    if (!defined($self->{__seen_header__}) && $self->header) {
+    # we need to wait for the first row that can be printed to provide us with
+    # a header
+    if (!$self->count && $self->header) {
         $self->csv->print($fh, ref $self->header ? $self->header : $fields);
     }
-    $self->{__seen_header__} = 1;
     $self->csv->print($fh, $row);
 }
 

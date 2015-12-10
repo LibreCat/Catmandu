@@ -6,44 +6,32 @@ our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
-use Catmandu::Fix;
 use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "query|q=s", "" ],
+        [ "cql-query|q=s", "" ],
+        [ "query=s", "" ],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my $from_args = [];
-    my $from_opts = {};
-
-    for (my $i = 0; $i < @$args; $i++) {
-        my $arg = $args->[$i];
-        if ($arg =~ s/^-+//) {
-            $arg =~ s/-/_/g;
-            $from_opts->{$arg} = $args->[++$i];
-        } else {
-            push @$from_args, $arg;
-        }
-    }
+    my ($from_args, $from_opts) = $self->_parse_options($args);
 
     my $from_bag = delete $from_opts->{bag};
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
-    if (defined $opts->query) {
-        $from->delete_by_query(query => $opts->query);
+    if ($opts->query // $opts->cql_query) {
+        $from->delete_by_query(
+            cql_query => $opts->cql_query,
+            query     => $opts->query,
+        );
     } else {
         $from->delete_all;
     }
 
     $from->commit;
-
-    unless ($from->count == 0) {
-        say STDERR "error: $from is not empty";
-    }
 }
 
 1;

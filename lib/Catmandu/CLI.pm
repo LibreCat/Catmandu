@@ -17,6 +17,7 @@ sub deleted_commands {
         Catmandu::Cmd::fix_info
         Catmandu::Cmd::importer_info
         Catmandu::Cmd::module_info
+        Catmandu::Cmd::move
         Catmandu::Cmd::store_info
     )];
 }

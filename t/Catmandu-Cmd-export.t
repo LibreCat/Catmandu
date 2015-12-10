@@ -17,11 +17,11 @@ require_ok $pkg;
 
 use Catmandu::CLI;
 
-my $result = test_app(qq|Catmandu::CLI| => [ qw(export -v test to JSON --fix t/myfixes.fix --limit 1) ]);
+my $result = test_app(qq|Catmandu::CLI| => [ qw(export -v test to JSON --fix t/myfixes.fix --total 1) ]);
 
 my @lines = split(/\n/,$result->stdout);
 
-ok @lines == 1 , 'test limit';
+ok @lines == 1 , 'test total';
 
 my $perl = decode_json($lines[0]);
 
@@ -33,4 +33,4 @@ is $result->error, undef, 'threw no exceptions' ;
 ## Next test can fail on buggy Perl installations
 #is $result->stderr, '', 'nothing sent to sderr' ;
 
-done_testing 7;
+done_testing;

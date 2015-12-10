@@ -54,6 +54,39 @@ sub description {
 sub command_opt_spec {}
 sub command {}
 
+# helpers
+sub _parse_options {
+    my ($self, $args) = @_;
+
+    my $a = my $from_args = [];
+    my $o = my $from_opts = {};
+    my $into_args = [];
+    my $into_opts = {};
+
+    for (my $i = 0; $i < @$args; $i++) {
+        my $arg = $args->[$i];
+        if ($arg eq 'to') {
+            $a = $into_args;
+            $o = $into_opts;
+        } elsif ($arg =~ s/^-+//) {
+            $arg =~ s/-/_/g;
+            if (exists $o->{$arg}) {
+                if (is_array_ref($o->{$arg})) {
+                    push @{$o->{$arg}}, $args->[++$i];
+                } else {
+                    $o->{$arg} = [$o->{$arg}, $args->[++$i]];
+                }
+            } else {
+                $o->{$arg} = $args->[++$i];
+            }
+        } else {
+            push @$a, $arg;
+        }
+    }
+
+    return $from_args, $from_opts, $into_args, $into_opts;
+}
+
 1;
 
 __END__

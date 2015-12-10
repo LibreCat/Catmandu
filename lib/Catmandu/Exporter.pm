@@ -107,7 +107,7 @@ An ARRAY of one or more fixes or file scripts to be applied to exported items.
 
 =head2 add
 
-Adds one object to be exported. 
+Adds one object to be exported.
 
 =head2 add_many
 
