@@ -123,7 +123,7 @@ sub io {
 sub read_file {
     my ($path) = @_;
     local $/;
-    open my $fh, "<", $path or Catmandu::Error->throw(qq(can't open "$path" for reading));
+    open my $fh, "<:encoding(UTF-8)", $path or Catmandu::Error->throw(qq(can't open "$path" for reading));
     my $str = <$fh>;
     close $fh;
     $str;
@@ -131,6 +131,7 @@ sub read_file {
 
 sub read_io {
     my ($io) = @_;
+    $io->binmode("encoding(UTF-8)");
     my @lines = ();
     while (<$io>) {
         push @lines, $_;
@@ -142,7 +143,7 @@ sub read_io {
 # Deprecated use tools like File::Slurp::Tiny
 sub write_file {
     my ($path, $str) = @_;
-    open my $fh, ">", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
+    open my $fh, ">:encoding(UTF-8)", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
     print $fh $str;
     close $fh;
     $path;
@@ -156,7 +157,7 @@ sub read_yaml {
 sub read_json {
     my $text = read_file($_[0]);
     # dies on error
-    JSON::XS::decode_json(read_file($_[0]));
+    JSON::XS->new->decode($text);
 }
 
 sub join_path {
