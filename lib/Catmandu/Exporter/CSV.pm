@@ -8,34 +8,14 @@ use Text::CSV;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Exporter';
+with 'Catmandu::TabularExporter';
 
-has csv          => (is => 'ro', lazy => 1, builder => 1);
+has csv          => (is => 'lazy');
 has sep_char     => (is => 'ro', default => sub { ',' });
 has quote_char   => (is => 'ro', default => sub { '"' });
 has escape_char  => (is => 'ro', default => sub { '"' });
 has always_quote => (is => 'ro');
-has header       => (is => 'lazy', default => sub { 1 });
-
-has fields => (
-    is      => 'rw',
-    trigger => sub {
-        my ($self, $fields) = @_;
-        $self->{fields} = _coerce_list($fields);
-        if (ref $fields and ref $fields eq 'HASH') {
-            $self->{header} = [
-                map { $fields->{$_} // $_ } @{$self->{fields}}
-            ];
-        }
-    },
-);
-
-sub _coerce_list {
-    my $fields = $_[0];
-    if (ref $fields eq 'ARRAY') { return $fields }
-    if (ref $fields eq 'HASH')  { return [sort keys %$fields] }
-    return [split ',', $fields];
-}
+has header       => (is => 'ro', default => sub { 1 });
 
 sub _build_csv {
     my ($self) = @_;
@@ -51,8 +31,6 @@ sub _build_csv {
 
 sub add {
     my ($self, $data) = @_;
-    return undef unless defined $data;
-    $self->fields([ sort keys %$data ]) unless $self->fields;
     my $fields = $self->fields;
     my $row = [map {
         my $val = $data->{$_} // "";
@@ -62,11 +40,12 @@ sub add {
         $val;
     } @$fields];
     my $fh = $self->fh;
-    # we need to wait for the first row that can be printed to provide us with
-    # a header
+
+    # header
     if (!$self->count && $self->header) {
-        $self->csv->print($fh, ref $self->header ? $self->header : $fields);
+        $self->csv->print($fh, $self->columns || $fields);
     }
+
     $self->csv->print($fh, $row);
 }
 
