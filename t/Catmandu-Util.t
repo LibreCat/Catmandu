@@ -393,7 +393,10 @@ is Catmandu::Util::capitalize("école") , "École" , 'capitalize';
 
 is Catmandu::Util::human_number(64354) , "64,354" , 'human_number';
 
+is Catmandu::Util::human_byte_size(10) , "10 bytes" , 'human_byte_size';
+is Catmandu::Util::human_byte_size(10005) , "10.01 KB" , 'human_byte_size';
 is Catmandu::Util::human_byte_size(10005000) , "10.01 MB" , 'human_byte_size';
+is Catmandu::Util::human_byte_size(10005000000) , "10.01 GB" , 'human_byte_size';
 
 is Catmandu::Util::human_content_type('application/x-dos_ms_excel') , 'Excel' , 'human_content_type';
 
@@ -401,4 +404,4 @@ is Catmandu::Util::xml_declaration() , qq(<?xml version="1.0" encoding="UTF-8"?>
 
 is Catmandu::Util::xml_escape("<>'&") , '&lt;&gt;&apos;&amp;' , 'xml_escape';
 
-done_testing 531;
+done_testing 534;

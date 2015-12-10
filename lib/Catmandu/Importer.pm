@@ -46,6 +46,7 @@ has variables => (is => 'ro', predicate => 1);
 has fh => (is => 'ro', lazy => 1, builder => 1);
 has encoding => (is => 'ro', builder=> 1);
 has data_path => (is => 'ro');
+has user_agent => (is => 'ro');
 has http_method => (is => 'lazy');
 has http_headers => (is => 'lazy');
 has http_agent => (is => 'ro', predicate => 1);
@@ -53,7 +54,7 @@ has http_max_redirect => (is => 'ro', predicate => 1);
 has http_timeout => (is => 'ro', predicate => 1);
 has http_verify_hostname => (is => 'ro', default => sub { 1 });
 has http_body => (is => 'ro', predicate => 1);
-has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => undef);
+has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => 'user_agent');
 
 sub _build_encoding {
     ':utf8';
