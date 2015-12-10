@@ -33,7 +33,7 @@ sub emit {
 
     $join_char   = $fixer->emit_string($join_char);
       
-      my $vals_var = $fixer->generate_var;
+    my $vals_var = $fixer->generate_var;
     my $perl     = $fixer->emit_declare_vars($vals_var, '[]');
 
     for my $val (@parsed_values) {
@@ -88,7 +88,7 @@ Catmandu::Fix::paste - concatenate path values
    paste(my.string,a,b,c,d,join_char:", ")  # my.string: eeny, meeny, miny, moe
 
    # Paste literal strings with a tilde sign
-   paste(my.string,~Hi,a,~,how are you?)    # my.string: Hi eeny ,how are you?
+   paste(my.string,~Hi,a,~how are you?)    # my.string: Hi eeny how are you?
 
 =head1 DESCRIPTION
 
