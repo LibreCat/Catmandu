@@ -62,12 +62,11 @@ sub add {
         $val;
     } @$fields];
     my $fh = $self->fh;
-    # We need to wait for the first row that can be printed to provide us
-    # with an header...
-    if (!defined($self->{__seen_header__}) && $self->header) {
+    # we need to wait for the first row that can be printed to provide us with
+    # a header
+    if (!$self->count && $self->header) {
         $self->csv->print($fh, ref $self->header ? $self->header : $fields);
     }
-    $self->{__seen_header__} = 1;
     $self->csv->print($fh, $row);
 }
 
