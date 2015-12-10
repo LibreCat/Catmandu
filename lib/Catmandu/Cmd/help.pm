@@ -29,12 +29,12 @@ my %MODULES = (
         ],
     },
     Store => {
-        re => qr/^(store|move)$/i,
+        re => qr/^(store|copy)$/i,
         usage => [
             "catmandu import ... to %n [options]",
-            "catmandu move   ... to %n [options]",
+            "catmandu copy   ... to %n [options]",
             "catmandu export %n [options] ...",
-            "catmandu move   %n [options] ...",
+            "catmandu copy   %n [options] ...",
         ]
     },
     Fix => {

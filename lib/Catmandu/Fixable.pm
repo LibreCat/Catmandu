@@ -12,9 +12,7 @@ use namespace::clean;
 has _fixer => (
     is => 'ro',
     init_arg => 'fix',
-    coerce => sub {
-        is_instance($_[0]) ? $_[0] : Catmandu->fixer($_[0]);
-    },
+    coerce => sub { Catmandu->fixer($_[0]) },
 );
 
 1;

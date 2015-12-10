@@ -141,8 +141,13 @@ sub store {
 
 sub fixer {
     my $self = shift;
-    if (ref $_[0]) {
+
+    if (is_array_ref($_[0])) {
         return Catmandu::Fix->new(fixes => $_[0]);
+    }
+
+    if (ref($_[0])) {
+        return Catmandu::Fix->new(fixes => [$_[0]]);
     }
 
     my $key = $_[0] || $self->default_fixer;

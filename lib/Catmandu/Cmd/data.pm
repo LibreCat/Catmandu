@@ -112,4 +112,24 @@ __END__
 
 Catmandu::Cmd::data - store, index, search, import, export or convert objects
 
+=head1 DEPRECIATION NOTICE
+
+This fix is deprecated, Please use these commands instead:
+
+=over 4
+
+=item L<Catmandu::Cmd::convert>
+
+=item L<Catmandu::Cmd::copy>
+
+=item L<Catmandu::Cmd::import>
+
+=item L<Catmandu::Cmd::export>
+
+=item L<Catmandu::Cmd::count>
+
+=item L<Catmandu::Cmd::delete>
+
+=back
+
 =cut
