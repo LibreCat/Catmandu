@@ -66,7 +66,11 @@ $i = T::Importer->new( user_agent => user_agent() , file => 'http://demo.org/{id
 is $i->file , "http://demo.org/1234";
 is $i->readall , "test1234" , "read from http (file + variables)";
 
-$i = T::Importer->new( user_agent => user_agent() , file => 'http://demo.org/{id}' , variables => { id => [qw(red green blue)]});
+$i = T::Importer->new( user_agent => user_agent() , file => 'http://demo.org/{1},{2},{3}' , variables => [qw(red green blue)]);
+is $i->file , "http://demo.org/red,green,blue";
+is $i->readall , "RED-GREEN-BLUE" , "read from http (file + variables list)";
+
+$i = T::Importer->new( user_agent => user_agent() , file => 'http://demo.org/{1},{2},{3}' , variables => "red,green,blue" );
 is $i->file , "http://demo.org/red,green,blue";
 is $i->readall , "RED-GREEN-BLUE" , "read from http (file + variables list)";
 

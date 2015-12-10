@@ -67,6 +67,7 @@ my %module_build_args = (
     "Log::Any::Test" => "1.03",
     "Test::Deep" => "0.112",
     "Test::Exception" => "0.32",
+    "Test::LWP::UserAgent" => 0,
     "Test::More" => "0.99",
     "Test::Pod" => 0
   }
@@ -78,6 +79,7 @@ my %fallback_build_requires = (
   "Module::Build" => "0.28",
   "Test::Deep" => "0.112",
   "Test::Exception" => "0.32",
+  "Test::LWP::UserAgent" => 0,
   "Test::More" => "0.99",
   "Test::Pod" => 0
 );
