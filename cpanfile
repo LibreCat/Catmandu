@@ -9,6 +9,7 @@ on 'test', sub {
   requires 'Test::LWP::UserAgent' , 0;
   requires 'Log::Log4perl' , 0;
   requires 'Log::Any::Adapter::Log4perl', 0;
+  requires 'Perl::Tidy', 0;
 };
 
 requires 'App::Cmd', '0.33';
