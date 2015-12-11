@@ -33,11 +33,23 @@ like $result->stdout , qr/commands:/, 'printed what we expected';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
+$result = test_app('Catmandu::CLI' => [ qw(--help) ]);
+
+like $result->stdout , qr/commands:/, 'printed what we expected';
+is $result->error, undef, 'threw no exceptions' ;
+is $result->stderr, '', 'nothing sent to sderr' ;
+
 $result = test_app('Catmandu::CLI' => [ qw(version) ]);
 
 like $result->stdout , qr/version $Catmandu::VERSION/, 'printed what we expected';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
-done_testing 14;
+$result = test_app('Catmandu::CLI' => [ qw(--version) ]);
+
+like $result->stdout , qr/version $Catmandu::VERSION/, 'printed what we expected';
+is $result->error, undef, 'threw no exceptions' ;
+is $result->stderr, '', 'nothing sent to sderr' ;
+
+done_testing 20;
 

@@ -9,8 +9,6 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has exporters => (is => 'ro', default => sub { [] });
-
 sub add {}
 
 1;

@@ -46,6 +46,7 @@ has variables => (is => 'ro', predicate => 1);
 has fh => (is => 'ro', lazy => 1, builder => 1);
 has encoding => (is => 'ro', builder=> 1);
 has data_path => (is => 'ro');
+has user_agent => (is => 'ro');
 has http_method => (is => 'lazy');
 has http_headers => (is => 'lazy');
 has http_agent => (is => 'ro', predicate => 1);
@@ -53,7 +54,7 @@ has http_max_redirect => (is => 'ro', predicate => 1);
 has http_timeout => (is => 'ro', predicate => 1);
 has http_verify_hostname => (is => 'ro', default => sub { 1 });
 has http_body => (is => 'ro', predicate => 1);
-has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => undef);
+has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => 'user_agent');
 
 sub _build_encoding {
     ':utf8';
@@ -89,9 +90,12 @@ sub _build_fh {
 
         if ($self->has_http_body) {
             $body = $self->http_body;
+            
             if (ref $body) {
                 $body = $self->serialize($body);
-            } elsif ($self->has_variables) {
+            }
+
+            if ($self->has_variables) {
                 my $vars = $self->variables;
                 if (is_hash_ref($vars)) { # named variables
                     for my $key (keys %$vars) {
@@ -290,17 +294,49 @@ These options are only relevant if C<file> is a url. See L<LWP::UserAgent> for d
 
 =over
 
+=item http_body
+
+Set the GET/POST message body.
+
 =item http_method
+
+Set the type of HTTP request 'GET', 'POST' , ...
 
 =item http_headers
 
+A reference to a HTTP::Headers objects.
+
+=back
+
+=head2 Set an own HTTP client
+
+=over 
+
+=item user_agent(LWP::UserAgent->new(...))
+
+Set an own HTTP client
+
+=back
+
+=head2 Alternative set the parameters of the default client
+
+=over
+
 =item http_agent
+
+A string containing the name of the HTTP client.
 
 =item http_max_redirect
 
+Maximum number of HTTP redirects allowed.
+
 =item http_timeout 
 
+Maximum execution time.
+
 =item http_verify_hostname
+
+Verify the SSL certificate.
 
 =back
 

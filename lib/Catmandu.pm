@@ -376,14 +376,15 @@ no name is given).  The NAME is set in the configuration file (see 'importer').
 
 =head2 export($data,[NAME])
 
-Export data using a default or named exporter.
+Export data using a default or named exporter or exporter instance.
 
     Catmandu->export({ foo=>'bar'});
 
     my $importer = Catmandu::Importer::Mock->new;
     Catmandu->export($importer, 'YAML', file => '/my/file');
     Catmandu->export($importer, 'my_exporter');
-    Catmandu->export($importer, 'my_exporter', foo => $bar);
+    Catmandu->export($importer, 'my_exporter', exporter_option => '...' , ...);
+    Catmantu->export($importer, Catmandu::Exporter::YAML->new);
 
 =head2 export_to_string
 

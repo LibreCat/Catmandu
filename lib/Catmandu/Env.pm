@@ -186,6 +186,9 @@ sub importer {
 sub exporter {
     my $self = shift;
     my $name = shift;
+
+    return $name if (is_invocant($name) && ref($name) =~ /^Catmandu::Exporter/);
+    
     my $ns = $self->exporter_namespace;
     if (exists $self->config->{exporter}) {
         if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {

@@ -74,4 +74,44 @@ if ($^O ne 'MSWin32') { # /dev/null required
     like $result->stderr , qr/Catmandu::Exporter::Testing123/ , 'wrong exporter error';
 }
 
+{
+    my $result = test_app(qq|Catmandu::CLI| => [ qw(-D convert Null to Null)]);
+    like $result->stderr , qr/debug activated/ , 'debug activated';
+}
+
+{
+    Catmandu->config->{log4perl} = <<EOF;
+log4perl.category.Catmandu=DEBUG,STDERR
+log4perl.categoty.Catmandu::Fix::log=TRACE,STDERR
+
+log4perl.appender.STDOUT=Log::Log4perl::Appender::Screen
+log4perl.appender.STDOUT.stderr=0
+log4perl.appender.STDOUT.utf8=1
+
+log4perl.appender.STDOUT.layout=PatternLayout
+log4perl.appender.STDOUT.layout.ConversionPattern=%d [%P] - %p %l %M time=%r : %m%n
+
+log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
+log4perl.appender.STDERR.stderr=1
+log4perl.appender.STDERR.utf8=1
+
+log4perl.appender.STDERR.layout=PatternLayout
+log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %l : %m%n
+EOF
+    my $result = test_app(qq|Catmandu::CLI| => [ qw(-D convert Null to Null)]);
+    like $result->stderr , qr/defined in catmandu\.yml/ , 'debug activated via catmandu.yml';
+}
+
+{
+    Catmandu->config->{log4perl} = 't/log4perl.conf';
+    my $result = test_app(qq|Catmandu::CLI| => [ qw(-D convert Null to Null)]);
+    like $result->stderr , qr/file: t\/log4perl\.conf/ , 'debug activated via t/log4perl.conf';
+}
+
+{
+    my $result = test_app(qq|Catmandu::CLI| => [ qw(convert JSON --file http://google.com/nonononono to Null)]);
+    like $result->stderr , qr/Oops! Got a HTTP error/ , 'Got an HTTP error';
+}
+
+
 done_testing;
