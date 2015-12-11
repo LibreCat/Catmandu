@@ -30,6 +30,11 @@ Catmandu::Exporter::YAML - a YAML exporter
 
 =head1 SYNOPSIS
 
+    # From the commandline
+    $ catmandu convert JSON --fix myfixes to YAML < /tmp/data.json
+
+    # From Perl
+
     use Catmandu::Exporter::YAML;
 
     # Print to STDOUT

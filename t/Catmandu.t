@@ -6,6 +6,8 @@ use Test::More;
 use Test::Exception;
 use Log::Any::Adapter;
 use Data::Dumper;
+use Cwd;
+use File::Spec;
 
 my $pkg;
 BEGIN {
@@ -56,4 +58,16 @@ isa_ok(Catmandu->fixer,'Catmandu::Fix','fixer test');
 
 like(Catmandu->export_to_string({ foo => 'bar'}, 'JSON'),qr/{"foo":"bar"}/,'export_to_string');
 
-done_testing 23;
+my $root = File::Spec->catfile(getcwd(),'t');
+
+is(Catmandu->root, $root, 'root');
+is_deeply(Catmandu->roots,[$root],'roots');
+
+is(Catmandu->default_importer_package,'JSON','default_importer_package');
+is(Catmandu->default_exporter_package,'JSON','default_exporter_package');
+
+my $exporter = Catmandu->exporter('Mock');
+Catmandu->export({ n => 1} , $exporter);
+is_deeply($exporter->as_arrayref,[{ n => 1}]);
+
+done_testing 28;
