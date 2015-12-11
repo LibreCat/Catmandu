@@ -27,7 +27,7 @@ my $perl = decode_json($lines[0]);
 
 ok $perl, 'got JSON';
 is $perl->{value} , 'Sol' , 'got data';
-is $perl->{utf8_name} , 'काठमाडौं' , 'got utf8 data';
+is $perl->{utf8_name} , 'ვეპხის ტყაოსანი შოთა რუსთაველი' , 'got utf8 data';
 is $result->error, undef, 'threw no exceptions' ;
 
 ## Next test can fail on buggy Perl installations

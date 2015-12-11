@@ -63,9 +63,14 @@ throws_ok {
     $fixer->fix({});
 } 'Catmandu::FixError';
 
-
 $fixer = Catmandu::Fix->new(fixes => ['t/myfixes.fix']);
 ok $fixer;
-is_deeply $fixer->fix({}), {utf8_name => 'काठमाडौं'} , 'fixing utf8';
+is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'} , 'fixing utf8';
 
-done_testing 26;
+open(FH,'<:encoding(UTF-8)','t/myfixes.fix');
+$fixer = Catmandu::Fix->new(fixes => [\*FH]);
+ok $fixer;
+is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'} , 'fixing utf8';
+close(FH);
+
+done_testing 28;

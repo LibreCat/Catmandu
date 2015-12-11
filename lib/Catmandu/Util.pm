@@ -131,7 +131,7 @@ sub read_file {
 
 sub read_io {
     my ($io) = @_;
-    $io->binmode("encoding(UTF-8)");
+    $io->binmode("encoding(UTF-8)") if ($io->can('binmode'));
     my @lines = ();
     while (<$io>) {
         push @lines, $_;
