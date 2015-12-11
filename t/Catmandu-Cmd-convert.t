@@ -26,7 +26,7 @@ is $result->error, undef, 'threw no exceptions' ;
 # Next test can fail on buggy Perl installations
 ##is $result->stderr, '', 'nothing sent to sderr' ;
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(convert -v --start=2 --total=1 CSV --file t/planets.csv to CSV --header 0 --fields english,latin) ]);
+$result = test_app(qq|Catmandu::CLI| => [ qw(convert -v --start=2 --total=1 CSV --file t/planets.csv to CSV --header 0 --fields), "english,latin" ]);
 is $result->stdout, "Moon,Luna\n", 'start and limit' ;
 
 done_testing 6;

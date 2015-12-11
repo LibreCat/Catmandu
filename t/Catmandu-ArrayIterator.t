@@ -41,7 +41,7 @@ $it->each(sub {
 
 $it->rewind;
 
-my $count = 0;
+$count = 0;
 $it->each_until(sub {
 	is shift->{n} , ++$count , "each ($count)";
 	return $count == 2 ? undef : 1;

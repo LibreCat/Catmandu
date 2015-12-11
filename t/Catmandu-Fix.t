@@ -4,6 +4,7 @@ use utf8;
 use warnings;
 use Test::More;
 use Test::Exception;
+use IO::File;
 use Catmandu::Importer::Mock;
 use Catmandu::Util qw(:is);
 
@@ -22,6 +23,8 @@ is_deeply $fixer->fix({}) , {} , 'fixing hashes';
 is_deeply $fixer->fix({name => 'value'}) , {name => 'value'};
 is_deeply $fixer->fix({name => { name => 'value'} }) , {name => { name => 'value'} };
 is_deeply $fixer->fix({name => [ { name => 'value'} ] }) , { name => [ { name => 'value'} ] };
+
+throws_ok { $fixer->fix(IO::File->new("<t/myfixes.fix")) } 'Catmandu::BadArg' , 'throws Catmandu::BadArg';
 
 is_deeply $fixer->fix([]), [] , 'fixing arrays';
 is_deeply $fixer->fix([{name => 'value'}]) , [{name => 'value'}];
@@ -73,4 +76,8 @@ ok $fixer;
 is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'} , 'fixing utf8';
 close(FH);
 
-done_testing 28;
+$fixer = Catmandu::Fix->new(fixes => [IO::File->new('< t/myfixes.fix')]);
+ok $fixer;
+is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'} , 'fixing utf8';
+
+done_testing 31;
