@@ -34,7 +34,7 @@ has collect_fields => (
 
 around add => sub {
     my ($orig, $self, $data) = @_;
-    $self->_set_fields([sort keys %$data]) unless $self->fields;
+    $self->_set_fields($data) unless $self->fields;
     $orig->($self, $data);
 };
 
@@ -59,13 +59,13 @@ around add_many => sub {
             }
         }
 
-        my %keys;
+        my $keys = {};
         for my $data (@$coll) {
             for my $key (keys %$data) {
-                $keys{$key} ||= 1;
+                $keys->{$key} ||= 1;
             }
         }
-        $self->_set_fields([sort keys %keys]);
+        $self->_set_fields($keys);
 
         $many = $coll;
     }
@@ -81,6 +81,35 @@ __END__
 
 =head1 NAME
 
-Catmandu::TabularExporter - base role for exporters that export a tabular format like CSV
+Catmandu::TabularExporter - base role for tabular exporters like CSV
+
+=head1 DESCRIPTION
+
+See L<Catmandu::Exporter> for the base functionality of this role. This role
+adds some functionality tailored to tabular or columnar exporters.
+
+=head1 CONFIGURATION
+
+=over
+
+=item fields
+
+The fields to be mapped. Can be an arrayref, example hashref or comma separated
+string. If missing, the fields of the first record encountered will be used. If
+C<collect_fields> is true, all fields names in the record stream will be
+collected first.
+
+=item columns
+
+Optional custom column labels. Can be an arrayref, example hashref or comma
+separated string.
+
+=item collect_fields
+
+See C<fields> for a description. Note that this option will cause all records
+in the stream to be buffered in memory.
+
+=back
 
 =cut
+

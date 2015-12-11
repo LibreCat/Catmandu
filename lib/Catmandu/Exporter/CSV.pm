@@ -86,9 +86,9 @@ Catmandu::Exporter::CSV - a CSV exporter
 
 This C<Catmandu::Exporter> exports items as rows with comma-separated values
 (CSV). Serialization is based on L<Text::CSV>. A header line with field names
-will be included if option C<header> is set. Field names can be read from the
-first item exported or set by option C<fields>. Newlines and tabulator values
-are in field values are escaped as C<\n>, C<\r>, and C<\t>.
+will be included if option C<header> is set. See L<Catmandu::TabularExporter>
+on how to configure the field mapping and column names. Newlines and tabulator
+values in field values are escaped as C<\n>, C<\r>, and C<\t>.
 
 =head1 CONFIGURATION
 
@@ -128,21 +128,25 @@ Character for escaping inside quoted field (C<"> by default)
 
 =item fields
 
-List of fields to be used as columns, given as array reference, comma-separated
-string, or hash reference.
+See L<Catmandu::TabularExporter>.
+
+=item columns
+
+See L<Catmandu::TabularExporter>.
 
 =item header
 
-Include a header line with the column names, if set to C<1> (the default).
-Custom field names can be supplied as hash reference. By default field names
-are used as as column names.
+Includes a header line with the column names, if set to C<1> (the default).
+See L<Catmandu::TabularExporter> on how to configure the field mapping and
+column names.
 
 =back
 
 =head1 METHODS
 
-See L<Catmandu::Exporter>, L<Catmandu::Addable>, L<Catmandu::Fixable>,
-L<Catmandu::Counter>, and L<Catmandu::Logger> for a full list of methods.
+See L<Catmandu::TabularExporter>, L<Catmandu::Exporter>, L<Catmandu::Addable>,
+L<Catmandu::Fixable>, L<Catmandu::Counter>, and L<Catmandu::Logger> for a full
+list of methods.
 
 =head1 SEE ALSO
 
