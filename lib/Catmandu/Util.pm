@@ -308,7 +308,7 @@ sub array_to_sentence {
     $join_last //= ' and ';
     my $size = scalar @$arr;
     $size > 2
-        ? join($join_last, join($join, @$arr[0..$size-1]), $arr->[-1])
+        ? join($join_last, join($join, @$arr[0..$size-2]), $arr->[-1])
         : join($join_last, @$arr);
 }
 

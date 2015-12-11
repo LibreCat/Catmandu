@@ -383,13 +383,40 @@ is Catmandu::Util::array_sum([1,2,3,4,5,6,7,8,9,10]) , 55 , 'array_sum';
 
 ok Catmandu::Util::array_includes([{ foo => [ { bar => 1}]}] ,  {foo => [ { bar => 1}]} ) , 'array_includes';
 
+ok ! Catmandu::Util::array_includes([{ foo => [ { bar => 1}]}] ,  {foo => [ { bar => 5}]} ) , '!array_includes';
+
 ok Catmandu::Util::array_any([0,1,2], sub { return 1 if shift == 2}) , 'array_any';
+
+ok ! Catmandu::Util::array_any([0,1,2], sub { return 1 if shift == 100}) , 'array_any';
+
+is Catmandu::Util::array_to_sentence([1,2]) , '1 and 2' , 'array_to_sentence';
+
+is Catmandu::Util::array_to_sentence([1,2,3]) , '1, 2 and 3' , 'array_to_sentence';
 
 is_deeply Catmandu::Util::array_rest([0,1,2]) , [1,2] , 'array_rest';
 
 is_deeply Catmandu::Util::array_uniq([0,1,2,2,2,2,3,3,2,3]) , [0,1,2,3] , 'array_uniq';
 
+is_deeply Catmandu::Util::hash_merge({ a => { b => 1 } } , { a => { c => 2 } }) , { a => { b => 1 , c => 2 } } , 'hash_merge';
+
+is Catmandu::Util::as_utf8("école") , "école" , 'as_utf8';
+
+is Catmandu::Util::trim("   \r\n     bla    \t\t\t\r\n") , "bla" , 'trim';
+
 is Catmandu::Util::capitalize("école") , "École" , 'capitalize';
+
+ok Catmandu::Util::is_same({ a => [ { b => 1 , c => 1 }]} , { a => [ { c => 1 , b => 1 }]}) , 'is_same';
+
+ok Catmandu::Util::is_different({ a => [ { b => 1 , c => 1 }]} , { a => [ { d => 1 , b => 1 }]}) , 'is_different';
+
+ok Catmandu::Util::check_same({ a => [ { b => 1 , c => 1 }]} , { a => [ { c => 1 , b => 1 }]}) , 'check_same';
+
+throws_ok { Catmandu::Util::check_same({ a => [ { b => 1 , c => 1 }]} , { a => [ { d => 1 , b => 1 }]}) } 'Catmandu::BadVal' , '!check_same';
+
+ok Catmandu::Util::check_different({ a => [ { b => 1 , c => 1 }]} , { a => [ { b => 1 , b => 1 }]}) , 'check_different';
+
+throws_ok { Catmandu::Util::check_different({ a => [ { b => 1 , c => 1 }]} , { a => [ { c => 1 , b => 1 }]}) } 'Catmandu::BadVal' , '!check_different';
+
 
 is Catmandu::Util::human_number(64354) , "64,354" , 'human_number';
 
@@ -404,4 +431,4 @@ is Catmandu::Util::xml_declaration() , qq(<?xml version="1.0" encoding="UTF-8"?>
 
 is Catmandu::Util::xml_escape("<>'&") , '&lt;&gt;&apos;&amp;' , 'xml_escape';
 
-done_testing 534;
+done_testing 547;
