@@ -74,6 +74,22 @@ $i = T::Importer->new( user_agent => user_agent() , file => 'http://demo.org/{1}
 is $i->file , "http://demo.org/red,green,blue";
 is $i->readall , "RED-GREEN-BLUE" , "read from http (file + variables list)";
 
+$i = T::Importer->new(user_agent => user_agent() , file => 'http://demo.org/post' , http_method => 'POST' , http_body => '=={id}==' , variables => { id => 1234} );
+is $i->file , "http://demo.org/post";
+is $i->readall , "POST" , "read from http (file + variables list + post request)";
+
+$i = T::Importer->new(user_agent => user_agent() , file => 'http://demo.org/post' , http_method => 'POST',  http_body => '=={id}==' , variables => "red,green,blue" );
+is $i->file , "http://demo.org/post";
+is $i->readall , "POST" , "read from http (file + variables list + post request)";
+
+$i = T::Importer->new(user_agent => user_agent() , file => 'http://demo.org/not-exsists' , http_method => 'POST',  http_body => '=={id}==' , variables => "red,green,blue" );
+
+throws_ok { $i->readall } 'Catmandu::HTTPError' , "throws an error on non-existing pages";
+
+$i = T::Importer->new(file => 'http://demo.org');
+
+is ref($i->_http_client) , 'LWP::UserAgent' , 'Got a real client';
+
 done_testing;
 
 sub user_agent  {
@@ -106,6 +122,16 @@ sub user_agent  {
             'OK' ,
             [ 'Content-Type' => 'text/plain'] ,
             'RED-GREEN-BLUE'
+        )
+    );
+
+    $ua->map_response(
+        qr{^http://demo.org/post$},
+        HTTP::Response->new(
+            '200' ,
+            'OK' ,
+            [ 'Content-Type' => 'text/plain'] ,
+            'POST'
         )
     );
 
