@@ -1400,7 +1400,9 @@ Hello, World?
 <span class="co"># Remove the 900 fields</span>
 <span class="kw">marc_remove</span>(<span class="st">&#39;900&#39;</span>)
 <span class="co"># Add a marc field (in Catmandu::MARC 0.110)</span>
-<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1:<span class="st">&#39; &#39;</span> , ind2:<span class="st">&#39;1&#39;</span> , a:<span class="st">&#39;test123&#39;</span>)
+<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1, <span class="st">&#39; &#39;</span> , ind2, <span class="st">&#39;1&#39;</span> , a, <span class="st">&#39;test123&#39;</span>)
+<span class="co"># Add a marc field populated with data from your record</span>
+<span class="kw">marc_add</span>(<span class="st">&#39;245&#39;</span>, a , $.my.title.field, c , $.my.author.field)
 <span class="co"># Set a marc value of one (sub)field to a new value</span>
 <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">marc_set</span>(<span class="st">&#39;650p&#39;</span>,<span class="st">&#39;test&#39;</span>)
@@ -2697,7 +2699,9 @@ git push origin dev</code></pre></li>
 <span class="co"># Remove the 900 fields</span>
 <span class="kw">marc_remove</span>(<span class="st">&#39;900&#39;</span>)
 <span class="co"># Add a marc field (in Catmandu::MARC 0.110)</span>
-<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1:<span class="st">&#39; &#39;</span> , ind2:<span class="st">&#39;1&#39;</span> , a:<span class="st">&#39;test123&#39;</span>)
+<span class="kw">marc_add</span>(<span class="st">&#39;999&#39;</span>, ind1, <span class="st">&#39; &#39;</span> , ind2, <span class="st">&#39;1&#39;</span> , a, <span class="st">&#39;test123&#39;</span>)
+<span class="co"># Add a marc field populated with data from your record</span>
+<span class="kw">marc_add</span>(<span class="st">&#39;245&#39;</span>, a , $.my.title.field, c , $.my.author.field)
 <span class="co"># Set a marc value of one (sub)field to a new value</span>
 <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">marc_set</span>(<span class="st">&#39;650p&#39;</span>,<span class="st">&#39;test&#39;</span>)
