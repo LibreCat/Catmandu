@@ -107,7 +107,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#opensuse"><span class="toc-section-number">1.2.5</span> openSUSE</a></li>
 <li><a href="#raspbian-gnulinux-7-on-the-raspberry-pi-armhf"><span class="toc-section-number">1.2.6</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</a></li>
 <li><a href="#openbsd-53"><span class="toc-section-number">1.2.7</span> OpenBSD 53</a></li>
-<li><a href="#windows-mac-osx-linux"><span class="toc-section-number">1.2.8</span> Windows, Mac OSX, Linux</a></li>
+<li><a href="#osx"><span class="toc-section-number">1.2.8</span> OSX</a></li>
+<li><a href="#windows-mac-osx-linux"><span class="toc-section-number">1.2.9</span> Windows, Mac OSX, Linux</a></li>
 </ul></li>
 <li><a href="#concepts"><span class="toc-section-number">1.3</span> Concepts <a href="https://github.com/LibreCat/Catmandu/wiki/Concepts">✎</a></a><ul>
 <li><a href="#extended-features"><span class="toc-section-number">1.3.1</span> Extended features</a></li>
@@ -444,8 +445,16 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpan</span> App::cpanminus
 <span class="kw">cpanm</span> Catmandu</code></pre>
 </section>
+<section id="osx" class="level3">
+<h3><span class="header-section-number">1.2.8</span> OSX</h3>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">curl</span> -L http://install.perlbrew.pl <span class="kw">|</span> <span class="kw">bash</span> <span class="co"># installs perlbrew</span>
+<span class="kw">perlbrew</span> install perl-5.22.0  <span class="co"># installs a fresh, isolated perl base in your home folder</span>
+<span class="kw">perlbrew</span> switch perl-5.22.0 <span class="co"># use perl 5.22.0 binary instead of 5.18.0</span>
+<span class="kw">perlbrew</span> install-cpanm <span class="co"># install cpanm. (If next step fails somehow)</span>
+<span class="kw">cpanm</span> --interactive Task::Catmandu <span class="co"># install Catmandu</span></code></pre>
+</section>
 <section id="windows-mac-osx-linux" class="level3">
-<h3><span class="header-section-number">1.2.8</span> Windows, Mac OSX, Linux</h3>
+<h3><span class="header-section-number">1.2.9</span> Windows, Mac OSX, Linux</h3>
 <p>A <a href="https://registry.hub.docker.com/u/librecat/catmandu/">docker image of Catmandu</a> is build with each release. After <a href="https://docs.docker.com/installation/#installation">installation of docker</a> get and use the Catmandu image like this:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Upgrade to the latest version</span>
 <span class="kw">docker</span> pull librecat/catmandu
@@ -1267,6 +1276,41 @@ Hello, World?
 <span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
 <span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
 
+<span class="co"># replace the value with a formatted (sprintf-like) version</span>
+<span class="co"># e.g. numbers: </span>
+<span class="co">#         - 41</span>
+<span class="co">#         - 15</span>
+<span class="kw">format</span>(number,<span class="st">&quot;%-10.10d %-5.5d&quot;</span>) <span class="co"># numbers =&gt; &quot;0000000041 00015&quot;</span>
+<span class="co"># e.g. hash:</span>
+<span class="co">#        name: Albert</span>
+<span class="kw">format</span>(name,<span class="st">&quot;%-10s: %s&quot;</span>) <span class="co"># hash: &quot;name      : Albert&quot;</span>
+
+<span class="co"># date: &quot;2015-03-07&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(\d\d\d\d)-(\d\d)-(\d\d)&#39;</span>)
+<span class="co"># date: </span>
+<span class="co">#    - 2015</span>
+<span class="co">#    - 03</span>
+<span class="co">#    - 07</span>
+
+<span class="co">#  parses a text into an array or hash of values</span>
+<span class="co"># date: &quot;2015-03-07&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(\d\d\d\d)-(\d\d)-(\d\d)&#39;</span>)
+<span class="co"># date: </span>
+<span class="co">#    - 2015</span>
+<span class="co">#    - 03</span>
+<span class="co">#    - 07 </span>
+ 
+<span class="co"># date: &quot;2015-03-07&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(?&lt;year&gt;\d\d\d\d)-(?&lt;month&gt;\d\d)-(?&lt;day&gt;\d\d)&#39;</span>)
+<span class="co"># date:</span>
+<span class="co">#   year: &quot;2015&quot;</span>
+<span class="co">#   month: &quot;03&quot; </span>
+<span class="co">#   day: &quot;07&quot;</span>
+ 
+<span class="co"># date: &quot;abcd&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(\d\d\d\d)-(\d\d)-(\d\d)&#39;</span>)
+<span class="co"># date: &quot;abcd&quot;</span>
+
 <span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, sep_char:<span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
 <span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, default:test)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
 <span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, delete:1)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
@@ -1275,8 +1319,13 @@ Hello, World?
                                            <span class="co"># replace it with the data found</span>
 <span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, default:<span class="st">&#39;default value&#39;</span> , delete:1) 
 
+<span class="co"># Replace the data in foo.bar with an external file or url</span>
+<span class="kw">import</span>(foo.bar, JSON, file: <span class="st">&quot;http://foo.com/bar.json&quot;</span>, data_path: data.*)
+
 <span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, bag:authors, database_name:catalog)  <span class="co"># add matching values to a store as a side effect</span>
 
+<span class="kw">add_to_exporter</span>(data,CSV,header:1,file:/tmp/data.csv) <span class="co"># send the &#39;data&#39; path to an alternative exporter</span>
+<span class="kw">add_to_exporter</span>(.,CSV,header:1,file:/tmp/data.csv)    <span class="co"># send the complete record to an alternative exporter</span>
 
 <span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
 <span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
@@ -1284,16 +1333,18 @@ Hello, World?
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, uniq:1)                 <span class="co"># sort the values plus keep unique values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, reverse:1)              <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, numeric:1)              <span class="co"># sort numerical values</span>
+<span class="kw">uniq</span>(tags)                                 <span class="co"># strip duplicate values from an array</span>
 <span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
 <span class="kw">flatten</span>(deep)                              <span class="co"># {deep =&gt; [1, [2, 3], 4, [5, [6, 7]]]} =&gt; {deep =&gt; [1, 2, 3, 4, 5, 6, 7]}</span>
 
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
 <span class="kw">perlcode</span>(<span class="st">&quot;myscript.pl&quot;</span>)                    <span class="co"># Execute Perl code as fix function</span>
+<span class="kw">sleep</span>(1,SECOND)                            <span class="co"># Do nothing for one second</span>
 
 <span class="kw">split_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                     <span class="co"># marc:must:die -&gt; [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;]</span>
 <span class="kw">join_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                      <span class="co"># [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;] -&gt; marc:must:die</span>
-<span class="kw">retain_field</span>(<span class="st">&quot;id&quot;</span>)                         <span class="co"># delete any field except &#39;id&#39;</span>
+<span class="kw">retain</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;id2&quot;</span>,<span class="st">&quot;id3&quot;</span>)                   <span class="co"># delete any field except &#39;id&#39;, &#39;id2&#39;, &#39;id3&#39;</span>
 <span class="kw">replace_all</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)               <span class="co"># marc -&gt; mxrc</span>
 
 <span class="co"># Most functions can work also work on arrays. E.g.</span>
@@ -1321,6 +1372,10 @@ Hello, World?
 <span class="kw">from_json</span>(<span class="st">&#39;my.field&#39;</span>)                      <span class="co"># replace the json field with the parsed value</span>
 
 <span class="fu">nothing()</span>                                  <span class="co"># do nothing (used in benchmarking)</span>
+
+
+<span class="co"># Delete all the empty fields</span>
+<span class="fu">vacuum()</span>
 
 <span class="co"># Copy all 245 subfields into the my.title hash</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
@@ -1354,6 +1409,13 @@ Hello, World?
 <span class="co"># Map all 650 subjects into an array </span>
 <span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>, join:<span class="st">&#39;###&#39;</span>) 
 <span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
+
+<span class="co"># Include fixes from another file</span>
+<span class="kw">include</span>(<span class="st">&#39;/path/to/myfixes.txt&#39;</span>)
+
+<span class="co"># Send debug messages to a logger</span>
+<span class="kw">log</span>(<span class="st">&#39;test123&#39;</span>)
+<span class="kw">log</span>(<span class="st">&#39;hello world&#39;</span> , level =<span class="kw">&gt;</span> <span class="st">&#39;DEBUG&#39;</span>)
 
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
 <span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
@@ -1404,6 +1466,22 @@ Hello, World?
 
 <span class="kw">if</span> <span class="kw">less_than</span>(<span class="st">&#39;year&#39;</span>,1970)
   <span class="kw">add_field</span>(<span class="st">&#39;ancient&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># execute fixes if one path is contained in another</span>
+<span class="co"># foo =&gt; 1 , bar =&gt; [3,2,1]  =&gt; in(foo,bar) -&gt; true</span>
+<span class="kw">if</span> <span class="kw">in(foo</span>,bar<span class="kw">)</span>
+   <span class="kw">add_field</span>(test,ok)
+<span class="kw">end</span>
+
+<span class="co"># only execute fixes if all path values are the boolean true, 1 or &quot;true&quot;</span>
+<span class="kw">if</span> <span class="kw">is_true</span>(data.*.has_error)
+  <span class="kw">add_field</span>(error,yes)
+<span class="kw">end</span>
+
+<span class="co"># only execute fixes if all path values are the boolean true, 0 or &quot;false&quot;</span>
+<span class="kw">if</span> <span class="kw">is_false</span>(data.*.has_error)
+  <span class="kw">add_field</span>(error,no)
 <span class="kw">end</span>
 
 <span class="co"># Evaludates true when a marc (sub)field matches a regular expression</span>
@@ -1470,6 +1548,25 @@ Hello, World?
   <span class="co"># if all_match(name,nicolas)</span>
   <span class="co">#  reject()</span>
   <span class="co"># end</span>
+<span class="kw">end</span>
+
+<span class="co">#  run fixes that should run within a time limit</span>
+<span class="kw">do</span> <span class="kw">timeout</span>(time =<span class="kw">&gt;</span> 5, units =<span class="kw">&gt;</span> seconds)
+  <span class="kw">...</span>
+<span class="kw">end</span>
+
+<span class="co"># a binder that computes Fix-es for every element in record</span>
+<span class="kw">do</span> <span class="fu">visitor()</span>
+   <span class="co"># upcase all the &#39;name&#39; fields in the record</span>
+   <span class="kw">if</span> <span class="kw">all_match</span>(key,name)
+     <span class="kw">upcase</span>(scalar)
+   <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="co"># a binder runs fixes on records from an importer</span>
+<span class="kw">do</span> <span class="kw">importer</span>(OAI,url: <span class="st">&quot;http://lib.ugent.be/oai&quot;</span>) 
+  <span class="kw">retain</span>(_id)
+  <span class="kw">add_to_exporter</span>(.,YAML)
 <span class="kw">end</span></code></pre>
 </section>
 <section id="example-fix-script" class="level2">
@@ -2476,6 +2573,41 @@ git push origin dev</code></pre></li>
 <span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
 <span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
 
+<span class="co"># replace the value with a formatted (sprintf-like) version</span>
+<span class="co"># e.g. numbers: </span>
+<span class="co">#         - 41</span>
+<span class="co">#         - 15</span>
+<span class="kw">format</span>(number,<span class="st">&quot;%-10.10d %-5.5d&quot;</span>) <span class="co"># numbers =&gt; &quot;0000000041 00015&quot;</span>
+<span class="co"># e.g. hash:</span>
+<span class="co">#        name: Albert</span>
+<span class="kw">format</span>(name,<span class="st">&quot;%-10s: %s&quot;</span>) <span class="co"># hash: &quot;name      : Albert&quot;</span>
+
+<span class="co"># date: &quot;2015-03-07&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(\d\d\d\d)-(\d\d)-(\d\d)&#39;</span>)
+<span class="co"># date: </span>
+<span class="co">#    - 2015</span>
+<span class="co">#    - 03</span>
+<span class="co">#    - 07</span>
+
+<span class="co">#  parses a text into an array or hash of values</span>
+<span class="co"># date: &quot;2015-03-07&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(\d\d\d\d)-(\d\d)-(\d\d)&#39;</span>)
+<span class="co"># date: </span>
+<span class="co">#    - 2015</span>
+<span class="co">#    - 03</span>
+<span class="co">#    - 07 </span>
+ 
+<span class="co"># date: &quot;2015-03-07&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(?&lt;year&gt;\d\d\d\d)-(?&lt;month&gt;\d\d)-(?&lt;day&gt;\d\d)&#39;</span>)
+<span class="co"># date:</span>
+<span class="co">#   year: &quot;2015&quot;</span>
+<span class="co">#   month: &quot;03&quot; </span>
+<span class="co">#   day: &quot;07&quot;</span>
+ 
+<span class="co"># date: &quot;abcd&quot;</span>
+<span class="kw">parse_text</span>(date, <span class="st">&#39;(\d\d\d\d)-(\d\d)-(\d\d)&#39;</span>)
+<span class="co"># date: &quot;abcd&quot;</span>
+
 <span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, sep_char:<span class="st">&#39;|&#39;</span>)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value</span>
 <span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, default:test)  <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or set it to &#39;test&#39;</span>
 <span class="kw">lookup</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;dict.csv&quot;</span>, delete:1)    <span class="co"># lookup &#39;marc&#39; in dict.csv and replace the value or delete nothing found</span>
@@ -2484,8 +2616,13 @@ git push origin dev</code></pre></li>
                                            <span class="co"># replace it with the data found</span>
 <span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, default:<span class="st">&#39;default value&#39;</span> , delete:1) 
 
+<span class="co"># Replace the data in foo.bar with an external file or url</span>
+<span class="kw">import</span>(foo.bar, JSON, file: <span class="st">&quot;http://foo.com/bar.json&quot;</span>, data_path: data.*)
+
 <span class="kw">add_to_store</span>(<span class="st">&#39;authors.*&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, bag:authors, database_name:catalog)  <span class="co"># add matching values to a store as a side effect</span>
 
+<span class="kw">add_to_exporter</span>(data,CSV,header:1,file:/tmp/data.csv) <span class="co"># send the &#39;data&#39; path to an alternative exporter</span>
+<span class="kw">add_to_exporter</span>(.,CSV,header:1,file:/tmp/data.csv)    <span class="co"># send the complete record to an alternative exporter</span>
 
 <span class="kw">count</span>(<span class="st">&quot;myarray&quot;</span>)                           <span class="co"># count number of elements in an array or hash</span>
 <span class="kw">sum</span>(<span class="st">&quot;numbers&quot;</span>)                             <span class="co"># replace an array element with the sum of its values</span>
@@ -2493,16 +2630,18 @@ git push origin dev</code></pre></li>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, uniq:1)                 <span class="co"># sort the values plus keep unique values</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, reverse:1)              <span class="co"># revese sort</span>
 <span class="kw">sort_field</span>(<span class="st">&quot;tags&quot;</span>, numeric:1)              <span class="co"># sort numerical values</span>
+<span class="kw">uniq</span>(tags)                                 <span class="co"># strip duplicate values from an array</span>
 <span class="kw">filter</span>(<span class="st">&quot;tags&quot;</span>,<span class="st">&quot;[Cc]at&quot;</span>)                    <span class="co"># filter array values tags = [&quot;Cats&quot;,&quot;Dogs&quot;] =&gt; [&quot;Cats&quot;]</span>
 <span class="kw">flatten</span>(deep)                              <span class="co"># {deep =&gt; [1, [2, 3], 4, [5, [6, 7]]]} =&gt; {deep =&gt; [1, 2, 3, 4, 5, 6, 7]}</span>
 
 <span class="kw">cmd</span>(<span class="st">&quot;java MyClass&quot;</span>)                        <span class="co"># Use an external program that can read JSON </span>
                                            <span class="co"># from stdin and write JSON to stdout</span>
 <span class="kw">perlcode</span>(<span class="st">&quot;myscript.pl&quot;</span>)                    <span class="co"># Execute Perl code as fix function</span>
+<span class="kw">sleep</span>(1,SECOND)                            <span class="co"># Do nothing for one second</span>
 
 <span class="kw">split_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                     <span class="co"># marc:must:die -&gt; [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;]</span>
 <span class="kw">join_field</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;:&quot;</span>)                      <span class="co"># [&#39;marc&#39;,&#39;must&#39;,&#39;die&#39;] -&gt; marc:must:die</span>
-<span class="kw">retain_field</span>(<span class="st">&quot;id&quot;</span>)                         <span class="co"># delete any field except &#39;id&#39;</span>
+<span class="kw">retain</span>(<span class="st">&quot;id&quot;</span>,<span class="st">&quot;id2&quot;</span>,<span class="st">&quot;id3&quot;</span>)                   <span class="co"># delete any field except &#39;id&#39;, &#39;id2&#39;, &#39;id3&#39;</span>
 <span class="kw">replace_all</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;x&quot;</span>)               <span class="co"># marc -&gt; mxrc</span>
 
 <span class="co"># Most functions can work also work on arrays. E.g.</span>
@@ -2530,6 +2669,10 @@ git push origin dev</code></pre></li>
 <span class="kw">from_json</span>(<span class="st">&#39;my.field&#39;</span>)                      <span class="co"># replace the json field with the parsed value</span>
 
 <span class="fu">nothing()</span>                                  <span class="co"># do nothing (used in benchmarking)</span>
+
+
+<span class="co"># Delete all the empty fields</span>
+<span class="fu">vacuum()</span>
 
 <span class="co"># Copy all 245 subfields into the my.title hash</span>
 <span class="kw">marc_map</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;my.title&#39;</span>) 
@@ -2563,6 +2706,13 @@ git push origin dev</code></pre></li>
 <span class="co"># Map all 650 subjects into an array </span>
 <span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>, join:<span class="st">&#39;###&#39;</span>) 
 <span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
+
+<span class="co"># Include fixes from another file</span>
+<span class="kw">include</span>(<span class="st">&#39;/path/to/myfixes.txt&#39;</span>)
+
+<span class="co"># Send debug messages to a logger</span>
+<span class="kw">log</span>(<span class="st">&#39;test123&#39;</span>)
+<span class="kw">log</span>(<span class="st">&#39;hello world&#39;</span> , level =<span class="kw">&gt;</span> <span class="st">&#39;DEBUG&#39;</span>)
 
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
 <span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
@@ -2613,6 +2763,22 @@ git push origin dev</code></pre></li>
 
 <span class="kw">if</span> <span class="kw">less_than</span>(<span class="st">&#39;year&#39;</span>,1970)
   <span class="kw">add_field</span>(<span class="st">&#39;ancient&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># execute fixes if one path is contained in another</span>
+<span class="co"># foo =&gt; 1 , bar =&gt; [3,2,1]  =&gt; in(foo,bar) -&gt; true</span>
+<span class="kw">if</span> <span class="kw">in(foo</span>,bar<span class="kw">)</span>
+   <span class="kw">add_field</span>(test,ok)
+<span class="kw">end</span>
+
+<span class="co"># only execute fixes if all path values are the boolean true, 1 or &quot;true&quot;</span>
+<span class="kw">if</span> <span class="kw">is_true</span>(data.*.has_error)
+  <span class="kw">add_field</span>(error,yes)
+<span class="kw">end</span>
+
+<span class="co"># only execute fixes if all path values are the boolean true, 0 or &quot;false&quot;</span>
+<span class="kw">if</span> <span class="kw">is_false</span>(data.*.has_error)
+  <span class="kw">add_field</span>(error,no)
 <span class="kw">end</span>
 
 <span class="co"># Evaludates true when a marc (sub)field matches a regular expression</span>
@@ -2679,6 +2845,25 @@ git push origin dev</code></pre></li>
   <span class="co"># if all_match(name,nicolas)</span>
   <span class="co">#  reject()</span>
   <span class="co"># end</span>
+<span class="kw">end</span>
+
+<span class="co">#  run fixes that should run within a time limit</span>
+<span class="kw">do</span> <span class="kw">timeout</span>(time =<span class="kw">&gt;</span> 5, units =<span class="kw">&gt;</span> seconds)
+  <span class="kw">...</span>
+<span class="kw">end</span>
+
+<span class="co"># a binder that computes Fix-es for every element in record</span>
+<span class="kw">do</span> <span class="fu">visitor()</span>
+   <span class="co"># upcase all the &#39;name&#39; fields in the record</span>
+   <span class="kw">if</span> <span class="kw">all_match</span>(key,name)
+     <span class="kw">upcase</span>(scalar)
+   <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="co"># a binder runs fixes on records from an importer</span>
+<span class="kw">do</span> <span class="kw">importer</span>(OAI,url: <span class="st">&quot;http://lib.ugent.be/oai&quot;</span>) 
+  <span class="kw">retain</span>(_id)
+  <span class="kw">add_to_exporter</span>(.,YAML)
 <span class="kw">end</span></code></pre>
 </section>
 <section id="cookbook" class="level2">
