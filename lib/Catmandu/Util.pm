@@ -266,7 +266,7 @@ sub data_at {
                 if ($key eq '$first') { $key = 0 }
                 elsif ($key eq '$last') { $key = -1 }
                 elsif ($key eq '$prepend') { unshift @$data, undef; $key = 0 }
-                elsif ($key eq '$append') { $key = @$data }
+                elsif ($key eq '$append') { push @$data, undef; $key = @$data }
                 is_integer($key) || return;
                 if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
