@@ -39,4 +39,12 @@ $it->each(sub {
 	is shift->{n} , ++$count , "each ($count)";
 });
 
-done_testing 13;
+$it->rewind;
+
+$count = 0;
+$it->each_until(sub {
+	is shift->{n} , ++$count , "each ($count)";
+	return $count == 2 ? undef : 1;
+});
+
+done_testing 15;

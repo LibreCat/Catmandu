@@ -41,6 +41,9 @@ require_ok $pkg;
     use Catmandu::Util qw(:human);
     package T::ImportXML;
     use Catmandu::Util qw(:xml);
+    package T::Foo;
+    use Moo;
+    sub bar { 'bar' }
 }
 
 for my $sym (qw(same different)) {
@@ -251,6 +254,8 @@ is Catmandu::Util::segmented_path("12345678",segment_size =>2,base_path=>"/x") ,
 is_deeply [Catmandu::Util::parse_data_path("foo.bar.x")] , [ ['foo','bar'], "x" ] , "parse_data_path";
 
 is Catmandu::Util::get_data({ foo => 'bar'} , 'foo') , 'bar' , 'get_data(foo)';
+ok ! Catmandu::Util::get_data({ foo => 'bar'} , 'foo2') , 'get_data(foo2)';
+ok ! Catmandu::Util::get_data([qw(0 1 2)], 3) , 'get_data(3)';
 is Catmandu::Util::get_data([qw(0 1 2)], 1) , '1' , 'get_data(1)';
 is Catmandu::Util::get_data([qw(0 1 2)], '$first') , '0' , 'get_data($first)';
 is Catmandu::Util::get_data([qw(0 1 2)], '$last') , '2' , 'get_data($last)';
@@ -290,6 +295,24 @@ is_deeply [Catmandu::Util::get_data([qw(0 1 2)], '*')] , [qw(0 1 2)] , 'get_data
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$append', 'bar');
     is_deeply $data , [qw(0 1 2 bar)] , 'set_data 6';
+}
+
+{ 
+    my $data = [qw(0 1 2)];
+    Catmandu::Util::set_data($data, '*', 'bar', 'bar' , 'bar');
+    is_deeply $data , [qw(bar bar bar)] , 'set_data 7';
+}
+
+{ 
+    my $data = [qw(0 1 2)];
+    Catmandu::Util::set_data($data, 'foo', 'bar');
+    is_deeply $data , [qw(0 1 2)] , 'set_data 8';
+}
+
+{ 
+    my $data = undef;
+    Catmandu::Util::set_data($data,'foo2','bar2');
+    is_deeply $data , undef , 'set_data 9';
 }
 
 { 
@@ -358,10 +381,34 @@ is_deeply [Catmandu::Util::get_data([qw(0 1 2)], '*')] , [qw(0 1 2)] , 'get_data
     is_deeply $data , [] , 'delete_data 5';
 }
 
+{ 
+    my $data = [qw(0 1 2)];
+    Catmandu::Util::delete_data($data, '100');
+    is_deeply $data , [qw(0 1 2)] , 'delete_data 6';
+}
+
+{ 
+    my $data = undef;
+    Catmandu::Util::delete_data($data, '100');
+    is_deeply $data , undef , 'delete_data 7';
+}
+
 is Catmandu::Util::data_at('foo', { foo => 'bar'}) , 'bar' , 'data_at 1';
 is Catmandu::Util::data_at('foo.1', { foo => [qw(bar bar2 bar3)] }) , 'bar2' , 'data_at 2';
 is Catmandu::Util::data_at('foo.$first', { foo => [qw(bar bar2 bar3)] }) , 'bar' , 'data_at 3';
 is Catmandu::Util::data_at('foo.$last', { foo => [qw(bar bar2 bar3)] }) , 'bar3' , 'data_at 4';
+
+{
+    my $data = {foo => [qw(0 1 2)]};
+    is_deeply Catmandu::Util::data_at('foo.$prepend', $data) , undef , 'data_at 5';
+    is_deeply $data , {foo => [undef, qw(0 1 2)]} , 'data_at 5';
+}
+
+{
+    my $data = {foo => [qw(0 1 2)]};
+    is_deeply Catmandu::Util::data_at('foo.$append', $data) , undef , 'data_at 6';
+    is_deeply $data , {foo => [qw(0 1 2), undef]} , 'data_at 6';
+}
 
 ok Catmandu::Util::array_exists([qw(0 1 2)],0) , 'array_exists 1';
 ok ! Catmandu::Util::array_exists([qw(0 1 2)],3) , '!array_exists';
@@ -383,13 +430,59 @@ is Catmandu::Util::array_sum([1,2,3,4,5,6,7,8,9,10]) , 55 , 'array_sum';
 
 ok Catmandu::Util::array_includes([{ foo => [ { bar => 1}]}] ,  {foo => [ { bar => 1}]} ) , 'array_includes';
 
+ok ! Catmandu::Util::array_includes([{ foo => [ { bar => 1}]}] ,  {foo => [ { bar => 5}]} ) , '!array_includes';
+
 ok Catmandu::Util::array_any([0,1,2], sub { return 1 if shift == 2}) , 'array_any';
+
+ok ! Catmandu::Util::array_any([0,1,2], sub { return 1 if shift == 100}) , 'array_any';
+
+is Catmandu::Util::array_to_sentence([1,2]) , '1 and 2' , 'array_to_sentence';
+
+is Catmandu::Util::array_to_sentence([1,2,3]) , '1, 2 and 3' , 'array_to_sentence';
 
 is_deeply Catmandu::Util::array_rest([0,1,2]) , [1,2] , 'array_rest';
 
 is_deeply Catmandu::Util::array_uniq([0,1,2,2,2,2,3,3,2,3]) , [0,1,2,3] , 'array_uniq';
 
+is_deeply Catmandu::Util::hash_merge({ a => { b => 1 } } , { a => { c => 2 } }) , { a => { b => 1 , c => 2 } } , 'hash_merge';
+
+is Catmandu::Util::as_utf8("école") , "école" , 'as_utf8';
+
+is Catmandu::Util::trim("   \r\n     bla    \t\t\t\r\n") , "bla" , 'trim';
+
 is Catmandu::Util::capitalize("école") , "École" , 'capitalize';
+
+ok Catmandu::Util::is_same({ a => [ { b => 1 , c => 1 }]} , { a => [ { c => 1 , b => 1 }]}) , 'is_same';
+
+ok Catmandu::Util::is_different({ a => [ { b => 1 , c => 1 }]} , { a => [ { d => 1 , b => 1 }]}) , 'is_different';
+
+ok Catmandu::Util::check_same({ a => [ { b => 1 , c => 1 }]} , { a => [ { c => 1 , b => 1 }]}) , 'check_same';
+
+throws_ok { Catmandu::Util::check_same({ a => [ { b => 1 , c => 1 }]} , { a => [ { d => 1 , b => 1 }]}) } 'Catmandu::BadVal' , '! check_same';
+
+ok Catmandu::Util::check_different({ a => [ { b => 1 , c => 1 }]} , { a => [ { b => 1 , b => 1 }]}) , 'check_different';
+
+throws_ok { Catmandu::Util::check_different({ a => [ { b => 1 , c => 1 }]} , { a => [ { c => 1 , b => 1 }]}) } 'Catmandu::BadVal' , '! check_different';
+
+ok Catmandu::Util::is_able(T::Foo->new,'bar') , 'is_able';
+ok !Catmandu::Util::is_able(T::Foo->new,'bar2') , '! is_able';
+ok !Catmandu::Util::is_able('123','bar2') , '! is_able';
+
+ok Catmandu::Util::check_able(T::Foo->new,'bar') , 'check_able';
+throws_ok { Catmandu::Util::check_able('123','bar2') } 'Catmandu::BadVal' , '! check_able';
+
+ok !Catmandu::Util::check_maybe_able(undef,'bar2') , 'check_maybe_able';
+throws_ok { Catmandu::Util::check_maybe_able('123','bar2') }  'Catmandu::BadVal' , '! check_maybe_able';
+
+ok Catmandu::Util::is_instance(T::Foo->new, 'T::Foo') , 'is_instance';
+ok ! Catmandu::Util::is_instance(T::Foo->new, 'T::Foo2') , '! is_instance';
+ok ! Catmandu::Util::is_instance(undef, 'T::Foo') , '! is_instance';
+
+ok Catmandu::Util::check_instance(T::Foo->new, 'T::Foo') , 'check_instance';
+throws_ok { Catmandu::Util::check_instance(undef, 'T::Foo')  } 'Catmandu::BadVal' , '! check_instance';
+
+ok ! Catmandu::Util::check_maybe_instance(undef, 'T::Foo') , '! check_maybe_instance';
+throws_ok { Catmandu::Util::check_maybe_instance(123, 'T::Foo')  } 'Catmandu::BadVal' , '! check_maybe_instance';
 
 is Catmandu::Util::human_number(64354) , "64,354" , 'human_number';
 
@@ -404,4 +497,4 @@ is Catmandu::Util::xml_declaration() , qq(<?xml version="1.0" encoding="UTF-8"?>
 
 is Catmandu::Util::xml_escape("<>'&") , '&lt;&gt;&apos;&amp;' , 'xml_escape';
 
-done_testing 534;
+done_testing 572;

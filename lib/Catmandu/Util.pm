@@ -266,7 +266,7 @@ sub data_at {
                 if ($key eq '$first') { $key = 0 }
                 elsif ($key eq '$last') { $key = -1 }
                 elsif ($key eq '$prepend') { unshift @$data, undef; $key = 0 }
-                elsif ($key eq '$append') { $key = @$data }
+                elsif ($key eq '$append') { push @$data, undef; $key = @$data }
                 is_integer($key) || return;
                 if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
@@ -308,7 +308,7 @@ sub array_to_sentence {
     $join_last //= ' and ';
     my $size = scalar @$arr;
     $size > 2
-        ? join($join_last, join($join, @$arr[0..$size-1]), $arr->[-1])
+        ? join($join_last, join($join, @$arr[0..$size-2]), $arr->[-1])
         : join($join_last, @$arr);
 }
 
