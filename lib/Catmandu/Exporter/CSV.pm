@@ -15,7 +15,6 @@ has sep_char     => (is => 'ro', default => sub { ',' });
 has quote_char   => (is => 'ro', default => sub { '"' });
 has escape_char  => (is => 'ro', default => sub { '"' });
 has always_quote => (is => 'ro');
-has header       => (is => 'ro', default => sub { 1 });
 
 sub _build_csv {
     my ($self) = @_;
@@ -136,9 +135,7 @@ See L<Catmandu::TabularExporter>.
 
 =item header
 
-Includes a header line with the column names, if set to C<1> (the default).
-See L<Catmandu::TabularExporter> on how to configure the field mapping and
-column names.
+Include a header line with column names. Enabled by default.
 
 =back
 

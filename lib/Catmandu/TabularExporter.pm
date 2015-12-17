@@ -32,6 +32,11 @@ has collect_fields => (
     is => 'ro',
 );
 
+has header => (
+    is => 'ro',
+    default => sub { 1 }
+);
+
 around add => sub {
     my ($orig, $self, $data) = @_;
     $self->_set_fields($data) unless $self->fields;
@@ -94,10 +99,10 @@ adds some functionality tailored to tabular or columnar exporters.
 
 =item fields
 
-The fields to be mapped. Can be an arrayref, example hashref or comma separated
-string. If missing, the fields of the first record encountered will be used. If
-C<collect_fields> is true, all fields names in the record stream will be
-collected first.
+The fields to be mapped. Can be an arrayref, example hashref or comma
+separated string. If missing, the fields of the first record encountered will
+be used. If C<collect_fields> is true, all fields names in the record stream
+will be collected first.
 
 =item columns
 
@@ -108,6 +113,10 @@ separated string.
 
 See C<fields> for a description. Note that this option will cause all records
 in the stream to be buffered in memory.
+
+=item header
+
+Include a header with column names. Enabled by default.
 
 =back
 
