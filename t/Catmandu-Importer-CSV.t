@@ -29,5 +29,19 @@ isa_ok $importer, $pkg;
 
 is_deeply $importer->to_array, $data;
 
-done_testing 4;
+$data = [
+   {0=>'Patrick',1=>'39'},
+   {0=>'Nicolas',1=>'34'},
+];
+
+$csv = <<EOF;
+"Patrick","39"
+"Nicolas","34"
+EOF
+
+$importer = $pkg->new(file => \$csv, header => 0);
+
+is_deeply $importer->to_array, $data;
+
+done_testing;
 

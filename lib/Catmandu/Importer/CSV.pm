@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '0.9505';
 
 use Text::CSV;
+use List::Util qw(reduce);
 use Moo;
 use namespace::clean;
 
@@ -18,7 +19,7 @@ has allow_loose_quotes => (is => 'ro', default => sub { 0 });
 has allow_loose_escapes => (is => 'ro', default => sub { 0 });
 has header => (is => 'ro', default => sub { 1 });
 has fields => (
-    is     => 'rw',
+    is     => 'rwp',
     coerce => sub {
         my $fields = $_[0];
         if (ref $fields eq 'ARRAY') { return $fields }
@@ -48,12 +49,27 @@ sub generator {
                 if ($self->fields) {
                     $self->csv->getline($fh);
                 } else {
-                    $self->fields($self->csv->getline($fh));
+                    $self->_set_fields($self->csv->getline($fh));
                 }
             }
-            $self->csv->column_names($self->fields);
+            if ($self->fields) {
+                $self->csv->column_names($self->fields);
+            }
             $self->csv;
         };
+
+        # generate field names if needed
+        unless ($self->fields) {
+            my $row = $csv->getline($fh) // return;
+            my $fields = [0 .. (@$row -1)];
+            $self->_set_fields($fields);
+            $csv->column_names($fields);
+            return reduce {
+               $a->{$b} = $row->[$b] if length $row->[$b];
+               $a;
+            } +{}, @$fields;
+        }
+
         $csv->getline_hr($fh);
     };
 }
@@ -122,7 +138,8 @@ An ARRAY of one or more fixes or file scripts to be applied to imported items.
 =item fields
 
 List of fields to be used as columns, given as array reference, comma-separated
-string, or hash reference.
+string, or hash reference. If C<header> is C<0> and C<fields> is C<undef> the
+fields will be named by column index ("0", "1", "2", ...).
 
 =item header
 
