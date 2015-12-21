@@ -10,17 +10,17 @@ use namespace::clean;
 with 'Catmandu::Importer';
 
 has pattern => (
-    is => 'ro',
-    coerce => sub { 
-        $_[0] =~ /\n/m ? qr{$_[0]}x : qr{$_[0]} 
+    is     => 'ro',
+    coerce => sub {
+        $_[0] =~ /\n/m ? qr{$_[0]}x : qr{$_[0]};
     },
 );
 
 has split => (
-    is => 'ro',
+    is     => 'ro',
     coerce => sub {
-        length $_[0] == 1 ? $_[0] : qr{$_[0]}
-    } 
+        length $_[0] == 1 ? quotemeta($_[0]) : qr{$_[0]};
+    }
 );
 
 sub generator {
@@ -31,21 +31,23 @@ sub generator {
         state $count   = 0;
         state $line;
 
-        while ( defined($line = $self->readline) ) {
+        while ( defined( $line = $self->readline ) ) {
             chomp $line;
             next if $pattern and $line !~ $pattern;
 
             my $data = { _id => ++$count };
 
-            if (@+ < 2) {       # no capturing groups
+            if ( @+ < 2 ) {    # no capturing groups
                 $data->{text} = $line;
-            } elsif (%+) {      # named capturing groups
-                $data->{match} = { %+ };
-            } else {            # numbered capturing groups
-                no strict 'refs';
-                $data->{match} = [ map { $$_ } 1..@+-1 ]; 
             }
-            
+            elsif (%+) {       # named capturing groups
+                $data->{match} = {%+};
+            }
+            else {             # numbered capturing groups
+                no strict 'refs';
+                $data->{match} = [ map { $$_ } 1 .. @+ - 1 ];
+            }
+
             if ($split) {
                 $data->{text} = [ split $split, $line ];
             }
@@ -91,10 +93,11 @@ In Perl code:
 
 =head1 DESCRIPTION
 
-This L<Catmandu::Importer> reads each line of input as an item with line number
-in field C<_id> and text content in field C<text>. Line separators are not
-included. A regular expression can be specified to only import selected lines
-and parts of lines that match a given pattern. 
+This L<Catmandu::Importer> reads textual input line by line. Each line is
+imported as item with line number in field C<_id> and text content in field
+C<text>. Line separators are not included. Lines can further be split by
+character or pattern and a regular expression can be specified to only import
+selected lines and to translate pattern groups to fields.
 
 =head1 CONFIGURATION
 
@@ -120,7 +123,7 @@ An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
 =item split
 
-Character or regular expression (given as string with a least two characters),
+Single Character or regular expression (as string with a least two characters),
 to split each line.  Resulting parts are imported in field C<text> as array.
 
 =item pattern
@@ -144,14 +147,16 @@ or as array with
 
 =head1 METHODS
 
-Every L<Catmandu::Importer> is a L<Catmandu::Iterable> all its methods are
+Every L<Catmandu::Importer> is a L<Catmandu::Iterable> with all its methods 
 inherited.
 
 =head1 SEE ALSO
 
 L<Catmandu::Exporter::Text>
 
-L<awk|https://en.wikipedia.org/wiki/AWK> and
+L<Catmandu::Fix::parse_text>
+
+Unix tools L<awk|https://en.wikipedia.org/wiki/AWK> and
 L<sed|https://en.wikipedia.org/wiki/Sed>
 
 =cut

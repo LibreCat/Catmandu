@@ -66,4 +66,6 @@ Catmandu::Fix::parse_text - parses a text into an array or hash of values
 
 L<Catmandu::Fix>
 
+L<Catmandu::Importer::Text>
+
 =cut
