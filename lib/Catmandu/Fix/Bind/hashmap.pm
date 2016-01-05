@@ -11,13 +11,13 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Bind';
 
-has exporter   => (fix_opt => 1 , default => sub { 'JSON' });
+has exporter   => (fix_opt => 1);
 has store      => (fix_opt => 1);
 has uniq       => (fix_opt => 1 , default => sub { 0 });
 has count      => (fix_opt => 1);
 has join       => (fix_opt => 1);
 has extra_args => (fix_opt => 'collect');
-has flag       => (is => 'rw'  , default => sub { 0 });
+has flag       => (is => 'rw', default => sub { 0 });
 has hash       => (is => 'lazy');
 
 sub _build_hash {
@@ -33,7 +33,7 @@ sub add_to_hash {
         $self->hash->{$key}->{$val} = 1;
     }
     else {
-        push @{$self->hash->{$key}}  , $val;
+        push @{$self->hash->{$key}}, $val;
     }
 }
 
@@ -83,11 +83,13 @@ sub DESTROY {
     if ($self->store) {
         $e = Catmandu->store($self->store, %$args);
     }
-    else {
+    elsif ($self->exporter) {
         $e = Catmandu->exporter($self->exporter, %$args);
+    } else {
+        $e = Catmandu->exporter('JSON', line_delimited => 1);
     }
 
-    my $sorter = $self->count ? 
+    my $sorter = $self->count ?
                     sub { $h->{$b} <=> $h->{$a} } :
                     sub { $a cmp $b };
 

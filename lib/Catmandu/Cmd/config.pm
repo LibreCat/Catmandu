@@ -39,7 +39,7 @@ sub command {
     if (@$into_args || %$into_opts) {
         $into = Catmandu->exporter($into_args->[0], $into_opts);
     } else {
-        $into = Catmandu->exporter('JSON', pretty => 1);
+        $into = Catmandu->exporter('JSON', pretty => 1, array => 0);
     }
 
     $into->add(defined $path ?

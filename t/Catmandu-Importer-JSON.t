@@ -28,4 +28,24 @@ isa_ok $importer, $pkg;
 
 is_deeply $importer->to_array, $data;
 
-done_testing 4;
+$json = <<EOF;
+[
+  {"name":"Patrick","age":"39"},
+  {"name":"Nicolas","age":"34"}
+]
+EOF
+
+$importer = $pkg->new(file => \$json);
+
+is_deeply $importer->to_array, $data;
+
+$json = <<EOF;
+  {"name":"Patrick","age":"39"},
+  {"name":"Nicolas","age":"34"}
+EOF
+
+$importer = $pkg->new(file => \$json);
+
+is_deeply $importer->to_array, $data;
+
+done_testing;

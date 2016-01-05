@@ -40,7 +40,7 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing zero fix functi
 $fixes =<<EOF;
 do hashmap()
   unless exists(foo)
-  	add_field(foo,bar)
+    add_field(foo,bar)
   end
 end
 EOF
@@ -52,7 +52,7 @@ is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing unless';
 $fixes =<<EOF;
 do hashmap()
   if exists(foo)
-  	add_field(foo2,bar)
+    add_field(foo2,bar)
   end
 end
 EOF
@@ -101,7 +101,7 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 
 {
     my ($stdout, $stderr, $exit) = capture {
       $fixes =<<EOF;
-  do hashmap(exporter => CSV, join => ',')
+  do hashmap(exporter: CSV, join: ',')
    do identity()
     copy_field(isbn,key)
     copy_field(_id,value)
@@ -129,7 +129,7 @@ EOF
 {
     my ($stdout, $stderr, $exit) = capture {
       $fixes =<<EOF;
-  do hashmap(exporter => YAML, uniq:1)
+  do hashmap(exporter: YAML, uniq: 1)
    do identity()
     copy_field(isbn,key)
     copy_field(_id,value)
@@ -165,7 +165,7 @@ EOF
 {
     my ($stdout, $stderr, $exit) = capture {
       $fixes =<<EOF;
-  do hashmap(exporter => CSV, count: 1)
+  do hashmap(exporter: CSV, count: 1)
    do identity()
     copy_field(isbn,key)
     copy_field(_id,value)

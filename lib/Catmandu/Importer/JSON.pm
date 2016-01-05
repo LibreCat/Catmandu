@@ -10,21 +10,32 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has json      => (is => 'ro', lazy => 1, builder => '_build_json');
-has multiline => (is => 'ro', default => sub { 0 });
-has array     => (is => 'ro', default => sub { 0 });
+has line_delimited => (is => 'ro', default => sub { 0 });
+has json           => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
     JSON::XS->new->utf8($self->encoding eq ':raw');
 }
 
-sub default_encoding { ':raw' }
+sub _build_encoding { ':raw' }
 
 sub generator {
     my ($self) = @_;
 
-    $self->multiline || $self->array ? sub {
+    if ($self->line_delimited) {
+        return sub {
+            state $json = $self->json;
+            state $fh   = $self->fh;
+            if (defined(my $line = <$fh>)) {
+                return $json->decode($line);
+            }
+            return;
+        };
+    }
+
+    # switch to slower incremental parser
+    sub {
         state $json = $self->json;
         state $fh   = $self->fh;
 
@@ -51,13 +62,6 @@ sub generator {
 
         return;
  
-    } : sub {
-        state $json = $self->json;
-        state $fh   = $self->fh;
-        if (defined(my $line = <$fh>)) {
-            return $json->decode($line);
-        }
-        return;
     };
 }
 
@@ -82,14 +86,13 @@ Catmandu::Importer::JSON - Package that imports JSON data
         # ...
     });
 
-The defaults assume a newline delimited JSON file:
+
+The parser is quite liberal in the input is accepts. You can use the
+C<line_delimited> option to parse newline delimited JSON faster:
 
     { "recordno": 1, "name": "Alpha" }
     { "recordno": 2, "name": "Beta" }
     { "recordno": 3, "name": "Gamma" }
-
-Use the C<multiline> or C<array> options to parse pretty-printed JSON or JSON
-arrays.
 
 =head1 CONFIGURATION
 
@@ -115,9 +118,9 @@ An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
 =item multiline
 
-=item array
+=item line_delimited
 
-Read JSON with line-breaks or a JSON array instead of line-delimited JSON
+Read line-delimited JSON with a faster, non-incremental parser.
 
 =back
 

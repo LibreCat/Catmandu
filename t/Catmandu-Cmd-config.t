@@ -20,7 +20,7 @@ my $result = test_app(qq|Catmandu::CLI| => [ qw(config to JSON) ]);
 my $perl = decode_json($result->stdout);
 
 ok $perl, 'got JSON';
-is $perl->{importer}->{default}->{package} , 'YAML' , 'got data';
+is $perl->[0]->{importer}{default}{package} , 'YAML' , 'got data';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
@@ -30,4 +30,4 @@ like $result->stdout , qr/"YAML"/ , 'got data';
 is $result->error, undef, 'threw no exceptions' ;
 is $result->stderr, '', 'nothing sent to sderr' ;
 
-done_testing 9;
+done_testing;
