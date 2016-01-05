@@ -259,8 +259,7 @@ use:
 =item --fix FILE
 
 When exporting or storing apply a fix EXPRESSION or all the fixes in FILE on
-each item. This option is repeatable. FILE can also be an arbitrary executable
-if Catmandu::Fix::cmd is installed.
+each item. This option is repeatable.
 
 =item --start NUM
 

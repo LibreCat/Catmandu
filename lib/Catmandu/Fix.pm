@@ -740,8 +740,7 @@ Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catm
 
 Create a new Catmandu::Fix which will execute every FIX into a consecutive
 order. A FIX can be the name of a Catmandu::Fix::* routine, or the path to a
-plain text file containing all the fixes to be executed or a path to any
-executable if L<Catmandu::Fix::cmd> is installed.
+plain text file containing all the fixes to be executed.
 
 =head2 fix(HASH)
 
