@@ -62,7 +62,7 @@ sub commit {}
 
 sub DESTROY {
     my ($self) = shift;
-    $self->commit if $self->autocommit && ! $self->_commit;
+    $self->commit if $self->autocommit && !$self->_commit;
 }
 
 1;
