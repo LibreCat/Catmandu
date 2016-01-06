@@ -80,6 +80,11 @@ sub delete_all {
     $self->_hash($self->store->_hashes->{$self->name} = {});
 }
 
+sub drop {
+    my $self = $_[0];
+    $self->delete_all;
+}
+
 1;
 
 __END__

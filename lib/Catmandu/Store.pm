@@ -57,7 +57,7 @@ has bags => (
         # Catmandu::Addable methods
         qw(add add_many commit),
         # Catmandu::Bag methods
-        qw(get delete delete_all get_or_add to_hash),
+        qw(get delete delete_all get_or_add to_hash drop),
     );
 
     for my $sub (@delegate) {
@@ -110,19 +110,19 @@ Some stores can be searched using L<Catmandu::Searchable> methods.
 =head2 new(%store_args, bag_class => $class, default_bag => $name, bags => { $bagname => \%bag_args })
 
 Create a new Catmandu::Store. Optionally provide the class name of a sub-class of
-L<Catmandu::Bag>, and the name of the default bag ('data'). Startup parameters can be 
+L<Catmandu::Bag>, and the name of the default bag ('data'). Startup parameters can be
 provided for each $bagname using the 'bags' parameter. E.g.
 
  my $store = Catmandu::Store::Hash->new(
 		bags => {myBag => {plugins => ['Datestamps']}});
 
  # $store->bag('myBag') will now contain Datestamps
- 
+
  my $bag_class = "Catmandu::Store::Hash::Bag"
  my $store = Catmandu::Store::Hash->new(
 		bag_class => $bag_class->with_plugins('Datestamps')
 	     );
- 
+
  # All $store->bag(...)'s will now contain Datestamps
 
 =head2 bag($name)
@@ -134,7 +134,7 @@ Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
 Return the current logger. Can be used when creating your own Stores.
 
 E.g.
-    
+
     package Catmandu::Store::Hash;
 
     ...

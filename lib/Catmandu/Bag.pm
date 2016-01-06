@@ -17,6 +17,7 @@ with 'Catmandu::Addable';
 requires 'get';
 requires 'delete';
 requires 'delete_all';
+requires 'drop';
 
 has store => (is => 'ro'); # TODO
 has name  => (is => 'ro'); # TODO
@@ -88,12 +89,12 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
 
     my $store = Catmandu::Store::DBI->new(
             data_source => 'DBI:mysql:database=test',
-            bags => { journals => { 
+            bags => { journals => {
                             fixes => [ ... ] ,
                             autocommit => 1 ,
                             plugins => [ ... ] ,
                             id_generator => Catmandu::IdGenerator::UUID->new ,
-                      } 
+                      }
                     },
             bag_class => Catmandu::Bag->with_plugins('Datestamps')
             );
@@ -132,7 +133,7 @@ An array of Catmandu::Pluggable to apply to the bag items.
 
 =head2 autocommit
 
-When set to a true value an commit automatically gets executed when the bag 
+When set to a true value an commit automatically gets executed when the bag
 goes out of scope.
 
 =head2 id_generator
