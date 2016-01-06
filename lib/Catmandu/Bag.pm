@@ -10,7 +10,7 @@ use Moo::Role;
 use namespace::clean;
 
 with 'Catmandu::Logger';
-with 'Catmandu::Pluggable'; # TODO
+with 'Catmandu::Pluggable';
 with 'Catmandu::Iterable';
 with 'Catmandu::Addable';
 
@@ -19,8 +19,8 @@ requires 'delete';
 requires 'delete_all';
 requires 'drop';
 
-has store => (is => 'ro'); # TODO
-has name  => (is => 'ro'); # TODO
+has store => (is => 'ro');
+has name  => (is => 'ro');
 has id_generator => (
     is => 'lazy',
     coerce => sub {
@@ -48,6 +48,12 @@ before add => sub {
 
 before delete => sub {
     check_value($_[1]);
+};
+
+around delete_all => sub {
+    my ($orig, $self) = @_;
+    $orig->($self);
+    return;
 };
 
 sub generate_id {
@@ -148,18 +154,18 @@ Create a new Bag.
 
 =head2 add($hash)
 
-Add one hash to the store or updates an existing hash by using its '_id' key. Returns
+Add a hash to the bag or updates an existing hash by using its '_id' key. Returns
 the stored hash on success or undef on failure.
 
 =head2 add_many($array)
 
 =head2 add_many($iterator)
 
-Add or update one or more items to the store.
+Add or update one or more items to the bag.
 
 =head2 get($id)
 
-Retrieves the item with identifier $id from the store.
+Retrieves the item with identifier $id from the bag.
 
 =head2 get_or_add($id, $hash)
 
@@ -168,15 +174,19 @@ C<$id> if it's not found.
 
 =head2 delete($id)
 
-Deletes the item with identifier $id from the store.
+Deletes the item with C<$id> from the bag.
 
 =head2 delete_all
 
-Deletes all items from the store.
+Clear the bag.
 
 =head2 commit
 
 Commit changes.
+
+=head2 drop
+
+Delete the bag.
 
 =head2 log
 

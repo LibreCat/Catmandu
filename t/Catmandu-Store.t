@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Role::Tiny;
 
 my $pkg;
 BEGIN {
@@ -13,9 +14,12 @@ BEGIN {
 require_ok $pkg;
 
 {
+    package T::StoreWithoutDrop;
+    use Moo;
     package T::Store;
     use Moo;
     with $pkg;
+    sub drop {}
     package T::Store::Bag;
     use Moo;
     package T::CustomBagClass;
@@ -24,6 +28,8 @@ require_ok $pkg;
     has name  => (is => 'ro');
     has prop  => (is => 'ro');
 }
+
+throws_ok { Role::Tiny->apply_role_to_package('T::StoreWithoutDrop', $pkg) } qr/missing drop/;
 
 my $s = T::Store->new;
 can_ok $s, 'bag_class';
@@ -51,5 +57,5 @@ isnt $s->bag('foo')->prop, 'another val';
 is $s->bag('bar')->prop, 'val';
 isnt $s->bag('bar')->name, 'baz';
 
-done_testing 17;
+done_testing;
 

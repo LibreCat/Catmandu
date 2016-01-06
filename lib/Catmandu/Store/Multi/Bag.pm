@@ -43,7 +43,9 @@ sub delete_all {
 
 sub drop {
     my ($self) = @_;
-    $self->delete_all;
+    for my $store (@{$self->store->stores}) {
+        $store->bag($self->name)->drop;
+    }
 }
 
 sub commit {

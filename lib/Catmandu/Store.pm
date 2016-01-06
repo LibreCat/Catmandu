@@ -9,6 +9,8 @@ use Sub::Quote qw(quote_sub);
 use Moo::Role;
 use namespace::clean;
 
+requires 'drop';
+
 with 'Catmandu::Logger';
 
 has bag_class => (
@@ -52,18 +54,25 @@ has bags => (
     my $pkg = __PACKAGE__;
     my @delegate = (
         # Catmandu::Iterable methods
-        qw(to_array count slice each tap any many all map reduce first rest take
-           pluck invoke contains includes group interleave max min benchmark),
+        qw(to_array count slice each tap any many all map reduce first rest
+            take pluck invoke contains includes group interleave max min
+            benchmark),
         # Catmandu::Addable methods
         qw(add add_many commit),
         # Catmandu::Bag methods
-        qw(get delete delete_all get_or_add to_hash drop),
+        qw(get delete delete_all get_or_add to_hash),
     );
 
     for my $sub (@delegate) {
         quote_sub("${pkg}::${sub}",
             "my \$self = shift; \$self->bag->${sub}(\@_)");
     }
+}
+
+sub drop_bags {
+    my ($self) = @_;
+    $_->drop for values %{$self->bags};
+    return;
 }
 
 1;
@@ -128,6 +137,14 @@ provided for each $bagname using the 'bags' parameter. E.g.
 =head2 bag($name)
 
 Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
+
+=head2 drop
+
+Delete the store and all it's bags.
+
+=head2 drop_bags
+
+Delete all bags, but not the store.
 
 =head2 log
 

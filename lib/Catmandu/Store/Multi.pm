@@ -26,6 +26,13 @@ has stores => (
     },
 );
 
+sub drop {
+    my ($self) = @_;
+    for my $store (@{$self->store->stores}) {
+        $store->drop;
+    }
+}
+
 1;
 
 __END__

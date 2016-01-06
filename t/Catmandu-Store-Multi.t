@@ -44,5 +44,9 @@ is $bag->count, 0;
 is $stores->[0]->bag->count, 0;
 is $stores->[1]->bag->count, 0;
 
+$bag->add_many($data);
+$bag->drop;
+is $bag->count, 0;
+
 done_testing;
 

@@ -4,8 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '0.9505';
 
-use Catmandu::Hits;
 use Moo;
+use Catmandu::Hits;
 use Clone qw(clone);
 use namespace::clean;
 
@@ -81,8 +81,7 @@ sub delete_all {
 }
 
 sub drop {
-    my $self = $_[0];
-    $self->delete_all;
+    $_[0]->delete_all;
 }
 
 1;
