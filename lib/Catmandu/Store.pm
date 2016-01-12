@@ -69,12 +69,6 @@ has bags => (
     }
 }
 
-sub drop_bags {
-    my ($self) = @_;
-    $_->drop for values %{$self->bags};
-    return;
-}
-
 1;
 
 __END__
@@ -141,10 +135,6 @@ Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
 =head2 drop
 
 Delete the store and all it's bags.
-
-=head2 drop_bags
-
-Delete all bags, but not the store.
 
 =head2 log
 

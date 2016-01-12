@@ -15,14 +15,16 @@ has _hashes   => (is => 'ro' , lazy => 1, init_arg => undef, default => sub { +{
 has init_data => (is => 'ro');
 
 sub BUILD {
-    my $self = $_[0];
+    my ($self) = @_;
     if (my $data = $self->init_data) {
         $self->bag->add($_) for @$data;
     }
 }
 
 sub drop {
-    $_[0]->drop_bags;
+    my ($self) = @_;
+    $_->drop for values %{$self->bags};
+    return;
 }
 
 1;

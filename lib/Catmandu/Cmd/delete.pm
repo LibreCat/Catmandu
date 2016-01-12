@@ -12,6 +12,7 @@ sub command_opt_spec {
     (
         [ "cql-query|q=s", "" ],
         [ "query=s", "" ],
+        [ "id=s@", "" ],
     );
 }
 
@@ -22,7 +23,9 @@ sub command {
 
     my $from_bag = delete $from_opts->{bag};
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
-    if ($opts->query // $opts->cql_query) {
+    if ($opts->id) {
+        $from->delete($_) for @{$opts->id};
+    } elsif ($opts->query // $opts->cql_query) {
         $from->delete_by_query(
             cql_query => $opts->cql_query,
             query     => $opts->query,
