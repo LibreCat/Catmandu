@@ -2,7 +2,7 @@ package Catmandu::Util;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Exporter qw(import);
 use Sub::Quote ();
@@ -123,7 +123,7 @@ sub io {
 sub read_file {
     my ($path) = @_;
     local $/;
-    open my $fh, "<", $path or Catmandu::Error->throw(qq(can't open "$path" for reading));
+    open my $fh, "<:encoding(UTF-8)", $path or Catmandu::Error->throw(qq(can't open "$path" for reading));
     my $str = <$fh>;
     close $fh;
     $str;
@@ -131,6 +131,7 @@ sub read_file {
 
 sub read_io {
     my ($io) = @_;
+    $io->binmode("encoding(UTF-8)") if ($io->can('binmode'));
     my @lines = ();
     while (<$io>) {
         push @lines, $_;
@@ -142,7 +143,7 @@ sub read_io {
 # Deprecated use tools like File::Slurp::Tiny
 sub write_file {
     my ($path, $str) = @_;
-    open my $fh, ">", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
+    open my $fh, ">:encoding(UTF-8)", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
     print $fh $str;
     close $fh;
     $path;
@@ -156,7 +157,7 @@ sub read_yaml {
 sub read_json {
     my $text = read_file($_[0]);
     # dies on error
-    JSON::XS::decode_json(read_file($_[0]));
+    JSON::XS->new->decode($text);
 }
 
 sub join_path {
@@ -265,7 +266,7 @@ sub data_at {
                 if ($key eq '$first') { $key = 0 }
                 elsif ($key eq '$last') { $key = -1 }
                 elsif ($key eq '$prepend') { unshift @$data, undef; $key = 0 }
-                elsif ($key eq '$append') { $key = @$data }
+                elsif ($key eq '$append') { push @$data, undef; $key = @$data }
                 is_integer($key) || return;
                 if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
@@ -307,7 +308,7 @@ sub array_to_sentence {
     $join_last //= ' and ';
     my $size = scalar @$arr;
     $size > 2
-        ? join($join_last, join($join, @$arr[0..$size-1]), $arr->[-1])
+        ? join($join_last, join($join, @$arr[0..$size-2]), $arr->[-1])
         : join($join_last, @$arr);
 }
 

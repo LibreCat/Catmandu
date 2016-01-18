@@ -2,20 +2,15 @@ package Catmandu::Logger;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Moo::Role;
-use Log::Any ();
+use MooX::Aliases;
 use namespace::clean;
 
-local $| = 1;
+with 'MooX::Role::Logger';
 
-has 'log' => (is => 'lazy');
-
-sub _build_log {
-    my ($self) = @_;
-    Log::Any->get_logger(category => ref($self));
-}
+alias log => '_logger';
 
 1;
 

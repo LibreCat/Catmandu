@@ -2,11 +2,11 @@ package Catmandu::Fix::expand;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Moo;
-use CGI::Expand ();
 use namespace::clean;
+use Catmandu::Expander ();
 use Catmandu::Fix::Has;
 
 has sep => (fix_opt => 1, default => sub { undef });
@@ -25,7 +25,7 @@ sub fix {
         $data = $new_ref;
     }
 
-    CGI::Expand->expand_hash($data);
+    Catmandu::Expander->expand_hash($data);
 }
 
 1;

@@ -2,7 +2,7 @@ package Catmandu::Exporter::YAML;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use YAML::XS ();
 use Moo;
@@ -29,6 +29,11 @@ __END__
 Catmandu::Exporter::YAML - a YAML exporter
 
 =head1 SYNOPSIS
+
+    # From the commandline
+    $ catmandu convert JSON --fix myfixes to YAML < /tmp/data.json
+
+    # From Perl
 
     use Catmandu::Exporter::YAML;
 

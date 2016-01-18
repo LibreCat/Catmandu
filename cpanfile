@@ -6,6 +6,10 @@ on 'test', sub {
   requires 'Test::More', '0.99';
   requires 'Test::Pod', 0;
   requires 'Log::Any::Test', '1.03';
+  requires 'Test::LWP::UserAgent' , 0;
+  requires 'Log::Log4perl' , 0;
+  requires 'Log::Any::Adapter::Log4perl', 0;
+  requires 'Perl::Tidy', 0;
 };
 
 requires 'App::Cmd', '0.33';
@@ -20,14 +24,14 @@ requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
 requires 'JSON::XS', '2.3';
 requires 'List::MoreUtils', '0.33';
-requires 'Log::Any', '1.03';
-requires 'Log::Any::Adapter', '1.03';
+requires 'Log::Any::Adapter', 0;
 requires 'LWP::UserAgent', 0;
 requires 'Time::Piece', 0; # undeclared Marpa dependency
 requires 'Marpa::R2', '2.084000';
 requires 'Module::Info', 0;
 requires 'Moo', '1.004006';
 requires 'MooX::Aliases', '0.001006';
+requires 'MooX::Role::Logger', '0.005';
 requires 'namespace::clean', '0.24';
 requires 'Unicode::Normalize', '0';
 requires 'Sub::Exporter', '0.982';

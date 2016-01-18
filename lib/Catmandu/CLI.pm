@@ -2,7 +2,7 @@ package Catmandu::CLI;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu::Util qw(is_instance is_able is_string);
 use Catmandu;
@@ -17,6 +17,7 @@ sub deleted_commands {
         Catmandu::Cmd::fix_info
         Catmandu::Cmd::importer_info
         Catmandu::Cmd::module_info
+        Catmandu::Cmd::move
         Catmandu::Cmd::store_info
     )];
 }

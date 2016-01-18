@@ -2,10 +2,10 @@ package Catmandu::Fix::collapse;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Moo;
-use CGI::Expand ();
+use Catmandu::Expander ();
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -13,7 +13,7 @@ has sep => (fix_opt => 1, default => sub { undef });
 
 sub fix {
     my ($self,$data) = @_;
-    my $ref = CGI::Expand->collapse_hash($data);
+    my $ref = Catmandu::Expander->collapse_hash($data);
 
     if (defined(my $char = $self->sep)) {
         my $new_ref = {};

@@ -2,7 +2,7 @@ package Catmandu::Exporter;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu::Util qw(io);
 use Moo::Role;
@@ -68,8 +68,8 @@ Catmandu::Exporter - Namespace for packages that can export
 
 A Catmandu::Exporter is a Perl package that can export data. By default, data
 items are written to STDOUT. Optionally provide a C<file> or C<fh> parameter to
-write to a file, string, or handle. New exporter modules are expected to use the 
-C<print> method of C<fh>.
+write to a file, string, or handle. New exporter modules are expected to use
+the C<print> method of C<fh>.
 
 Every Catmandu::Exporter is a L<Catmandu::Fixable> thus provides a C<fix>
 parameter and method to apply fixes to exported items.
@@ -107,7 +107,7 @@ An ARRAY of one or more fixes or file scripts to be applied to exported items.
 
 =head2 add
 
-Adds one object to be exported. 
+Adds one object to be exported.
 
 =head2 add_many
 

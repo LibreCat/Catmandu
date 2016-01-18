@@ -2,7 +2,7 @@ package Catmandu::Cmd::config;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu::Util qw(data_at);
@@ -39,7 +39,7 @@ sub command {
     if (@$into_args || %$into_opts) {
         $into = Catmandu->exporter($into_args->[0], $into_opts);
     } else {
-        $into = Catmandu->exporter('JSON', pretty => 1);
+        $into = Catmandu->exporter('JSON', pretty => 1, array => 0);
     }
 
     $into->add(defined $path ?

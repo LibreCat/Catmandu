@@ -2,7 +2,7 @@ package Catmandu::Cmd::help;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use App::Cmd::Command::help;
@@ -29,12 +29,12 @@ my %MODULES = (
         ],
     },
     Store => {
-        re => qr/^(store|move)$/i,
+        re => qr/^(store|copy)$/i,
         usage => [
             "catmandu import ... to %n [options]",
-            "catmandu move   ... to %n [options]",
+            "catmandu copy   ... to %n [options]",
             "catmandu export %n [options] ...",
-            "catmandu move   %n [options] ...",
+            "catmandu copy   %n [options] ...",
         ]
     },
     Fix => {

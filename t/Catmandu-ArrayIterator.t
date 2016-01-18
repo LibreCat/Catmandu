@@ -32,4 +32,19 @@ is_deeply $it->next, {n=>2};
 $it->rewind;
 is_deeply $it->next, {n=>1};
 
-done_testing 10;
+$it->rewind;
+
+my $count = 0;
+$it->each(sub {
+	is shift->{n} , ++$count , "each ($count)";
+});
+
+$it->rewind;
+
+$count = 0;
+$it->each_until(sub {
+	is shift->{n} , ++$count , "each ($count)";
+	return $count == 2 ? undef : 1;
+});
+
+done_testing 15;

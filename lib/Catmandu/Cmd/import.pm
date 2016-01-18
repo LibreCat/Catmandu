@@ -2,49 +2,46 @@ package Catmandu::Cmd::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
-use Catmandu::Fix;
 use namespace::clean;
 
 sub command_opt_spec {
     (
         [ "verbose|v", "" ],
+        [ "fix=s@", "" ],
+        [ "start=i", "" ],
+        [ "total=i", "" ],
+        [ "delete", "delete existing objects first" ],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my $a = my $from_args = [];
-    my $o = my $from_opts = {};
-    my $into_args = [];
-    my $into_opts = {};
-
-    for (my $i = 0; $i < @$args; $i++) {
-        my $arg = $args->[$i];
-        if ($arg eq 'to') {
-            $a = $into_args;
-            $o = $into_opts;
-        } elsif ($arg =~ s/^-+//) {
-            $arg =~ s/-/_/g;
-            if ($arg eq 'fix') {
-                push @{$o->{$arg} ||= []}, $args->[++$i];
-            } else {
-                $o->{$arg} = $args->[++$i];
-            }
-        } else {
-            push @$a, $arg;
-        }
-    }
+    my ($from_args, $from_opts, $into_args, $into_opts) = $self->_parse_options($args);
 
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into_bag = delete $into_opts->{bag};
     my $into = Catmandu->store($into_args->[0], $into_opts)->bag($into_bag);
 
-    $from = $from->benchmark if $opts->verbose;
+    if ($opts->start // $opts->total) {
+        $from = $from->slice($opts->start, $opts->total);
+    }
+    if ($opts->fix) {
+        $from = Catmandu->fixer($opts->fix)->fix($from);
+    }
+    if ($opts->verbose) {
+        $from = $from->benchmark;
+    }
+
+    if ($opts->delete) {
+        $into->delete_all;
+        $into->commit;
+    }
+
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {

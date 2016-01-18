@@ -2,7 +2,7 @@ package Catmandu::Cmd;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(pod_section);
@@ -53,6 +53,39 @@ sub description {
 # These should be implemented by the Catmandu::Cmd's
 sub command_opt_spec {}
 sub command {}
+
+# helpers
+sub _parse_options {
+    my ($self, $args) = @_;
+
+    my $a = my $from_args = [];
+    my $o = my $from_opts = {};
+    my $into_args = [];
+    my $into_opts = {};
+
+    for (my $i = 0; $i < @$args; $i++) {
+        my $arg = $args->[$i];
+        if ($arg eq 'to') {
+            $a = $into_args;
+            $o = $into_opts;
+        } elsif ($arg =~ s/^-+//) {
+            $arg =~ s/-/_/g;
+            if (exists $o->{$arg}) {
+                if (is_array_ref($o->{$arg})) {
+                    push @{$o->{$arg}}, $args->[++$i];
+                } else {
+                    $o->{$arg} = [$o->{$arg}, $args->[++$i]];
+                }
+            } else {
+                $o->{$arg} = $args->[++$i];
+            }
+        } else {
+            push @$a, $arg;
+        }
+    }
+
+    return $from_args, $from_opts, $into_args, $into_opts;
+}
 
 1;
 

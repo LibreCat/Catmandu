@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "0.9504",
+  "dist_version" => "0.9505",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -40,12 +40,12 @@ my %module_build_args = (
     "JSON::XS" => "2.3",
     "LWP::UserAgent" => 0,
     "List::MoreUtils" => "0.33",
-    "Log::Any" => "1.03",
-    "Log::Any::Adapter" => "1.03",
+    "Log::Any::Adapter" => 0,
     "Marpa::R2" => "2.084000",
     "Module::Info" => 0,
     "Moo" => "1.004006",
     "MooX::Aliases" => "0.001006",
+    "MooX::Role::Logger" => "0.005",
     "Sub::Exporter" => "0.982",
     "Sub::Quote" => 0,
     "Text::CSV" => "1.21",
@@ -64,9 +64,13 @@ my %module_build_args = (
     "bin/catmandu"
   ],
   "test_requires" => {
+    "Log::Any::Adapter::Log4perl" => 0,
     "Log::Any::Test" => "1.03",
+    "Log::Log4perl" => 0,
+    "Perl::Tidy" => 0,
     "Test::Deep" => "0.112",
     "Test::Exception" => "0.32",
+    "Test::LWP::UserAgent" => 0,
     "Test::More" => "0.99",
     "Test::Pod" => 0
   }
@@ -74,10 +78,14 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
+  "Log::Any::Adapter::Log4perl" => 0,
   "Log::Any::Test" => "1.03",
+  "Log::Log4perl" => 0,
   "Module::Build" => "0.28",
+  "Perl::Tidy" => 0,
   "Test::Deep" => "0.112",
   "Test::Exception" => "0.32",
+  "Test::LWP::UserAgent" => 0,
   "Test::More" => "0.99",
   "Test::Pod" => 0
 );

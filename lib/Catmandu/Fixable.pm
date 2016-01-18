@@ -2,7 +2,7 @@ package Catmandu::Fixable;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu::Util qw(is_instance);
 use Catmandu;
@@ -12,9 +12,7 @@ use namespace::clean;
 has _fixer => (
     is => 'ro',
     init_arg => 'fix',
-    coerce => sub {
-        is_instance($_[0]) ? $_[0] : Catmandu->fixer($_[0]);
-    },
+    coerce => sub { Catmandu->fixer($_[0]) },
 );
 
 1;

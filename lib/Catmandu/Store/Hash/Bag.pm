@@ -2,14 +2,15 @@ package Catmandu::Store::Hash::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
-use Catmandu::Hits;
 use Moo;
+use Catmandu::Hits;
 use Clone qw(clone);
 use namespace::clean;
 
 with 'Catmandu::Bag';
+with 'Catmandu::Droppable';
 
 has _hash => (is => 'rw', lazy => 1 , init_arg => undef, builder => '_build_hash');
 has _head => (is => 'rw', init_arg => undef, clearer => '_clear_head');
@@ -78,6 +79,10 @@ sub delete_all {
     $self->_clear_head;
     $self->_clear_tail;
     $self->_hash($self->store->_hashes->{$self->name} = {});
+}
+
+sub drop {
+    $_[0]->delete_all;
 }
 
 1;

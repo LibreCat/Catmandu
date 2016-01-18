@@ -12,7 +12,7 @@ BEGIN {
 }
 
 is_deeply
-    $pkg->new()->fix({'names.0.name' => "joe", 'names.1.name' => "rick"}),
+    $pkg->new->fix({'names.0.name' => "joe", 'names.1.name' => "rick"}),
     {names => [{name => 'joe'}, {name => 'rick'}]},
     "data is unflattened";
 
@@ -21,4 +21,10 @@ is_deeply
     {names => [{name => 'joe'}, {name => 'rick'}]},
     "data is unflattened";
 
-done_testing 3;
+lives_ok {
+    my %flat = map { ("list.$_" => $_) } 0 .. 9999;
+    my $deep = $pkg->new->fix(\%flat);
+    die unless @{$deep->{list}} == 10000;
+} "expand large arrays";
+
+done_testing;

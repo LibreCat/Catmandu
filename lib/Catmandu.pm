@@ -2,7 +2,7 @@ package Catmandu;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu::Env;
 use Catmandu::Util qw(:is);
@@ -203,10 +203,6 @@ To install Catmandu just run:
 
   cpanm Catmandu
 
-To install a whole bunch of Catmandu* modules run
-
-  cpanm --interactive Task::Catmandu
-
 Read our documentation for more installation hints and OS specific requirements:
 
 http://librecat.org/Catmandu/#installation
@@ -376,14 +372,15 @@ no name is given).  The NAME is set in the configuration file (see 'importer').
 
 =head2 export($data,[NAME])
 
-Export data using a default or named exporter.
+Export data using a default or named exporter or exporter instance.
 
     Catmandu->export({ foo=>'bar'});
 
     my $importer = Catmandu::Importer::Mock->new;
     Catmandu->export($importer, 'YAML', file => '/my/file');
     Catmandu->export($importer, 'my_exporter');
-    Catmandu->export($importer, 'my_exporter', foo => $bar);
+    Catmandu->export($importer, 'my_exporter', exporter_option => '...' , ...);
+    Catmantu->export($importer, Catmandu::Exporter::YAML->new);
 
 =head2 export_to_string
 
@@ -516,10 +513,6 @@ L<Catmandu::Exporter>,
 L<Catmandu::Store>,
 L<Catmandu::Fix>,
 L<Catmandu::Iterable>
-
-=item install all modules
-
-L<Task::Catmandu>
 
 =item extended features
 

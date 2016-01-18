@@ -1,2 +1,2 @@
-add_field(hello,world)
-add_to_exporter(.,JSON)
+add_field(hello, world)
+add_to_exporter(., JSON, line_delimited: 1)

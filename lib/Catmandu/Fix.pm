@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
@@ -45,14 +45,15 @@ sub _build_fixes {
     my $fixes = [];
 
     for my $fix (@$fixes_arg) {
+
         if (is_code_ref($fix)) {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
+        } elsif (ref $fix && ref($fix) =~ /^IO::/) {
+            my $txt = Catmandu::Util::read_io($fix);
+            push @$fixes, @{$self->parser->parse($txt)};
         } elsif (is_glob_ref($fix)) {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
-            push @$fixes, @{$self->parser->parse($txt)};
-        } elsif (ref $fix && ref $fix =~ /^IO::/) {
-            my $txt = Catmandu::Util::read_io($fix);
             push @$fixes, @{$self->parser->parse($txt)};
         } elsif (ref $fix) {
             push @$fixes, $fix;
@@ -104,7 +105,7 @@ sub fix {
         return $d;
     }
 
-    if (is_instance($data)) {
+    if (is_instance($data) && $data->DOES('Catmandu::Iterable')) {
         return $data->map(sub { $fixer->($_[0]) })
                     ->reject(sub { $self->_is_reject($_[0]) });
     }
@@ -739,8 +740,7 @@ Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catm
 
 Create a new Catmandu::Fix which will execute every FIX into a consecutive
 order. A FIX can be the name of a Catmandu::Fix::* routine, or the path to a
-plain text file containing all the fixes to be executed or a path to any
-executable if L<Catmandu::Fix::cmd> is installed.
+plain text file containing all the fixes to be executed.
 
 =head2 fix(HASH)
 

@@ -16,14 +16,17 @@ require_ok $pkg;
 
 use Catmandu::CLI;
 
-my $result = test_app(qq|Catmandu::CLI| => [ qw(convert YAML --file t/catmandu.yml to JSON) ]);
+my $result = test_app(qq|Catmandu::CLI| => [ qw(convert -v YAML --file t/catmandu.yml to JSON) ]);
 
 my $perl = decode_json($result->stdout);
 
 ok $perl, 'got JSON';
-is $perl->{importer}->{default}->{package} , 'YAML' , 'got data';
-is $result->error, undef, 'threw no exceptions' ;
-# Next test can fail on buggy Perl installations
-##is $result->stderr, '', 'nothing sent to sderr' ;
+is $perl->[0]->{importer}{default}{package}, 'YAML', 'got data';
+is $result->error, undef, 'threw no exceptions';
+# next test can fail on buggy Perl installations
+#is $result->stderr, '', 'nothing sent to sderr';
 
-done_testing 5;
+$result = test_app(qq|Catmandu::CLI| => ['convert', '-v', '--start=2' ,'--total=1', 'CSV', '--file', 't/planets.csv', 'to', 'CSV', '--header', '0', '--fields', 'english,latin']);
+is $result->stdout, "Moon,Luna\n", 'start and limit' ;
+
+done_testing;

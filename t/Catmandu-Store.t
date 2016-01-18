@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Role::Tiny;
 
 my $pkg;
 BEGIN {
@@ -51,5 +52,5 @@ isnt $s->bag('foo')->prop, 'another val';
 is $s->bag('bar')->prop, 'val';
 isnt $s->bag('bar')->name, 'baz';
 
-done_testing 17;
+done_testing;
 

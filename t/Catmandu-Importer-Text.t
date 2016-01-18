@@ -9,7 +9,7 @@ my $text = <<EOF;
 Roses are red,
 Violets are blue,
 Sugar is sweet,
-And so are you.
+And so| are you.
 EOF
 
 sub text {
@@ -20,13 +20,13 @@ is_deeply text(), [
        {_id => 1 , text => "Roses are red,"} ,
        {_id => 2 , text => "Violets are blue,"},
        {_id => 3 , text => "Sugar is sweet,"},
-       {_id => 4 , text => "And so are you."},
+       {_id => 4 , text => "And so| are you."},
     ], 'simple text import';
 
 is_deeply text( pattern => 'are' ), [
        {_id => 1 , text => "Roses are red,"} ,
        {_id => 2 , text => "Violets are blue,"},
-       {_id => 3 , text => "And so are you."},
+       {_id => 3 , text => "And so| are you."},
     ], 'simple pattern match';
 
 is_deeply text( pattern => '(\w+)(.).*\.$' ), [
@@ -52,12 +52,16 @@ is_deeply [ map { $_->{text} } @{ text( split => ' ' ) } ],
     [ map { [ split ' ', $_ ] } split "\n", $text ],
     'split by character';
 
+is_deeply [ map { $_->{text} } @{ text( split => '|' ) } ],
+    [ map { [ split '\\|', $_ ] } split "\n", $text ],
+    'split by character (no regexp)';
+
 is_deeply [ map { $_->{text} } @{ text( split => 'is|are' ) } ],
     [ map { [ split /is|are/, $_ ] } split "\n", $text ],
     'split by regexp';
 
-is_deeply text( split => ' is | are ', pattern => '^And so (.*)' ),
-    [ { _id => 1, text => ['And so','you.'], match => ['are you.'] } ],
+is_deeply text( split => ' is | are ', pattern => '^And so. (.*)' ),
+    [ { _id => 1, text => ['And so|','you.'], match => ['are you.'] } ],
     'split and pattern';
 
 done_testing;

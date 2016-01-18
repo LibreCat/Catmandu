@@ -2,7 +2,7 @@ package Catmandu::Env;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
 use Catmandu::Fix;
@@ -141,8 +141,13 @@ sub store {
 
 sub fixer {
     my $self = shift;
-    if (ref $_[0]) {
+
+    if (is_array_ref($_[0])) {
         return Catmandu::Fix->new(fixes => $_[0]);
+    }
+
+    if (ref($_[0])) {
+        return Catmandu::Fix->new(fixes => [$_[0]]);
     }
 
     my $key = $_[0] || $self->default_fixer;
@@ -181,6 +186,9 @@ sub importer {
 sub exporter {
     my $self = shift;
     my $name = shift;
+
+    return $name if (is_invocant($name) && ref($name) =~ /^Catmandu::Exporter/);
+    
     my $ns = $self->exporter_namespace;
     if (exists $self->config->{exporter}) {
         if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {

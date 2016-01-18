@@ -2,7 +2,7 @@ package Catmandu::Fix::parse_text;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Moo;
 use namespace::clean;
@@ -65,5 +65,7 @@ Catmandu::Fix::parse_text - parses a text into an array or hash of values
 =head1 SEE ALSO
 
 L<Catmandu::Fix>
+
+L<Catmandu::Importer::Text>
 
 =cut

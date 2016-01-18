@@ -2,7 +2,7 @@ package Catmandu::Exporter::Text;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Moo;
 use Catmandu::Util;
@@ -33,12 +33,16 @@ sub unbackslash ($) {
 }
 # End from String::Escape
 
-has line_sep  => (is => 'ro', default => sub { undef }, coerce => sub {
-    unbackslash($_[0]);
-});
-has field_sep => (is => 'ro', default => sub { undef }, coerce => sub {
-    unbackslash($_[0]);
-});
+has line_sep  => (
+    is => 'ro', 
+    default => sub { "\n" }, 
+    coerce => sub { unbackslash($_[0]); }
+);
+has field_sep => (
+    is => 'ro', 
+    default => sub { undef }, 
+    coerce => sub { unbackslash($_[0]) }
+);
 
 sub add {
     my ($self, $data) = @_;
@@ -146,7 +150,7 @@ Binmode of the output stream C<fh>. Set to "C<:utf8>" by default.
 
 =item line_sep STR
 
-Use the STR at each end of line.
+Use the STR at each end of line. Set to "C<\n>" by default.
 
 =item field_sep STR
 

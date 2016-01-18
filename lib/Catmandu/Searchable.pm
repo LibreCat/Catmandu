@@ -2,7 +2,7 @@ package Catmandu::Searchable;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use Catmandu::Util qw(:is);
 use Moo::Role;
@@ -65,7 +65,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Searchable - Base class for all searchable Catmandu classes
+Catmandu::Searchable - Optional role for searchable stores
 
 =head1 SYNOPSIS
 

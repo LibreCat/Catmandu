@@ -2,7 +2,7 @@ package Catmandu::Cmd::count;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9504';
+our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -11,30 +11,25 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "query|q=s", "" ],
+        [ "cql-query|q=s", "" ],
+        [ "query=s", "" ],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my $from_args = [];
-    my $from_opts = {};
-
-    for (my $i = 0; $i < @$args; $i++) {
-        my $arg = $args->[$i];
-        if ($arg =~ s/^-+//) {
-            $arg =~ s/-/_/g;
-            $from_opts->{$arg} = $args->[++$i];
-        } else {
-            push @$from_args, $arg;
-        }
-    }
+    my ($from_args, $from_opts) = $self->_parse_options($args);
 
     my $from_bag = delete $from_opts->{bag};
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
-    if (defined $opts->query) {
-        $from = $from->searcher(query => $opts->query);
+
+    if ($opts->query // $opts->cql_query) {
+        $self->usage_error("Bag isn't searchable") unless $from->can('searcher');
+        $from = $from->searcher(
+            cql_query => $opts->cql_query,
+            query     => $opts->query,
+        );
     }
 
     say $from->count;

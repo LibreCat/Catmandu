@@ -15,8 +15,30 @@ require_ok $pkg;
 
 use Catmandu::CLI;
 
-my $result = test_app(qq|Catmandu::CLI| => [ qw(info) ]);
+my $result;
+
+$result = test_app(qq|Catmandu::CLI| => [ qw(info) ]);
 
 is $result->error, undef, 'threw no exceptions' ;
 
-done_testing 3;
+$result = test_app(qq|Catmandu::CLI| => [ qw(info --exporters) ]);
+
+is $result->error, undef, 'threw no exceptions' ;
+
+$result = test_app(qq|Catmandu::CLI| => [ qw(info --importers) ]);
+
+is $result->error, undef, 'threw no exceptions' ;
+
+$result = test_app(qq|Catmandu::CLI| => [ qw(info --fixes) ]);
+
+is $result->error, undef, 'threw no exceptions' ;
+
+$result = test_app(qq|Catmandu::CLI| => [ qw(info --stores) ]);
+
+is $result->error, undef, 'threw no exceptions' ;
+
+$result = test_app(qq|Catmandu::CLI| => [ qw(info --fixes to JSON) ]);
+
+is $result->error, undef, 'threw no exceptions' ;
+
+done_testing 8;

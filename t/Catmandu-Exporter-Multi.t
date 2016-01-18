@@ -17,8 +17,8 @@ require_ok $pkg;
 my $data = [{'a' => 'moose'}, {'a' => 'pony'}, {'a' => 'shrimp'}];
 my $file1 = "";
 my $file2 = "";
-my $exporter1 = Catmandu::Exporter::JSON->new(file => \$file1);
-my $exporter2 = Catmandu::Exporter::JSON->new(file => \$file2);
+my $exporter1 = Catmandu::Exporter::JSON->new(file => \$file1, line_delimited => 1);
+my $exporter2 = Catmandu::Exporter::JSON->new(file => \$file2, line_delimited => 1);
 
 my $exporter = $pkg->new(exporters => [
     $exporter1,
