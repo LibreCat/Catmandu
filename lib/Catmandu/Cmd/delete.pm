@@ -6,6 +6,7 @@ our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
+use Catmandu::Util qw(delete_by_query);
 use namespace::clean;
 
 sub command_opt_spec {
@@ -26,6 +27,7 @@ sub command {
     if ($opts->id) {
         $from->delete($_) for @{$opts->id};
     } elsif ($opts->query // $opts->cql_query) {
+        check_able($from, 'delete_by_query');
         $from->delete_by_query(
             cql_query => $opts->cql_query,
             query     => $opts->query,
