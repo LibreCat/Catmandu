@@ -51,9 +51,18 @@ Catmandu::Cmd::delete - delete objects from a store
 
   catmandu delete <STORE> <OPTIONS>
 
+  
+  # delete items with matching _id
+  catmandu delete ElasticSearch --index-name items --bag book \
+                                --id 1234 --id 2345
+
+  # delete items matching the query
   catmandu delete ElasticSearch --index-name items --bag book \
                                 --query 'title:"My Rabbit"'
 
+  # delete all items
+  catmandu delete ElasticSearch --index-name items --bag book
+
   catmandu help store ElasticSearch
-  
+
 =cut
