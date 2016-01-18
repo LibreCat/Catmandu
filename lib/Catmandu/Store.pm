@@ -9,8 +9,6 @@ use Sub::Quote qw(quote_sub);
 use Moo::Role;
 use namespace::clean;
 
-requires 'drop';
-
 with 'Catmandu::Logger';
 
 has bag_class => (
@@ -131,10 +129,6 @@ provided for each $bagname using the 'bags' parameter. E.g.
 =head2 bag($name)
 
 Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
-
-=head2 drop
-
-Delete the store and all it's bags.
 
 =head2 log
 

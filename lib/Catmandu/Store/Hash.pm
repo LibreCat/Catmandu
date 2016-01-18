@@ -10,6 +10,7 @@ use Catmandu::Store::Hash::Bag;
 use namespace::clean;
 
 with 'Catmandu::Store';
+with 'Catmandu::Droppable';
 
 has _hashes   => (is => 'ro' , lazy => 1, init_arg => undef, default => sub { +{} });
 has init_data => (is => 'ro');

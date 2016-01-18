@@ -65,7 +65,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Searchable - Base class for all searchable Catmandu classes
+Catmandu::Searchable - Optional role for searchable stores
 
 =head1 SYNOPSIS
 

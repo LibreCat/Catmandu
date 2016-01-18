@@ -10,6 +10,7 @@ use Clone qw(clone);
 use namespace::clean;
 
 with 'Catmandu::Bag';
+with 'Catmandu::Droppable';
 
 has _hash => (is => 'rw', lazy => 1 , init_arg => undef, builder => '_build_hash');
 has _head => (is => 'rw', init_arg => undef, clearer => '_clear_head');

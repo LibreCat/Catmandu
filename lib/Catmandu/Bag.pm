@@ -17,7 +17,6 @@ with 'Catmandu::Addable';
 requires 'get';
 requires 'delete';
 requires 'delete_all';
-requires 'drop';
 
 has store => (is => 'ro');
 has name  => (is => 'ro');
@@ -183,10 +182,6 @@ Clear the bag.
 =head2 commit
 
 Commit changes.
-
-=head2 drop
-
-Delete the bag.
 
 =head2 log
 

@@ -6,6 +6,7 @@ our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
+use Catmandu::Util qw(check_able);
 use namespace::clean;
 
 sub command_opt_spec {
@@ -21,9 +22,9 @@ sub command {
 
     my $from = Catmandu->store($from_args->[0], $from_opts);
     if ($opts->bag) {
-        $from->bag($opts->bag)->drop;
+        check_able($from->bag($opts->bag), 'drop')->drop;
     } else {
-        $from->drop;
+        check_able($from, 'drop')->drop;
     }
 }
 
