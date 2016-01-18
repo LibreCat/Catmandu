@@ -14,12 +14,9 @@ BEGIN {
 require_ok $pkg;
 
 {
-    package T::StoreWithoutDrop;
-    use Moo;
     package T::Store;
     use Moo;
     with $pkg;
-    sub drop {}
     package T::Store::Bag;
     use Moo;
     package T::CustomBagClass;
@@ -28,8 +25,6 @@ require_ok $pkg;
     has name  => (is => 'ro');
     has prop  => (is => 'ro');
 }
-
-throws_ok { Role::Tiny->apply_role_to_package('T::StoreWithoutDrop', $pkg) } qr/missing drop/;
 
 my $s = T::Store->new;
 can_ok $s, 'bag_class';

@@ -21,28 +21,18 @@ require_ok $pkg;
     sub add {}
     sub delete {}
     sub delete_all {}
-    sub drop {}
     package T::BagWithoutDelete;
     use Moo;
     sub generator {}
     sub add {}
     sub get {}
     sub delete_all {}
-    sub drop {}
     package T::BagWithoutDeleteAll;
     use Moo;
     sub generator {}
     sub add {}
     sub get {}
     sub delete {}
-    sub drop {}
-    package T::BagWithoutDrop;
-    use Moo;
-    sub generator {}
-    sub add {}
-    sub get {}
-    sub delete {}
-    sub delete_all {}
 
     package T::Bag; #mock array based bag
     use Moo;
@@ -101,12 +91,6 @@ require_ok $pkg;
         splice @$bag;
     }
 
-    sub drop {
-        my ($self) = @_;
-        my $bag = $self->bag;
-        splice @$bag;
-    }
-
     package T::BagData;
     use Moo;
 }
@@ -114,7 +98,6 @@ require_ok $pkg;
 throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutGet', $pkg) } qr/missing get/;
 throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutDelete', $pkg) } qr/missing delete/;
 throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutDeleteAll', $pkg) } qr/missing delete_all/;
-throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutDrop', $pkg) } qr/missing drop/;
 
 my $b = T::Bag->new;
 ok $b->does('Catmandu::Iterable');
@@ -123,7 +106,6 @@ can_ok $b, 'generate_id';
 can_ok $b, 'commit';
 can_ok $b, 'get_or_add';
 can_ok $b, 'to_hash';
-can_ok $b, 'drop';
 
 ok Catmandu::Util::is_value($b->generate_id);
 
@@ -156,8 +138,5 @@ $b->add($data);
 is_deeply $b->get_or_add($data->{_id}, {a=>{pony=>'wails'}}), $data;
 
 is_deeply $b->to_hash, {$data->{_id}=>$data};
-
-$b->drop;
-is $b->count, 0;
 
 done_testing;
