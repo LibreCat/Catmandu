@@ -8,9 +8,9 @@ use Test::Exception;
 my $pkg1;
 my $pkg2;
 BEGIN {
-    $pkg1 = 'Catmandu::Fix::url_encode';
+    $pkg1 = 'Catmandu::Fix::uri_encode';
     use_ok $pkg1;
-    $pkg2 = 'Catmandu::Fix::url_decode';
+    $pkg2 = 'Catmandu::Fix::uri_decode';
     use_ok $pkg2;
 }
 
@@ -29,4 +29,4 @@ is_deeply
     { name => "ὁ τῶν Πέρσων βασιλεύς" },
     "escape and unescape Greek";
 
-done_testing 4;
+done_testing;

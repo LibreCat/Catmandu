@@ -7,7 +7,7 @@ use Test::Exception;
 
 my $pkg;
 BEGIN {
-    $pkg = 'Catmandu::Fix::url_decode';
+    $pkg = 'Catmandu::Fix::uri_decode';
     use_ok $pkg;
 }
 
@@ -21,4 +21,4 @@ is_deeply
     {name => "ὁ τῶν Πέρσων βασιλεύς"},
     "unescape utf8 string from Greek";
 
-done_testing 3;
+done_testing;
