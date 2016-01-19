@@ -6,7 +6,7 @@ our $VERSION = '0.9505';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
-use Catmandu::Util qw(delete_by_query);
+use Catmandu::Util qw(check_able);
 use namespace::clean;
 
 sub command_opt_spec {

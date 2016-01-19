@@ -2,6 +2,7 @@ package Catmandu::Fix::uri_decode;
 
 use Catmandu::Sane;
 use Moo;
+use Encode ();
 use URI::Escape ();
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -12,7 +13,7 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var) = @_;
-    "${var} = URI::Escape::uri_unescape(${var});";
+    "${var} = Encode::decode_utf8(URI::Escape::uri_unescape(${var}));";
 }
 
 1;
@@ -20,6 +21,8 @@ sub emit_value {
 __END__
 
 =pod
+
+=encoding utf8
 
 =head1 NAME
 

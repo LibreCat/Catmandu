@@ -54,6 +54,7 @@ my %module_build_args = (
     "Time::Piece" => 0,
     "Try::Tiny::ByClass" => "0.01",
     "URI" => 0,
+    "URI::Escape" => 0,
     "URI::Template" => 0,
     "Unicode::Normalize" => 0,
     "YAML::XS" => "0.41",

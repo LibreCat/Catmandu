@@ -21,6 +21,8 @@ __END__
 
 =pod
 
+=encoding utf8
+
 =head1 NAME
 
 Catmandu::Fix::uri_encode - percent encode a URI
