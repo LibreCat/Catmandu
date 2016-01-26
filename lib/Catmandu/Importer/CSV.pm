@@ -12,7 +12,15 @@ use namespace::clean;
 with 'Catmandu::Importer';
 
 has csv => (is => 'ro', lazy => 1, builder => '_build_csv');
-has sep_char => (is => 'ro', default => sub { ',' });
+has sep_char => (
+    is      => 'ro',
+    default => sub {','},
+    coerce  => sub {
+        my $sep_char = $_[0];
+        $sep_char =~ s/(\\[abefnrt])/"qq{$1}"/gee;
+        return $sep_char;
+    }
+);
 has quote_char => (is => 'ro', default => sub { '"' });
 has escape_char => (is => 'ro', default => sub { '"' });
 has allow_loose_quotes => (is => 'ro', default => sub { 0 });
