@@ -56,12 +56,14 @@ Catmandu::Fix::retain - delete everything except the paths given
 
 =head1 SYNOPSIS
 
-   # Delete everything except foo.bar and baz.bar
-   retain(foo.bar, bar.baz)
+   # Keep the field _id , name , title
+   retain(_id , name, title)
 
-   {bar => { x => 1} , foo => {bar => 1, y => 2}}
-   # becomes
-   {foo => {bar => 1}}
+   # Delete everything except foo.bar 
+   #   {bar => { x => 1} , foo => {bar => 1, y => 2}}
+   # to
+   #   {foo => {bar => 1}}
+   retain(foo.bar)
 
 =head1 SEE ALSO
 
