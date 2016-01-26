@@ -4,21 +4,28 @@ use Catmandu::Sane;
 
 our $VERSION = '0.9505';
 
+use Moo;
 use Catmandu::Util qw(:is);
 use Catmandu::Store::Hash::Bag;
-use Moo;
 use namespace::clean;
 
 with 'Catmandu::Store';
+with 'Catmandu::Droppable';
 
 has _hashes   => (is => 'ro' , lazy => 1, init_arg => undef, default => sub { +{} });
 has init_data => (is => 'ro');
 
 sub BUILD {
-    my $self = $_[0];
+    my ($self) = @_;
     if (my $data = $self->init_data) {
         $self->bag->add($_) for @$data;
     }
+}
+
+sub drop {
+    my ($self) = @_;
+    $_->drop for values %{$self->bags};
+    return;
 }
 
 1;
@@ -63,7 +70,8 @@ for fast retrieval combined with a doubly linked list for fast traversal.
 
 =head2 new([init_data => [...] ])
 
-Create a new Catmandu::Store::Hash. Optionally provide as init_data an array ref of data:
+Create a new Catmandu::Store::Hash. Optionally provide as init_data an array
+ref of data:
 
     my $store = Catmandu->store('Hash', init_data => [ 
            { _id => 1, data => foo } ,

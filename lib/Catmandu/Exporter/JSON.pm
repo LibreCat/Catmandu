@@ -11,23 +11,24 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has pretty       => (is => 'ro', alias => 'multiline', default => sub { 0 });
-has indent       => (is => 'ro', default => sub { 0 });
-has space_before => (is => 'ro', default => sub { 0 });
-has space_after  => (is => 'ro', default => sub { 0 });
-has canonical    => (is => 'ro', default => sub { 0 });
-has array        => (is => 'ro', default => sub { 0 });
-has json         => (is => 'ro', lazy => 1, builder => '_build_json');
+has line_delimited => (is => 'ro', default => sub { 0 });
+has array          => (is => 'ro', default => sub { 1 });
+has pretty         => (is => 'ro', default => sub { 0 });
+has indent         => (is => 'ro', default => sub { 0 });
+has space_before   => (is => 'ro', default => sub { 0 });
+has space_after    => (is => 'ro', default => sub { 0 });
+has canonical      => (is => 'ro', default => sub { 0 });
+has json           => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
     JSON::XS->new
             ->utf8(0)
             ->allow_nonref
-            ->pretty($self->pretty)
-            ->indent($self->pretty || $self->indent)
-            ->space_before($self->pretty || $self->space_before)
-            ->space_after($self->pretty || $self->space_after)
+            ->pretty($self->line_delimited ? 0 : $self->pretty)
+            ->indent($self->line_delimited ? 0 : $self->pretty || $self->indent)
+            ->space_before($self->line_delimited ? 0 : $self->pretty || $self->space_before)
+            ->space_after($self->line_delimited ? 0 : $self->pretty || $self->space_after)
             ->canonical($self->canonical);
 }
 
@@ -35,6 +36,12 @@ sub add {
     my ($self, $data) = @_;
     my $fh = $self->fh;
     my $json = $self->json->encode($data);
+    if ($self->line_delimited) {
+        print $fh $json;
+        print $fh "\n";
+        return;
+    }
+
     if ($self->pretty) {
         chomp $json;
     }
@@ -45,16 +52,13 @@ sub add {
         } else {
             print $fh "[";
         }
-        print $fh $json;
-    } else {
-        print $fh $json;
-        print $fh "\n";
     }
+    print $fh $json;
 }
 
 sub commit {
     my ($self, $data) = @_;
-    if ($self->array) {
+    if (!$self->line_delimited && $self->array) {
         my $fh = $self->fh;
         unless ($self->count) {
             print $fh "[";
@@ -124,8 +128,6 @@ Binmode of the output stream C<fh>. Set to "C<:utf8>" by default.
 
 =item pretty
 
-=item multiline
-
 Pretty-print JSON
 
 =item indent
@@ -140,7 +142,11 @@ L<JSON> serialization options
 
 =item array
 
-Seralize items as one JSON array instead of concatenated JSON objects
+Structure the data as a JSON array. Default is C<1>.
+
+=item line_delimited
+
+Export objects as newline delimited JSON. Default is C<0>. The C<array>, C<pretty>, C<indent>, C<space_before> and C<space_after> options will be ignored if C<line_delimited> is C<1>.
 
 =back
 

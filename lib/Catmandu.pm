@@ -203,10 +203,6 @@ To install Catmandu just run:
 
   cpanm Catmandu
 
-To install a whole bunch of Catmandu* modules run
-
-  cpanm --interactive Task::Catmandu
-
 Read our documentation for more installation hints and OS specific requirements:
 
 http://librecat.org/Catmandu/#installation
@@ -517,10 +513,6 @@ L<Catmandu::Exporter>,
 L<Catmandu::Store>,
 L<Catmandu::Fix>,
 L<Catmandu::Iterable>
-
-=item install all modules
-
-L<Task::Catmandu>
 
 =item extended features
 

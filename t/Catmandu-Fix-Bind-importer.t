@@ -20,7 +20,7 @@ require_ok $pkg;
 	     $fixer->fix({});
 	};
 
-	is $stdout, qq|{"n":0}\n| , 'fixed ok';
+	is $stdout, qq|[{"n":0}]\n| , 'fixed ok';
 }
 
 {
@@ -29,7 +29,7 @@ require_ok $pkg;
 	     $fixer->fix({});
 	};
 
-	is $stdout, qq|| , 'fixed ok';
+	is $stdout, qq||, 'fixed ok';
 }
 
 {
@@ -38,7 +38,7 @@ require_ok $pkg;
 	     $fixer->fix({});
 	};
 
-	is $stdout, qq|| , 'fixed ok';
+	is $stdout, qq||, 'fixed ok';
 }
 
-done_testing 5;
+done_testing;

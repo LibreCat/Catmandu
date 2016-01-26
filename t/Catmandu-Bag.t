@@ -139,5 +139,4 @@ is_deeply $b->get_or_add($data->{_id}, {a=>{pony=>'wails'}}), $data;
 
 is_deeply $b->to_hash, {$data->{_id}=>$data};
 
-done_testing 26;
-
+done_testing;

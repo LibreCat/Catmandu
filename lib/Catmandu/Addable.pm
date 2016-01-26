@@ -62,7 +62,7 @@ sub commit {}
 
 sub DESTROY {
     my ($self) = shift;
-    $self->commit if $self->autocommit && ! $self->_commit;
+    $self->commit if $self->autocommit && !$self->_commit;
 }
 
 1;
@@ -136,8 +136,9 @@ This method is usually called at the end of many add or add_many operations.
 
 =head1 INHERIT
 
-If you provide an 'add' method, then automatically your package gets a add_many method, plus
-a fix attribute which transforms all Perl hashes provided to the add method.
+If you provide an 'add' method, then automatically your package gets a add_many
+method, plus a fix attribute which transforms all Perl hashes provided to the
+add method.
 
 =head1 SEE ALSO
 
