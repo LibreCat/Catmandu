@@ -17,15 +17,15 @@ command:
 
     $ catmandu convert JSON to CSV < data.json
 
-Or, to store a YAML file into an ElasticSearch database type:
+Or, to store a YAML file into an ElasticSearch database type (requires Catmandu::ElasticSearch):
 
     $ catmandu import YAML to ElasticSearch --index_name demo < test.yml
 
-To export all the data from an Solr search engine into JSON type:
+To export all the data from an Solr search engine into JSON type (requires Catmandu::Solr):
 
     $ catmandu export Solr --url http://localhost:8983/solr to JSON
 
-With Catmandu one can import OAI-PMH records in your application:
+With Catmandu one can import OAI-PMH records in your application (requires Catmandu::OAI):
 
     $ catmandu convert OAI --url http://biblio.ugent.be/oai --set allFtxt
 
@@ -48,7 +48,7 @@ which contains a (sub)field 'nested'.
 
 Catmandu was created by librarians for librarians. We process a lot of metadata especially
 library metadata in formats such as MARC, MAB2 and MODS. With the following command we can extract
-data from a marc record and to store it into the title field:
+data from a marc record and to store it into the title field (requires Catmandu::MARC):
 
     $ catmandu convert MARC --fix 'marc_map(245,title)' < data.mrc
 
@@ -119,7 +119,7 @@ For a quick and demo installation visit our [blog](https://librecatproject.wordp
 where a VirtualBox image is available containing all the Catmandu modules, including
 ElasticSearch and MongoDB.
 
-On our [website](http://librecat.org/Catmandu/) we provide installation instructions for:
+On our [website](http://librecat.org/Catmandu/#installation) we provide installation instructions for:
 
     * Debian
     * Ubuntu Server

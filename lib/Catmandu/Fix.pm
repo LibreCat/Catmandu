@@ -664,29 +664,33 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix - a Catmandu class used for data crunching
+Catmandu::Fix - a Catmandu class used for data transformations
 
 =head1 SYNOPSIS
 
-    use Catmandu::Fix;
+    # From the command line
 
-    my $fixer = Catmandu::Fix->new(fixes => ['upcase("job")','remove_field("test")']);
+    $ catmandu convert JSON --fix 'add_field(foo,bar)' < data.json
+    $ catmandu convert YAML --fix 'upcase(job); remove_field(test)' < data.yml
+    $ catmandu convert CSV  --fix 'sort_field(tags)' < data.csv
+    $ catmandu run /tmp/myfixes.txt
+    $ catmandu convert OAI --url http://biblio.ugent.be/oai --fix /tmp/myfixes.txt
 
-    or
+    # From Perl
 
-    my $fixer = Catmandu::Fix->new(fixes => ['fix_file.txt']);
+    use Catmandu;
 
-    my $arr  = $fixer->fix([ ... ]);
-    my $hash = $fixer->fix({ ... });
+    my $fixer = Catmandu->fixer('upcase(job)','remove_field(test)');
+    my $fixer = Catmandu->fixer('/tmp/myfixes.txt');
 
-    my $it = Catmandu::Importer::YAML(file => '...');
-    $fixer->fix($it)->each(sub {
-        ...
-    });
+    # Convert data
+    my $arr      = $fixer->fix([ ... ]);
+    my $hash     = $fixer->fix({ ... });
+    my $importer = Catmandu->importer('YAML', file => 'data.yml');
+    my $fixed_importer = $fixer->fix($importer);
 
-    or
-
-    use Catmandu::Fix::upcase as => 'my_upcase';
+    # Inline fixes
+    use Catmandu::Fix::upcase       as => 'my_upcase';
     use Catmandu::Fix::remove_field as => 'my_remove';
 
     my $hash = { 'job' => 'librarian' , deep => { nested => '1'} };
@@ -696,10 +700,37 @@ Catmandu::Fix - a Catmandu class used for data crunching
 
 =head1 DESCRIPTION
 
-Catmandu::Fixes can be used for easy data manipulation by non programmers. Using a
-small Perl DSL language end-users can use Fix routines to manipulate data objects.
-A plain text file of fixes can be created to specify all the routines needed to
-tranform the data into the desired format.
+A Catmandu::Fix is a Perl package that can transform data. These packages are used
+for easy data manipulation by non programmers. The main intention is to use fixes
+on the command line or in Fix scripts. A small DSL language is available to execute
+many Fix command on a stream of data.
+
+When a C<fix> argument is given to a L<Catmandu::Importer>, L<Catmandu::Store> or
+L<Catmandu::Store> then the transformations are executed on every item in the stream.
+
+Many fixes can use Fix paths (see below) to point to fields in a data record. A
+Fix script is a collection of one or more Fix commands:
+
+    upcase(title)
+    add_field(deep.nested.field,1)
+
+Conditionals can be used to provide the logic when to execute some fixes:
+
+    if exists(deep.nested.field)
+        add_field(nested,"ok!")
+    end
+
+    unless all_match(title,"PERL")
+        add_field(is_perl,"noooo")
+    end
+
+Binds are used to manipulate the context in which Fixes are executed. E.g.
+execute a fix on every item in a list
+
+     # 'demo' is an array of hashes
+     do list(path:demo)
+        add_field(foo,bar)
+     end   
 
 =head1 PATHS
 
@@ -732,7 +763,7 @@ E.g.
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
 
-Read more about the Fix language at our Wiki: L<https://github.com/LibreCat/Catmandu/wiki/Fixes>
+Read more about the Fix language in our Wiki: L<https://github.com/LibreCat/Catmandu/wiki/Fixes>
 
 =head1 PUBLIC METHODS
 
@@ -763,7 +794,7 @@ Executes all the fixes on a generator function. Returns a new generator with fix
 
 Return the current logger. See L<Catmandu> for activating the logger in your main code.
 
-=head1 EXTEND
+=head1 CODING
 
 One can extend the Fix language by creating own custom-made fixes. Two methods are
 available to create an own Fix function:
