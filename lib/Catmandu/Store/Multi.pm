@@ -2,7 +2,7 @@ package Catmandu::Store::Multi;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9505';
+our $VERSION = '1.00_01';
 
 use Catmandu::Util qw(:is);
 use Catmandu::Store::Multi::Bag;
