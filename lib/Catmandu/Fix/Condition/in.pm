@@ -31,6 +31,12 @@ Catmandu::Fix::Condition::in - only execute fixes the data in one path is contai
 =head1 SYNOPSIS
 
    #-------------------------------------------------------------------
+   # Compare single values
+   # foo => 42 , bar => 42 => in(foo,bar) -> true
+   if in(foo,bar)
+      add_field(forty_two,ok)
+   end
+   
    # When comparing single values to an array: test if the value is 
    # contained in the array  
 

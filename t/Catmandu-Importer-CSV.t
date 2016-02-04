@@ -43,5 +43,18 @@ $importer = $pkg->new(file => \$csv, header => 0);
 
 is_deeply $importer->to_array, $data;
 
+$data = [
+   {name=>'Nicolas',age=>'34'},
+];
+
+$csv = <<EOF;
+"name"	"age"
+"Nicolas"	"34"
+EOF
+
+$importer = $pkg->new(file => \$csv, sep_char => '\t');
+
+is_deeply $importer->to_array, $data;
+
 done_testing;
 

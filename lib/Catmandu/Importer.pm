@@ -161,10 +161,12 @@ sub _build_http_client {
 }
 
 sub readline {
+    warnings::warnif("deprecated","readline is deprecated, fh->getline instead");
     $_[0]->fh->getline;
 }
 
 sub readall {
+    warnings::warnif("deprecated","readall is deprecated, join('',fh->getlines) instead");
     join '', $_[0]->fh->getlines;
 }
 
@@ -180,60 +182,72 @@ Catmandu::Importer - Namespace for packages that can import
 
 =head1 SYNOPSIS
 
-    package Catmandu::Importer::Hello;
+    # From the command line
 
-    use Catmandu::Sane;
-    use Moo;
+    # JSON is an importer and YAML an exporter
+    $ catmandu convert JSON to YAML < data.json
 
-    with 'Catmandu::Importer';
+    # OAI is an importer and JSON an exporter
+    $ catmandu convert OAI --url http://biblio.ugent.be/oai to JSON 
 
-    sub generator {
-        my ($self) = @_;
-        state $fh = $self->fh;
-        my $n = 0;
-        return sub {
-            $self->log->debug("generating record " . ++$n);
-            my $name = $self->readline;
-            return defined $name ? { "hello" => $name } : undef;
-        };
-    }
-
-    package main;
-
-    use Catmandu;
-
-    my $importer = Catmandu->importer('Hello', file => '/tmp/names.txt');
-    $importer->each(sub {
-        my $items = shift;
-        .
-        .
-        .
-    });
-
-    # Or on the command line
-    $ catmandu convert Hello to YAML < /tmp/names.txt
     # Fetch remote content
     $ catmandu convert JSON --file http://example.com/data.json to YAML
+    
+    # From Perl
+    
+    use Catmandu;
+    use Data::Dumper;
+
+    my $importer = Catmandu->importer('JSON', file => 'data.json');
+
+    $importer->each(sub {
+        my $item = shift;
+        print Dumper($item);
+    });
+
+    my $num = $importer->count;
+
+    my $first_item = $importer->first;
+
+    # Convert OAI to JSON in Perl
+    my $importer = Catmandu->importer('OAI', url => 'http://biblio.ugent.be/oai');
+    my $exporter = Catmandu->exporter('JSON');
+
+    $exporter->add_many($importer);
 
 =head1 DESCRIPTION
 
-A Catmandu::Importer is a Perl package that can import data from an external
-source (a file, the network, ...). Most importers read from an input stream, 
-such as STDIN, a given file, or an URL to fetch data from, so this base class
-provides helper method for consuming the input stream once.
+A Catmandu::Importer is a Perl package that can generate structured data from
+sources such as JSON, YAML, XML, RDF or network protocols such as Atom, OAI-PMH,
+SRU and even DBI databases. Given an Catmandu::Importer a programmer can read
+data from using one of the many L<Catmandu::Iterable> methods:
 
-Every Catmandu::Importer is a L<Catmandu::Fixable> and thus inherits a 'fix'
-parameter that can be set in the constructor. When given then each item returned
-by the generator will be automatically Fixed using one or more L<Catmandu::Fix>es.
+
+    $importer->to_array;
+    $importer->count;
+    $importer->each(\&callback);
+    $importer->first;
+    $importer->rest;
+    ...etc...
+
+Every Catmandu::Importer is also L<Catmandu::Fixable> and thus inherits a 'fix'
+parameter that can be set in the constructor. When given a 'fix' parameter, then each 
+item returned by the generator will be automatically Fixed using one or 
+more L<Catmandu::Fix>es.
 E.g.
     
-    my $importer = Catmandu->importer('Hello',fix => ['upcase(hello)']);
+    my $importer = Catmandu->importer('JSON',fix => ['upcase(title)']);
     $importer->each( sub {
-        my $item = shift ; # Every item will be upcased... 
-    } );
+        my $item = shift ; # Every $item->{title} is now upcased... 
 
-Every Catmandu::Importer is a L<Catmandu::Iterable> and inherits the methods (C<first>,
-C<each>, C<to_array>...) etc.
+    });
+
+    # or via a Fix file
+    my $importer = Catmandu->importer('JSON',fix => ['/my/fixes.txt']);
+    $importer->each( sub {
+        my $item = shift ; # Every $item->{title} is now upcased... 
+
+    });
 
 =head1 CONFIGURATION
 
@@ -256,7 +270,7 @@ Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 
 =item fix
 
-An ARRAY of one or more fixes or file scripts to be applied to imported items.
+An ARRAY of one or more Fix-es or Fix scripts to be applied to imported items.
 
 =item data_path
 
@@ -277,14 +291,25 @@ Variables given here will interpolate the C<file> and C<http_body> options. The
 syntax is the same as L<URI::Template>.
 
     # named arguments
-    my $importer = Catmandu->importer('Hello',
-        file => 'http://example.com/{id}',
-        variables => {id => 1234},
+    my $importer = Catmandu->importer('JSON',
+        file => 'http://{server}/{path}',
+        variables => {server => 'biblio.ugent.be', path => 'file.json'},
     );
+
     # positional arguments
-    {variables => "1234,768"}
+    my $importer = Catmandu->importer('JSON',
+        file => 'http://{server}/{path}',
+        variables => 'biblio.ugent.be,file.json',
+    );
+
     # or
-    {variables => [1234,768]}
+    my $importer = Catmandu->importer('JSON',
+        url => 'http://{server}/{path}',
+        variables => ['biblio.ugent.be','file.json'],
+    );
+
+    # or via the command line
+    $ catmandu convert JSON --file 'http://{server}/{path}' --variables 'biblio.ugent.be,file.json'
 
 =back
 
@@ -342,17 +367,58 @@ Verify the SSL certificate.
 
 =head1 METHODS
 
-=head2 readline
-
-Read a line from the input stream. Equivalent to C<< $importer->fh->getline >>.
-
-=head2 readall
-
-Read the whole input stream as string.
-
 =head2 first, each, rest , ...
 
 See L<Catmandu::Iterable> for all inherited methods.
+
+=head1 CODING
+
+Create your own importer by creating a Perl package in the Catmandu::Importer namespace that
+implements C<Catmandu::Importer>. Basically, you need to create a method 'generate' which 
+returns a callback that creates one Perl hash for each call:
+
+    my $importer = Catmandu::Importer::Hello->new;
+
+    $importer->generate(); # record
+    $importer->generate(); # next record
+    $importer->generate(); # undef = end of stream
+
+Here is an example of a simple C<Hello> importer:
+
+    package Catmandu::Importer::Hello;
+
+    use Catmandu::Sane;
+    use Moo;
+
+    with 'Catmandu::Importer';
+
+    sub generator {
+        my ($self) = @_;
+        state $fh = $self->fh;
+        my $n = 0;
+        return sub {
+            $self->log->debug("generating record " . ++$n);
+            my $name = $self->fh->readline;
+            return defined $name ? { "hello" => $name } : undef;
+        };
+    }
+
+    1;
+
+This importer can be called via the command line as:
+
+    $ catmandu convert Hello to JSON < /tmp/names.txt
+    $ catmandu convert Hello to YAML < /tmp/names.txt
+    $ catmandu import Hello to MongoDB --database_name test < /tmp/names.txt
+
+Or, via Perl
+
+    use Catmandu;
+
+    my $importer = Catmandu->importer('Hello', file => '/tmp/names.txt');
+    $importer->each(sub {
+        my $items = shift;
+    });
 
 =head1 SEE ALSO
 

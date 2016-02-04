@@ -148,15 +148,34 @@ __END__
 Catmandu - a data toolkit
 
 =head1 SYNOPSIS
+    
+    # From the command line
 
-    use Catmandu -all;
-    use Catmandu qw(config store);
-    use Catmandu -load; # loads default configuration file
-    use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
+    # Convert data from one format to another
+    $ catmandu convert JSON to CSV  < data.json
+    $ catmandu convert CSV  to YAML < data.csv
+    $ catmandu convert MARC to YAML < data.mrc
+
+    # Fix data, add, delete, change fields
+    $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
+    $ catmandu convert JSON --fix al_my_fixes.txt < data.json
+
+    # Import data into a database
+    # Requires: Catmandu::MongoDB and Catmandu::ElasticSearch
+    $ catmandu import YAML to MongoDB --database_name bibliography < data.yml
+    $ catmandu import CSV to ElasticSearch --index_name mystuff < data.csv
+
+    # Export data from a database
+    # Requires: Catmandu::MongoDB and Catmandu::ElasticSearch
+    $ catmandu export MongoDB --database_name bibliography to YAML > data.yml
+    $ catmandu export ElasticSearch --index_name mystuff to CSV > data.csv
+
+    # From Perl
+    use Catmandu;
 
     # If you have Catmandu::OAI and Catmandu::MongoDB installed
     my $importer = Catmandu->importer('OAI',url => 'https://biblio.ugent.be/oai')
-    my $store    = Catmandu->exporter('MongoDB',database_name => 'test');
+    my $store    = Catmandu->store('MongoDB',database_name => 'test');
 
     # Import all the OAI records into MongoDB
     $store->add_many($importer);
@@ -170,51 +189,100 @@ Catmandu - a data toolkit
     my $fixer    = Catmandu->fixer('myfixes.txt');
     my $exporter = Catmandu->exporter('YAML');
 
-    $exporter->add_many(
-        $fixer->fix($store)
-    );
+    $exporter->add_many( $fixer->fix($store) );
     $exporter->commit;
-
-    # Or be very lazy and do this via the command line
-    $ catmandu import OAI --url https://biblio.ugent.be/oai to MongoDB --database_name test
-    $ catmandu export MongoDB --database_name test --fix myfixes.txt to YAML
 
 =head1 DESCRIPTION
 
-Importing, transforming, storing and indexing data should be easy.
+Catmandu provides a command line client and a Perl API to ease the export (E) 
+transformation (T) and loading (L) of data into databases or data file, ETL in short. 
 
-Catmandu provides a suite of Perl modules to ease the import, storage,
-retrieval, export and transformation of metadata records. Combine Catmandu
-modules with web application frameworks such as PSGI/Plack, document stores
-such as MongoDB and full text indexes such as Solr to create a rapid
-development environment for digital library services such as institutional
-repositories and search engines.
+Most of the daily work processing structured data can be done on the command line
+executing the C<catmandu> command. With our catmandu command ETL processing is available 
+in a Perl context. Catmandu is different from other
+ETL tools by its focus on command line processing with much support for dataformats
+available in (academic) libraries: MARC, MODS, OAI and SRU. But, also generic formats such
+as JSON, YAML, CVS, Excel, XML, RDF, Atom are supported. 
 
-In the L<http://librecat.org/> project it is our goal to provide an
-open source set of programming components to build up digital libraries
-services suited to your local needs.
+Read :
 
-Read an in depth introduction into Catmandu programming at
-L<https://github.com/LibreCat/Catmandu/wiki/Introduction>.
+=over
+  
+=item  * L<Catmandu::Introduction> for a primer on the command line capabilities of Catmandu. 
 
-=head1 INSTALLATION
+=item  * L<Catmandu::Importer> for the basics of importing
 
-To install Catmandu just run:
+=item  * L<Catmandu::Fix> for the basics of transformations
 
-  cpanm Catmandu
+=item  * L<Catmandu::Exporter> for the basics of exporting
 
-Read our documentation for more installation hints and OS specific requirements:
+=item  * L<Catmandu::Store> for the basics of storing information
 
-http://librecat.org/Catmandu/#installation
+=item  * Or, visit our website at L<http://librecat.org/> and our blog L<https://librecatproject.wordpress.com/> 
+    for many tutorials
 
-=head1 METHODS
+=back
+
+The documentation below describes the methods available when including Catmandu as
+part of a Perl script. For an overview of the command line tool itself read the 
+documentation on L<catmandu>.
+
+=head1 USE
+
+To include Catmandu in a Perl script it should be loaded with a C<use> command:
+
+    use Catmandu;
+
+By default no methods are imported into the Perl context. To import all or some Catmandu methods,
+provide them as a list to the C<use> command:
+
+    use Catmandu -all;
+    use Catmandu qw(config store exporter);
+
+Catmandu can load configuration options for exports, importers, fixers via configuration
+files (see the CONFIG section below). When adding the --load option (optionally with a path) to the 
+C<use> command, these configuration files will be loaded at the start of your script.
+
+    use Catmandu -load;
+    use Catmandu --load => ['/my/config/directory'];
+
+    # or use all the options
+    use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
+
+=head1 CLASS METHODS
 
 =head2 log
 
-Return the current logger (the L<Log::Any::Adapter> for category
-L<Catmandu::Env>). See L<Log::Any#Logging> for how to send messages to the
-logger. Read our L<https://github.com/LibreCat/Catmandu/wiki/Cookbook>
-"See some debug messages" for some hints on logging.
+Return the current L<Log::Any::Adapter> logger.
+
+    use Catmandu;
+    use Log::Any::Adapter;
+    use Log::Log4perl;
+
+    Log::Any::Adapter->set('Log4perl');
+    Log::Log4perl::init('./log4perl.conf');
+
+    my $logger = Catmandu->log;
+    $logger->info("Starting main program");
+
+with log4perl.conf like:
+
+    # Send a copy of all logging messages to STDERR
+    log4perl.rootLogger=DEBUG,STDERR
+
+    # Logging specific for your main program
+    log4perl.category.myprog=INFO,STDERR
+
+    # Logging specific for on part of Catmandu
+    log4perl.category.Catmandu::Fix=DEBUG,STDERR
+
+    # Where to send the STDERR output
+    log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
+    log4perl.appender.STDERR.stderr=1
+    log4perl.appender.STDERR.utf8=1
+
+    log4perl.appender.STDERR.layout=PatternLayout
+    log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
 
 =head2 default_load_path('/default/path')
 

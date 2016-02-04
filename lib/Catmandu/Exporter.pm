@@ -42,37 +42,38 @@ Catmandu::Exporter - Namespace for packages that can export
 
 =head1 SYNOPSIS
 
-    package Catmandu::Exporter::Foo;
+    # From the command line
 
-    use Catmandu::Sane;
-    use Moo;
+    # JSON is an importer and YAML an exporter
+    $ catmandu convert JSON to YAML < data.json
 
-    with 'Catmandu::Exporter'
+    # OAI is an importer and JSON an exporter
+    $ catmandu convert OAI --url http://biblio.ugent.be/oai to JSON 
 
-    sub add {
-        my ($self, $data) = @_;
-        my $fh = $self->fh;
-        $fh->print( ... );
-    }
-
-    package main;
-
+    # From Perl
     use Catmandu;
 
-    my $exporter = Catmandu->exporter('Foo', file => "/tmp/output.txt");
-    
-    # Or on the command line
-    $ catmandu convert JSON to Foo < /tmp/something.txt >/tmp/output.txt
+    my $importer = Catmandu->importer('JSON', file => 'data.json');
+    my $exporter = Catmandu->exporter('YAML');
+
+    $exporter->add({ record => "one"});
+    $exporter->add_many([ { record => "one" } , { record => "two" } ]);
+    $exporter->add_many($importer);
 
 =head1 DESCRIPTION
 
-A Catmandu::Exporter is a Perl package that can export data. By default, data
-items are written to STDOUT. Optionally provide a C<file> or C<fh> parameter to
-write to a file, string, or handle. New exporter modules are expected to use
-the C<print> method of C<fh>.
+A Catmandu::Exporter is a Perl package that can export data into JSON, YAML, XML
+or many other formats. By default, data is to STDOUT. Optionally provide a C<file> 
+or C<fh> parameter to write to a file, string, or handle. 
 
 Every Catmandu::Exporter is a L<Catmandu::Fixable> thus provides a C<fix>
-parameter and method to apply fixes to exported items.
+parameter and method to apply fixes to exported items:
+    
+    my $exporter = Catmandu->exporter('JSON', fix => ['upcase(title)']);
+
+    # This will be printed to STDOUT like: {"title":"MY TITLE"}
+    $exporter->add({ title => "my title"});
+
 
 Every Catmandu::Exporter is a L<Catmandu::Addable> thus inherits the methods
 C<add> and C<add_many>.
@@ -123,13 +124,47 @@ Returns the number of items exported by this Catmandu::Exporter.
 
 Returns the current logger.
 
+=head1 CODING
+
+Create your own exporter by creating a Perl package in the Catmandu::Exporter namespace
+that implements C<Catmandu::Exporter>. Basically, you need to create a method add which
+writes a Perl hash to a file handle:
+
+
+    package Catmandu::Exporter::Foo;
+
+    use Catmandu::Sane;
+    use Moo;
+
+    with 'Catmandu::Exporter'
+
+    sub add {
+        my ($self, $data) = @_;
+        my $fh = $self->fh;
+        $fh->print( "Hello, World!");
+    }
+
+    1;
+
+This exporter can be called from the command line as:
+
+    $ catmandu convert JSON to Foo < data.json
+
+Or, via Perl
+
+    use Catmandu;
+
+    my $exporter = Catmandu->exporter('Foo', file => "/tmp/output.txt");
+
+    $exporter->add({test => 123});
+
 =head1 SEE ALSO
 
 See function L<export_to_string|Catmandu/export_to_string> in module
 L<Catmandu>.
 
 The exporters L<Catmandu::Exporter::JSON>, L<Catmandu::Exporter::YAML>,
-L<Catmandu::Exporter::CSV>, and L<Catmandu::Exporter::RIS> are included in
+L<Catmandu::Exporter::CSV>, and L<Catmandu::Exporter::Text> are included in
 Catmandu core.
 
 See L<Catmandu::Importer> for the opposite action.

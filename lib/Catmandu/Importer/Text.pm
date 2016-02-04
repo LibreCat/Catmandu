@@ -31,7 +31,7 @@ sub generator {
         state $count   = 0;
         state $line;
 
-        while ( defined( $line = $self->readline ) ) {
+        while ( defined( $line = $self->fh->getline ) ) {
             chomp $line;
             next if $pattern and $line !~ $pattern;
 
