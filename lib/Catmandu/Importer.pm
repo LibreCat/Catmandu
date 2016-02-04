@@ -2,7 +2,7 @@ package Catmandu::Importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '0.9505';
+our $VERSION = '1.00_01';
 
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;

@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.00_01  2016-02-04 16:30:11 CET
   - lots of pod
   - lots of tests
   - new Exporter::Mock
