@@ -51,7 +51,8 @@ sub emit {
                     $perl .= $fixer->emit_delete_key($var, $key);
                 }
                 $perl .= "}";
-            }$perl;
+            }
+            $perl;
         });
     });
 }
