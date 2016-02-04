@@ -60,6 +60,14 @@ Catmandu::Exporter::CSV - a CSV exporter
 
 =head1 SYNOPSIS
 
+    # On the command line
+
+    $ catmandu convert XSL to CSV < data.xls
+
+    $ catmandu convert JSON to CSV --fix myfixes.txt --sep_char ';' < data.json
+    
+    # In a Perl script
+
     use Catmandu::Exporter::CSV;
 
     my $exporter = Catmandu::Exporter::CSV->new(
