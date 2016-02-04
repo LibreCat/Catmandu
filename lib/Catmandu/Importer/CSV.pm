@@ -51,13 +51,16 @@ sub _build_csv {
 sub generator {
     my ($self) = @_;
     sub {
-        state $fh = $self->fh;
+        state $line = 0;
+        state $fh  = $self->fh;
         state $csv = do {
             if ($self->header) {
                 if ($self->fields) {
                     $self->csv->getline($fh);
+                    $line++;
                 } else {
                     $self->_set_fields($self->csv->getline($fh));
+                    $line++;
                 }
             }
             if ($self->fields) {
@@ -69,6 +72,7 @@ sub generator {
         # generate field names if needed
         unless ($self->fields) {
             my $row = $csv->getline($fh) // return;
+            $line++;
             my $fields = [0 .. (@$row -1)];
             $self->_set_fields($fields);
             $csv->column_names($fields);
@@ -78,7 +82,16 @@ sub generator {
             } +{}, @$fields;
         }
 
-        $csv->getline_hr($fh);
+        my $rec = $csv->getline_hr($fh);
+        $line++;
+
+        if (defined $rec || $csv->eof()) {
+            return $rec;
+        }
+        else {
+            my ($cde, $str, $pos) = $csv->error_diag ();
+            die "at line $line (byte $pos) found a Text::CSV parse error($cde) $str";
+        }
     };
 }
 
@@ -94,29 +107,34 @@ Catmandu::Importer::CSV - Package that imports CSV data
 
 =head1 SYNOPSIS
 
-    use Catmandu::Importer::CSV;
+    # From the command line
 
-    my $importer = Catmandu::Importer::CSV->new(file => "/foo/bar.csv");
+    # convert a CSV file to JSON
+    catmandu convert CSV to JSON < journals.csv
+
+    # set column names if CSV file has no header line
+    echo '12157,"The Journal of Headache and Pain",2193-1801' | \
+      catmandu convert CSV --header 0 --fields 'id,title,issn' to YAML
+    
+    # set field separator and quote character 
+    echo '12157;$The Journal of Headache and Pain$;2193-1801' | \
+      catmandu convert CSV --header 0 --fields 'id,title,issn' --sep_char ';' --quote_char '$' to XLSX --file journal.xlsx
+
+
+    # Or in a Perl script
+
+    use Catmandu;
+
+    my $importer = Catmandu->importer('CSV', file => "/foo/bar.csv");
 
     my $n = $importer->each(sub {
         my $hashref = $_[0];
         # ...
     });
 
-Convert CSV to other formats with the catmandu command line client:
-
-    # convert CSV file to JSON
-    catmandu convert CSV to JSON < journals.csv
-    # set column names if CSV file has no header line
-    echo '12157,"The Journal of Headache and Pain",2193-1801' | \
-      catmandu convert CSV --header 0 --fields 'id,title,issn' to YAML
-    # set field separator and quote character 
-    echo '12157;$The Journal of Headache and Pain$;2193-1801' | \
-      catmandu convert CSV --header 0 --fields 'id,title,issn' --sep_char ';' --quote_char '$' to XLSX --file journal.xlsx
-
 =head1 DESCRIPTION
 
-This L<Catmandu::Importer> imports comma-separated values (CSV).  The object
+The L<Catmandu::Importer> package imports comma-separated values (CSV).  The object
 fields are read from the CSV header line or given via the C<fields> parameter.
 Strings in CSV are quoted by C<quote_char> and fields are separated by
 C<sep_char>.
