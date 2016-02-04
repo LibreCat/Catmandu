@@ -1,6 +1,9 @@
 package Catmandu::Fix::uri_encode;
 
 use Catmandu::Sane;
+
+our $VERSION = '0.9505';
+
 use Moo;
 use URI::Escape ();
 use namespace::clean;

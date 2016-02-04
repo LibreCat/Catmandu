@@ -12,14 +12,14 @@ with 'Catmandu::Exporter';
 has _data_ => (is => 'ro', default => sub { [] });
 
 sub add {
-	my ($self, $data) = @_;
-	push @{$self->_data_} , $data;
-	1;
+    my ($self, $data) = @_;
+    push @{$self->_data_} , $data;
+    1;
 }
 
 sub as_arrayref {
-	my ($self) = @_;
-	return $self->_data_;
+    my ($self) = @_;
+    return $self->_data_;
 }
 
 1;
@@ -34,8 +34,8 @@ Catmandu::Exporter::Mock - a expoter that doesn't export anything
 
 =head1 SYNOPSIS
 
-  	# From the commandline
-  	$ catmandu convert JSON --fix myfixes to Mock < /tmp/data.json
+    # From the commandline
+    $ catmandu convert JSON --fix myfixes to Mock < /tmp/data.json
 
     # From Perl
 
@@ -52,9 +52,9 @@ Catmandu::Exporter::Mock - a expoter that doesn't export anything
 
     printf "exported %d objects\n" , $exporter->count;
 
-	# Get an array ref of all records exported
+    # Get an array ref of all records exported
     my $data = $exporter->as_arrayref;
-	
+    
 =head1 DESCRIPTION
 
 This exporter exports nothing and can be used as in situations where you e.g. export

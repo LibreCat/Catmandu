@@ -1,6 +1,23 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - lots of pod
+  - lots of tests
+  - new Exporter::Mock
+  - new Importer::TSV and Exporter::TSV
+  - new 'uri_decode' and 'uri_encode' fixes
+  - new Droppable and Transactional roles for stores
+  - new 'drop' command
+  - switch to MooX::Role::Logger for logging
+  - smarter CSV::Importer
+  - new specialized TabulerExporter base role
+  - fix bug in 'array_to_sentence' helper function
+  - fix $append bug in 'data_at' helper function
+  - the 'data' command is deprecated. All it's functionality is now provided by
+    the 'import', 'export', 'convert' and 'copy' commands
+  - rename the 'move' command to the more accurate 'copy'
+  - line delimited JSON is no longer the default for Importer::JSON and
+    Exporter:JSON
 
 0.9505  2015-12-02 10:36:58 CET
   - expand, collapse and vacuum fixes handle large arrays
