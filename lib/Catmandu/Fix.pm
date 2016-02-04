@@ -105,7 +105,7 @@ sub fix {
         return $d;
     }
 
-    if (is_instance($data)) {
+    if (is_instance($data) && is_able($data, 'does') && $data->does('Catmandu::Iterable')) {
         return $data->map(sub { $fixer->($_[0]) })
                     ->reject(sub { $self->_is_reject($_[0]) });
     }
