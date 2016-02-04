@@ -71,7 +71,7 @@ Catmandu::Importer::Text - Package that imports textual data
 
 =head1 SYNOPSIS
 
-With L<catmandu> command line client:
+    # From the command line
 
     # separate fields by whitespace sequences just like awk
     catmandu convert Text --split '\s+' 
@@ -79,7 +79,7 @@ With L<catmandu> command line client:
     # import all lines starting with '#', omitting this character 
     catmandu convert Text --pattern '^#(.*)'
 
-In Perl code:
+    # In a Perl script
 
     use Catmandu::Importer::Text;
 
@@ -93,7 +93,7 @@ In Perl code:
 
 =head1 DESCRIPTION
 
-This L<Catmandu::Importer> reads textual input line by line. Each line is
+This package reads textual input line by line. Each line is
 imported as item with line number in field C<_id> and text content in field
 C<text>. Line separators are not included. Lines can further be split by
 character or pattern and a regular expression can be specified to only import

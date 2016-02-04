@@ -70,7 +70,7 @@ Catmandu::Importer::TSV - Package that imports tab-separated values
 
 =head1 DESCRIPTION
 
-The L<Catmandu::Importer> package imports tab-separated values (TSV).  The object
+This package imports tab-separated values (TSV).  The object
 fields are read from the TSV header line or given via the C<fields> parameter.
 
 =head1 CONFIGURATION

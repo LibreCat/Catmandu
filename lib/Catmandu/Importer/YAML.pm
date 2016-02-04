@@ -55,6 +55,12 @@ Catmandu::Importer::YAML - Package that imports YAML data
 
 =head1 SYNOPSIS
 
+    # From the command line
+
+    $ catmandu convert YAML to JSON < data.yaml
+
+    # In a Perl script
+    
     use Catmandu::Importer::YAML;
 
     my $importer = Catmandu::Importer::YAML->new(file => "/foo/bar.yaml");

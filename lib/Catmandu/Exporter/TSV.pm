@@ -44,7 +44,7 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 
 =head1 SYNOPSIS
 
-    # On the command line
+    # From the command line
 
     $ catmandu convert JSON to TSV --fields "id,title,year" < data.json
 

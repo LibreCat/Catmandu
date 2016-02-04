@@ -77,18 +77,30 @@ Catmandu::Importer::JSON - Package that imports JSON data
 
 =head1 SYNOPSIS
 
-    use Catmandu::Importer::JSON;
+    # From the command line
+    
+    $ catmandu convert JSON to YAML < data.json
 
-    my $importer = Catmandu::Importer::JSON->new(file => "/foo/bar.json");
+    # or for faster newline delimited input
+
+    $ catmandu convert JSON --line_delimited 1 to YAML < data.json
+
+    # In a Perl script
+
+    use Catmandu;
+
+    my $importer = Catmandu->importer('JSON', file => "/foo/bar.json");
 
     my $n = $importer->each(sub {
         my $hashref = $_[0];
         # ...
     });
 
+=head1 DESCRIPTION
 
-The parser is quite liberal in the input is accepts. You can use the
-C<line_delimited> option to parse newline delimited JSON faster:
+This package imports JSON data. The parser is quite liberal in the input 
+it accepts. You can use the C<line_delimited> option to parse "newline 
+delimited JSON" faster:
 
     { "recordno": 1, "name": "Alpha" }
     { "recordno": 2, "name": "Beta" }

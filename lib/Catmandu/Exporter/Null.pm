@@ -26,10 +26,12 @@ Catmandu::Exporter::Null - a expoter that doesn't export anything
   	# From the commandline
   	$ catmandu convert JSON --fix myfixes to Null < /tmp/data.json
 
+	$ catmandu convert JSON --fix 'add_to_exporter(.,JSON)' to Null < /tmp/data.json
+	
 =head1 DESCRIPTION
 
-This exporter exports nothing and can be used as in situations where you e.g. export
-data from a fix.
+This exporter exports nothing and can be used as in situations where you export
+data in the Fix script itself.
 
 =head1 SEE ALSO
 

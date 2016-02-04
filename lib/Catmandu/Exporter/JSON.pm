@@ -79,11 +79,11 @@ Catmandu::Exporter::JSON - a JSON exporter
 
 =head1 SYNOPSIS
 
-Command line interface:
+    # From the command line
 
     catmandu convert YAML to JSON --pretty 1 < input.yml
 
-In Perl code:
+    # In a Perl script
 
     use Catmandu -all;
 

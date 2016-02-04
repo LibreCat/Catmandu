@@ -107,6 +107,13 @@ Catmandu::Exporter::Text - a Text exporter
 
 =head1 SYNOPSIS
 
+    # From the command line
+    
+    # Write all field values as a line of Text
+    $ catmandu convert JSON to Text --field_sep "," < data.json
+
+    # In a Perl script
+
     use Catmandu::Exporter::Text;
 
     # Print to STDOUT
@@ -123,6 +130,11 @@ Catmandu::Exporter::Text - a Text exporter
     $exporter->add($hashref);
 
     printf "exported %d objects\n" , $exporter->count;
+
+=head1 DESCRIPTION
+
+This C<Catmandu::Exporter> exports items as raw text. All field values found
+in the data will be contactenated using C<field_sep> as delimiter. 
 
 =head1 CONFIGURATION
 

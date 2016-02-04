@@ -120,8 +120,7 @@ Catmandu::Importer::CSV - Package that imports CSV data
     echo '12157;$The Journal of Headache and Pain$;2193-1801' | \
       catmandu convert CSV --header 0 --fields 'id,title,issn' --sep_char ';' --quote_char '$' to XLSX --file journal.xlsx
 
-
-    # Or in a Perl script
+    # In a Perl script
 
     use Catmandu;
 
@@ -134,7 +133,7 @@ Catmandu::Importer::CSV - Package that imports CSV data
 
 =head1 DESCRIPTION
 
-The L<Catmandu::Importer> package imports comma-separated values (CSV).  The object
+The package imports comma-separated values (CSV).  The object
 fields are read from the CSV header line or given via the C<fields> parameter.
 Strings in CSV are quoted by C<quote_char> and fields are separated by
 C<sep_char>.

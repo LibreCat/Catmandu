@@ -30,14 +30,15 @@ Catmandu::Importer::Null - Null importer used for testing purposes
 
 =head1 SYNOPSIS
 
-    # On the command line
+    # From the command line
+
     catmandu convert Null --fix 'add_field(foo,bar)'   
     # creates { "foo": "bar" }
 
-    # In perl
-    use Catmandu::Importer::Null;
+    # In a Perl script
+    use Catmandu;
 
-    my $importer = Catmandu::Importer::Null->new();
+    my $importer = Catmandu->importer('Null');
 
     my $n = $importer->each(sub {
         my $hashref = $_[0];
@@ -46,7 +47,7 @@ Catmandu::Importer::Null - Null importer used for testing purposes
 
 =head1 DESCRIPTION
 
-The Null importer generated one empty record and exists. This importer can be used to
+The importer generates one empty record and then exists. This importer can be used to
 test fix functions, generating a single record.
 
 =head1 METHODS
