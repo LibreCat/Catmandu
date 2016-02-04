@@ -128,8 +128,6 @@ Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 
 An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
-=item multiline
-
 =item line_delimited
 
 Read line-delimited JSON with a faster, non-incremental parser.
