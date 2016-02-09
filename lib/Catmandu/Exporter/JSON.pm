@@ -82,6 +82,9 @@ Catmandu::Exporter::JSON - a JSON exporter
     # From the command line
 
     catmandu convert YAML to JSON --pretty 1 < input.yml
+    
+    # Export in the line-delimited format
+    catmandu convert YAML to JSON --line_delimited 1 < input.yml
 
     # In a Perl script
 
