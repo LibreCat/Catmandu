@@ -52,6 +52,9 @@ is_deeply $i->to_array, [{ hello => "World"}], 'import from string reference';
 $i = T::Importer->new( file => \"Hello\nWorld" );
 is join('',$i->fh->getlines), "Hello\nWorld", "import all";
 
+$i = T::Importer->new( file => "missing" );
+throws_ok { $i->fh->getlines } "Catmandu::BadArg", "throws an error if file doesn't exist";
+
 $i = T::DataPathImporter->new;
 is_deeply $i->to_array, [{abc => [{a=>1},{b=>2},{c=>3}]},{abc => [{d=>4},{e=>5},{f=>6}]}];
 $i = T::DataPathImporter->new(data_path => 'abc');

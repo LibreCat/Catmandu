@@ -78,6 +78,9 @@ sub _build_file {
         }
         $file = $template->process_to_string(%$vars);
     }
+    if (is_string($file) && $file !~ m!^https?://! && ! -f $file) {
+        Catmandu::BadArg->throw("file '$file' doesn't exist");
+    }
     $file;
 }
 
