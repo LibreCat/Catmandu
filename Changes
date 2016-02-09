@@ -2,6 +2,11 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+1.00_02  2016-02-09 10:17:58 CET
+  - bump required version of URI::Template because we need variable names
+    returned in order
+  - pod fixes
+
 1.00_01  2016-02-04 16:30:11 CET
   - lots of pod
   - lots of tests
@@ -12,7 +17,7 @@ Revision history for Catmandu
   - new 'drop' command
   - switch to MooX::Role::Logger for logging
   - smarter CSV::Importer
-  - new specialized TabulerExporter base role
+  - new specialized TabularExporter base role
   - fix bug in 'array_to_sentence' helper function
   - fix $append bug in 'data_at' helper function
   - the 'data' command is deprecated. All it's functionality is now provided by

@@ -2,7 +2,7 @@ package Catmandu::Importer::JSON;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_01';
+our $VERSION = '1.00_02';
 
 use JSON::XS ();
 use Moo;
@@ -127,8 +127,6 @@ Binmode of the input stream C<fh>. Set to C<:utf8> by default.
 =item fix
 
 An ARRAY of one or more fixes or file scripts to be applied to imported items.
-
-=item multiline
 
 =item line_delimited
 

@@ -2,7 +2,7 @@ package Catmandu::Cmd::data;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_01';
+our $VERSION = '1.00_02';
 
 use parent 'Catmandu::Cmd';
 use Catmandu qw(:all);
@@ -110,7 +110,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::data - store, index, search, import, export or convert objects
+Catmandu::Cmd::data - store, index, search, import, export or convert (deprecated)
 
 =head1 DEPRECIATION NOTICE
 

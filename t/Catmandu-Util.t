@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use IO::Handle;
+use File::Spec;
 
 use utf8;
 use feature 'state';
@@ -247,11 +248,15 @@ EOF
     is_deeply Catmandu::Util::read_json("t/small.json") , { "hello" => "ვეპხის ტყაოსანი შოთა რუსთაველი"} , 'read_json';
 }
 
-is Catmandu::Util::join_path("/this/..","./is","..","./a/../weird/path","./../../isnt/../it") , "/it" , 'join_path';
-is Catmandu::Util::normalize_path("/this/../is/../a/../weird/path/../../isnt/../it") , "/it" , 'normalize_path';
-is Catmandu::Util::segmented_path("12345678",segment_size =>2,base_path=>"/x") , "/x/12/34/56/78" , 'segmented_path';
+is Catmandu::Util::join_path("/this/..", "./is","..", "./a/../weird/path", "./../../isnt/../it"),
+    File::Spec->catfile("/it"), 'join_path';
+is Catmandu::Util::normalize_path("/this/../is/../a/../weird/path/../../isnt/../it"),
+    File::Spec->catfile("/it"), 'normalize_path';
+is Catmandu::Util::segmented_path("12345678", segment_size => 2, base_path => "/x"),
+    File::Spec->catfile("/x/12/34/56/78"), 'segmented_path';
 
-is_deeply [Catmandu::Util::parse_data_path("foo.bar.x")] , [ ['foo','bar'], "x" ] , "parse_data_path";
+is_deeply [Catmandu::Util::parse_data_path("foo.bar.x")],
+    [ ['foo','bar'], "x" ] , "parse_data_path";
 
 is Catmandu::Util::get_data({ foo => 'bar'} , 'foo') , 'bar' , 'get_data(foo)';
 ok ! Catmandu::Util::get_data({ foo => 'bar'} , 'foo2') , 'get_data(foo2)';

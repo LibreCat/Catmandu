@@ -42,7 +42,7 @@ requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
 requires 'URI', 0;
 requires 'URI::Escape', 0;
-requires 'URI::Template', 0;
+requires 'URI::Template', 0.22;
 requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';
