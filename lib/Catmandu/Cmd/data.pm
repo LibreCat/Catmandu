@@ -110,7 +110,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::data - store, index, search, import, export or convert objects
+Catmandu::Cmd::data - store, index, search, import, export or convert (deprecated)
 
 =head1 DEPRECIATION NOTICE
 

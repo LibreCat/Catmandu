@@ -12,7 +12,7 @@ Revision history for Catmandu
   - new 'drop' command
   - switch to MooX::Role::Logger for logging
   - smarter CSV::Importer
-  - new specialized TabulerExporter base role
+  - new specialized TabularExporter base role
   - fix bug in 'array_to_sentence' helper function
   - fix $append bug in 'data_at' helper function
   - the 'data' command is deprecated. All it's functionality is now provided by
