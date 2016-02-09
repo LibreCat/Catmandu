@@ -100,14 +100,14 @@ sub _build_fh {
                 if (is_hash_ref($vars)) { # named variables
                     for my $key (keys %$vars) {
                         my $var = $vars->{$key};
-                        $body =~ s/{$key}/$var/; 
+                        $body =~ s/{$key}/$var/;
                     }
                 } else { # positional variables
                     if (is_value($vars)) {
                         $vars = [split ',', $vars];
                     }
                     for my $var (@$vars) {
-                        $body =~ s/{\w+}/$var/; 
+                        $body =~ s/{\w+}/$var/;
                     }
                 }
             }
