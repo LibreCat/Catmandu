@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.00_02  2016-02-09 10:17:58 CET
   - bump required version of URI::Template because we need variable names
     returned in order
   - pod fixes
