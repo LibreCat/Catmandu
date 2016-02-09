@@ -249,11 +249,11 @@ EOF
 }
 
 is Catmandu::Util::join_path("/this/..", "./is","..", "./a/../weird/path", "./../../isnt/../it"),
-    File::Spec->join_path("/it"), 'join_path';
+    File::Spec->catfile("/it"), 'join_path';
 is Catmandu::Util::normalize_path("/this/../is/../a/../weird/path/../../isnt/../it"),
-    File::Spec->join_path("/it"), 'normalize_path';
+    File::Spec->catfile("/it"), 'normalize_path';
 is Catmandu::Util::segmented_path("12345678", segment_size => 2, base_path => "/x"),
-    File::Spec->join_path("/x/12/34/56/78"), 'segmented_path';
+    File::Spec->catfile("/x/12/34/56/78"), 'segmented_path';
 
 is_deeply [Catmandu::Util::parse_data_path("foo.bar.x")],
     [ ['foo','bar'], "x" ] , "parse_data_path";

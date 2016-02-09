@@ -58,7 +58,8 @@ isa_ok(Catmandu->fixer,'Catmandu::Fix','fixer test');
 
 like(Catmandu->export_to_string({ foo => 'bar'}, 'JSON'),qr/{"foo":"bar"}/,'export_to_string');
 
-my ($root_vol, $root) = File::Spec->splitpath(File::Spec->catfile(getcwd(),'t'));
+my ($root_vol, $root_path, $root_file) = File::Spec->splitpath(File::Spec->catfile(getcwd(), 't'));
+my $root = File::Spec->catfile($root_path, $root_file);
 
 is(Catmandu->root, $root, 'root');
 is_deeply(Catmandu->roots,[$root],'roots');
