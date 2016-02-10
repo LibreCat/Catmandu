@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.00_03  2016-02-10 14:34:07 CET
   - fix os-dependent paths in tests
   - throw an error if an Importer file path doesn't exist
 
