@@ -162,14 +162,16 @@ sub read_json {
 
 sub join_path {
     my $path = File::Spec->catfile(@_);
-    normalize_path($path);
+    $path =~ s!/\./!/!g;
+    while ($path =~ s![^/]*/\.\./!!) {}
+    $path;
 }
 
 sub normalize_path { # taken from Dancer::FileUtils
     my ($path) = @_;
     $path =~ s!/\./!/!g;
     while ($path =~ s![^/]*/\.\./!!) {}
-    $path;
+    File::Spec->catfile($path);
 }
 
 sub segmented_path {
