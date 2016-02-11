@@ -2,7 +2,7 @@ package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_02';
+our $VERSION = '1.00_03';
 
 use Moo;
 use namespace::clean;
