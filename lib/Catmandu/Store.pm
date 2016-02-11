@@ -79,9 +79,18 @@ Catmandu::Store - Namespace for packages that can make data persistent
 
 =head1 SYNOPSIS
 
-    use Catmandu::Store::DBI;
+    # From the command line
 
-    my $store = Catmandu::Store::DBI->new(data_source => 'DBI:mysql:database=test');
+    $ catmandu import JSON into MongoDB --database_name 'bibliography' < data.json
+
+    $ catmandu export MongoDB --database_name 'bibliography' to YAML
+    $ catmandu export MongoDB --database_name 'bibliography' --query '{"PublicationYear": "1937"}'
+    $ catmandu count  MongoDB --database_name 'bibliography' --query '{"PublicationYear": "1937"}'
+
+    # From Perl
+    use Catmandu;
+
+    my $store = Catmandu->store('MongoDB',database_name => 'bibliography');
 
     my $obj1 = $store->bag->add({ name => 'Patrick' });
 
