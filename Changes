@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.00  2016-02-22 16:16:07 CET
   - fix os-dependent paths in tests
   - throw an error if an Importer file path doesn't exist
   - bump required version of URI::Template because we need variable names

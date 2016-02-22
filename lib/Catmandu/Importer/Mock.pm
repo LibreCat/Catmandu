@@ -2,7 +2,7 @@ package Catmandu::Importer::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_03';
+our $VERSION = '1.00';
 
 use Moo;
 use namespace::clean;

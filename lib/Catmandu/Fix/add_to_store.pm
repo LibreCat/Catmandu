@@ -2,7 +2,7 @@ package Catmandu::Fix::add_to_store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_03';
+our $VERSION = '1.00';
 
 use Catmandu;
 use Moo;
