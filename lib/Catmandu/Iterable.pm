@@ -595,21 +595,21 @@ regex.
 =head2 detect($key => $val)
 
 If the iterator contains HASH values, then return the first item where the value of
-$key is equal to val.
+C<$key> is equal to val.
 
 =head2 detect($key => qr/..../)
 
 If the iterator contains HASH values, then return the first item where the value of
-$key matches the regex.
+C<$key> matches the regex.
 
 =head2 detect($key => [$val, ...])
 
 If the iterator contains HASH values, then return the first item where the value of
-$key is equal to any of the vals given.
+C<$key> is equal to any of the vals given.
 
 =head2 pluck($key)
 
-Return an Iterator that only containes the values of the given $key.
+Return an Iterator that only contains the values of the given C<$key>.
 
 =head2 select(\&callback)
 
@@ -622,17 +622,17 @@ If the iterator contains STRING values, then return each item which matches the 
 =head2 select($key => $val)
 
 If the iterator contains HASH values, then return each item where the value of
-$key is equal to val.
+C<$key> is equal to val.
 
 =head2 select($key => qr/..../)
 
-If the iterator contains HASH values, then return each item where the value of $key
+If the iterator contains HASH values, then return each item where the value of C<$key>
 matches the regex.
 
 =head2 select($key => [$val, ...])
 
 If the iterator contains HASH values, then return each item where the value of
-$key is equal to any of the vals given.
+C<$key> is equal to any of the vals given.
 
 =head2 grep( ... )
 
