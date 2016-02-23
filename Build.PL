@@ -27,6 +27,7 @@ my %module_build_args = (
   },
   "recursive_test_files" => 1,
   "requires" => {
+    "Any::URI::Escape" => 0,
     "App::Cmd" => "0.33",
     "CGI::Expand" => "2.02",
     "Clone" => "0.31",
@@ -54,7 +55,6 @@ my %module_build_args = (
     "Time::Piece" => 0,
     "Try::Tiny::ByClass" => "0.01",
     "URI" => 0,
-    "URI::Escape" => 0,
     "URI::Template" => "0.22",
     "Unicode::Normalize" => 0,
     "YAML::XS" => "0.41",
