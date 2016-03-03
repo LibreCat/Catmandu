@@ -2,7 +2,7 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - fix some pod typos
-  - fix a bug in handling multi value response http headers
+  - fix handling multivalued response http headers in Importer
 
 1.00  2016-02-22 16:16:07 CET
   - fix os-dependent paths in tests
