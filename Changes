@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0001  2016-03-03 16:28:16 CET
   - fix some pod typos
   - fix handling multivalued response http headers in Importer
 

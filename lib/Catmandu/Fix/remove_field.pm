@@ -2,7 +2,7 @@ package Catmandu::Fix::remove_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00';
+our $VERSION = '1.0001';
 
 use Moo;
 use namespace::clean;
