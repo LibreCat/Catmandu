@@ -448,11 +448,20 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 </section>
 <section id="osx" class="level3">
 <h3><span class="header-section-number">1.2.8</span> OSX</h3>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">curl</span> -L http://install.perlbrew.pl <span class="kw">|</span> <span class="kw">bash</span> <span class="co"># installs perlbrew</span>
-<span class="kw">perlbrew</span> install perl-5.22.0  <span class="co"># installs a fresh, isolated perl base in your home folder</span>
-<span class="kw">perlbrew</span> switch perl-5.22.0 <span class="co"># use perl 5.22.0 binary instead of 5.18.0</span>
-<span class="kw">perlbrew</span> install-cpanm <span class="co"># install cpanm. (If next step fails somehow)</span>
-<span class="kw">cpanm</span> --interactive Task::Catmandu <span class="co"># install Catmandu</span></code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">brew</span> install libxml++ libxml2 xml2 libxslt
+<span class="co"># Install plenv from https://github.com/tokuhirom/plenv</span>
+<span class="kw">git</span> clone https://github.com/tokuhirom/plenv.git ~/.plenv
+<span class="kw">echo</span> <span class="st">&#39;export PATH=&quot;$HOME/.plenv/bin:$PATH&quot;&#39;</span> <span class="kw">&gt;&gt;</span> ~/.bash_profile
+<span class="kw">echo</span> <span class="st">&#39;eval &quot;$(plenv init -)&quot;&#39;</span> <span class="kw">&gt;&gt;</span> ~/.bash_profile
+<span class="kw">exec</span> <span class="ot">$SHELL</span> -l
+<span class="kw">git</span> clone https://github.com/tokuhirom/Perl-Build.git ~/.plenv/plugins/perl-build/
+<span class="co"># Install a modern Perl</span>
+<span class="kw">plenv</span> install 5.22.0
+<span class="kw">plenv</span> rehash
+<span class="kw">cpan</span> App::cpanminus
+<span class="co"># Install catmandu</span>
+<span class="kw">cpanm</span> Catmandu Catmandu::MARC
+<span class="kw">plenv</span> rehash</code></pre>
 </section>
 <section id="windows-mac-osx-linux" class="level3">
 <h3><span class="header-section-number">1.2.9</span> Windows, Mac OSX, Linux</h3>
