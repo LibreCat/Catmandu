@@ -340,8 +340,8 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <section id="installation" class="level2">
 <h2><span class="header-section-number">1.2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation">✎</a></h2>
 <p>To get Catmandu running on your system you need to download and install at least the CPAN <a href="https://metacpan.org/pod/Catmandu">Catmandu</a> module. Additional modules add support for more input and output formats, databases, and processing options.</p>
-<p>To install all recommended modules and select optional extension just install <a href="https://metacpan.org/release/Task-Catmandu">Task::Catmandu</a>:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
+<p>To install all modules select at least Catmandu (and probably Catmandu::MARC)</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cpanm</span> Catmandu Catmandu::MARC</code></pre>
 <p>Here are some Catmandu installation hints for various platforms.</p>
 <section id="debian" class="level3">
 <h3><span class="header-section-number">1.2.1</span> Debian</h3>
@@ -388,7 +388,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <p>Alternatively, you can build newest Catmandu and dependencies from source:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get update
 <span class="kw">sudo</span> apt-get install cpanminus build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev
-<span class="kw">cpanm</span> --interactive Task::Catmandu</code></pre>
+<span class="kw">cpanm</span> Catmandu Catmandu::MARC</code></pre>
 </section>
 <section id="ubuntu-server-12.04.4-lts" class="level3">
 <h3><span class="header-section-number">1.2.2</span> Ubuntu Server 12.04.4 LTS</h3>
@@ -405,7 +405,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> Test::More
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
-<span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
+<span class="kw">/usr/local/bin/cpanm</span> Catmandu Catmandu::MARC</code></pre>
 </section>
 <section id="centos-6.4" class="level3">
 <h3><span class="header-section-number">1.2.3</span> CentOS 6.4</h3>
@@ -420,7 +420,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <span class="kw">yum</span> install libxml2 libxml2-devel libxslt libxslt-devel -y
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> YAML
 <span class="kw">yes</span> <span class="kw">|</span> <span class="kw">cpan</span> App::cpanminus
-<span class="kw">/usr/local/bin/cpanm</span> Task::Catmandu</code></pre>
+<span class="kw">/usr/local/bin/cpanm</span> Catmandu Catmandu::MARC</code></pre>
 </section>
 <section id="centos-7" class="level3">
 <h3><span class="header-section-number">1.2.4</span> CentOS 7</h3>
@@ -434,7 +434,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper install --type pattern devel_basis
 <span class="kw">sudo</span> zypper install libxml2-devel libxslt-devel
 <span class="kw">curl</span> -L http://cpanmin.us <span class="kw">|</span> <span class="kw">perl</span> - App::cpanminus  <span class="co">## unless you already have cpanm</span>
-<span class="kw">cpanm</span> Task::Catmandu</code></pre>
+<span class="kw">cpanm</span> Catmandu Catmandu::MARC</code></pre>
 </section>
 <section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
 <h3><span class="header-section-number">1.2.6</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
@@ -444,7 +444,7 @@ remove_field<span class="ot">(</span>record<span class="ot">)</span></code></pre
 <section id="openbsd-53" class="level3">
 <h3><span class="header-section-number">1.2.7</span> OpenBSD 53</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpan</span> App::cpanminus
-<span class="kw">cpanm</span> Catmandu</code></pre>
+<span class="kw">cpanm</span> Catmandu Catmandu::MARC</code></pre>
 </section>
 <section id="osx" class="level3">
 <h3><span class="header-section-number">1.2.8</span> OSX</h3>
