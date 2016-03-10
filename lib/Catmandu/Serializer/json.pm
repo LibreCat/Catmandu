@@ -2,7 +2,7 @@ package Catmandu::Serializer::json;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_03';
+our $VERSION = '1.0001';
 
 use JSON::XS ();
 use Moo;

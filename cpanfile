@@ -12,6 +12,7 @@ on 'test', sub {
   requires 'Perl::Tidy', 0;
 };
 
+requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '0.33';
 requires 'CGI::Expand', '2.02';
 requires 'Clone', '0.31';
@@ -41,7 +42,6 @@ requires 'Time::HiRes', 0; # not always installed?
 requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
 requires 'URI', 0;
-requires 'URI::Escape', 0;
 requires 'URI::Template', 0.22;
 requires 'YAML::XS', '0.41';
 

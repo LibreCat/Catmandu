@@ -2,7 +2,7 @@ package Catmandu::Importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.00_03';
+our $VERSION = '1.0001';
 
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
@@ -55,6 +55,7 @@ has http_timeout => (is => 'ro', predicate => 1);
 has http_verify_hostname => (is => 'ro', default => sub { 1 });
 has http_body => (is => 'ro', predicate => 1);
 has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => 'user_agent');
+has ignore_404 => (is => 'ro');
 
 sub _build_encoding {
     ':utf8';
@@ -122,7 +123,8 @@ sub _build_fh {
         unless ($res->is_success) {
             my $res_headers = [];
             for my $header ($res->header_field_names) {
-                push @$res_headers, $header, $res->header($header);
+                my $val = $res->header($header);
+                push @$res_headers, $header, $val;
             }
             Catmandu::HTTPError->throw({
                 code             => $res->code,
