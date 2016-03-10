@@ -608,6 +608,16 @@ Dave Sherohman, C<< dave.sherohman at ub.lu.se >>
 
 Jakob Voss, C<< nichtich at cpan.org >>
 
+=head1 QUESTIONS, ISSUES & BUG REPORTS
+
+For any questions on the use of our modules please join our mailing list at:
+
+    librecat-dev@lists.uni-bielefeld.de
+
+or send in your bug reports or feature requests to our issue tracker at:
+
+    https://github.com/LibreCat/Catmandu/issues
+
 =head1 LICENSE AND COPYRIGHT
 
 This program is free software; you can redistribute it and/or modify it
