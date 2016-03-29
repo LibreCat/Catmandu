@@ -80,7 +80,7 @@ by looking up it's value in a store
 
 =head1 SYNOPSIS
 
-   # Lookup in a SQLLite database
+   # Lookup in an SQLLite database
    lookup_in_store(foo.bar, DBI, data_source: "dbi:SQLite:path/data.sqlite")
 
    # Lookup in a MongoDB database
@@ -148,7 +148,7 @@ The resulting data will contain:
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix>, L<Catmandu::Store>
+L<Catmandu::Fix>, L<Catmandu::Store> , L<Catmandu::Fix::add_to_store>
 
 =cut
 
