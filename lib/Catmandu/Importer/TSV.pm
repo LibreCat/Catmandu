@@ -11,6 +11,15 @@ use namespace::clean;
 with 'Catmandu::Importer';
 
 has header => (is => 'ro', default => sub { 1 });
+has sep_char => (
+    is      => 'ro',
+    default => sub { "\t"},
+    coerce  => sub {
+        my $sep_char = $_[0];
+        $sep_char =~ s/(\\[abefnrt])/"qq{$1}"/gee;
+        return $sep_char;
+    }
+);
 has fields => (
     is     => 'rwp',
     coerce => sub {
@@ -27,7 +36,7 @@ sub _build_csv {
 	my ($self) = @_;
 	my $csv = Catmandu::Importer::CSV->new(
 		header => $self->header,
-		sep_char => "\t", 
+		sep_char => $self->sep_char, 
 		quote_char => undef, 
 		escape_char => undef,
 		file => $self->file,
@@ -105,6 +114,10 @@ fields will be named by column index ("0", "1", "2", ...).
 
 Read fields from a header line with the column names, if set to C<1> (the
 default).
+
+=item sep_char
+
+Column separator (C<tab> by default)
 
 =back
 

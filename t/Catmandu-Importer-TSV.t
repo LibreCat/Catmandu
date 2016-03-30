@@ -43,5 +43,13 @@ $importer = $pkg->new(file => \$tsv, header => 0);
 
 is_deeply $importer->to_array, $data;
 
-done_testing;
+$tsv = <<EOF;
+Patrick 44
+Nicolas 39
+EOF
 
+$importer = $pkg->new(file => \$tsv, header => 0, sep_char => ' ');
+
+is_deeply $importer->to_array, $data;
+
+done_testing;
