@@ -10,6 +10,15 @@ use namespace::clean;
 
 with 'Catmandu::TabularExporter';
 
+has sep_char => (
+    is      => 'ro',
+    default => sub {"\t"},
+    coerce  => sub {
+        my $sep_char = $_[0];
+        $sep_char =~ s/(\\[abefnrt])/"qq{$1}"/gee;
+        return $sep_char;
+    }
+);
 has csv          => (is => 'lazy');
 
 sub _build_csv {
@@ -17,7 +26,7 @@ sub _build_csv {
     my $csv = Catmandu::Exporter::CSV->new(
         header      => $self->header,
         collect_fields => $self->collect_fields,
-        sep_char    => "\t",
+        sep_char    => $self->sep_char,
         quote_char  => undef,
         escape_char => undef,
         file => $self->file,
@@ -54,10 +63,6 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 
     my $exporter = Catmandu::Exporter::TSV->new(
                 fix => 'myfix.txt',
-                quote_char => '"',
-                sep_char => ',',
-                escape_char => '"' ,
-                always_quote => 1,
                 header => 1);
 
     $exporter->fields("f1,f2,f3");
@@ -114,6 +119,10 @@ See L<Catmandu::TabularExporter>.
 =item header
 
 Include a header line with column names. Enabled by default.
+
+=item sep_char
+
+Column separator (C<tab> by default)
 
 =back
 
