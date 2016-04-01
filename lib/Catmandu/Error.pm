@@ -11,6 +11,11 @@ extends 'Throwable::Error';
 
 with 'Catmandu::Logger';
 
+has message => (
+  is => 'ro',
+  default => sub { "" },
+);
+
 sub BUILD {
     my ($self) = @_;
     my $msg = $self->log_message;

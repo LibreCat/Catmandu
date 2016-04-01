@@ -1,6 +1,9 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix debug mode dying if Perl::Tidy is missing
+  - error messages now default to empty string
+  - improved Importer::TSV and Exporter::TSV
 
 1.0001  2016-03-03 16:28:16 CET
   - fix some pod typos

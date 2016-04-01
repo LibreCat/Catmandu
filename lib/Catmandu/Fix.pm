@@ -183,24 +183,33 @@ sub emit {
     }
 
     if ($self->tidy || $self->log->is_debug) {
-        require Perl::Tidy;
+        try {
+            my $pkg = require_package 'Perl::Tidy';
+            my $sub = do {
+                no strict 'refs';
+                \&{"${pkg}::perltidy"};
+            };
 
-        my $tidy_perl = "";
-        my $err = "";
-        my $log = "";
+            my $tidy_perl = "";
+            my $err = "";
+            my $log = "";
 
-        my $has_err = Perl::Tidy::perltidy(
-            argv        => "-se",
-            source      => \$perl,
-            destination => \$tidy_perl,
-            logfile     => \$log,
-            stderr      => \$err,
-        );
-        if ($has_err) {
-            Catmandu::Error->throw($err);
-        }
+            my $has_err = $sub->(
+                argv        => "-se",
+                source      => \$perl,
+                destination => \$tidy_perl,
+                logfile     => \$log,
+                stderr      => \$err,
+            );
+            if ($has_err) {
+                Catmandu::Error->throw($err);
+            }
 
-        $perl = $tidy_perl;
+            $perl = $tidy_perl;
+        } catch_case [
+            'Catmandu::NoSuchPackage' => sub {},
+       ];
+
     }
 
     $self->log->debug($perl);
