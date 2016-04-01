@@ -2,7 +2,7 @@ package Catmandu::Fix::Has;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0001';
+our $VERSION = '1.0002';
 
 use Class::Method::Modifiers qw(install_modifier);
 

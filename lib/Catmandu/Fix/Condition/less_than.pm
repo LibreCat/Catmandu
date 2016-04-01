@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::less_than;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0001';
+our $VERSION = '1.0002';
 
 use Moo;
 use namespace::clean;

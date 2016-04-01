@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0002  2016-04-01 13:36:28 CEST
   - fix debug mode dying if Perl::Tidy is missing
   - error messages now default to empty string
   - improved Importer::TSV and Exporter::TSV
