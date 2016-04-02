@@ -145,9 +145,9 @@ Catmandu::Fix::Bind::visitor - a binder that computes Fix-es for every element i
 
 =head1 DESCRIPTION
 
-The visitor binder will iterate over all the elements in a record and preform fixes on them.
+The visitor binder will iterate over all the elements in a record and perform fixes on them.
 
-Special node names are availabe to process every visited element:
+Special node names are available to process every visited element:
 
 =over 4
 

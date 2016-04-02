@@ -157,7 +157,7 @@ This method should be overridden to provide option specifications. (This is list
 
 If not overridden, it returns an empty list.
 
-=head2 descripton()
+=head2 description()
 
 This method should return a string containing the long documentation of the command
 

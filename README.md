@@ -95,7 +95,7 @@ interactive mode:
      ...
      fix >
 
-Catmandu contains many powerfull fixes. Visit [http://librecat.org/Catmandu/#fixes-cheat-sheet](http://librecat.org/Catmandu/#fixes-cheat-sheet) to get
+Catmandu contains many powerful fixes. Visit [http://librecat.org/Catmandu/#fixes-cheat-sheet](http://librecat.org/Catmandu/#fixes-cheat-sheet) to get
 an overview what is possible.
 
 # Documentation
