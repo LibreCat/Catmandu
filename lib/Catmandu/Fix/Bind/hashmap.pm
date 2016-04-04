@@ -188,7 +188,7 @@ Join all the values of a key using a delimiter.
 
 =head2 count: 0|1
 
-Don't store the values only count the number of key occurences.
+Don't store the values only count the number of key occurrences.
 
 =head1 SEE ALSO
 
