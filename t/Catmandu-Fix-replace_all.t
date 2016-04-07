@@ -20,4 +20,9 @@ is_deeply
     {date => "July 23th"},
     "interpolation works";
 
-done_testing 3;
+is_deeply
+    $pkg->new('words', '/b', '')->fix({words => "/bar"}),
+    {words => "ar"},
+    "Slashes";
+
+done_testing 4;

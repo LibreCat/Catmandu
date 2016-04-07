@@ -19,4 +19,8 @@ is_deeply
     $pkg->new('words', 'Przewalski')->fix({words => [qw(Patrick Nicolas Paul Frank)]}),
     {words => [qw()]};
 
-done_testing 3;
+is_deeply
+	$pkg->new('words', '/bar')->fix({words => [qw(/bar bor)]}) ,
+	{words => [qw{/bar}]};
+
+done_testing 4;
