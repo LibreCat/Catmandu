@@ -285,16 +285,16 @@ sub emit_string {
 sub emit_match {
     my ($self, $pattern) = @_;
     $pattern =~ s/\//\\\//g;
-    $pattern =~ s/\\$/\\\\/;
+    $pattern =~ s/\\$/\\\\/; # pattern can't end with an escape in m/.../
     "m/$pattern/";
 }
 
 sub emit_substitution {
     my ($self, $pattern, $replace) = @_;
     $pattern =~ s/\//\\\//g;
-    $pattern =~ s/\\$/\\\\/;
+    $pattern =~ s/\\$/\\\\/; # pattern can't end with an escape in m/.../
     $replace =~ s/\//\\\//g;
-    $replace =~ s/\\$/\\\\/;
+    $replace =~ s/\\$/\\\\/; # pattern can't end with an escape in m/.../
     "s/$pattern/$replace/";
 }
 
