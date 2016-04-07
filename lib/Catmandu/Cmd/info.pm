@@ -116,6 +116,7 @@ Catmandu::Cmd::info - list installed Catmandu modules
 =head1 DESCRIPTION
 
 This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all modules.
+By default modules are listed in tabular form, like L<Catmandu::Exporter::Table>.
 
 =head1 EXAMPLES
 
@@ -125,5 +126,8 @@ This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all modules.
   catmandu info --stores
   catmandu info --namespace=Catmandu
   catmandu info --all
-  
+
+  # export list of exporter modules to JSON
+  catmandu info --exporters to JSON
+
 =cut
