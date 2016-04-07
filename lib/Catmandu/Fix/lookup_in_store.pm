@@ -76,7 +76,7 @@ __END__
 =head1 NAME
 
 Catmandu::Fix::lookup_in_store - change the value of a HASH key or ARRAY index
-by looking up it's value in a store
+by looking up its value in a store
 
 =head1 SYNOPSIS
 

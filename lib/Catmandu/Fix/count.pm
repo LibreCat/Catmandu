@@ -29,7 +29,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::count - replace the value of an array or hash field with it's count
+Catmandu::Fix::count - replace the value of an array or hash field with its count
 
 =head1 SYNOPSIS
 

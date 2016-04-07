@@ -29,7 +29,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::sum - replace the value of an array field with the sum of it's elements
+Catmandu::Fix::sum - replace the value of an array field with the sum of its elements
 
 =head1 SYNOPSIS
 
