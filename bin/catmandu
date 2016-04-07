@@ -23,10 +23,10 @@ catmandu - LibreCat command line tools
  catmandu convert JSON to YAML < file.json
  catmandu convert YAML to JSON < file.yaml
  catmandu convert YAML < file.yaml # 'to JSON' is implicit
- catmandu convert MARC < records.mrc 
+ catmandu convert MARC < records.mrc
  catmandu convert MARC --fix 'marc_map(245,title)' < records.mrc
- catmandu convert OAI --url https://biblio.ugent.be/oai 
- catmandu convert SRU --base http://www.unicat.be/sru --query dna 
+ catmandu convert OAI --url https://biblio.ugent.be/oai
+ catmandu convert SRU --base http://www.unicat.be/sru --query dna
 
  # import
  catmandu import JSON to MongoDB --database_name mydb < records.json
@@ -49,18 +49,18 @@ catmandu - LibreCat command line tools
    options:
     database_name: mydb
 
- catmandu import JSON to test1 < records.json 
+ catmandu import JSON to test1 < records.json
 
  catmandu config   # show the contents of catmandu.yml
 
- catmandu count test1 
+ catmandu count test1
  catmandu delete test1 -q 'title:"My Rabbit"'
 
 =head1 COMMANDS
 
 =head2 help COMMAND
 
-Documentation about command line options. 
+Documentation about command line options.
 
 =head2 config
 
@@ -68,8 +68,8 @@ Display the contents of the catmandu.yml files in your project.
 
 =head2 convert IMPORTER [OPTIONS] [[--fix FIX]] to EXPORTER [OPTIONS]
 
-Convert data from one format to another format with help of L<Catmandu::Importer>s and 
-L<Catmandu::Exporter>s. All options given on the command line will be send to the Importer 
+Convert data from one format to another format with help of L<Catmandu::Importer>s and
+L<Catmandu::Exporter>s. All options given on the command line will be send to the Importer
 or Exporter as initialization parameters. E.g.
 
  catmandu convert OAI --url BASEURL --metadataPrefx PREFIX \
@@ -86,19 +86,27 @@ All importers accept one or more --fix options with the name of a fix file or fi
 
 The JSON exporter is implicit and is optional.
 
- catmandu convert YAML to JSON  
- catmandu convert YAML # shorter 
+ catmandu convert YAML to JSON
+ catmandu convert YAML # shorter
+
+=head2 copy STORE [OPTIONS] [-q QUERY] [--limit LIMIT] [[--fix FIX]] to STORE [OPTIONS]
+
+Copy items from one L<Catmandu::Store> to another. All options given
+on the command line will be send to the Stores as initialization parameters.
+Optionally a QUERY and LIMIT can be provided to selectively export items from the Store.
+Optionally a FIX can be provided to be executed on all the items before they are
+stored.
 
 =head2 count STORE [OPTIONS]
 
-Count the number of items in a L<Catmandu::Store>. All options given on the command line 
+Count the number of items in a L<Catmandu::Store>. All options given on the command line
 will be send to the store as initialization parameters. E.g.
 
  catmandu count MongoDB --database_name mydb --bag data
 
 =head2 delete STORE [OPTIONS] [-q QUERY]
 
-Delete items from a L<Catmandu::Store>. All options given on the command line 
+Delete items from a L<Catmandu::Store>. All options given on the command line
 will be send to the store as initialization parameters. Optionally a QUERY can
 be provided to select the items to delete. E.g.
 
@@ -106,10 +114,10 @@ be provided to select the items to delete. E.g.
 
 =head2 export STORE [OPTIONS] [-q QUERY] [--limit LIMIT] [[--fix FIX]] to EXPORTER [OPTIONS]
 
-Export items from a L<Catmandu::Store> using a L<Catmandu::Exporter>. All options given 
+Export items from a L<Catmandu::Store> using a L<Catmandu::Exporter>. All options given
 on the command line will be send to the Store or Exporter as initialization parameters.
 Optionally a QUERY and LIMIT can be provided to selectively export items from the Store.
-Optionally a FIX can be provided to be executed on all the items before they are 
+Optionally a FIX can be provided to be executed on all the items before they are
 exporter by the exporter.
 
 E.g.
@@ -118,24 +126,20 @@ E.g.
 
 =head2 import IMPORTER [OPTIONS] [[--fix FIX]] to STORE [OPTIONS]
 
-Import items from a L<Catmandu::Importer> to a L<Catmandu::Store>. All options given 
+Import items from a L<Catmandu::Importer> to a L<Catmandu::Store>. All options given
 on the command line will be send to the Importer or Store as initialization parameters.
 Optionally a FIX can be provided to be executed on all the items before they are
 stored into the Store.
 
  catmandu import JSON to MongoDB --database_name mydb < records.json
 
-=head2 move STORE [OPTIONS] [-q QUERY] [--limit LIMIT] [[--fix FIX]] to STORE [OPTIONS]
+=head2 info [OPTIONS]
 
-Move items from one L<Catmandu::Store> to another. All options given 
-on the command line will be send to the Stores as initialization parameters.
-Optionally a QUERY and LIMIT can be provided to selectively export items from the Store.
-Optionally a FIX can be provided to be executed on all the items before they are 
-stored.
+List installed Catmandu modules (importers, exporters, stores, and fixes).
 
-=head2 data [LONG_OPTIONS]
+=head2 run [FIX]
 
-Low level data manipulation command. See DATA OPTIONS below for full documentation.
+Execute a fix script or run an interactive Fix shell.
 
 =head1 OPTIONS
 
