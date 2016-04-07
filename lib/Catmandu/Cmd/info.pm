@@ -60,7 +60,7 @@ sub command {
         $opts->{namespace} = 'Catmandu::Store';
     }
     else {
-        $opts->{namespace} = [qw(Catmandu::Exporter Catmandu::Fix Catmandu::Importer Catmandu::Store)];
+        $opts->{namespace} = [qw(Catmandu)];
     }
 
     my $from_opts = { fix => [sub{add_about(@_)}] };
