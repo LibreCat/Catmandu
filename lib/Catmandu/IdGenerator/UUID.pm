@@ -38,8 +38,10 @@ Catmandu::IdGenerator::Mock - Generator of UUID identifiers
        printf "id: %s\n" m $x->generate;
     }
 
-=head1 SEE ALSO
+=head1 DESCRIPTION
 
-L<Catmandu::IdGenerator>
+This L<Catmandu::IdGenerator> generates identifiers based on the Universally
+Unique Identifier (UUID) standard. A UUID is a 128 bit number represented by
+lowercase hexadecimal digits such as C<de305d54-75b4-431b-adb2-eb6b9e546014>.
 
 =cut
