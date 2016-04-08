@@ -52,6 +52,17 @@ Catmandu::IdGenerator::Mock - Generator of increasing identifiers
 
 =head1 SEE ALSO
 
-L<Catmandu::IdGenerator>
+This L<Catmandu::IdGenerator> generates identifiers based on the sequence of
+natural numbers.
+
+=head1 CONFIGURATION
+
+=over
+
+=item first_id
+
+First number to start from. Set to C<0> by default (zero-based numbering).
+
+=back
 
 =cut

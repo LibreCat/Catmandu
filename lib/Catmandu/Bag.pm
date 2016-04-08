@@ -143,13 +143,10 @@ goes out of scope.
 
 =head2 id_generator
 
-An Catmandu::IdGenerator.
+A L<Catmandu::IdGenerator> or name of an IdGenerator class.
+By default L<Catmandu::IdGenerator::UUID> is used.
 
 =head1 METHODS
-
-=head2 new(OPTIONS)
-
-Create a new Bag.
 
 =head2 add($hash)
 
