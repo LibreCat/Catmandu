@@ -14,11 +14,12 @@ has search => (fix_arg => 1);
 with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
-    my ($self, $var) = @_;
-    my $search = $self->search;
+    my ($self, $var, $fixer) = @_;
     
     "if (is_array_ref(${var})) {" .
-        "${var} = [ grep { /${search}/ } \@{${var}} ];" .
+        "${var} = [ grep { " .
+        $fixer->emit_match($self->search) .
+        " } \@{${var}} ];" .
     "}";
 }
 

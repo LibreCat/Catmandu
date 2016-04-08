@@ -71,7 +71,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::copy - copy objects to another store
+Catmandu::Cmd::copy - copy objects from one store to another
 
 =head1 EXAMPLES
 

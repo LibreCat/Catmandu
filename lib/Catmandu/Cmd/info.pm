@@ -13,10 +13,11 @@ use namespace::clean;
 sub command_opt_spec {
     (
         ["all"       , "show all module on this server"],
-        ["exporters" , "show all catmandu exporters"],
-        ["importers" , "show all catmandu importers"],
-        ["fixes"     , "show all catmandu fixes"],
-        ["stores"    , "show all catmandu stores"],
+        ["exporters" , "show all Catmandu exporters"],
+        ["importers" , "show all Catmandu importers"],
+        ["fixes"     , "show all Catmandu fixes"],
+        ["stores"    , "show all Catmandu stores"],
+        ["validators", "show all Catmandu validators"],
         ["namespace=s", "search by namespace"],
         ["max_depth=i", "maximum depth to search for modules"],
         ["inc=s@", 'override included directories (defaults to @INC)', {default => [@INC]}],
@@ -59,8 +60,12 @@ sub command {
         delete $opts->{stores};
         $opts->{namespace} = 'Catmandu::Store';
     }
+    elsif ($opts->{validators}) {
+        delete $opts->{stores};
+        $opts->{namespace} = 'Catmandu::Validator';
+    }
     else {
-        $opts->{namespace} = [qw(Catmandu::Exporter Catmandu::Fix Catmandu::Importer Catmandu::Store)];
+        $opts->{namespace} = [qw(Catmandu)];
     }
 
     my $from_opts = { fix => [sub{add_about(@_)}] };
@@ -116,6 +121,7 @@ Catmandu::Cmd::info - list installed Catmandu modules
 =head1 DESCRIPTION
 
 This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all modules.
+By default modules are listed in tabular form, like L<Catmandu::Exporter::Table>.
 
 =head1 EXAMPLES
 
@@ -123,7 +129,11 @@ This L<Catmandu::Cmd> uses L<Catmandu::Importer::Modules> to list all modules.
   catmandu info --importers
   catmandu info --fixes
   catmandu info --stores
+  catmandu info --validators
   catmandu info --namespace=Catmandu
   catmandu info --all
-  
+
+  # export list of exporter modules to JSON
+  catmandu info --exporters to JSON
+
 =cut

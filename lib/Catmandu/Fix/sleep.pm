@@ -48,7 +48,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::sleep - Do nothing for a specified ammount of time
+Catmandu::Fix::sleep - Do nothing for a specified amount of time
 
 =head1 SYNOPSIS
   

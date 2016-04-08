@@ -36,7 +36,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::drop - drop a store or one of it's bags
+Catmandu::Cmd::drop - drop a store or one of its bags
 
 =head1 EXAMPLES
 

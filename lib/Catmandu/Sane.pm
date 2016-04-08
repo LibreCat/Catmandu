@@ -56,7 +56,7 @@ Catmandu::Sane - Package boilerplate
     Catmandu::Error->throw("error");
     Catmandu::BadVal->throw("eek val");
     Catmandu::BadArg->throw("eek arg");
-    Catmandu::NotImplemented->throw("cant do that!");
+    Catmandu::NotImplemented->throw("can't do that!");
 
 =head1 DESCRIPTION
 

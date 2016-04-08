@@ -59,7 +59,7 @@ it adds the new keys in a different location, instead of "in place".
 
 =item
 
-it's behaviour cannot be changed without breaking its current use
+its behaviour cannot be changed without breaking its current use
 
 =back
 

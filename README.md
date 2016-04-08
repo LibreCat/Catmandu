@@ -1,54 +1,54 @@
 # NAME
 
-Catmandu::Introduction - a Catmandu HOW TO
+Catmandu::Introduction - An Introduction to Catmandu data processing toolkit
 
 # STATUS
 
 [![Build Status](https://travis-ci.org/LibreCat/Catmandu.svg?branch=master)](https://travis-ci.org/LibreCat/Catmandu)
-[![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.png?branch=master)](https://coveralls.io/r/LibreCat/Catmandu)
+[![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.svg?branch=master)](https://coveralls.io/r/LibreCat/Catmandu)
 [![CPANTS kwalitee](http://cpants.cpanauthors.org/dist/Catmandu.png)](http://cpants.cpanauthors.org/dist/Catmandu)
 
 # Introduction
 
 Catmandu is a data processing toolkit developed as part of the [LibreCat](http://librecat.org) project.
-Catmandu provides a command line client and a suite of tools to ease the import, storage, retrieval,
-export and transformation of data. For instance, to transform a CSV file into JSON use the
+Catmandu provides the command line client [catmandu](https://metacpan.org/pod/catmandu) and a suite of tools to ease the import, storage,
+retrieval, export and transformation of data. For instance, to transform a CSV file into JSON use the
 command:
 
     $ catmandu convert JSON to CSV < data.json
 
-Or, to store a YAML file into an ElasticSearch database type (requires Catmandu::ElasticSearch):
+Or, to store a YAML file into an ElasticSearch database type (requires [Catmandu::ElasticSearch](https://metacpan.org/pod/Catmandu::ElasticSearch)):
 
     $ catmandu import YAML to ElasticSearch --index_name demo < test.yml
 
-To export all the data from an Solr search engine into JSON type (requires Catmandu::Solr):
+To export all the data from an Solr search engine into JSON type (requires [Catmandu::Solr](https://metacpan.org/pod/Catmandu::Solr)):
 
     $ catmandu export Solr --url http://localhost:8983/solr to JSON
 
-With Catmandu one can import OAI-PMH records in your application (requires Catmandu::OAI):
+With Catmandu one can import OAI-PMH records in your application (requires [Catmandu::OAI](https://metacpan.org/pod/Catmandu::OAI)):
 
     $ catmandu convert OAI --url http://biblio.ugent.be/oai --set allFtxt
 
 and export records into formats such as JSON, YAML, CSV, XLS, RDF and many more.
 
 Catmandu also provides a small scripting language to manipulate data, extract parts of your dataset and
-transform records. For instance, rename fields  with the 'move\_field' command:
+transform records. For instance, rename fields  with the '[move\_field](https://metacpan.org/pod/Catmandu::Fix::move_field)' Fix command:
 
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
 
 In the example above, we renamed all the 'title' fields in the dataset into the 'my\_title' field.
 
 One can also work on deeply nested data. E.g. create a deeply nested data structure with the
-'move\_field' command:
+'move\_field' Fix command:
 
     $ catmandu convert JSON --fix 'move_field(title,my.deeply.nested.title)' < data.json
 
 In this example we moved the field 'title' into the field 'my', which contains a (sub)field 'deeply',
 which contains a (sub)field 'nested'.
 
-Catmandu was created by librarians for librarians. We process a lot of metadata especially
+Catmandu was originally created by librarians for librarians. We process a lot of metadata especially
 library metadata in formats such as MARC, MAB2 and MODS. With the following command we can extract
-data from a marc record and to store it into the title field (requires Catmandu::MARC):
+data from a marc record and to store it into the title field (requires [Catmandu::MARC](https://metacpan.org/pod/Catmandu::MARC)):
 
     $ catmandu convert MARC --fix 'marc_map(245,title)' < data.mrc
 
@@ -95,7 +95,7 @@ interactive mode:
      ...
      fix >
 
-Catmandu contains many powerfull fixes. Visit [http://librecat.org/Catmandu/#fixes-cheat-sheet](http://librecat.org/Catmandu/#fixes-cheat-sheet) to get
+Catmandu contains many powerful fixes. Visit [http://librecat.org/Catmandu/#fixes-cheat-sheet](http://librecat.org/Catmandu/#fixes-cheat-sheet) to get
 an overview what is possible.
 
 # Documentation
@@ -121,12 +121,12 @@ ElasticSearch and MongoDB.
 
 On our [website](http://librecat.org/Catmandu/#installation) we provide installation instructions for:
 
-    * Debian
-    * Ubuntu Server
-    * CentOS
-    * openSUSE
-    * OpenBSD
-    * Windows
+- Debian
+- Ubuntu Server
+- CentOS
+- openSUSE
+- OpenBSD
+- Windows
 
 and even a generic installation using [Docker](https://www.docker.com/): [https://hub.docker.com/r/librecat/catmandu/](https://hub.docker.com/r/librecat/catmandu/).
 
@@ -158,3 +158,5 @@ Snorri Briem , Upasana Shukla and Vitali Peil
 # SEE ALSO
 
 [Catmandu](https://metacpan.org/pod/Catmandu)
+
+[http://librecat.org/](http://librecat.org/)
