@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use JSON::XS ();
+use Cpanel::JSON::XS ();
 use Catmandu::Exporter::JSON;
 
 my $pkg;
@@ -33,7 +33,7 @@ $exporter->commit;
 is $exporter1->count, 3;
 is $exporter2->count, 3;
 is $exporter->count, 3;
-is_deeply $data, [ map { JSON::XS::decode_json($_) } split /[\r\n]+/, $file1 ];
-is_deeply $data, [ map { JSON::XS::decode_json($_) } split /[\r\n]+/, $file2 ];
+is_deeply $data, [ map { Cpanel::JSON::XS::decode_json($_) } split /[\r\n]+/, $file1 ];
+is_deeply $data, [ map { Cpanel::JSON::XS::decode_json($_) } split /[\r\n]+/, $file2 ];
 
 done_testing;

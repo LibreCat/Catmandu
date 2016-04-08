@@ -5,7 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use App::Cmd::Tester::CaptureExternal;
-use JSON::XS;
+use Cpanel::JSON::XS;
 use utf8;
 
 my $pkg;

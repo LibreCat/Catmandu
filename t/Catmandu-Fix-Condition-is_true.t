@@ -5,7 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use Catmandu::Fix::set_field;
-use JSON::XS;
+use Cpanel::JSON::XS;
 
 my $pkg;
 BEGIN {

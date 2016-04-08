@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
-use JSON::XS ();
+use Cpanel::JSON::XS ();
 
 my $pkg;
 BEGIN {
@@ -12,7 +12,7 @@ BEGIN {
     use_ok $pkg;
 }
 
-my $json = JSON::XS->new->utf8(0)->allow_nonref(1);
+my $json = Cpanel::JSON::XS->new->utf8(0)->allow_nonref(1);
 
 is_deeply
     $pkg->new('name')->fix({name => ["Joe"]}),
@@ -22,4 +22,4 @@ is_deeply
     $pkg->new('names.*')->fix({names => [{name => 'Joe'}, {name => 'Rick'}]}),
     {names => [$json->encode({name => 'Joe'}), $json->encode({name => 'Rick'})]};
 
-done_testing 3;
+done_testing;

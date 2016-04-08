@@ -5,7 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use App::Cmd::Tester;
-use JSON::XS;
+use Cpanel::JSON::XS;
 
 my $pkg;
 BEGIN {

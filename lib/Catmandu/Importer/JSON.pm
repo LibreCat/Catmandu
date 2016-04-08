@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0002';
 
-use JSON::XS ();
+use Cpanel::JSON::XS ();
 use Moo;
 use namespace::clean;
 
@@ -15,7 +15,7 @@ has json           => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
-    JSON::XS->new->utf8($self->encoding eq ':raw');
+    Cpanel::JSON::XS->new->utf8($self->encoding eq ':raw');
 }
 
 sub _build_encoding { ':raw' }

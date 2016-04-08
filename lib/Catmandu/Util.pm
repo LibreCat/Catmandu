@@ -14,7 +14,7 @@ use IO::File;
 use IO::Handle::Util ();
 use File::Spec;
 use YAML::XS ();
-use JSON::XS ();
+use Cpanel::JSON::XS ();
 use Hash::Merge::Simple ();
 
 our %EXPORT_TAGS = (
@@ -157,7 +157,7 @@ sub read_yaml {
 sub read_json {
     my $text = read_file($_[0]);
     # dies on error
-    JSON::XS->new->decode($text);
+    Cpanel::JSON::XS->new->decode($text);
 }
 
 sub join_path {
