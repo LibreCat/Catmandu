@@ -208,8 +208,7 @@ sub emit {
             $perl = $tidy_perl;
         } catch_case [
             'Catmandu::NoSuchPackage' => sub {},
-       ];
-
+        ];
     }
 
     $self->log->debug($perl);
