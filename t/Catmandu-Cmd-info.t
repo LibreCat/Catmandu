@@ -37,8 +37,12 @@ $result = test_app(qq|Catmandu::CLI| => [ qw(info --stores) ]);
 
 is $result->error, undef, 'threw no exceptions' ;
 
+$result = test_app(qq|Catmandu::CLI| => [ qw(info --validators) ]);
+
+is $result->error, undef, 'threw no exceptions' ;
+
 $result = test_app(qq|Catmandu::CLI| => [ qw(info --fixes to JSON) ]);
 
 is $result->error, undef, 'threw no exceptions' ;
 
-done_testing 8;
+done_testing 9;
