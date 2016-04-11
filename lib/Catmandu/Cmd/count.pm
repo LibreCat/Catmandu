@@ -6,7 +6,6 @@ our $VERSION = '1.0002';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
-use Catmandu::Fix;
 use namespace::clean;
 
 sub command_opt_spec {
