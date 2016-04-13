@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0002';
 
-use JSON::XS ();
+use Cpanel::JSON::XS ();
 use Moo;
 use MooX::Aliases;
 use namespace::clean;
@@ -22,7 +22,7 @@ has json           => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
-    JSON::XS->new
+    Cpanel::JSON::XS->new
             ->utf8(0)
             ->allow_nonref
             ->pretty($self->line_delimited ? 0 : $self->pretty)

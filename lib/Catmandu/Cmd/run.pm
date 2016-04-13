@@ -6,8 +6,7 @@ our $VERSION = '1.0002';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
-use Catmandu::Interactive;
-use Catmandu::Fix;
+use Catmandu::Util qw(require_package);
 use namespace::clean;
 
 sub command_opt_spec {
@@ -21,6 +20,7 @@ sub command {
     my ($self, $opts, $args) = @_;
 
     if (defined $opts->{i} || !defined $args->[0]) {
+        my $pkg = require_package('Catmandu::Interactive');
         my $app = Catmandu::Interactive->new();
         $app->run();
     }

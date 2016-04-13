@@ -284,9 +284,12 @@ with log4perl.conf like:
     log4perl.appender.STDERR.layout=PatternLayout
     log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
 
-=head2 default_load_path('/default/path')
+=head2 default_load_path(['/default/path'])
 
-Set the location of the default configuration file to a new path.
+Returns the default location where L<Catmandu> looks for configuration and lib
+when called with no argument. Sets the default location if a path is given.
+The default load path is the script directory or it's parent if the script
+directory is C<bin>.
 
 =head2 load
 

@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0002';
 
-use JSON::XS ();
+use Cpanel::JSON::XS ();
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -15,7 +15,8 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    my $json_var = $fixer->capture(JSON::XS->new->utf8(0)->pretty(0)->allow_nonref(1));
+    my $json_var = $fixer->capture(Cpanel::JSON::XS->new
+            ->utf8(0)->pretty(0)->allow_nonref(1));
 
     "if (is_string(${var})) {" .
         "${var} = ${json_var}->decode(${var});" .

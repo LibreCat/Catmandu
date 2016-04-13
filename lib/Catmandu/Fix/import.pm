@@ -66,7 +66,7 @@ __END__
 =head1 NAME
 
 Catmandu::Fix::import - change the value of a HASH key or ARRAY index by replacing
-it's value with imported data
+its value with imported data
 
 =head1 SYNOPSIS
 

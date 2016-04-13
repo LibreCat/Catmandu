@@ -88,6 +88,9 @@ Catmandu::Hits - Iterable object that wraps Catmandu::Store search hits
 
 =head1 METHODS
 
+A Catmandu::Hits object provides the following methods in addition to
+methods of L<Catmandu::Iterable> and L<Catmandu::Paged>.
+
 =head2 total
 
 Returns the total number of hits matching the query.
@@ -106,6 +109,6 @@ Return true if there are more search results.
 
 =head1 SEE ALSO
 
-L<Catmandu::Iterable>, L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>, L<Catmandu::Paged>
+L<Catmandu::Bag>, L<Catmandu::Searchable>, L<Catmandu::Store>
 
 =cut
