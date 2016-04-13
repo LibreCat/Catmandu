@@ -18,9 +18,25 @@ my $data = [
 ];
 
 my $store = $pkg->new();
+can_ok $store, 'transaction';
+
 my $bag = $store->bag;
 my @method = qw(to_array each take add add_many count slice first rest any many all tap map reduce);
 can_ok $bag, $_ for @method;
+
+$store->transaction(sub {
+    my $rec = $bag->get_or_add('1', {latest => '0'});
+    ++$rec->{latest};
+    $bag->add($rec);
+});
+is_deeply $bag->first, {_id => 1, latest => 1}, "transaction ok";
+$store->transaction(sub {
+    my $rec = $bag->get_or_add('1', {latest => '0'});
+    ++$rec->{latest};
+    $bag->add($rec);
+});
+is_deeply $bag->first, {_id => 1, latest => 2}, "transaction ok again";
+$bag->drop;
 
 $bag->add_many($data);
 is $bag->count, 2, "Count bag size";
@@ -44,5 +60,4 @@ is $bag2->count , 1 , "Bags stay alive";
 my $bag3 = $store->bag('foo');
 ok ! $bag3->get('123') , "foo doesnt have 123";
 
-done_testing 27;
-
+done_testing;

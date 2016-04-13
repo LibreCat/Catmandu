@@ -11,6 +11,7 @@ use namespace::clean;
 
 with 'Catmandu::Store';
 with 'Catmandu::Droppable';
+with 'Catmandu::Transactional';
 
 has _hashes   => (is => 'ro' , lazy => 1, init_arg => undef, default => sub { +{} });
 has init_data => (is => 'ro');
@@ -26,6 +27,11 @@ sub drop {
     my ($self) = @_;
     $_->drop for values %{$self->bags};
     return;
+}
+
+sub transaction {
+    my ($self, $coderef) = @_;
+    &{$coderef} if is_code_ref($coderef);
 }
 
 1;
@@ -73,13 +79,13 @@ for fast retrieval combined with a doubly linked list for fast traversal.
 Create a new Catmandu::Store::Hash. Optionally provide as init_data an array
 ref of data:
 
-    my $store = Catmandu->store('Hash', init_data => [ 
+    my $store = Catmandu->store('Hash', init_data => [
            { _id => 1, data => foo } ,
            { _id => 2, data => bar }
     ]);
 
     # or in a catmandu.yml configuration file:
-    
+
     ---
     store:
        hash:
