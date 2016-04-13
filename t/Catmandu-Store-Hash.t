@@ -44,5 +44,41 @@ is $bag2->count , 1 , "Bags stay alive";
 my $bag3 = $store->bag('foo');
 ok ! $bag3->get('123') , "foo doesnt have 123";
 
-done_testing 27;
+
+$bag->delete_all;
+for(1..100){
+    $bag->add({ title => "title $_", author => "author $_" });
+}
+
+can_ok $bag, $_ for qw(search searcher delete_by_query translate_sru_sortkeys translate_cql_query);
+is $bag->search( query => "title 1" )->total, 12, "search in store";
+is $bag->search( )->total, 100, "search in store with empty query";
+$bag->delete_by_query( query => "title 1" );
+is $bag->search( query => "title 1" )->total, 0, "search in store";
+is $bag->search( )->total, 88, "search in store";
+
+$bag->delete_all();
+
+for(1..100){
+    my $title_key = int($_ / 10);
+    $bag->add({
+        title => "title $title_key",
+        author => "author $_"
+    });
+}
+
+{
+    my $got = $bag->searcher( sort => "title asc,author desc" )->to_array();
+    my $expected = [ sort {
+        my $diff = $a->{title} cmp $b->{title};
+        if( $diff == 0 ){
+            $diff = $a->{author} cmp $b->{author};
+            $diff = -$diff;
+        }
+        $diff;
+    } @{ $bag->to_array } ];
+    is_deeply $got,$expected, "multi key sort";
+}
+
+done_testing 37;
 
