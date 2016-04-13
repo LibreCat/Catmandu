@@ -65,6 +65,7 @@ Catmandu::Cmd::run - run a fix command
   #!/usr/bin/env catmandu run
   do importer(Mock,size:10)
     add_field(foo,bar)
+    add_to_exporter(.,JSON)
   end
 
 =cut
