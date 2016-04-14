@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0002_01  2016-04-14 14:19:42 CEST
   - better info command
   - switch to Cpanel::JSON::XS
   - consistent interpretation of backslash in fixes with regexes
