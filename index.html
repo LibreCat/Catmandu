@@ -92,12 +92,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <nav id="TOC">
 <h1>Table of Contents</h1>
 <ul>
-<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction <a href="https://github.com/LibreCat/Catmandu/wiki/Introduction">✎</a></a><ul>
-<li><a href="#overview"><span class="toc-section-number">1.1</span> Overview</a><ul>
-<li><a href="#where-do-we-use-it"><span class="toc-section-number">1.1.1</span> Where do we use it?</a></li>
-<li><a href="#why-do-we-use-it"><span class="toc-section-number">1.1.2</span> Why do we use it?</a></li>
-</ul></li>
-</ul></li>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction <a href="https://github.com/LibreCat/Catmandu/wiki/Introduction">✎</a></a></li>
 <li><a href="#installation"><span class="toc-section-number">2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation">✎</a></a><ul>
 <li><a href="#debian"><span class="toc-section-number">2.0.1</span> Debian</a></li>
 <li><a href="#ubuntu-server-12.04.4-lts"><span class="toc-section-number">2.0.2</span> Ubuntu Server 12.04.4 LTS</a></li>
@@ -182,32 +177,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>index data into databases such as Solr, Elasticsearch and MongoDB.</li>
 <li>use a simple <a href="#fix-language">Fix language</a> to convert metadata into any format you like.</li>
 </ul>
-<section id="overview" class="level2">
-<h2><span class="header-section-number">1.1</span> Overview</h2>
-<section id="where-do-we-use-it" class="level3">
-<h3><span class="header-section-number">1.1.1</span> Where do we use it?</h3>
-<p>Catmandu is used in the <a href="#librecat">LibreCat</a> project for several applications.</p>
-<p>We have more than 60 Catmandu projects available at <a href="https://github.com/organizations/LibreCat">GitHub LibreCat</a>.</p>
-</section>
-<section id="why-do-we-use-it" class="level3">
-<h3><span class="header-section-number">1.1.2</span> Why do we use it?</h3>
-<figure>
-<img src="files/catmandu.png" />
-</figure>
-<section id="extract-transform-and-load" class="level4 unnumbered">
-<h4>Extract, Transform and Load</h4>
-<p>Create a search engine, one of your first tasks will to import data from various sources, map the fields to a common data model and post it to a full-text search engine. Modules such as <a href="http://search.cpan.org/~bricas/WebService-Solr-0.17/lib/WebService/Solr.pm">WebService::Solr</a> or <a href="http://search.cpan.org/~drtech/ElasticSearch-0.52/lib/ElasticSearch.pm">ElasticSearch</a> provide easy access to your favorite document stores, but you keep writing a lot of boilerplate code to create the connections, massaging the incoming data into the correct format, validating and uploading and indexing the data in the database. Next morning you are asked to provide a fast dump of records into an Excel worksheet. After some fixes are applied you are asked to upload it into your database. Again you hit Emacs or Vi and provide an ad-hoc script. In our LibreCat group we saw this workflow over and over. We tried to abstract this problem to a set of tools which can work with library data such as MARC, Dublin Core, EndNote protocols such as OAI-PMH, SRU and repositories such as DSpace and Fedora. In data warehouses these processes are called ETL, <em>Extract</em>, <em>Transform</em>, <em>Load</em>. Many tools currenty exist for ETL processing but none adress typical library data models and services.</p>
-</section>
-<section id="copy-and-paste" class="level4 unnumbered">
-<h4>Copy and Paste</h4>
-<p>As programmers, we would like to reuse our code and algorithms as easy as possible. In fast application development you typically want to copy and paste parts of existing code in a new project. In Catmandu we use a functional style of programming to keep our code tight and clean and suitable for copy and pasting. When working with library data models we use native Perl hashes and arrays to pass data around. In this way adhere to the rationale of Alan J. Perlis: “It is better to have 100 functions operate on one data structure than to have 10 functions operate on 10 data structures.” Our functions are all based on a few primary data structures on which we define many functions (map, count, each, first, take, …)</p>
-</section>
-<section id="schemaless-databases" class="level4 unnumbered">
-<h4>Schemaless databases</h4>
-<p>In the past it was a nuisance to create database schemas and indexes to store and search your data. Certainly in institutional repositories this can be a ongoing job for a programmer because the metadata schemas are not fixed in time. Any new report will require you to add new data fields and new relations for which you need to change your database schema. With the introduction of schemaless databases the storage of complex records is really easy. With our <em>ElasticSearch</em> Store we even can provide you a CQL style query language for retrieval.</p>
-</section>
-</section>
-</section>
+<p>Catmandu is used in the <a href="#librecat">LibreCat</a> project to build institutional repositories and search engines. Catmandu is used on the <a href="#-command-line-client">command line</a> for quick and dirty reports but also as part of larger programming projects processing millions of records per day. For a short overview of use-cases, see our <a href="http://librecat.org/use-cases.html">Homepage</a>.</p>
+<p>There are than 60 Catmandu projects available at <a href="https://github.com/organizations/LibreCat">GitHub LibreCat</a>.</p>
 </section>
 <section id="installation" class="level1">
 <h1><span class="header-section-number">2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation">✎</a></h1>
@@ -1502,7 +1473,7 @@ year
 <h2><span class="header-section-number">10.3</span> RESOURCES FOR DEVELOPERS</h2>
 <section id="website" class="level3">
 <h3><span class="header-section-number">10.3.1</span> Website</h3>
-<p>The official website is here: <a href="http://librecat.org/" class="uri">http://librecat.org/</a></p>
+<p>The official website is here: <a href="http://librecat.org/" class="uri">http://librecat.org/</a> A Wordpress blog with hints is available at: <a href="https://librecatproject.wordpress.com/" class="uri">https://librecatproject.wordpress.com/</a></p>
 </section>
 <section id="mailing-lists" class="level3">
 <h3><span class="header-section-number">10.3.2</span> Mailing Lists</h3>
