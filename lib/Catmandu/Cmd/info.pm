@@ -5,8 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0002';
 
 use parent 'Catmandu::Cmd';
-use Catmandu::Importer::Modules;
-use Catmandu::Store::Hash;
+use Catmandu;
 use Catmandu::Util qw(pod_section);
 use namespace::clean;
 
@@ -74,7 +73,7 @@ sub command {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
 
-    my $from = Catmandu::Importer::Modules->new($from_opts);
+    my $from = Catmandu->importer('Modules',$from_opts);
 
     my $into_args = [];
     my $into_opts = {};

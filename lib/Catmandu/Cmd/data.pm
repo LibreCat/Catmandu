@@ -5,8 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0002';
 
 use parent 'Catmandu::Cmd';
-use Catmandu qw(:all);
-use Catmandu::Fix;
+use Catmandu;
 use namespace::clean;
 
 sub command_opt_spec {
@@ -48,9 +47,9 @@ sub command {
     my $into;
 
     if ($opts->from_bag) {
-        $from = store($opts->from_store, $from_opts)->bag($opts->from_bag);
+        $from = Catmandu->store($opts->from_store, $from_opts)->bag($opts->from_bag);
     } else {
-        $from = importer($opts->from_importer, $from_opts);
+        $from = Catmandu->importer($opts->from_importer, $from_opts);
     }
 
     if ($opts->query || $opts->cql_query) {
@@ -74,13 +73,13 @@ sub command {
     }
 
     if ($opts->into_bag) {
-        $into = store($opts->into_store, $into_opts)->bag($opts->into_bag);
+        $into = Catmandu->store($opts->into_store, $into_opts)->bag($opts->into_bag);
     } else {
-        $into = exporter($opts->into_exporter, $into_opts);
+        $into = Catmandu->exporter($opts->into_exporter, $into_opts);
     }
 
     if (my $fix = $opts->fix) {
-        $from = Catmandu::Fix->new(fixes => $fix)->fix($from);
+        $from = Catmandu->fixer($fix)->fix($from);
     }
 
     if ($opts->replace && $into->can('delete_all')) {
