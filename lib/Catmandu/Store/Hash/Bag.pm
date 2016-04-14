@@ -188,7 +188,17 @@ sub _slice_records {
 
     my ( $self, $list, $start, $limit ) = @_;
 
-    my $end = $start + $limit;
+    #slice in perl creates empty place with 'undef' when requesting for non existing places
+
+    return [] if $limit <= 0;
+
+    my $total = scalar( @$list );
+
+    return [] if $start >= $total;
+
+    my $end = $start + $limit - 1;
+    $end = $total - 1 if $end >= $total;
+
     [ @$list[$start..$end] ];
 
 }
