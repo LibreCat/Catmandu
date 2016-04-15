@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0002_01';
 
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
@@ -16,6 +16,8 @@ sub _eval_emit {
 use Moo;
 use Catmandu::Fix::Parser;
 use File::Slurp::Tiny ();
+use File::Spec ();
+use File::Temp ();
 use B ();
 
 with 'Catmandu::Logger';
@@ -34,6 +36,7 @@ has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_buil
 has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
 has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
+has _has_perltidy => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_has_perltidy');
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
@@ -92,6 +95,12 @@ sub _build_fixes_var {
 sub _build_current_fix_var {
     my ($self) = @_;
     $self->generate_var;
+}
+
+sub _build_has_perltidy {
+    File::Spec->isa("File::Spec::Unix")
+        ? `which perltidy` ? 1 : 0
+        : 0;
 }
 
 sub fix {
@@ -182,33 +191,15 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    if ($self->tidy || $self->log->is_debug) {
-        try {
-            my $pkg = require_package 'Perl::Tidy';
-            my $sub = do {
-                no strict 'refs';
-                \&{"${pkg}::perltidy"};
-            };
-
-            my $tidy_perl = "";
-            my $err = "";
-            my $log = "";
-
-            my $has_err = $sub->(
-                argv        => "-se",
-                source      => \$perl,
-                destination => \$tidy_perl,
-                logfile     => \$log,
-                stderr      => \$err,
-            );
-            if ($has_err) {
-                Catmandu::Error->throw($err);
-            }
-
+    if (($self->tidy || $self->log->is_debug) && $self->_has_perltidy) {
+        my $fh = File::Temp->new;
+        binmode($fh, ':utf8');
+        $fh->printflush($perl);
+        my $path = $fh->filename;
+        my $tidy_perl = `perltidy -utf8 -npro -st -se $path`;
+        unless ($?) {
             $perl = $tidy_perl;
-        } catch_case [
-            'Catmandu::NoSuchPackage' => sub {},
-        ];
+        }
     }
 
     $self->log->debug($perl);

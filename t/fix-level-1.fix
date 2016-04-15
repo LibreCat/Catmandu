@@ -2,4 +2,4 @@
 add_field('name','Franck')
 add_field('first_name','Nicolas')
 
-include('fix-level-2.txt')
+include('fix-level-2.fix')

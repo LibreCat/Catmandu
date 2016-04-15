@@ -2,6 +2,14 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+1.0002_01  2016-04-14 14:19:42 CEST
+  - better info command
+  - switch to Cpanel::JSON::XS
+  - consistent interpretation of backslash in fixes with regexes
+  - fix bugs relating to perltidy
+  - more and better pod
+  - more tests
+
 1.0002  2016-04-01 13:36:28 CEST
   - fix debug mode dying if Perl::Tidy is missing
   - error messages now default to empty string

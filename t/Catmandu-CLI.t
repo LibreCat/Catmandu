@@ -60,12 +60,12 @@ if ($^O ne 'MSWin32') { # /dev/null required
 }
 
 {
-    my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix thisFixThrowsAnError())]);
+    my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix thisFixThrowsAnError()) ]);
     like $result->stderr , qr/One of your fixes threw an error/ , 'fix error';
 }
 
 {
-    my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix add_field() )]);
+    my $result = test_app(qq|Catmandu::CLI| => [ qw(convert Null to Null --fix add_field()) ]);
     like $result->stderr , qr/Oops/ , 'wrong arguments';
 }
 
