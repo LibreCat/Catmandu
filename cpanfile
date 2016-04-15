@@ -37,6 +37,7 @@ requires 'namespace::clean', '0.24';
 requires 'Unicode::Normalize', '0';
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;
+requires 'Text::Hogan::Compiler', '1.02';
 requires 'Text::CSV', '1.21';
 requires 'Time::HiRes', 0; # not always installed?
 requires 'Throwable', '0.200004';
