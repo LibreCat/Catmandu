@@ -38,6 +38,7 @@ has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'gene
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
 has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
 has _has_perltidy => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_has_perltidy');
+has preprocess => (is => 'ro');
 has _hogan => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
 has _hogan_vars => (is => 'ro', lazy => 1, init_arg => 'variables', default => sub { +{} });
 
@@ -56,22 +57,22 @@ sub _build_fixes {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
         } elsif (ref $fix && ref($fix) =~ /^IO::/) {
             my $txt = Catmandu::Util::read_io($fix);
-            $txt = $self->_hogan->compile($txt)->render($self->_hogan_vars);
+            $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};
         } elsif (is_glob_ref($fix)) {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
-            $txt = $self->_hogan->compile($txt)->render($self->_hogan_vars);
+            $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};
         } elsif (ref $fix) {
             push @$fixes, $fix;
         } elsif (is_string($fix)) {
             if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
                 $fix = File::Slurp::Tiny::read_file($fix, binmode => ':encoding(UTF-8)');
-                $fix = $self->_hogan->compile($fix)->render($self->_hogan_vars);
+                $fix = $self->_preprocess($fix);
             }
             push @$fixes, @{$self->parser->parse($fix)};
-        } 
+        }
     }
 
     $fixes;
@@ -111,6 +112,12 @@ sub _build_has_perltidy {
 
 sub _build_hogan {
     Text::Hogan::Compiler->new;
+}
+
+sub _preprocess {
+    my ($self, $text) = @_;
+    return $text unless $self->preprocess;
+    $self->_hogan->compile($text)->render($self->_hogan_vars);
 }
 
 sub fix {

@@ -161,11 +161,14 @@ is_deeply $fixer->fix({ data => { 1 => 1 , 2 => 2 }}) , {data => { 1 => 1 , 2 =>
 
 $fixer = Catmandu::Fix->new(
     fixes => ['t/variables.fix'],
+    preprocess => 1,
     variables => {
         source => 'field1',
         target => 'field2',
     }
 );
-is_deeply $fixer->fix({field1 => 'value'}), {field2 => 'value'} , 'variable interpolation';
+
+is_deeply $fixer->fix({field1 => 'value'}), {field2 => 'value'},
+    'preprocessing: variable interpolation';
 
 done_testing;
