@@ -1,1 +1,13 @@
 move_field({{source}}, {{target}})
+
+{{#others}}
+	add_field(other_{{.}},{{.}})
+{{/others}}
+
+{{#beer}}
+	add_field(drunk,yes)
+{{/beer}}
+
+{{#milk}}
+	set_field(drunk,no)
+{{/milk}}

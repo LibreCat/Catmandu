@@ -165,10 +165,15 @@ $fixer = Catmandu::Fix->new(
     variables => {
         source => 'field1',
         target => 'field2',
+        others => [qw(0 1)],
+        beer   => 1,
+        milk   => 0,
     }
 );
 
-is_deeply $fixer->fix({field1 => 'value'}), {field2 => 'value'},
+is_deeply $fixer->fix(
+    {field1 => 'value'}), 
+    {field2 => 'value', other_0 => 0, other_1 => 1, drunk => 'yes'},
     'preprocessing: variable interpolation';
 
 done_testing;
