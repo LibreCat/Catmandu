@@ -69,8 +69,8 @@ sub _build_fixes {
         } elsif (is_string($fix)) {
             if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
                 $fix = File::Slurp::Tiny::read_file($fix, binmode => ':encoding(UTF-8)');
-                $fix = $self->_preprocess($fix);
             }
+            $fix = $self->_preprocess($fix);
             push @$fixes, @{$self->parser->parse($fix)};
         }
     }
