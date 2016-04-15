@@ -19,24 +19,27 @@ use File::Slurp::Tiny ();
 use File::Spec ();
 use File::Temp ();
 use B ();
+use Text::Hogan::Compiler;
 
 with 'Catmandu::Logger';
 
 has tidy         => (is => 'ro');
 has parser       => (is => 'lazy');
 has fixer        => (is => 'lazy', init_arg => undef);
-has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
-has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
-has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
+has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
+has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
+has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{} });
 has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
 has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
 has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
-has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
+has _reject      => (is => 'ro', init_arg => undef, default => sub { +{} });
 has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
 has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
 has _has_perltidy => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_has_perltidy');
+has _hogan => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
+has _hogan_vars => (is => 'ro', lazy => 1, init_arg => 'variables', default => sub { +{} });
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
@@ -53,16 +56,19 @@ sub _build_fixes {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
         } elsif (ref $fix && ref($fix) =~ /^IO::/) {
             my $txt = Catmandu::Util::read_io($fix);
+            $txt = $self->_hogan->compile($txt)->render($self->_hogan_vars);
             push @$fixes, @{$self->parser->parse($txt)};
         } elsif (is_glob_ref($fix)) {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
+            $txt = $self->_hogan->compile($txt)->render($self->_hogan_vars);
             push @$fixes, @{$self->parser->parse($txt)};
         } elsif (ref $fix) {
             push @$fixes, $fix;
         } elsif (is_string($fix)) {
             if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
                 $fix = File::Slurp::Tiny::read_file($fix, binmode => ':encoding(UTF-8)');
+                $fix = $self->_hogan->compile($fix)->render($self->_hogan_vars);
             }
             push @$fixes, @{$self->parser->parse($fix)};
         } 
@@ -101,6 +107,10 @@ sub _build_has_perltidy {
     File::Spec->isa("File::Spec::Unix")
         ? `which perltidy` ? 1 : 0
         : 0;
+}
+
+sub _build_hogan {
+    Text::Hogan::Compiler->new;
 }
 
 sub fix {
