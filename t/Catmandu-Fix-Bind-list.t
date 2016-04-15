@@ -129,7 +129,7 @@ do list(path:foo,var:loop)
 end
 
 do list(path:foo) 
- append(loop,':')
+ append(_,':')
 end
 
 EOF
