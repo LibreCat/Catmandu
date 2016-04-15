@@ -125,14 +125,19 @@ add_field(foo.\$append,3)
 add_field(foo.\$append,4)
 
 do list(path:foo,var:loop) 
- copy_field(loop,test.\$append)
+ copy_field(loop,test2.\$append)
 end
+
+do list(path:foo) 
+ append(loop,':')
+end
+
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix(
              {}
-          ), {foo => [1,2,3,4] , test => [1,2,3,4]} , 'specific testing, loop variable';
+          ), {foo => ["1:","2:","3:","4:"], test2 => [1,2,3,4]} , 'specific testing, loop variable';
 
 done_testing 13;
