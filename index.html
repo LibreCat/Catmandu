@@ -119,11 +119,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><a href="#functions"><span class="toc-section-number">5.2</span> Functions <a href="https://github.com/LibreCat/Catmandu/wiki/Functions">✎</a></a></li>
 <li><a href="#selectors"><span class="toc-section-number">5.3</span> Selectors <a href="https://github.com/LibreCat/Catmandu/wiki/Selectors">✎</a></a></li>
-<li><a href="#conditionals"><span class="toc-section-number">5.4</span> Conditionals <a href="https://github.com/LibreCat/Catmandu/wiki/Conditionals">✎</a></a><ul>
-<li><a href="#syntax"><span class="toc-section-number">5.4.1</span> Syntax</a></li>
-<li><a href="#is_truepath"><span class="toc-section-number">5.4.2</span> is_true(<em>path</em>)</a></li>
-<li><a href="#is_falsepath"><span class="toc-section-number">5.4.3</span> is_false(<em>path</em>)</a></li>
-</ul></li>
+<li><a href="#conditionals"><span class="toc-section-number">5.4</span> Conditionals <a href="https://github.com/LibreCat/Catmandu/wiki/Conditionals">✎</a></a></li>
 <li><a href="#binds"><span class="toc-section-number">5.5</span> Binds <a href="https://github.com/LibreCat/Catmandu/wiki/Binds">✎</a></a></li>
 <li><a href="#comments"><span class="toc-section-number">5.6</span> Comments <a href="https://github.com/LibreCat/Catmandu/wiki/Comments">✎</a></a></li>
 </ul></li>
@@ -758,8 +754,6 @@ end</code></pre>
 <pre><code>if exists(error)
   reject()
 end</code></pre>
-<section id="syntax" class="level3">
-<h3><span class="header-section-number">5.4.1</span> Syntax</h3>
 <p>A condition contains an <em>if</em> or <em>unless</em> statement a <strong>Conditional</strong> (Fix functions which can be true or false), a <em>body</em> of zero or more Fix functions and an optional <em>else</em> clause:</p>
 <pre><code>if exists(error)
    # Write here all the Fix functions when the field &#39;error&#39; exists
@@ -846,13 +840,12 @@ end</code></pre>
    set_field(known_author,1)
 end</code></pre>
 </section>
-</section>
-<section id="is_truepath" class="level3">
-<h3><span class="header-section-number">5.4.2</span> is_true(<em>path</em>)</h3>
+<section id="is_truepath" class="level4 unnumbered">
+<h4>is_true(<em>path</em>)</h4>
 <p>True, if the value at path can be evaluated to a boolean true. False otherwise</p>
 </section>
-<section id="is_falsepath" class="level3">
-<h3><span class="header-section-number">5.4.3</span> is_false(<em>path</em>)</h3>
+<section id="is_falsepath" class="level4 unnumbered">
+<h4>is_false(<em>path</em>)</h4>
 <p>True, if the value at path can be evaluated to a boolean false. False otherwise</p>
 </section>
 </section>
