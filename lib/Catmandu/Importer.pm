@@ -6,6 +6,7 @@ our $VERSION = '1.0002_01';
 
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
+use LWP::UserAgent::Determined;
 use HTTP::Request ();
 use URI ();
 use URI::Template ();
@@ -51,8 +52,10 @@ has http_method => (is => 'lazy');
 has http_headers => (is => 'lazy');
 has http_agent => (is => 'ro', predicate => 1);
 has http_max_redirect => (is => 'ro', predicate => 1);
-has http_timeout => (is => 'ro', predicate => 1);
+has http_timeout => (is => 'ro', default => sub { 180 }); # LWP default
 has http_verify_hostname => (is => 'ro', default => sub { 1 });
+has http_retry => (is => 'ro', predicate => 1);
+has http_timing => (is => 'ro', predicate => 1);
 has http_body => (is => 'ro', predicate => 1);
 has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => 'user_agent');
 has ignore_404 => (is => 'ro');
@@ -155,10 +158,19 @@ sub _build_http_method {
 
 sub _build_http_client {
     my ($self) = @_;
-    my $ua = LWP::UserAgent->new;
+    my $ua;
+    if ($self->has_http_timing) {
+        $ua = LWP::UserAgent::Determined->new;
+        $ua->timing($self->http_timing);
+    } elsif ($self->has_http_retry) {
+        $ua = LWP::UserAgent::Determined->new;
+        $ua->timing(join(',', ($self->http_timeout) x $self->http_retry));
+    } else {
+        $ua = LWP::UserAgent->new;
+        $ua->timeout($self->http_timeout);
+    }
     $ua->agent($self->http_agent) if $self->has_http_agent;
     $ua->max_redirect($self->http_max_redirect) if $self->has_http_max_redirect;
-    $ua->timeout($self->http_timeout) if $self->has_http_timeout;
     $ua->ssl_opts(verify_hostname => $self->http_verify_hostname);
     $ua->protocols_allowed([qw(http https)]);
     $ua->env_proxy;
@@ -367,6 +379,18 @@ Maximum execution time.
 =item http_verify_hostname
 
 Verify the SSL certificate.
+
+=item http_retry
+
+Maximum times to retry the HTTP request if it temporarily fails. Default is not
+to retry.  See L<LWP::User::UserAgent::Determined> for the HTTP status codes
+that initiate a retry.
+
+=item http_timing
+
+Maximum times and timeouts to retry the HTTP request if it temporarily fails. Default is not
+to retry.  See L<LWP::User::UserAgent::Determined> for the HTTP status codes
+that initiate a retry and the format of the timing value.
 
 =back
 

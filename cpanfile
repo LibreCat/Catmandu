@@ -27,6 +27,7 @@ requires 'IO::Handle::Util', '0.01';
 requires 'List::MoreUtils', '0.33';
 requires 'Log::Any::Adapter', 0;
 requires 'LWP::UserAgent', 0;
+requires 'LWP::UserAgent::Determined', 0;
 requires 'Time::Piece', 0; # undeclared Marpa dependency
 requires 'Marpa::R2', '2.084000';
 requires 'Module::Info', 0;
