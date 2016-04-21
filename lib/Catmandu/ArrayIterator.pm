@@ -71,7 +71,6 @@ Catmandu::ArrayIterator - Convert an arrayref to an Iterable object
     $it->count
     # => 3
 
-
 =head1 METHODS
 
 =head2 new($arrayRef)
