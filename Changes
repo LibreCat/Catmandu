@@ -3,7 +3,7 @@ Revision history for Catmandu
 {{$NEXT}}
 
 1.0002_02  2016-04-22 09:38:41 CEST
-  - new is_array, is_object and is_null fix conditions
+  - new is_array, is_object, is_string, is_number and is_null fix conditions
   - new Importer http_timing and http_retry options
   - better info command
   - switch to Cpanel::JSON::XS
