@@ -27,7 +27,7 @@ is_deeply
 
 is_deeply
     $cond->fix({foo => 0}),
-    {foo => 1,  test => 'fail'};
+    {foo => 0,  test => 'fail'};
 
 is_deeply
     $cond->fix({}),
