@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0002_02  2016-04-22 09:38:41 CEST
   - new is_array and is_null fix conditions
   - new Importer http_timing and http_retry options
   - better info command
