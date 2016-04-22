@@ -46,4 +46,29 @@ is_deeply
     $cond->fix($hash2),
     {%$hash2, test => 'fail'};
 
+# Strict
+$cond = $pkg->new('foo', 'strict', 1);
+$cond->pass_fixes([Catmandu::Fix::set_field->new('test', 'pass')]);
+$cond->fail_fixes([Catmandu::Fix::set_field->new('test', 'fail')]);
+
+is_deeply
+    $cond->fix({foo => 1}),
+    {foo => 1, test => 'fail'};
+
+is_deeply
+    $cond->fix({foo => '1'}),
+    {foo => '1', test => 'fail'};
+
+is_deeply
+    $cond->fix({foo => 'true'}),
+    {foo => 'true', test => 'fail'};
+
+is_deeply
+    $cond->fix({foo => Cpanel::JSON::XS::true}),
+    {foo => Cpanel::JSON::XS::true, test => 'pass'};
+
+is_deeply
+    $cond->fix({foo => Cpanel::JSON::XS::false}),
+    {foo => Cpanel::JSON::XS::false, test => 'fail'};
+
 done_testing;
