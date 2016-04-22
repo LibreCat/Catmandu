@@ -18,7 +18,7 @@ $cond->pass_fixes([Catmandu::Fix::set_field->new('test', 'pass')]);
 $cond->fail_fixes([Catmandu::Fix::set_field->new('test', 'fail')]);
 
 is_deeply
-    $cond->fix({foo => {foo => 'foo'}),
+    $cond->fix({foo => {foo => 'foo'}}),
     {foo => {foo => 'foo'},  test => 'pass'};
 
 is_deeply
