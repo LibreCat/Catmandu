@@ -3,6 +3,7 @@ Revision history for Catmandu
 {{$NEXT}}
 
 1.0002_02  2016-04-22 09:38:41 CEST
+  - is_true and is_false fix conditions have a new strict mode
   - new is_array, is_object, is_string, is_number and is_null fix conditions
   - new Importer http_timing and http_retry options
   - better info command
