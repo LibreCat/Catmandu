@@ -47,6 +47,6 @@ is_deeply
 
 is_deeply
     $cond->fix({ foo => ["1.1x"] }),
-    {foo => [1] ,  test => 'fail'};
+    {foo => ["1.1x"] ,  test => 'fail'};
 
 done_testing;
