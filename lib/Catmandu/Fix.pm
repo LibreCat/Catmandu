@@ -22,7 +22,6 @@ use B ();
 
 with 'Catmandu::Logger';
 
-has tidy         => (is => 'ro');
 has parser       => (is => 'lazy');
 has fixer        => (is => 'lazy', init_arg => undef);
 has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
@@ -36,7 +35,6 @@ has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_buil
 has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
 has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
-has _has_perltidy => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_has_perltidy');
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
@@ -95,12 +93,6 @@ sub _build_fixes_var {
 sub _build_current_fix_var {
     my ($self) = @_;
     $self->generate_var;
-}
-
-sub _build_has_perltidy {
-    File::Spec->isa("File::Spec::Unix")
-        ? `which perltidy` ? 1 : 0
-        : 0;
 }
 
 sub fix {
@@ -191,7 +183,7 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    if (($self->tidy || $self->log->is_debug) && $self->_has_perltidy) {
+    if ($self->log->is_debug && $ENV{CATMANDU_PERLTIDY}) {
         my $fh = File::Temp->new;
         binmode($fh, ':utf8');
         $fh->printflush($perl);
