@@ -19,31 +19,31 @@ $cond->fail_fixes([Catmandu::Fix::set_field->new('test', 'fail')]);
 
 # Integers
 is_deeply
-    $cond->fix({ foo => 1 }),
-    {foo => 1 ,  test => 'fail'};
+    $cond->fix({foo => 1}),
+    {foo => 1, test => 'fail'};
 
 is_deeply
-    $cond->fix({ foo => 0 }),
-    {foo => 0 ,  test => 'pass'};
+    $cond->fix({foo => 0}),
+    {foo => 0, test => 'pass'};
 
 # Strings
 is_deeply
-    $cond->fix({ foo => "true" }),
-    {foo => "true" ,  test => 'fail'};
+    $cond->fix({foo => "true"}),
+    {foo => "true", test => 'fail'};
 
 is_deeply
-    $cond->fix({ foo => "false" }),
-    {foo => "false" ,  test => 'pass'};
+    $cond->fix({foo => "false"}),
+    {foo => "false", test => 'pass'};
 
 # Boolean
 my $hash = decode_json(qq|{"foo":true}|);
 is_deeply
     $cond->fix($hash),
-    {%$hash ,  test => 'fail'};
+    {%$hash, test => 'fail'};
 
 my $hash2 = decode_json(qq|{"foo":false}|);
 is_deeply
     $cond->fix($hash2),
-    {%$hash2 ,  test => 'pass'};
+    {%$hash2, test => 'pass'};
 
-done_testing 7;
+done_testing;
