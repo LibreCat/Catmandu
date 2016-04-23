@@ -10,18 +10,19 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "verbose|v", "" ],
-        [ "fix=s@", "" ],
-        [ "start=i", "" ],
-        [ "total=i", "" ],
-        [ "delete", "delete existing objects first" ],
+        ["verbose|v", ""],
+        ["fix=s@",    ""],
+        ["start=i",   ""],
+        ["total=i",   ""],
+        ["delete",    "delete existing objects first"],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my ($from_args, $from_opts, $into_args, $into_opts) = $self->_parse_options($args);
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into_bag = delete $into_opts->{bag};

@@ -6,7 +6,7 @@ our $VERSION = '1.0002_02';
 
 use parent 'CGI::Expand';
 
-sub max_array { 1000000 }
+sub max_array {1000000}
 
 1;
 

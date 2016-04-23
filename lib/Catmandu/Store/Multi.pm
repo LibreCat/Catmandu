@@ -12,17 +12,20 @@ use namespace::clean;
 with 'Catmandu::Store';
 
 has stores => (
-    is => 'ro',
-    default => sub { [] },
-    coerce => sub {
+    is      => 'ro',
+    default => sub {[]},
+    coerce  => sub {
         my $stores = $_[0];
-        return [ map {
-            if (is_string($_)) {
-                Catmandu->store($_);
-            } else {
-                $_;
-            }
-        } @$stores ];
+        return [
+            map {
+                if (is_string($_)) {
+                    Catmandu->store($_);
+                }
+                else {
+                    $_;
+                }
+            } @$stores
+        ];
     },
 );
 

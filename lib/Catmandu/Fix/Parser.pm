@@ -102,10 +102,8 @@ sep ~ [,:]
 GRAMMAR
 
 sub parse {
-    state $grammar = Marpa::R2::Scanless::G->new({
-        bless_package  => __PACKAGE__,
-        source => \$GRAMMAR,
-    });
+    state $grammar = Marpa::R2::Scanless::G->new(
+        {bless_package => __PACKAGE__, source => \$GRAMMAR,});
 
     my ($self, $source) = @_;
 
@@ -121,66 +119,71 @@ sub parse {
         $self->log->debugf(Dumper($val)) if $self->log->is_debug;
 
         [map {$_->reify} @$val];
-    } catch {
-       if (is_instance($_, 'Catmandu::Error')) {
-           $_->set_source($source) if is_able($_, 'set_source');
-           $_->throw;
-       }
-       Catmandu::FixParseError->throw(message => $_, source => $source);
+    }
+    catch {
+        if (is_instance($_, 'Catmandu::Error')) {
+            $_->set_source($source) if is_able($_, 'set_source');
+            $_->throw;
+        }
+        Catmandu::FixParseError->throw(message => $_, source => $source);
     };
 }
 
 sub _build_fix {
-   my ($name, $ns, @args) = @_;
-   my $pkg;
-   try {
-    $pkg = require_package($name, $ns); 
-   } catch_case [
-       'Catmandu::NoSuchPackage' => sub {
-           Catmandu::NoSuchFixPackage->throw(
-               message      => "No such fix package: $name",
-               package_name => $_->package_name,
-               fix_name     => $name,
-           );
-       },
-   ];
-   try {
-       $pkg->new(@args); 
-   } catch {
-       $_->throw if is_instance($_, 'Catmandu::Error');
-       Catmandu::BadFixArg->throw(
-           message      => $_,
-           package_name => $pkg,
-           fix_name     => $name,
-       );
-   };
+    my ($name, $ns, @args) = @_;
+    my $pkg;
+    try {
+        $pkg = require_package($name, $ns);
+    }
+    catch_case [
+        'Catmandu::NoSuchPackage' => sub {
+            Catmandu::NoSuchFixPackage->throw(
+                message      => "No such fix package: $name",
+                package_name => $_->package_name,
+                fix_name     => $name,
+            );
+        },
+    ];
+    try {
+        $pkg->new(@args);
+    }
+    catch {
+        $_->throw if is_instance($_, 'Catmandu::Error');
+        Catmandu::BadFixArg->throw(
+            message      => $_,
+            package_name => $pkg,
+            fix_name     => $name,
+        );
+    };
 }
 
 sub Catmandu::Fix::Parser::IfElse::reify {
     my $cond       = $_[0]->[0]->reify;
     my $pass_fixes = $_[0]->[1];
     my $fail_fixes = $_[0]->[2];
-    $cond->pass_fixes([map { $_->reify } @$pass_fixes]);
-    $cond->fail_fixes([map { $_->reify } @$fail_fixes]) if $fail_fixes;
+    $cond->pass_fixes([map {$_->reify} @$pass_fixes]);
+    $cond->fail_fixes([map {$_->reify} @$fail_fixes]) if $fail_fixes;
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Unless::reify {
     my $cond       = $_[0]->[0]->reify;
     my $fail_fixes = $_[0]->[1];
-    $cond->fail_fixes([map { $_->reify } @$fail_fixes]);
+    $cond->fail_fixes([map {$_->reify} @$fail_fixes]);
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Select::reify {
     my $cond = $_[0]->[0]->reify;
-    $cond->fail_fixes([Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
+    $cond->fail_fixes(
+        [Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
     $cond;
 }
 
 sub Catmandu::Fix::Parser::Reject::reify {
     my $cond = $_[0]->[0]->reify;
-    $cond->pass_fixes([Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
+    $cond->pass_fixes(
+        [Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
     $cond;
 }
 
@@ -188,14 +191,14 @@ sub Catmandu::Fix::Parser::Fix::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
     Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix',
-        map { $_->reify } @$args);
+        map {$_->reify} @$args);
 }
 
 sub Catmandu::Fix::Parser::Condition::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
     Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Condition',
-        map { $_->reify } @$args);
+        map {$_->reify} @$args);
 }
 
 sub Catmandu::Fix::Parser::OldCondition::reify {
@@ -203,22 +206,22 @@ sub Catmandu::Fix::Parser::OldCondition::reify {
     my $args = $_[0]->[1];
     $name =~ s/^(?:if|unless)_//;
     Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Condition',
-        map { $_->reify } @$args);
+        map {$_->reify} @$args);
 }
 
 sub Catmandu::Fix::Parser::DoSet::reify {
-    my $bind       = $_[0]->[0]->reify;
-    my $do_fixes   = $_[0]->[1];
+    my $bind     = $_[0]->[0]->reify;
+    my $do_fixes = $_[0]->[1];
     $bind->return(1);
-    $bind->fixes([map { $_->reify } @$do_fixes]);
+    $bind->fixes([map {$_->reify} @$do_fixes]);
     $bind;
 }
 
 sub Catmandu::Fix::Parser::Do::reify {
-    my $bind       = $_[0]->[0]->reify;
-    my $do_fixes   = $_[0]->[1];
+    my $bind     = $_[0]->[0]->reify;
+    my $do_fixes = $_[0]->[1];
     $bind->return(0);
-    $bind->fixes([map { $_->reify } @$do_fixes]);
+    $bind->fixes([map {$_->reify} @$do_fixes]);
     $bind;
 }
 
@@ -226,7 +229,7 @@ sub Catmandu::Fix::Parser::Bind::reify {
     my $name = $_[0]->[0];
     my $args = $_[0]->[1];
     Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Bind',
-        map { $_->reify } @$args);
+        map {$_->reify} @$args);
 }
 
 sub Catmandu::Fix::Parser::DoubleQuotedString::reify {

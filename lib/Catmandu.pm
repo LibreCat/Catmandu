@@ -10,25 +10,25 @@ use File::Spec;
 use namespace::clean;
 use Sub::Exporter::Util qw(curry_method);
 use Sub::Exporter -setup => {
-    exports => [config   => curry_method,
-                log      => curry_method,
-                store    => curry_method,
-                fixer    => curry_method,
-                importer => curry_method,
-                exporter => curry_method,
-                export   => curry_method,
-                export_to_string => curry_method],
-    collectors => {
-        '-load' => \'_import_load',
-        ':load' => \'_import_load',
-    },
+    exports => [
+        config           => curry_method,
+        log              => curry_method,
+        store            => curry_method,
+        fixer            => curry_method,
+        importer         => curry_method,
+        exporter         => curry_method,
+        export           => curry_method,
+        export_to_string => curry_method
+    ],
+    collectors => {'-load' => \'_import_load', ':load' => \'_import_load',},
 };
 
 sub _import_load {
     my ($self, $value, $data) = @_;
     if (is_array_ref $value) {
         $self->load(@$value);
-    } else {
+    }
+    else {
         $self->load;
     }
     1;
@@ -38,23 +38,26 @@ sub _env {
     my ($class, $env) = @_;
     state $loaded_env;
     $loaded_env = $env if defined $env;
-    $loaded_env ||= Catmandu::Env->new(load_paths => $class->default_load_path);
+    $loaded_env
+        ||= Catmandu::Env->new(load_paths => $class->default_load_path);
 }
 
-sub log { $_[0]->_env->log }
+sub log {$_[0]->_env->log}
 
-sub default_load_path { # TODO move to Catmandu::Env
+sub default_load_path {    # TODO move to Catmandu::Env
     my ($class, $path) = @_;
     state $default_path;
     $default_path = $path if defined $path;
     $default_path //= do {
         my $script = File::Spec->rel2abs($0);
-        my ($script_vol, $script_path, $script_name) = File::Spec->splitpath($script);
+        my ($script_vol, $script_path, $script_name)
+            = File::Spec->splitpath($script);
         my @dirs = grep length, File::Spec->splitdir($script_path);
         if ($dirs[-1] eq 'bin') {
             pop @dirs;
             File::Spec->catdir(File::Spec->rootdir, @dirs);
-        } else {
+        }
+        else {
             $script_path;
         }
     };
@@ -63,7 +66,7 @@ sub default_load_path { # TODO move to Catmandu::Env
 sub load {
     my $class = shift;
     my $paths = [@_ ? @_ : $class->default_load_path];
-    my $env = Catmandu::Env->new(load_paths => $paths);
+    my $env   = Catmandu::Env->new(load_paths => $paths);
     $class->_env($env);
     $class;
 }
@@ -80,32 +83,32 @@ sub config {
     $_[0]->_env->config;
 }
 
-sub default_store { $_[0]->_env->default_store }
+sub default_store {$_[0]->_env->default_store}
 
 sub store {
     my $class = shift;
     $class->_env->store(@_);
 }
 
-sub default_fixer { $_[0]->_env->default_fixer }
+sub default_fixer {$_[0]->_env->default_fixer}
 
 sub fixer {
     my $class = shift;
     $class->_env->fixer(@_);
 }
 
-sub default_importer { $_[0]->_env->default_importer }
+sub default_importer {$_[0]->_env->default_importer}
 
-sub default_importer_package { $_[0]->_env->default_importer_package }
+sub default_importer_package {$_[0]->_env->default_importer_package}
 
 sub importer {
     my $class = shift;
     $class->_env->importer(@_);
 }
 
-sub default_exporter { $_[0]->_env->default_exporter }
+sub default_exporter {$_[0]->_env->default_exporter}
 
-sub default_exporter_package { $_[0]->_env->default_exporter_package }
+sub default_exporter_package {$_[0]->_env->default_exporter_package}
 
 sub exporter {
     my $class = shift;
@@ -113,26 +116,22 @@ sub exporter {
 }
 
 sub export {
-    my $class = shift;
-    my $data = shift;
+    my $class    = shift;
+    my $data     = shift;
     my $exporter = $class->_env->exporter(@_);
-    is_hash_ref($data)
-        ? $exporter->add($data)
-        : $exporter->add_many($data);
+    is_hash_ref($data) ? $exporter->add($data) : $exporter->add_many($data);
     $exporter->commit;
     return;
 }
 
 sub export_to_string {
-    my $class = shift;
-    my $data = shift;
-    my $name = shift;
-    my %opts = ref $_[0] ? %{$_[0]} : @_;
-    my $str = "";
+    my $class    = shift;
+    my $data     = shift;
+    my $name     = shift;
+    my %opts     = ref $_[0] ? %{$_[0]} : @_;
+    my $str      = "";
     my $exporter = $class->_env->exporter($name, %opts, file => \$str);
-    is_hash_ref($data)
-        ? $exporter->add($data)
-        : $exporter->add_many($data);
+    is_hash_ref($data) ? $exporter->add($data) : $exporter->add_many($data);
     $exporter->commit;
     $str;
 }

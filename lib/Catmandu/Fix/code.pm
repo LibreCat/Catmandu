@@ -8,10 +8,14 @@ use Catmandu::Util qw(is_code_ref);
 use Moo;
 
 has code => (
-    is => 'ro', 
-    default => sub { return sub { } },
+    is      => 'ro',
+    default => sub {
+        return sub { }
+    },
     isa => sub {
-        die "code must be a CODE reference" unless is_code_ref($_[0])
+        die "code must be a CODE reference" unless is_code_ref(
+            $_[0]
+            );
     }
 );
 

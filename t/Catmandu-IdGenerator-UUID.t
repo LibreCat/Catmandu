@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::IdGenerator::UUID';
     use_ok $pkg;

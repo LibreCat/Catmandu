@@ -13,8 +13,8 @@ has path       => (fix_arg => 1);
 has store_name => (fix_arg => 1);
 has bag_name   => (fix_opt => 1, init_arg => 'bag');
 has store_args => (fix_opt => 'collect');
-has store      => (is => 'lazy', init_arg => undef);
-has bag        => (is => 'lazy', init_arg => undef);
+has store      => (is      => 'lazy', init_arg => undef);
+has bag        => (is      => 'lazy', init_arg => undef);
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -34,9 +34,7 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $bag_var = $fixer->capture($self->bag);
 
-    "if (is_hash_ref(${var})) {" .
-        "${bag_var}->add(${var});" .
-    "}";
+    "if (is_hash_ref(${var})) {" . "${bag_var}->add(${var});" . "}";
 }
 
 1;

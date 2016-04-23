@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Sane';
     use_ok $pkg;

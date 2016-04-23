@@ -17,19 +17,17 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $pattern = $fixer->emit_match($self->pattern);
 
-    "if (is_string(${var}) && ${var} =~ ${pattern}) {" .
-        "if (\@+ < 2) { " .      
+    "if (is_string(${var}) && ${var} =~ ${pattern}) {" . "if (\@+ < 2) { " .
+
         # # no capturing groups
-        "}" . 
-        "elsif (\%+) { " .      
+        "}" . "elsif (\%+) { " .
+
         # named capturing groups
-            "${var} = { \%+ }; " .
-        "} else {" .            
+        "${var} = { \%+ }; " . "} else {" .
+
         # numbered capturing groups
-            "no strict 'refs';" .
-            "${var} = [ map { \${\$_} } 1..(\@{+} - 1) ];" . 
-        "}".
-     "}";
+        "no strict 'refs';"
+        . "${var} = [ map { \${\$_} } 1..(\@{+} - 1) ];" . "}" . "}";
 }
 
 1;

@@ -6,16 +6,15 @@ use Test::More;
 use Test::Exception;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Importer::JSON';
     use_ok $pkg;
 }
 require_ok $pkg;
 
-my $data = [
-   {name=>'Patrick',age=>'39'},
-   {name=>'Nicolas',age=>'34'},
-];
+my $data
+    = [{name => 'Patrick', age => '39'}, {name => 'Nicolas', age => '34'},];
 
 my $json = <<EOF;
 {"name":"Patrick","age":"39"}

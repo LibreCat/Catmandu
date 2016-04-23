@@ -9,15 +9,13 @@ use Data::Compare;
 use Moo::Role;
 use namespace::clean;
 
-has version_bag => (
-    is => 'lazy',
-);
+has version_bag => (is => 'lazy',);
 
 has version_compare_ignore => (
     is     => 'lazy',
     coerce => sub {
         my $keys = $_[0];
-        $keys = [@$keys]           if is_array_ref $keys;
+        $keys = [@$keys] if is_array_ref $keys;
         $keys = [split /,/, $keys] if is_value $keys;
         push @$keys, '_version' unless grep /^_version$/, @$keys;
         $keys;
@@ -28,7 +26,7 @@ has version_transfer => (
     is     => 'lazy',
     coerce => sub {
         my $keys = $_[0];
-        $keys = [@$keys]           if is_array_ref $keys;
+        $keys = [@$keys] if is_array_ref $keys;
         $keys = [split /,/, $keys] if is_value $keys;
         $keys;
     },
@@ -55,10 +53,13 @@ around add => sub {
             $data->{$key} = $d->{$key};
         }
         return $data
-            if Compare($data, $d, {ignore_hash_keys => $self->version_compare_ignore});
-        $self->version_bag->add({_id => "$data->{_id}.$data->{_version}", data => $d});
+            if Compare($data, $d,
+            {ignore_hash_keys => $self->version_compare_ignore});
+        $self->version_bag->add(
+            {_id => "$data->{_id}.$data->{_version}", data => $d});
         $data->{_version}++;
-    } else {
+    }
+    else {
         $data->{_version} ||= 1;
     }
     $sub->($self, $data);

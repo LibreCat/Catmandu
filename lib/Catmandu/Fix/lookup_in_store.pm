@@ -17,8 +17,8 @@ has bag_name   => (fix_opt => 1, init_arg => 'bag');
 has default    => (fix_opt => 1);
 has delete     => (fix_opt => 1);
 has store_args => (fix_opt => 'collect');
-has store      => (is => 'lazy', init_arg => undef);
-has bag        => (is => 'lazy', init_arg => undef);
+has store      => (is      => 'lazy', init_arg => undef);
+has bag        => (is      => 'lazy', init_arg => undef);
 
 sub _build_store {
     my ($self) = @_;
@@ -34,37 +34,48 @@ sub _build_bag {
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path     = $fixer->split_path($self->path);
-    my $key      = pop @$path;
-    my $bag_var  = $fixer->capture($self->bag);
-    my $delete   = $self->delete;
-    my $default  = $self->default;
+    my $path    = $fixer->split_path($self->path);
+    my $key     = pop @$path;
+    my $bag_var = $fixer->capture($self->bag);
+    my $delete  = $self->delete;
+    my $default = $self->default;
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
-            my $val_var = shift;
-            my $val_index = shift;
-            my $bag_val_var = $fixer->generate_var;
-            my $perl = "if (is_value(${val_var}) && defined(my ${bag_val_var} = ${bag_var}->get(${val_var}))) {" .
-                "${val_var} = ${bag_val_var};" .
-            "}";
-            if ($delete) {
-                $perl .= "else {";
-                if (defined $val_index) { # wildcard: only delete the value where the lookup failed
-                    $perl .= "splice(\@{${var}}, ${val_index}--, 1);";
-                } else {
-                    $perl .= $fixer->emit_delete_key($var, $key);
+    $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            $fixer->emit_get_key(
+                $var, $key,
+                sub {
+                    my $val_var     = shift;
+                    my $val_index   = shift;
+                    my $bag_val_var = $fixer->generate_var;
+                    my $perl
+                        = "if (is_value(${val_var}) && defined(my ${bag_val_var} = ${bag_var}->get(${val_var}))) {"
+                        . "${val_var} = ${bag_val_var};" . "}";
+                    if ($delete) {
+                        $perl .= "else {";
+                        if (defined $val_index)
+                        { # wildcard: only delete the value where the lookup failed
+                            $perl .= "splice(\@{${var}}, ${val_index}--, 1);";
+                        }
+                        else {
+                            $perl .= $fixer->emit_delete_key($var, $key);
+                        }
+                        $perl .= "}";
+                    }
+                    elsif (defined $default) {
+                        $perl
+                            .= "else {"
+                            . "${val_var} = "
+                            . $fixer->emit_value($default) . ";" . "}";
+                    }
+                    $perl;
                 }
-                $perl .= "}";
-            } elsif (defined $default) {
-                $perl .= "else {" .
-                    "${val_var} = " . $fixer->emit_value($default) . ";" .
-                "}";
-            }
-            $perl;
-        });
-    });
+            );
+        }
+    );
 }
 
 1;

@@ -10,11 +10,7 @@ use Catmandu::Util qw(check_able);
 use namespace::clean;
 
 sub command_opt_spec {
-    (
-        [ "cql-query|q=s", "" ],
-        [ "query=s", "" ],
-        [ "id=s@", "" ],
-    );
+    (["cql-query|q=s", ""], ["query=s", ""], ["id=s@", ""],);
 }
 
 sub command {
@@ -26,13 +22,15 @@ sub command {
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
     if ($opts->id) {
         $from->delete($_) for @{$opts->id};
-    } elsif ($opts->query // $opts->cql_query) {
+    }
+    elsif ($opts->query // $opts->cql_query) {
         check_able($from, 'delete_by_query');
         $from->delete_by_query(
             cql_query => $opts->cql_query,
             query     => $opts->query,
         );
-    } else {
+    }
+    else {
         $from->delete_all;
     }
 

@@ -15,7 +15,7 @@ with 'Catmandu::Fix::Condition::SimpleAllTest';
 
 sub emit_test {
     my ($self, $var, $parser) = @_;
-    "is_value(${var}) && ${var} =~ ".$parser->emit_match($self->pattern);
+    "is_value(${var}) && ${var} =~ " . $parser->emit_match($self->pattern);
 }
 
 1;

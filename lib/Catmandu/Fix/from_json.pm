@@ -15,12 +15,11 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    my $json_var = $fixer->capture(Cpanel::JSON::XS->new
-            ->utf8(0)->pretty(0)->allow_nonref(1));
+    my $json_var = $fixer->capture(
+        Cpanel::JSON::XS->new->utf8(0)->pretty(0)->allow_nonref(1));
 
-    "if (is_string(${var})) {" .
-        "${var} = ${json_var}->decode(${var});" .
-    "}";
+    "if (is_string(${var})) {"
+        . "${var} = ${json_var}->decode(${var});" . "}";
 }
 
 1;

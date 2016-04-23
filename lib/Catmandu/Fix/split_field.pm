@@ -8,8 +8,8 @@ use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path       => (fix_arg => 1);
-has split_char => (fix_arg => 1, default => sub { qr'\s+' });
+has path => (fix_arg => 1);
+has split_char => (fix_arg => 1, default => sub {qr'\s+'});
 
 with 'Catmandu::Fix::SimpleGetValue';
 

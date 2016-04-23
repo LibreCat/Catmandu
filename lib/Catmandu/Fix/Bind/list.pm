@@ -12,11 +12,11 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Bind';
 
-has path   => (fix_opt => 1);
-has var    => (fix_opt => 1);
+has path => (fix_opt => 1);
+has var  => (fix_opt => 1);
 
 has _root_ => (is => 'rw');
-has flag   => (is => 'rw'  , default => sub { 0 });
+has flag => (is => 'rw', default => sub {0});
 
 sub zero {
     my ($self) = @_;
@@ -24,22 +24,23 @@ sub zero {
 }
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
 
     $self->_root_($data);
 
     # Set a flag so that all the bind fixes are only run once...
     $self->flag(0);
 
-    defined $self->path ? Catmandu::Util::data_at($self->path,$data) : $data;
+    defined $self->path ? Catmandu::Util::data_at($self->path, $data) : $data;
 }
 
 sub bind {
-    my ($self,$mvar,$func,$name,$fixer) = @_;
+    my ($self, $mvar, $func, $name, $fixer) = @_;
 
     if (Catmandu::Util::is_hash_ref($mvar)) {
-         # Ignore all specialized processing when not an array
-         $mvar = $func->($mvar);
+
+        # Ignore all specialized processing when not an array
+        $mvar = $func->($mvar);
     }
     elsif (Catmandu::Util::is_array_ref($mvar)) {
         return $mvar if $self->flag;
@@ -47,40 +48,42 @@ sub bind {
         # Run only these fixes once: no need for do identity() ... end
         $self->flag(1);
 
-        
         my $idx = 0;
 
-        [ map { 
-            my $scope;
-            my $has_default_context_variable = 0;
+        [
+            map {
+                my $scope;
+                my $has_default_context_variable = 0;
 
-            # Switch context to the variable set by the user
-            if ($self->var) {
-                $scope = $self->_root_;
-                $scope->{$self->var} = $_;
-            }
-            elsif (!ref($_)) {
-                $scope = { '_' => $_ };
-                $has_default_context_variable = 1;
-            }
-            else {
-                $scope = $_;
-            }
+                # Switch context to the variable set by the user
+                if ($self->var) {
+                    $scope = $self->_root_;
+                    $scope->{$self->var} = $_;
+                }
+                elsif (!ref($_)) {
+                    $scope = {'_' => $_};
+                    $has_default_context_variable = 1;
+                }
+                else {
+                    $scope = $_;
+                }
 
-            # Run /all/ the fixes on the scope
-            my $res = $fixer->fix($scope);
+                # Run /all/ the fixes on the scope
+                my $res = $fixer->fix($scope);
 
-            # Check for rejects()
-            if (defined $res) {
-                $mvar->[$idx] = $res->{'_'} if $has_default_context_variable;
-                $idx++;
-            }
-            else {
-                splice(@$mvar,$idx,1);
-            }
+                # Check for rejects()
+                if (defined $res) {
+                    $mvar->[$idx] = $res->{'_'}
+                        if $has_default_context_variable;
+                    $idx++;
+                }
+                else {
+                    splice(@$mvar, $idx, 1);
+                }
 
-            delete $res->{$self->var} if $self->var; 
-          } @$mvar ];
+                delete $res->{$self->var} if $self->var;
+            } @$mvar
+        ];
     }
     else {
         return $self->zero;
@@ -89,9 +92,9 @@ sub bind {
 
 # Flatten an array: [ [A] , [A] , [A] ] -> [ A, A, A ]
 sub plus {
-    my ($self,$prev,$next) = @_;
+    my ($self, $prev, $next) = @_;
 
-    Catmandu::Util::is_array_ref($next) ? [ $prev, @$next ] : [ $prev, $next] ;
+    Catmandu::Util::is_array_ref($next) ? [$prev, @$next] : [$prev, $next];
 }
 
 1;

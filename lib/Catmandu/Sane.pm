@@ -7,7 +7,7 @@ our $VERSION = '1.0002_02';
 
 use feature ();
 use utf8;
-use IO::File ();
+use IO::File   ();
 use IO::Handle ();
 use Try::Tiny::ByClass;
 use Catmandu::Error;

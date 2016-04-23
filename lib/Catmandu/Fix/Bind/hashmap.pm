@@ -13,19 +13,19 @@ with 'Catmandu::Fix::Bind';
 
 has exporter   => (fix_opt => 1);
 has store      => (fix_opt => 1);
-has uniq       => (fix_opt => 1 , default => sub { 0 });
+has uniq       => (fix_opt => 1, default => sub {0});
 has count      => (fix_opt => 1);
 has join       => (fix_opt => 1);
 has extra_args => (fix_opt => 'collect');
-has flag       => (is => 'rw', default => sub { 0 });
-has hash       => (is => 'lazy');
+has flag       => (is      => 'rw', default => sub {0});
+has hash       => (is      => 'lazy');
 
 sub _build_hash {
     +{};
 }
 
 sub add_to_hash {
-    my ($self,$key,$val) = @_;
+    my ($self, $key, $val) = @_;
     if ($self->count) {
         $self->hash->{$key} += 1;
     }
@@ -38,7 +38,7 @@ sub add_to_hash {
 }
 
 sub bind {
-    my ($self,$data,$code,$name,$fixer) = @_;
+    my ($self, $data, $code, $name, $fixer) = @_;
 
     return if $self->flag;
 
@@ -49,11 +49,11 @@ sub bind {
 
     if (defined $key) {
         if (is_string($key)) {
-            $self->add_to_hash($key,$value);
+            $self->add_to_hash($key, $value);
         }
         elsif (is_array_ref($key)) {
             for (@$key) {
-                $self->add_to_hash($_,$value);
+                $self->add_to_hash($_, $value);
             }
         }
         else {
@@ -67,10 +67,10 @@ sub bind {
 }
 
 sub result {
-    my ($self,$mvar) = @_;
+    my ($self, $mvar) = @_;
 
     $self->flag(0);
-    
+
     $mvar;
 }
 
@@ -85,13 +85,12 @@ sub DESTROY {
     }
     elsif ($self->exporter) {
         $e = Catmandu->exporter($self->exporter, %$args);
-    } else {
+    }
+    else {
         $e = Catmandu->exporter('JSON', line_delimited => 1);
     }
 
-    my $sorter = $self->count ?
-                    sub { $h->{$b} <=> $h->{$a} } :
-                    sub { $a cmp $b };
+    my $sorter = $self->count ? sub {$h->{$b} <=> $h->{$a}} : sub {$a cmp $b};
 
     my $id = 0;
     for (sort $sorter keys %$h) {
@@ -101,18 +100,17 @@ sub DESTROY {
             $v = $h->{$_};
         }
         elsif ($self->uniq) {
-            $v = [ sort keys %{$h->{$_}} ];
+            $v = [sort keys %{$h->{$_}}];
         }
         else {
             $v = $h->{$_};
         }
 
         if (is_array_ref($v) && $self->join) {
-            $v = join $self->join , @$v;
+            $v = join $self->join, @$v;
         }
 
-
-        $e->add({ _id => $_ ,  value => $v });
+        $e->add({_id => $_, value => $v});
     }
 
     $e->commit;

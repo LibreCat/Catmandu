@@ -15,12 +15,16 @@ has path => (fix_arg => 1);
 sub emit {
     my ($self, $fixer) = @_;
     my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+    my $key  = pop @$path;
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_delete_key($var, $key);
-    });
+    $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            $fixer->emit_delete_key($var, $key);
+        }
+    );
 }
 
 1;

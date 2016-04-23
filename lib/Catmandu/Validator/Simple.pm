@@ -10,10 +10,10 @@ use namespace::clean;
 with 'Catmandu::Validator';
 
 has handler => (
-    is  => 'rw',
+    is       => 'rw',
     required => 1,
-    isa => sub {
-        Catmandu::BadArg->throw( "handler should be a CODE reference")
+    isa      => sub {
+        Catmandu::BadArg->throw("handler should be a CODE reference")
             unless ref $_[0] eq 'CODE';
     },
 );

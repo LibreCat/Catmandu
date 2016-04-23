@@ -12,70 +12,75 @@ use namespace::clean;
 with 'Catmandu::Fix::Bind';
 
 has time  => (is => 'ro');
-has units => (is => 'ro' , default => sub {'SECONDS'} );
+has units => (is => 'ro', default => sub {'SECONDS'});
 has sleep => (is => 'rw');
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
 
     my $sleep = $self->time;
     my $units = $self->units // 'SECONDS';
 
     if ($units =~ /^MICROSECOND(S)?$/i) {
-      $sleep /= 1000000;
+        $sleep /= 1000000;
     }
     elsif ($units =~ /^MILLISECOND(S)$/i) {
-      $sleep /= 1000;
+        $sleep /= 1000;
     }
     elsif ($units =~ /^SECOND(S)?$/i) {
-      # ok
+
+        # ok
     }
     elsif ($units =~ /^MINUTE(S)?$/i) {
-      $sleep *= 60;
+        $sleep *= 60;
     }
     elsif ($units =~ /^HOUR(S)?$/i) {
-      $sleep *= 3600;
+        $sleep *= 3600;
     }
     else {
-      # ok - use seconds
+        # ok - use seconds
     }
 
     $self->sleep($sleep);
 
-    [ $data , Clone::clone($data) ];
+    [$data, Clone::clone($data)];
 }
 
 sub bind {
-    my ($self,$mvar,$func) = @_;
+    my ($self, $mvar, $func) = @_;
 
     my $sleep = $self->sleep();
 
     if ($sleep >= 0) {
-      my $start  = [Time::HiRes::gettimeofday];
+        my $start = [Time::HiRes::gettimeofday];
 
-      $mvar->[0] = $func->($mvar->[0]);
+        $mvar->[0] = $func->($mvar->[0]);
 
-      $sleep -= Time::HiRes::tv_interval($start);
+        $sleep -= Time::HiRes::tv_interval($start);
 
-      $self->sleep($sleep);
+        $self->sleep($sleep);
     }
 
     $mvar;
 }
 
 sub result {
-    my ($self,$mvar) = @_;
+    my ($self, $mvar) = @_;
 
     if ($self->sleep < 0) {
-      $self->log->warn("timeout after > " . $self->time . " " . $self->units . " : " . (-1 * $self->sleep) . " extra time");
-      inline_replace($mvar->[0],$mvar->[1]);
+        $self->log->warn("timeout after > "
+                . $self->time . " "
+                . $self->units . " : "
+                . (-1 * $self->sleep)
+                . " extra time");
+        inline_replace($mvar->[0], $mvar->[1]);
     }
 
     $self->sleep < 0 ? $mvar->[1] : $mvar->[0];
 }
 
 sub inline_replace {
-    my ($old,$new) = @_;
+    my ($old, $new) = @_;
 
     for my $key (keys %$old) {
         delete $old->{$key};
@@ -83,7 +88,7 @@ sub inline_replace {
 
     for my $key (keys %$new) {
         $old->{$key} = $new->{$key};
-    }   
+    }
 }
 
 1;

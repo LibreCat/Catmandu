@@ -7,7 +7,7 @@ our $VERSION = '1.0002_02';
 use Moo::Role;
 use namespace::clean;
 
-sub plugin_namespace { 'Catmandu::Plugin' }
+sub plugin_namespace {'Catmandu::Plugin'}
 
 sub with_plugins {
     my $class = shift;
@@ -16,13 +16,16 @@ sub with_plugins {
     @plugins = split /,/, join ',', @plugins;
     @plugins || return $class;
     my $ns = $class->plugin_namespace;
-    Moo::Role->create_class_with_roles($class, map {
-        my $pkg = $_;
-        if ($pkg !~ s/^\+// && $pkg !~ /^$ns/) {
-            $pkg = "${ns}::${pkg}";
-        }
-        $pkg;
-    } @plugins);
+    Moo::Role->create_class_with_roles(
+        $class,
+        map {
+            my $pkg = $_;
+            if ($pkg !~ s/^\+// && $pkg !~ /^$ns/) {
+                $pkg = "${ns}::${pkg}";
+            }
+            $pkg;
+        } @plugins
+    );
 }
 
 1;

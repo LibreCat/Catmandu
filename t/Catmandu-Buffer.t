@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Buffer';
     use_ok $pkg;
@@ -13,6 +14,7 @@ BEGIN {
 require_ok $pkg;
 
 {
+
     package T::Buffer;
     use Moo;
     with $pkg;
@@ -34,14 +36,14 @@ $b = T::Buffer->new(buffer_size => 5);
 is $b->buffer_size, 5;
 is $b->buffer_used, 0;
 
-$b->buffer_add(1,2,3);
+$b->buffer_add(1, 2, 3);
 is $b->buffer_used, 3;
-is_deeply $b->buffer, [1,2,3];
+is_deeply $b->buffer, [1, 2, 3];
 is $b->buffer_is_full, 0;
 
-$b->buffer_add(4,5,6);
+$b->buffer_add(4, 5, 6);
 is $b->buffer_used, 6;
-is_deeply $b->buffer, [1,2,3,4,5,6];
+is_deeply $b->buffer, [1, 2, 3, 4, 5, 6];
 is $b->buffer_is_full, 1;
 
 $b->clear_buffer;

@@ -8,9 +8,9 @@ use Moo::Role;
 use namespace::clean;
 
 has buffer_size => (is => 'ro', lazy => 1, builder => 'default_buffer_size');
-has buffer => (is => 'rwp', lazy => 1, default => sub { [] });
+has buffer => (is => 'rwp', lazy => 1, default => sub {[]});
 
-sub default_buffer_size { 100 }
+sub default_buffer_size {100}
 
 sub clear_buffer {
     $_[0]->_set_buffer([]);

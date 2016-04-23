@@ -12,23 +12,19 @@ with 'Catmandu::Logger';
 with 'Catmandu::Addable';
 with 'Catmandu::Counter';
 
-has file => (
-    is      => 'ro',
-    lazy    => 1,
-    default => sub { \*STDOUT },
-);
+has file => (is => 'ro', lazy => 1, default => sub {\*STDOUT},);
 
 has fh => (
     is      => 'ro',
     lazy    => 1,
-    default => sub { io($_[0]->file, mode => 'w', binmode => $_[0]->encoding) },
+    default => sub {io($_[0]->file, mode => 'w', binmode => $_[0]->encoding)},
 );
 
 after add => sub {
     $_[0]->inc_count;
 };
 
-sub encoding { ':utf8' }
+sub encoding {':utf8'}
 
 1;
 

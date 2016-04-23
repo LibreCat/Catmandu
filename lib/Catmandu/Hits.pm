@@ -27,7 +27,7 @@ sub more {
 sub generator {
     my $self = $_[0];
     my $hits = $self->hits;
-    my $i = 0;
+    my $i    = 0;
     sub {
         $hits->[$i++];
     };

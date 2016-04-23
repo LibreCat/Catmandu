@@ -15,9 +15,9 @@ requires 'emit_test';
 
 sub emit {
     my ($self, $fixer, $label) = @_;
-    
-    my $path  = $fixer->split_path($self->path);
-    my $key   = pop @$path;
+
+    my $path = $fixer->split_path($self->path);
+    my $key  = pop @$path;
 
     my $path2 = $fixer->split_path($self->path2);
     my $key2  = pop @$path2;
@@ -26,10 +26,12 @@ sub emit {
     my $fail_fixes = $self->fail_fixes;
 
     my $fail_label;
-    my $fail_block = $fixer->emit_block(sub {
-        $fail_label = shift;
-        $fixer->emit_fixes($fail_fixes);
-    });
+    my $fail_block = $fixer->emit_block(
+        sub {
+            $fail_label = shift;
+            $fixer->emit_fixes($fail_fixes);
+        }
+    );
 
     my $perl = "no if ($] >= 5.018), 'warnings' => 'experimental';";
 
@@ -39,37 +41,51 @@ sub emit {
     my $vals_1 = $fixer->generate_var;
     $perl .= $fixer->emit_declare_vars($vals_1, '{}');
 
-    $perl .= $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
+    $perl .= $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
             my $var = shift;
-            my $perl = "${has_match_var} ||= 1;";
-            $perl   .= "${vals_1} = ${var};";
-            $perl;
-        });
-    });
+            $fixer->emit_get_key(
+                $var, $key,
+                sub {
+                    my $var  = shift;
+                    my $perl = "${has_match_var} ||= 1;";
+                    $perl .= "${vals_1} = ${var};";
+                    $perl;
+                }
+            );
+        }
+    );
 
     my $vals_2 = $fixer->generate_var;
     $perl .= $fixer->emit_declare_vars($vals_2, '{}');
 
-    $perl .= $fixer->emit_walk_path($fixer->var, $path2, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key2, sub {
+    $perl .= $fixer->emit_walk_path(
+        $fixer->var,
+        $path2,
+        sub {
             my $var = shift;
-            my $perl = "${has_match_var} ||= 1;";
-            $perl   .= "${vals_2} = ${var};";
-            $perl;
-        });
-    });
+            $fixer->emit_get_key(
+                $var, $key2,
+                sub {
+                    my $var  = shift;
+                    my $perl = "${has_match_var} ||= 1;";
+                    $perl .= "${vals_2} = ${var};";
+                    $perl;
+                }
+            );
+        }
+    );
 
-    $perl .= "unless (" . $self->emit_test($vals_1,$vals_2, $fixer) . ") {";
+    $perl .= "unless (" . $self->emit_test($vals_1, $vals_2, $fixer) . ") {";
     if (@$fail_fixes) {
-      $perl .= "goto ${fail_label};";
-    } else {
-      $perl .= "last ${label};";
+        $perl .= "goto ${fail_label};";
+    }
+    else {
+        $perl .= "last ${label};";
     }
     $perl .= "}";
-
 
     $perl .= "if (${has_match_var}) {";
 

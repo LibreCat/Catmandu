@@ -9,18 +9,14 @@ use Catmandu;
 use namespace::clean;
 
 sub command_opt_spec {
-    (
-        [ "verbose|v", "" ],
-        [ "fix=s@", "" ],
-        [ "start=i", "" ],
-        [ "total=i", "" ],
-    );
+    (["verbose|v", ""], ["fix=s@", ""], ["start=i", ""], ["total=i", ""],);
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my ($from_args, $from_opts, $into_args, $into_opts) = $self->_parse_options($args);
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);

@@ -11,8 +11,8 @@ use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
 
-has path   => (is => 'ro');
-has flag   => (is => 'rw');
+has path => (is => 'ro');
+has flag => (is => 'rw');
 
 sub zero {
     my ($self) = @_;
@@ -20,10 +20,10 @@ sub zero {
 }
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
 
     my $ref;
-    
+
     if (defined $self->path) {
         $ref = Catmandu::Util::data_at($self->path, $data);
     }
@@ -38,29 +38,29 @@ sub unit {
 }
 
 sub bind {
-    my ($self,$mvar,$func,$name,$fixer) = @_;
+    my ($self, $mvar, $func, $name, $fixer) = @_;
 
-    # The fixer contains all the fixes no every separate fix.
-    # Set a flag so that the fixes are only run once, creating an implicit do identity() ... end block
+# The fixer contains all the fixes no every separate fix.
+# Set a flag so that the fixes are only run once, creating an implicit do identity() ... end block
 
     return $mvar unless $self->flag == 0;
 
     my $ref;
-    
+
     if (!defined $mvar) {
-        $ref = $fixer->fix( $self->zero );
+        $ref = $fixer->fix($self->zero);
     }
     elsif (Catmandu::Util::is_array_ref($mvar)) {
-        $ref = $fixer->fix( $mvar );
+        $ref = $fixer->fix($mvar);
     }
     elsif (Catmandu::Util::is_hash_ref($mvar)) {
-        $ref = $fixer->fix( $mvar );
+        $ref = $fixer->fix($mvar);
     }
     else {
-        $ref = $fixer->fix( $self->zero );
+        $ref = $fixer->fix($self->zero);
     }
 
-    inline_copy($mvar,$ref);
+    inline_copy($mvar, $ref);
 
     $self->flag(1);
 
@@ -68,21 +68,21 @@ sub bind {
 }
 
 sub result {
-    my ($self,$mvar) = @_;
+    my ($self, $mvar) = @_;
     $self->flag(0);
     $mvar;
 }
 
 sub inline_copy {
-    my ($old,$new) = @_;
+    my ($old, $new) = @_;
 
     if (Catmandu::Util::is_array_ref($old)) {
         undef @{$old};
         for (@$new) {
-            push @$old , $_;
+            push @$old, $_;
         }
     }
-    elsif (! defined $new) {
+    elsif (!defined $new) {
         undef %{$old};
     }
 }

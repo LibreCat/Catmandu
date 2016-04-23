@@ -16,14 +16,13 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $spec = $fixer->emit_string($self->spec);
-    
-    "if (is_array_ref(${var})) {" .
-        "${var} = sprintf(${spec},\@{${var}});" .
-    "} elsif (is_hash_ref(${var})) {" .
-        "${var} = sprintf(${spec},\%{${var}});" .
-    "} elsif (is_string(${var})) {" .
-        "${var} = sprintf(${spec},${var});" .
-    "}";
+
+    "if (is_array_ref(${var})) {"
+        . "${var} = sprintf(${spec},\@{${var}});"
+        . "} elsif (is_hash_ref(${var})) {"
+        . "${var} = sprintf(${spec},\%{${var}});"
+        . "} elsif (is_string(${var})) {"
+        . "${var} = sprintf(${spec},${var});" . "}";
 }
 
 1;

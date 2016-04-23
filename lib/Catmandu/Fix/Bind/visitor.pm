@@ -10,13 +10,13 @@ use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
 
-has path  => (is => 'ro');
+has path => (is => 'ro');
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
 
     if (defined $self->path) {
-        return Catmandu::Util::data_at($self->path,$data);
+        return Catmandu::Util::data_at($self->path, $data);
     }
     else {
         return $data;
@@ -24,42 +24,43 @@ sub unit {
 }
 
 sub bind {
-    my ($self,$mvar,$func) = @_;
+    my ($self, $mvar, $func) = @_;
 
     if (Catmandu::Util::is_array_ref($mvar)) {
-        return $self->bind_array($mvar,$func,'');
+        return $self->bind_array($mvar, $func, '');
     }
     elsif (Catmandu::Util::is_hash_ref($mvar)) {
-        return $self->bind_hash($mvar,$func,'');
+        return $self->bind_hash($mvar, $func, '');
     }
     else {
-        return $self->bind_hash($mvar,$func,'');
+        return $self->bind_hash($mvar, $func, '');
     }
 }
 
 sub bind_scalar {
-    my ($self,$mvar,$func,$parent) = @_;
+    my ($self, $mvar, $func, $parent) = @_;
 
-    return $func->({ 'key' => $parent , 'scalar' => $mvar })->{'scalar'};
+    return $func->({'key' => $parent, 'scalar' => $mvar})->{'scalar'};
 }
 
 sub bind_array {
-    my ($self,$mvar,$func,$parent) = @_;
+    my ($self, $mvar, $func, $parent) = @_;
 
-    $mvar = $func->({ 'key' => $parent , 'array' => $mvar })->{'array'};
+    $mvar = $func->({'key' => $parent, 'array' => $mvar})->{'array'};
 
     my $new_var = [];
-    
-    for (my $i = 0 ; $i < @$mvar ; $i++) {
+
+    for (my $i = 0; $i < @$mvar; $i++) {
         my $item = $mvar->[$i];
         if (Catmandu::Util::is_array_ref($item)) {
-            $mvar->[$i] = $self->bind_array($item,$func,$i);
+            $mvar->[$i] = $self->bind_array($item, $func, $i);
         }
         elsif (Catmandu::Util::is_hash_ref($item)) {
-            $mvar->[$i] = $self->bind_hash($item,$func,$i);
+            $mvar->[$i] = $self->bind_hash($item, $func, $i);
         }
         else {
-            $mvar->[$i] = $func->({ 'key' => $i ,'scalar' => $item})->{'scalar'};
+            $mvar->[$i]
+                = $func->({'key' => $i, 'scalar' => $item})->{'scalar'};
         }
     }
 
@@ -67,21 +68,22 @@ sub bind_array {
 }
 
 sub bind_hash {
-    my ($self,$mvar,$func,$parent) = @_;
+    my ($self, $mvar, $func, $parent) = @_;
 
-    $mvar = $func->({ 'key' => $parent , 'hash' => $mvar })->{'hash'};
+    $mvar = $func->({'key' => $parent, 'hash' => $mvar})->{'hash'};
 
     for my $key (keys %$mvar) {
         my $item = $mvar->{$key};
 
         if (Catmandu::Util::is_array_ref($item)) {
-            $mvar->{$key} = $self->bind_array($item,$func,$key);
+            $mvar->{$key} = $self->bind_array($item, $func, $key);
         }
         elsif (Catmandu::Util::is_hash_ref($item)) {
-            $mvar->{$key} = $self->bind_hash($item,$func,$key);
+            $mvar->{$key} = $self->bind_hash($item, $func, $key);
         }
         else {
-            $mvar->{$key} = $func->({ 'key' => $key , 'scalar' => $item })->{'scalar'};
+            $mvar->{$key}
+                = $func->({'key' => $key, 'scalar' => $item})->{'scalar'};
         }
     }
 

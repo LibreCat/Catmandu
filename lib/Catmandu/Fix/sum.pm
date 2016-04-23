@@ -16,9 +16,8 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var) = @_;
 
-    "if (is_array_ref(${var})) {" .
-        "${var} = List::Util::sum(\@{${var}}) // 0;" .
-    "}";
+    "if (is_array_ref(${var})) {"
+        . "${var} = List::Util::sum(\@{${var}}) // 0;" . "}";
 }
 
 1;

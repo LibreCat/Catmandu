@@ -9,11 +9,11 @@ use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path    => (fix_arg => 1);
-has uniq    => (fix_opt => 1);
-has reverse => (fix_opt => 1);
-has numeric => (fix_opt => 1);
-has undef_position => (fix_opt => 1, default => sub { 'last' });
+has path           => (fix_arg => 1);
+has uniq           => (fix_opt => 1);
+has reverse        => (fix_opt => 1);
+has numeric        => (fix_opt => 1);
+has undef_position => (fix_opt => 1, default => sub {'last'});
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -36,28 +36,32 @@ sub emit_value {
     #sort
     if ($self->reverse) {
         $perl .= "${var} = [sort { \$b $comparer \$a } \@{${var}}];";
-    } else {
+    }
+    else {
         $perl .= "${var} = [sort { \$a $comparer \$b } \@{${var}}];";
     }
 
     #insert undef at the end
-    if($self->undef_position eq "last"){
-        if($self->uniq){
+    if ($self->undef_position eq "last") {
+        if ($self->uniq) {
             $perl .= "push \@{${var}},undef if scalar(\@{${undef_values}});";
         }
-        else{
+        else {
             $perl .= "push \@{${var}},\@{${undef_values}};";
         }
     }
+
     #insert undef at the beginning
-    elsif($self->undef_position eq "first"){
-        if($self->uniq){
-            $perl .= "unshift \@{${var}},undef if scalar(\@{${undef_values}});";
+    elsif ($self->undef_position eq "first") {
+        if ($self->uniq) {
+            $perl
+                .= "unshift \@{${var}},undef if scalar(\@{${undef_values}});";
         }
-        else{
+        else {
             $perl .= "unshift \@{${var}},\@{${undef_values}};";
         }
     }
+
     #leave undef out of the list
 
     $perl .= "}";

@@ -11,20 +11,11 @@ use namespace::clean;
 
 with 'Catmandu::Logger';
 
-has bag_class => (
-    is => 'ro',
-    default => sub { ref($_[0]).'::Bag' },
-);
+has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
 
-has default_bag => (
-    is => 'ro',
-    default => sub { 'data' },
-);
+has default_bag => (is => 'ro', default => sub {'data'},);
 
-has bags => (
-    is => 'ro',
-    default => sub { +{} },
-);
+has bags => (is => 'ro', default => sub {+{}},);
 
 {
     Hash::Util::FieldHash::fieldhash my %bag_instances;
@@ -40,7 +31,8 @@ has bags => (
                     $pkg = $pkg->with_plugins($plugins);
                 }
                 $pkg->new(%$options, store => $self, name => $name);
-            } else {
+            }
+            else {
                 $pkg->new(store => $self, name => $name);
             }
         };
@@ -49,14 +41,17 @@ has bags => (
 
 # forward methods to default bag
 {
-    my $pkg = __PACKAGE__;
+    my $pkg      = __PACKAGE__;
     my @delegate = (
+
         # Catmandu::Iterable methods
         qw(to_array count slice each tap any many all map reduce first rest
             take pluck invoke contains includes group interleave max min
             benchmark),
+
         # Catmandu::Addable methods
         qw(add add_many commit),
+
         # Catmandu::Bag methods
         qw(get delete delete_all get_or_add to_hash),
     );

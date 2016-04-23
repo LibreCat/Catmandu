@@ -9,7 +9,7 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-sub add {}
+sub add { }
 
 1;
 

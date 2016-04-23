@@ -18,9 +18,10 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
 
     "if (is_value(${var})) {"
-        ."utf8::upgrade(${var});"
-        ."${var} =~ ".$fixer->emit_substitution($self->search, $self->replace)."g;"
-        ."}";
+        . "utf8::upgrade(${var});"
+        . "${var} =~ "
+        . $fixer->emit_substitution($self->search, $self->replace) . "g;"
+        . "}";
 }
 
 1;

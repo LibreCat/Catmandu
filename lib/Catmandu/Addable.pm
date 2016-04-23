@@ -12,8 +12,8 @@ with 'Catmandu::Fixable';
 
 requires 'add';
 
-has autocommit => (is => 'ro' , default => sub { 0 });
-has _commit    => (is => 'rw' , default => sub { 0 });
+has autocommit => (is => 'ro', default => sub {0});
+has _commit    => (is => 'rw', default => sub {0});
 
 around add => sub {
     my ($orig, $self, $data) = @_;
@@ -58,7 +58,7 @@ sub add_many {
     $n;
 }
 
-sub commit {}
+sub commit { }
 
 sub DESTROY {
     my ($self) = shift;

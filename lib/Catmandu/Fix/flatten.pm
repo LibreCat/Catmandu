@@ -14,10 +14,9 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var) = @_;
-    "if (is_array_ref(${var})) {" .
-        "${var} = [map { ref \$_ eq 'ARRAY' ? \@\$_ : \$_ } \@{${var}}] " .
-        "while grep ref \$_ eq 'ARRAY', \@{${var}};" .
-    "}";
+    "if (is_array_ref(${var})) {"
+        . "${var} = [map { ref \$_ eq 'ARRAY' ? \@\$_ : \$_ } \@{${var}}] "
+        . "while grep ref \$_ eq 'ARRAY', \@{${var}};" . "}";
 }
 
 1;

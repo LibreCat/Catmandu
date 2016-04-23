@@ -9,11 +9,11 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has _data_ => (is => 'ro', default => sub { [] });
+has _data_ => (is => 'ro', default => sub {[]});
 
 sub add {
     my ($self, $data) = @_;
-    push @{$self->_data_} , $data;
+    push @{$self->_data_}, $data;
     1;
 }
 

@@ -10,15 +10,15 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has line_delimited => (is => 'ro', default => sub { 0 });
-has json           => (is => 'lazy');
+has line_delimited => (is => 'ro', default => sub {0});
+has json => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
     Cpanel::JSON::XS->new->utf8($self->encoding eq ':raw');
 }
 
-sub _build_encoding { ':raw' }
+sub _build_encoding {':raw'}
 
 sub generator {
     my ($self) = @_;
@@ -42,10 +42,10 @@ sub generator {
         for (;;) {
             my $res = sysread($fh, my $buf, 512);
             $res // Catmandu::Error->throw($!);
-            $json->incr_parse($buf); # void context, so no parsing
+            $json->incr_parse($buf);    # void context, so no parsing
             $json->incr_text =~ s/^[^{]+//;
             return if $json->incr_text =~ /^$/;
-            last if $json->incr_text =~ /^{/;
+            last   if $json->incr_text =~ /^{/;
         }
 
         # read data until we get a single json object
@@ -56,12 +56,14 @@ sub generator {
 
             my $res = sysread($fh, my $buf, 512);
             $res // Catmandu::Error->throw($!);
-            $res || Catmandu::Error->throw("JSON syntax error: unexpected end of object");
+            $res
+                || Catmandu::Error->throw(
+                "JSON syntax error: unexpected end of object");
             $json->incr_parse($buf);
         }
 
         return;
- 
+
     };
 }
 

@@ -13,24 +13,27 @@ use namespace::clean;
 with 'Catmandu::Importer';
 
 has importers => (
-    is => 'ro',
-    default => sub { [] },
-    coerce => sub {
+    is      => 'ro',
+    default => sub {[]},
+    coerce  => sub {
         my $importers = $_[0];
-        return [ map {
-            if (is_string($_)) {
-                Catmandu->importer($_);
-            } else {
-                $_;
-            }
-        } @$importers ];
+        return [
+            map {
+                if (is_string($_)) {
+                    Catmandu->importer($_);
+                }
+                else {
+                    $_;
+                }
+            } @$importers
+        ];
     },
 );
 
 sub generator {
     my ($self) = @_;
     sub {
-        state $generators = [ map { $_->generator } @{$self->importers} ];
+        state $generators = [map {$_->generator} @{$self->importers}];
         while (@$generators) {
             my $data = $generators->[0]->();
             return $data if defined $data;

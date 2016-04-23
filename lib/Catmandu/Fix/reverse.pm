@@ -16,11 +16,9 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
 
     "if (is_array_ref(${var})) {"
-        ."${var} = [reverse(\@{${var}})];"
-    ."}"
-    ."elsif (is_string(${var})) {"
-        ."${var} = scalar(reverse(${var}));"
-    ."}";
+        . "${var} = [reverse(\@{${var}})];" . "}"
+        . "elsif (is_string(${var})) {"
+        . "${var} = scalar(reverse(${var}));" . "}";
 }
 
 1;

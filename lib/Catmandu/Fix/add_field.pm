@@ -15,13 +15,17 @@ has value => (fix_arg => 1);
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
+    my $path  = $fixer->split_path($self->path);
     my $value = $fixer->emit_value($self->value);
 
-    $fixer->emit_create_path($fixer->var, $path, sub {
-        my $var = shift;
-        "${var} = ${value};";
-    });
+    $fixer->emit_create_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            "${var} = ${value};";
+        }
+    );
 }
 
 1;

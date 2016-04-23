@@ -14,9 +14,7 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var) = @_;
-    "if (is_hash_ref(${var})) {" .
-        "${var} = [\%{${var}}];" .
-    "}";
+    "if (is_hash_ref(${var})) {" . "${var} = [\%{${var}}];" . "}";
 }
 
 1;

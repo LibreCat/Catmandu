@@ -6,6 +6,7 @@ use Test::Exception;
 use Catmandu::Util qw(:is);
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::Bind';
     use_ok $pkg;

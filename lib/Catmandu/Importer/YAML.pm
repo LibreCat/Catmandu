@@ -17,7 +17,7 @@ my $RE_SEP = qr'^---';
 sub generator {
     my ($self) = @_;
     sub {
-        state $fh = $self->fh;
+        state $fh   = $self->fh;
         state $yaml = "";
         state $data;
         state $line;
@@ -33,7 +33,7 @@ sub generator {
             }
             $yaml .= $line;
         }
-        if ($yaml) { 
+        if ($yaml) {
             utf8::encode($yaml);
             $data = YAML::XS::Load($yaml);
             $yaml = "";

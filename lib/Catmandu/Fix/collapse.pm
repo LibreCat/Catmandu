@@ -9,10 +9,10 @@ use Catmandu::Expander ();
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has sep => (fix_opt => 1, default => sub { undef });
+has sep => (fix_opt => 1, default => sub {undef});
 
 sub fix {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     my $ref = Catmandu::Expander->collapse_hash($data);
 
     if (defined(my $char = $self->sep)) {

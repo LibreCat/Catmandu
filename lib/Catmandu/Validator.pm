@@ -10,37 +10,22 @@ use namespace::clean;
 
 requires 'validate_data';
 
-has 'last_errors' => (
-      is => 'rwp',
-      clearer => '_clear_last_errors',
-      init_arg => undef,
-);
+has 'last_errors' =>
+    (is => 'rwp', clearer => '_clear_last_errors', init_arg => undef,);
 
-has 'after_callback' => (
-    is => 'ro',
-    clearer => 1,
-);
+has 'after_callback' => (is => 'ro', clearer => 1,);
 
-has 'error_callback' => (
-    is => 'ro',
-    clearer => 1,
-);
+has 'error_callback' => (is => 'ro', clearer => 1,);
 
-has 'error_field' => (
-    is => 'ro',
-    clearer => 1,
-);
+has 'error_field' => (is => 'ro', clearer => 1,);
 
-has ['valid_count', 'invalid_count'] => (
-    is => 'rwp',
-    init_arg => undef,
-    default => sub {0},
-);
+has ['valid_count', 'invalid_count'] =>
+    (is => 'rwp', init_arg => undef, default => sub {0},);
 
 sub is_valid {
     my ($self, $data) = @_;
 
-    if (! is_hash_ref($data)) {
+    if (!is_hash_ref($data)) {
         Catmandu::BadArg->throw('Cannot validate data of this type');
     }
 
@@ -54,7 +39,8 @@ sub is_valid {
         $self->_set_last_errors($errors);
         $self->_set_invalid_count(1);
         return 0;
-    } else {
+    }
+    else {
         $self->_set_valid_count(1);
     }
 
@@ -74,14 +60,12 @@ sub validate {
 
     # handle arrayref, returns a new arrayref
     if (is_array_ref($data)) {
-        return [grep {defined} map {
-             $self->_process_record($_)
-        } @$data];
+        return [grep {defined} map {$self->_process_record($_)} @$data];
     }
 
     # handle iterators, returns a new iterator
     if (is_invocant($data)) {
-        return $data->select(sub { $self->_process_record($_[0]) });
+        return $data->select(sub {$self->_process_record($_[0])});
     }
 
     Catmandu::BadArg->throw('Cannot validate data of this type');
@@ -90,19 +74,20 @@ sub validate {
 sub _process_record {
     my ($self, $data) = @_;
 
-    my $error_field =
-        ($self->error_field||0) eq '1'
+    my $error_field
+        = ($self->error_field || 0) eq '1'
         ? '_validation_errors'
         : $self->error_field;
 
     $self->_clear_last_errors;
-    my $errors =  $self->validate_data($data);
+    my $errors = $self->validate_data($data);
     $self->_set_last_errors($errors);
 
     if ($errors) {
-        $self->_set_invalid_count(1+$self->invalid_count);
-    } else {
-        $self->_set_valid_count(1+$self->valid_count);
+        $self->_set_invalid_count(1 + $self->invalid_count);
+    }
+    else {
+        $self->_set_valid_count(1 + $self->valid_count);
     }
 
     if ($errors && $error_field) {

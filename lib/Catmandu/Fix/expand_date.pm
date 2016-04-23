@@ -15,15 +15,15 @@ my $DATE_REGEX = qr{
         )?
 }x;
 
-has date_field => (fix_arg => 1, default => sub { 'date' });
+has date_field => (fix_arg => 1, default => sub {'date'});
 
 sub fix {
     my ($self, $data) = @_;
     if (my $date = $data->{$self->date_field}) {
         if (my ($y, $m, $d) = $date =~ $DATE_REGEX) {
             $data->{year}  = $y;
-            $data->{month} = 1*$m if $m;
-            $data->{day}   = 1*$d if $d;
+            $data->{month} = 1 * $m if $m;
+            $data->{day}   = 1 * $d if $d;
         }
     }
     $data;

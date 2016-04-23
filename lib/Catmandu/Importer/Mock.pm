@@ -16,7 +16,7 @@ sub generator {
     my $n = 0;
     sub {
         return if defined $self->size && $n == $self->size;
-        return { n => $n++ };
+        return {n => $n++};
     };
 }
 

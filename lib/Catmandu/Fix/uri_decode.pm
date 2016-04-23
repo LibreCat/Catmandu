@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0002_02';
 
 use Moo;
-use Encode ();
+use Encode      ();
 use URI::Escape ();
 use namespace::clean;
 use Catmandu::Fix::Has;

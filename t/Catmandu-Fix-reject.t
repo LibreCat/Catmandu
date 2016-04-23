@@ -7,6 +7,7 @@ use Test::Exception;
 use Catmandu::ArrayIterator;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::reject';
     use_ok $pkg;

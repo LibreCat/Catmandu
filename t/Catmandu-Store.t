@@ -7,6 +7,7 @@ use Test::Exception;
 use Role::Tiny;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Store';
     use_ok $pkg;
@@ -14,11 +15,14 @@ BEGIN {
 require_ok $pkg;
 
 {
+
     package T::Store;
     use Moo;
     with $pkg;
+
     package T::Store::Bag;
     use Moo;
+
     package T::CustomBagClass;
     use Moo;
     has store => (is => 'ro');
@@ -40,16 +44,16 @@ is $s->default_bag, 'data';
 
 my $b = $s->bag;
 isa_ok $b, $s->bag_class;
-is $s->bag, $b;
+is $s->bag,   $b;
 is $b->store, $s;
-is $b->name, 'data';
+is $b->name,  'data';
 $b = $s->bag('foo');
 is $b->name, 'foo';
 $s->bags->{foo}{prop} = 'another val';
 $s->bags->{bar}{prop} = 'val';
 $s->bags->{bar}{name} = 'baz';
 isnt $s->bag('foo')->prop, 'another val';
-is $s->bag('bar')->prop, 'val';
+is $s->bag('bar')->prop,   'val';
 isnt $s->bag('bar')->name, 'baz';
 
 done_testing;

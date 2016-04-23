@@ -16,10 +16,9 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
 
-    "if (is_array_ref(${var})) {" .
-        "no warnings 'uninitialized';" .
-        "${var} = [List::MoreUtils::uniq(\@{${var}})];" .
-    "}";
+    "if (is_array_ref(${var})) {"
+        . "no warnings 'uninitialized';"
+        . "${var} = [List::MoreUtils::uniq(\@{${var}})];" . "}";
 }
 
 1;

@@ -20,42 +20,44 @@ sub _search_up {
     for (; @dirs; pop @dirs) {
         my $path = File::Spec->catdir(File::Spec->rootdir, @dirs);
         opendir my $dh, $path or last;
-        return $path if
-            grep { -f File::Spec->catfile($path, $_) }
-            grep /^catmandu.+(?:yaml|yml|json|pl)$/,
-            readdir $dh;
+        return $path
+            if grep {-f File::Spec->catfile($path, $_)}
+            grep /^catmandu.+(?:yaml|yml|json|pl)$/, readdir $dh;
     }
     Catmandu->default_load_path;
 }
 
 has load_paths => (
     is      => 'ro',
-    default => sub { [] },
+    default => sub {[]},
     coerce  => sub {
-        [ map { File::Spec->canonpath($_) }
-          map { $_ eq ':up' ? _search_up($_) : $_ }
-          split /,/, join ',',
-          ref $_[0] ? @{$_[0]} : $_[0] ];
+        [
+            map {File::Spec->canonpath($_)}
+                map {$_ eq ':up' ? _search_up($_) : $_} split /,/,
+            join ',',
+            ref $_[0] ? @{$_[0]} : $_[0]
+        ];
     },
 );
 
-has config => (is => 'rwp', default => sub { +{} });
+has config => (is => 'rwp', default => sub {+{}});
 
-has stores => (is => 'ro', default => sub { +{} });
-has fixers => (is => 'ro', default => sub { +{} });
+has stores => (is => 'ro', default => sub {+{}});
+has fixers => (is => 'ro', default => sub {+{}});
 
-has default_store => (is => 'ro', default => sub { 'default' });
-has default_fixer => (is => 'ro', default => sub { 'default' });
-has default_importer => (is => 'ro', default => sub { 'default' });
-has default_exporter => (is => 'ro', default => sub { 'default' });
-has default_importer_package => (is => 'ro', default => sub { 'JSON' });
-has default_exporter_package => (is => 'ro', default => sub { 'JSON' });
+has default_store            => (is => 'ro', default => sub {'default'});
+has default_fixer            => (is => 'ro', default => sub {'default'});
+has default_importer         => (is => 'ro', default => sub {'default'});
+has default_exporter         => (is => 'ro', default => sub {'default'});
+has default_importer_package => (is => 'ro', default => sub {'JSON'});
+has default_exporter_package => (is => 'ro', default => sub {'JSON'});
 
-has store_namespace => (is => 'ro', default => sub { 'Catmandu::Store' });
-has fixes_namespace => (is => 'ro', default => sub { 'Catmandu::Fix' }); # TODO unused
+has store_namespace => (is => 'ro', default => sub {'Catmandu::Store'});
+has fixes_namespace => (is => 'ro', default => sub {'Catmandu::Fix'})
+    ;    # TODO unused
 
-has importer_namespace => (is => 'ro', default => sub { 'Catmandu::Importer' });
-has exporter_namespace => (is => 'ro', default => sub { 'Catmandu::Exporter' });
+has importer_namespace => (is => 'ro', default => sub {'Catmandu::Importer'});
+has exporter_namespace => (is => 'ro', default => sub {'Catmandu::Exporter'});
 
 sub default_config_extensions {
     [qw(yaml yml json pl)];
@@ -68,7 +70,7 @@ sub BUILD {
     my @lib_dirs;
 
     for my $dir (@config_dirs) {
-        if (! -d $dir) {
+        if (!-d $dir) {
             Catmandu::Error->throw("load path $dir doesn't exist");
         }
 
@@ -80,9 +82,11 @@ sub BUILD {
     }
 
     if (@config_dirs) {
-        my @globs = map { my $dir = $_;
-                          map { File::Spec->catfile($dir, "catmandu*.$_") } qw(yaml yml json pl) }
-                              reverse @config_dirs;
+        my @globs = map {
+            my $dir = $_;
+            map {File::Spec->catfile($dir, "catmandu*.$_")}
+                qw(yaml yml json pl)
+        } reverse @config_dirs;
 
         my $config = Config::Onion->new(prefix_key => '_prefix');
         $config->load_glob(@globs);
@@ -127,16 +131,18 @@ sub store {
             my $opts = $c->{options} || {};
             if (@_ > 1) {
                 $opts = {%$opts, @_};
-            } elsif (@_ == 1) {
+            }
+            elsif (@_ == 1) {
                 $opts = {%$opts, %{$_[0]}};
             }
-            return $stores->{$key} = require_package($package, $ns)->new($opts);
+            return $stores->{$key}
+                = require_package($package, $ns)->new($opts);
         }
         if ($name) {
             return require_package($name, $ns)->new(@_);
         }
-        Catmandu::BadArg->throw("unknown store ".$self->default_store);
-    }
+        Catmandu::BadArg->throw("unknown store " . $self->default_store);
+        }
 }
 
 sub fixer {
@@ -159,52 +165,57 @@ sub fixer {
             return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
         }
         return Catmandu::Fix->new(fixes => [@_]);
-    }
+        }
 }
 
 sub importer {
     my $self = shift;
     my $name = shift;
-    my $ns = $self->importer_namespace;
+    my $ns   = $self->importer_namespace;
     if (exists $self->config->{importer}) {
-        if (my $c = $self->config->{importer}{$name || $self->default_importer}) {
+        if (my $c
+            = $self->config->{importer}{$name || $self->default_importer})
+        {
             check_hash_ref($c);
             my $package = $c->{package} || $self->default_importer_package;
             my $opts    = $c->{options} || {};
             if (@_ > 1) {
                 $opts = {%$opts, @_};
-            } elsif (@_ == 1) {
+            }
+            elsif (@_ == 1) {
                 $opts = {%$opts, %{$_[0]}};
             }
             return require_package($package, $ns)->new($opts);
         }
     }
-    require_package($name ||
-        $self->default_importer_package, $ns)->new(@_);
+    require_package($name || $self->default_importer_package, $ns)->new(@_);
 }
 
 sub exporter {
     my $self = shift;
     my $name = shift;
 
-    return $name if (is_invocant($name) && ref($name) =~ /^Catmandu::Exporter/);
-    
+    return $name
+        if (is_invocant($name) && ref($name) =~ /^Catmandu::Exporter/);
+
     my $ns = $self->exporter_namespace;
     if (exists $self->config->{exporter}) {
-        if (my $c = $self->config->{exporter}{$name || $self->default_exporter}) {
+        if (my $c
+            = $self->config->{exporter}{$name || $self->default_exporter})
+        {
             check_hash_ref($c);
             my $package = $c->{package} || $self->default_exporter_package;
             my $opts    = $c->{options} || {};
             if (@_ > 1) {
                 $opts = {%$opts, @_};
-            } elsif (@_ == 1) {
+            }
+            elsif (@_ == 1) {
                 $opts = {%$opts, %{$_[0]}};
             }
             return require_package($package, $ns)->new($opts);
         }
     }
-    require_package($name ||
-        $self->default_exporter_package, $ns)->new(@_);
+    require_package($name || $self->default_exporter_package, $ns)->new(@_);
 }
 
 1;

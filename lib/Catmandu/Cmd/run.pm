@@ -10,10 +10,7 @@ use Catmandu::Util qw(require_package);
 use namespace::clean;
 
 sub command_opt_spec {
-    (
-        [ "verbose|v", "" ],
-        [ "i"        , "interactive mode"],
-    );
+    (["verbose|v", ""], ["i", "interactive mode"],);
 }
 
 sub command {
@@ -36,7 +33,9 @@ sub command {
         $into->commit;
 
         if ($opts->verbose) {
-            say STDERR $n == 1 ? "converted 1 object" : "converted $n objects";
+            say STDERR $n == 1
+                ? "converted 1 object"
+                : "converted $n objects";
             say STDERR "done";
         }
     }

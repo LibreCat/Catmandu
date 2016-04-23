@@ -14,28 +14,36 @@ has path => (fix_arg => 1);
 
 sub emit {
     my ($self, $fixer, $label) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+    my $path    = $fixer->split_path($self->path);
+    my $key     = pop @$path;
     my $str_key = $fixer->emit_string($key);
 
-    my $perl = $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var  = shift;
-        my $perl = "if (";
-        if ($key eq '$first' || $key eq '$last') {
-            $perl .= "is_array_ref(${var}) && \@{${var}}";
-        } elsif ($key =~ /^\d+$/) {
-            $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
-        } else {
-            $perl .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
+    my $perl = $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var  = shift;
+            my $perl = "if (";
+            if ($key eq '$first' || $key eq '$last') {
+                $perl .= "is_array_ref(${var}) && \@{${var}}";
+            }
+            elsif ($key =~ /^\d+$/) {
+                $perl
+                    .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
+            }
+            else {
+                $perl
+                    .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
+            }
+            $perl .= ") {";
+
+            $perl .= $fixer->emit_fixes($self->pass_fixes);
+
+            $perl .= "last $label;";
+            $perl .= "}";
+            $perl;
         }
-        $perl .= ") {";
-
-        $perl .= $fixer->emit_fixes($self->pass_fixes);
-
-        $perl .= "last $label;";
-        $perl .= "}";
-        $perl;
-    });
+    );
 
     $perl .= $fixer->emit_fixes($self->fail_fixes);
 

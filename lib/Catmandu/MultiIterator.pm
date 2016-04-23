@@ -18,7 +18,7 @@ sub new {
 sub generator {
     my ($self) = @_;
     sub {
-        state $generators = [ map { $_->generator } @$self ];
+        state $generators = [map {$_->generator} @$self];
         while (@$generators) {
             my $data = $generators->[0]->();
             return $data if defined $data;

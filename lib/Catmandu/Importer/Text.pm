@@ -31,25 +31,25 @@ sub generator {
         state $count   = 0;
         state $line;
 
-        while ( defined( $line = $self->fh->getline ) ) {
+        while (defined($line = $self->fh->getline)) {
             chomp $line;
             next if $pattern and $line !~ $pattern;
 
-            my $data = { _id => ++$count };
+            my $data = {_id => ++$count};
 
-            if ( @+ < 2 ) {    # no capturing groups
+            if (@+ < 2) {    # no capturing groups
                 $data->{text} = $line;
             }
-            elsif (%+) {       # named capturing groups
+            elsif (%+) {     # named capturing groups
                 $data->{match} = {%+};
             }
-            else {             # numbered capturing groups
+            else {           # numbered capturing groups
                 no strict 'refs';
-                $data->{match} = [ map { $$_ } 1 .. @+ - 1 ];
+                $data->{match} = [map {$$_} 1 .. @+ - 1];
             }
 
             if ($split) {
-                $data->{text} = [ split $split, $line ];
+                $data->{text} = [split $split, $line];
             }
 
             return $data;

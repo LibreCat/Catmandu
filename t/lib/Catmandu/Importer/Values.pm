@@ -6,13 +6,13 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has values => (is => 'ro', default => sub { '' });
+has values => (is => 'ro', default => sub {''});
 
 sub generator {
     my ($self) = @_;
     sub {
-        state $values = [ split /;/, $self->values ];
-        return @$values ? { value => shift(@$values) } : undef;
+        state $values = [split /;/, $self->values];
+        return @$values ? {value => shift(@$values)} : undef;
     };
 }
 

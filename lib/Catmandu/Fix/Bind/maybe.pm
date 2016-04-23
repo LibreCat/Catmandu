@@ -12,8 +12,8 @@ with 'Catmandu::Fix::Bind';
 
 # Copied from hiratara's Data::Monad::Maybe
 sub just {
-    my ($self,@values) = @_;
-    bless [@values] , __PACKAGE__;
+    my ($self, @values) = @_;
+    bless [@values], __PACKAGE__;
 }
 
 sub nothing {
@@ -21,28 +21,29 @@ sub nothing {
     bless \(my $d = undef), __PACKAGE__;
 }
 
-sub is_nothing { 
-    my ($self,$mvar) = @_;
+sub is_nothing {
+    my ($self, $mvar) = @_;
     reftype $mvar ne 'ARRAY';
 }
 
 sub value {
-    my ($self,$mvar) = @_;
+    my ($self, $mvar) = @_;
 
     if ($self->is_nothing($mvar)) {
         {};
-    } else {
+    }
+    else {
         $mvar->[0];
     }
 }
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     $self->just($data);
 }
 
 sub bind {
-    my ($self,$mvar,$func) = @_;
+    my ($self, $mvar, $func) = @_;
 
     if ($self->is_nothing($mvar)) {
         return $self->nothing;
@@ -50,9 +51,7 @@ sub bind {
 
     my $res;
 
-    eval { 
-        $res = $func->($self->value($mvar));
-    };
+    eval {$res = $func->($self->value($mvar));};
 
     if ($@) {
         return $self->nothing;
@@ -67,7 +66,7 @@ sub bind {
 }
 
 sub result {
-    my ($self,$mvar) = @_;
+    my ($self, $mvar) = @_;
     $self->value($mvar);
 }
 

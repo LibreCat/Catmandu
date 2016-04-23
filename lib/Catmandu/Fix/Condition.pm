@@ -9,8 +9,8 @@ use namespace::clean;
 
 with 'Catmandu::Fix::Base';
 
-has pass_fixes => (is => 'rw', default => sub { [] });
-has fail_fixes => (is => 'rw', default => sub { [] });
+has pass_fixes => (is => 'rw', default => sub {[]});
+has fail_fixes => (is => 'rw', default => sub {[]});
 
 1;
 

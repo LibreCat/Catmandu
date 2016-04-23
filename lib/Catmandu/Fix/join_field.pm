@@ -8,8 +8,8 @@ use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path      => (fix_arg => 1);
-has join_char => (fix_arg => 1, default => sub { '' });
+has path => (fix_arg => 1);
+has join_char => (fix_arg => 1, default => sub {''});
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -17,9 +17,9 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $join_char = $fixer->emit_string($self->join_char);
 
-    "if (is_array_ref(${var})) {".
-        "${var} = join(${join_char}, grep { is_value(\$_) } \@{${var}});".
-    "}";
+    "if (is_array_ref(${var})) {"
+        . "${var} = join(${join_char}, grep { is_value(\$_) } \@{${var}});"
+        . "}";
 }
 
 1;
