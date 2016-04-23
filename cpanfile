@@ -10,6 +10,8 @@ on 'test', sub {
   requires 'Log::Log4perl' , 0;
   requires 'Log::Any::Adapter::Log4perl', 0;
   requires 'Perl::Tidy', 0;
+  requires 'Code::TidyAll', 0;
+  requires 'Test::Code::TidyAll', '0.20';
 };
 
 requires 'Any::URI::Escape', 0;
