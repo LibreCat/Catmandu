@@ -2,7 +2,7 @@ package Catmandu::Cmd::copy;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_01';
+our $VERSION = '1.0002_02';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -44,7 +44,7 @@ sub command {
         $from = $from->slice($opts->start, $opts->total);
     }
     if ($opts->fix) {
-        $from = Catmandu->fixer($opts->fix)->fix($from);
+        $from = $self->_build_fixer($opts)->fix($from);
     }
     if ($opts->verbose) {
         $from = $from->benchmark;

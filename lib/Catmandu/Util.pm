@@ -2,13 +2,13 @@ package Catmandu::Util;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_01';
+our $VERSION = '1.0002_02';
 
 use Exporter qw(import);
 use Sub::Quote ();
 use Scalar::Util ();
-use overload ();
 use List::Util ();
+use Ref::Util ();
 use Data::Compare ();
 use IO::File;
 use IO::Handle::Util ();
@@ -260,7 +260,7 @@ sub data_at {
     }
     my $key;
     while (defined(my $key = shift @$path)) {
-        ref $data || return;
+        is_ref($data) || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
                 return map { data_at($path, $_, create => $create, _key => $_key) } @$data;
@@ -344,7 +344,7 @@ sub array_uniq {
 
 sub array_split {
     my ($arr) = @_;
-    (ref $arr and ref $arr eq 'ARRAY') ? $arr : [split ',', $arr];
+    is_array_ref($arr) ? $arr : [split ',', $arr];
 }
 
 *hash_merge = \&Hash::Merge::Simple::merge;
@@ -388,10 +388,6 @@ sub check_different {
 
 
 # the following code is taken from Data::Util::PurePerl 0.63 
-sub _overloaded {
-    return Scalar::Util::blessed($_[0]) && overload::Method($_[0], $_[1]);
-}
-
 sub _get_stash {
     my($inv) = @_;
 
@@ -421,7 +417,7 @@ sub _get_code_ref {
     my $stash = _get_stash($pkg) or return undef;
 
     if (defined(my $glob = $stash->{$name})) {
-        if (ref(\$glob) eq 'GLOB') {
+        if (is_glob_ref(\$glob)) {
             return *{$glob}{CODE};
         } else { # a stub or special constant
             no strict 'refs';
@@ -434,46 +430,44 @@ sub _get_code_ref {
 sub is_invocant {
     my ($inv) = @_;
     if (ref $inv) {
-    	return !!Scalar::Util::blessed($inv);
+        return !!Scalar::Util::blessed($inv);
     } else {
         return !!_get_stash($inv);
     }
 }
 
-sub is_scalar_ref {
-    return ref($_[0]) eq 'SCALAR' || ref($_[0]) eq 'REF' || _overloaded($_[0], '${}');
+sub is_scalar_ref { # TODO no idea why Ref::Util::is_scalarref fails here
+    ref($_[0]) eq 'SCALAR';
 }
 
 sub is_array_ref {
-    return ref($_[0]) eq 'ARRAY' || _overloaded($_[0], '@{}');
+    !Scalar::Util::blessed($_[0]) && Ref::Util::is_arrayref($_[0]);
 }
 
 sub is_hash_ref {
-    return ref($_[0]) eq 'HASH' || _overloaded($_[0], '%{}');
+    !Scalar::Util::blessed($_[0]) && Ref::Util::is_hashref($_[0]);
 }
 
 sub is_code_ref {
-    return ref($_[0]) eq 'CODE' || _overloaded($_[0], '&{}');
+    !Scalar::Util::blessed($_[0]) && Ref::Util::is_coderef($_[0]);
 }
 
-sub is_regex_ref {
-    return ref($_[0]) eq 'Regexp';
-}
+*is_regex_ref = \&Ref::Util::is_regexpref;
 
-sub is_glob_ref {
-    return ref($_[0]) eq 'GLOB' || _overloaded($_[0], '*{}');
+sub is_glob_ref { # TODO no idea why Ref::Util::is_globref fails here
+    ref($_[0]) eq 'GLOB';
 }
 
 sub is_value {
-    return defined($_[0]) && !ref($_[0]) && ref(\$_[0]) ne 'GLOB';
+    defined($_[0]) && !is_ref($_[0]) && !is_glob_ref(\$_[0]);
 }
 
 sub is_string {
-    return defined($_[0]) && !ref($_[0]) && ref(\$_[0]) ne 'GLOB' && length($_[0]) > 0;
+    is_value($_[0]) && length($_[0]) > 0;
 }
 
 sub is_number {
-    return 0 if !defined($_[0]) || ref($_[0]);
+    return 0 if !defined($_[0]) || is_ref($_[0]);
 
     return $_[0] =~ m{
         \A \s*
@@ -487,7 +481,7 @@ sub is_number {
 }
 
 sub is_integer {
-    return 0 if !defined($_[0]) || ref($_[0]);
+    return 0 if !defined($_[0]) || is_ref($_[0]);
  
     return $_[0] =~ m{
         \A \s*
@@ -516,9 +510,7 @@ sub is_positive {
     is_integer($_[0]) && $_[0] >= 1;
 }
 
-sub is_ref {
-    ref $_[0] ? 1 : 0;
-}
+*is_ref = \&Ref::Util::is_ref;
 
 sub is_able {
     my $obj = shift;
@@ -638,7 +630,7 @@ sub use_lib {
 }
 
 sub pod_section {
-    my $class = ref $_[0] ? ref(shift) : shift;
+    my $class = is_ref($_[0]) ? ref(shift) : shift;
     my $section = uc(shift);
 
     unless (-r $class) {
@@ -666,7 +658,7 @@ sub pod_section {
     $text =~ s/$section:\n//m;
     chomp $text;
 
-    return $text;
+    $text;
 }
 
 sub require_package {

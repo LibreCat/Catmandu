@@ -2,7 +2,7 @@ package Catmandu::Cmd::data;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_01';
+our $VERSION = '1.0002_02';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -78,8 +78,8 @@ sub command {
         $into = Catmandu->exporter($opts->into_exporter, $into_opts);
     }
 
-    if (my $fix = $opts->fix) {
-        $from = Catmandu->fixer($fix)->fix($from);
+    if ($opts->fix) {
+        $from = $self->_build_fixer($opts)->fix($from);
     }
 
     if ($opts->replace && $into->can('delete_all')) {

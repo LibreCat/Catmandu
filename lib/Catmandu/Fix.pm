@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_01';
+our $VERSION = '1.0002_02';
 
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
@@ -23,7 +23,6 @@ use Text::Hogan::Compiler;
 
 with 'Catmandu::Logger';
 
-has tidy         => (is => 'ro');
 has parser       => (is => 'lazy');
 has fixer        => (is => 'lazy', init_arg => undef);
 has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
@@ -36,8 +35,8 @@ has _reject      => (is => 'ro', init_arg => undef, default => sub { +{} });
 has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
 has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
 has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
-has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
-has _has_perltidy => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_has_perltidy');
+has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef,
+    builder => '_build_current_fix_var');
 has preprocess => (is => 'ro');
 has _hogan => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
 has _hogan_vars => (is => 'ro', lazy => 1, init_arg => 'variables', default => sub { +{} });
@@ -102,12 +101,6 @@ sub _build_fixes_var {
 sub _build_current_fix_var {
     my ($self) = @_;
     $self->generate_var;
-}
-
-sub _build_has_perltidy {
-    File::Spec->isa("File::Spec::Unix")
-        ? `which perltidy` ? 1 : 0
-        : 0;
 }
 
 sub _build_hogan {
@@ -208,7 +201,7 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    if (($self->tidy || $self->log->is_debug) && $self->_has_perltidy) {
+    if ($self->log->is_debug && $ENV{CATMANDU_PERLTIDY}) {
         my $fh = File::Temp->new;
         binmode($fh, ':utf8');
         $fh->printflush($perl);

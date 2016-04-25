@@ -19,31 +19,56 @@ $cond->fail_fixes([Catmandu::Fix::set_field->new('test', 'fail')]);
 
 # Integers
 is_deeply
-    $cond->fix({ foo => 1 }),
-    {foo => 1 ,  test => 'pass'};
+    $cond->fix({foo => 1}),
+    {foo => 1, test => 'pass'};
 
 is_deeply
-    $cond->fix({ foo => 0 }),
-    {foo => 0 ,  test => 'fail'};
+    $cond->fix({foo => 0}),
+    {foo => 0, test => 'fail'};
 
 # Strings
 is_deeply
-    $cond->fix({ foo => "true" }),
-    {foo => "true" ,  test => 'pass'};
+    $cond->fix({foo => "true"}),
+    {foo => "true", test => 'pass'};
 
 is_deeply
-    $cond->fix({ foo => "false" }),
-    {foo => "false" ,  test => 'fail'};
+    $cond->fix({foo => "false"}),
+    {foo => "false", test => 'fail'};
 
 # Boolean
 my $hash = decode_json(qq|{"foo":true}|);
 is_deeply
     $cond->fix($hash),
-    {%$hash ,  test => 'pass'};
+    {%$hash, test => 'pass'};
 
 my $hash2 = decode_json(qq|{"foo":false}|);
 is_deeply
     $cond->fix($hash2),
-    {%$hash2 ,  test => 'fail'};
+    {%$hash2, test => 'fail'};
 
-done_testing 7;
+# Strict
+$cond = $pkg->new('foo', 'strict', 1);
+$cond->pass_fixes([Catmandu::Fix::set_field->new('test', 'pass')]);
+$cond->fail_fixes([Catmandu::Fix::set_field->new('test', 'fail')]);
+
+is_deeply
+    $cond->fix({foo => 1}),
+    {foo => 1, test => 'fail'};
+
+is_deeply
+    $cond->fix({foo => '1'}),
+    {foo => '1', test => 'fail'};
+
+is_deeply
+    $cond->fix({foo => 'true'}),
+    {foo => 'true', test => 'fail'};
+
+is_deeply
+    $cond->fix({foo => Cpanel::JSON::XS::true}),
+    {foo => Cpanel::JSON::XS::true, test => 'pass'};
+
+is_deeply
+    $cond->fix({foo => Cpanel::JSON::XS::false}),
+    {foo => Cpanel::JSON::XS::false, test => 'fail'};
+
+done_testing;
