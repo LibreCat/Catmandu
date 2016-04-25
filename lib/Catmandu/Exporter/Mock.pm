@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Exporter::Mock - a expoter that doesn't export anything
+Catmandu::Exporter::Mock - a exporter that doesn't export anything
 
 =head1 SYNOPSIS
 
