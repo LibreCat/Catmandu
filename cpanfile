@@ -35,13 +35,14 @@ requires 'Moo', '1.004006';
 requires 'MooX::Aliases', '0.001006';
 requires 'MooX::Role::Logger', '0.005';
 requires 'namespace::clean', '0.24';
-requires 'Unicode::Normalize', '0';
+requires 'Ref::Util', '0.008';
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;
 requires 'Text::CSV', '1.21';
 requires 'Time::HiRes', 0; # not always installed?
 requires 'Throwable', '0.200004';
 requires 'Try::Tiny::ByClass', '0.01';
+requires 'Unicode::Normalize', '0';
 requires 'URI', 0;
 requires 'URI::Template', 0.22;
 requires 'YAML::XS', '0.41';
