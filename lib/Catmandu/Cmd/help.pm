@@ -59,6 +59,13 @@ sub execute {
                 }
             }
         }
+    } elsif ( @$args == 1 ) {
+        my $term = $args->[0];
+        require_package('Catmandu::Help::Glossary');
+        if ( $term =~ /^glossary|terms$/i ) {
+            say pod_section('Catmandu::Help::Glossary', 'GLOSSARY');
+            return;
+        }
     } 
   
     App::Cmd::Command::help::execute(@_);
