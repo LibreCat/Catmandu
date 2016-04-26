@@ -37,6 +37,8 @@ sub unit {
 sub bind {
     my ($self,$mvar,$func,$name,$fixer) = @_;
 
+    my $MAGIC_PATH = '$_';
+
     if (Catmandu::Util::is_hash_ref($mvar)) {
          # Ignore all specialized processing when not an array
          $mvar = $func->($mvar);
@@ -60,7 +62,7 @@ sub bind {
                 $scope->{$self->var} = $_;
             }
             elsif (!ref($_)) {
-                $scope = { '_' => $_ };
+                $scope = { $MAGIC_PATH => $_ };
                 $has_default_context_variable = 1;
             }
             else {
@@ -72,7 +74,7 @@ sub bind {
 
             # Check for rejects()
             if (defined $res) {
-                $mvar->[$idx] = $res->{'_'} if $has_default_context_variable;
+                $mvar->[$idx] = $res->{$MAGIC_PATH} if $has_default_context_variable;
                 $idx++;
             }
             else {
@@ -114,11 +116,11 @@ Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a
 
      # Add a foo field to every item in the demo list, by default all 
      # fixes will be in context of the iterated path. If the context
-     # is a list, then '_' will be the name of a temporary context
+     # is a list, then '$_' will be the name of a temporary context
      # variable
      do list(path:demo)
-        if all_equal(_,green)
-            upcase(_)
+        if all_equal($_,green)
+            upcase($_)
         end
      end
 
