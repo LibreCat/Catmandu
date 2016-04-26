@@ -10,11 +10,13 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        ["verbose|v", ""],
-        ["fix=s@",    ""],
-        ["start=i",   ""],
-        ["total=i",   ""],
-        ["delete",    "delete existing objects first"],
+        [ "verbose|v", "" ],
+        [ "fix=s@", "" ],
+        [ "var=s%", "" ],
+        [ "preprocess|pp", "" ],
+        [ "start=i", "" ],
+        [ "total=i", "" ],
+        [ "delete", "delete existing objects first" ],
     );
 }
 
@@ -32,7 +34,7 @@ sub command {
         $from = $from->slice($opts->start, $opts->total);
     }
     if ($opts->fix) {
-        $from = Catmandu->fixer($opts->fix)->fix($from);
+        $from = $self->_build_fixer($opts)->fix($from);
     }
     if ($opts->verbose) {
         $from = $from->benchmark;

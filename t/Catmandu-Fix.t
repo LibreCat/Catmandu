@@ -199,4 +199,23 @@ $fixer = Catmandu::Fix->new(fixes => ['retain_field(data.*)']);
 is_deeply $fixer->fix({data => {1 => 1, 2 => 2}}),
     {data => {1 => 1, 2 => 2}}, 'retain_field star test hash';
 
-done_testing 54;
+#-- preprocessing and variables
+
+$fixer = Catmandu::Fix->new(
+    fixes => ['t/variables.fix'],
+    preprocess => 1,
+    variables => {
+        source => 'field1',
+        target => 'field2',
+        others => [qw(0 1)],
+        beer   => 1,
+        milk   => 0,
+    }
+);
+
+is_deeply $fixer->fix(
+    {field1 => 'value'}), 
+    {field2 => 'value', other_0 => 0, other_1 => 1, drunk => 'yes'},
+    'preprocessing: variable interpolation';
+
+done_testing;

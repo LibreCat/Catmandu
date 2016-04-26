@@ -6,6 +6,7 @@ our $VERSION = '1.0002_02';
 
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(pod_section);
+use Catmandu::Fix;
 use namespace::clean;
 
 # Internal required by App::Cmd
@@ -88,6 +89,21 @@ sub _parse_options {
     }
 
     return $from_args, $from_opts, $into_args, $into_opts;
+}
+
+sub _build_fixer {
+    my ($self, $opts) = @_;
+    if ($opts->var) {
+        return Catmandu::Fix->new(
+            preprocess => 1,
+            fixes      => $opts->fix,
+            variables  => $opts->var,
+        );
+    }
+    Catmandu::Fix->new(
+        preprocess => $opts->preprocess ? 1 : 0,
+        fixes      => $opts->fix,
+    );
 }
 
 1;

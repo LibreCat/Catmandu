@@ -10,21 +10,23 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        ["from-store=s",    "", {default => Catmandu->default_store}],
-        ["from-importer=s", ""],
-        ["from-bag=s",      ""],
-        ["count",           ""],
-        ["into-exporter=s", ""],
-        ["into-store=s",    "", {default => Catmandu->default_store}],
-        ["into-bag=s",      ""],
-        ["start=i",         ""],
-        ["limit=i",         ""],
-        ["total=i",         ""],
-        ["cql-query|q=s",   ""],
-        ["query=s",         ""],
-        ["fix=s@",    "fix expression(s) or fix file(s)"],
-        ["replace",   ""],
-        ["verbose|v", ""],
+        [ "from-store=s", "",    { default => Catmandu->default_store } ],
+        [ "from-importer=s", "" ],
+        [ "from-bag=s", "" ],
+        [ "count", "" ],
+        [ "into-exporter=s", "" ],
+        [ "into-store=s", "",    { default => Catmandu->default_store } ],
+        [ "into-bag=s", "" ],
+        [ "start=i", "" ],
+        [ "limit=i", "" ],
+        [ "total=i", "" ],
+        [ "cql-query|q=s", "" ],
+        [ "query=s", "" ],
+        [ "fix=s@", "fix expression(s) or fix file(s)" ],
+        [ "var=s%", "" ],
+        [ "preprocess|pp", "" ],
+        [ "replace", "" ],
+        [ "verbose|v", "" ],
     );
 }
 
@@ -83,8 +85,8 @@ sub command {
         $into = Catmandu->exporter($opts->into_exporter, $into_opts);
     }
 
-    if (my $fix = $opts->fix) {
-        $from = Catmandu->fixer($fix)->fix($from);
+    if ($opts->fix) {
+        $from = $self->_build_fixer($opts)->fix($from);
     }
 
     if ($opts->replace && $into->can('delete_all')) {

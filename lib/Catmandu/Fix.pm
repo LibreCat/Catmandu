@@ -16,42 +16,30 @@ sub _eval_emit {
 use Moo;
 use Catmandu::Fix::Parser;
 use File::Slurp::Tiny ();
-use File::Spec        ();
-use File::Temp        ();
-use B                 ();
+use File::Spec ();
+use File::Temp ();
+use B ();
+use Text::Hogan::Compiler;
 
 with 'Catmandu::Logger';
 
-has parser => (is => 'lazy');
-has fixer => (is => 'lazy', init_arg => undef);
-has _num_labels =>
-    (is => 'rw', lazy => 1, init_arg => undef, default => sub {0;});
-has _num_vars =>
-    (is => 'rw', lazy => 1, init_arg => undef, default => sub {0;});
-has _captures =>
-    (is => 'ro', lazy => 1, init_arg => undef, default => sub {+{};});
-has var =>
-    (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
-has _fixes => (is => 'ro', init_arg => 'fixes', default => sub {[]});
-has fixes =>
-    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
-has _reject => (is => 'ro', init_arg => undef, default => sub {+{};});
-has _reject_var => (
-    is       => 'ro',
-    lazy     => 1,
-    init_arg => undef,
-    builder  => '_build_reject_var'
-);
-has _reject_label =>
-    (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
-has _fixes_var =>
-    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
-has _current_fix_var => (
-    is       => 'ro',
-    lazy     => 1,
-    init_arg => undef,
-    builder  => '_build_current_fix_var'
-);
+has parser       => (is => 'lazy');
+has fixer        => (is => 'lazy', init_arg => undef);
+has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
+has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
+has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{} });
+has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
+has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
+has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
+has _reject      => (is => 'ro', init_arg => undef, default => sub { +{} });
+has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
+has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
+has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
+has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef,
+    builder => '_build_current_fix_var');
+has preprocess => (is => 'ro');
+has _hogan => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
+has _hogan_vars => (is => 'ro', init_arg => 'variables');
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
@@ -69,11 +57,13 @@ sub _build_fixes {
         }
         elsif (ref $fix && ref($fix) =~ /^IO::/) {
             my $txt = Catmandu::Util::read_io($fix);
+            $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};
         }
         elsif (is_glob_ref($fix)) {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
+            $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};
         }
         elsif (ref $fix) {
@@ -84,6 +74,7 @@ sub _build_fixes {
                 $fix = File::Slurp::Tiny::read_file($fix,
                     binmode => ':encoding(UTF-8)');
             }
+            $fix = $self->_preprocess($fix);
             push @$fixes, @{$self->parser->parse($fix)};
         }
     }
@@ -115,6 +106,16 @@ sub _build_fixes_var {
 sub _build_current_fix_var {
     my ($self) = @_;
     $self->generate_var;
+}
+
+sub _build_hogan {
+    Text::Hogan::Compiler->new;
+}
+
+sub _preprocess {
+    my ($self, $text) = @_;
+    return $text unless $self->preprocess || $self->_hogan_vars;
+    $self->_hogan->compile($text)->render($self->_hogan_vars || {});
 }
 
 sub fix {
@@ -848,16 +849,35 @@ E.g.
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
 
-=head1 PERL API
+=head1 OPTIONS
 
-The following is a list of methods available when including Catmandu::Fix as part of
-a Perl program.
+=head2 fixes
 
-=head2 new(fixes => [ FIX , ...])
+An array of fixes. L<Catmandu::Fix> which will execute every fix in consecutive
+order. A fix can be the name of a Catmandu::Fix::* routine, or the path to a
+plain text file containing all the fixes to be executed. Required.
 
-Create a new Catmandu::Fix which will execute every FIX into a consecutive
-order. A FIX can be the name of a Catmandu::Fix::* routine, or the path to a
-plain text file containing all the fixes to be executed.
+=head2 preprocess
+
+If set to C<1>, fix files or inline fixes will first be preprocessed as a
+moustache template. See C<variables> below for an example. Default is C<0>, no
+preprocessing.
+
+=head2 variables
+
+An optional hashref of variables that are used to preprocess the fix files or
+inline fixes as a moustache template. Setting the C<variables> option also sets
+C<preprocess> to 1.
+
+    my $fixer = Catmandu::Fix->new(
+        variables => {x => 'foo', y => 'bar'},
+        fixes => ['add_field({{x}},{{y}})'],
+    );
+    my $data = {};
+    $fixer->fix($data);
+    # $data is now {foo => 'bar'}
+
+=head1 METHODS
 
 =head2 fix(HASH)
 
@@ -1072,9 +1092,9 @@ this method is DEPRECATED.
 =head1 SEE ALSO
 
 L<Catmandu::Fixable>,
-L<Catmandu::Importer>, 
+L<Catmandu::Importer>,
 L<Catmandu::Exporter>,
-L<Catmandu::Store>,  
+L<Catmandu::Store>,
 L<Catmandu::Bag>
 
 =cut
