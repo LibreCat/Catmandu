@@ -24,6 +24,7 @@ sub command_opt_spec {
         [ "query=s", "" ],
         [ "fix=s@", "fix expression(s) or fix file(s)" ],
         [ "var=s%", "" ],
+        [ "preprocess|pp", "" ],
         [ "replace", "" ],
         [ "verbose|v", "" ],
     );

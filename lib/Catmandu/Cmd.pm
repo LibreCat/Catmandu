@@ -97,7 +97,10 @@ sub _build_fixer {
             variables  => $opts->var,
         );
     }
-    Catmandu::Fix->new(fixes => $opts->fix);
+    Catmandu::Fix->new(
+        preprocess => $opts->preprocess ? 1 : 0,
+        fixes      => $opts->fix,
+    );
 }
 
 1;

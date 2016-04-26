@@ -13,6 +13,7 @@ sub command_opt_spec {
         [ "verbose|v", "" ],
         [ "fix=s@", "" ],
         [ "var=s%", "" ],
+        [ "preprocess|pp", "" ],
         [ "start=i", "" ],
         [ "limit=i", "" ],
         [ "total=i", "" ],

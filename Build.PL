@@ -61,6 +61,7 @@ my %module_build_args = (
     "URI::Template" => "0.22",
     "Unicode::Normalize" => 0,
     "YAML::XS" => "0.41",
+    "asa" => 0,
     "namespace::clean" => "0.24",
     "perl" => "v5.10.1"
   },
