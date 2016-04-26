@@ -39,7 +39,7 @@ has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef,
     builder => '_build_current_fix_var');
 has preprocess => (is => 'ro');
 has _hogan => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
-has _hogan_vars => (is => 'ro', lazy => 1, init_arg => 'variables', default => sub { +{} });
+has _hogan_vars => (is => 'ro', init_arg => 'variables');
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
@@ -109,8 +109,8 @@ sub _build_hogan {
 
 sub _preprocess {
     my ($self, $text) = @_;
-    return $text unless $self->preprocess;
-    $self->_hogan->compile($text)->render($self->_hogan_vars);
+    return $text unless $self->preprocess || $self->_hogan_vars;
+    $self->_hogan->compile($text)->render($self->_hogan_vars || {});
 }
 
 sub fix {
@@ -814,16 +814,35 @@ E.g.
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
 
-=head1 PERL API
+=head1 OPTIONS
 
-The following is a list of methods available when including Catmandu::Fix as part of
-a Perl program.
+=head2 fixes
 
-=head2 new(fixes => [ FIX , ...])
+An array of fixes. L<Catmandu::Fix> which will execute every fix in consecutive
+order. A fix can be the name of a Catmandu::Fix::* routine, or the path to a
+plain text file containing all the fixes to be executed. Required.
 
-Create a new Catmandu::Fix which will execute every FIX into a consecutive
-order. A FIX can be the name of a Catmandu::Fix::* routine, or the path to a
-plain text file containing all the fixes to be executed.
+=head2 preprocess
+
+If set to C<1>, fix files or inline fixes will first be preprocessed as a
+moustache template. See C<variables> below for an example. Default is C<0>, no
+preprocessing.
+
+=head2 variables
+
+An optional hashref of variables that are used to preprocess the fix files or
+inline fixes as a moustache template. Setting the C<variables> option also sets
+C<preprocess> to 1.
+
+    my $fixer = Catmandu::Fix->new(
+        variables => {x => 'foo', y => 'bar'},
+        fixes => ['add_field({{x}},{{y}})'],
+    );
+    my $data = {};
+    $fixer->fix($data);
+    # $data is now {foo => 'bar'}
+
+=head1 METHODS
 
 =head2 fix(HASH)
 
@@ -1038,9 +1057,9 @@ this method is DEPRECATED.
 =head1 SEE ALSO
 
 L<Catmandu::Fixable>,
-L<Catmandu::Importer>, 
+L<Catmandu::Importer>,
 L<Catmandu::Exporter>,
-L<Catmandu::Store>,  
+L<Catmandu::Store>,
 L<Catmandu::Bag>
 
 =cut
