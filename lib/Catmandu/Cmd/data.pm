@@ -23,6 +23,7 @@ sub command_opt_spec {
         [ "cql-query|q=s", "" ],
         [ "query=s", "" ],
         [ "fix=s@", "fix expression(s) or fix file(s)" ],
+        [ "var=s%", "" ],
         [ "replace", "" ],
         [ "verbose|v", "" ],
     );

@@ -12,6 +12,7 @@ sub command_opt_spec {
     (
         [ "verbose|v", "" ],
         [ "fix=s@", "" ],
+        [ "var=s%", "" ],
         [ "start=i", "" ],
         [ "limit=i", "" ],
         [ "total=i", "" ],
