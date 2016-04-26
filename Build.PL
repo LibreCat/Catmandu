@@ -66,10 +66,12 @@ my %module_build_args = (
     "bin/catmandu"
   ],
   "test_requires" => {
+    "Code::TidyAll" => 0,
     "Log::Any::Adapter::Log4perl" => 0,
     "Log::Any::Test" => "1.03",
     "Log::Log4perl" => 0,
     "Perl::Tidy" => 0,
+    "Test::Code::TidyAll" => "0.20",
     "Test::Deep" => "0.112",
     "Test::Exception" => "0.32",
     "Test::LWP::UserAgent" => 0,
@@ -80,11 +82,13 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
+  "Code::TidyAll" => 0,
   "Log::Any::Adapter::Log4perl" => 0,
   "Log::Any::Test" => "1.03",
   "Log::Log4perl" => 0,
   "Module::Build" => "0.28",
   "Perl::Tidy" => 0,
+  "Test::Code::TidyAll" => "0.20",
   "Test::Deep" => "0.112",
   "Test::Exception" => "0.32",
   "Test::LWP::UserAgent" => 0,
