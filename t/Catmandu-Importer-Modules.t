@@ -17,7 +17,7 @@ lives_ok sub {
             max_depth => 1,
             pattern   => qr/add_field/
         )->to_array
-        };
+    };
 };
 
 ok @modules > 0, 'imported with options';
@@ -32,7 +32,7 @@ lives_ok sub {
             max_depth => 1,
             pattern   => qr/JSON/
         )->to_array
-        };
+    };
 };
 
 is_deeply [map {$_->{name}} @modules],

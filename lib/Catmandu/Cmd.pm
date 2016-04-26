@@ -102,7 +102,7 @@ sub _build_fixer {
     }
     Catmandu::Fix->new(
         preprocess => $opts->preprocess ? 1 : 0,
-        fixes      => $opts->fix,
+        fixes => $opts->fix,
     );
 }
 

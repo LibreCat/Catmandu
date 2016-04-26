@@ -16,29 +16,46 @@ sub _eval_emit {
 use Moo;
 use Catmandu::Fix::Parser;
 use File::Slurp::Tiny ();
-use File::Spec ();
-use File::Temp ();
-use B ();
+use File::Spec        ();
+use File::Temp        ();
+use B                 ();
 use Text::Hogan::Compiler;
 
 with 'Catmandu::Logger';
 
-has parser       => (is => 'lazy');
-has fixer        => (is => 'lazy', init_arg => undef);
-has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
-has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0 });
-has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{} });
-has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
-has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
-has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
-has _reject      => (is => 'ro', init_arg => undef, default => sub { +{} });
-has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
-has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
-has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
-has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef,
-    builder => '_build_current_fix_var');
+has parser => (is => 'lazy');
+has fixer => (is => 'lazy', init_arg => undef);
+has _num_labels =>
+    (is => 'rw', lazy => 1, init_arg => undef, default => sub {0});
+has _num_vars =>
+    (is => 'rw', lazy => 1, init_arg => undef, default => sub {0});
+has _captures =>
+    (is => 'ro', lazy => 1, init_arg => undef, default => sub {+{}});
+has var =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
+has _fixes => (is => 'ro', init_arg => 'fixes', default => sub {[]});
+has fixes =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
+has _reject => (is => 'ro', init_arg => undef, default => sub {+{}});
+has _reject_var => (
+    is       => 'ro',
+    lazy     => 1,
+    init_arg => undef,
+    builder  => '_build_reject_var'
+);
+has _reject_label =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
+has _fixes_var =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
+has _current_fix_var => (
+    is       => 'ro',
+    lazy     => 1,
+    init_arg => undef,
+    builder  => '_build_current_fix_var'
+);
 has preprocess => (is => 'ro');
-has _hogan => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
+has _hogan =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
 has _hogan_vars => (is => 'ro', init_arg => 'variables');
 
 sub _build_parser {

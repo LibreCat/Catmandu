@@ -40,9 +40,8 @@ sub DESTROY {
     printf OUT "-" x 100 . "\n";
 
     for my $key (
-        sort {
-            $self->stats->{$b}->{elapsed} cmp $self->stats->{$a}->{elapsed}
-        } keys %{$self->stats}
+        sort {$self->stats->{$b}->{elapsed} cmp $self->stats->{$a}->{elapsed}}
+        keys %{$self->stats}
         )
     {
         my $speed

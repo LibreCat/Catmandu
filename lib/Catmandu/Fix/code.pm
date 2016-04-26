@@ -13,9 +13,7 @@ has code => (
         return sub { }
     },
     isa => sub {
-        die "code must be a CODE reference" unless is_code_ref(
-            $_[0]
-            );
+        die "code must be a CODE reference" unless is_code_ref($_[0]);
     }
 );
 

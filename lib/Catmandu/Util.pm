@@ -5,10 +5,10 @@ use Catmandu::Sane;
 our $VERSION = '1.0002_02';
 
 use Exporter qw(import);
-use Sub::Quote ();
-use Scalar::Util ();
-use List::Util ();
-use Ref::Util ();
+use Sub::Quote    ();
+use Scalar::Util  ();
+use List::Util    ();
+use Ref::Util     ();
 use Data::Compare ();
 use IO::File;
 use IO::Handle::Util ();
@@ -282,9 +282,7 @@ sub data_at {
         $path = [map {split /[\/\.]/} @$path];
     }
     else {
-        $path = [
-            split /[\/\.]/, $path
-            ];
+        $path = [split /[\/\.]/, $path];
     }
     my $create = $opts{create};
     my $_key = $opts{_key} // $opts{key};
@@ -296,9 +294,9 @@ sub data_at {
         is_ref($data) || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
-                return map {
-                    data_at($path, $_, create => $create, _key => $_key)
-                } @$data;
+                return
+                    map {data_at($path, $_, create => $create, _key => $_key)}
+                    @$data;
             }
             else {
                 if    ($key eq '$first') {$key = 0}
@@ -483,7 +481,7 @@ sub is_invocant {
     }
 }
 
-sub is_scalar_ref { # TODO no idea why Ref::Util::is_scalarref fails here
+sub is_scalar_ref {    # TODO no idea why Ref::Util::is_scalarref fails here
     ref($_[0]) eq 'SCALAR';
 }
 
@@ -501,7 +499,7 @@ sub is_code_ref {
 
 *is_regex_ref = \&Ref::Util::is_regexpref;
 
-sub is_glob_ref { # TODO no idea why Ref::Util::is_globref fails here
+sub is_glob_ref {    # TODO no idea why Ref::Util::is_globref fails here
     ref($_[0]) eq 'GLOB';
 }
 

@@ -10,13 +10,13 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "verbose|v", "" ],
-        [ "fix=s@", "" ],
-        [ "var=s%", "" ],
-        [ "preprocess|pp", "" ],
-        [ "start=i", "" ],
-        [ "total=i", "" ],
-        [ "delete", "delete existing objects first" ],
+        ["verbose|v",     ""],
+        ["fix=s@",        ""],
+        ["var=s%",        ""],
+        ["preprocess|pp", ""],
+        ["start=i",       ""],
+        ["total=i",       ""],
+        ["delete",        "delete existing objects first"],
     );
 }
 

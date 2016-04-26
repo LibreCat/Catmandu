@@ -202,9 +202,9 @@ is_deeply $fixer->fix({data => {1 => 1, 2 => 2}}),
 #-- preprocessing and variables
 
 $fixer = Catmandu::Fix->new(
-    fixes => ['t/variables.fix'],
+    fixes      => ['t/variables.fix'],
     preprocess => 1,
-    variables => {
+    variables  => {
         source => 'field1',
         target => 'field2',
         others => [qw(0 1)],
@@ -213,8 +213,7 @@ $fixer = Catmandu::Fix->new(
     }
 );
 
-is_deeply $fixer->fix(
-    {field1 => 'value'}), 
+is_deeply $fixer->fix({field1 => 'value'}),
     {field2 => 'value', other_0 => 0, other_1 => 1, drunk => 'yes'},
     'preprocessing: variable interpolation';
 
