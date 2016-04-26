@@ -79,7 +79,8 @@ my %module_build_args = (
     "Test::Exception" => "0.32",
     "Test::LWP::UserAgent" => 0,
     "Test::More" => "0.99",
-    "Test::Pod" => 0
+    "Test::Pod" => 0,
+    "Text::Diff" => 0
   }
 );
 
@@ -96,7 +97,8 @@ my %fallback_build_requires = (
   "Test::Exception" => "0.32",
   "Test::LWP::UserAgent" => 0,
   "Test::More" => "0.99",
-  "Test::Pod" => 0
+  "Test::Pod" => 0,
+  "Text::Diff" => 0
 );
 
 
