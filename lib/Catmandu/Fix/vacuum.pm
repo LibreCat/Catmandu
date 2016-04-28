@@ -2,7 +2,7 @@ package Catmandu::Fix::vacuum;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Catmandu::Expander ();

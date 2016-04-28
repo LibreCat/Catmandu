@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.0002_02",
+  "dist_version" => "1.0002_03",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {

@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0002_03  2016-04-28 10:00:55 CEST
   - fix file or inline fix preprocessing with moustache templates
   - faster type tests with Ref::Util
   - is_true and is_false fix conditions have a new strict mode
