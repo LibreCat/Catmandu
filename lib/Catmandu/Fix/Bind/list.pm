@@ -71,14 +71,19 @@ sub bind {
 
             # Check for rejects()
             if (defined $res) {
-                $mvar->[$idx] = $res->[0] if $has_default_context_variable;
+                if ($self->var) {
+                    $mvar->[$idx] = $scope->{$self->var};
+                }
+                elsif ($has_default_context_variable) {
+                    $mvar->[$idx] = $res->[0];
+                }
                 $idx++;
             }
             else {
                 splice(@$mvar,$idx,1);
             }
 
-            delete $res->{$self->var} if $self->var; 
+            delete $scope->{$self->var} if $self->var; 
           } @$mvar ];
     }
     else {
