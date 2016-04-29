@@ -2,15 +2,15 @@ package Catmandu::Buffer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo::Role;
 use namespace::clean;
 
 has buffer_size => (is => 'ro', lazy => 1, builder => 'default_buffer_size');
-has buffer => (is => 'rwp', lazy => 1, default => sub { [] });
+has buffer => (is => 'rwp', lazy => 1, default => sub {[]});
 
-sub default_buffer_size { 100 }
+sub default_buffer_size {100}
 
 sub clear_buffer {
     $_[0]->_set_buffer([]);

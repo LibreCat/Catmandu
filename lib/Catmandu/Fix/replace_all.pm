@@ -2,7 +2,7 @@ package Catmandu::Fix::replace_all;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -18,9 +18,10 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
 
     "if (is_value(${var})) {"
-        ."utf8::upgrade(${var});"
-        ."${var} =~ ".$fixer->emit_substitution($self->search, $self->replace)."g;"
-        ."}";
+        . "utf8::upgrade(${var});"
+        . "${var} =~ "
+        . $fixer->emit_substitution($self->search, $self->replace) . "g;"
+        . "}";
 }
 
 1;

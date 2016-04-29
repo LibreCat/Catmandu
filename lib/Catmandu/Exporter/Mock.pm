@@ -2,18 +2,18 @@ package Catmandu::Exporter::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has _data_ => (is => 'ro', default => sub { [] });
+has _data_ => (is => 'ro', default => sub {[]});
 
 sub add {
     my ($self, $data) = @_;
-    push @{$self->_data_} , $data;
+    push @{$self->_data_}, $data;
     1;
 }
 

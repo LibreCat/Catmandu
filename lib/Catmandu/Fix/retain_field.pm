@@ -2,7 +2,7 @@ package Catmandu::Fix::retain_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -15,12 +15,16 @@ has path => (fix_arg => 1);
 sub emit {
     my ($self, $fixer) = @_;
     my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+    my $key  = pop @$path;
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_retain_key($var, $key);
-    });
+    $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            $fixer->emit_retain_key($var, $key);
+        }
+    );
 }
 
 1;

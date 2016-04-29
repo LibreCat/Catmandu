@@ -2,17 +2,17 @@ package Catmandu::Fix::expand;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
 use Catmandu::Expander ();
 use Catmandu::Fix::Has;
 
-has sep => (fix_opt => 1, default => sub { undef });
+has sep => (fix_opt => 1, default => sub {undef});
 
 sub fix {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
 
     if (defined(my $char = $self->sep)) {
         my $new_ref = {};

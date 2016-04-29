@@ -2,7 +2,7 @@ package Catmandu::Fix::set_array;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -10,20 +10,24 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path   => (fix_arg => 1);
-has values => (fix_arg => 'collect', default => sub { [] });
+has path => (fix_arg => 1);
+has values => (fix_arg => 'collect', default => sub {[]});
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+    my $path   = $fixer->split_path($self->path);
+    my $key    = pop @$path;
     my $values = $self->values;
 
-    $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_set_key($var, $key,
-            "[".join(',', map { $fixer->emit_value($_) } @$values)."]");
-    });
+    $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            $fixer->emit_set_key($var, $key,
+                "[" . join(',', map {$fixer->emit_value($_)} @$values) . "]");
+        }
+    );
 }
 
 1;

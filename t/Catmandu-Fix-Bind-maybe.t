@@ -9,13 +9,14 @@ use Catmandu::Importer::Mock;
 use Catmandu::Util qw(:is);
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::Bind::maybe';
     use_ok $pkg;
 }
 require_ok $pkg;
 
-my $fixes =<<EOF;
+my $fixes = <<EOF;
 do maybe()
   add_field(foo,bar)
 end
@@ -25,18 +26,19 @@ my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 ok $fixer , 'create fixer';
 
-is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing add_field';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing add_field';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
 end
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing zero fix functions';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'},
+    'testing zero fix functions';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
   unless exists(foo)
   	add_field(foo,bar)
@@ -46,9 +48,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing unless';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing unless';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
   if exists(foo)
   	add_field(foo2,bar)
@@ -58,9 +60,10 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'} , 'testing if';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'},
+    'testing if';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
   reject exists(foo)
 end
@@ -68,9 +71,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-ok !defined $fixer->fix({foo => 'bar'}) , 'testing reject';
+ok !defined $fixer->fix({foo => 'bar'}), 'testing reject';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
   select exists(foo)
 end
@@ -78,9 +81,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing select';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing select';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
  do maybe()
   do maybe()
@@ -92,9 +95,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing nesting';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 add_field(before,ok)
 do maybe()
    add_field(inside,ok)
@@ -104,9 +107,11 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'} , 'before/after testing';
+is_deeply $fixer->fix({foo => 'bar'}),
+    {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'},
+    'before/after testing';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do maybe()
   undef_error()
   add_field(foo,bar)
@@ -115,6 +120,6 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'specific testing';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'specific testing';
 
 done_testing 12;

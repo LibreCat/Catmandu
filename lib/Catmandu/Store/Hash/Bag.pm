@@ -2,7 +2,7 @@ package Catmandu::Store::Hash::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Catmandu::Hits;
@@ -12,7 +12,8 @@ use namespace::clean;
 with 'Catmandu::Bag';
 with 'Catmandu::Droppable';
 
-has _hash => (is => 'rw', lazy => 1 , init_arg => undef, builder => '_build_hash');
+has _hash =>
+    (is => 'rw', lazy => 1, init_arg => undef, builder => '_build_hash');
 has _head => (is => 'rw', init_arg => undef, clearer => '_clear_head');
 has _tail => (is => 'rw', init_arg => undef, clearer => '_clear_tail');
 
@@ -41,15 +42,17 @@ sub get {
 
 sub add {
     my ($self, $data) = @_;
-    my $id = $data->{_id};
+    my $id   = $data->{_id};
     my $node = $self->_hash->{$id};
     if ($node) {
         $node->[1] = clone($data);
-    } elsif (my $tail = $self->_tail) {
+    }
+    elsif (my $tail = $self->_tail) {
         $tail->[2] = $node = [$tail, clone($data), undef];
         $self->_hash->{$id} = $node;
         $self->_tail($node);
-    } else {
+    }
+    else {
         $node = [undef, clone($data), undef];
         $self->_hash->{$id} = $node;
         $self->_head($node);
@@ -63,12 +66,14 @@ sub delete {
     my $node = $self->_hash->{$id} || return;
     if ($node->[0]) {
         $node->[0][2] = $node->[2];
-    } else {
+    }
+    else {
         $self->_head($node->[2]);
     }
     if ($node->[2]) {
         $node->[2][0] = $node->[0];
-    } else {
+    }
+    else {
         $self->_tail($node->[0]);
     }
     delete $self->_hash->{$id};

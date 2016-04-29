@@ -2,7 +2,7 @@ package Catmandu::Cmd::info;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -11,15 +11,19 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        ["all"       , "show all module on this server"],
-        ["exporters" , "show all Catmandu exporters"],
-        ["importers" , "show all Catmandu importers"],
-        ["fixes"     , "show all Catmandu fixes"],
-        ["stores"    , "show all Catmandu stores"],
-        ["validators", "show all Catmandu validators"],
+        ["all",         "show all module on this server"],
+        ["exporters",   "show all Catmandu exporters"],
+        ["importers",   "show all Catmandu importers"],
+        ["fixes",       "show all Catmandu fixes"],
+        ["stores",      "show all Catmandu stores"],
+        ["validators",  "show all Catmandu validators"],
         ["namespace=s", "search by namespace"],
         ["max_depth=i", "maximum depth to search for modules"],
-        ["inc=s@", 'override included directories (defaults to @INC)', {default => [@INC]}],
+        [
+            "inc=s@",
+            'override included directories (defaults to @INC)',
+            {default => [@INC]}
+        ],
         ["verbose|v", ""]
     );
 }
@@ -30,7 +34,7 @@ sub add_about {
     $name =~ s/[^-]+(\s*-?\s*)?//;
     $name =~ s/\n/ /mg;
     chomp $name;
-    $item->{about} = $name; 
+    $item->{about} = $name;
     $item;
 }
 
@@ -67,19 +71,20 @@ sub command {
         $opts->{namespace} = [qw(Catmandu)];
     }
 
-    my $from_opts = { fix => [sub{add_about(@_)}] };
-    
+    my $from_opts = {fix => [sub {add_about(@_)}]};
+
     for my $key (qw(inc namespace max_depth)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
 
-    my $from = Catmandu->importer('Modules',$from_opts);
+    my $from = Catmandu->importer('Modules', $from_opts);
 
     my $into_args = [];
     my $into_opts = {};
     my $into;
 
     if (@$args && $args->[0] eq 'to') {
+
         # TODO: don't duplicate argument parsing
         for (my $i = 1; $i < @$args; $i++) {
             my $arg = $args->[$i];
@@ -87,10 +92,12 @@ sub command {
                 $arg =~ s/-/_/g;
                 if ($arg eq 'fix') {
                     push @{$into_opts->{$arg} ||= []}, $args->[++$i];
-                } else {
+                }
+                else {
                     $into_opts->{$arg} = $args->[++$i];
                 }
-            } else {
+            }
+            else {
                 push @$into_args, $arg;
             }
         }
@@ -100,7 +107,8 @@ sub command {
         $into = Catmandu->exporter($into_args->[0], $into_opts);
         $into->add_many($from);
         $into->commit;
-    } else {
+    }
+    else {
         my $cols = [qw(name version about)];
         push @$cols, 'file' if $opts->verbose;
         $from->format(cols => $cols);

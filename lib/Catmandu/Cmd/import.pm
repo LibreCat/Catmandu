@@ -2,7 +2,7 @@ package Catmandu::Cmd::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -10,18 +10,21 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "verbose|v", "" ],
-        [ "fix=s@", "" ],
-        [ "start=i", "" ],
-        [ "total=i", "" ],
-        [ "delete", "delete existing objects first" ],
+        ["verbose|v",     ""],
+        ["fix=s@",        ""],
+        ["var=s%",        ""],
+        ["preprocess|pp", ""],
+        ["start=i",       ""],
+        ["total=i",       ""],
+        ["delete",        "delete existing objects first"],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my ($from_args, $from_opts, $into_args, $into_opts) = $self->_parse_options($args);
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into_bag = delete $into_opts->{bag};
@@ -31,7 +34,7 @@ sub command {
         $from = $from->slice($opts->start, $opts->total);
     }
     if ($opts->fix) {
-        $from = Catmandu->fixer($opts->fix)->fix($from);
+        $from = $self->_build_fixer($opts)->fix($from);
     }
     if ($opts->verbose) {
         $from = $from->benchmark;

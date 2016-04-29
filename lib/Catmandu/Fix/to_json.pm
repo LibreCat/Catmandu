@@ -2,7 +2,7 @@ package Catmandu::Fix::to_json;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Cpanel::JSON::XS ();
 use Moo;
@@ -15,13 +15,13 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    # memoize in case called multiple times
-    my $json_var = $fixer->capture(Cpanel::JSON::XS->new
-            ->utf8(0)->pretty(0)->allow_nonref(1));
 
-    "if (is_maybe_value(${var}) || is_array_ref(${var}) || is_hash_ref(${var})) {" .
-        "${var} = ${json_var}->encode(${var});" .
-    "}";
+    # memoize in case called multiple times
+    my $json_var = $fixer->capture(
+        Cpanel::JSON::XS->new->utf8(0)->pretty(0)->allow_nonref(1));
+
+    "if (is_maybe_value(${var}) || is_array_ref(${var}) || is_hash_ref(${var})) {"
+        . "${var} = ${json_var}->encode(${var});" . "}";
 }
 
 1;

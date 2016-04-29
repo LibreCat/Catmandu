@@ -2,15 +2,15 @@ package Catmandu::Fix::Condition;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo::Role;
 use namespace::clean;
 
 with 'Catmandu::Fix::Base';
 
-has pass_fixes => (is => 'rw', default => sub { [] });
-has fail_fixes => (is => 'rw', default => sub { [] });
+has pass_fixes => (is => 'rw', default => sub {[]});
+has fail_fixes => (is => 'rw', default => sub {[]});
 
 1;
 

@@ -2,7 +2,7 @@ package Catmandu::Exporter::TSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Catmandu::Exporter::CSV;
 use Moo;
@@ -19,17 +19,17 @@ has sep_char => (
         return $sep_char;
     }
 );
-has csv          => (is => 'lazy');
+has csv => (is => 'lazy');
 
 sub _build_csv {
     my ($self) = @_;
     my $csv = Catmandu::Exporter::CSV->new(
-        header      => $self->header,
+        header         => $self->header,
         collect_fields => $self->collect_fields,
-        sep_char    => $self->sep_char,
-        quote_char  => undef,
-        escape_char => undef,
-        file => $self->file,
+        sep_char       => $self->sep_char,
+        quote_char     => undef,
+        escape_char    => undef,
+        file           => $self->file,
     );
     $csv->{fields}  = $self->fields;
     $csv->{columns} = $self->columns;

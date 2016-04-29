@@ -2,7 +2,7 @@ package Catmandu::Importer::CSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Text::CSV;
 use List::Util qw(reduce);
@@ -21,44 +21,47 @@ has sep_char => (
         return $sep_char;
     }
 );
-has quote_char => (is => 'ro', default => sub { '"' });
-has escape_char => (is => 'ro', default => sub { '"' });
-has allow_loose_quotes => (is => 'ro', default => sub { 0 });
-has allow_loose_escapes => (is => 'ro', default => sub { 0 });
-has header => (is => 'ro', default => sub { 1 });
-has fields => (
+has quote_char          => (is => 'ro', default => sub {'"'});
+has escape_char         => (is => 'ro', default => sub {'"'});
+has allow_loose_quotes  => (is => 'ro', default => sub {0});
+has allow_loose_escapes => (is => 'ro', default => sub {0});
+has header              => (is => 'ro', default => sub {1});
+has fields              => (
     is     => 'rwp',
     coerce => sub {
         my $fields = $_[0];
-        if (ref $fields eq 'ARRAY') { return $fields }
-        if (ref $fields eq 'HASH')  { return [sort keys %$fields] }
+        if (ref $fields eq 'ARRAY') {return $fields}
+        if (ref $fields eq 'HASH') {return [sort keys %$fields]}
         return [split ',', $fields];
     },
 );
 
 sub _build_csv {
     my ($self) = @_;
-    Text::CSV->new({
-        binary => 1,
-        sep_char => $self->sep_char,
-        quote_char => $self->quote_char ? $self->quote_char : undef,
-        escape_char => $self->escape_char ? $self->escape_char : undef,
-        allow_loose_quotes => $self->allow_loose_quotes,
-        allow_loose_escapes => $self->allow_loose_escapes,
-    });
+    Text::CSV->new(
+        {
+            binary      => 1,
+            sep_char    => $self->sep_char,
+            quote_char  => $self->quote_char ? $self->quote_char : undef,
+            escape_char => $self->escape_char ? $self->escape_char : undef,
+            allow_loose_quotes  => $self->allow_loose_quotes,
+            allow_loose_escapes => $self->allow_loose_escapes,
+        }
+    );
 }
 
 sub generator {
     my ($self) = @_;
     sub {
         state $line = 0;
-        state $fh  = $self->fh;
-        state $csv = do {
+        state $fh   = $self->fh;
+        state $csv  = do {
             if ($self->header) {
                 if ($self->fields) {
                     $self->csv->getline($fh);
                     $line++;
-                } else {
+                }
+                else {
                     $self->_set_fields($self->csv->getline($fh));
                     $line++;
                 }
@@ -73,13 +76,14 @@ sub generator {
         unless ($self->fields) {
             my $row = $csv->getline($fh) // return;
             $line++;
-            my $fields = [0 .. (@$row -1)];
+            my $fields = [0 .. (@$row - 1)];
             $self->_set_fields($fields);
             $csv->column_names($fields);
             return reduce {
-               $a->{$b} = $row->[$b] if length $row->[$b];
-               $a;
-            } +{}, @$fields;
+                $a->{$b} = $row->[$b] if length $row->[$b];
+                $a;
+            }
+            +{}, @$fields;
         }
 
         my $rec = $csv->getline_hr($fh);
@@ -89,8 +93,9 @@ sub generator {
             return $rec;
         }
         else {
-            my ($cde, $str, $pos) = $csv->error_diag ();
-            die "at line $line (byte $pos) found a Text::CSV parse error($cde) $str";
+            my ($cde, $str, $pos) = $csv->error_diag();
+            die
+                "at line $line (byte $pos) found a Text::CSV parse error($cde) $str";
         }
     };
 }

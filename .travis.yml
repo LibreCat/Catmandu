@@ -6,6 +6,9 @@ perl:
   - "5.14"
   - "5.12"
   - "5.10"
+before_install:
+  - cpanm --notest Perl::Tidy
+  - cpanm --notest Test::Code::TidyAll 
 install: 
   - cpanm --quiet --installdeps --notest --force --skip-satisfied .
   - cpanm --quiet --notest --skip-satisfied Devel::Cover

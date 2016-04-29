@@ -2,7 +2,7 @@ package Catmandu::Cmd::config;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use parent 'Catmandu::Cmd';
 use Catmandu::Util qw(data_at);
@@ -27,10 +27,12 @@ sub command {
                 $arg =~ s/-/_/g;
                 if ($arg eq 'fix') {
                     push @{$into_opts->{$arg} ||= []}, $args->[++$i];
-                } else {
+                }
+                else {
                     $into_opts->{$arg} = $args->[++$i];
                 }
-            } else {
+            }
+            else {
                 push @$into_args, $arg;
             }
         }
@@ -38,13 +40,13 @@ sub command {
 
     if (@$into_args || %$into_opts) {
         $into = Catmandu->exporter($into_args->[0], $into_opts);
-    } else {
+    }
+    else {
         $into = Catmandu->exporter('JSON', pretty => 1, array => 0);
     }
 
-    $into->add(defined $path ?
-            data_at($path, Catmandu->config) :
-        Catmandu->config);
+    $into->add(
+        defined $path ? data_at($path, Catmandu->config) : Catmandu->config);
     $into->commit;
 }
 

@@ -10,13 +10,14 @@ use Catmandu::Util qw(:is);
 use Capture::Tiny ':all';
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::Bind::hashmap';
     use_ok $pkg;
 }
 require_ok $pkg;
 
-my $fixes =<<EOF;
+my $fixes = <<EOF;
 do hashmap()
   add_field(foo,bar)
 end
@@ -26,18 +27,19 @@ my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 ok $fixer , 'create fixer';
 
-is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing add_field';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing add_field';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do hashmap()
 end
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing zero fix functions';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'},
+    'testing zero fix functions';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do hashmap()
   unless exists(foo)
     add_field(foo,bar)
@@ -47,9 +49,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing unless';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing unless';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do hashmap()
   if exists(foo)
     add_field(foo2,bar)
@@ -59,9 +61,10 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'} , 'testing if';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'},
+    'testing if';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do hashmap()
   select exists(foo)
 end
@@ -69,9 +72,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing select';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing select';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do hashmap()
  do hashmap()
   do hashmap()
@@ -83,9 +86,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing nesting';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing nesting';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 add_field(before,ok)
 do hashmap()
    add_field(inside,ok)
@@ -95,12 +98,14 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'} , 'before/after testing';
+is_deeply $fixer->fix({foo => 'bar'}),
+    {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'},
+    'before/after testing';
 
 # Specific tests
 {
     my ($stdout, $stderr, $exit) = capture {
-      $fixes =<<EOF;
+        $fixes = <<EOF;
   do hashmap(exporter: CSV, join: ',')
    do identity()
     copy_field(isbn,key)
@@ -108,27 +113,29 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 
    end
   end
 EOF
-    $fixer = Catmandu::Fix->new(fixes => [$fixes]);
-    $fixer->fix([
-        {_id => 1, isbn => '1234567890'},
-        {_id => 2, isbn => '1234567890'},
-        {_id => 3, isbn => '0987654321'},
-    ]);
-    undef($fixer);
+        $fixer = Catmandu::Fix->new(fixes => [$fixes]);
+        $fixer->fix(
+            [
+                {_id => 1, isbn => '1234567890'},
+                {_id => 2, isbn => '1234567890'},
+                {_id => 3, isbn => '0987654321'},
+            ]
+        );
+        undef($fixer);
     };
 
-    my $exp =<<EOF;
+    my $exp = <<EOF;
 _id,value
 0987654321,3
 1234567890,"1,2"
 EOF
 
-    is $stdout , $exp , 'grouping isbn join';
+    is $stdout , $exp, 'grouping isbn join';
 }
 
 {
     my ($stdout, $stderr, $exit) = capture {
-      $fixes =<<EOF;
+        $fixes = <<EOF;
   do hashmap(exporter: YAML, uniq: 1)
    do identity()
     copy_field(isbn,key)
@@ -136,16 +143,18 @@ EOF
    end
   end
 EOF
-    $fixer = Catmandu::Fix->new(fixes => [$fixes]);
-    $fixer->fix([
-        {_id => 1, isbn => '1234567890'},
-        {_id => 2, isbn => '1234567890'},
-        {_id => 3, isbn => '0987654321'},
-    ]);
-    undef($fixer);
+        $fixer = Catmandu::Fix->new(fixes => [$fixes]);
+        $fixer->fix(
+            [
+                {_id => 1, isbn => '1234567890'},
+                {_id => 2, isbn => '1234567890'},
+                {_id => 3, isbn => '0987654321'},
+            ]
+        );
+        undef($fixer);
     };
 
-    my $exp =<<EOF;
+    my $exp = <<EOF;
 ---
 _id: '0987654321'
 value:
@@ -159,12 +168,12 @@ value:
 ...
 EOF
 
-    is $stdout , $exp , 'grouping isbn uniq';
+    is $stdout , $exp, 'grouping isbn uniq';
 }
 
 {
     my ($stdout, $stderr, $exit) = capture {
-      $fixes =<<EOF;
+        $fixes = <<EOF;
   do hashmap(exporter: CSV, count: 1)
    do identity()
     copy_field(isbn,key)
@@ -172,22 +181,24 @@ EOF
    end
   end
 EOF
-    $fixer = Catmandu::Fix->new(fixes => [$fixes]);
-    $fixer->fix([
-        {_id => 1, isbn => '1234567890'},
-        {_id => 2, isbn => '1234567890'},
-        {_id => 3, isbn => '0987654321'},
-    ]);
-    undef($fixer);
+        $fixer = Catmandu::Fix->new(fixes => [$fixes]);
+        $fixer->fix(
+            [
+                {_id => 1, isbn => '1234567890'},
+                {_id => 2, isbn => '1234567890'},
+                {_id => 3, isbn => '0987654321'},
+            ]
+        );
+        undef($fixer);
     };
 
-    my $exp =<<EOF;
+    my $exp = <<EOF;
 _id,value
 1234567890,2
 0987654321,1
 EOF
 
-    is $stdout , $exp , 'grouping isbn count';
+    is $stdout , $exp, 'grouping isbn count';
 }
 
 done_testing 13;

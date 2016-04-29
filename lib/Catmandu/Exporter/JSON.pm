@@ -2,7 +2,7 @@ package Catmandu::Exporter::JSON;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Cpanel::JSON::XS ();
 use Moo;
@@ -11,30 +11,29 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has line_delimited => (is => 'ro', default => sub { 0 });
-has array          => (is => 'ro', default => sub { 1 });
-has pretty         => (is => 'ro', default => sub { 0 });
-has indent         => (is => 'ro', default => sub { 0 });
-has space_before   => (is => 'ro', default => sub { 0 });
-has space_after    => (is => 'ro', default => sub { 0 });
-has canonical      => (is => 'ro', default => sub { 0 });
+has line_delimited => (is => 'ro', default => sub {0});
+has array          => (is => 'ro', default => sub {1});
+has pretty         => (is => 'ro', default => sub {0});
+has indent         => (is => 'ro', default => sub {0});
+has space_before   => (is => 'ro', default => sub {0});
+has space_after    => (is => 'ro', default => sub {0});
+has canonical      => (is => 'ro', default => sub {0});
 has json           => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
-    Cpanel::JSON::XS->new
-            ->utf8(0)
-            ->allow_nonref
-            ->pretty($self->line_delimited ? 0 : $self->pretty)
-            ->indent($self->line_delimited ? 0 : $self->pretty || $self->indent)
-            ->space_before($self->line_delimited ? 0 : $self->pretty || $self->space_before)
-            ->space_after($self->line_delimited ? 0 : $self->pretty || $self->space_after)
-            ->canonical($self->canonical);
+    Cpanel::JSON::XS->new->utf8(0)
+        ->allow_nonref->pretty($self->line_delimited ? 0 : $self->pretty)
+        ->indent($self->line_delimited ? 0 : $self->pretty || $self->indent)
+        ->space_before($self->line_delimited ? 0 : $self->pretty
+            || $self->space_before)
+        ->space_after($self->line_delimited ? 0 : $self->pretty
+            || $self->space_after)->canonical($self->canonical);
 }
 
 sub add {
     my ($self, $data) = @_;
-    my $fh = $self->fh;
+    my $fh   = $self->fh;
     my $json = $self->json->encode($data);
     if ($self->line_delimited) {
         print $fh $json;
@@ -49,7 +48,8 @@ sub add {
         if ($self->count) {
             print $fh ",";
             print $fh "\n" if $self->pretty;
-        } else {
+        }
+        else {
             print $fh "[";
         }
     }

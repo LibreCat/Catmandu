@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Catmandu::Util qw(:is);
@@ -16,7 +16,7 @@ has step          => (fix_opt => 1);
 has importer_args => (fix_opt => 'collect');
 
 has importer => (is => 'lazy');
-has flag => (is => 'rw'  , default => sub { 0 });
+has flag => (is => 'rw', default => sub {0});
 
 sub _build_importer {
     my ($self) = @_;
@@ -24,12 +24,12 @@ sub _build_importer {
 }
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     $data;
 }
 
 sub bind {
-    my ($self,$mvar,$func,$name,$fixer) = @_;
+    my ($self, $mvar, $func, $name, $fixer) = @_;
 
     return if $self->flag;
 
@@ -38,9 +38,11 @@ sub bind {
         $fixer->fix($next) if $next;
     }
     else {
-        $self->importer->each(sub {
-            $fixer->fix($_[0]);
-        });
+        $self->importer->each(
+            sub {
+                $fixer->fix($_[0]);
+            }
+        );
     }
 
     $self->flag(1);
@@ -49,10 +51,10 @@ sub bind {
 }
 
 sub result {
-    my ($self,$mvar) = @_;
+    my ($self, $mvar) = @_;
 
     $self->flag(0);
-    
+
     $mvar;
 }
 

@@ -7,6 +7,7 @@ use Test::Exception;
 use App::Cmd::Tester;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Cmd::info';
     use_ok $pkg;
@@ -17,32 +18,32 @@ use Catmandu::CLI;
 
 my $result;
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info --exporters) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info --exporters)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info --importers) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info --importers)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info --fixes) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info --fixes)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info --stores) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info --stores)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info --validators) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info --validators)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
-$result = test_app(qq|Catmandu::CLI| => [ qw(info --fixes to JSON) ]);
+$result = test_app(qq|Catmandu::CLI| => [qw(info --fixes to JSON)]);
 
-is $result->error, undef, 'threw no exceptions' ;
+is $result->error, undef, 'threw no exceptions';
 
 done_testing 9;

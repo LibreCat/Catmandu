@@ -2,7 +2,7 @@ package Catmandu::Fix::log;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Catmandu;
@@ -15,13 +15,15 @@ has message => (fix_arg => 1);
 has level   => (fix_opt => 1);
 
 sub fix {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     my $id    = $data->{_id} // '<undef>';
     my $level = $self->level // 'INFO';
 
-    if ($level =~ /^(trace|debug|info|notice|warn|error|critical|alert|emergency)$/i) {
+    if ($level
+        =~ /^(trace|debug|info|notice|warn|error|critical|alert|emergency)$/i)
+    {
         my $lvl = lc $level;
-        $self->log->$lvl(sprintf "%s : %s\n" , $id , $self->message);
+        $self->log->$lvl(sprintf "%s : %s\n", $id, $self->message);
     }
 
     $data;

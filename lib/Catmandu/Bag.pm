@@ -2,7 +2,7 @@ package Catmandu::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Catmandu::Util qw(:check is_string require_package);
 use Catmandu::IdGenerator::UUID;
@@ -21,11 +21,12 @@ requires 'delete_all';
 has store => (is => 'ro');
 has name  => (is => 'ro');
 has id_generator => (
-    is => 'lazy',
+    is     => 'lazy',
     coerce => sub {
         if (is_string($_[0])) {
             require_package($_[0], 'Catmandu::IdGenerator')->new;
-        } else {
+        }
+        else {
             $_[0];
         }
     },
@@ -71,11 +72,14 @@ sub get_or_add {
 
 sub to_hash {
     my ($self) = @_;
-    $self->reduce({}, sub {
-        my ($hash, $data) = @_;
-        $hash->{$data->{_id}} = $data;
-        $hash;
-    });
+    $self->reduce(
+        {},
+        sub {
+            my ($hash, $data) = @_;
+            $hash->{$data->{_id}} = $data;
+            $hash;
+        }
+    );
 }
 
 1;

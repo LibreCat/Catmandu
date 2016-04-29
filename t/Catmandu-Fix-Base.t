@@ -7,6 +7,7 @@ use Test::Exception;
 use Role::Tiny;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::Base';
     use_ok $pkg;
@@ -14,6 +15,7 @@ BEGIN {
 require_ok $pkg;
 
 {
+
     package T::FixBaseWithoutEmit;
     use Moo;
 
@@ -30,7 +32,8 @@ require_ok $pkg;
     T::FixBase->import(as => 'do_fix_base');
 }
 
-throws_ok { Role::Tiny->apply_role_to_package('T::FixBaseWithoutEmit', $pkg) } qr/missing emit/;
+throws_ok {Role::Tiny->apply_role_to_package('T::FixBaseWithoutEmit', $pkg)}
+qr/missing emit/;
 
 my $fb = T::FixBase->new;
 can_ok $fb, 'fixer';

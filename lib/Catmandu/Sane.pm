@@ -3,11 +3,11 @@ package Catmandu::Sane;
 use strict;
 use warnings;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use feature ();
 use utf8;
-use IO::File ();
+use IO::File   ();
 use IO::Handle ();
 use Try::Tiny::ByClass;
 use Catmandu::Error;

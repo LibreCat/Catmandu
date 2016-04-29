@@ -7,6 +7,7 @@ use Test::Exception;
 use utf8;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Importer::YAML';
     use_ok $pkg;
@@ -14,9 +15,9 @@ BEGIN {
 require_ok $pkg;
 
 my $data = [
-   {name=>'Patrick',age=>'39'},
-   {name=>'Nicolas',age=>'34'},
-   {name=>'村上 春樹',age=>'65'},
+    {name => 'Patrick',         age => '39'},
+    {name => 'Nicolas',         age => '34'},
+    {name => '村上 春樹', age => '65'},
 ];
 
 my $yaml = <<EOF;
@@ -39,11 +40,11 @@ isa_ok $importer, $pkg;
 my $arr = $importer->to_array;
 is_deeply $arr, $data, 'checking correct import';
 
-is $arr->[2]->{name} , '村上 春樹' , 'checking utf8 issues';
+is $arr->[2]->{name}, '村上 春樹', 'checking utf8 issues';
 
 $importer = $pkg->new(file => 't/non_ascii.yaml');
 
-is $importer->count, 1000 , 'parsed non ascii file';
+is $importer->count, 1000, 'parsed non ascii file';
 
 done_testing 6;
 

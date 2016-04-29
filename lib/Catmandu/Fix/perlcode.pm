@@ -2,7 +2,7 @@ package Catmandu::Fix::perlcode;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -12,15 +12,13 @@ with 'Catmandu::Fix::Base';
 
 our %CACHE;
 
-has file => (
-    fix_arg => 1
-);
+has file => (fix_arg => 1);
 
 has code => (
-    is => 'lazy',
+    is      => 'lazy',
     builder => sub {
         my $file = $_[0]->file;
-        $CACHE{ $file } //= do $_[0]->file;
+        $CACHE{$file} //= do $_[0]->file;
     }
 );
 
@@ -32,8 +30,7 @@ sub emit {
     my $reject = $fixer->capture({});
 
     "if (${code}->(${var},${reject}) == ${reject}) {"
-    . $fixer->emit_reject .
-    "}"
+        . $fixer->emit_reject . "}";
 }
 
 1;

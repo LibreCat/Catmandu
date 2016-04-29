@@ -2,51 +2,64 @@ package Catmandu::Interactive;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Catmandu;
 use Moo;
 use namespace::clean;
 
-has in => (is => 'ro' , default => sub {
-    Catmandu::Util::io(\*STDIN);
-});
+has in => (
+    is      => 'ro',
+    default => sub {
+        Catmandu::Util::io(\*STDIN);
+    }
+);
 
-has out => (is => 'ro' , default => sub { 
-    Catmandu::Util::io(\*STDOUT, mode => 'w', binmode => ':encoding(utf-8)');
-});
+has out => (
+    is      => 'ro',
+    default => sub {
+        Catmandu::Util::io(
+            \*STDOUT,
+            mode    => 'w',
+            binmode => ':encoding(utf-8)'
+        );
+    }
+);
 
 has silent => (is => 'ro');
 
-has exporter => (is => 'ro' , default => sub { 'YAML'} );
+has exporter => (is => 'ro', default => sub {'YAML'});
 
-has exporter_args => (is => 'ro' , default => sub { +{} });
+has exporter_args => (is => 'ro', default => sub {+{}});
 
-has header => (is => 'ro' , default => sub {
-    "\e[36m\n" .
-    "      A_A    ____      _                             _             \n" .
-    "     (-.-)  / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _       \n" .
-    "      |-|  | |   / _` | __| '_ ` _ \\ / _` | '_ \\ / _` | | | |    \n" .
-    "     /   \\ | |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |     \n" .
-    "    |     | \\____\\__,_|\\__|_| |_| |_|\\__,_|_| |_|\\__,_|\\__,_|\n" .
-    "    |  || |  |  \\___            version: $Catmandu::VERSION       \n" .
-    "     \\_||_/_/                                                \e[0m\n" .
-    "                                                                   \n" .
-    "Commands:                     | Interactive support is still       \n" .
-    " \\h - the fix history         | experimental. Run:                \n" .
-    " \\r - repeat the previous fix | \$ catmandu run <your_fix_script> \n" .
-    " \\q - quit                    | to access all Catmandu features   \n";
-});
+has header => (
+    is      => 'ro',
+    default => sub {
+        "\e[36m\n"
+            . "      A_A    ____      _                             _             \n"
+            . "     (-.-)  / ___|__ _| |_ _ __ ___   __ _ _ __   __| |_   _       \n"
+            . "      |-|  | |   / _` | __| '_ ` _ \\ / _` | '_ \\ / _` | | | |    \n"
+            . "     /   \\ | |__| (_| | |_| | | | | | (_| | | | | (_| | |_| |     \n"
+            . "    |     | \\____\\__,_|\\__|_| |_| |_|\\__,_|_| |_|\\__,_|\\__,_|\n"
+            . "    |  || |  |  \\___            version: $Catmandu::VERSION       \n"
+            . "     \\_||_/_/                                                \e[0m\n"
+            . "                                                                   \n"
+            . "Commands:                     | Interactive support is still       \n"
+            . " \\h - the fix history         | experimental. Run:                \n"
+            . " \\r - repeat the previous fix | \$ catmandu run <your_fix_script> \n"
+            . " \\q - quit                    | to access all Catmandu features   \n";
+    }
+);
 
-has data => (is => 'rw' , default => sub { + {} });
+has data => (is => 'rw', default => sub {+{}});
 
-has _history => (is => 'ro' , default => sub { [] });
+has _history => (is => 'ro', default => sub {[]});
 
 sub run {
     my $self = shift;
 
     my $keep_reading = 0;
-    my $buffer = '';
+    my $buffer       = '';
 
     $self->head;
 
@@ -56,8 +69,8 @@ sub run {
         if ($line =~ /^\\(.*)/) {
             next if length $buffer;
 
-            my ($command,$args) = split(/\s+/,$1,2);
-            
+            my ($command, $args) = split(/\s+/, $1, 2);
+
             if ($command eq 'h') {
                 $self->cmd_history;
                 $self->prompt('fix');
@@ -66,7 +79,8 @@ sub run {
             elsif ($command eq 'r') {
                 if (@{$self->_history} > 0) {
                     $line = $self->_history->[-1];
-                } else {
+                }
+                else {
                     $self->prompt('fix');
                     next;
                 }
@@ -84,18 +98,19 @@ sub run {
         $line = "$buffer$line" if length $buffer;
 
         if (length $line) {
-            my ($fixes,$keep_reading,$error) = $self->parse_fixes($line,$keep_reading);
+            my ($fixes, $keep_reading, $error)
+                = $self->parse_fixes($line, $keep_reading);
 
             if ($error) {
                 $buffer = '';
             }
             elsif ($keep_reading == 0) {
                 my $fixer = Catmandu::Fix->new(fixes => $fixes);
-                
-                $self->data( $fixer->fix($self->data) );
+
+                $self->data($fixer->fix($self->data));
                 $self->export;
 
-                push(@{$self->_history},$line);
+                push(@{$self->_history}, $line);
 
                 $buffer = '';
             }
@@ -113,60 +128,65 @@ sub run {
 sub cmd_history {
     my ($self) = @_;
 
-    $self->out->printf(join("",@{$self->_history}));
+    $self->out->printf(join("", @{$self->_history}));
 }
 
 sub head {
     my ($self) = @_;
 
-    $self->out->printf("%s\n" , $self->header) unless $self->silent;
+    $self->out->printf("%s\n", $self->header) unless $self->silent;
 }
 
 sub error {
-    my ($self,$txt) = @_;
+    my ($self, $txt) = @_;
     $self->out->print("ERROR: $txt\n") unless $self->silent;
 }
 
 sub prompt {
-    my ($self,$txt) = @_;
+    my ($self, $txt) = @_;
     $txt //= 'fix';
 
-    $self->out->printf("\e[35m%s > \e[0m" , $txt) unless $self->silent;
+    $self->out->printf("\e[35m%s > \e[0m", $txt) unless $self->silent;
 }
 
 sub export {
     my ($self) = @_;
     my $exporter = Catmandu->exporter(
-                        $self->exporter, %{$self->exporter_args} , fh => $self->out
-                    );
+        $self->exporter,
+        %{$self->exporter_args},
+        fh => $self->out
+    );
     $exporter->add($self->data);
     $exporter->commit;
 }
 
 sub parse_fixes {
-    my ($self,$string,$keep_reading) = @_;
+    my ($self, $string, $keep_reading) = @_;
 
     my $parser = Catmandu::Fix::Parser->new;
 
     my $fixes;
-    my $error =0;
+    my $error = 0;
 
     try {
-         $fixes = $parser->parse($string);
-         $keep_reading = 0;
+        $fixes        = $parser->parse($string);
+        $keep_reading = 0;
     }
     catch {
-        if (ref($_) eq 'Catmandu::FixParseError' && $_->message =~ /Can't use an undefined value as a SCALAR reference at/) {
+        if (ref($_) eq 'Catmandu::FixParseError'
+            && $_->message
+            =~ /Can't use an undefined value as a SCALAR reference at/)
+        {
             $keep_reading = 1;
         }
         else {
-             $_ =~ s/\n.*//g;
-             $self->error($_);
-             $error = 1;
+            $_ =~ s/\n.*//g;
+            $self->error($_);
+            $error = 1;
         }
     };
 
-    return ($fixes,$keep_reading,$error);
+    return ($fixes, $keep_reading, $error);
 }
 
 1;

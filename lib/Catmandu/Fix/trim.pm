@@ -2,7 +2,7 @@ package Catmandu::Fix::trim;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Unicode::Normalize;
@@ -10,7 +10,7 @@ use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
-has mode => (fix_arg => 1, default => sub { 'whitespace' });
+has mode => (fix_arg => 1, default => sub {'whitespace'});
 
 with 'Catmandu::Fix::SimpleGetValue';
 
@@ -22,8 +22,8 @@ sub emit_value {
         $perl .= "${var} = trim(${var});";
     }
     elsif ($self->mode eq 'nonword') {
-        $perl .= $var.' =~ s/^\W+//;';
-        $perl .= $var.' =~ s/\W+$//;';
+        $perl .= $var . ' =~ s/^\W+//;';
+        $perl .= $var . ' =~ s/\W+$//;';
     }
     elsif ($self->mode eq 'diacritics') {
         $perl .= "${var} = Unicode::Normalize::NFKD(${var});";

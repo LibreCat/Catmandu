@@ -2,7 +2,7 @@ package Catmandu::Importer::Modules;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Module::Info;
 use File::Spec;
@@ -16,43 +16,35 @@ with 'Catmandu::Importer';
 has inc => (
     is      => 'ro',
     lazy    => 1,
-    default => sub { [@INC] },
+    default => sub {[@INC]},
     coerce  => \&array_split,
 );
 
-has namespace => (
-    is      => 'ro',
-    default => sub { [""] },
-    coerce  => \&array_split,
-);
+has namespace =>
+    (is => 'ro', default => sub {[""]}, coerce => \&array_split,);
 
-has max_depth => (
-    is        => 'ro',
-    predicate => 1,
-);
+has max_depth => (is => 'ro', predicate => 1,);
 
-has pattern => (
-    is => 'ro',
-);
+has pattern => (is => 'ro',);
 
-has primary => (
-    is => 'ro',
-);
+has primary => (is => 'ro',);
 
 sub generator {
     my ($self) = @_;
 
     sub {
         state $pattern = $self->pattern;
-        state $files = { };
-        state $names = { };
+        state $files   = {};
+        state $names   = {};
 
         # array of [ $directory => $namespace ]
-        state $search = [ map {
-            my $ns = $_;
-            my $parts = [ map { grep length, split(/::/, $_) } $ns ];
-            map { [ File::Spec->catdir($_, @$parts) => $ns ] } @{$self->inc};
-        } @{$self->namespace} ];
+        state $search = [
+            map {
+                my $ns = $_;
+                my $parts = [map {grep length, split(/::/, $_)} $ns];
+                map {[File::Spec->catdir($_, @$parts) => $ns]} @{$self->inc};
+            } @{$self->namespace}
+        ];
 
         state $cur = shift(@$search) // return;
 
@@ -63,7 +55,7 @@ sub generator {
         };
 
         while (1) {
-            my ($dir,$ns) = @$cur;
+            my ($dir, $ns) = @$cur;
 
             if (defined(my $file = $rule->match)) {
                 my $path = File::Spec->abs2rel($file, $dir);
@@ -84,19 +76,17 @@ sub generator {
                     $names->{$name} = 1;
                 }
 
-                my $data = {
-                    file => $file,
-                    name => $name,
-                    path => $dir,
-                };
-                $data->{version} = "".$info->version if defined $info->version;
+                my $data = {file => $file, name => $name, path => $dir,};
+                $data->{version} = "" . $info->version
+                    if defined $info->version;
 
                 my $about = pod_section($file, 'NAME');
                 $about =~ s/^[^-]+(\s*-?\s*)?|\n.*$//sg;
-                $data->{about} = $about if $about ne ''; 
+                $data->{about} = $about if $about ne '';
 
                 return $data;
-            } else {
+            }
+            else {
                 $cur = shift(@$search) // return;
                 $rule->start($cur->[0]);
             }

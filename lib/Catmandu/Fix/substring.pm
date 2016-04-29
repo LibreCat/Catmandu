@@ -2,7 +2,7 @@ package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -19,13 +19,13 @@ sub emit_value {
     my $str_args = @$args > 1 ? join(", ", @$args[0, 1]) : $args->[0];
 
     if (@$args < 3) {
-        return "eval { ${var} = substr(as_utf8(${var}), ${str_args}) } if is_value(${var});";
+        return
+            "eval { ${var} = substr(as_utf8(${var}), ${str_args}) } if is_value(${var});";
     }
     my $replace = $fixer->emit_string($args->[2]);
     "if (is_value(${var})) {"
-        ."utf8::upgrade(${var});"
-        ."eval { substr(${var}, ${str_args}) = ${replace} };"
-        ."}";
+        . "utf8::upgrade(${var});"
+        . "eval { substr(${var}, ${str_args}) = ${replace} };" . "}";
 }
 
 1;

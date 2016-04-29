@@ -2,7 +2,7 @@ package Catmandu::Importer::Multi;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Catmandu::Util qw(is_string);
 use Catmandu;
@@ -13,24 +13,27 @@ use namespace::clean;
 with 'Catmandu::Importer';
 
 has importers => (
-    is => 'ro',
-    default => sub { [] },
-    coerce => sub {
+    is      => 'ro',
+    default => sub {[]},
+    coerce  => sub {
         my $importers = $_[0];
-        return [ map {
-            if (is_string($_)) {
-                Catmandu->importer($_);
-            } else {
-                $_;
-            }
-        } @$importers ];
+        return [
+            map {
+                if (is_string($_)) {
+                    Catmandu->importer($_);
+                }
+                else {
+                    $_;
+                }
+            } @$importers
+        ];
     },
 );
 
 sub generator {
     my ($self) = @_;
     sub {
-        state $generators = [ map { $_->generator } @{$self->importers} ];
+        state $generators = [map {$_->generator} @{$self->importers}];
         while (@$generators) {
             my $data = $generators->[0]->();
             return $data if defined $data;

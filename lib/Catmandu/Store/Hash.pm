@@ -2,7 +2,7 @@ package Catmandu::Store::Hash;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Catmandu::Util qw(:is);
@@ -12,7 +12,8 @@ use namespace::clean;
 with 'Catmandu::Store';
 with 'Catmandu::Droppable';
 
-has _hashes   => (is => 'ro' , lazy => 1, init_arg => undef, default => sub { +{} });
+has _hashes =>
+    (is => 'ro', lazy => 1, init_arg => undef, default => sub {+{}});
 has init_data => (is => 'ro');
 
 sub BUILD {

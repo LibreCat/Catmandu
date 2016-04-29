@@ -5,14 +5,16 @@ use Test::More;
 use Test::Exception;
 use YAML::XS ();
 
-BEGIN { use_ok 'Catmandu::Exporter::Text' }
+BEGIN {use_ok 'Catmandu::Exporter::Text'}
 require_ok 'Catmandu::Exporter::Text';
 
 {
-    my $data = [{'a' => 'moose'}, {'a' => 'pony'}, {'a' => ['shrimp','lobster']}];
+    my $data
+        = [{'a' => 'moose'}, {'a' => 'pony'}, {'a' => ['shrimp', 'lobster']}];
     my $file = "";
 
-    my $exporter = Catmandu::Exporter::Text->new(file => \$file, field_sep => ',');
+    my $exporter
+        = Catmandu::Exporter::Text->new(file => \$file, field_sep => ',');
     isa_ok $exporter, 'Catmandu::Exporter::Text';
 
     $exporter->add($_) for @$data;
@@ -20,7 +22,7 @@ require_ok 'Catmandu::Exporter::Text';
 
     is $exporter->count, 3, 'Count ok';
 
-    my $text =<<EOF;
+    my $text = <<EOF;
 moose
 pony
 shrimp,lobster
@@ -30,13 +32,19 @@ EOF
 }
 
 {
-    my $data = [{'a' => 'moose'}, {'a' => 'pony'}, {'a' => ['shrimp','lobster']}];
+    my $data
+        = [{'a' => 'moose'}, {'a' => 'pony'}, {'a' => ['shrimp', 'lobster']}];
     my $file = "";
 
-    my $exporter = Catmandu::Exporter::Text->new(file => \$file, line_sep => '\t' , field_sep => ',');
+    my $exporter = Catmandu::Exporter::Text->new(
+        file      => \$file,
+        line_sep  => '\t',
+        field_sep => ','
+    );
     isa_ok $exporter, 'Catmandu::Exporter::Text';
 
     $exporter->add_many($data);
+
     # don't call commit to test streaming output
 
     is $exporter->count, 3, 'Count ok';

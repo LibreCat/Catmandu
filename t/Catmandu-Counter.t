@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Counter';
     use_ok $pkg;
@@ -13,6 +14,7 @@ BEGIN {
 require_ok $pkg;
 
 {
+
     package T::Counter;
     use Moo;
     with $pkg;

@@ -7,6 +7,7 @@ use Test::Exception;
 use Catmandu::Store::Hash;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Store::Multi';
     use_ok $pkg;
@@ -14,14 +15,11 @@ BEGIN {
 require_ok $pkg;
 
 my $data = [
-   {_id => '123', name=>'Patrick',age=>'39'},
-   {_id => '321', name=>'Nicolas',age=>'34'},
+    {_id => '123', name => 'Patrick', age => '39'},
+    {_id => '321', name => 'Nicolas', age => '34'},
 ];
 
-my $stores = [
-    Catmandu::Store::Hash->new,
-    Catmandu::Store::Hash->new,
-];
+my $stores = [Catmandu::Store::Hash->new, Catmandu::Store::Hash->new,];
 my $store = $pkg->new(stores => $stores);
 my $bag = $store->bag;
 

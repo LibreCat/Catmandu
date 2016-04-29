@@ -8,6 +8,7 @@ use Role::Tiny;
 use Catmandu::Util;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Bag';
     use_ok $pkg;
@@ -15,35 +16,38 @@ BEGIN {
 require_ok $pkg;
 
 {
+
     package T::BagWithoutGet;
     use Moo;
-    sub generator {}
-    sub add {}
-    sub delete {}
-    sub delete_all {}
+    sub generator  { }
+    sub add        { }
+    sub delete     { }
+    sub delete_all { }
+
     package T::BagWithoutDelete;
     use Moo;
-    sub generator {}
-    sub add {}
-    sub get {}
-    sub delete_all {}
+    sub generator  { }
+    sub add        { }
+    sub get        { }
+    sub delete_all { }
+
     package T::BagWithoutDeleteAll;
     use Moo;
-    sub generator {}
-    sub add {}
-    sub get {}
-    sub delete {}
+    sub generator { }
+    sub add       { }
+    sub get       { }
+    sub delete    { }
 
-    package T::Bag; #mock array based bag
+    package T::Bag;    #mock array based bag
     use Moo;
     use Clone;
     with $pkg;
 
-    has bag => (is => 'ro', default => sub { [] });
+    has bag => (is => 'ro', default => sub {[]});
 
     sub generator {
         my $bag = $_[0]->bag;
-        my $n = 0;
+        my $n   = 0;
         sub {
             return $bag->[$n++] if $n < @$bag;
             return;
@@ -95,9 +99,12 @@ require_ok $pkg;
     use Moo;
 }
 
-throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutGet', $pkg) } qr/missing get/;
-throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutDelete', $pkg) } qr/missing delete/;
-throws_ok { Role::Tiny->apply_role_to_package('T::BagWithoutDeleteAll', $pkg) } qr/missing delete_all/;
+throws_ok {Role::Tiny->apply_role_to_package('T::BagWithoutGet', $pkg)}
+qr/missing get/;
+throws_ok {Role::Tiny->apply_role_to_package('T::BagWithoutDelete', $pkg)}
+qr/missing delete/;
+throws_ok {Role::Tiny->apply_role_to_package('T::BagWithoutDeleteAll', $pkg)}
+qr/missing delete_all/;
 
 my $b = T::Bag->new;
 ok $b->does('Catmandu::Iterable');
@@ -109,22 +116,22 @@ can_ok $b, 'to_hash';
 
 ok Catmandu::Util::is_value($b->generate_id);
 
-throws_ok { $b->add(T::BagData->new) } qr/should be hash ref/;
-throws_ok { $b->add([]) } qr/should be hash ref/;
-throws_ok { $b->add("") } qr/should be hash ref/;
+throws_ok {$b->add(T::BagData->new)} qr/should be hash ref/;
+throws_ok {$b->add([])} qr/should be hash ref/;
+throws_ok {$b->add("")} qr/should be hash ref/;
 
-throws_ok { $b->add({_id => T::BagData->new}) } qr/should be value/;
-throws_ok { $b->add({_id => *STDOUT}) } qr/should be value/;
+throws_ok {$b->add({_id => T::BagData->new})} qr/should be value/;
+throws_ok {$b->add({_id => *STDOUT})} qr/should be value/;
 
-lives_ok { $b->add({_id => ""})};
-lives_ok { $b->add({_id => "0"})};
-lives_ok { $b->add({_id => 0})};
+lives_ok {$b->add({_id => ""})};
+lives_ok {$b->add({_id => "0"})};
+lives_ok {$b->add({_id => 0})};
 
-$b->add_many([{},{},{}]);
+$b->add_many([{}, {}, {}]);
 $b->delete_all;
 is $b->count, 0;
 
-my $data = {a=>{shrimp=>'shrieks'}};
+my $data = {a => {shrimp => 'shrieks'}};
 
 $b->add($data);
 ok Catmandu::Util::is_value($data->{_id});
@@ -135,8 +142,8 @@ is $b->get($data->{_id}), undef;
 
 $b->add($data);
 
-is_deeply $b->get_or_add($data->{_id}, {a=>{pony=>'wails'}}), $data;
+is_deeply $b->get_or_add($data->{_id}, {a => {pony => 'wails'}}), $data;
 
-is_deeply $b->to_hash, {$data->{_id}=>$data};
+is_deeply $b->to_hash, {$data->{_id} => $data};
 
 done_testing;

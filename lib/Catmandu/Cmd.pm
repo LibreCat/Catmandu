@@ -2,10 +2,11 @@ package Catmandu::Cmd;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(pod_section);
+use Catmandu::Fix;
 use namespace::clean;
 
 # Internal required by App::Cmd
@@ -13,8 +14,7 @@ sub opt_spec {
     my ($class, $cli) = @_;
     (
         ['help|h|?', "print this usage screen"],
-        $cli->global_opt_spec,
-        $class->command_opt_spec($cli),
+        $cli->global_opt_spec, $class->command_opt_spec($cli),
     );
 }
 
@@ -38,12 +38,12 @@ sub execute {
 sub description {
     my $class = ref shift;
 
-    my $s = pod_section($class,"name");
+    my $s = pod_section($class, "name");
     $s =~ s/.*\s+-\s+//;
     $s = ucfirst($s);
-    $s.= "\n";
+    $s .= "\n";
 
-    for (pod_section($class,"examples")) {
+    for (pod_section($class, "examples")) {
         $s .= "Examples:\n\n$_";
     }
 
@@ -51,8 +51,8 @@ sub description {
 }
 
 # These should be implemented by the Catmandu::Cmd's
-sub command_opt_spec {}
-sub command {}
+sub command_opt_spec { }
+sub command          { }
 
 # helpers
 sub _parse_options {
@@ -68,23 +68,42 @@ sub _parse_options {
         if ($arg eq 'to') {
             $a = $into_args;
             $o = $into_opts;
-        } elsif ($arg =~ s/^-+//) {
+        }
+        elsif ($arg =~ s/^-+//) {
             $arg =~ s/-/_/g;
             if (exists $o->{$arg}) {
                 if (is_array_ref($o->{$arg})) {
                     push @{$o->{$arg}}, $args->[++$i];
-                } else {
+                }
+                else {
                     $o->{$arg} = [$o->{$arg}, $args->[++$i]];
                 }
-            } else {
+            }
+            else {
                 $o->{$arg} = $args->[++$i];
             }
-        } else {
+        }
+        else {
             push @$a, $arg;
         }
     }
 
     return $from_args, $from_opts, $into_args, $into_opts;
+}
+
+sub _build_fixer {
+    my ($self, $opts) = @_;
+    if ($opts->var) {
+        return Catmandu::Fix->new(
+            preprocess => 1,
+            fixes      => $opts->fix,
+            variables  => $opts->var,
+        );
+    }
+    Catmandu::Fix->new(
+        preprocess => $opts->preprocess ? 1 : 0,
+        fixes => $opts->fix,
+    );
 }
 
 1;

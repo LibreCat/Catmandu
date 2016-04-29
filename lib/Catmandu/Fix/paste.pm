@@ -2,7 +2,7 @@ package Catmandu::Fix::paste;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -10,12 +10,12 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
-has path      => (fix_arg => 1);
-has values    => (fix_arg => 'collect');
+has path   => (fix_arg => 1);
+has values => (fix_arg => 'collect');
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $values   = $self->values;
+    my $values = $self->values;
 
     my @parsed_values = ();
     my $join_char     = ' ';
@@ -27,14 +27,14 @@ sub emit {
             last;
         }
         else {
-            push @parsed_values , $val;
+            push @parsed_values, $val;
         }
     }
 
-    $join_char   = $fixer->emit_string($join_char);
-      
+    $join_char = $fixer->emit_string($join_char);
+
     my $vals_var = $fixer->generate_var;
-    my $perl     = $fixer->emit_declare_vars($vals_var, '[]');
+    my $perl = $fixer->emit_declare_vars($vals_var, '[]');
 
     for my $val (@parsed_values) {
         my $vals_path = $fixer->split_path($val);
@@ -45,22 +45,34 @@ sub emit {
             $perl .= "push(\@{${vals_var}}, ${tmp});";
         }
         else {
-            $perl .= $fixer->emit_walk_path($fixer->var, $vals_path, sub {
-                my $var = shift;
-                $fixer->emit_get_key($var, $vals_key, sub {
+            $perl .= $fixer->emit_walk_path(
+                $fixer->var,
+                $vals_path,
+                sub {
                     my $var = shift;
-                    "push(\@{${vals_var}}, ${var}) if is_value(${var});";
-                });
-            });
+                    $fixer->emit_get_key(
+                        $var,
+                        $vals_key,
+                        sub {
+                            my $var = shift;
+                            "push(\@{${vals_var}}, ${var}) if is_value(${var});";
+                        }
+                    );
+                }
+            );
         }
     }
 
     my $path = $fixer->split_path($self->path);
 
-    $perl .= $fixer->emit_create_path($fixer->var, $path, sub {
-        my $var = shift;
-        "${var} = join(${join_char}, \@{${vals_var}});";
-    });
+    $perl .= $fixer->emit_create_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            "${var} = join(${join_char}, \@{${vals_var}});";
+        }
+    );
 
     $perl;
 }

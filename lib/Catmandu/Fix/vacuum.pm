@@ -2,7 +2,7 @@ package Catmandu::Fix::vacuum;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use Catmandu::Expander ();
@@ -11,34 +11,40 @@ use namespace::clean;
 use Catmandu::Fix::Has;
 
 sub fix {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
 
     my $ref = eval {
-      # This can die with 'Unknown reference type' when the data is blessed
-      Catmandu::Expander->collapse_hash($data);
-   };
 
-   # Try to unbless data
-   if ($@) {
-      my $bind = Catmandu::Fix::Bind::visitor->new;
-      my $data = $bind->unit($data);
+        # This can die with 'Unknown reference type' when the data is blessed
+        Catmandu::Expander->collapse_hash($data);
+    };
 
-      $data = $bind->bind($data,sub {
-         my $item = $_[0];
+    # Try to unbless data
+    if ($@) {
+        my $bind = Catmandu::Fix::Bind::visitor->new;
+        my $data = $bind->unit($data);
 
-         $item->{scalar} = sprintf "%s" , $item->{scalar} if (ref $item->{scalar});
+        $data = $bind->bind(
+            $data,
+            sub {
+                my $item = $_[0];
 
-         $item;
-      });
+                $item->{scalar} = sprintf "%s", $item->{scalar}
+                    if (ref $item->{scalar});
 
-      $ref = Catmandu::Expander->collapse_hash($data);
-   }
+                $item;
+            }
+        );
+
+        $ref = Catmandu::Expander->collapse_hash($data);
+    }
 
     for my $key (keys %$ref) {
         my $value = $ref->{$key};
-        delete $ref->{$key} unless defined($value) && length $value && $value =~ /\S/; 
+        delete $ref->{$key}
+            unless defined($value) && length $value && $value =~ /\S/;
     }
-    
+
     Catmandu::Expander->expand_hash($ref);
 }
 

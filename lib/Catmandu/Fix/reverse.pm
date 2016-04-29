@@ -2,7 +2,7 @@ package Catmandu::Fix::reverse;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Moo;
 use namespace::clean;
@@ -16,11 +16,9 @@ sub emit_value {
     my ($self, $var, $fixer) = @_;
 
     "if (is_array_ref(${var})) {"
-        ."${var} = [reverse(\@{${var}})];"
-    ."}"
-    ."elsif (is_string(${var})) {"
-        ."${var} = scalar(reverse(${var}));"
-    ."}";
+        . "${var} = [reverse(\@{${var}})];" . "}"
+        . "elsif (is_string(${var})) {"
+        . "${var} = scalar(reverse(${var}));" . "}";
 }
 
 1;

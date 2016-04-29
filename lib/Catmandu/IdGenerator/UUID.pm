@@ -2,7 +2,7 @@ package Catmandu::IdGenerator::UUID;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Data::UUID;
 use Moo;
@@ -12,7 +12,7 @@ with 'Catmandu::IdGenerator';
 
 has _uuid => (is => 'lazy', builder => '_build_uuid');
 
-sub _build_uuid { Data::UUID->new }
+sub _build_uuid {Data::UUID->new}
 
 sub generate {
     $_[0]->_uuid->create_str;

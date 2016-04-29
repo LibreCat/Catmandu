@@ -2,7 +2,7 @@ package Catmandu::Store::Multi;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_02';
+our $VERSION = '1.0002_03';
 
 use Catmandu::Util qw(:is);
 use Catmandu::Store::Multi::Bag;
@@ -12,17 +12,20 @@ use namespace::clean;
 with 'Catmandu::Store';
 
 has stores => (
-    is => 'ro',
-    default => sub { [] },
-    coerce => sub {
+    is      => 'ro',
+    default => sub {[]},
+    coerce  => sub {
         my $stores = $_[0];
-        return [ map {
-            if (is_string($_)) {
-                Catmandu->store($_);
-            } else {
-                $_;
-            }
-        } @$stores ];
+        return [
+            map {
+                if (is_string($_)) {
+                    Catmandu->store($_);
+                }
+                else {
+                    $_;
+                }
+            } @$stores
+        ];
     },
 );
 
