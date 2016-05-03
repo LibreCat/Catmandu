@@ -38,7 +38,11 @@ require_ok $pkg;
     sub get       { }
     sub delete    { }
 
-    package T::Bag;    #mock array based bag
+    package T::Store;
+    use Moo;
+    with 'Catmandu::Store';
+
+    package T::Bag; #mock array based bag
     use Moo;
     use Clone;
     with $pkg;
@@ -106,7 +110,7 @@ qr/missing delete/;
 throws_ok {Role::Tiny->apply_role_to_package('T::BagWithoutDeleteAll', $pkg)}
 qr/missing delete_all/;
 
-my $b = T::Bag->new;
+my $b = T::Bag->new(store => T::Store->new, name => 'test');
 ok $b->does('Catmandu::Iterable');
 ok $b->does('Catmandu::Addable');
 can_ok $b, 'generate_id';

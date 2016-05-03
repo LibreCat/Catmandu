@@ -17,6 +17,12 @@ has default_bag => (is => 'ro', default => sub {'data'},);
 
 has bags => (is => 'ro', default => sub {+{}},);
 
+has key_prefix => (is => 'lazy', default => sub {'_'},);
+
+sub key_for {
+    $_[0]->key_prefix.$_[1];
+}
+
 {
     Hash::Util::FieldHash::fieldhash my %bag_instances;
 
@@ -110,29 +116,60 @@ databases or search engines. The database as a whole is called a 'store'.
 Databases also have compartments (e.g. tables) called L<Catmandu::Bag>-s.
 Some stores can be searched using L<Catmandu::Searchable> methods.
 
+=head1 CONFIGURATION
+
+=over
+
+=item default_bag
+
+The name of the bag to use if no explicit bag is given. Default is 'data'.
+
+    my $store = Catmandu::Store::MyDB->new(default_bag => 'stuff');
+    # this will return the stuff bag
+    my $bag = $store->bag;
+
+=item bags
+
+Specify configuration for individual bags.
+
+    my $store = Catmandu::Store::Hash->new(
+        bags => {stuff => {plugins => ['Datestamps']}});
+    # this bag will use the L<Catmandu::Plugin::Datestamps> role
+    $store->bag('stuff')
+    # this bag won't
+    $store->bag('otherbag')
+
+=item bag_class
+
+An optional custom class to use for bags. Default is C<Bag> in the store's
+namespace. This class should consume the L<Catmandu::Bag> role.
+
+    # this will use the Catmandu::Store::MyDB::Bag class for bags
+    Catmandu::Store::MyDB->new()
+    # this will use MyBag
+    Catmandu::Store::MyDB->new(bag_class => 'MyBag')
+
+=item key_prefix
+
+Use a custom prefix to mark the reserved or special keys that the store uses.
+By default an underscore gets prependend. The only special key in a normal
+store is '_id'. L<Catmandu::Plugin::Versioning> will also use '_version'. Other
+plugins or stores may add their own special keys.
+
+    # this store will use the my_id key to hold id's
+    Catmandu::Store::MyDB->new(key_prefix => 'my_')
+
+=back
+
 =head1 METHODS
-
-=head2 new(%store_args, bag_class => $class, default_bag => $name, bags => { $bagname => \%bag_args })
-
-Create a new Catmandu::Store. Optionally provide the class name of a sub-class of
-L<Catmandu::Bag>, and the name of the default bag ('data'). Startup parameters can be
-provided for each $bagname using the 'bags' parameter. E.g.
-
- my $store = Catmandu::Store::Hash->new(
-		bags => {myBag => {plugins => ['Datestamps']}});
-
- # $store->bag('myBag') will now contain Datestamps
-
- my $bag_class = "Catmandu::Store::Hash::Bag"
- my $store = Catmandu::Store::Hash->new(
-		bag_class => $bag_class->with_plugins('Datestamps')
-	     );
-
- # All $store->bag(...)'s will now contain Datestamps
 
 =head2 bag($name)
 
-Create or retieve a bag with name $name. Returns a L<Catmandu::Bag>.
+Create or retieve a bag with name C<$name>. Returns a L<Catmandu::Bag>.
+
+=head2 key_for($key)
+
+Helper method that applies C<key_prefix> to the C<$key> given.
 
 =head2 log
 

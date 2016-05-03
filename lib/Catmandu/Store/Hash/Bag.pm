@@ -42,7 +42,7 @@ sub get {
 
 sub add {
     my ($self, $data) = @_;
-    my $id   = $data->{_id};
+    my $id   = $data->{$self->id_key};
     my $node = $self->_hash->{$id};
     if ($node) {
         $node->[1] = clone($data);

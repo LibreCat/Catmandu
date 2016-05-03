@@ -18,8 +18,11 @@ requires 'get';
 requires 'delete';
 requires 'delete_all';
 
-has store => (is => 'ro');
-has name  => (is => 'ro');
+has store => (is => 'ro', required => 1);
+has name  => (is => 'ro', required => 1);
+has id_key => (
+    is => 'lazy',
+);
 has id_generator => (
     is     => 'lazy',
     coerce => sub {
@@ -32,6 +35,10 @@ has id_generator => (
     },
 );
 
+sub _build_id_key {
+    $_[0]->store->key_for('id');
+}
+
 sub _build_id_generator {
     state $uuid = Catmandu::IdGenerator::UUID->new;
 }
@@ -43,7 +50,8 @@ before get => sub {
 before add => sub {
     my ($self, $data) = @_;
     check_hash_ref($data);
-    check_value($data->{_id} //= $self->generate_id($data));
+    check_value($data->{$self->id_key}
+        //= $self->generate_id($data));
 };
 
 before delete => sub {
@@ -65,7 +73,7 @@ sub get_or_add {
     check_value($id);
     check_hash_ref($data);
     $self->get($id) || do {
-        $data->{_id} = $id;
+        $data->{$self->id_key} = $id;
         $self->add($data);
     };
 }
@@ -76,7 +84,7 @@ sub to_hash {
         {},
         sub {
             my ($hash, $data) = @_;
-            $hash->{$data->{_id}} = $data;
+            $hash->{$data->{$self->id_key}} = $data;
             $hash;
         }
     );
@@ -130,25 +138,34 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
 
     $bag->delete_all;
 
-=head1 OPTIONS
+=head1 CONFIGURATION
 
-=head2 fixes
+=over
+
+=item fixes
 
 An array of fixes to apply before importing or exporting data from the bag.
 
-=head2 plugins
+=item plugins
 
 An array of Catmandu::Pluggable to apply to the bag items.
 
-=head2 autocommit
+=item autocommit
 
 When set to a true value an commit automatically gets executed when the bag
 goes out of scope.
 
-=head2 id_generator
+=item id_generator
 
 A L<Catmandu::IdGenerator> or name of an IdGenerator class.
 By default L<Catmandu::IdGenerator::UUID> is used.
+
+=item id_key
+
+Use a custom key to hold id's in this bag. See L<Catmandu::Store> for the
+default or store wide value.
+
+=back
 
 =head1 METHODS
 
