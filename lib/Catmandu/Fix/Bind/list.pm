@@ -50,40 +50,42 @@ sub bind {
 
         my $idx = 0;
 
-        [
-            map {
-                my $scope;
-                my $has_default_context_variable = 0;
+        [ map { 
+            my $scope;
+            my $has_default_context_variable = 0;
 
-                # Switch context to the variable set by the user
+            # Switch context to the variable set by the user
+            if ($self->var) {
+                $scope = $self->_root_;
+                $scope->{$self->var} = $_;
+            }
+            elsif (!ref($_)) {
+                $scope = [$_];
+                $has_default_context_variable = 1;
+            }
+            else {
+                $scope = $_;
+            }
+
+            # Run /all/ the fixes on the scope
+            my $res = $fixer->fix($scope);
+
+            # Check for rejects()
+            if (defined $res) {
                 if ($self->var) {
-                    $scope = $self->_root_;
-                    $scope->{$self->var} = $_;
+                    $mvar->[$idx] = $scope->{$self->var};
                 }
-                elsif (!ref($_)) {
-                    $scope = {'_' => $_};
-                    $has_default_context_variable = 1;
+                elsif ($has_default_context_variable) {
+                    $mvar->[$idx] = $res->[0];
                 }
-                else {
-                    $scope = $_;
-                }
+                $idx++;
+            }
+            else {
+                splice(@$mvar,$idx,1);
+            }
 
-                # Run /all/ the fixes on the scope
-                my $res = $fixer->fix($scope);
-
-                # Check for rejects()
-                if (defined $res) {
-                    $mvar->[$idx] = $res->{'_'}
-                        if $has_default_context_variable;
-                    $idx++;
-                }
-                else {
-                    splice(@$mvar, $idx, 1);
-                }
-
-                delete $res->{$self->var} if $self->var;
-            } @$mvar
-        ];
+            delete $scope->{$self->var} if $self->var; 
+          } @$mvar ];
     }
     else {
         return $self->zero;
@@ -117,11 +119,11 @@ Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a
 
      # Add a foo field to every item in the demo list, by default all 
      # fixes will be in context of the iterated path. If the context
-     # is a list, then '_' will be the name of a temporary context
+     # is a list, then '.' will be the path of the temporary context
      # variable
      do list(path:demo)
-        if all_equal(_,green)
-            upcase(_)
+        if all_equal(.,green)
+            upcase(.)
         end
      end
 
