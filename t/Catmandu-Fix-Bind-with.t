@@ -123,4 +123,17 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 is_deeply $fixer->fix({foo => [{bar => 1}, {bar => 2}]}),
     {foo => [{bar => 1}]}, 'specific testing';
 
-done_testing 12;
+$fixes =<<EOF;
+do with(path => colors)
+  if all_match(.,red)
+    upcase(.)
+  end
+end
+EOF
+
+$fixer = Catmandu::Fix->new(fixes => [$fixes]);
+
+is_deeply $fixer->fix({colors => [qw(yellow red blue)]}),
+    {colors => [qw(yellow RED blue)]}, 'anon item test';
+
+done_testing 13;
