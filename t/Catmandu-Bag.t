@@ -153,11 +153,17 @@ is_deeply $b->get_or_add($data->{_id}, {a => {pony => 'wails'}}), $data;
 
 is_deeply $b->to_hash, {$data->{_id} => $data};
 
-# custom id key
+# store custom key_prefix
 
-$b = T::Bag->new(store => T::Store->new, name => 'test', id_key => 'my_id');
+$b = T::Bag->new(store => T::Store->new(key_prefix => 'my_'), name => 'test');
+is $b->id_key, 'my_id';
+
+# custom id_key
+
+$b = T::Bag->new(store => T::Store->new(key_prefix => '__'), name => 'test', id_key => 'my_id');
 $data = $b->add({});
 is $data->{_id}, undef;
+is $data->{__id}, undef;
 ok exists($data->{my_id});
 isnt $b->get($data->{my_id}), undef;
 $b->delete($data->{my_id});

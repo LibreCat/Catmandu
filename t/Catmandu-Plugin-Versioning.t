@@ -112,4 +112,14 @@ $data->{name} = 'Camel';
 $store->bag->add($data);
 isnt $store->bag->version_bag->get("$data->{my_id}.1"), undef;
 
+$store = Catmandu::Store::Hash->new(
+    key_prefix => 'my_',
+    bags => {
+        data => {
+            plugins => [qw(Versioning)],
+        },
+    },
+);
+is $store->bag->version_key, 'my_version';
+
 done_testing;
