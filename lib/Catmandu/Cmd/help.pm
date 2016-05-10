@@ -2,7 +2,7 @@ package Catmandu::Cmd::help;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_03';
+our $VERSION = '1.01';
 
 use parent 'Catmandu::Cmd';
 use App::Cmd::Command::help;
