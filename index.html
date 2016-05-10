@@ -127,7 +127,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#command-line-client-cheat-sheet"><span class="toc-section-number">6.1</span> Command line client Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Command%20line%20client%20Cheat%20Sheet">✎</a></a><ul>
 <li><a href="#convert-1"><span class="toc-section-number">6.1.1</span> Convert</a></li>
 <li><a href="#importexport"><span class="toc-section-number">6.1.2</span> Import/Export</a></li>
-<li><a href="#configuration-1"><span class="toc-section-number">6.1.3</span> Configuration</a></li>
+<li><a href="#copy"><span class="toc-section-number">6.1.3</span> Copy</a></li>
+<li><a href="#count"><span class="toc-section-number">6.1.4</span> Count</a></li>
+<li><a href="#delete"><span class="toc-section-number">6.1.5</span> Delete</a></li>
+<li><a href="#configuration-1"><span class="toc-section-number">6.1.6</span> Configuration</a></li>
 </ul></li>
 <li><a href="#fixes-cheat-sheet"><span class="toc-section-number">6.2</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet">✎</a></a></li>
 <li><a href="#example-fix-script"><span class="toc-section-number">6.3</span> Example Fix Script <a href="https://github.com/LibreCat/Catmandu/wiki/Example%20Fix%20Script">✎</a></a></li>
@@ -916,12 +919,20 @@ add_field(foo,bar)  #This is a comment at the and of a line, add_field will be e
 $ <span class="kw">catmandu</span> help convert</code></pre>
 <section id="convert-1" class="level3">
 <h3><span class="header-section-number">6.1.1</span> Convert</h3>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Use Catmandu Importers to read data into your environment</span>
-$ <span class="kw">catmandu</span> convert MARC to JSON <span class="kw">&lt;</span> records.mrc
+<p>Convert one data format to another optionally provide a Fix script to transform the data</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert MARC to JSON <span class="kw">&lt;</span> records.mrc
 $ <span class="kw">catmandu</span> convert MARC to YAML <span class="kw">&lt;</span> records.mrc
 $ <span class="kw">catmandu</span> convert MARC to JSON --pretty 1 <span class="kw">&lt;</span> records.mrc
 $ <span class="kw">catmandu</span> convert MARC to JSON --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;);remove_field(&quot;record&quot;)&#39;</span> <span class="kw">&lt;</span> records.mrc
-$ <span class="kw">catmandu</span> convert MARC to CSV --fix <span class="st">&#39;marc_map(&quot;245&quot;,&quot;title&quot;); remove_field(&quot;record&quot;);&#39;</span> <span class="kw">&lt;</span> records.mrc
+$ <span class="kw">catmandu</span> convert MARC to CSV --fix myfixes.fix <span class="kw">&lt;</span> records.mrc
+$ <span class="kw">cat</span> myfixes.fix
+<span class="kw">marc_map</span>(<span class="st">&quot;245&quot;</span>,<span class="st">&quot;title&quot;</span>)
+<span class="kw">remove_field</span>(<span class="st">&quot;record&quot;</span>)
+$ <span class="kw">catmandu</span> convert MARC to CSV --fix myfixes2.fix --var source=<span class="st">&quot;Springer&quot;</span> <span class="kw">&lt;</span> records.mrc
+$ <span class="kw">cat</span> myfixes2.fix
+<span class="kw">add_field</span>(<span class="st">&quot;source&quot;</span>,<span class="st">&quot;{{source}&quot;</span>)
+<span class="kw">marc_map</span>(<span class="st">&quot;245&quot;</span>,<span class="st">&quot;title&quot;</span>)
+<span class="kw">remove_field</span>(<span class="st">&quot;record&quot;</span>)
 $ <span class="kw">catmandu</span> convert OAI --url http://biblio.ugent.be/oai --set allFtxt to JSON
 $ <span class="kw">catmandu</span> convert OAI --url http://biblio.ugent.be/oai --set allFtxt to JSON --fix <span class="st">&#39;retain_field(&quot;title&quot;)&#39;</span>
 $ <span class="kw">catmandu</span> convert SRU --base http://www.unicat.be/sru --query dna  
@@ -935,8 +946,8 @@ $ <span class="kw">catmandu</span> convert MARC to Template --template <span cla
 </section>
 <section id="importexport" class="level3">
 <h3><span class="header-section-number">6.1.2</span> Import/Export</h3>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Use Catmandu Store to store/retrieve data from a database</span>
-$ <span class="kw">catmandu</span> import JSON to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.json
+<p>Store data in a (noSQL) database and export it out again</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> import JSON to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.json
 $ <span class="kw">catmandu</span> import MARC to MongoDB --database_name mydb --bag data <span class="kw">&lt;</span> records.mrc
 $ <span class="kw">catmandu</span> import MARC to ElasticSearch --index_name mydb --bag data <span class="kw">&lt;</span> records.mrc
 $ <span class="kw">catmandu</span> import MARC to ElasticSearch --index_name mydb --bag data --fix <span class="st">&#39;marc_map(&quot;245a&quot;,&quot;title&quot;)&#39;</span> <span class="kw">&lt;</span> records.mrc
@@ -946,8 +957,30 @@ $ <span class="kw">catmandu</span> export MongoDB --database_name mydb --bag dat
 $ <span class="kw">catmandu</span> export Solr --url http://localhost:8983/solr to JSON
 $ <span class="kw">catmandu</span> export ElasticSearch --index_name mydb to JSON</code></pre>
 </section>
+<section id="copy" class="level3">
+<h3><span class="header-section-number">6.1.3</span> Copy</h3>
+<p>Copy data from one database to another</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> copy MongoDB --database_name items --bag book to ElasticSearch --index_name items --bag book</code></pre>
+</section>
+<section id="count" class="level3">
+<h3><span class="header-section-number">6.1.4</span> Count</h3>
+<p>Count the number of items in a store</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> count ElasticSearch --index-name shop --bag products --query <span class="st">&#39;brand:Acme&#39;</span></code></pre>
+</section>
+<section id="delete" class="level3">
+<h3><span class="header-section-number">6.1.5</span> Delete</h3>
+<p>Delete data from a store</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># delete items with matching _id</span>
+$ <span class="kw">catmandu</span> delete ElasticSearch --index-name items --bag book --id 1234 --id 2345
+
+<span class="co"># delete items matching the query</span>
+$ <span class="kw">catmandu</span> delete ElasticSearch --index-name items --bag book --query <span class="st">&#39;title:&quot;My Rabbit&quot;&#39;</span>
+
+<span class="co"># delete all items</span>
+$ <span class="kw">catmandu</span> delete ElasticSearch --index-name items --bag book</code></pre>
+</section>
 <section id="configuration-1" class="level3">
-<h3><span class="header-section-number">6.1.3</span> Configuration</h3>
+<h3><span class="header-section-number">6.1.6</span> Configuration</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cat</span> catmandu.yml
 <span class="kw">---</span>
 <span class="kw">store</span>:
@@ -1036,6 +1069,19 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 <span class="co">#    - 03</span>
 <span class="co">#    - 07 </span>
  
+<span class="co"># If you data record is:</span>
+<span class="co">#   a: eeny</span>
+<span class="co">#   b: meeny</span>
+<span class="co">#   c: miny</span>
+<span class="co">#   d: moe</span>
+<span class="kw">paste</span>(my.string,a,b,c,d)                 <span class="co"># my.string: eeny meeny miny moe</span>
+ 
+<span class="co"># Use a join character</span>
+<span class="kw">paste</span>(my.string,a,b,c,d,join_char:<span class="st">&quot;, &quot;</span>)  <span class="co"># my.string: eeny, meeny, miny, moe</span>
+ 
+<span class="co"># Paste literal strings with a tilde sign</span>
+<span class="kw">paste</span>(my.string,~Hi,a,~how are you?)     <span class="co"># my.string: Hi eeny how are you?</span>
+
 <span class="co"># date: &quot;2015-03-07&quot;</span>
 <span class="kw">parse_text</span>(date, <span class="st">&#39;(?&lt;year&gt;\d\d\d\d)-(?&lt;month&gt;\d\d)-(?&lt;day&gt;\d\d)&#39;</span>)
 <span class="co"># date:</span>
@@ -1220,6 +1266,31 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 <span class="co"># only execute fixes if all path values are the boolean true, 0 or &quot;false&quot;</span>
 <span class="kw">if</span> <span class="kw">is_false</span>(data.*.has_error)
   <span class="kw">add_field</span>(error,no)
+<span class="kw">end</span>
+
+<span class="co"># only execute the fixes if the path contains an array</span>
+<span class="kw">if</span> <span class="kw">is_array</span>(data)
+  <span class="kw">upcase</span>(data.0)
+<span class="kw">end</span>
+
+<span class="co"># only execute the fixes if the path contains an object (an hash, nested field)</span>
+<span class="kw">if</span> <span class="kw">is_object</span>(data)
+  <span class="kw">add_field</span>(data.ok,yes)
+<span class="kw">end</span>
+
+<span class="co"># only execute the fixes if the path contains a number</span>
+<span class="kw">if</span> <span class="kw">is_number</span>(data)
+  <span class="kw">append</span>(data,<span class="st">&quot; : is a number&quot;</span>)
+<span class="kw">end</span>
+
+<span class="co"># only execute the fixes if the path contains a string</span>
+<span class="kw">if</span> <span class="kw">is_string</span>(data)
+  <span class="kw">append</span>(data,<span class="st">&quot; : is a string&quot;</span>)
+<span class="kw">end</span>
+
+<span class="co"># only execute the fixes if the path contains &#39;null&#39; values</span>
+<span class="kw">if</span> <span class="kw">is_null</span>(data)
+  <span class="kw">set_field</span>(data,<span class="st">&quot;I&#39;m empty!&quot;</span>)
 <span class="kw">end</span>
 
 <span class="co"># Evaludates true when a marc (sub)field matches a regular expression</span>
