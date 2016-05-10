@@ -123,7 +123,7 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 is_deeply $fixer->fix({foo => [{bar => 1}, {bar => 2}]}),
     {foo => [{bar => 1}]}, 'specific testing';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do with(path => colors)
   if all_match(.,red)
     upcase(.)

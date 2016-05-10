@@ -60,6 +60,7 @@ isnt $s->bag('bar')->name, 'baz';
 
 is(T::Store->new->key_prefix, '_');
 is(T::Store->new(key_prefix => 'catmandu_')->key_prefix, 'catmandu_');
+
 # there are more key_prefix tests in Catmandu-Bag.t and
 # Catmandu-Plugin-Versioning.t
 

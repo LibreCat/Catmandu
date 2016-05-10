@@ -88,10 +88,8 @@ is_deeply $store->bag->get('2'),
 
 $store = Catmandu::Store::Hash->new(
     bags => {
-        history => {
-            id_key => 'my_history_id',
-        },
-        data => {
+        history => {id_key => 'my_history_id',},
+        data    => {
             plugins     => [qw(Versioning)],
             version_bag => 'my_history',
             version_key => 'my_version',
@@ -104,7 +102,7 @@ is $store->bag->version_bag->name, 'my_history';
 
 my $data = $store->bag->add({name => 'Penguin'});
 
-is $data->{_id}, undef;
+is $data->{_id},      undef;
 is $data->{_version}, undef;
 ok exists($data->{my_id});
 is $data->{my_version}, 1;
@@ -114,11 +112,7 @@ isnt $store->bag->version_bag->get("$data->{my_id}.1"), undef;
 
 $store = Catmandu::Store::Hash->new(
     key_prefix => 'my_',
-    bags => {
-        data => {
-            plugins => [qw(Versioning)],
-        },
-    },
+    bags       => {data => {plugins => [qw(Versioning)],},},
 );
 is $store->bag->version_key, 'my_version';
 

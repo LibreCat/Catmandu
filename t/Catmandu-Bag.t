@@ -42,7 +42,7 @@ require_ok $pkg;
     use Moo;
     with 'Catmandu::Store';
 
-    package T::Bag; #mock array based bag
+    package T::Bag;    #mock array based bag
     use Moo;
     use Clone;
     with $pkg;
@@ -160,9 +160,13 @@ is $b->id_key, 'my_id';
 
 # custom id_key
 
-$b = T::Bag->new(store => T::Store->new(key_prefix => '__'), name => 'test', id_key => 'my_id');
+$b = T::Bag->new(
+    store  => T::Store->new(key_prefix => '__'),
+    name   => 'test',
+    id_key => 'my_id'
+);
 $data = $b->add({});
-is $data->{_id}, undef;
+is $data->{_id},  undef;
 is $data->{__id}, undef;
 ok exists($data->{my_id});
 isnt $b->get($data->{my_id}), undef;
