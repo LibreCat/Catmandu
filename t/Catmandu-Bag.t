@@ -62,8 +62,9 @@ require_ok $pkg;
         my ($self, $data) = @_;
         $data = Clone::clone($data);
         my $bag = $self->bag;
+        my $key = $self->id_key;
         for (my $i = 0; $i < @$bag; $i++) {
-            if ($bag->[$i]->{_id} eq $data->{_id}) {
+            if ($bag->[$i]->{$key} eq $data->{$key}) {
                 $bag->[$i] = $data;
                 return;
             }
@@ -74,8 +75,9 @@ require_ok $pkg;
     sub get {
         my ($self, $id) = @_;
         my $bag = $self->bag;
+        my $key = $self->id_key;
         for (my $i = 0; $i < @$bag; $i++) {
-            if ($bag->[$i]->{_id} eq $id) {
+            if ($bag->[$i]->{$key} eq $id) {
                 return $bag->[$i];
             }
         }
@@ -85,8 +87,9 @@ require_ok $pkg;
     sub delete {
         my ($self, $id) = @_;
         my $bag = $self->bag;
+        my $key = $self->id_key;
         for (my $i = 0; $i < @$bag; $i++) {
-            if ($bag->[$i]->{_id} eq $id) {
+            if ($bag->[$i]->{$key} eq $id) {
                 splice @$bag, $i, 1;
                 return;
             }
@@ -149,5 +152,25 @@ $b->add($data);
 is_deeply $b->get_or_add($data->{_id}, {a => {pony => 'wails'}}), $data;
 
 is_deeply $b->to_hash, {$data->{_id} => $data};
+
+# store custom key_prefix
+
+$b = T::Bag->new(store => T::Store->new(key_prefix => 'my_'), name => 'test');
+is $b->id_key, 'my_id';
+
+# custom id_key
+
+$b = T::Bag->new(
+    store  => T::Store->new(key_prefix => '__'),
+    name   => 'test',
+    id_key => 'my_id'
+);
+$data = $b->add({});
+is $data->{_id},  undef;
+is $data->{__id}, undef;
+ok exists($data->{my_id});
+isnt $b->get($data->{my_id}), undef;
+$b->delete($data->{my_id});
+is $b->get($data->{my_id}), undef;
 
 done_testing;

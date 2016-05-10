@@ -56,5 +56,13 @@ isnt $s->bag('foo')->prop, 'another val';
 is $s->bag('bar')->prop,   'val';
 isnt $s->bag('bar')->name, 'baz';
 
+# custom key_prefix
+
+is(T::Store->new->key_prefix, '_');
+is(T::Store->new(key_prefix => 'catmandu_')->key_prefix, 'catmandu_');
+
+# there are more key_prefix tests in Catmandu-Bag.t and
+# Catmandu-Plugin-Versioning.t
+
 done_testing;
 

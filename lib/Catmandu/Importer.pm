@@ -2,7 +2,7 @@ package Catmandu::Importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002_03';
+our $VERSION = '1.01';
 
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
@@ -89,7 +89,7 @@ sub _build_file {
         }
         $file = $template->process_to_string(%$vars);
     }
-    if (is_string($file) && $file !~ m!^https?://! && ! -r $file) {
+    if (is_string($file) && $file !~ m!^https?://! && !-r $file) {
         Catmandu::BadArg->throw("file '$file' doesn't exist");
     }
     $file;

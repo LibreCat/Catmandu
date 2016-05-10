@@ -7,7 +7,7 @@ on 'test', sub {
   requires 'Log::Log4perl' , 0;
   requires 'Perl::Tidy', 0;
   requires 'Test::Deep', '0.112';
-  requires 'Test::Exception', '0.32';
+  requires 'Test::Exception', '0.43';
   requires 'Test::LWP::UserAgent' , 0;
   requires 'Test::More', '0.99';
   requires 'Test::Pod', 0;

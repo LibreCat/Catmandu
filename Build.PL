@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.0002_03",
+  "dist_version" => "1.01",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -76,7 +76,7 @@ my %module_build_args = (
     "Perl::Tidy" => 0,
     "Test::Code::TidyAll" => "0.20",
     "Test::Deep" => "0.112",
-    "Test::Exception" => "0.32",
+    "Test::Exception" => "0.43",
     "Test::LWP::UserAgent" => 0,
     "Test::More" => "0.99",
     "Test::Pod" => 0,
@@ -94,7 +94,7 @@ my %fallback_build_requires = (
   "Perl::Tidy" => 0,
   "Test::Code::TidyAll" => "0.20",
   "Test::Deep" => "0.112",
-  "Test::Exception" => "0.32",
+  "Test::Exception" => "0.43",
   "Test::LWP::UserAgent" => 0,
   "Test::More" => "0.99",
   "Test::Pod" => 0,
