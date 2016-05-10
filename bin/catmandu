@@ -40,6 +40,30 @@ catmandu - LibreCat command line tools
  catmandu export Solr --url http://localhost:8983/solr to JSON
  catmandu export ElasticSearch --index_name mydb to JSON
 
+ # copy
+ catmandu copy MongoDB --database_name mydb to ElasticSearch --index_name mydb 
+
+ # show the contents of catmandu.yml
+ catmandu config   
+
+ # count items in a store
+ catmandu count test1
+
+ # delete items from store
+ catmandu delete test1 -q 'title:"My Rabbit"'
+
+ # run a fix script
+ $ catmandu run myfixes.fix
+
+ # or, create an executable fix script
+ $ cat myfixes.fix
+ #!/usr/local/bin/catmandu run
+ do importer(OAI,url:"http://biblio.ugent.be/oai")
+    retain(_id)
+ end
+ $ chmod 755 myfixes.fix
+ $ ./myfixes.fix
+ 
  # configuration
  $ cat catmandu.yml
  ---
@@ -48,13 +72,11 @@ catmandu - LibreCat command line tools
    package: MongoDB
    options:
     database_name: mydb
-
  catmandu import JSON to test1 < records.json
 
- catmandu config   # show the contents of catmandu.yml
-
- catmandu count test1
- catmandu delete test1 -q 'title:"My Rabbit"'
+ # show installed commands
+ $ catmandu info
+ $ catmandu info --namespace XML
 
 =head1 COMMANDS
 

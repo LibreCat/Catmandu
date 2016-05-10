@@ -21,7 +21,7 @@ sub _search_up {
         my $path = File::Spec->catdir(File::Spec->rootdir, @dirs);
         opendir my $dh, $path or last;
         return $path
-            if grep {-f File::Spec->catfile($path, $_)}
+            if grep {-r File::Spec->catfile($path, $_)}
             grep /^catmandu.+(?:yaml|yml|json|pl)$/, readdir $dh;
     }
     Catmandu->default_load_path;
