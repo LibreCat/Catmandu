@@ -157,7 +157,9 @@ Catmandu - a data toolkit
 
     # Fix data, add, delete, change fields
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
-    $ catmandu convert JSON --fix al_my_fixes.txt < data.json
+    $ catmandu convert JSON --fix all_my_fixes.txt < data.json
+    # Use a moustache preprocessor on the fix script
+    $ catmandu convert JSON --fix all_my_fixes.txt --var opt1=foo --var opt2=bar < data.json
 
     # Import data into a database
     # Requires: Catmandu::MongoDB and Catmandu::ElasticSearch
@@ -168,6 +170,30 @@ Catmandu - a data toolkit
     # Requires: Catmandu::MongoDB and Catmandu::ElasticSearch
     $ catmandu export MongoDB --database_name bibliography to YAML > data.yml
     $ catmandu export ElasticSearch --index_name mystuff to CSV > data.csv
+
+    # Copy data from one store to another
+    $ catmandu copy MongoDB --database_name mydb to ElasticSearch --index_name mydb 
+
+    # Show the contents of catmandu.yml
+    $ catmandu config  
+
+    # Count items in a store
+    $ catmandu count test1
+
+    # Delete items from store
+    $ catmandu delete test1 -q 'title:"My Rabbit"'
+
+    # run a fix script
+    $ catmandu run myfixes.fix
+
+    # or, create an executable fix script
+    $ cat myfixes.fix
+    #!/usr/local/bin/catmandu run
+    do importer(OAI,url:"http://biblio.ugent.be/oai")
+        retain(_id)
+    end
+    $ chmod 755 myfixes.fix
+    $ ./myfixes.fix
 
     # From Perl
     use Catmandu;
