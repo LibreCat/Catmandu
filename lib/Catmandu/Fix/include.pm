@@ -30,7 +30,7 @@ has _path => (
         else {
             for my $p (@$load_paths) {
                 my $n = File::Spec->catfile($p, $path);
-                if (-f $n) {
+                if (-r $n) {
                     $real_path = Cwd::realpath($n);
                     last;
                 }
