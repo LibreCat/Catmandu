@@ -42,7 +42,7 @@ require_ok $pkg;
     use Moo;
     with 'Catmandu::Store';
 
-    package T::Bag; #mock array based bag
+    package T::Bag;    #mock array based bag
     use Moo;
     use Clone;
     with $pkg;

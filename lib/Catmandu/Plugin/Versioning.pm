@@ -9,9 +9,9 @@ use Data::Compare;
 use Moo::Role;
 use namespace::clean;
 
-has version_bag_name => (is => 'lazy',init_arg => 'version_bag');
-has version_bag => (is => 'lazy',init_arg => undef);
-has version_key => (is => 'lazy');
+has version_bag_name => (is => 'lazy', init_arg => 'version_bag');
+has version_bag      => (is => 'lazy', init_arg => undef);
+has version_key      => (is => 'lazy');
 
 has version_compare_ignore => (
     is     => 'lazy',
@@ -34,7 +34,7 @@ has version_transfer => (
 );
 
 sub _build_version_bag_name {
-    $_[0]->name.'_version';
+    $_[0]->name . '_version';
 }
 
 sub _build_version_bag {
@@ -66,7 +66,7 @@ sub _version_id {
 
 around add => sub {
     my ($sub, $self, $data) = @_;
-    my $id_key = $self->id_key;
+    my $id_key      = $self->id_key;
     my $version_key = $self->version_key;
     if (defined $data->{$id_key} and my $d = $self->get($data->{$id_key})) {
         $data->{$version_key} = $d->{$version_key} ||= 1;
@@ -77,9 +77,10 @@ around add => sub {
         return $data
             if Compare($data, $d,
             {ignore_hash_keys => $self->version_compare_ignore});
-        my $version_id = $self->_version_id($data->{$id_key}, $data->{$version_key});
-        $self->version_bag->add({$self->version_bag->id_key => $version_id,
-                data => $d});
+        my $version_id
+            = $self->_version_id($data->{$id_key}, $data->{$version_key});
+        $self->version_bag->add(
+            {$self->version_bag->id_key => $version_id, data => $d});
         $data->{$version_key}++;
     }
     else {
@@ -105,7 +106,8 @@ sub get_version {
     my ($self, $id, $version) = @_;
     check_value($id);
     check_positive($version);
-    my $data = $self->version_bag->get($self->_version_id($id, $version)) || return;
+    my $data = $self->version_bag->get($self->_version_id($id, $version))
+        || return;
     $data->{data};
 }
 

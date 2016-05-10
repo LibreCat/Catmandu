@@ -20,9 +20,7 @@ requires 'delete_all';
 
 has store => (is => 'ro', required => 1);
 has name  => (is => 'ro', required => 1);
-has id_key => (
-    is => 'lazy',
-);
+has id_key => (is => 'lazy',);
 has id_generator => (
     is     => 'lazy',
     coerce => sub {
@@ -50,8 +48,7 @@ before get => sub {
 before add => sub {
     my ($self, $data) = @_;
     check_hash_ref($data);
-    check_value($data->{$self->id_key}
-        //= $self->generate_id($data));
+    check_value($data->{$self->id_key} //= $self->generate_id($data));
 };
 
 before delete => sub {

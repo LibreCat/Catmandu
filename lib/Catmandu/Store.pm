@@ -20,7 +20,7 @@ has bags => (is => 'ro', default => sub {+{}},);
 has key_prefix => (is => 'lazy', default => sub {'_'},);
 
 sub key_for {
-    $_[0]->key_prefix.$_[1];
+    $_[0]->key_prefix . $_[1];
 }
 
 {

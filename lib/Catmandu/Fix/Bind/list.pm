@@ -50,42 +50,44 @@ sub bind {
 
         my $idx = 0;
 
-        [ map { 
-            my $scope;
-            my $has_default_context_variable = 0;
+        [
+            map {
+                my $scope;
+                my $has_default_context_variable = 0;
 
-            # Switch context to the variable set by the user
-            if ($self->var) {
-                $scope = $self->_root_;
-                $scope->{$self->var} = $_;
-            }
-            elsif (!ref($_)) {
-                $scope = [$_];
-                $has_default_context_variable = 1;
-            }
-            else {
-                $scope = $_;
-            }
-
-            # Run /all/ the fixes on the scope
-            my $res = $fixer->fix($scope);
-
-            # Check for rejects()
-            if (defined $res) {
+                # Switch context to the variable set by the user
                 if ($self->var) {
-                    $mvar->[$idx] = $scope->{$self->var};
+                    $scope = $self->_root_;
+                    $scope->{$self->var} = $_;
                 }
-                elsif ($has_default_context_variable) {
-                    $mvar->[$idx] = $res->[0];
+                elsif (!ref($_)) {
+                    $scope                        = [$_];
+                    $has_default_context_variable = 1;
                 }
-                $idx++;
-            }
-            else {
-                splice(@$mvar,$idx,1);
-            }
+                else {
+                    $scope = $_;
+                }
 
-            delete $scope->{$self->var} if $self->var; 
-          } @$mvar ];
+                # Run /all/ the fixes on the scope
+                my $res = $fixer->fix($scope);
+
+                # Check for rejects()
+                if (defined $res) {
+                    if ($self->var) {
+                        $mvar->[$idx] = $scope->{$self->var};
+                    }
+                    elsif ($has_default_context_variable) {
+                        $mvar->[$idx] = $res->[0];
+                    }
+                    $idx++;
+                }
+                else {
+                    splice(@$mvar, $idx, 1);
+                }
+
+                delete $scope->{$self->var} if $self->var;
+            } @$mvar
+        ];
     }
     else {
         return $self->zero;
