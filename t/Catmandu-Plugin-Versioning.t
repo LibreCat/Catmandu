@@ -84,4 +84,32 @@ $store->bag->add({_id => '2', name => 'El Penguino'});
 is_deeply $store->bag->get('2'),
     {_id => '2', _version => 2, name => 'El Penguino', stamp => 1};
 
-done_testing 24;
+# custom version bag, custom keys
+
+$store = Catmandu::Store::Hash->new(
+    bags => {
+        history => {
+            id_key => 'my_history_id',
+        },
+        data => {
+            plugins     => [qw(Versioning)],
+            version_bag => 'my_history',
+            version_key => 'my_version',
+            id_key      => 'my_id',
+        },
+    },
+);
+
+is $store->bag->version_bag->name, 'my_history';
+
+my $data = $store->bag->add({name => 'Penguin'});
+
+is $data->{_id}, undef;
+is $data->{_version}, undef;
+ok exists($data->{my_id});
+is $data->{my_version}, 1;
+$data->{name} = 'Camel';
+$store->bag->add($data);
+isnt $store->bag->version_bag->get("$data->{my_id}.1"), undef;
+
+done_testing;
