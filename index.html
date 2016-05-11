@@ -1045,6 +1045,12 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 <span class="kw">prepend</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot;die &quot;</span>)                    <span class="co"># marc -&gt; die marc</span>
 <span class="kw">append</span>(<span class="st">&quot;title&quot;</span>,<span class="st">&quot; must die&quot;</span>)                <span class="co"># marc -&gt; marc must die</span>
 
+<span class="co"># {author =&gt; &quot;tom jones&quot;}  -&gt; {author =&gt; &quot;senoj mot&quot;}</span>
+<span class="kw">reverse</span>(author)
+ 
+<span class="co"># {numbers =&gt; [1,14,2]} -&gt; {numbers =&gt; [2,14,1]}</span>
+<span class="kw">reverse</span>(numbers)
+
 <span class="co"># replace the value with a formatted (sprintf-like) version</span>
 <span class="co"># e.g. numbers: </span>
 <span class="co">#         - 41</span>
@@ -1155,6 +1161,13 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 
 <span class="fu">nothing()</span>                                  <span class="co"># do nothing (used in benchmarking)</span>
 
+<span class="co"># &#39;3%A9&#39; =&gt; &#39;café&#39;</span>
+<span class="kw">uri_decode</span>(place)
+<span class="co"># &#39;café&#39; =&gt; &#39;3%A9&#39;</span>
+<span class="kw">uri_encode</span>(place)
+
+<span class="co"># Add a new field &#39;foo&#39; with a random value between 0 and 9</span>
+<span class="kw">random</span>(foo, 10)
 
 <span class="co"># Delete all the empty fields</span>
 <span class="fu">vacuum()</span>
