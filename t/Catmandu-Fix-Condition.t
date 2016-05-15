@@ -64,4 +64,10 @@ is_deeply $fixer->fix({foo => 'low', oogly => ['doogly']}),
 is_deeply $fixer->fix({foo => 'low'}), {foo => 'low'},
     "if_exists - check no match";
 
-done_testing 15;
+# USE AS INLINE FIX
+use Catmandu::Fix::Condition::exists as => 'has_field';
+my $item = { foo => { bar => 1 } };
+ok has_field($item, 'foo.bar'), 'inline condition - true';
+ok !has_field($item, 'doz'), 'inline condition - false';
+
+done_testing 17;
