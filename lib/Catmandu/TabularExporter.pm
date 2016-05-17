@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.01';
 
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(:is :check);
 use Moo::Role;
 
 sub _coerce_array {
