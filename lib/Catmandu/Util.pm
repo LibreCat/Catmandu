@@ -481,27 +481,17 @@ sub is_invocant {
     }
 }
 
-sub is_scalar_ref {    # TODO no idea why Ref::Util::is_scalarref fails here
-    ref($_[0]) eq 'SCALAR';
-}
+*is_scalar_ref = \&Ref::Util::is_plain_scalarref;
 
-sub is_array_ref {
-    !Scalar::Util::blessed($_[0]) && Ref::Util::is_arrayref($_[0]);
-}
+*is_array_ref = \&Ref::Util::is_plain_arrayref;
 
-sub is_hash_ref {
-    !Scalar::Util::blessed($_[0]) && Ref::Util::is_hashref($_[0]);
-}
+*is_hash_ref = \&Ref::Util::is_plain_hashref;
 
-sub is_code_ref {
-    !Scalar::Util::blessed($_[0]) && Ref::Util::is_coderef($_[0]);
-}
+*is_code_ref = \&Ref::Util::is_plain_coderef;
 
 *is_regex_ref = \&Ref::Util::is_regexpref;
 
-sub is_glob_ref {    # TODO no idea why Ref::Util::is_globref fails here
-    ref($_[0]) eq 'GLOB';
-}
+*is_glob_ref = \&Ref::Util::is_plain_globref;
 
 sub is_value {
     defined($_[0]) && !is_ref($_[0]) && !is_glob_ref(\$_[0]);
@@ -612,13 +602,13 @@ for my $sym (
     push @{$EXPORT_TAGS{is}},    "is_$sym",    "is_maybe_$sym";
     push @{$EXPORT_TAGS{check}}, "check_$sym", "check_maybe_$sym";
     Sub::Quote::quote_sub("${pkg}::is_maybe_$sym",
-        "!defined(\$_[0]) || ${pkg}::is_$sym(\@_)")
+        "!defined(\$_[0]) || ${pkg}::is_$sym(\$_[0])")
         unless _get_code_ref($pkg, "is_maybe_$sym");
     Sub::Quote::quote_sub("${pkg}::check_$sym",
-        "${pkg}::is_$sym(\@_) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]"
+        "${pkg}::is_$sym(\$_[0]) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]"
     ) unless _get_code_ref($pkg, "check_$sym");
     Sub::Quote::quote_sub("${pkg}::check_maybe_$sym",
-        "${pkg}::is_maybe_$sym(\@_) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]"
+        "${pkg}::is_maybe_$sym(\$_[0]) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]"
     ) unless _get_code_ref($pkg, "check_maybe_$sym");
 }
 

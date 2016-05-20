@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - more fast type tests
+  - fix type check bug
 
 1.01  2016-05-10 13:03:58 CEST
   - configurable prefixes for internal store data keys (_id, _version, ...)
