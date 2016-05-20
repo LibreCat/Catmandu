@@ -8,7 +8,6 @@ use Moo;
 use Catmandu::Expander ();
 use Catmandu::Fix::Bind::visitor;
 use namespace::clean;
-use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Inlineable';
 
