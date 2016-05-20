@@ -21,7 +21,7 @@ require_ok $pkg;
     with $pkg;
 
     sub fix {
-        my ($self,$data) = @_;
+        my ($self, $data) = @_;
 
         $data->{foo} = 'bar';
 
@@ -37,6 +37,6 @@ my $fb = T::FixBase->new;
 can_ok $fb, 'fix';
 can_ok $fb, 'import';
 
-is_deeply {foo => 'bar'}, T::UseFixBase::do_fix_base({}) , 'can inline';
+is_deeply {foo => 'bar'}, T::UseFixBase::do_fix_base({}), 'can inline';
 
 done_testing 5;
