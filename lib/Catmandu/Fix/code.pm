@@ -7,6 +7,8 @@ our $VERSION = '1.01';
 use Catmandu::Util qw(is_code_ref);
 use Moo;
 
+with 'Catmandu::Fix::Inlineable';
+
 has code => (
     is      => 'ro',
     default => sub {

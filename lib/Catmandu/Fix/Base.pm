@@ -5,11 +5,10 @@ use Catmandu::Sane;
 our $VERSION = '1.01';
 
 use Catmandu::Fix;
-use Clone ();
 use Moo::Role;
 use namespace::clean;
 
-with 'Catmandu::Logger';
+with 'Catmandu::Fix::Inlineable', 'Catmandu::Logger';
 
 requires 'emit';
 
@@ -23,23 +22,6 @@ sub _build_fixer {
 sub fix {
     my ($self, $data) = @_;
     $self->fixer->fix($data);
-}
-
-sub import {
-    my $target = caller;
-    my ($fix, %opts) = @_;
-
-    if (my $sym = $opts{as}) {
-        my $sub = sub {
-            my $data = shift;
-            if ($opts{clone}) {
-                $data = Clone::clone($data);
-            }
-            $fix->new(@_)->fix($data);
-        };
-        no strict 'refs';
-        *{"${target}::$sym"} = $sub;
-    }
 }
 
 1;

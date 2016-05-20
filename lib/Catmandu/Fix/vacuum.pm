@@ -10,6 +10,8 @@ use Catmandu::Fix::Bind::visitor;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Inlineable';
+
 sub fix {
     my ($self, $data) = @_;
 

@@ -15,6 +15,8 @@ my $DATE_REGEX = qr{
         )?
 }x;
 
+with 'Catmandu::Fix::Inlineable';
+
 has date_field => (fix_arg => 1, default => sub {'date'});
 
 sub fix {

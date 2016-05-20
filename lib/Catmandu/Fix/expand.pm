@@ -9,6 +9,8 @@ use namespace::clean;
 use Catmandu::Expander ();
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Inlineable';
+
 has sep => (fix_opt => 1, default => sub {undef});
 
 sub fix {

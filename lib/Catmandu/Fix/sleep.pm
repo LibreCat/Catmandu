@@ -9,6 +9,8 @@ use Time::HiRes;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Inlineable';
+
 has seconds => (fix_arg => 1);
 has units   => (fix_arg => 1);
 
