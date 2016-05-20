@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.02  2016-05-20 11:33:38 CEST
   - all fixes and fix conditions can be used inline now
   - more fast type tests
   - fix type check bug

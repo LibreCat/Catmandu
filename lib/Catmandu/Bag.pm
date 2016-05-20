@@ -2,7 +2,7 @@ package Catmandu::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use Catmandu::Util qw(:check is_string require_package);
 use Catmandu::IdGenerator::UUID;

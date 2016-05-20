@@ -2,7 +2,7 @@ package Catmandu::Importer::Modules;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use Module::Info;
 use File::Spec;

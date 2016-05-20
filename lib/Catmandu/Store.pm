@@ -2,7 +2,7 @@ package Catmandu::Store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use Hash::Util::FieldHash ();
 use Sub::Quote qw(quote_sub);

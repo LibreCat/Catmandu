@@ -2,7 +2,7 @@ package Catmandu::Fix::parse_text;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use Moo;
 use namespace::clean;

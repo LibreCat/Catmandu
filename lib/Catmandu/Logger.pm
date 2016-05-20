@@ -2,7 +2,7 @@ package Catmandu::Logger;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use Moo::Role;
 use MooX::Aliases;
