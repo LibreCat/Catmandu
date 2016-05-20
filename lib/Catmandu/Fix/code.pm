@@ -4,17 +4,17 @@ use Catmandu::Sane;
 
 our $VERSION = '1.01';
 
-use Catmandu::Util qw(is_code_ref);
+use Catmandu::Util qw(check_code_ref);
 use Moo;
+
+with 'Catmandu::Fix::Inlineable';
 
 has code => (
     is      => 'ro',
     default => sub {
         return sub { }
     },
-    isa => sub {
-        die "code must be a CODE reference" unless is_code_ref($_[0]);
-    }
+    isa => \&check_code_ref,
 );
 
 around BUILDARGS => sub {

@@ -9,7 +9,7 @@ use Catmandu;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Logger';
+with 'Catmandu::Fix::Inlineable', 'Catmandu::Logger';
 
 has message => (fix_arg => 1);
 has level   => (fix_opt => 1);

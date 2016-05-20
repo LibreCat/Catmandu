@@ -25,6 +25,7 @@ catmandu - LibreCat command line tools
  catmandu convert YAML < file.yaml # 'to JSON' is implicit
  catmandu convert MARC < records.mrc
  catmandu convert MARC --fix 'marc_map(245,title)' < records.mrc
+ catmandu convert MARC --fix myfixes.txt < records.mrc
  catmandu convert OAI --url https://biblio.ugent.be/oai
  catmandu convert SRU --base http://www.unicat.be/sru --query dna
 
@@ -188,6 +189,21 @@ repeatable.
 
 Search upwards from this path for configuration files and accompanying lib
 directories. This option is repeatable.
+
+=item --var [NAME]=[VALUE]
+
+Catmandu such as convert, import and export accept command line variables
+that can be read by any fix script provided. For instance, if provenance
+information need to be added to the output, then this can be provided
+via the command line:
+
+     $ catmandu convert MARC --fix myfixes.txt --var source=Springer --var date=2016 < data.mrc
+
+with myfixes.txt a file like:
+
+     add_field(source,{{source}})
+     add_field(data,{{date}})
+     ...(other fixes)...
 
 =item --debug [LEVEL]
 

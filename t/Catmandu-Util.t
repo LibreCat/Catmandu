@@ -112,6 +112,13 @@ for my $sym (
     is_deeply $hash_ref, {arr_ref => []}, "no autovivication in $name";
 }
 
+{
+    my $val;
+    lives_ok {Catmandu::Util::check_maybe_regex_ref($val)};
+    $val = qr/re/;
+    lives_ok {Catmandu::Util::check_regex_ref($val)};
+}
+
 for my $sym (qw(require_package use_lib)) {
     can_ok $pkg, $sym;
     ok !T::ImportNothing->can($sym);
@@ -593,4 +600,4 @@ is Catmandu::Util::xml_declaration(),
 
 is Catmandu::Util::xml_escape("<>'&"), '&lt;&gt;&apos;&amp;', 'xml_escape';
 
-done_testing 572;
+done_testing;

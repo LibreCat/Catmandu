@@ -12,6 +12,8 @@ use Cwd qw();
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Inlineable';
+
 has path => (fix_arg => 1);
 has _path => (
     is      => 'ro',
