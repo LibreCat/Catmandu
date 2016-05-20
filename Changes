@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix conditions can also be used inline now
   - more fast type tests
   - fix type check bug
 

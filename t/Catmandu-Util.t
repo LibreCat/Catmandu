@@ -113,10 +113,10 @@ for my $sym (
 }
 
 {
-  my $val;
-  lives_ok { Catmandu::Util::check_maybe_regex_ref($val) };
-  $val = qr/re/;
-  lives_ok { Catmandu::Util::check_regex_ref($val) };
+    my $val;
+    lives_ok {Catmandu::Util::check_maybe_regex_ref($val)};
+    $val = qr/re/;
+    lives_ok {Catmandu::Util::check_regex_ref($val)};
 }
 
 for my $sym (qw(require_package use_lib)) {

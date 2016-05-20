@@ -11,11 +11,11 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-      ["var=s%",        ""],
-      ["fix=s@",        ""],
-      ["preprocess|pp", ""],
-      ["verbose|v", ""], 
-      ["i", "interactive mode"],
+        ["var=s%",        ""],
+        ["fix=s@",        ""],
+        ["preprocess|pp", ""],
+        ["verbose|v",     ""],
+        ["i",             "interactive mode"],
     );
 }
 
@@ -37,11 +37,11 @@ sub command {
         $from = $self->_build_fixer($opts)->fix($from);
 
         if ($opts->verbose) {
-          $from = $from->benchmark;
+            $from = $from->benchmark;
         }
 
         my $into = Catmandu->exporter('Null');
-        my $n = $into->add_many($from);
+        my $n    = $into->add_many($from);
         $into->commit;
 
         if ($opts->verbose) {

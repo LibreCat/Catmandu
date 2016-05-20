@@ -66,7 +66,7 @@ is_deeply $fixer->fix({foo => 'low'}), {foo => 'low'},
 
 # USE AS INLINE FIX
 use Catmandu::Fix::Condition::exists as => 'has_field';
-my $item = { foo => { bar => 1 } };
+my $item = {foo => {bar => 1}};
 ok has_field($item, 'foo.bar'), 'inline condition - true';
 ok !has_field($item, 'doz'), 'inline condition - false';
 
