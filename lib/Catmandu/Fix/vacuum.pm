@@ -9,7 +9,7 @@ use Catmandu::Expander ();
 use Catmandu::Fix::Bind::visitor;
 use namespace::clean;
 
-with 'Catmandu::Fix::Inlineable';
+#with 'Catmandu::Fix::Inlineable';
 
 sub fix {
     my ($self, $data) = @_;
