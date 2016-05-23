@@ -33,7 +33,7 @@ requires 'Log::Any::Adapter', 0;
 requires 'LWP::UserAgent', 0;
 requires 'LWP::UserAgent::Determined', 0;
 requires 'Time::Piece', 0; # undeclared Marpa dependency
-requires 'Marpa::R2', '2.084000';
+requires 'Marpa::R2', '3.000000';
 requires 'Module::Info', 0;
 requires 'Moo', '1.004006';
 requires 'MooX::Aliases', '0.001006';
