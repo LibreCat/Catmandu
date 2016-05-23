@@ -4,49 +4,77 @@ use Catmandu::Sane;
 
 our $VERSION = '1.02';
 
+use Catmandu::Util qw(:is);
+use Scalar::Util qw(refaddr);
 use Moo;
-use Catmandu::Expander ();
-use Catmandu::Fix::Bind::visitor;
 use namespace::clean;
 
-#with 'Catmandu::Fix::Inlineable';
+with 'Catmandu::Fix::Inlineable';
+
+sub _visit {
+    my ($self, $v) = @_;
+    (is_hash_ref($v) && %$v) || (is_array_ref($v) && @$v);
+}
+
+sub _empty {
+    my ($self, $v) = @_;
+    !defined($v)
+        || (is_value($v)     && $v !~ /\S/)
+        || (is_hash_ref($v)  && !%$v)
+        || (is_array_ref($v) && !@$v);
+}
 
 sub fix {
     my ($self, $data) = @_;
 
-    my $ref = eval {
+    return $data unless is_hash_ref($data) || is_array_ref($data);
 
-        # This can die with 'Unknown reference type' when the data is blessed
-        Catmandu::Expander->collapse_hash($data);
-    };
+    my @stack = ($data);
+    my %seen;
 
-    # Try to unbless data
-    if ($@) {
-        my $bind = Catmandu::Fix::Bind::visitor->new;
-        my $data = $bind->unit($data);
+    while (@stack) {
+        my $d  = pop @stack;
+        my $id = refaddr($d);
 
-        $data = $bind->bind(
-            $data,
-            sub {
-                my $item = $_[0];
-
-                $item->{scalar} = sprintf "%s", $item->{scalar}
-                    if (ref $item->{scalar});
-
-                $item;
+        if ($seen{$id}) {
+            if (is_hash_ref($d)) {
+                for my $k (keys %$d) {
+                    delete $d->{$k} if $self->_empty($d->{$k});
+                }
             }
-        );
+            elsif (is_array_ref($d)) {
+                my @vals = grep {!$self->_empty($_)} @$d;
+                splice(@$d, 0, @$d, @vals);
+            }
+        }
+        else {
+            $seen{$id} = 1;
+            push @stack, $d;
 
-        $ref = Catmandu::Expander->collapse_hash($data);
+            if (is_hash_ref($d)) {
+                for my $k (keys %$d) {
+                    my $v = $d->{$k};
+                    if ($self->_empty($v)) {
+                        delete $d->{$k};
+                    }
+                    elsif ($self->_visit($v)) {
+                        push @stack, $v;
+                    }
+                }
+            }
+            elsif (is_array_ref($d)) {
+                my @vals;
+                for my $v (@$d) {
+                    next if $self->_empty($v);
+                    push @vals, $v;
+                    push @stack, $v if $self->_visit($v);
+                }
+                splice @$d, 0, @$d, @vals;
+            }
+        }
     }
 
-    for my $key (keys %$ref) {
-        my $value = $ref->{$key};
-        delete $ref->{$key}
-            unless defined($value) && length $value && $value =~ /\S/;
-    }
-
-    Catmandu::Expander->expand_hash($ref);
+    $data;
 }
 
 1;
