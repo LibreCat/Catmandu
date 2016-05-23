@@ -4,12 +4,11 @@ use Catmandu::Sane;
 
 our $VERSION = '1.02';
 
-use Catmandu::Fix;
 use Clone ();
 use Moo::Role;
 use namespace::clean;
 
-with 'Catmandu::Logger';
+requires 'fix';
 
 sub import {
     my $target = caller;
@@ -58,7 +57,7 @@ Catmandu::Fix::Inlineable - Role for all Catmandu fixes that can be inlined
     use Catmandu::Sane;
     use Moo;
 
-    # Catmandu::Fix::Base automatcally is Inlineable
+    # Catmandu::Fix::Base automatically is Inlineable
     with 'Catmandu::Fix::Base';
 
     sub emit {
