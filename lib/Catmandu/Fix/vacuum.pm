@@ -27,7 +27,7 @@ sub _empty {
 sub fix {
     my ($self, $data) = @_;
 
-    return $data unless is_hash_ref($data) || is_array_ref($data);
+    return $data unless $self->_visit($data);
 
     my @stack = ($data);
     my %seen;

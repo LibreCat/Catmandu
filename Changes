@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - faster, simpler vacuum fix
 
 1.02  2016-05-20 11:33:38 CEST
   - all fixes and fix conditions can be used inline now

@@ -21,7 +21,7 @@ BEGIN {
     use_ok $pkg;
 }
 
-my $res = $pkg->new()->fix(
+my $res = $pkg->new->fix(
     {
         arrays         => [],
         hashes         => {},
@@ -34,7 +34,7 @@ my $res = $pkg->new()->fix(
     }
 );
 
-is_deeply $res, {keep_me => {me => 1}, keep_me_2 => [undef, [":-P yuck"]]},
+is_deeply $res, {keep_me => {me => 1}, keep_me_2 => [[":-P yuck"]]},
     "data is vacuumed";
 
-done_testing 2;
+done_testing;
