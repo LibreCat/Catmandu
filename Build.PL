@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.02",
+  "dist_version" => "1.0201",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -43,7 +43,7 @@ my %module_build_args = (
     "LWP::UserAgent::Determined" => 0,
     "List::MoreUtils" => "0.33",
     "Log::Any::Adapter" => 0,
-    "Marpa::R2" => "2.084000",
+    "Marpa::R2" => "3.000000",
     "Module::Info" => 0,
     "Moo" => "1.004006",
     "MooX::Aliases" => "0.001006",
