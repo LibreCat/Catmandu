@@ -41,10 +41,6 @@ sub pattern_ident {
     qr/[a-z][_\da-zA-Z]*/;
 }
 
-sub pattern_int {
-    qr/0|-?[1-9][0-9]*/;
-}
-
 sub pattern_comment {
     qr/#[^\n]*/;
 }
@@ -140,7 +136,6 @@ sub parse_arguments {
 sub parse_value {
    my ($self) = @_;
    $self->any_of(
-       'parse_int',
        'parse_string',
        'parse_bare_string',
    );

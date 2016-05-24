@@ -40,7 +40,7 @@ is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'},
 $fixes = <<EOF;
 do timeout(time => 2 , units => 'seconds')
   unless exists(foo)
-  	add_field(foo,bar)
+    add_field(foo,bar)
   end
 end
 EOF
@@ -52,7 +52,7 @@ is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing unless';
 $fixes = <<EOF;
 do timeout(time => 2 , units => 'seconds')
   if exists(foo)
-  	add_field(foo2,bar)
+    add_field(foo2,bar)
   end
 end
 EOF
@@ -143,4 +143,4 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'specific testing';
 
-done_testing 14;
+done_testing;
