@@ -4,133 +4,165 @@ use Catmandu::Sane;
 
 our $VERSION = '1.02';
 
-use Marpa::R2;
-use Data::Dumper;
-use Catmandu;
 use Catmandu::Util qw(check_value is_instance is_able require_package);
 use Moo;
+use namespace::clean;
 
-with 'Catmandu::Logger';
+extends 'Parser::MGC';
 
-my $GRAMMAR = <<'GRAMMAR';
-:default ::= action => ::array
-:start ::= fixes
-:discard ~ discard
-
-fixes ::= expression*
-
-expression ::= old_if     action => ::first
-             | old_unless action => ::first
-             | if         action => ::first
-             | if_else    action => ::first
-             | unless     action => ::first
-             | select     action => ::first
-             | reject     action => ::first
-             | doset      action => ::first
-             | do         action => ::first
-             | fix        action => ::first
-
-old_if ::= old_if_condition fixes ('end()') bless => IfElse
-
-old_unless ::= old_unless_condition fixes ('end()') bless => Unless
-
-if ::= ('if') condition fixes ('end') bless => IfElse
-
-if_else ::= ('if') condition fixes ('else') fixes ('end') bless => IfElse
-
-unless ::= ('unless') condition fixes ('end') bless => Unless
-
-select ::= ('select') condition bless => Select
-
-reject ::= ('reject') condition bless => Reject
-
-old_if_condition ::= old_if_name ('(') args (')') bless => OldCondition
-
-old_unless_condition ::= old_unless_name ('(') args (')') bless => OldCondition
-
-condition ::= name ('(') args (')') bless => Condition
-
-doset ::= ('doset') bind fixes ('end') bless => DoSet
-
-do ::= ('do') bind fixes ('end') bless => Do
-
-bind ::= name ('(') args (')') bless => Bind
-
-fix ::= name ('(') args (')') bless => Fix
-
-args ::= arg* separator => sep
-
-arg ::= int         bless => Int
-      | qq_string   bless => DoubleQuotedString
-      | q_string    bless => SingleQuotedString
-      | bare_string bless => BareString
-
-old_if_name ~ 'if_' [a-z] name_rest
-
-old_unless_name ~ 'unless_' [a-z] name_rest
-
-name      ~ [a-z] name_rest
-name_rest ~ [_\da-zA-Z]*
-
-int ~ digits
-    | '-' digits
-
-digits ~ [\d]+
-
-qq_string ~ '"' qq_chars '"'
-qq_chars  ~ qq_char*
-qq_char   ~ [^"] | '\"'
-
-q_string ~ ['] q_chars [']
-q_chars  ~ q_char*
-q_char   ~ [^'] | '\' [']
-
-bare_string ~ [^\s\\\,;:=>()"']+
-
-discard ~ comment | whitespace | old_terminator
-
-whitespace ~ [\s]+
-
-comment       ~ '#' comment_chars
-comment_chars ~ comment_char*
-comment_char  ~ [^\n]
-
-old_terminator ~ ';'
-
-sep ~ [,:]
-    | '=>'
-GRAMMAR
+sub FOREIGNBUILDARGS {
+    my ($class, $opts) = @_;
+    $opts->{toplevel} = 'parse_statements';
+    %$opts;
+}
 
 sub parse {
-    state $grammar = Marpa::R2::Scanless::G->new(
-        {bless_package => __PACKAGE__, source => \$GRAMMAR,});
-
     my ($self, $source) = @_;
 
     check_value($source);
 
-    my $val;
-
     try {
-        my $recognizer = Marpa::R2::Scanless::R->new({grammar => $grammar});
-        $recognizer->read(\$source);
-        $val = ${$recognizer->value};
-
-        $self->log->debugf(Dumper($val)) if $self->log->is_debug;
-
-        [map {$_->reify} @$val];
+        $self->from_string($source);
     }
     catch {
-        if (is_instance($_, 'Catmandu::Error')) {
-            $_->set_source($source) if is_able($_, 'set_source');
-            $_->throw;
+        my $err = $_;
+        if (is_instance($err, 'Catmandu::Error')) {
+            $err->set_source($source) if is_able($err, 'set_source');
+            $err->throw;
         }
-        Catmandu::FixParseError->throw(message => $_, source => $source);
+        Catmandu::FixParseError->throw(
+            message => $err,
+            source  => $source,
+        );
     };
 }
 
+sub pattern_ident {
+    qr/[a-z][_\da-zA-Z]*/;
+}
+
+sub pattern_int {
+    qr/0|-?[1-9][0-9]*/;
+}
+
+sub pattern_comment {
+    qr/#[^\n]*/;
+}
+
+sub parse_statements {
+    my ($self) = @_;
+    $self->sequence_of('parse_statement');
+}
+
+sub parse_statement {
+   my ($self) = @_;
+   my $statement = $self->any_of(
+       'parse_filter',
+       'parse_condition',
+       'parse_bind',
+       'parse_fix',
+   );
+   # support deprecated separator
+   $self->maybe_expect(';');
+   $statement;
+}
+
+sub parse_condition {
+    my ($self) = @_;
+    my $type = $self->token_kw('if', 'unless');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
+    my $fixes = $self->sequence_of('parse_statement');
+    my $else_fixes = $self->maybe( sub {
+        $self->fail if $type eq 'unless';
+        $self->expect('else');
+        $self->sequence_of('parse_statement');
+    });
+    $self->expect('end');
+    my $cond = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
+    if ($type eq 'if') {
+        $cond->pass_fixes($fixes);
+        $cond->fail_fixes($else_fixes) if $else_fixes;
+    } else {
+        $cond->fail_fixes($fixes);
+    }
+    $cond;
+}
+
+sub parse_filter {
+    my ($self) = @_;
+    my $type = $self->token_kw('select', 'reject');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
+    my $cond = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
+    my $fixes = [require_package('Catmandu::Fix::reject')->new];
+    if ($type eq 'select') {
+        $cond->fail_fixes($fixes);
+    } else {
+        $cond->pass_fixes($fixes);
+    }
+    $cond;
+}
+
+sub parse_bind {
+    my ($self) = @_;
+    my $type = $self->token_kw('do', 'doset');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
+    my $fixes = $self->sequence_of('parse_statement');
+    $self->expect('end');
+    my $bind = $self->_build_fix($name, 'Catmandu::Fix::Bind', $args);
+    $bind->return($type eq 'doset');
+    $bind->fixes($fixes);
+    $bind;
+}
+
+sub parse_fix {
+    my ($self) = @_;
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
+    $self->_build_fix($name, 'Catmandu::Fix', $args);
+}
+
+sub parse_name {
+    my ($self) = @_;
+    $self->token_ident;
+}
+
+sub parse_arguments {
+    my ($self) = @_;
+    $self->expect('(');
+    my $args = $self->list_of(qr/[,:]|=>/, 'parse_value');
+    $self->expect(')');
+    $args;
+}
+
+sub parse_value {
+   my ($self) = @_;
+   $self->any_of(
+       'parse_int',
+       'parse_string',
+       'parse_bare_string',
+   );
+}
+
+sub parse_int {
+    my ($self) = @_;
+    $self->token_int;
+}
+
+sub parse_bare_string {
+    my ($self) = @_;
+    $self->generic_token('bare string', qr/[^\s\\,;:=>()"']+/);
+}
+
+sub parse_string {
+    my ($self) = @_;
+    $self->token_string;
+}
+
 sub _build_fix {
-    my ($name, $ns, @args) = @_;
+    my ($self, $name, $ns, $args) = @_;
     my $pkg;
     try {
         $pkg = require_package($name, $ns);
@@ -145,7 +177,7 @@ sub _build_fix {
         },
     ];
     try {
-        $pkg->new(@args);
+        $pkg->new(@$args);
     }
     catch {
         $_->throw if is_instance($_, 'Catmandu::Error');
@@ -155,119 +187,6 @@ sub _build_fix {
             fix_name     => $name,
         );
     };
-}
-
-sub Catmandu::Fix::Parser::IfElse::reify {
-    my $cond       = $_[0]->[0]->reify;
-    my $pass_fixes = $_[0]->[1];
-    my $fail_fixes = $_[0]->[2];
-    $cond->pass_fixes([map {$_->reify} @$pass_fixes]);
-    $cond->fail_fixes([map {$_->reify} @$fail_fixes]) if $fail_fixes;
-    $cond;
-}
-
-sub Catmandu::Fix::Parser::Unless::reify {
-    my $cond       = $_[0]->[0]->reify;
-    my $fail_fixes = $_[0]->[1];
-    $cond->fail_fixes([map {$_->reify} @$fail_fixes]);
-    $cond;
-}
-
-sub Catmandu::Fix::Parser::Select::reify {
-    my $cond = $_[0]->[0]->reify;
-    $cond->fail_fixes(
-        [Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
-    $cond;
-}
-
-sub Catmandu::Fix::Parser::Reject::reify {
-    my $cond = $_[0]->[0]->reify;
-    $cond->pass_fixes(
-        [Catmandu::Util::require_package('Catmandu::Fix::reject')->new]);
-    $cond;
-}
-
-sub Catmandu::Fix::Parser::Fix::reify {
-    my $name = $_[0]->[0];
-    my $args = $_[0]->[1];
-    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix',
-        map {$_->reify} @$args);
-}
-
-sub Catmandu::Fix::Parser::Condition::reify {
-    my $name = $_[0]->[0];
-    my $args = $_[0]->[1];
-    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Condition',
-        map {$_->reify} @$args);
-}
-
-sub Catmandu::Fix::Parser::OldCondition::reify {
-    my $name = $_[0]->[0];
-    my $args = $_[0]->[1];
-    $name =~ s/^(?:if|unless)_//;
-    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Condition',
-        map {$_->reify} @$args);
-}
-
-sub Catmandu::Fix::Parser::DoSet::reify {
-    my $bind     = $_[0]->[0]->reify;
-    my $do_fixes = $_[0]->[1];
-    $bind->return(1);
-    $bind->fixes([map {$_->reify} @$do_fixes]);
-    $bind;
-}
-
-sub Catmandu::Fix::Parser::Do::reify {
-    my $bind     = $_[0]->[0]->reify;
-    my $do_fixes = $_[0]->[1];
-    $bind->return(0);
-    $bind->fixes([map {$_->reify} @$do_fixes]);
-    $bind;
-}
-
-sub Catmandu::Fix::Parser::Bind::reify {
-    my $name = $_[0]->[0];
-    my $args = $_[0]->[1];
-    Catmandu::Fix::Parser::_build_fix($name, 'Catmandu::Fix::Bind',
-        map {$_->reify} @$args);
-}
-
-sub Catmandu::Fix::Parser::DoubleQuotedString::reify {
-    my $str = $_[0]->[0];
-
-    $str = substr($str, 1, length($str) - 2);
-
-    if (index($str, '\\') != -1) {
-        $str =~ s/\\u([0-9A-Fa-f]{4})/chr(hex($1))/egxms;
-        $str =~ s/\\n/\n/gxms;
-        $str =~ s/\\r/\r/gxms;
-        $str =~ s/\\b/\b/gxms;
-        $str =~ s/\\f/\f/gxms;
-        $str =~ s/\\t/\t/gxms;
-        $str =~ s/\\\\/\\/gxms;
-        $str =~ s{\\/}{/}gxms;
-        $str =~ s{\\"}{"}gxms;
-    }
-
-    $str;
-}
-
-sub Catmandu::Fix::Parser::SingleQuotedString::reify {
-    my $str = $_[0]->[0];
-
-    $str = substr($str, 1, length($str) - 2);
-
-    $str =~ s{\\'}{'}gxms;
-
-    $str;
-}
-
-sub Catmandu::Fix::Parser::BareString::reify {
-    $_[0]->[0];
-}
-
-sub Catmandu::Fix::Parser::Int::reify {
-    int($_[0]->[0]);
 }
 
 1;
@@ -329,9 +248,7 @@ Create a new Catmandu::Fix parser
 
 =head2 parse($string)
 
-=head2 parse($file)
-
-Reads a string or a file and returns a blessed object with parsed
+Reads a string and returns a blessed object with parsed
 Catmandu::Fixes. Throws an Catmandu::ParseError on failure.
 
 =head1 SEE ALSO
