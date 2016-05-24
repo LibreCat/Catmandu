@@ -141,11 +141,6 @@ sub parse_value {
    );
 }
 
-sub parse_int {
-    my ($self) = @_;
-    $self->token_int;
-}
-
 sub parse_bare_string {
     my ($self) = @_;
     $self->generic_token('bare string', qr/[^\s\\,;:=>()"']+/);
