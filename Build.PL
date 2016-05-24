@@ -55,7 +55,6 @@ my %module_build_args = (
     "Text::Hogan::Compiler" => "1.02",
     "Throwable" => "0.200004",
     "Time::HiRes" => 0,
-    "Time::Piece" => 0,
     "Try::Tiny::ByClass" => "0.01",
     "URI" => 0,
     "URI::Template" => "0.22",
