@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - rewrite of the fix parser using Parser::MGC
 
 1.0201  2016-05-23 14:25:25 CEST
   - faster, simpler vacuum fix
