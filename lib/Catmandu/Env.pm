@@ -173,7 +173,7 @@ sub fixer {
             return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
         }
         return Catmandu::Fix->new(fixes => [@_]);
-    }
+        }
 }
 
 sub importer {

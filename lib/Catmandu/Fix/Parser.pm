@@ -30,10 +30,7 @@ sub parse {
             $err->set_source($source) if is_able($err, 'set_source');
             $err->throw;
         }
-        Catmandu::FixParseError->throw(
-            message => $err,
-            source  => $source,
-        );
+        Catmandu::FixParseError->throw(message => $err, source => $source,);
     };
 }
 
@@ -51,35 +48,36 @@ sub parse_statements {
 }
 
 sub parse_statement {
-   my ($self) = @_;
-   my $statement = $self->any_of(
-       'parse_filter',
-       'parse_condition',
-       'parse_bind',
-       'parse_fix',
-   );
-   # support deprecated separator
-   $self->maybe_expect(';');
-   $statement;
+    my ($self) = @_;
+    my $statement
+        = $self->any_of('parse_filter', 'parse_condition', 'parse_bind',
+        'parse_fix',);
+
+    # support deprecated separator
+    $self->maybe_expect(';');
+    $statement;
 }
 
 sub parse_condition {
     my ($self) = @_;
-    my $type = $self->token_kw('if', 'unless');
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
-    my $fixes = $self->sequence_of('parse_statement');
-    my $else_fixes = $self->maybe( sub {
-        $self->fail if $type eq 'unless';
-        $self->expect('else');
-        $self->sequence_of('parse_statement');
-    });
+    my $type       = $self->token_kw('if', 'unless');
+    my $name       = $self->parse_name;
+    my $args       = $self->parse_arguments;
+    my $fixes      = $self->sequence_of('parse_statement');
+    my $else_fixes = $self->maybe(
+        sub {
+            $self->fail if $type eq 'unless';
+            $self->expect('else');
+            $self->sequence_of('parse_statement');
+        }
+    );
     $self->expect('end');
     my $cond = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
     if ($type eq 'if') {
         $cond->pass_fixes($fixes);
         $cond->fail_fixes($else_fixes) if $else_fixes;
-    } else {
+    }
+    else {
         $cond->fail_fixes($fixes);
     }
     $cond;
@@ -87,14 +85,15 @@ sub parse_condition {
 
 sub parse_filter {
     my ($self) = @_;
-    my $type = $self->token_kw('select', 'reject');
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
-    my $cond = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
+    my $type  = $self->token_kw('select', 'reject');
+    my $name  = $self->parse_name;
+    my $args  = $self->parse_arguments;
+    my $cond  = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
     my $fixes = [require_package('Catmandu::Fix::reject')->new];
     if ($type eq 'select') {
         $cond->fail_fixes($fixes);
-    } else {
+    }
+    else {
         $cond->pass_fixes($fixes);
     }
     $cond;
@@ -102,9 +101,9 @@ sub parse_filter {
 
 sub parse_bind {
     my ($self) = @_;
-    my $type = $self->token_kw('do', 'doset');
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
+    my $type  = $self->token_kw('do', 'doset');
+    my $name  = $self->parse_name;
+    my $args  = $self->parse_arguments;
     my $fixes = $self->sequence_of('parse_statement');
     $self->expect('end');
     my $bind = $self->_build_fix($name, 'Catmandu::Fix::Bind', $args);
@@ -115,8 +114,8 @@ sub parse_bind {
 
 sub parse_fix {
     my ($self) = @_;
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
+    my $name   = $self->parse_name;
+    my $args   = $self->parse_arguments;
     $self->_build_fix($name, 'Catmandu::Fix', $args);
 }
 
@@ -134,11 +133,8 @@ sub parse_arguments {
 }
 
 sub parse_value {
-   my ($self) = @_;
-   $self->any_of(
-       'parse_string',
-       'parse_bare_string',
-   );
+    my ($self) = @_;
+    $self->any_of('parse_string', 'parse_bare_string',);
 }
 
 sub parse_bare_string {
