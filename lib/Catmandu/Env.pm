@@ -148,14 +148,22 @@ sub store {
 sub fixer {
     my $self = shift;
 
+    # it's already a fixer
+    if (is_instance($_[0], 'Catmandu::Fix')) {
+        return $_[0];
+    }
+
+    # an array ref of fixes
     if (is_array_ref($_[0])) {
         return Catmandu::Fix->new(fixes => $_[0]);
     }
 
-    if (ref($_[0])) {
+    # a single fix instance
+    if (is_able($_[0], 'fix')) {
         return Catmandu::Fix->new(fixes => [$_[0]]);
     }
 
+    # try to laod from config
     my $key = $_[0] || $self->default_fixer;
 
     my $fixers = $self->fixers;
@@ -165,7 +173,7 @@ sub fixer {
             return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
         }
         return Catmandu::Fix->new(fixes => [@_]);
-        }
+    }
 }
 
 sub importer {
