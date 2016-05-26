@@ -2,6 +2,7 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - rewrite of the fix parser using Parser::MGC
+  - Catmandu->fixer($fixer) echoes the $fixer back as expected
 
 1.0201  2016-05-23 14:25:25 CEST
   - faster, simpler vacuum fix
