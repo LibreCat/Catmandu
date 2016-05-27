@@ -2,7 +2,7 @@ package Catmandu::Cmd::drop;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0201_01';
+our $VERSION = '1.0201_02';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
