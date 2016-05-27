@@ -110,4 +110,16 @@ throws_ok {
 }
 'Catmandu::FixParseError', 'syntax errors throw FixParseError';
 
-done_testing 28;
+# string and regex escapes
+{
+    my $fixes;
+    lives_ok {
+        $fixes = $parser->parse(q|replace_all(test, '\+(\d{2}):(\d{2})', '+$1$2')|);
+    };
+    is $fixes->[0]->search, '\+(\d{2}):(\d{2})';
+    $fixes = $parser->parse(q|replace_all(test, "\+(\d{2}):(\d{2})", "+$1$2")|);
+    is $fixes->[0]->search, '\+(\d{2}):(\d{2})';
+    is $fixes->[0]->replace, '+$1$2';
+}
+
+done_testing;

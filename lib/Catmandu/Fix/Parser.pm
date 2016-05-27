@@ -34,10 +34,6 @@ sub parse {
     };
 }
 
-sub pattern_ident {
-    qr/[a-z][_\da-zA-Z]*/;
-}
-
 sub pattern_comment {
     qr/#[^\n]*/;
 }
@@ -121,7 +117,7 @@ sub parse_fix {
 
 sub parse_name {
     my ($self) = @_;
-    $self->token_ident;
+    $self->generic_token(name => qr/[a-z][_\da-zA-Z]*/);
 }
 
 sub parse_arguments {
@@ -134,17 +130,48 @@ sub parse_arguments {
 
 sub parse_value {
     my ($self) = @_;
-    $self->any_of('parse_string', 'parse_bare_string',);
+    $self->any_of(
+        'parse_double_quoted_string',
+        'parse_single_quoted_string',
+        'parse_bare_string',
+    );
 }
 
 sub parse_bare_string {
     my ($self) = @_;
-    $self->generic_token('bare string', qr/[^\s\\,;:=>()"']+/);
+    $self->generic_token(bare_string => qr/[^\s\\,;:=>()"']+/);
 }
 
-sub parse_string {
+sub parse_single_quoted_string {
     my ($self) = @_;
-    $self->token_string;
+
+    my $str = $self->generic_token(string => qr/'(?:[^']|\\')*'/);
+    $str = substr($str, 1, length($str) - 2);
+
+    $str =~ s{\\'}{'}gxms;
+
+    $str;
+}
+
+sub parse_double_quoted_string {
+    my ($self) = @_;
+
+    my $str = $self->generic_token(string => qr/"(?:[^"]|\\")*"/);
+    $str = substr($str, 1, length($str) - 2);
+
+    if (index($str, '\\') != -1) {
+        $str =~ s/\\u([0-9A-Fa-f]{4})/chr(hex($1))/egxms;
+        $str =~ s/\\n/\n/gxms;
+        $str =~ s/\\r/\r/gxms;
+        $str =~ s/\\b/\b/gxms;
+        $str =~ s/\\f/\f/gxms;
+        $str =~ s/\\t/\t/gxms;
+        $str =~ s/\\\\/\\/gxms;
+        $str =~ s{\\/}{/}gxms;
+        $str =~ s{\\"}{"}gxms;
+    }
+
+    $str;
 }
 
 sub _build_fix {
