@@ -130,11 +130,8 @@ sub parse_arguments {
 
 sub parse_value {
     my ($self) = @_;
-    $self->any_of(
-        'parse_double_quoted_string',
-        'parse_single_quoted_string',
-        'parse_bare_string',
-    );
+    $self->any_of('parse_double_quoted_string', 'parse_single_quoted_string',
+        'parse_bare_string',);
 }
 
 sub parse_bare_string {
