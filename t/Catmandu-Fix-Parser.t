@@ -110,6 +110,13 @@ throws_ok {
 }
 'Catmandu::FixParseError', 'syntax errors throw FixParseError';
 
+# bare strings
+
+{
+    my $fixes = $parser->parse(q|add_field(022, 022)|);
+    is $fixes->[0]->path, '022';
+}
+
 # string and regex escapes
 {
     my $fixes;
