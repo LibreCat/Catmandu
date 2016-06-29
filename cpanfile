@@ -25,7 +25,7 @@ requires 'Cpanel::JSON::XS', '3.0213';
 requires 'Data::Compare', '1.22';
 requires 'Data::UUID', '1.217';
 requires 'File::Find::Rule', '0.33';
-requires 'File::Slurp::Tiny', '0.003';
+requires 'Path::Tiny', '0';
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
 requires 'List::MoreUtils', '0.33';
@@ -53,4 +53,3 @@ requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';
-

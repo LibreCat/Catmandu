@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0201_02';
+our $VERSION = '1.0201';
 
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
@@ -15,7 +15,7 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Parser;
-use File::Slurp::Tiny ();
+use Path::Tiny        ();
 use File::Spec        ();
 use File::Temp        ();
 use B                 ();
@@ -88,8 +88,7 @@ sub _build_fixes {
         }
         elsif (is_string($fix)) {
             if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
-                $fix = File::Slurp::Tiny::read_file($fix,
-                    binmode => ':encoding(UTF-8)');
+                $fix = Path::Tiny::path($fix)->slurp_utf8;
             }
             $fix = $self->_preprocess($fix);
             push @$fixes, @{$self->parser->parse($fix)};
@@ -771,7 +770,7 @@ L<Catmandu::Store> then the transformations are executed on every item in the st
 
 =head1 FIX LANGUAGE
 
-A Fix script is a collection of one or more Fix commands. The fixes are executed 
+A Fix script is a collection of one or more Fix commands. The fixes are executed
 on every record in the dataset. If this command is executed on the command line:
 
     $ catmandu convert JSON --fix 'upcase(title); add_field(deep.nested.field,1)' < data.json
@@ -786,7 +785,7 @@ becomes:
     { "title":"FOO" , "deep":{"nested":{"field":1}} }
     { "title":"BAR" , "deep":{"nested":{"field":1}} }
 
-Using the command line, Fix commands need a semicolon (;) as separator. All these commands can 
+Using the command line, Fix commands need a semicolon (;) as separator. All these commands can
 also be written into a Fix script where semicolons are not required:
 
     $ catmandu convert JSON --fix script.fix < data.json
