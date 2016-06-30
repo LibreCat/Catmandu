@@ -150,9 +150,11 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0201_02';
 
-use Catmandu::Util qw(is_string);
 use Moo;
 use namespace::clean;
+
+# avoid circular dependencies
+require Catmandu::Util;
 
 extends 'Catmandu::Error';
 
@@ -171,13 +173,13 @@ sub log_message {
     $msg .= "\nMethod: " . $self->method;
     $msg .= "\nRequest headers: "
         . $self->_headers_to_string($self->request_headers);
-    if (is_string($self->request_body)) {
+    if (Catmandu::Util::is_string($self->request_body)) {
         $msg .= "\nRequest body: \n" . $self->_indent($self->request_body);
     }
     $msg .= "\nResponse code: " . $self->code;
     $msg .= "\nResponse headers: "
         . $self->_headers_to_string($self->response_headers);
-    if (is_string($self->response_body)) {
+    if (Catmandu::Util::is_string($self->response_body)) {
         $msg .= "\nResponse body: \n" . $self->_indent($self->response_body);
     }
     $msg;

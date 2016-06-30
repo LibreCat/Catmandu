@@ -142,7 +142,7 @@ sub io {
     $io;
 }
 
-# Deprecated use tools like Path::Tiny
+# Deprecated use tools like File::Slurp::Tiny
 sub read_file {
     my ($path) = @_;
     local $/;
@@ -164,7 +164,7 @@ sub read_io {
     join "", @lines;
 }
 
-# Deprecated use tools like Path::Tiny
+# Deprecated use tools like File::Slurp::Tiny
 sub write_file {
     my ($path, $str) = @_;
     open my $fh, ">:encoding(UTF-8)", $path
@@ -793,13 +793,13 @@ Alias for C<binmode>.
 
 =item read_file($path);
 
-[deprecated]: use tools like use tools like Path::Tiny instead.
+[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
 
 Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
 
-Throws a Catmandu::Error on failure.
+Throws a Catmandu::Error on failure. 
 
 =item read_io($io)
 
@@ -809,13 +809,13 @@ Reads an IO::Handle into a string.
 
 =item write_file($path, $str);
 
-[deprecated]: use tools like use tools like Path::Tiny instead.
+[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
 
 Writes the string C<$str> to a file at C<$path>.
 
     write_file('/path/to/file.txt', "contents");
 
-Throws a Catmandu::Error on failure.
+Throws a Catmandu::Error on failure. 
 
 =item read_yaml($path);
 
@@ -957,7 +957,7 @@ with C<is_same()>.
 
 =item array_split($array | $string)
 
-Returns C<$array> or a new array by splitting C<$string> at commas.
+Returns C<$array> or a new array by splitting C<$string> at commas. 
 
 =back
 

@@ -10,7 +10,7 @@ use utf8;
 use IO::File   ();
 use IO::Handle ();
 use Try::Tiny::ByClass;
-use Catmandu::Error;
+use Catmandu::Error ();
 
 sub import {
     my $pkg = caller;
