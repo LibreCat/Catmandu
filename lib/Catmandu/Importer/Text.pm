@@ -83,7 +83,7 @@ Catmandu::Importer::Text - Package that imports textual data
 
     use Catmandu::Importer::Text;
 
-    my $importer = Catmandu::Importer::text->new( file => "/foo/bar.txt" );
+    my $importer = Catmandu->importer('Text' , file => "/foo/bar.txt" );
 
     # print all lines with line number
     $importer->each(sub {
