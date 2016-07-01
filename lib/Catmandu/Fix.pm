@@ -228,17 +228,6 @@ sub emit {
         $perl = join '', @captured_vars, $perl;
     }
 
-    if ($self->log->is_debug && $ENV{CATMANDU_PERLTIDY}) {
-        my $fh = File::Temp->new;
-        binmode($fh, ':utf8');
-        $fh->printflush($perl);
-        my $path      = $fh->filename;
-        my $tidy_perl = `perltidy -utf8 -npro -st -se $path`;
-        unless ($?) {
-            $perl = $tidy_perl;
-        }
-    }
-
     $self->log->debug($perl);
 
     $perl;
