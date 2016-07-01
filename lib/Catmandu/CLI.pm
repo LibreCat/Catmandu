@@ -26,10 +26,6 @@ sub deleted_commands {
 
 sub default_command {'commands'}
 
-sub command_groups {
-    [qw(help config convert copy count delete drop export import info run)];
-}
-
 sub plugin_search_path {'Catmandu::Cmd'}
 
 sub global_opt_spec {
