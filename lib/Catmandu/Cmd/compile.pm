@@ -45,7 +45,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::compile - compile a Fix file into Perl
+Catmandu::Cmd::compile - compile a Fix into Perl (for debugging)
 
 =head1 EXAMPLES
 
