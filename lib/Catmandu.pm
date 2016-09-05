@@ -278,13 +278,13 @@ C<use> command, these configuration files will be loaded at the start of your sc
 
 =head2 log
 
-Return the current L<Log::Any::Adapter> logger.
+Return the current L<Log::Any> logger.
 
     use Catmandu;
     use Log::Any::Adapter;
     use Log::Log4perl;
 
-    Log::Any::Adapter->set('Log4perl');
+    Log::Any::Adapter->set('Log4perl'); # requires Log::Any::Adapter::Log4perl
     Log::Log4perl::init('./log4perl.conf');
 
     my $logger = Catmandu->log;
