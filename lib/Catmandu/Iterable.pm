@@ -466,7 +466,7 @@ sub stop_if {
                 my $data = $next->() // return;
                 $sub->($data) && return;
                 $data;
-                }
+            }
         }
     );
 }
