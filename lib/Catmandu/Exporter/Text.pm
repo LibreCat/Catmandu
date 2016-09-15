@@ -50,7 +50,7 @@ sub add {
 sub hash_text {
     my ($self, $text, $hash) = @_;
 
-    for my $k (keys %$hash) {
+    for my $k (sort keys %$hash) {
         next if ($k =~ /^_.*/);
         my $item = $hash->{$k};
 
@@ -105,7 +105,7 @@ Catmandu::Exporter::Text - a Text exporter
 =head1 SYNOPSIS
 
     # From the command line
-    
+
     # Write all field values as a line of Text
     $ catmandu convert JSON to Text --field_sep "," < data.json
 
@@ -131,7 +131,7 @@ Catmandu::Exporter::Text - a Text exporter
 =head1 DESCRIPTION
 
 This C<Catmandu::Exporter> exports items as raw text. All field values found
-in the data will be contactenated using C<field_sep> as delimiter. 
+in the data will be contactenated using C<field_sep> as delimiter.
 
 =head1 CONFIGURATION
 
