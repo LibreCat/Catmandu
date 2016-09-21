@@ -2,7 +2,7 @@ package Catmandu::Fix::Parser;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0201_02';
+our $VERSION = '1.03';
 
 use Catmandu::Util qw(check_value is_instance is_able require_package);
 use Moo;

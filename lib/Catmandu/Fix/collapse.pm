@@ -2,7 +2,7 @@ package Catmandu::Fix::collapse;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0201_02';
+our $VERSION = '1.03';
 
 use Moo;
 use Catmandu::Expander ();
