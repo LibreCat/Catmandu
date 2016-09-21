@@ -1,4 +1,4 @@
-package Catmandu::IdGenerator;
+package Catmandu::Bag::IdGenerator;
 
 use Catmandu::Sane;
 
@@ -7,7 +7,7 @@ our $VERSION = '1.0201_02';
 use Moo::Role;
 use namespace::clean;
 
-requires 'generate';
+with 'Catmandu::IdGenerator';
 
 1;
 
@@ -17,7 +17,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::IdGenerator - A base role for identifier generators
+Catmandu::Bag::IdGenerator - A base role for bag identifier generators
 
 =head1 SYNOPSIS
 
@@ -25,11 +25,11 @@ Catmandu::IdGenerator - A base role for identifier generators
 
     use Moo;
 
-    with 'Catmandu::IdGenerator';
+    with 'Catmandu::Bag::IdGenerator';
 
     sub generate {
-       my ($self) = @_;
-       return int(rand(999999)) . "-" . time;
+       my ($self, $bag) = @_;
+       return $bag->name . "-" . int(ran(999999)) . "-" . time;
     }
 
     package main;
@@ -46,3 +46,4 @@ L<Catmandu::IdGenerator::Mock> ,
 L<Catmandu::IdGenerator::UUID>
 
 =cut
+

@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0201_02';
 
 use Catmandu::Util qw(:check is_string require_package);
-use Catmandu::IdGenerator::UUID;
+use Catmandu::Bag::IdGenerator::UUID;
 use Moo::Role;
 use namespace::clean;
 
@@ -25,7 +25,7 @@ has id_generator => (
     is     => 'lazy',
     coerce => sub {
         if (is_string($_[0])) {
-            require_package($_[0], 'Catmandu::IdGenerator')->new;
+            require_package($_[0], 'Catmandu::Bag::IdGenerator')->new;
         }
         else {
             $_[0];
@@ -38,7 +38,7 @@ sub _build_id_key {
 }
 
 sub _build_id_generator {
-    state $uuid = Catmandu::IdGenerator::UUID->new;
+    state $uuid = Catmandu::Bag::IdGenerator::UUID->new;
 }
 
 before get => sub {
@@ -62,7 +62,8 @@ around delete_all => sub {
 };
 
 sub generate_id {
-    $_[0]->id_generator->generate;
+    my ($self) = @_;
+    $self->id_generator->generate($self);
 }
 
 sub get_or_add {

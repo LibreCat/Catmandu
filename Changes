@@ -1,6 +1,9 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - specialized id generators for bags
+  - rewrite of the fix parser using Parser::MGC
+  - Catmandu->fixer($fixer) echoes the $fixer back as expected
 
 1.0201_02  2016-05-27 09:46:53 CEST
   - rewrite of the fix parser using Parser::MGC
