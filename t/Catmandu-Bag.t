@@ -104,6 +104,17 @@ require_ok $pkg;
 
     package T::BagData;
     use Moo;
+
+    package T::IdGenerator;
+    use Catmandu::Util;
+    use Moo;
+    with 'Catmandu::Bag::IdGenerator';
+
+    sub generate {
+        my ($self, $bag) = @_;
+        die unless Catmandu::Util::is_instance($bag, 'T::Bag');
+        1;
+    }
 }
 
 throws_ok {Role::Tiny->apply_role_to_package('T::BagWithoutGet', $pkg)}
@@ -172,5 +183,15 @@ ok exists($data->{my_id});
 isnt $b->get($data->{my_id}), undef;
 $b->delete($data->{my_id});
 is $b->get($data->{my_id}), undef;
+
+# custom id generator
+
+$b = T::Bag->new(
+    store        => T::Store->new,
+    name         => 'test',
+    id_generator => T::IdGenerator->new,
+);
+
+lives_ok {$b->generate_id};
 
 done_testing;

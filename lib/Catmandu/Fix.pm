@@ -15,10 +15,10 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Parser;
-use Path::Tiny        ();
-use File::Spec        ();
-use File::Temp        ();
-use B                 ();
+use Path::Tiny ();
+use File::Spec ();
+use File::Temp ();
+use B          ();
 use Text::Hogan::Compiler;
 
 with 'Catmandu::Logger';

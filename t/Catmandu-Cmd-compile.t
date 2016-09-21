@@ -17,7 +17,7 @@ require_ok $pkg;
 
 use Catmandu::CLI;
 
-my $result = test_app(qq|Catmandu::CLI| => ['compile','nothing()']);
+my $result = test_app(qq|Catmandu::CLI| => ['compile', 'nothing()']);
 
 ok $result->stdout;
 
