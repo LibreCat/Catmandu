@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 use Catmandu::Fix;
 use Catmandu::Importer::Mock;
+use Cpanel::JSON::XS qw(decode_json);
 use Catmandu::Util qw(:is);
 use Capture::Tiny ':all';
 
@@ -156,7 +157,7 @@ EOF
 
     my $exp = '[{"_id":"0987654321","value":["3"]},{"_id":"1234567890","value":["1","2"]}]';
 
-    is $stdout , $exp, 'grouping isbn uniq';
+    is_deeply decode_json($stdout), decode_json($exp), 'grouping isbn uniq';
 }
 
 {
