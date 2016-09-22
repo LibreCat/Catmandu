@@ -108,4 +108,4 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing nesting';
 
-done_testing 13;
+done_testing;

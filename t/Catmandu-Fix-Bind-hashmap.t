@@ -158,13 +158,13 @@ EOF
 ---
 _id: '0987654321'
 value:
-- '3'
+  - '3'
 ...
 ---
 _id: '1234567890'
 value:
-- '1'
-- '2'
+  - '1'
+  - '2'
 ...
 EOF
 
@@ -201,4 +201,4 @@ EOF
     is $stdout , $exp, 'grouping isbn count';
 }
 
-done_testing 13;
+done_testing;
