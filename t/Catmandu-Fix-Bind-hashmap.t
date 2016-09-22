@@ -155,7 +155,8 @@ EOF
         undef($fixer);
     };
 
-    my $exp = '[{"_id":"0987654321","value":["3"]},{"_id":"1234567890","value":["1","2"]}]';
+    my $exp
+        = '[{"_id":"0987654321","value":["3"]},{"_id":"1234567890","value":["1","2"]}]';
 
     is_deeply decode_json($stdout), decode_json($exp), 'grouping isbn uniq';
 }
