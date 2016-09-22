@@ -136,7 +136,7 @@ EOF
 {
     my ($stdout, $stderr, $exit) = capture {
         $fixes = <<EOF;
-  do hashmap(exporter: YAML, uniq: 1)
+  do hashmap(exporter: JSON, uniq: 1)
    do identity()
     copy_field(isbn,key)
     copy_field(_id,value)
@@ -154,19 +154,7 @@ EOF
         undef($fixer);
     };
 
-    my $exp = <<EOF;
----
-_id: '0987654321'
-value:
-  - '3'
-...
----
-_id: '1234567890'
-value:
-  - '1'
-  - '2'
-...
-EOF
+    my $exp = '[{"_id":"0987654321","value":["3"]},{"_id":"1234567890","value":["1","2"]}';
 
     is $stdout , $exp, 'grouping isbn uniq';
 }
