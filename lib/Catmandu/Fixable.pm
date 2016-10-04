@@ -2,18 +2,15 @@ package Catmandu::Fixable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(is_instance);
 use Catmandu;
 use Moo::Role;
 use namespace::clean;
 
-has _fixer => (
-    is => 'ro',
-    init_arg => 'fix',
-    coerce => sub { Catmandu->fixer($_[0]) },
-);
+has _fixer =>
+    (is => 'ro', init_arg => 'fix', coerce => sub {Catmandu->fixer($_[0])},);
 
 1;
 

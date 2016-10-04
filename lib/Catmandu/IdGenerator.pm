@@ -2,7 +2,7 @@ package Catmandu::IdGenerator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo::Role;
 use namespace::clean;
@@ -17,26 +17,27 @@ __END__
 
 =head1 NAME
 
-Catmandu::IdGenerator - A base class for modules that needs to generate identifiers
+Catmandu::IdGenerator - A base role for identifier generators
 
 =head1 SYNOPSIS
 
-    package MyPackage;
+    package MyGenerator;
 
     use Moo;
 
     with 'Catmandu::IdGenerator';
 
     sub generate {
+       my ($self) = @_;
        return int(rand(999999)) . "-" . time;
     }
 
     package main;
 
-    my $x = MyPackage->new;
+    my $gen = MyGenerator->new;
 
     for (1..100) {
-       printf "id: %s\n" m $x->generate;
+       printf "id: %s\n" m $gen->generate;
     }
 
 =head1 SEE ALSO

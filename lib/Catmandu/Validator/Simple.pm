@@ -2,7 +2,7 @@ package Catmandu::Validator::Simple;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -10,10 +10,10 @@ use namespace::clean;
 with 'Catmandu::Validator';
 
 has handler => (
-    is  => 'rw',
+    is       => 'rw',
     required => 1,
-    isa => sub {
-        Catmandu::BadArg->throw( "handler should be a CODE reference")
+    isa      => sub {
+        Catmandu::BadArg->throw("handler should be a CODE reference")
             unless ref $_[0] eq 'CODE';
     },
 );

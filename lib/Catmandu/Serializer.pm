@@ -2,16 +2,14 @@ package Catmandu::Serializer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(require_package);
 use Moo::Role;
 use namespace::clean;
 
-has serialization_format => (
-    is      => 'ro',
-    builder => 'default_serialization_format',
-);
+has serialization_format =>
+    (is => 'ro', builder => 'default_serialization_format',);
 
 has serializer => (
     is      => 'ro',
@@ -20,11 +18,12 @@ has serializer => (
     handles => [qw(serialize deserialize)]
 );
 
-sub default_serialization_format { 'json' }
+sub default_serialization_format {'json'}
 
 sub _build_serializer {
     my ($self) = @_;
-    my $pkg = require_package($self->serialization_format, 'Catmandu::Serializer');
+    my $pkg = require_package($self->serialization_format,
+        'Catmandu::Serializer');
     $pkg->new;
 }
 

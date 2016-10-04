@@ -2,7 +2,7 @@ package Catmandu::Importer::Text;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -31,25 +31,25 @@ sub generator {
         state $count   = 0;
         state $line;
 
-        while ( defined( $line = $self->fh->getline ) ) {
+        while (defined($line = $self->fh->getline)) {
             chomp $line;
             next if $pattern and $line !~ $pattern;
 
-            my $data = { _id => ++$count };
+            my $data = {_id => ++$count};
 
-            if ( @+ < 2 ) {    # no capturing groups
+            if (@+ < 2) {    # no capturing groups
                 $data->{text} = $line;
             }
-            elsif (%+) {       # named capturing groups
+            elsif (%+) {     # named capturing groups
                 $data->{match} = {%+};
             }
-            else {             # numbered capturing groups
+            else {           # numbered capturing groups
                 no strict 'refs';
-                $data->{match} = [ map { $$_ } 1 .. @+ - 1 ];
+                $data->{match} = [map {$$_} 1 .. @+ - 1];
             }
 
             if ($split) {
-                $data->{text} = [ split $split, $line ];
+                $data->{text} = [split $split, $line];
             }
 
             return $data;
@@ -83,7 +83,7 @@ Catmandu::Importer::Text - Package that imports textual data
 
     use Catmandu::Importer::Text;
 
-    my $importer = Catmandu::Importer::text->new( file => "/foo/bar.txt" );
+    my $importer = Catmandu->importer('Text' , file => "/foo/bar.txt" );
 
     # print all lines with line number
     $importer->each(sub {

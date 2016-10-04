@@ -1,0 +1,18 @@
+-bbt=2   # High block brace tightness
+-bt=2    # High brace tightness
+-ci=4    # Continuation indentation is 4 columns
+-cti=0   # Low closing token indentation 
+-i=4     # Indentation is 4 columns
+-iob     # Ignore old breakpoints
+-isbc    # Don't indent comments without leading space
+-l=78    # 78 characters per line
+-mbl=1   # No more than 1 blank lines
+-nolq    # No outdent long quotes
+-nsfs    # No space for semicolon
+-pt=2    # High parenthesis tightness
+-sbt=2   # High square bracket tightness
+-se      # Errors to standard error output
+# -st    # Standard output; Disabled, see https://github.com/LibreCat/Catmandu/issues/221
+-vt=0    # Less vertical tightness
+-w       # Show all warnings
+-wbb="% + - * / x != == >= <= =~ !~ < > | & = **= += *= &= <<= &&= -= /= |= >>= ||= //= .= %= ^= x=" # Want break before

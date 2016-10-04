@@ -2,18 +2,18 @@ package Catmandu::Exporter::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has _data_ => (is => 'ro', default => sub { [] });
+has _data_ => (is => 'ro', default => sub {[]});
 
 sub add {
     my ($self, $data) = @_;
-    push @{$self->_data_} , $data;
+    push @{$self->_data_}, $data;
     1;
 }
 
@@ -30,7 +30,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Exporter::Mock - a expoter that doesn't export anything
+Catmandu::Exporter::Mock - a exporter that doesn't export anything
 
 =head1 SYNOPSIS
 

@@ -2,7 +2,7 @@ package Catmandu::Addable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(:is :check);
 use Moo::Role;
@@ -12,8 +12,8 @@ with 'Catmandu::Fixable';
 
 requires 'add';
 
-has autocommit => (is => 'ro' , default => sub { 0 });
-has _commit    => (is => 'rw' , default => sub { 0 });
+has autocommit => (is => 'ro', default => sub {0});
+has _commit    => (is => 'rw', default => sub {0});
 
 around add => sub {
     my ($orig, $self, $data) = @_;
@@ -58,7 +58,7 @@ sub add_many {
     $n;
 }
 
-sub commit {}
+sub commit { }
 
 sub DESTROY {
     my ($self) = shift;

@@ -25,6 +25,7 @@ catmandu - LibreCat command line tools
  catmandu convert YAML < file.yaml # 'to JSON' is implicit
  catmandu convert MARC < records.mrc
  catmandu convert MARC --fix 'marc_map(245,title)' < records.mrc
+ catmandu convert MARC --fix myfixes.txt < records.mrc
  catmandu convert OAI --url https://biblio.ugent.be/oai
  catmandu convert SRU --base http://www.unicat.be/sru --query dna
 
@@ -40,6 +41,30 @@ catmandu - LibreCat command line tools
  catmandu export Solr --url http://localhost:8983/solr to JSON
  catmandu export ElasticSearch --index_name mydb to JSON
 
+ # copy
+ catmandu copy MongoDB --database_name mydb to ElasticSearch --index_name mydb 
+
+ # show the contents of catmandu.yml
+ catmandu config   
+
+ # count items in a store
+ catmandu count test1
+
+ # delete items from store
+ catmandu delete test1 -q 'title:"My Rabbit"'
+
+ # run a fix script
+ $ catmandu run myfixes.fix
+
+ # or, create an executable fix script
+ $ cat myfixes.fix
+ #!/usr/local/bin/catmandu run
+ do importer(OAI,url:"http://biblio.ugent.be/oai")
+    retain(_id)
+ end
+ $ chmod 755 myfixes.fix
+ $ ./myfixes.fix
+ 
  # configuration
  $ cat catmandu.yml
  ---
@@ -48,13 +73,11 @@ catmandu - LibreCat command line tools
    package: MongoDB
    options:
     database_name: mydb
-
  catmandu import JSON to test1 < records.json
 
- catmandu config   # show the contents of catmandu.yml
-
- catmandu count test1
- catmandu delete test1 -q 'title:"My Rabbit"'
+ # show installed commands
+ $ catmandu info
+ $ catmandu info --namespace XML
 
 =head1 COMMANDS
 
@@ -166,6 +189,21 @@ repeatable.
 
 Search upwards from this path for configuration files and accompanying lib
 directories. This option is repeatable.
+
+=item --var [NAME]=[VALUE]
+
+Catmandu such as convert, import and export accept command line variables
+that can be read by any fix script provided. For instance, if provenance
+information need to be added to the output, then this can be provided
+via the command line:
+
+     $ catmandu convert MARC --fix myfixes.txt --var source=Springer --var date=2016 < data.mrc
+
+with myfixes.txt a file like:
+
+     add_field(source,{{source}})
+     add_field(data,{{date}})
+     ...(other fixes)...
 
 =item --debug [LEVEL]
 

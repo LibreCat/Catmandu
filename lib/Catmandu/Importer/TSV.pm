@@ -2,7 +2,7 @@ package Catmandu::Importer::TSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Importer::CSV;
 use Moo;
@@ -10,10 +10,10 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has header => (is => 'ro', default => sub { 1 });
+has header => (is => 'ro', default => sub {1});
 has sep_char => (
     is      => 'ro',
-    default => sub { "\t"},
+    default => sub {"\t"},
     coerce  => sub {
         my $sep_char = $_[0];
         $sep_char =~ s/(\\[abefnrt])/"qq{$1}"/gee;
@@ -24,8 +24,8 @@ has fields => (
     is     => 'rwp',
     coerce => sub {
         my $fields = $_[0];
-        if (ref $fields eq 'ARRAY') { return $fields }
-        if (ref $fields eq 'HASH')  { return [sort keys %$fields] }
+        if (ref $fields eq 'ARRAY') {return $fields}
+        if (ref $fields eq 'HASH') {return [sort keys %$fields]}
         return [split ',', $fields];
     },
 );
@@ -33,21 +33,21 @@ has fields => (
 has csv => (is => 'lazy');
 
 sub _build_csv {
-	my ($self) = @_;
-	my $csv = Catmandu::Importer::CSV->new(
-		header => $self->header,
-		sep_char => $self->sep_char, 
-		quote_char => undef, 
-		escape_char => undef,
-		file => $self->file,
-	);
-	$csv->{fields} = $self->fields;
-	$csv;
+    my ($self) = @_;
+    my $csv = Catmandu::Importer::CSV->new(
+        header      => $self->header,
+        sep_char    => $self->sep_char,
+        quote_char  => undef,
+        escape_char => undef,
+        file        => $self->file,
+    );
+    $csv->{fields} = $self->fields;
+    $csv;
 }
 
 sub generator {
-	my ($self) = @_;
-	$self->csv->generator;
+    my ($self) = @_;
+    $self->csv->generator;
 }
 
 1;

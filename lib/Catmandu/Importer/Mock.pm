@@ -2,7 +2,7 @@ package Catmandu::Importer::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -16,7 +16,7 @@ sub generator {
     my $n = 0;
     sub {
         return if defined $self->size && $n == $self->size;
-        return { n => $n++ };
+        return {n => $n++};
     };
 }
 

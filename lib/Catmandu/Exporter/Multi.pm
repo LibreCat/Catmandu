@@ -2,7 +2,7 @@ package Catmandu::Exporter::Multi;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(is_string);
 use Catmandu;
@@ -12,17 +12,20 @@ use namespace::clean;
 with 'Catmandu::Exporter';
 
 has exporters => (
-    is => 'ro',
-    default => sub { [] },
-    coerce => sub {
+    is      => 'ro',
+    default => sub {[]},
+    coerce  => sub {
         my $exporters = $_[0];
-        return [ map {
-            if (is_string($_)) {
-                Catmandu->exporter($_);
-            } else {
-                $_;
-            }
-        } @$exporters ];
+        return [
+            map {
+                if (is_string($_)) {
+                    Catmandu->exporter($_);
+                }
+                else {
+                    $_;
+                }
+            } @$exporters
+        ];
     },
 );
 

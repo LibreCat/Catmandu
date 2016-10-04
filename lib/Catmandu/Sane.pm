@@ -3,14 +3,14 @@ package Catmandu::Sane;
 use strict;
 use warnings;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use feature ();
 use utf8;
-use IO::File ();
+use IO::File   ();
 use IO::Handle ();
 use Try::Tiny::ByClass;
-use Catmandu::Error;
+use Catmandu::Error ();
 
 sub import {
     my $pkg = caller;

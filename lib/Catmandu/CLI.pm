@@ -2,7 +2,7 @@ package Catmandu::CLI;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(is_instance is_able is_string);
 use Catmandu;
@@ -12,37 +12,31 @@ use Data::Dumper;
 use parent qw(App::Cmd);
 
 sub deleted_commands {
-    [qw(
-        Catmandu::Cmd::exporter_info
-        Catmandu::Cmd::fix_info
-        Catmandu::Cmd::importer_info
-        Catmandu::Cmd::module_info
-        Catmandu::Cmd::move
-        Catmandu::Cmd::store_info
-    )];
+    [
+        qw(
+            Catmandu::Cmd::exporter_info
+            Catmandu::Cmd::fix_info
+            Catmandu::Cmd::importer_info
+            Catmandu::Cmd::module_info
+            Catmandu::Cmd::move
+            Catmandu::Cmd::store_info
+            )
+    ];
 }
 
-sub default_command { 'commands' }
+sub default_command {'commands'}
 
-sub command_groups {
-    [qw(help config convert copy count delete drop export import info run)];
-}
-
-sub plugin_search_path { 'Catmandu::Cmd' }
+sub plugin_search_path {'Catmandu::Cmd'}
 
 sub global_opt_spec {
-    (
-        ['debug|D:i',""],
-        ['load_path|L=s@', ""],
-        ['lib_path|I=s@', ""]
-    );
+    (['debug|D:i', ""], ['load_path|L=s@', ""], ['lib_path|I=s@', ""]);
 }
 
 sub default_log4perl_config {
     my $level    = shift // 'DEBUG';
     my $appender = shift // 'STDERR';
 
-    my $config =<<EOF;
+    my $config = <<EOF;
 log4perl.category.Catmandu=$level,$appender
 log4perl.categoty.Catmandu::Fix::log=TRACE,$appender
 
@@ -61,37 +55,39 @@ log4perl.appender.STDERR.layout=PatternLayout
 log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %l : %m%n
 
 EOF
-    \$config
+    \$config;
 }
 
 sub setup_debugging {
-    my %LEVELS = ( 1 => 'WARN' , 2 => 'INFO' , 3 => 'DEBUG');
-    my $debug = shift;
-    my $level = $LEVELS{$debug} // 'WARN';
+    my %LEVELS = (1 => 'WARN', 2 => 'INFO', 3 => 'DEBUG');
+    my $debug  = shift;
+    my $level  = $LEVELS{$debug} // 'WARN';
     my $load_from;
 
     try {
-        my $log4perl_pkg   = Catmandu::Util::require_package('Log::Log4perl');
-        my $logany_adapter = Catmandu::Util::require_package('Log::Any::Adapter::Log4perl');
-        my $config         = Catmandu->config->{log4perl};
+        my $log4perl_pkg = Catmandu::Util::require_package('Log::Log4perl');
+        my $logany_adapter
+            = Catmandu::Util::require_package('Log::Any::Adapter::Log4perl');
+        my $config = Catmandu->config->{log4perl};
 
         if (defined $config) {
             if ($config =~ /^\S+$/) {
-                Log::Log4perl::init( $config ) ;
+                Log::Log4perl::init($config);
                 $load_from = "file: $config";
             }
             else {
-                Log::Log4perl::init( \$config ) ;
+                Log::Log4perl::init(\$config);
                 $load_from = "string: <defined in catmandu.yml>";
             }
         }
         else {
-            Log::Log4perl::init( default_log4perl_config($level, 'STDERR') );
+            Log::Log4perl::init(default_log4perl_config($level, 'STDERR'));
             $load_from = "string: <defined in " . __PACKAGE__ . ">";
         }
 
         Log::Any::Adapter->set('Log4perl');
-    } catch {
+    }
+    catch {
         print STDERR <<EOF;
 
 Oops! Debugging tools not available on this platform
@@ -103,7 +99,8 @@ EOF
         exit(2);
     };
 
-    Catmandu->log->warn("debug activated - level $level - config load from $load_from");
+    Catmandu->log->warn(
+        "debug activated - level $level - config load from $load_from");
 }
 
 # overload run to read the global options before
@@ -111,10 +108,12 @@ EOF
 sub run {
     my ($class) = @_;
 
-    my ($global_opts, $argv) = $class->_process_args([@ARGV], $class->_global_option_processing_params);
+    my ($global_opts, $argv)
+        = $class->_process_args([@ARGV],
+        $class->_global_option_processing_params);
 
     my $load_path = $global_opts->{load_path} || [];
-    my $lib_path  = $global_opts->{lib_path} || [];
+    my $lib_path  = $global_opts->{lib_path}  || [];
 
     if (exists $global_opts->{debug}) {
         setup_debugging($global_opts->{debug} // 1);
@@ -132,21 +131,28 @@ sub run {
 
     try {
         $self->execute_command($cmd, $opts, @args);
-    } catch {
+    }
+    catch {
         if (is_instance $_, 'Catmandu::NoSuchPackage') {
             my $pkg_name = $_->package_name;
 
             if ($pkg_name eq 'Catmandu::Importer::help') {
                 say STDERR "Oops! Did you mean 'catmandu $ARGV[1] $ARGV[0]'?";
             }
-            elsif (my ($type, $name) = $pkg_name =~ /^Catmandu::(Importer|Exporter|Store)::(\S+)/) {
-                say STDERR "Oops! Can't find the ".lc($type)." '$name' in your configuration file or $pkg_name is not installed.";
+            elsif (my ($type, $name)
+                = $pkg_name =~ /^Catmandu::(Importer|Exporter|Store)::(\S+)/)
+            {
+                say STDERR "Oops! Can't find the "
+                    . lc($type)
+                    . " '$name' in your configuration file or $pkg_name is not installed.";
             }
             elsif ($pkg_name =~ /^Catmandu::Fix::\S+/) {
                 my ($fix_name) = $pkg_name =~ /([^:]+)$/;
                 if ($fix_name =~ /^[a-z]/) {
-                    say STDERR "Oops! Tried to execute the fix '$fix_name' but can't find $pkg_name on your system.";
-                } else { # not a fix
+                    say STDERR
+                        "Oops! Tried to execute the fix '$fix_name' but can't find $pkg_name on your system.";
+                }
+                else {    # not a fix
                     say STDERR "Oops! Failed to load $pkg_name";
                 }
             }
@@ -162,8 +168,9 @@ sub run {
         }
         elsif (is_instance $_, 'Catmandu::BadFixArg') {
             my $fix_name = $_->fix_name;
-            my $source = $_->source;
-            say STDERR "Oops! The fix '$fix_name' was called with missing or wrong arguments.";
+            my $source   = $_->source;
+            say STDERR
+                "Oops! The fix '$fix_name' was called with missing or wrong arguments.";
             $self->print_source($_->source);
         }
         elsif (is_instance $_, 'Catmandu::FixParseError') {
@@ -202,9 +209,11 @@ sub run {
             say STDERR "URL: $url";
             say STDERR "Method: $method";
             say STDERR "Request headers:\n" . Dumper($_->request_headers);
-            say STDERR "Request body:\n$request_body" if is_string $request_body;
+            say STDERR "Request body:\n$request_body"
+                if is_string $request_body;
             say STDERR "Response headers:\n" . Dumper($_->response_headers);
-            say STDERR "Response body:\n$response_body" if is_string $response_body;
+            say STDERR "Response body:\n$response_body"
+                if is_string $response_body;
 
             goto ERROR;
         }
@@ -217,15 +226,15 @@ sub run {
 
     return 1;
 
-    ERROR:
-        return undef;
+ERROR:
+    return undef;
 }
 
 sub print_source {
     my ($self, $source) = @_;
     if (is_string $source) {
         say STDERR "Source:\n";
-        for (split(/\n/,$source)) {
+        for (split(/\n/, $source)) {
             print STDERR "\t$_\n";
         }
     }

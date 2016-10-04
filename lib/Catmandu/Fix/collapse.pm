@@ -2,17 +2,19 @@ package Catmandu::Fix::collapse;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use Catmandu::Expander ();
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has sep => (fix_opt => 1, default => sub { undef });
+with 'Catmandu::Fix::Inlineable';
+
+has sep => (fix_opt => 1, default => sub {undef});
 
 sub fix {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     my $ref = Catmandu::Expander->collapse_hash($data);
 
     if (defined(my $char = $self->sep)) {

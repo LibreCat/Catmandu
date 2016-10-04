@@ -13,13 +13,13 @@ sub hello {
     $data;
 }
 
-my $fixer = Catmandu::Fix::code->new( \&hello );
-is_deeply $fixer->fix({}), { hello => 'world' }, 'code fixer';
+my $fixer = Catmandu::Fix::code->new(\&hello);
+is_deeply $fixer->fix({}), {hello => 'world'}, 'code fixer';
 
-my $importer = Catmandu::Importer::Mock->new( size => 1, fix => [$fixer]);
-is_deeply $importer->first, { n => 0, hello => 'world' }, 'fix as instance';
+my $importer = Catmandu::Importer::Mock->new(size => 1, fix => [$fixer]);
+is_deeply $importer->first, {n => 0, hello => 'world'}, 'fix as instance';
 
-$importer = Catmandu::Importer::Mock->new( size => 1, fix => [\&hello]);
-is_deeply $importer->first, { n => 0, hello => 'world' }, 'fix as code';
+$importer = Catmandu::Importer::Mock->new(size => 1, fix => [\&hello]);
+is_deeply $importer->first, {n => 0, hello => 'world'}, 'fix as code';
 
 done_testing;

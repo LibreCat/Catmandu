@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo::Role;
 use namespace::clean;
@@ -12,15 +12,15 @@ with 'Catmandu::Logger';
 requires 'unit';
 requires 'bind';
 
-has return => (is => 'rw', default => sub { [0]});
-has fixes  => (is => 'rw', default => sub { [] });
+has return => (is => 'rw', default => sub {[0]});
+has fixes  => (is => 'rw', default => sub {[]});
 
 around bind => sub {
     my ($orig, $self, $prev, @args) = @_;
-    my $next = $orig->($self,$prev,@args);
+    my $next = $orig->($self, $prev, @args);
 
     if ($self->can('plus')) {
-        return $self->plus($prev,$next);
+        return $self->plus($prev, $next);
     }
     else {
         return $next;
@@ -28,13 +28,13 @@ around bind => sub {
 };
 
 sub unit {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     return $data;
 }
 
 sub bind {
-    my ($self,$data,$code,$name,$fixes) = @_;
-      return $code->($data);
+    my ($self, $data, $code, $name, $fixes) = @_;
+    return $code->($data);
 }
 
 sub emit {
@@ -49,14 +49,16 @@ sub emit {
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-    for my $fix (@{$self->fixes}) { 
-        my $name           = ref($fix);
-        my $original_code  = $fixer->emit_fix($fix);
-        my $generated_code = "sub { my ${var} = shift; $original_code ; ${var} }";
+    for my $fix (@{$self->fixes}) {
+        my $name          = ref($fix);
+        my $original_code = $fixer->emit_fix($fix);
+        my $generated_code
+            = "sub { my ${var} = shift; $original_code ; ${var} }";
 
-        $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name',${sub_fixer_var});"
+        $perl
+            .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name',${sub_fixer_var});";
     }
-    
+
     if ($self->can('result')) {
         $perl .= "${unit} = ${bind_var}->result(${unit});";
     }

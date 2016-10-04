@@ -2,7 +2,7 @@ package Catmandu::Exporter::CSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Text::CSV;
 use Moo;
@@ -11,33 +11,37 @@ use namespace::clean;
 with 'Catmandu::TabularExporter';
 
 has csv          => (is => 'lazy');
-has sep_char     => (is => 'ro', default => sub { ',' });
-has quote_char   => (is => 'ro', default => sub { '"' });
-has escape_char  => (is => 'ro', default => sub { '"' });
+has sep_char     => (is => 'ro', default => sub {','});
+has quote_char   => (is => 'ro', default => sub {'"'});
+has escape_char  => (is => 'ro', default => sub {'"'});
 has always_quote => (is => 'ro');
 
 sub _build_csv {
     my ($self) = @_;
-    Text::CSV->new({
-        binary => 1,
-        eol => "\n",
-        sep_char => $self->sep_char,
-        always_quote => $self->always_quote,
-        quote_char => $self->quote_char ? $self->quote_char : undef,
-        escape_char => $self->escape_char ? $self->escape_char : undef,
-    });
+    Text::CSV->new(
+        {
+            binary       => 1,
+            eol          => "\n",
+            sep_char     => $self->sep_char,
+            always_quote => $self->always_quote,
+            quote_char   => $self->quote_char ? $self->quote_char : undef,
+            escape_char  => $self->escape_char ? $self->escape_char : undef,
+        }
+    );
 }
 
 sub add {
     my ($self, $data) = @_;
     my $fields = $self->fields;
-    my $row = [map {
-        my $val = $data->{$_} // "";
-        $val =~ s/\t/\\t/g;
-        $val =~ s/\n/\\n/g;
-        $val =~ s/\r/\\r/g;
-        $val;
-    } @$fields];
+    my $row    = [
+        map {
+            my $val = $data->{$_} // "";
+            $val =~ s/\t/\\t/g;
+            $val =~ s/\n/\\n/g;
+            $val =~ s/\r/\\r/g;
+            $val;
+        } @$fields
+    ];
     my $fh = $self->fh;
 
     # header

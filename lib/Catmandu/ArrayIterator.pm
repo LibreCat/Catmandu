@@ -2,7 +2,7 @@ package Catmandu::ArrayIterator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(check_array_ref);
 use Role::Tiny::With;
@@ -70,7 +70,6 @@ Catmandu::ArrayIterator - Convert an arrayref to an Iterable object
     # => [2, 3, 4]
     $it->count
     # => 3
-
 
 =head1 METHODS
 

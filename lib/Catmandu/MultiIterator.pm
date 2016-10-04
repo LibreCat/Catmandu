@@ -2,7 +2,7 @@ package Catmandu::MultiIterator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Role::Tiny::With;
 use namespace::clean;
@@ -18,7 +18,7 @@ sub new {
 sub generator {
     my ($self) = @_;
     sub {
-        state $generators = [ map { $_->generator } @$self ];
+        state $generators = [map {$_->generator} @$self];
         while (@$generators) {
             my $data = $generators->[0]->();
             return $data if defined $data;

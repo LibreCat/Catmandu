@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0201';
 
 use Catmandu;
 use Catmandu::Util qw(:is :string :misc);
@@ -15,54 +15,84 @@ sub _eval_emit {
 
 use Moo;
 use Catmandu::Fix::Parser;
-use File::Slurp::Tiny ();
-use B ();
+use Path::Tiny ();
+use File::Spec ();
+use File::Temp ();
+use B          ();
+use Text::Hogan::Compiler;
 
 with 'Catmandu::Logger';
 
-has tidy         => (is => 'ro');
-has parser       => (is => 'lazy');
-has fixer        => (is => 'lazy', init_arg => undef);
-has _num_labels  => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
-has _num_vars    => (is => 'rw', lazy => 1, init_arg => undef, default => sub { 0; });
-has _captures    => (is => 'ro', lazy => 1, init_arg => undef, default => sub { +{}; });
-has var          => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
-has _fixes       => (is => 'ro', init_arg => 'fixes', default => sub { [] });
-has fixes        => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
-has _reject      => (is => 'ro', init_arg => undef, default => sub { +{}; });
-has _reject_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_reject_var');
-has _reject_label => (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
-has _fixes_var   => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
-has _current_fix_var  => (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_current_fix_var');
+has parser => (is => 'lazy');
+has fixer => (is => 'lazy', init_arg => undef);
+has _num_labels =>
+    (is => 'rw', lazy => 1, init_arg => undef, default => sub {0});
+has _num_vars =>
+    (is => 'rw', lazy => 1, init_arg => undef, default => sub {0});
+has _captures =>
+    (is => 'ro', lazy => 1, init_arg => undef, default => sub {+{}});
+has var =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_var');
+has _fixes => (is => 'ro', init_arg => 'fixes', default => sub {[]});
+has fixes =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes');
+has _reject => (is => 'ro', init_arg => undef, default => sub {+{}});
+has _reject_var => (
+    is       => 'ro',
+    lazy     => 1,
+    init_arg => undef,
+    builder  => '_build_reject_var'
+);
+has _reject_label =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => 'generate_label');
+has _fixes_var =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
+has _current_fix_var => (
+    is       => 'ro',
+    lazy     => 1,
+    init_arg => undef,
+    builder  => '_build_current_fix_var'
+);
+has preprocess => (is => 'ro');
+has _hogan =>
+    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
+has _hogan_vars => (is => 'ro', init_arg => 'variables');
 
 sub _build_parser {
     Catmandu::Fix::Parser->new;
 }
 
 sub _build_fixes {
-    my ($self) = @_;
+    my ($self)    = @_;
     my $fixes_arg = $self->_fixes;
-    my $fixes = [];
+    my $fixes     = [];
 
     for my $fix (@$fixes_arg) {
 
         if (is_code_ref($fix)) {
             push @$fixes, require_package('Catmandu::Fix::code')->new($fix);
-        } elsif (ref $fix && ref($fix) =~ /^IO::/) {
+        }
+        elsif (ref $fix && ref($fix) =~ /^IO::/) {
             my $txt = Catmandu::Util::read_io($fix);
+            $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};
-        } elsif (is_glob_ref($fix)) {
+        }
+        elsif (is_glob_ref($fix)) {
             my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
+            $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};
-        } elsif (ref $fix) {
+        }
+        elsif (ref $fix) {
             push @$fixes, $fix;
-        } elsif (is_string($fix)) {
+        }
+        elsif (is_string($fix)) {
             if ($fix =~ /[^\s]/ && $fix !~ /\(/) {
-                $fix = File::Slurp::Tiny::read_file($fix, binmode => ':encoding(UTF-8)');
+                $fix = Path::Tiny::path($fix)->slurp_utf8;
             }
+            $fix = $self->_preprocess($fix);
             push @$fixes, @{$self->parser->parse($fix)};
-        } 
+        }
     }
 
     $fixes;
@@ -94,6 +124,16 @@ sub _build_current_fix_var {
     $self->generate_var;
 }
 
+sub _build_hogan {
+    Text::Hogan::Compiler->new;
+}
+
+sub _preprocess {
+    my ($self, $text) = @_;
+    return $text unless $self->preprocess || $self->_hogan_vars;
+    $self->_hogan->compile($text)->render($self->_hogan_vars || {});
+}
+
 sub fix {
     my ($self, $data) = @_;
 
@@ -105,9 +145,12 @@ sub fix {
         return $d;
     }
 
-    if (is_instance($data) && is_able($data, 'does') && $data->does('Catmandu::Iterable')) {
-        return $data->map(sub { $fixer->($_[0]) })
-                    ->reject(sub { $self->_is_reject($_[0]) });
+    if (   is_instance($data)
+        && is_able($data, 'does')
+        && $data->does('Catmandu::Iterable'))
+    {
+        return $data->map(sub {$fixer->($_[0])})
+            ->reject(sub      {$self->_is_reject($_[0])});
     }
 
     if (is_code_ref($data)) {
@@ -121,10 +164,11 @@ sub fix {
     }
 
     if (is_array_ref($data)) {
-        return [ grep { !$self->_is_reject($_) } map { $fixer->($_) } @$data ];
+        return [grep {!$self->_is_reject($_)} map {$fixer->($_)} @$data];
     }
 
-    Catmandu::BadArg->throw("must be hashref, arrayref, coderef or iterable object");
+    Catmandu::BadArg->throw(
+        "must be hashref, arrayref, coderef or iterable object");
 }
 
 sub generate_var {
@@ -150,13 +194,13 @@ sub capture {
 }
 
 sub emit {
-    my ($self) = @_;
-    my $var = $self->var;
-    my $err = $self->generate_var;
-    my $captures = $self->_captures;
-    my $reject_var = $self->_reject_var;
+    my ($self)          = @_;
+    my $var             = $self->var;
+    my $err             = $self->generate_var;
+    my $captures        = $self->_captures;
+    my $reject_var      = $self->_reject_var;
     my $current_fix_var = $self->_current_fix_var;
-    my $perl = "";
+    my $perl            = "";
 
     $perl .= "sub {";
     $perl .= $self->emit_declare_vars($current_fix_var);
@@ -171,44 +215,17 @@ sub emit {
     $perl .= "} or do {";
     $perl .= $self->emit_declare_vars($err, '$@');
     $perl .= "${err}->throw if is_instance(${err},'Throwable::Error');";
-    $perl .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
+    $perl
+        .= "Catmandu::FixError->throw(message => ${err}, data => ${var}, fix => ${current_fix_var});";
     $perl .= "};";
     $perl .= "};";
 
     if (%$captures) {
         my @captured_vars = map {
-            $self->emit_declare_vars($_, '$_[1]->{'.$self->emit_string($_).'}');
+            $self->emit_declare_vars($_,
+                '$_[1]->{' . $self->emit_string($_) . '}');
         } keys %$captures;
         $perl = join '', @captured_vars, $perl;
-    }
-
-    if ($self->tidy || $self->log->is_debug) {
-        try {
-            my $pkg = require_package 'Perl::Tidy';
-            my $sub = do {
-                no strict 'refs';
-                \&{"${pkg}::perltidy"};
-            };
-
-            my $tidy_perl = "";
-            my $err = "";
-            my $log = "";
-
-            my $has_err = $sub->(
-                argv        => "-se",
-                source      => \$perl,
-                destination => \$tidy_perl,
-                logfile     => \$log,
-                stderr      => \$err,
-            );
-            if ($has_err) {
-                Catmandu::Error->throw($err);
-            }
-
-            $perl = $tidy_perl;
-        } catch_case [
-            'Catmandu::NoSuchPackage' => sub {},
-        ];
     }
 
     $self->log->debug($perl);
@@ -218,12 +235,15 @@ sub emit {
 
 # Emit an array of fixes
 sub emit_fixes {
-    my ($self,$fixes) = @_;
+    my ($self, $fixes) = @_;
     my $perl = '';
 
     for (my $i = 0; $i < @{$fixes}; $i++) {
         my $fix = $fixes->[$i];
-        $perl .= $self->_current_fix_var . " = " . $self->_fixes_var . "->[${i}];";
+        $perl
+            .= $self->_current_fix_var . " = "
+            . $self->_fixes_var
+            . "->[${i}];";
         $perl .= $self->emit_fix($fix);
     }
 
@@ -232,7 +252,7 @@ sub emit_fixes {
 
 sub emit_reject {
     my ($self) = @_;
-    "goto " .  $self->_reject_label . ";";
+    "goto " . $self->_reject_label . ";";
 }
 
 sub emit_fix {
@@ -240,11 +260,14 @@ sub emit_fix {
     my $perl;
 
     if ($fix->can('emit')) {
-        $perl = $self->emit_block(sub {
-            my ($label) = @_;
-            $fix->emit($self, $label);
-        });
-    } else {
+        $perl = $self->emit_block(
+            sub {
+                my ($label) = @_;
+                $fix->emit($self, $label);
+            }
+        );
+    }
+    else {
         my $var = $self->var;
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
@@ -259,7 +282,7 @@ sub emit_block {
     my $n = $self->_num_labels;
     $self->_num_labels($n + 1);
     my $label = "__FIX__${n}";
-    my $perl = "${label}: {";
+    my $perl  = "${label}: {";
     $perl .= $cb->($label);
     $perl .= "};";
     $perl;
@@ -272,7 +295,8 @@ sub emit_clear_hash_ref {
 
 sub emit_value {
     my ($self, $val) = @_;
-    # Number should look like number and don't start with a 0 (no support for octals)
+
+# Number should look like number and don't start with a 0 (no support for octals)
     is_number($val) && $val !~ /^0+/ ? $val : $self->emit_string($val);
 }
 
@@ -284,23 +308,23 @@ sub emit_string {
 sub emit_match {
     my ($self, $pattern) = @_;
     $pattern =~ s/\//\\\//g;
-    $pattern =~ s/\\$/\\\\/; # pattern can't end with an escape in m/.../
+    $pattern =~ s/\\$/\\\\/;    # pattern can't end with an escape in m/.../
     "m/$pattern/";
 }
 
 sub emit_substitution {
     my ($self, $pattern, $replace) = @_;
     $pattern =~ s/\//\\\//g;
-    $pattern =~ s/\\$/\\\\/; # pattern can't end with an escape in m/.../
+    $pattern =~ s/\\$/\\\\/;    # pattern can't end with an escape in m/.../
     $replace =~ s/\//\\\//g;
-    $replace =~ s/\\$/\\\\/; # pattern can't end with an escape in m/.../
+    $replace =~ s/\\$/\\\\/;    # pattern can't end with an escape in m/.../
     "s/$pattern/$replace/";
 }
 
 sub emit_declare_vars {
     my ($self, $var, $val) = @_;
-    $var = "(".join(", ", @$var).")" if ref $var;
-    $val = "(".join(", ", @$val).")" if ref $val;
+    $var = "(" . join(", ", @$var) . ")" if ref $var;
+    $val = "(" . join(", ", @$val) . ")" if ref $val;
     if (defined $val) {
         return "my ${var} = ${val};";
     }
@@ -318,7 +342,7 @@ sub emit_end_scope {
 sub emit_foreach {
     my ($self, $var, $cb) = @_;
     my $perl = "";
-    my $v = $self->generate_var;
+    my $v    = $self->generate_var;
     $perl .= "foreach (\@{${var}}) {";
     $perl .= $self->emit_declare_vars($v, '$_');
     $perl .= $cb->($v);
@@ -329,7 +353,7 @@ sub emit_foreach {
 sub emit_foreach_key {
     my ($self, $var, $cb) = @_;
     my $perl = "";
-    my $v = $self->generate_var;
+    my $v    = $self->generate_var;
     $perl .= "foreach (keys(\%{${var}})) {";
     $perl .= $self->emit_declare_vars($v, '$_');
     $perl .= $cb->($v);
@@ -340,13 +364,14 @@ sub emit_foreach_key {
 sub emit_walk_path {
     my ($self, $var, $keys, $cb) = @_;
 
-    $keys = [@$keys]; # protect keys
+    $keys = [@$keys];    # protect keys
 
-    if (@$keys) { # protect $var
+    if (@$keys) {        # protect $var
         my $v = $self->generate_var;
         $self->emit_declare_vars($v, $var)
             . $self->_emit_walk_path($v, $keys, $cb);
-    } else {
+    }
+    else {
         $cb->($var);
     }
 }
@@ -356,9 +381,9 @@ sub _emit_walk_path {
 
     @$keys || return $cb->($var);
 
-    my $key = shift @$keys;
+    my $key     = shift @$keys;
     my $str_key = $self->emit_string($key);
-    my $perl = "";
+    my $perl    = "";
 
     if ($key =~ /^\d+$/) {
         $perl .= "if (is_hash_ref(${var})) {";
@@ -372,9 +397,12 @@ sub _emit_walk_path {
     elsif ($key eq '*') {
         my $v = $self->generate_var;
         $perl .= "if (is_array_ref(${var})) {";
-        $perl .= $self->emit_foreach($var, sub {
-            return $self->_emit_walk_path(shift, $keys, $cb);
-        });
+        $perl .= $self->emit_foreach(
+            $var,
+            sub {
+                return $self->_emit_walk_path(shift, $keys, $cb);
+            }
+        );
         $perl .= "}";
     }
     else {
@@ -407,16 +435,17 @@ sub _emit_create_path {
 
     @$keys || return $cb->($var);
 
-    my $key = shift @$keys;
+    my $key     = shift @$keys;
     my $str_key = $self->emit_string($key);
-    my $perl = "";
+    my $perl    = "";
 
     if ($key =~ /^\d+$/) {
         my $v1 = $self->generate_var;
         my $v2 = $self->generate_var;
         $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "my ${v1} = ${var};";
-        $perl .= $self->_emit_create_path("${v1}->{${str_key}}", [@$keys], $cb);
+        $perl
+            .= $self->_emit_create_path("${v1}->{${str_key}}", [@$keys], $cb);
         $perl .= "} elsif (is_maybe_array_ref(${var})) {";
         $perl .= "my ${v2} = ${var} //= [];";
         $perl .= $self->_emit_create_path("${v2}->[${key}]", [@$keys], $cb);
@@ -434,15 +463,20 @@ sub _emit_create_path {
     }
     else {
         my $v = $self->generate_var;
-        if ($key eq '$first' || $key eq '$last' || $key eq '$prepend' || $key eq '$append') {
+        if (   $key eq '$first'
+            || $key eq '$last'
+            || $key eq '$prepend'
+            || $key eq '$append')
+        {
             $perl .= "if (is_maybe_array_ref(${var})) {";
             $perl .= "my ${v} = ${var} //= [];";
             if ($key eq '$first') {
-                    $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
+                $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
             }
             elsif ($key eq '$last') {
                 $perl .= "if (\@${v}) {";
-                $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]", [@$keys], $cb);
+                $perl .= $self->_emit_create_path("${v}->[\@${v} - 1]",
+                    [@$keys], $cb);
                 $perl .= "} else {";
                 $perl .= $self->_emit_create_path("${v}->[0]", [@$keys], $cb);
                 $perl .= "}";
@@ -454,14 +488,16 @@ sub _emit_create_path {
                 $perl .= $self->_emit_create_path("${v}->[0]", $keys, $cb);
             }
             elsif ($key eq '$append') {
-                $perl .= $self->_emit_create_path("${v}->[\@${v}]", $keys, $cb);
+                $perl
+                    .= $self->_emit_create_path("${v}->[\@${v}]", $keys, $cb);
             }
             $perl .= "}";
         }
         else {
             $perl .= "if (is_maybe_hash_ref(${var})) {";
             $perl .= "my ${v} = ${var} //= {};";
-            $perl .= $self->_emit_create_path("${v}->{${str_key}}", $keys, $cb);
+            $perl
+                .= $self->_emit_create_path("${v}->{${str_key}}", $keys, $cb);
             $perl .= "}";
         }
     }
@@ -475,7 +511,7 @@ sub emit_get_key {
     return $cb->($var) unless defined $key;
 
     my $str_key = $self->emit_string($key);
-    my $perl = "";
+    my $perl    = "";
 
     if ($key =~ /^\d+$/) {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
@@ -515,7 +551,7 @@ sub emit_set_key {
 
     return "${var} = $val;" unless defined $key;
 
-    my $perl = "";
+    my $perl    = "";
     my $str_key = $self->emit_string($key);
 
     if ($key =~ /^\d+$/) {
@@ -565,7 +601,7 @@ sub emit_delete_key {
     my ($self, $var, $key, $cb) = @_;
 
     my $str_key = $self->emit_string($key);
-    my $perl = "";
+    my $perl    = "";
     my $vals;
     if ($cb) {
         $vals = $self->generate_var;
@@ -574,28 +610,28 @@ sub emit_delete_key {
 
     if ($key =~ /^\d+$/) {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
-        $perl .= "push(\@{${vals}}, "                     if $cb;
+        $perl .= "push(\@{${vals}}, " if $cb;
         $perl .= "delete(${var}->{${str_key}})";
-        $perl .= ")"                                      if $cb;
+        $perl .= ")" if $cb;
         $perl .= ";";
         $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
-        $perl .= "push(\@{${vals}}, "                     if $cb;
+        $perl .= "push(\@{${vals}}, " if $cb;
         $perl .= "splice(\@{${var}}, ${key}, 1)";
-        $perl .= ")"                                      if $cb;
+        $perl .= ")" if $cb;
     }
     elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
         $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
-        $perl .= "push(\@{${vals}}, "                     if $cb;
-        $perl .= "splice(\@{${var}}, 0, 1)"               if $key eq '$first';
-        $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)"  if $key eq '$last';
-        $perl .= "splice(\@{${var}}, 0, \@{${var}})"      if $key eq '*';
-        $perl .= ")"                                      if $cb;
+        $perl .= "push(\@{${vals}}, " if $cb;
+        $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
+        $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
+        $perl .= "splice(\@{${var}}, 0, \@{${var}})" if $key eq '*';
+        $perl .= ")" if $cb;
     }
     else {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
-        $perl .= "push(\@{${vals}}, "                    if $cb;
+        $perl .= "push(\@{${vals}}, " if $cb;
         $perl .= "delete(${var}->{${str_key}})";
-        $perl .= ")"                                     if $cb;
+        $perl .= ")" if $cb;
     }
     $perl .= ";";
     $perl .= "}";
@@ -613,10 +649,13 @@ sub emit_retain_key {
 
     if ($key =~ /^\d+$/) {
         $perl .= "if (is_hash_ref(${var})) {";
-        $perl .= $self->emit_foreach_key($var, sub {
-            my $v = shift;
-            "delete(${var}->{${v}}) if ${v} ne ${key};";
-        });
+        $perl .= $self->emit_foreach_key(
+            $var,
+            sub {
+                my $v = shift;
+                "delete(${var}->{${v}}) if ${v} ne ${key};";
+            }
+        );
         $perl .= "} elsif (is_array_ref(${var})) {";
         $perl .= "if (\@{${var}} > ${key}) {";
         $perl .= "splice(\@{${var}}, 0, ${key});" if $key > 0;
@@ -637,17 +676,19 @@ sub emit_retain_key {
         $perl .= "}";
     }
     elsif ($key eq '*') {
+
         # retain everything
     }
     else {
         $key = $self->emit_string($key);
         $perl .= "if (is_hash_ref(${var})) {";
-        $perl .= $self->emit_foreach_key($var, sub {
-            my $v = shift;
-            "if ($v ne ${key}) {".
-            "delete(${var}->{${v}});".
-            "}";
-        });
+        $perl .= $self->emit_foreach_key(
+            $var,
+            sub {
+                my $v = shift;
+                "if ($v ne ${key}) {" . "delete(${var}->{${v}});" . "}";
+            }
+        );
         $perl .= "}";
     }
 
@@ -718,7 +759,7 @@ L<Catmandu::Store> then the transformations are executed on every item in the st
 
 =head1 FIX LANGUAGE
 
-A Fix script is a collection of one or more Fix commands. The fixes are executed 
+A Fix script is a collection of one or more Fix commands. The fixes are executed
 on every record in the dataset. If this command is executed on the command line:
 
     $ catmandu convert JSON --fix 'upcase(title); add_field(deep.nested.field,1)' < data.json
@@ -733,7 +774,7 @@ becomes:
     { "title":"FOO" , "deep":{"nested":{"field":1}} }
     { "title":"BAR" , "deep":{"nested":{"field":1}} }
 
-Using the command line, Fix commands need a semicolon (;) as separator. All these commands can 
+Using the command line, Fix commands need a semicolon (;) as separator. All these commands can
 also be written into a Fix script where semicolons are not required:
 
     $ catmandu convert JSON --fix script.fix < data.json
@@ -813,16 +854,35 @@ E.g.
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
 
-=head1 PERL API
+=head1 OPTIONS
 
-The following is a list of methods available when including Catmandu::Fix as part of
-a Perl program.
+=head2 fixes
 
-=head2 new(fixes => [ FIX , ...])
+An array of fixes. L<Catmandu::Fix> which will execute every fix in consecutive
+order. A fix can be the name of a Catmandu::Fix::* routine, or the path to a
+plain text file containing all the fixes to be executed. Required.
 
-Create a new Catmandu::Fix which will execute every FIX into a consecutive
-order. A FIX can be the name of a Catmandu::Fix::* routine, or the path to a
-plain text file containing all the fixes to be executed.
+=head2 preprocess
+
+If set to C<1>, fix files or inline fixes will first be preprocessed as a
+moustache template. See C<variables> below for an example. Default is C<0>, no
+preprocessing.
+
+=head2 variables
+
+An optional hashref of variables that are used to preprocess the fix files or
+inline fixes as a moustache template. Setting the C<variables> option also sets
+C<preprocess> to 1.
+
+    my $fixer = Catmandu::Fix->new(
+        variables => {x => 'foo', y => 'bar'},
+        fixes => ['add_field({{x}},{{y}})'],
+    );
+    my $data = {};
+    $fixer->fix($data);
+    # $data is now {foo => 'bar'}
+
+=head1 METHODS
 
 =head2 fix(HASH)
 
@@ -1037,9 +1097,9 @@ this method is DEPRECATED.
 =head1 SEE ALSO
 
 L<Catmandu::Fixable>,
-L<Catmandu::Importer>, 
+L<Catmandu::Importer>,
 L<Catmandu::Exporter>,
-L<Catmandu::Store>,  
+L<Catmandu::Store>,
 L<Catmandu::Bag>
 
 =cut

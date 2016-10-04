@@ -2,7 +2,7 @@ package Catmandu::IdGenerator::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use Catmandu::Util qw(check_natural);
@@ -10,18 +10,11 @@ use namespace::clean;
 
 with 'Catmandu::IdGenerator';
 
-has first_id => (
-    is => 'ro',
-    isa => sub { check_natural($_[0]) },
-    default => sub { 0 },
-);
+has first_id =>
+    (is => 'ro', isa => sub {check_natural($_[0])}, default => sub {0},);
 
-has next_id => (
-    is => 'rwp',
-    init_arg => undef,
-    lazy => 1,
-    builder => 'first_id',
-);
+has next_id =>
+    (is => 'rwp', init_arg => undef, lazy => 1, builder => 'first_id',);
 
 sub generate {
     my ($self) = @_;

@@ -8,6 +8,7 @@ use Test::Exception;
 use lib 't/lib';
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Serializer';
     use_ok $pkg;
@@ -15,6 +16,7 @@ BEGIN {
 require_ok $pkg;
 
 {
+
     package T::Serializer;
     use Moo;
     with $pkg;

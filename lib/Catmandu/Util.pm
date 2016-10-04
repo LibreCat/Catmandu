@@ -2,27 +2,31 @@ package Catmandu::Util;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Exporter qw(import);
-use Sub::Quote ();
-use Scalar::Util ();
-use overload ();
-use List::Util ();
+use Sub::Quote    ();
+use Scalar::Util  ();
+use List::Util    ();
+use Ref::Util     ();
 use Data::Compare ();
 use IO::File;
 use IO::Handle::Util ();
 use File::Spec;
-use YAML::XS ();
-use Cpanel::JSON::XS ();
+use YAML::XS            ();
+use Cpanel::JSON::XS    ();
 use Hash::Merge::Simple ();
 
 our %EXPORT_TAGS = (
-    io     => [qw(io read_file read_io write_file read_yaml read_json join_path
-        normalize_path segmented_path)],
-    data   => [qw(parse_data_path get_data set_data delete_data data_at)],
-    array  => [qw(array_exists array_group_by array_pluck array_to_sentence
-        array_sum array_includes array_any array_rest array_uniq array_split)],
+    io => [
+        qw(io read_file read_io write_file read_yaml read_json join_path
+            normalize_path segmented_path)
+    ],
+    data  => [qw(parse_data_path get_data set_data delete_data data_at)],
+    array => [
+        qw(array_exists array_group_by array_pluck array_to_sentence
+            array_sum array_includes array_any array_rest array_uniq array_split)
+    ],
     hash   => [qw(hash_merge)],
     string => [qw(as_utf8 trim capitalize)],
     is     => [qw(is_same is_different)],
@@ -32,63 +36,76 @@ our %EXPORT_TAGS = (
     misc   => [qw(require_package use_lib pod_section)],
 );
 
-our @EXPORT_OK = map { @$_ } values %EXPORT_TAGS;
+our @EXPORT_OK = map {@$_} values %EXPORT_TAGS;
 
 $EXPORT_TAGS{all} = \@EXPORT_OK;
 
 my $HUMAN_CONTENT_TYPES = {
+
     # txt
-    'text/plain' => 'Text',
+    'text/plain'      => 'Text',
     'application/txt' => 'Text',
+
     # pdf
-    'application/pdf' => 'PDF',
-    'application/x-pdf' => 'PDF',
-    'application/acrobat' => 'PDF',
+    'application/pdf'      => 'PDF',
+    'application/x-pdf'    => 'PDF',
+    'application/acrobat'  => 'PDF',
     'applications/vnd.pdf' => 'PDF',
-    'text/pdf' => 'PDF',
-    'text/x-pdf' => 'PDF',
+    'text/pdf'             => 'PDF',
+    'text/x-pdf'           => 'PDF',
+
     # doc
-    'application/doc' => 'Word',
-    'application/vnd.msword' => 'Word',
+    'application/doc'         => 'Word',
+    'application/vnd.msword'  => 'Word',
     'application/vnd.ms-word' => 'Word',
-    'application/winword' => 'Word',
-    'application/word' => 'Word',
-    'application/x-msw6' => 'Word',
-    'application/x-msword' => 'Word',
+    'application/winword'     => 'Word',
+    'application/word'        => 'Word',
+    'application/x-msw6'      => 'Word',
+    'application/x-msword'    => 'Word',
+
     # docx
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        => 'Word',
+
     # xls
-    'application/vnd.ms-excel' => 'Excel',
-    'application/msexcel' => 'Excel',
-    'application/x-msexcel' => 'Excel',
-    'application/x-ms-excel' => 'Excel',
-    'application/vnd.ms-excel' => 'Excel',
-    'application/x-excel' => 'Excel',
+    'application/vnd.ms-excel'   => 'Excel',
+    'application/msexcel'        => 'Excel',
+    'application/x-msexcel'      => 'Excel',
+    'application/x-ms-excel'     => 'Excel',
+    'application/vnd.ms-excel'   => 'Excel',
+    'application/x-excel'        => 'Excel',
     'application/x-dos_ms_excel' => 'Excel',
-    'application/xls' => 'Excel',
+    'application/xls'            => 'Excel',
+
     # xlsx
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' =>
+        'Excel',
+
     # ppt
     'application/vnd.ms-powerpoint' => 'PowerPoint',
-    'application/mspowerpoint' => 'PowerPoint',
-    'application/ms-powerpoint' => 'PowerPoint',
-    'application/mspowerpnt' => 'PowerPoint',
-    'application/vnd-mspowerpoint' => 'PowerPoint',
-    'application/powerpoint' => 'PowerPoint',
-    'application/x-powerpoint' => 'PowerPoint',
+    'application/mspowerpoint'      => 'PowerPoint',
+    'application/ms-powerpoint'     => 'PowerPoint',
+    'application/mspowerpnt'        => 'PowerPoint',
+    'application/vnd-mspowerpoint'  => 'PowerPoint',
+    'application/powerpoint'        => 'PowerPoint',
+    'application/x-powerpoint'      => 'PowerPoint',
+
     # pptx
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'PowerPoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        => 'PowerPoint',
+
     # csv
     'text/comma-separated-values' => 'CSV',
-    'text/csv' => 'CSV',
-    'application/csv' => 'CSV',
+    'text/csv'                    => 'CSV',
+    'application/csv'             => 'CSV',
+
     # zip
     'application/zip' => 'ZIP archive',
 };
 
 my $XML_DECLARATION = qq(<?xml version="1.0" encoding="UTF-8"?>\n);
 
-sub TIESCALAR {};
+sub TIESCALAR { }
 
 sub io {
     my ($arg, %opts) = @_;
@@ -99,20 +116,26 @@ sub io {
     if (is_scalar_ref($arg)) {
         $io = IO::Handle::Util::io_from_scalar_ref($arg);
         defined($io) && binmode $io, $binmode;
-    } elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
+    }
+    elsif (is_glob_ref(\$arg) || is_glob_ref($arg)) {
         $io = IO::Handle->new_from_fd($arg, $mode) // $arg;
         defined($io) && binmode $io, $binmode;
-    } elsif (is_string($arg)) {
+    }
+    elsif (is_string($arg)) {
         $io = IO::File->new($arg, $mode);
         defined($io) && binmode $io, $binmode;
-    } elsif (is_code_ref($arg) && $mode eq 'r') {
+    }
+    elsif (is_code_ref($arg) && $mode eq 'r') {
         $io = IO::Handle::Util::io_from_getline($arg);
-    } elsif (is_code_ref($arg) && $mode eq 'w') {
+    }
+    elsif (is_code_ref($arg) && $mode eq 'w') {
         $io = IO::Handle::Util::io_from_write_cb($arg);
-    } elsif (is_instance($arg, 'IO::Handle')) {
+    }
+    elsif (is_instance($arg, 'IO::Handle')) {
         $io = $arg;
         defined($io) && binmode $io, $binmode;
-    } else {
+    }
+    else {
         Catmandu::BadArg->throw("can't make io from argument");
     }
 
@@ -123,7 +146,8 @@ sub io {
 sub read_file {
     my ($path) = @_;
     local $/;
-    open my $fh, "<:encoding(UTF-8)", $path or Catmandu::Error->throw(qq(can't open "$path" for reading));
+    open my $fh, "<:encoding(UTF-8)", $path
+        or Catmandu::Error->throw(qq(can't open "$path" for reading));
     my $str = <$fh>;
     close $fh;
     $str;
@@ -143,19 +167,22 @@ sub read_io {
 # Deprecated use tools like File::Slurp::Tiny
 sub write_file {
     my ($path, $str) = @_;
-    open my $fh, ">:encoding(UTF-8)", $path or Catmandu::Error->throw(qq(can't open "$path" for writing));
+    open my $fh, ">:encoding(UTF-8)", $path
+        or Catmandu::Error->throw(qq(can't open "$path" for writing));
     print $fh $str;
     close $fh;
     $path;
 }
 
 sub read_yaml {
+
     # dies on error
     YAML::XS::LoadFile($_[0]);
 }
 
 sub read_json {
     my $text = read_file($_[0]);
+
     # dies on error
     Cpanel::JSON::XS->new->decode($text);
 }
@@ -163,14 +190,14 @@ sub read_json {
 sub join_path {
     my $path = File::Spec->catfile(@_);
     $path =~ s!/\./!/!g;
-    while ($path =~ s![^/]*/\.\./!!) {}
+    while ($path =~ s![^/]*/\.\./!!) { }
     $path;
 }
 
-sub normalize_path { # taken from Dancer::FileUtils
+sub normalize_path {    # taken from Dancer::FileUtils
     my ($path) = @_;
     $path =~ s!/\./!/!g;
-    while ($path =~ s![^/]*/\.\./!!) {}
+    while ($path =~ s![^/]*/\.\./!!) { }
     File::Spec->catfile($path);
 }
 
@@ -188,7 +215,7 @@ sub segmented_path {
 sub parse_data_path {
     my ($path) = @_;
     check_string($path);
-    $path = [ split /[\/\.]/, $path ];
+    $path = [split /[\/\.]/, $path];
     my $key = pop @$path;
     return $path, $key;
 }
@@ -196,9 +223,9 @@ sub parse_data_path {
 sub get_data {
     my ($data, $key) = @_;
     if (is_array_ref($data)) {
-        if ($key eq '$first') { return unless @$data; $key = 0 }
-        elsif ($key eq '$last') { return unless @$data; $key = @$data - 1 }
-        elsif ($key eq '*') { return @$data }
+        if    ($key eq '$first') {return unless @$data; $key = 0}
+        elsif ($key eq '$last')  {return unless @$data; $key = @$data - 1}
+        elsif ($key eq '*') {return @$data}
         if (array_exists($data, $key)) {
             return $data->[$key];
         }
@@ -214,11 +241,14 @@ sub set_data {
     my ($data, $key, @vals) = @_;
     return unless @vals;
     if (is_array_ref($data)) {
-        if ($key eq '$first') { return unless @$data; $key = 0 }
-        elsif ($key eq '$last') { return unless @$data; $key = @$data - 1 }
-        elsif ($key eq '$prepend') { unshift @$data, $vals[0]; return $vals[0] }
-        elsif ($key eq '$append') { push    @$data, $vals[0]; return $vals[0] }
-        elsif ($key eq '*') { return splice @$data, 0, @$data, @vals }
+        if    ($key eq '$first') {return unless @$data; $key = 0}
+        elsif ($key eq '$last')  {return unless @$data; $key = @$data - 1}
+        elsif ($key eq '$prepend') {
+            unshift @$data, $vals[0];
+            return $vals[0];
+        }
+        elsif ($key eq '$append') {push @$data, $vals[0]; return $vals[0]}
+        elsif ($key eq '*') {return splice @$data, 0, @$data, @vals}
         return $data->[$key] = $vals[0] if is_natural($key);
         return;
     }
@@ -231,9 +261,9 @@ sub set_data {
 sub delete_data {
     my ($data, $key) = @_;
     if (is_array_ref($data)) {
-        if ($key eq '$first') { return unless @$data; $key = 0 }
-        elsif ($key eq '$last') { return unless @$data; $key = @$data - 1 }
-        elsif ($key eq '*') { return splice @$data, 0, @$data }
+        if    ($key eq '$first') {return unless @$data; $key = 0}
+        elsif ($key eq '$last')  {return unless @$data; $key = @$data - 1}
+        elsif ($key eq '*') {return splice @$data, 0, @$data}
         if (array_exists($data, $key)) {
             return splice @$data, $key, 1;
         }
@@ -249,9 +279,10 @@ sub delete_data {
 sub data_at {
     my ($path, $data, %opts) = @_;
     if (ref $path) {
-        $path = [map { split /[\/\.]/ } @$path];
-    } else {
-        $path = [split /[\/\.]/, $path]
+        $path = [map {split /[\/\.]/} @$path];
+    }
+    else {
+        $path = [split /[\/\.]/, $path];
     }
     my $create = $opts{create};
     my $_key = $opts{_key} // $opts{key};
@@ -260,25 +291,33 @@ sub data_at {
     }
     my $key;
     while (defined(my $key = shift @$path)) {
-        ref $data || return;
+        is_ref($data) || return;
         if (is_array_ref($data)) {
             if ($key eq '*') {
-                return map { data_at($path, $_, create => $create, _key => $_key) } @$data;
-            } else {
-                if ($key eq '$first') { $key = 0 }
-                elsif ($key eq '$last') { $key = -1 }
-                elsif ($key eq '$prepend') { unshift @$data, undef; $key = 0 }
-                elsif ($key eq '$append') { push @$data, undef; $key = @$data }
+                return
+                    map {data_at($path, $_, create => $create, _key => $_key)}
+                    @$data;
+            }
+            else {
+                if    ($key eq '$first') {$key = 0}
+                elsif ($key eq '$last')  {$key = -1}
+                elsif ($key eq '$prepend') {unshift @$data, undef; $key = 0}
+                elsif ($key eq '$append') {push @$data, undef; $key = @$data}
                 is_integer($key) || return;
                 if ($create && @$path) {
-                    $data = $data->[$key] ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
-                } else {
+                    $data = $data->[$key] ||= is_integer($path->[0])
+                        || ord($path->[0]) == ord('$') ? [] : {};
+                }
+                else {
                     $data = $data->[$key];
                 }
             }
-        } elsif ($create && @$path) {
-            $data = $data->{$key} ||= is_integer($path->[0]) || ord($path->[0]) == ord('$') ? [] : {};
-        } else {
+        }
+        elsif ($create && @$path) {
+            $data = $data->{$key} ||= is_integer($path->[0])
+                || ord($path->[0]) == ord('$') ? [] : {};
+        }
+        else {
             $data = $data->{$key};
         }
         if ($create && @$path == 1) {
@@ -295,22 +334,27 @@ sub array_exists {
 
 sub array_group_by {
     my ($arr, $key) = @_;
-    List::Util::reduce { my $k = $b->{$key}; push @{$a->{$k} ||= []}, $b if defined $k; $a } {}, @$arr;
+    List::Util::reduce {
+        my $k = $b->{$key};
+        push @{$a->{$k} ||= []}, $b if defined $k;
+        $a
+    }
+    {}, @$arr;
 }
 
 sub array_pluck {
     my ($arr, $key) = @_;
-    my @vals = map { $_->{$key} } @$arr;
+    my @vals = map {$_->{$key}} @$arr;
     \@vals;
 }
 
 sub array_to_sentence {
     my ($arr, $join, $join_last) = @_;
-    $join //= ', ';
+    $join      //= ', ';
     $join_last //= ' and ';
     my $size = scalar @$arr;
     $size > 2
-        ? join($join_last, join($join, @$arr[0..$size-2]), $arr->[-1])
+        ? join($join_last, join($join, @$arr[0 .. $size - 2]), $arr->[-1])
         : join($join_last, @$arr);
 }
 
@@ -332,19 +376,19 @@ sub array_any {
 
 sub array_rest {
     my ($arr) = @_;
-    @$arr < 2 ? [] : [@$arr[1..(@$arr-1)]];
+    @$arr < 2 ? [] : [@$arr[1 .. (@$arr - 1)]];
 }
 
 sub array_uniq {
     my ($arr) = @_;
     my %seen = ();
-    my @vals = grep { not $seen{$_}++ } @$arr;
+    my @vals = grep {not $seen{$_}++} @$arr;
     \@vals;
 }
 
 sub array_split {
     my ($arr) = @_;
-    (ref $arr and ref $arr eq 'ARRAY') ? $arr : [split ',', $arr];
+    is_array_ref($arr) ? $arr : [split ',', $arr];
 }
 
 *hash_merge = \&Hash::Merge::Simple::merge;
@@ -386,14 +430,9 @@ sub check_different {
     $_[0];
 }
 
-
-# the following code is taken from Data::Util::PurePerl 0.63 
-sub _overloaded {
-    return Scalar::Util::blessed($_[0]) && overload::Method($_[0], $_[1]);
-}
-
+# the following code is taken from Data::Util::PurePerl 0.63
 sub _get_stash {
-    my($inv) = @_;
+    my ($inv) = @_;
 
     if (Scalar::Util::blessed($inv)) {
         no strict 'refs';
@@ -406,24 +445,25 @@ sub _get_stash {
     $inv =~ s/^:://;
 
     my $pack = *main::;
-    for my $part(split /::/, $inv) {
+    for my $part (split /::/, $inv) {
         return undef unless $pack = $pack->{$part . '::'};
     }
     return *{$pack}{HASH};
 }
 
 sub _get_code_ref {
-    my($pkg, $name, @flags) = @_;
+    my ($pkg, $name, @flags) = @_;
 
-    is_string($pkg) || Catmandu::BadVal->throw('should be string');
+    is_string($pkg)  || Catmandu::BadVal->throw('should be string');
     is_string($name) || Catmandu::BadVal->throw('should be string');
 
     my $stash = _get_stash($pkg) or return undef;
 
     if (defined(my $glob = $stash->{$name})) {
-        if (ref(\$glob) eq 'GLOB') {
+        if (is_glob_ref(\$glob)) {
             return *{$glob}{CODE};
-        } else { # a stub or special constant
+        }
+        else {    # a stub or special constant
             no strict 'refs';
             return *{$pkg . '::' . $name}{CODE};
         }
@@ -434,46 +474,35 @@ sub _get_code_ref {
 sub is_invocant {
     my ($inv) = @_;
     if (ref $inv) {
-    	return !!Scalar::Util::blessed($inv);
-    } else {
+        return !!Scalar::Util::blessed($inv);
+    }
+    else {
         return !!_get_stash($inv);
     }
 }
 
-sub is_scalar_ref {
-    return ref($_[0]) eq 'SCALAR' || ref($_[0]) eq 'REF' || _overloaded($_[0], '${}');
-}
+*is_scalar_ref = \&Ref::Util::is_plain_scalarref;
 
-sub is_array_ref {
-    return ref($_[0]) eq 'ARRAY' || _overloaded($_[0], '@{}');
-}
+*is_array_ref = \&Ref::Util::is_plain_arrayref;
 
-sub is_hash_ref {
-    return ref($_[0]) eq 'HASH' || _overloaded($_[0], '%{}');
-}
+*is_hash_ref = \&Ref::Util::is_plain_hashref;
 
-sub is_code_ref {
-    return ref($_[0]) eq 'CODE' || _overloaded($_[0], '&{}');
-}
+*is_code_ref = \&Ref::Util::is_plain_coderef;
 
-sub is_regex_ref {
-    return ref($_[0]) eq 'Regexp';
-}
+*is_regex_ref = \&Ref::Util::is_regexpref;
 
-sub is_glob_ref {
-    return ref($_[0]) eq 'GLOB' || _overloaded($_[0], '*{}');
-}
+*is_glob_ref = \&Ref::Util::is_plain_globref;
 
 sub is_value {
-    return defined($_[0]) && !ref($_[0]) && ref(\$_[0]) ne 'GLOB';
+    defined($_[0]) && !is_ref($_[0]) && !is_glob_ref(\$_[0]);
 }
 
 sub is_string {
-    return defined($_[0]) && !ref($_[0]) && ref(\$_[0]) ne 'GLOB' && length($_[0]) > 0;
+    is_value($_[0]) && length($_[0]) > 0;
 }
 
 sub is_number {
-    return 0 if !defined($_[0]) || ref($_[0]);
+    return 0 if !defined($_[0]) || is_ref($_[0]);
 
     return $_[0] =~ m{
         \A \s*
@@ -487,8 +516,8 @@ sub is_number {
 }
 
 sub is_integer {
-    return 0 if !defined($_[0]) || ref($_[0]);
- 
+    return 0 if !defined($_[0]) || is_ref($_[0]);
+
     return $_[0] =~ m{
         \A \s*
                 [+-]?
@@ -496,16 +525,16 @@ sub is_integer {
         \s* \z
     }xms;
 }
+
 # end of code taken from Data::Util
 
 sub is_bool {
-    Scalar::Util::blessed($_[0]) && (
-        $_[0]->isa('boolean') ||
-        $_[0]->isa('Types::Serialiser::Boolean') ||
-        $_[0]->isa('JSON::XS::Boolean') ||
-        $_[0]->isa('Cpanel::JSON::XS::Boolean') ||
-        $_[0]->isa('JSON::PP::Boolean')
-    ); 
+    Scalar::Util::blessed($_[0])
+        && ($_[0]->isa('boolean')
+        || $_[0]->isa('Types::Serialiser::Boolean')
+        || $_[0]->isa('JSON::XS::Boolean')
+        || $_[0]->isa('Cpanel::JSON::XS::Boolean')
+        || $_[0]->isa('JSON::PP::Boolean'));
 }
 
 sub is_natural {
@@ -516,74 +545,82 @@ sub is_positive {
     is_integer($_[0]) && $_[0] >= 1;
 }
 
-sub is_ref {
-    ref $_[0] ? 1 : 0;
-}
+*is_ref = \&Ref::Util::is_ref;
 
 sub is_able {
     my $obj = shift;
     is_invocant($obj) || return 0;
-    $obj->can($_)     || return 0 for @_;
+    $obj->can($_) || return 0 for @_;
     1;
 }
 
 sub check_able {
     my $obj = shift;
     return $obj if is_able($obj, @_);
-    Catmandu::BadVal->throw('should be able to '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw('should be able to ' . array_to_sentence(\@_));
 }
 
 sub check_maybe_able {
     my $obj = shift;
     return $obj if is_maybe_able($obj, @_);
-    Catmandu::BadVal->throw('should be undef or able to '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw(
+        'should be undef or able to ' . array_to_sentence(\@_));
 }
 
 sub is_instance {
     my $obj = shift;
     Scalar::Util::blessed($obj) || return 0;
-    $obj->isa($_)               || return 0 for @_;
+    $obj->isa($_) || return 0 for @_;
     1;
 }
 
 sub check_instance {
     my $obj = shift;
     return $obj if is_instance($obj, @_);
-    Catmandu::BadVal->throw('should be instance of '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw(
+        'should be instance of ' . array_to_sentence(\@_));
 }
 
 sub check_maybe_instance {
     my $obj = shift;
     return $obj if is_maybe_instance($obj, @_);
-    Catmandu::BadVal->throw('should be undef or instance of '.array_to_sentence(\@_));
+    Catmandu::BadVal->throw(
+        'should be undef or instance of ' . array_to_sentence(\@_));
 }
 
-for my $sym (qw(able instance invocant ref
-        scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
-        bool value string number integer natural positive)) {
-    my $pkg = __PACKAGE__;
+for my $sym (
+    qw(able instance invocant ref
+    scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
+    bool value string number integer natural positive)
+    )
+{
+    my $pkg      = __PACKAGE__;
     my $err_name = $sym;
     $err_name =~ s/_/ /;
-    push @EXPORT_OK, "is_$sym", "is_maybe_$sym", "check_$sym", "check_maybe_$sym";
-    push @{$EXPORT_TAGS{is}}, "is_$sym", "is_maybe_$sym";
+    push @EXPORT_OK, "is_$sym", "is_maybe_$sym", "check_$sym",
+        "check_maybe_$sym";
+    push @{$EXPORT_TAGS{is}},    "is_$sym",    "is_maybe_$sym";
     push @{$EXPORT_TAGS{check}}, "check_$sym", "check_maybe_$sym";
     Sub::Quote::quote_sub("${pkg}::is_maybe_$sym",
-        "!defined(\$_[0]) || ${pkg}::is_$sym(\@_)")
-            unless _get_code_ref($pkg, "is_maybe_$sym");
+        "!defined(\$_[0]) || ${pkg}::is_$sym(\$_[0])")
+        unless _get_code_ref($pkg, "is_maybe_$sym");
     Sub::Quote::quote_sub("${pkg}::check_$sym",
-        "${pkg}::is_$sym(\@_) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]")
-            unless _get_code_ref($pkg, "check_$sym");
+        "${pkg}::is_$sym(\$_[0]) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]"
+    ) unless _get_code_ref($pkg, "check_$sym");
     Sub::Quote::quote_sub("${pkg}::check_maybe_$sym",
-        "${pkg}::is_maybe_$sym(\@_) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]")
-            unless _get_code_ref($pkg, "check_maybe_$sym");
+        "${pkg}::is_maybe_$sym(\$_[0]) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]"
+    ) unless _get_code_ref($pkg, "check_maybe_$sym");
 }
 
-sub human_number { # taken from Number::Format
+sub human_number {    # taken from Number::Format
     my $num = $_[0];
+
     # add leading 0's so length($num) is divisible by 3
-    $num = '0'x(3 - (length($num) % 3)).$num;
+    $num = '0' x (3 - (length($num) % 3)) . $num;
+
     # split $num into groups of 3 characters and insert commas
-    $num = join ',', grep { $_ ne '' } split /(...)/, $num;
+    $num = join ',', grep {$_ ne ''} split /(...)/, $num;
+
     # strip off leading zeroes and/or comma
     $num =~ s/^0+,?//;
     length $num ? $num : '0';
@@ -593,9 +630,11 @@ sub human_byte_size {
     my ($size) = @_;
     if ($size > 1000000000) {
         return sprintf("%.2f GB", $size / 1000000000);
-    } elsif ($size > 1000000) {
+    }
+    elsif ($size > 1000000) {
         return sprintf("%.2f MB", $size / 1000000);
-    } elsif ($size > 1000) {
+    }
+    elsif ($size > 1000) {
         return sprintf("%.2f KB", $size / 1000);
     }
     "$size bytes";
@@ -620,8 +659,10 @@ sub xml_escape {
     $str =~ s/>/&gt;/go;
     $str =~ s/"/&quot;/go;
     $str =~ s/'/&apos;/go;
+
     # remove control chars
-    $str =~ s/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//go;
+    $str
+        =~ s/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//go;
 
     $str;
 }
@@ -638,7 +679,7 @@ sub use_lib {
 }
 
 sub pod_section {
-    my $class = ref $_[0] ? ref(shift) : shift;
+    my $class = is_ref($_[0]) ? ref(shift) : shift;
     my $section = uc(shift);
 
     unless (-r $class) {
@@ -651,22 +692,22 @@ sub pod_section {
     open my $input, "<", $class or return '';
     open my $output, ">", \$text;
 
-    require Pod::Usage; # lazy load only if needed
+    require Pod::Usage;    # lazy load only if needed
     Pod::Usage::pod2usage(
-       -input    => $input,
-       -output   => $output,
-       -sections => $section,
-       -exit     => "NOEXIT",
-       -verbose  => 99,
-       -indent   => 0,
-       -utf8     => 1,
-       @_
+        -input    => $input,
+        -output   => $output,
+        -sections => $section,
+        -exit     => "NOEXIT",
+        -verbose  => 99,
+        -indent   => 0,
+        -utf8     => 1,
+        @_
     );
     $section = ucfirst(lc($section));
     $text =~ s/$section:\n//m;
     chomp $text;
 
-    return $text;
+    $text;
 }
 
 sub require_package {
@@ -682,7 +723,9 @@ sub require_package {
 
     eval "require $pkg;1;"
         or Catmandu::NoSuchPackage->throw(
-            message => "No such package: $pkg", package_name => $pkg);
+        message      => "No such package: $pkg",
+        package_name => $pkg
+        );
 
     $pkg;
 }

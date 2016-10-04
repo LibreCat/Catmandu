@@ -7,14 +7,13 @@ use Test::Exception;
 use Catmandu;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::add_to_store';
     use_ok $pkg;
 }
 
-Catmandu->config->{store}{test} = {
-    package => "Hash",
-};
+Catmandu->config->{store}{test} = {package => "Hash",};
 
 my $bag = Catmandu->store('test')->bag('test');
 

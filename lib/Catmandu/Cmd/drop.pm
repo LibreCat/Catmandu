@@ -2,7 +2,7 @@ package Catmandu::Cmd::drop;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -10,9 +10,7 @@ use Catmandu::Util qw(check_able);
 use namespace::clean;
 
 sub command_opt_spec {
-    (
-        [ "bag=s", "drop a bag" ],
-    );
+    (["bag=s", "drop a bag"],);
 }
 
 sub command {
@@ -23,7 +21,8 @@ sub command {
     my $from = Catmandu->store($from_args->[0], $from_opts);
     if ($opts->bag) {
         check_able($from->bag($opts->bag), 'drop')->drop;
-    } else {
+    }
+    else {
         check_able($from, 'drop')->drop;
     }
 }

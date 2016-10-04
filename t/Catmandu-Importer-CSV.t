@@ -6,16 +6,15 @@ use Test::More;
 use Test::Exception;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Importer::CSV';
     use_ok $pkg;
 }
 require_ok $pkg;
 
-my $data = [
-   {name=>'Patrick',age=>'39'},
-   {name=>'Nicolas',age=>'34'},
-];
+my $data
+    = [{name => 'Patrick', age => '39'}, {name => 'Nicolas', age => '34'},];
 
 my $csv = <<EOF;
 "name","age"
@@ -29,10 +28,7 @@ isa_ok $importer, $pkg;
 
 is_deeply $importer->to_array, $data;
 
-$data = [
-   {0=>'Patrick',1=>'39'},
-   {0=>'Nicolas',1=>'34'},
-];
+$data = [{0 => 'Patrick', 1 => '39'}, {0 => 'Nicolas', 1 => '34'},];
 
 $csv = <<EOF;
 "Patrick","39"
@@ -43,9 +39,7 @@ $importer = $pkg->new(file => \$csv, header => 0);
 
 is_deeply $importer->to_array, $data;
 
-$data = [
-   {name=>'Nicolas',age=>'34'},
-];
+$data = [{name => 'Nicolas', age => '34'},];
 
 $csv = <<EOF;
 "name"	"age"

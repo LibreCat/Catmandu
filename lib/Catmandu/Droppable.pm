@@ -2,7 +2,7 @@ package Catmandu::Droppable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo::Role;
 use namespace::clean;

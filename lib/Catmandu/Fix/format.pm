@@ -2,7 +2,7 @@ package Catmandu::Fix::format;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -16,14 +16,13 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $spec = $fixer->emit_string($self->spec);
-    
-    "if (is_array_ref(${var})) {" .
-        "${var} = sprintf(${spec},\@{${var}});" .
-    "} elsif (is_hash_ref(${var})) {" .
-        "${var} = sprintf(${spec},\%{${var}});" .
-    "} elsif (is_string(${var})) {" .
-        "${var} = sprintf(${spec},${var});" .
-    "}";
+
+    "if (is_array_ref(${var})) {"
+        . "${var} = sprintf(${spec},\@{${var}});"
+        . "} elsif (is_hash_ref(${var})) {"
+        . "${var} = sprintf(${spec},\%{${var}});"
+        . "} elsif (is_string(${var})) {"
+        . "${var} = sprintf(${spec},${var});" . "}";
 }
 
 1;

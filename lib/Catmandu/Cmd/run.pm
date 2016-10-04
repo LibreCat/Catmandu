@@ -2,7 +2,7 @@ package Catmandu::Cmd::run;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -11,8 +11,11 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "verbose|v", "" ],
-        [ "i"        , "interactive mode"],
+        ["var=s%",        ""],
+        ["fix=s@",        ""],
+        ["preprocess|pp", ""],
+        ["verbose|v",     ""],
+        ["i",             "interactive mode"],
     );
 }
 
@@ -28,15 +31,23 @@ sub command {
         my $fix_file = $args->[0];
         $fix_file = [\*STDIN] unless defined $fix_file;
 
-        my $from = Catmandu->importer('Null');
-        my $into = Catmandu->exporter('Null', fix => $fix_file);
+        $opts->{fix} = [$fix_file];
 
-        $from = $from->benchmark if $opts->verbose;
-        my $n = $into->add_many($from);
+        my $from = Catmandu->importer('Null');
+        $from = $self->_build_fixer($opts)->fix($from);
+
+        if ($opts->verbose) {
+            $from = $from->benchmark;
+        }
+
+        my $into = Catmandu->exporter('Null');
+        my $n    = $into->add_many($from);
         $into->commit;
 
         if ($opts->verbose) {
-            say STDERR $n == 1 ? "converted 1 object" : "converted $n objects";
+            say STDERR $n == 1
+                ? "converted 1 object"
+                : "converted $n objects";
             say STDERR "done";
         }
     }
@@ -59,6 +70,11 @@ Catmandu::Cmd::run - run a fix command
 
   # Execute the fix script
   $ catmandu run myfixes.txt
+
+  # Execute the scripts with options passed
+  $ catmandu run --var source=bla myfixes.txt
+  $ cat myfixes.txt
+  add_field(my_source,{{source}})
 
   # Or create an execurable fix script:
 

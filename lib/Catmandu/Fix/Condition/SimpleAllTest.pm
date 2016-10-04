@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::SimpleAllTest;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo::Role;
 use namespace::clean;
@@ -15,37 +15,48 @@ requires 'emit_test';
 sub emit {
     my ($self, $fixer, $label) = @_;
     my $path = $fixer->split_path($self->path);
-    my $key = pop @$path;
+    my $key  = pop @$path;
 
     my $pass_fixes = $self->pass_fixes;
     my $fail_fixes = $self->fail_fixes;
 
     my $fail_label;
-    my $fail_block = $fixer->emit_block(sub {
-        $fail_label = shift;
+    my $fail_block = $fixer->emit_block(
+        sub {
+            $fail_label = shift;
 
-        $fixer->emit_fixes($fail_fixes);
-    });
+            $fixer->emit_fixes($fail_fixes);
+        }
+    );
 
     my $has_match_var = $fixer->generate_var;
 
     my $perl = $fixer->emit_declare_vars($has_match_var, '0');
 
-    $perl .= $fixer->emit_walk_path($fixer->var, $path, sub {
-        my $var = shift;
-        $fixer->emit_get_key($var, $key, sub {
+    $perl .= $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
             my $var = shift;
-            my $perl = "${has_match_var} ||= 1;";
-            $perl .= "unless (" . $self->emit_test($var, $fixer) . ") {";
-            if (@$fail_fixes) {
-                $perl .= "goto ${fail_label};";
-            } else {
-                $perl .= "last ${label};";
-            }
-            $perl .= "}";
-            $perl;
-        });
-    });
+            $fixer->emit_get_key(
+                $var, $key,
+                sub {
+                    my $var  = shift;
+                    my $perl = "${has_match_var} ||= 1;";
+                    $perl .= "unless ("
+                        . $self->emit_test($var, $fixer) . ") {";
+                    if (@$fail_fixes) {
+                        $perl .= "goto ${fail_label};";
+                    }
+                    else {
+                        $perl .= "last ${label};";
+                    }
+                    $perl .= "}";
+                    $perl;
+                }
+            );
+        }
+    );
 
     $perl .= "if (${has_match_var}) {";
 

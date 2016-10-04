@@ -2,12 +2,13 @@ package Catmandu::Importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
+use LWP::UserAgent::Determined;
 use HTTP::Request ();
-use URI ();
+use URI           ();
 use URI::Template ();
 use Moo::Role;
 use namespace::clean;
@@ -30,6 +31,7 @@ around generator => sub {
             state @buf;
             while (1) {
                 return shift @buf if @buf;
+
                 # TODO use something faster than data_at
                 @buf = data_at($path, $generator->() // return);
                 next;
@@ -41,20 +43,28 @@ around generator => sub {
 };
 
 has file => (is => 'lazy', init_arg => undef);
-has _file_template => (is => 'ro', predicate => 'has_file', init_arg => 'file');
+has _file_template =>
+    (is => 'ro', predicate => 'has_file', init_arg => 'file');
 has variables => (is => 'ro', predicate => 1);
-has fh => (is => 'ro', lazy => 1, builder => 1);
-has encoding => (is => 'ro', builder=> 1);
-has data_path => (is => 'ro');
-has user_agent => (is => 'ro');
-has http_method => (is => 'lazy');
-has http_headers => (is => 'lazy');
-has http_agent => (is => 'ro', predicate => 1);
-has http_max_redirect => (is => 'ro', predicate => 1);
-has http_timeout => (is => 'ro', predicate => 1);
-has http_verify_hostname => (is => 'ro', default => sub { 1 });
-has http_body => (is => 'ro', predicate => 1);
-has _http_client  => (is => 'ro', lazy => 1, builder => '_build_http_client', init_arg => 'user_agent');
+has fh        => (is => 'ro', lazy      => 1, builder => 1);
+has encoding  => (is => 'ro', builder   => 1);
+has data_path            => (is => 'ro');
+has user_agent           => (is => 'ro');
+has http_method          => (is => 'lazy');
+has http_headers         => (is => 'lazy');
+has http_agent           => (is => 'ro', predicate => 1);
+has http_max_redirect    => (is => 'ro', predicate => 1);
+has http_timeout         => (is => 'ro', default => sub {180});  # LWP default
+has http_verify_hostname => (is => 'ro', default => sub {1});
+has http_retry  => (is => 'ro', predicate => 1);
+has http_timing => (is => 'ro', predicate => 1);
+has http_body   => (is => 'ro', predicate => 1);
+has _http_client => (
+    is       => 'ro',
+    lazy     => 1,
+    builder  => '_build_http_client',
+    init_arg => 'user_agent'
+);
 has ignore_404 => (is => 'ro');
 
 sub _build_encoding {
@@ -67,7 +77,7 @@ sub _build_file {
     my $file = $self->_file_template;
     if (is_string($file) && $self->has_variables) {
         my $template = URI::Template->new($file);
-        my $vars = $self->variables;
+        my $vars     = $self->variables;
         if (is_value($vars)) {
             $vars = [split ',', $vars];
         }
@@ -79,7 +89,7 @@ sub _build_file {
         }
         $file = $template->process_to_string(%$vars);
     }
-    if (is_string($file) && $file !~ m!^https?://! && ! -f $file) {
+    if (is_string($file) && $file !~ m!^https?://! && !-r $file) {
         Catmandu::BadArg->throw("file '$file' doesn't exist");
     }
     $file;
@@ -90,23 +100,25 @@ sub _build_fh {
     my $file = $self->file;
     my $body;
     if (is_string($file) && $file =~ m!^https?://!) {
-        my $req = HTTP::Request->new($self->http_method, $file, $self->http_headers);
+        my $req = HTTP::Request->new($self->http_method, $file,
+            $self->http_headers);
 
         if ($self->has_http_body) {
             $body = $self->http_body;
-            
+
             if (ref $body) {
                 $body = $self->serialize($body);
             }
 
             if ($self->has_variables) {
                 my $vars = $self->variables;
-                if (is_hash_ref($vars)) { # named variables
+                if (is_hash_ref($vars)) {    # named variables
                     for my $key (keys %$vars) {
                         my $var = $vars->{$key};
                         $body =~ s/{$key}/$var/;
                     }
-                } else { # positional variables
+                }
+                else {                       # positional variables
                     if (is_value($vars)) {
                         $vars = [split ',', $vars];
                     }
@@ -126,16 +138,18 @@ sub _build_fh {
                 my $val = $res->header($header);
                 push @$res_headers, $header, $val;
             }
-            Catmandu::HTTPError->throw({
-                code             => $res->code,
-                message          => $res->status_line,
-                url              => $file,
-                method           => $self->http_method,
-                request_headers  => $self->http_headers,
-                request_body     => $body,
-                response_headers => $res_headers,
-                response_body    => $res->decoded_content,
-            });
+            Catmandu::HTTPError->throw(
+                {
+                    code             => $res->code,
+                    message          => $res->status_line,
+                    url              => $file,
+                    method           => $self->http_method,
+                    request_headers  => $self->http_headers,
+                    request_body     => $body,
+                    response_headers => $res_headers,
+                    response_body    => $res->decoded_content,
+                }
+            );
         }
 
         my $content = $res->decoded_content;
@@ -155,10 +169,22 @@ sub _build_http_method {
 
 sub _build_http_client {
     my ($self) = @_;
-    my $ua = LWP::UserAgent->new;
+    my $ua;
+    if ($self->has_http_timing) {
+        $ua = LWP::UserAgent::Determined->new;
+        $ua->timing($self->http_timing);
+    }
+    elsif ($self->has_http_retry) {
+        $ua = LWP::UserAgent::Determined->new;
+        $ua->timing(join(',', ($self->http_timeout) x $self->http_retry));
+    }
+    else {
+        $ua = LWP::UserAgent->new;
+        $ua->timeout($self->http_timeout);
+    }
     $ua->agent($self->http_agent) if $self->has_http_agent;
-    $ua->max_redirect($self->http_max_redirect) if $self->has_http_max_redirect;
-    $ua->timeout($self->http_timeout) if $self->has_http_timeout;
+    $ua->max_redirect($self->http_max_redirect)
+        if $self->has_http_max_redirect;
     $ua->ssl_opts(verify_hostname => $self->http_verify_hostname);
     $ua->protocols_allowed([qw(http https)]);
     $ua->env_proxy;
@@ -166,12 +192,14 @@ sub _build_http_client {
 }
 
 sub readline {
-    warnings::warnif("deprecated","readline is deprecated, fh->getline instead");
+    warnings::warnif("deprecated",
+        "readline is deprecated, fh->getline instead");
     $_[0]->fh->getline;
 }
 
 sub readall {
-    warnings::warnif("deprecated","readall is deprecated, join('',fh->getlines) instead");
+    warnings::warnif("deprecated",
+        "readall is deprecated, join('',fh->getlines) instead");
     join '', $_[0]->fh->getlines;
 }
 
@@ -367,6 +395,18 @@ Maximum execution time.
 =item http_verify_hostname
 
 Verify the SSL certificate.
+
+=item http_retry
+
+Maximum times to retry the HTTP request if it temporarily fails. Default is not
+to retry.  See L<LWP::User::UserAgent::Determined> for the HTTP status codes
+that initiate a retry.
+
+=item http_timing
+
+Maximum times and timeouts to retry the HTTP request if it temporarily fails. Default is not
+to retry.  See L<LWP::User::UserAgent::Determined> for the HTTP status codes
+that initiate a retry and the format of the timing value.
 
 =back
 

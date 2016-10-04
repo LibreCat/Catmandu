@@ -2,7 +2,7 @@ package Catmandu::Fix::add_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -15,13 +15,17 @@ has value => (fix_arg => 1);
 
 sub emit {
     my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
+    my $path  = $fixer->split_path($self->path);
     my $value = $fixer->emit_value($self->value);
 
-    $fixer->emit_create_path($fixer->var, $path, sub {
-        my $var = shift;
-        "${var} = ${value};";
-    });
+    $fixer->emit_create_path(
+        $fixer->var,
+        $path,
+        sub {
+            my $var = shift;
+            "${var} = ${value};";
+        }
+    );
 }
 
 1;

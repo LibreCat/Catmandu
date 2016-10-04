@@ -2,7 +2,7 @@ package Catmandu::Fix::uniq;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use List::MoreUtils ();
 use Moo;
@@ -16,10 +16,9 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
 
-    "if (is_array_ref(${var})) {" .
-        "no warnings 'uninitialized';" .
-        "${var} = [List::MoreUtils::uniq(\@{${var}})];" .
-    "}";
+    "if (is_array_ref(${var})) {"
+        . "no warnings 'uninitialized';"
+        . "${var} = [List::MoreUtils::uniq(\@{${var}})];" . "}";
 }
 
 1;

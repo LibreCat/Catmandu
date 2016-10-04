@@ -2,15 +2,15 @@ package Catmandu::TabularExporter;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(:is :check);
 use Moo::Role;
 
 sub _coerce_array {
     my $fields = $_[0];
-    if (ref $fields eq 'ARRAY') { return $fields }
-    if (ref $fields eq 'HASH')  { return [sort keys %$fields] }
+    if (ref $fields eq 'ARRAY') {return $fields}
+    if (ref $fields eq 'HASH') {return [sort keys %$fields]}
     [split ',', $fields];
 }
 
@@ -18,24 +18,13 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has fields => (
-    is => 'rwp',
-    coerce => \&_coerce_array,
-);
+has fields => (is => 'rwp', coerce => \&_coerce_array,);
 
-has columns => (
-    is => 'rwp',
-    coerce => \&_coerce_array,
-);
+has columns => (is => 'rwp', coerce => \&_coerce_array,);
 
-has collect_fields => (
-    is => 'ro',
-);
+has collect_fields => (is => 'ro',);
 
-has header => (
-    is => 'ro',
-    default => sub { 1 }
-);
+has header => (is => 'ro', default => sub {1});
 
 around add => sub {
     my ($orig, $self, $data) = @_;
@@ -51,9 +40,11 @@ around add_many => sub {
 
         if (is_array_ref($many)) {
             $coll = $many;
-        } elsif (is_hash_ref($many)) {
+        }
+        elsif (is_hash_ref($many)) {
             $coll = [$many];
-        } else {
+        }
+        else {
             if (is_invocant($many)) {
                 $many = check_able($many, 'generator')->generator;
             }

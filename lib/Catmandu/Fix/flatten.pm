@@ -2,7 +2,7 @@ package Catmandu::Fix::flatten;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -14,10 +14,9 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var) = @_;
-    "if (is_array_ref(${var})) {" .
-        "${var} = [map { ref \$_ eq 'ARRAY' ? \@\$_ : \$_ } \@{${var}}] " .
-        "while grep ref \$_ eq 'ARRAY', \@{${var}};" .
-    "}";
+    "if (is_array_ref(${var})) {"
+        . "${var} = [map { ref \$_ eq 'ARRAY' ? \@\$_ : \$_ } \@{${var}}] "
+        . "while grep ref \$_ eq 'ARRAY', \@{${var}};" . "}";
 }
 
 1;

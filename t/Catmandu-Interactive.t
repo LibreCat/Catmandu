@@ -7,6 +7,7 @@ use Test::Exception;
 use Catmandu::Util;
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Interactive';
     use_ok $pkg;
@@ -14,10 +15,10 @@ BEGIN {
 require_ok $pkg;
 
 {
-    my $cmd  = "\\q\n";
-    my $res  = ""; 
-    my $in   = Catmandu::Util::io \$cmd, mode => 'r';
-    my $out  = Catmandu::Util::io \$res, mode => 'w';
+    my $cmd = "\\q\n";
+    my $res = "";
+    my $in  = Catmandu::Util::io \$cmd, mode => 'r';
+    my $out = Catmandu::Util::io \$res, mode => 'w';
 
     my $app = Catmandu::Interactive->new(in => $in, out => $out, silent => 1);
 
@@ -31,15 +32,15 @@ require_ok $pkg;
 
 {
     my $cmd = "add_field(hello,world)\n";
-    my $res  = ""; 
-    my $in   = Catmandu::Util::io \$cmd, mode => 'r';
-    my $out  = Catmandu::Util::io \$res, mode => 'w';
+    my $res = "";
+    my $in  = Catmandu::Util::io \$cmd, mode => 'r';
+    my $out = Catmandu::Util::io \$res, mode => 'w';
 
     my $app = Catmandu::Interactive->new(
-        in => $in,
-        out => $out,
-        silent => 1,
-        exporter => 'JSON',
+        in            => $in,
+        out           => $out,
+        silent        => 1,
+        exporter      => 'JSON',
         exporter_args => {line_delimited => 1},
     );
 
@@ -52,22 +53,24 @@ require_ok $pkg;
 }
 
 {
-    my $cmd = "add_field(hello,world)\nif exists(hello)\nupcase(hello)\nend\n";
-    my $res  = ""; 
-    my $in   = Catmandu::Util::io \$cmd, mode => 'r';
-    my $out  = Catmandu::Util::io \$res, mode => 'w';
+    my $cmd
+        = "add_field(hello,world)\nif exists(hello)\nupcase(hello)\nend\n";
+    my $res = "";
+    my $in  = Catmandu::Util::io \$cmd, mode => 'r';
+    my $out = Catmandu::Util::io \$res, mode => 'w';
 
     my $app = Catmandu::Interactive->new(
-        in => $in,
-        out => $out,
-        silent => 1,
-        exporter => 'JSON',
+        in            => $in,
+        out           => $out,
+        silent        => 1,
+        exporter      => 'JSON',
         exporter_args => {line_delimited => 1},
     );
 
     $app->run();
 
-    is $res , "{\"hello\":\"world\"}\n{\"hello\":\"WORLD\"}\n", 'can execute hello world with continuation';
+    is $res , "{\"hello\":\"world\"}\n{\"hello\":\"WORLD\"}\n",
+        'can execute hello world with continuation';
 
     $in->close();
     $out->close();
@@ -75,21 +78,22 @@ require_ok $pkg;
 
 {
     my $cmd = "add_field(hello,world)\n\\h\n";
-    my $res  = ""; 
-    my $in   = Catmandu::Util::io \$cmd, mode => 'r';
-    my $out  = Catmandu::Util::io \$res, mode => 'w';
+    my $res = "";
+    my $in  = Catmandu::Util::io \$cmd, mode => 'r';
+    my $out = Catmandu::Util::io \$res, mode => 'w';
 
     my $app = Catmandu::Interactive->new(
-        in => $in,
-        out => $out,
-        silent => 1,
-        exporter => 'JSON',
+        in            => $in,
+        out           => $out,
+        silent        => 1,
+        exporter      => 'JSON',
         exporter_args => {line_delimited => 1},
     );
 
     $app->run();
 
-    is $res , "{\"hello\":\"world\"}\nadd_field(hello,world)\n", 'can execute \h';
+    is $res , "{\"hello\":\"world\"}\nadd_field(hello,world)\n",
+        'can execute \h';
 
     $in->close();
     $out->close();
@@ -97,21 +101,22 @@ require_ok $pkg;
 
 {
     my $cmd = "add_field(hello.\$append,world)\n\\r\n";
-    my $res  = ""; 
-    my $in   = Catmandu::Util::io \$cmd, mode => 'r';
-    my $out  = Catmandu::Util::io \$res, mode => 'w';
+    my $res = "";
+    my $in  = Catmandu::Util::io \$cmd, mode => 'r';
+    my $out = Catmandu::Util::io \$res, mode => 'w';
 
     my $app = Catmandu::Interactive->new(
-        in => $in,
-        out => $out,
-        silent => 1,
-        exporter => 'JSON',
+        in            => $in,
+        out           => $out,
+        silent        => 1,
+        exporter      => 'JSON',
         exporter_args => {line_delimited => 1},
     );
 
     $app->run();
 
-    is $res , "{\"hello\":[\"world\"]}\n{\"hello\":[\"world\",\"world\"]}\n", 'can execute \r';
+    is $res , "{\"hello\":[\"world\"]}\n{\"hello\":[\"world\",\"world\"]}\n",
+        'can execute \r';
 
     $in->close();
     $out->close();

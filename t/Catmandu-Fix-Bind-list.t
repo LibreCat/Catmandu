@@ -8,13 +8,14 @@ use Catmandu::Importer::Mock;
 use Catmandu::Util qw(:is);
 
 my $pkg;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::Bind::list';
     use_ok $pkg;
 }
 require_ok $pkg;
 
-my $fixes =<<EOF;
+my $fixes = <<EOF;
 do list()
   add_field(foo,bar)
 end
@@ -24,18 +25,19 @@ my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 ok $fixer , 'create fixer';
 
-is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing add_field';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing add_field';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list()
 end
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing zero fix functions';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'},
+    'testing zero fix functions';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list()
   unless exists(foo)
   	add_field(foo,bar)
@@ -45,9 +47,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({}), {foo => 'bar'} , 'testing unless';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing unless';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list()
   if exists(foo)
   	add_field(foo2,bar)
@@ -57,9 +59,10 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'} , 'testing if';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', foo2 => 'bar'},
+    'testing if';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list()
   reject exists(foo)
 end
@@ -67,9 +70,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-ok !defined $fixer->fix({foo => 'bar'}) , 'testing reject';
+ok !defined $fixer->fix({foo => 'bar'}), 'testing reject';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list()
   select exists(foo)
 end
@@ -77,9 +80,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'testing select';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing select';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list()
  do list()
   do list()
@@ -91,9 +94,9 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'} , 'before/after testing';
+is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'before/after testing';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 add_field(before,ok)
 do list()
    add_field(inside,ok)
@@ -103,9 +106,11 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'} , 'before/after testing';
+is_deeply $fixer->fix({foo => 'bar'}),
+    {foo => 'bar', before => 'ok', inside => 'ok', after => 'ok'},
+    'before/after testing';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 do list(path => foo)
   add_field(test,bar)
 end
@@ -113,26 +118,30 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix(
-             {foo => [ {bar => 1}, {bar => 2} ]}
-          ), {foo => [ {bar => 1 , test => 'bar'} , 
-             {bar => 2 , test => 'bar'}]} , 'specific testing';
+is_deeply $fixer->fix({foo => [{bar => 1}, {bar => 2}]}),
+    {foo => [{bar => 1, test => 'bar'}, {bar => 2, test => 'bar'}]},
+    'specific testing';
 
-$fixes =<<EOF;
+$fixes = <<EOF;
 add_field(foo.\$append,1)
 add_field(foo.\$append,2)
 add_field(foo.\$append,3)
 add_field(foo.\$append,4)
 
 do list(path:foo,var:loop) 
- copy_field(loop,test.\$append)
+ copy_field(loop,test2.\$append)
 end
+
+do list(path:foo) 
+ append(.,':')
+end
+
 EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix(
-             {}
-          ), {foo => [1,2,3,4] , test => [1,2,3,4]} , 'specific testing, loop variable';
+is_deeply $fixer->fix({}),
+    {foo => ["1:", "2:", "3:", "4:"], test2 => [1, 2, 3, 4]},
+    'specific testing, loop variable';
 
 done_testing 13;

@@ -2,7 +2,7 @@ package Catmandu::Iterable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -44,8 +44,8 @@ sub to_array {
 
 sub count {
     my ($self) = @_;
-    my $next = $self->generator;
-    my $n = 0;
+    my $next   = $self->generator;
+    my $n      = 0;
     while ($next->()) {
         $n++;
     }
@@ -55,30 +55,34 @@ sub count {
 sub slice {
     my ($self, $start, $total) = @_;
     $start //= 0;
-    Catmandu::Iterator->new(sub { sub {
-        if (defined $total) {
-            $total || return;
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                if (defined $total) {
+                    $total || return;
+                }
+                state $next = $self->generator;
+                state $data;
+                while (defined($data = $next->())) {
+                    if ($start > 0) {
+                        $start--;
+                        next;
+                    }
+                    if (defined $total) {
+                        $total--;
+                    }
+                    return $data;
+                }
+                return;
+                }
         }
-        state $next = $self->generator;
-        state $data;
-        while (defined($data = $next->())) {
-            if ($start > 0) {
-                $start--;
-                next;
-            }
-            if (defined $total) {
-                $total--;
-            }
-            return $data;
-        }
-        return;
-    }});
+    );
 }
 
 sub each {
     my ($self, $sub) = @_;
     my $next = $self->generator;
-    my $n = 0;
+    my $n    = 0;
     my $data;
     while (defined($data = $next->())) {
         $sub->($data);
@@ -90,7 +94,7 @@ sub each {
 sub each_until {
     my ($self, $sub) = @_;
     my $next = $self->generator;
-    my $n = 0;
+    my $n    = 0;
     my $data;
     while (defined($data = $next->())) {
         $sub->($data) || last;
@@ -101,15 +105,19 @@ sub each_until {
 
 sub tap {
     my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub { sub {
-        state $next = $self->generator;
-        state $data;
-        if (defined($data = $next->())) {
-            $sub->($data);
-            return $data;
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                state $next = $self->generator;
+                state $data;
+                if (defined($data = $next->())) {
+                    $sub->($data);
+                    return $data;
+                }
+                return;
+                }
         }
-        return;
-    }});
+    );
 }
 
 sub any {
@@ -125,7 +133,7 @@ sub any {
 sub many {
     my ($self, $sub) = @_;
     my $next = $self->generator;
-    my $n = 0;
+    my $n    = 0;
     my $data;
     while (defined($data = $next->())) {
         $sub->($data) && ++$n > 1 && return 1;
@@ -145,24 +153,29 @@ sub all {
 
 sub map {
     my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub { sub {
-        state $next = $self->generator;
-        $sub->($next->() // return);
-    }});
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                state $next = $self->generator;
+                $sub->($next->() // return);
+                }
+        }
+    );
 }
 
 sub reduce {
-    my $self = shift;
+    my $self     = shift;
     my $memo_set = @_ > 1;
-    my $sub  = pop;
-    my $memo = shift;
-    my $next = $self->generator;
+    my $sub      = pop;
+    my $memo     = shift;
+    my $next     = $self->generator;
     my $data;
     while (defined($data = $next->())) {
         if ($memo_set) {
             $memo = $sub->($memo, $data);
-        } else {
-            $memo = $data;
+        }
+        else {
+            $memo     = $data;
             $memo_set = 1;
         }
     }
@@ -189,7 +202,8 @@ sub take {
             if (is_regex_ref($arg2)) {
                 return sub {
                     is_hash_ref($_[0]) || return 0;
-                    my $val = $_[0]->{$arg1}; is_value($val) && $val =~ $arg2;
+                    my $val = $_[0]->{$arg1};
+                    is_value($val) && $val =~ $arg2;
                 };
             }
             if (is_array_ref($arg2)) {
@@ -204,13 +218,15 @@ sub take {
             }
             return sub {
                 is_hash_ref($_[0]) || return 0;
-                my $val = $_[0]->{$arg1}; is_value($val) && $val eq $arg2;
+                my $val = $_[0]->{$arg1};
+                is_value($val) && $val eq $arg2;
             };
         }
 
         if (is_regex_ref($arg1)) {
             return sub {
-                my $val = $_[0]; is_value($val) && $val =~ $arg1;
+                my $val = $_[0];
+                is_value($val) && $val =~ $arg1;
             };
         }
 
@@ -218,7 +234,8 @@ sub take {
     };
 
     sub detect {
-        my $self = shift; my $sub = $to_sub->(@_);
+        my $self = shift;
+        my $sub  = $to_sub->(@_);
         my $next = $self->generator;
         my $data;
         while (defined($data = $next->())) {
@@ -228,174 +245,212 @@ sub take {
     }
 
     sub select {
-        my $self = shift; my $sub = $to_sub->(@_);
-        Catmandu::Iterator->new(sub { sub {
-            state $next = $self->generator;
-            state $data;
-            while (defined($data = $next->())) {
-                $sub->($data) && return $data;
+        my $self = shift;
+        my $sub  = $to_sub->(@_);
+        Catmandu::Iterator->new(
+            sub {
+                sub {
+                    state $next = $self->generator;
+                    state $data;
+                    while (defined($data = $next->())) {
+                        $sub->($data) && return $data;
+                    }
+                    return;
+                    }
             }
-            return;
-        }});
+        );
     }
 
-    sub grep { goto &select }
-    
+    sub grep {goto &select}
+
     sub reject {
-        my $self = shift; my $sub = $to_sub->(@_);
-        Catmandu::Iterator->new(sub { sub {
-            state $next = $self->generator;
-            state $data;
-            while (defined($data = $next->())) {
-                $sub->($data) || return $data;
+        my $self = shift;
+        my $sub  = $to_sub->(@_);
+        Catmandu::Iterator->new(
+            sub {
+                sub {
+                    state $next = $self->generator;
+                    state $data;
+                    while (defined($data = $next->())) {
+                        $sub->($data) || return $data;
+                    }
+                    return;
+                    }
             }
-            return;
-        }});
+        );
     }
 };
 
 sub sorted {
     my ($self, $cmp) = @_;
     if (!defined $cmp) {
-        Catmandu::ArrayIterator->new([ sort @{$self->to_array} ]);
-    } elsif (ref $cmp) {
-        Catmandu::ArrayIterator->new([ 
-            sort { $cmp->($a,$b) }
-            @{$self->to_array} 
-        ]);
-    } else {
+        Catmandu::ArrayIterator->new([sort @{$self->to_array}]);
+    }
+    elsif (ref $cmp) {
+        Catmandu::ArrayIterator->new(
+            [sort {$cmp->($a, $b)} @{$self->to_array}]);
+    }
+    else {
         # TODO: use Schwartzian transform for more complex key
-        Catmandu::ArrayIterator->new([ 
-            sort { $a->{$cmp} cmp $b->{$cmp} } @{$self->to_array}
-        ]);
+        Catmandu::ArrayIterator->new(
+            [sort {$a->{$cmp} cmp $b->{$cmp}} @{$self->to_array}]);
     }
 }
 
 sub pluck {
     my ($self, $key) = @_;
-    $self->map(sub {
-        $_[0]->{$key};
-    });
+    $self->map(
+        sub {
+            $_[0]->{$key};
+        }
+    );
 }
 
 sub invoke {
     my ($self, $method, @args) = @_;
-    $self->map(sub {
-        $_[0]->$method(@args);
-    });
+    $self->map(
+        sub {
+            $_[0]->$method(@args);
+        }
+    );
 }
 
-sub contains { goto &includes }
+sub contains {goto &includes}
 
 sub includes {
     my ($self, $data) = @_;
-    $self->any(sub {
-        is_same($data, $_[0]);
-    });
+    $self->any(
+        sub {
+            is_same($data, $_[0]);
+        }
+    );
 }
 
 sub group {
     my ($self, $size) = @_;
-    Catmandu::Iterator->new(sub { sub {
-        state $next = $self->generator;
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                state $next = $self->generator;
 
-        my $group = [];
+                my $group = [];
 
-        for (my $i = 0; $i < $size; $i++) {
-            push @$group, $next->() // last;
+                for (my $i = 0; $i < $size; $i++) {
+                    push @$group, $next->() // last;
+                }
+
+                unless (@$group) {
+                    return;
+                }
+
+                Catmandu::ArrayIterator->new($group);
+                }
         }
-
-        unless (@$group) {
-            return;
-        }
-
-        Catmandu::ArrayIterator->new($group);
-    }});
+    );
 }
 
 sub interleave {
     my @iterators = @_;
-    Catmandu::Iterator->new(sub { sub {
-        state @generators;
-        state $n = @iterators;
-        state $i = 0;
-        while ($n) {
-            $i = 0 if $i == $n;
-            my $next = $generators[$i] ||= $iterators[$i]->generator;
-            if (defined(my $data = $next->())) {
-                $i++;
-                return $data;
-            } else {
-                splice @generators, $i, 1;
-                $n--;
-            }
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                state @generators;
+                state $n = @iterators;
+                state $i = 0;
+                while ($n) {
+                    $i = 0 if $i == $n;
+                    my $next = $generators[$i] ||= $iterators[$i]->generator;
+                    if (defined(my $data = $next->())) {
+                        $i++;
+                        return $data;
+                    }
+                    else {
+                        splice @generators, $i, 1;
+                        $n--;
+                    }
+                }
+                return;
+                }
         }
-        return;
-    }});
+    );
 }
 
 sub max {
     my ($self, $sub) = @_;
-    $self->reduce(undef, sub {
-        my ($memo, $data) = @_;
-        my $val = defined $sub ? $sub->($data) : $data;
-        return $val > $memo ? $val : $memo if is_number($memo) && is_number($val);
-        return $memo if is_number($memo);
-        return $val  if is_number($val);
-        return;
-    });
+    $self->reduce(
+        undef,
+        sub {
+            my ($memo, $data) = @_;
+            my $val = defined $sub ? $sub->($data) : $data;
+            return $val > $memo ? $val : $memo
+                if is_number($memo) && is_number($val);
+            return $memo if is_number($memo);
+            return $val  if is_number($val);
+            return;
+        }
+    );
 }
 
 sub min {
     my ($self, $sub) = @_;
-    $_[0]->reduce(undef, sub {
-        my ($memo, $data) = @_;
-        my $val = defined $sub ? $sub->($data) : $data;
-        return $val < $memo ? $val : $memo if is_number($memo) && is_number($val);
-        return $memo if is_number($memo);
-        return $val  if is_number($val);
-        return;
-    });
+    $_[0]->reduce(
+        undef,
+        sub {
+            my ($memo, $data) = @_;
+            my $val = defined $sub ? $sub->($data) : $data;
+            return $val < $memo ? $val : $memo
+                if is_number($memo) && is_number($val);
+            return $memo if is_number($memo);
+            return $val  if is_number($val);
+            return;
+        }
+    );
 }
 
 sub benchmark {
     my ($self) = @_;
-    $self->tap(sub {
-        state $n = 0;
-        state $t = [gettimeofday];
-        if (++$n % 100 == 0) {
-            printf STDERR "added %9d (%d/sec)\n", $n, $n/tv_interval($t);
+    $self->tap(
+        sub {
+            state $n = 0;
+            state $t = [gettimeofday];
+            if (++$n % 100 == 0) {
+                printf STDERR "added %9d (%d/sec)\n", $n,
+                    $n / tv_interval($t);
+            }
         }
-    });
+    );
 }
 
 sub format {
     my ($self, %opts) = @_;
-    $opts{header} //= 1;
+    $opts{header}  //= 1;
     $opts{col_sep} //= " | ";
     my @cols = $opts{cols} ? @{$opts{cols}} : ();
     my @col_lengths = map length, @cols;
 
-    my $rows = $self->map(sub {
-        my $data = $_[0];
-        my $row = [];
-        for (my $i = 0; $i < @cols; $i++) {
-            my $col = $data->{$cols[$i]} // "";
-            my $len = length $col;
-            $col_lengths[$i] = $len if $len > $col_lengths[$i];
-            push @$row, $col;
+    my $rows = $self->map(
+        sub {
+            my $data = $_[0];
+            my $row  = [];
+            for (my $i = 0; $i < @cols; $i++) {
+                my $col = $data->{$cols[$i]} // "";
+                my $len = length $col;
+                $col_lengths[$i] = $len if $len > $col_lengths[$i];
+                push @$row, $col;
+            }
+            $row;
         }
-        $row;
-    })->to_array;
+    )->to_array;
 
-    my @indices = 0 .. @cols-1;
-    my $pattern = join($opts{col_sep}, map { "%-$col_lengths[$_]s" } @indices)."\n";
+    my @indices = 0 .. @cols - 1;
+    my $pattern
+        = join($opts{col_sep}, map {"%-$col_lengths[$_]s"} @indices) . "\n";
 
     if ($opts{header}) {
         printf $pattern, @cols;
         my $sep = $opts{col_sep};
         $sep =~ s/[^|]/-/g;
-        print join($sep, map { '-' x $col_lengths[$_] } @indices)."\n";
+        print join($sep, map {'-' x $col_lengths[$_]} @indices) . "\n";
     }
     for my $row (@$rows) {
         printf $pattern, @$row;
@@ -404,12 +459,16 @@ sub format {
 
 sub stop_if {
     my ($self, $sub) = @_;
-    Catmandu::Iterator->new(sub { sub {
-        state $next = $self->generator;
-        my $data = $next->() // return;
-        $sub->($data) && return;
-        $data;
-    }});
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                state $next = $self->generator;
+                my $data = $next->() // return;
+                $sub->($data) && return;
+                $data;
+                }
+        }
+    );
 }
 
 1;

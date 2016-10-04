@@ -2,7 +2,7 @@ package Catmandu::Cmd::copy;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -10,21 +10,24 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        [ "verbose|v", "" ],
-        [ "fix=s@", "" ],
-        [ "start=i", "" ],
-        [ "limit=i", "" ],
-        [ "total=i", "" ],
-        [ "cql-query|q=s", "" ],
-        [ "query=s", "" ],
-        [ "delete", "delete existing objects first" ],
+        ["verbose|v",     ""],
+        ["fix=s@",        ""],
+        ["var=s%",        ""],
+        ["preprocess|pp", ""],
+        ["start=i",       ""],
+        ["limit=i",       ""],
+        ["total=i",       ""],
+        ["cql-query|q=s", ""],
+        ["query=s",       ""],
+        ["delete",        "delete existing objects first"],
     );
 }
 
 sub command {
     my ($self, $opts, $args) = @_;
 
-    my ($from_args, $from_opts, $into_args, $into_opts) = $self->_parse_options($args);
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
     my $from_bag = delete $from_opts->{bag};
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
@@ -32,7 +35,8 @@ sub command {
     my $into = Catmandu->store($into_args->[0], $into_opts)->bag($into_bag);
 
     if ($opts->query // $opts->cql_query) {
-        $self->usage_error("Bag isn't searchable") unless $from->can('searcher');
+        $self->usage_error("Bag isn't searchable")
+            unless $from->can('searcher');
         $from = $from->searcher(
             cql_query => $opts->cql_query,
             query     => $opts->query,
@@ -40,11 +44,12 @@ sub command {
             total     => $opts->total,
             limit     => $opts->limit,
         );
-    } elsif ($opts->start // $opts->total) {
+    }
+    elsif ($opts->start // $opts->total) {
         $from = $from->slice($opts->start, $opts->total);
     }
     if ($opts->fix) {
-        $from = Catmandu->fixer($opts->fix)->fix($from);
+        $from = $self->_build_fixer($opts)->fix($from);
     }
     if ($opts->verbose) {
         $from = $from->benchmark;
@@ -58,7 +63,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR $n ==1 ? "copied 1 object" : "copied $n objects";
+        say STDERR $n == 1 ? "copied 1 object" : "copied $n objects";
         say STDERR "done";
     }
 }

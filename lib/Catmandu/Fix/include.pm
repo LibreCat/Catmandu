@@ -2,7 +2,7 @@ package Catmandu::Fix::include;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use Catmandu;
@@ -12,10 +12,12 @@ use Cwd qw();
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Inlineable';
+
 has path => (fix_arg => 1);
 has _path => (
-    is => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     builder => sub {
 
         my $self = $_[0];
@@ -24,12 +26,13 @@ has _path => (
         my $real_path;
         my $load_paths = Catmandu->_env->load_paths;
 
-        if( File::Spec->file_name_is_absolute( $path ) ){
+        if (File::Spec->file_name_is_absolute($path)) {
             $real_path = $path;
-        } else {
-            for my $p(@$load_paths){
-                my $n = File::Spec->catfile($p,$path);
-                if( -f $n ){
+        }
+        else {
+            for my $p (@$load_paths) {
+                my $n = File::Spec->catfile($p, $path);
+                if (-r $n) {
                     $real_path = Cwd::realpath($n);
                     last;
                 }
@@ -37,24 +40,23 @@ has _path => (
 
         }
 
-        die("unable to find $path in load_path of Catmandu (load_path:  ".
-            join(',',@$load_paths).")") unless defined $real_path;
+        die("unable to find $path in load_path of Catmandu (load_path:  "
+                . join(',', @$load_paths) . ")")
+            unless defined $real_path;
         $real_path;
     }
 );
 
 has _fixer => (
-    is => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     builder => sub {
-        Catmandu::Fix->new(
-            fixes => [ $_[0]->_path() ]
-        );
+        Catmandu::Fix->new(fixes => [$_[0]->_path()]);
     }
 );
 
 sub fix {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     $self->_fixer()->fix($data);
 }
 

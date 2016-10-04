@@ -2,7 +2,7 @@ package Catmandu::Hits;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0002';
+our $VERSION = '1.0301';
 
 use Moo;
 use namespace::clean;
@@ -27,7 +27,7 @@ sub more {
 sub generator {
     my $self = $_[0];
     my $hits = $self->hits;
-    my $i = 0;
+    my $i    = 0;
     sub {
         $hits->[$i++];
     };
@@ -66,13 +66,13 @@ Catmandu::Hits - Iterable object that wraps Catmandu::Store search hits
 
 =head1 SYNOPSIS
 
-    my $store = Catmandu::Store::Solr->new();
+    my $store = Catmandu::Store::Solr->new;
 
     my $hits  = $store->bag->search(
-		   query => 'dna' ,
-	       start => 0 ,
-		   limit => 100 ,
-		   sort  => 'title desc',
+           query => 'dna' ,
+           start => 0 ,
+           limit => 100 ,
+           sort  => 'title desc',
                 );
 
     # Every hits is an iterator...
