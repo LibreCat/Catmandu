@@ -2,7 +2,7 @@ package Catmandu::TabularExporter;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0301';
+our $VERSION = '1.0302';
 
 use Catmandu::Util qw(:is :check);
 use Moo::Role;

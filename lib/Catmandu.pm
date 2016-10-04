@@ -2,7 +2,7 @@ package Catmandu;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0301';
+our $VERSION = '1.0302';
 
 use Catmandu::Env;
 use Catmandu::Util qw(:is);
