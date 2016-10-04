@@ -22,20 +22,25 @@ my $store = $pkg->new();
 can_ok $store, 'transaction';
 
 my $bag = $store->bag;
-my @method = qw(to_array each take add add_many count slice first rest any many all tap map reduce);
+my @method
+    = qw(to_array each take add add_many count slice first rest any many all tap map reduce);
 can_ok $bag, $_ for @method;
 
-$store->transaction(sub {
-    my $rec = $bag->get_or_add('1', {latest => '0'});
-    ++$rec->{latest};
-    $bag->add($rec);
-});
+$store->transaction(
+    sub {
+        my $rec = $bag->get_or_add('1', {latest => '0'});
+        ++$rec->{latest};
+        $bag->add($rec);
+    }
+);
 is_deeply $bag->first, {_id => 1, latest => 1}, "transaction ok";
-$store->transaction(sub {
-    my $rec = $bag->get_or_add('1', {latest => '0'});
-    ++$rec->{latest};
-    $bag->add($rec);
-});
+$store->transaction(
+    sub {
+        my $rec = $bag->get_or_add('1', {latest => '0'});
+        ++$rec->{latest};
+        $bag->add($rec);
+    }
+);
 is_deeply $bag->first, {_id => 1, latest => 2}, "transaction ok again";
 $bag->drop;
 

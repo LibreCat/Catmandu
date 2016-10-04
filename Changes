@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Hash store is now transactional for testing purposes
 
 1.0301  2016-09-22 09:33:53 CEST
   - fix hashmap bind tests
