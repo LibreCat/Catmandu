@@ -9,16 +9,16 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has num => (is => 'rwp' , default => sub { 0 });
+has _num => (is => 'rw', default => sub {0});
 
 sub add {
     my $self = $_[0];
-    $self->_set_num($self->num + 1);
+    $self->_num($self->_num + 1);
 }
 
 sub commit {
     my $self = $_[0];
-    $self->fh->print($self->num . "\n");
+    $self->fh->print($self->_num . "\n");
 }
 
 1;
