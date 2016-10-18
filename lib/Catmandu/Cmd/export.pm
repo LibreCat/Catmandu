@@ -19,6 +19,7 @@ sub command_opt_spec {
         ["total=i",       ""],
         ["cql-query|q=s", ""],
         ["query=s",       ""],
+        ["id=s",          ""],
     );
 }
 
@@ -31,6 +32,17 @@ sub command {
     my $from_bag = delete $from_opts->{bag};
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
+
+    if ($opts->id) {
+        if (my $data = $from->get($opts->id)) {
+            if ($opts->fix) {
+                $data = $self->_build_fixer($opts)->fix($data);
+            }
+            $into->add($data);
+            $into->commit;
+        }
+        return;
+    }
 
     if ($opts->query // $opts->cql_query) {
         $self->usage_error("Bag isn't searchable")
