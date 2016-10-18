@@ -6,6 +6,7 @@ our $VERSION = '1.0302';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
+use Catmandu::Util qw(array_includes);
 use namespace::clean;
 
 sub command_opt_spec {
@@ -16,6 +17,7 @@ sub command_opt_spec {
         ["preprocess|pp", ""],
         ["start=i",       ""],
         ["total=i",       ""],
+        ["id=s@",         ""],
     );
 }
 
@@ -28,12 +30,17 @@ sub command {
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
-    if ($opts->start // $opts->total) {
+    if (my $ids = $opts->id) {
+        $from = $from->select(sub { array_includes($ids, $_[0]->{_id}) });
+    }
+    elsif ($opts->start // $opts->total) {
         $from = $from->slice($opts->start, $opts->total);
     }
+
     if ($opts->fix) {
         $from = $self->_build_fixer($opts)->fix($from);
     }
+
     if ($opts->verbose) {
         $from = $from->benchmark;
     }

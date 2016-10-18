@@ -6,6 +6,7 @@ our $VERSION = '1.0302';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
+use Catmandu::ArrayIterator;
 use namespace::clean;
 
 sub command_opt_spec {
@@ -19,7 +20,7 @@ sub command_opt_spec {
         ["total=i",       ""],
         ["cql-query|q=s", ""],
         ["query=s",       ""],
-        ["id=s",          ""],
+        ["id=s@",         ""],
     );
 }
 
@@ -33,18 +34,10 @@ sub command {
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
-    if ($opts->id) {
-        if (my $data = $from->get($opts->id)) {
-            if ($opts->fix) {
-                $data = $self->_build_fixer($opts)->fix($data);
-            }
-            $into->add($data);
-            $into->commit;
-        }
-        return;
+    if (my $ids = $opts->id) {
+        $from = Catmandu::ArrayIterator->new([map { $from->get($_) } @$ids]);
     }
-
-    if ($opts->query // $opts->cql_query) {
+    elsif ($opts->query // $opts->cql_query) {
         $self->usage_error("Bag isn't searchable")
             unless $from->can('searcher');
         $from = $from->searcher(
@@ -58,9 +51,11 @@ sub command {
     elsif ($opts->start // $opts->total) {
         $from = $from->slice($opts->start, $opts->total);
     }
+
     if ($opts->fix) {
         $from = $self->_build_fixer($opts)->fix($from);
     }
+
     if ($opts->verbose) {
         $from = $from->benchmark;
     }
