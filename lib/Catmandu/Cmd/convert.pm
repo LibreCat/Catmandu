@@ -31,7 +31,7 @@ sub command {
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
     if (my $ids = $opts->id) {
-        $from = $from->select(sub { array_includes($ids, $_[0]->{_id}) });
+        $from = $from->select(sub {array_includes($ids, $_[0]->{_id})});
     }
     elsif ($opts->start // $opts->total) {
         $from = $from->slice($opts->start, $opts->total);

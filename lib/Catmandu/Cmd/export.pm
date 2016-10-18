@@ -35,7 +35,7 @@ sub command {
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
     if (my $ids = $opts->id) {
-        $from = Catmandu::ArrayIterator->new([map { $from->get($_) } @$ids]);
+        $from = Catmandu::ArrayIterator->new([map {$from->get($_)} @$ids]);
     }
     elsif ($opts->query // $opts->cql_query) {
         $self->usage_error("Bag isn't searchable")
