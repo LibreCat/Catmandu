@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - convert and export commands get a new id option
 
 1.0302  2016-10-04 10:43:51 CEST
   - Hash store is now transactional for testing purposes
