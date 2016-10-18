@@ -2,7 +2,7 @@ package Catmandu::Plugin::Datestamps;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0302';
+our $VERSION = '1.0303';
 
 use Role::Tiny;
 use POSIX qw(strftime);

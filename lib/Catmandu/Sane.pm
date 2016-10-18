@@ -3,7 +3,7 @@ package Catmandu::Sane;
 use strict;
 use warnings;
 
-our $VERSION = '1.0302';
+our $VERSION = '1.0303';
 
 use feature ();
 use utf8;

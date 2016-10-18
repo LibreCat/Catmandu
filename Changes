@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0303  2016-10-18 14:45:49 CEST
   - convert and export commands get a new id option
 
 1.0302  2016-10-04 10:43:51 CEST
