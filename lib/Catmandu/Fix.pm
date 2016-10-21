@@ -700,48 +700,10 @@ sub emit_clone {
     "$var = clone($var);";
 }
 
-##
-# This function will split a path on a '.' or a '/',
-# but not on '\.' or '\/'.
+# Split a path on '.' or '/', but not on '\.' or '\/'.
 sub split_path {
     my ($self, $path) = @_;
-    
-    my @splitted_path;
-    my @component;
-
-    my @chars = split(//, trim($path));
-
-    foreach my $char (@chars) {
-        if ($char eq '.' || $char eq '/') {
-            my $previous = pop(@component);
-
-            # If $previous equals \, do not split on $char and append
-            # $char to @component. It is a part of the path key, not the path.
-            # $previous is thrown away if it is \, as it is nowhere in the
-            # original path.
-            if (defined($previous)) {
-                if ($previous eq '\\') {
-                    push(@component, $char);
-                } else {
-                    # Perform the split action
-                    push(@component, $previous);
-                    push(@splitted_path, join('', @component));
-                    # Empty @component
-                    @component = ();
-                }
-            }
-        } else {
-            # It is not a split char, so add to @component
-            push(@component, $char);
-        }
-    }
-
-    # Add the last @component (between the last ./ and the end of the string)
-    if (scalar @component != 0) {
-        push(@splitted_path, join('', @component));
-    }
-
-    return \@splitted_path;
+    [map { s/\\(?=[\.\/])//g; $_ } split /(?<!\\)[\.\/]/, trim($path)];
 }
 
 1;
