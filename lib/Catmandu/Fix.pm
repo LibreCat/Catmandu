@@ -700,11 +700,6 @@ sub emit_clone {
     "$var = clone($var);";
 }
 
-sub __split_path {
-    my ($self, $path) = @_;
-    return [split /[\/\.]/, trim($path)];
-}
-
 ##
 # This function will split a path on a '.' or a '/',
 # but not on '\.' or '\/'.
