@@ -79,29 +79,10 @@ sub command {
 
     my $from = Catmandu->importer('Modules', $from_opts);
 
-    my $into_args = [];
-    my $into_opts = {};
     my $into;
 
-    if (@$args && $args->[0] eq 'to') {
-
-        # TODO: don't duplicate argument parsing
-        for (my $i = 1; $i < @$args; $i++) {
-            my $arg = $args->[$i];
-            if ($arg =~ s/^-+//) {
-                $arg =~ s/-/_/g;
-                if ($arg eq 'fix') {
-                    push @{$into_opts->{$arg} ||= []}, $args->[++$i];
-                }
-                else {
-                    $into_opts->{$arg} = $args->[++$i];
-                }
-            }
-            else {
-                push @$into_args, $arg;
-            }
-        }
-    }
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
     if (@$into_args || %$into_opts) {
         $into = Catmandu->exporter($into_args->[0], $into_opts);
