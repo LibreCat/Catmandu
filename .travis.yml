@@ -6,16 +6,27 @@ perl:
   - "5.14"
   - "5.12"
   - "5.10"
+
+cache:
+  directories:
+  - perl_modules
+
 before_install:
+  - cpanm local::lib
+  - eval "$(perl -Mlocal::lib=${PWD}/perl_modules)"
   - cpanm --notest Perl::Tidy
-  - cpanm --notest Test::Code::TidyAll 
-install: 
+  - cpanm --notest Test::Code::TidyAll
+
+install:
   - cpanm --quiet --installdeps --notest --force --skip-satisfied .
   - cpanm --quiet --notest --skip-satisfied Devel::Cover
+
 script:
   - perl Build.PL && ./Build build && cover -test
+
 after_success:
   - cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Coveralls
   - cover -report coveralls
+
 env: RELEASE_TESTING=1 AUTOMATED_TESTING=1
 sudo: false
