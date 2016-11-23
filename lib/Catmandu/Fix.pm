@@ -700,9 +700,10 @@ sub emit_clone {
     "$var = clone($var);";
 }
 
+# Split a path on '.' or '/', but not on '\.' or '\/'.
 sub split_path {
     my ($self, $path) = @_;
-    return [split /[\/\.]/, trim($path)];
+    [map { s/\\(?=[\.\/])//g; $_ } split /(?<!\\)[\.\/]/, trim($path)];
 }
 
 1;

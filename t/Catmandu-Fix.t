@@ -99,7 +99,7 @@ is_deeply $fixer->fix({}),
         'ვეპხის ტყაოსანი შოთა რუსთაველი'
     }, 'fixing utf8';
 
-#-- get
+# get
 
 $fixer = Catmandu::Fix->new(fixes => ['copy_field(data.$first,test)']);
 is_deeply $fixer->fix({data => [qw(0 1 2)]}),
@@ -121,7 +121,7 @@ $fixer = Catmandu::Fix->new(fixes => ['copy_field(data.*,test)']);
 is_deeply $fixer->fix({data => [qw(0 1 2)]}),
     {data => [qw(0 1 2)], test => 2}, 'get star test arary';
 
-#-- set
+# set
 
 $fixer = Catmandu::Fix->new(fixes => ['copy_field(data,test.1)']);
 is_deeply $fixer->fix({data => 1}), {data => 1, test => [undef, 1]},
@@ -151,7 +151,7 @@ $fixer = Catmandu::Fix->new(fixes => ['copy_field(data,test.1)']);
 is_deeply $fixer->fix({data => 1, test => {}}),
     {data => 1, test => {1 => 1}}, 'set hash test';
 
-#-- delete
+# delete
 
 $fixer = Catmandu::Fix->new(fixes => ['remove_field(data.$first)']);
 is_deeply $fixer->fix({data => [qw(0 1 2)]}), {data => [qw(1 2)]},
@@ -173,7 +173,7 @@ $fixer = Catmandu::Fix->new(fixes => ['remove_field(data.*)']);
 is_deeply $fixer->fix({data => [qw(0 1 2)]}), {data => []},
     'remove star test arary';
 
-#-- retain
+# retain
 
 $fixer = Catmandu::Fix->new(fixes => ['retain_field(data.$first)']);
 is_deeply $fixer->fix({data => [qw(0 1 2)]}), {data => [qw(0)]},
@@ -199,7 +199,16 @@ $fixer = Catmandu::Fix->new(fixes => ['retain_field(data.*)']);
 is_deeply $fixer->fix({data => {1 => 1, 2 => 2}}),
     {data => {1 => 1, 2 => 2}}, 'retain_field star test hash';
 
-#-- preprocessing and variables
+# path delimiter escapes
+
+$fixer = Catmandu::Fix->new(fixes => [q|add_field('with\.a\.dot', Train)|]);
+is_deeply $fixer->fix({}),
+    {'with.a.dot' => 'Train'}, "add field with.a.dot";
+$fixer = Catmandu::Fix->new(fixes => [q|copy_field('with\.a.dot', no.dot)|]);
+is_deeply $fixer->fix({'with.a' => {'dot' => 'Train'}}),
+    {'no' => {'dot' => 'Train'}, 'with.a' => {'dot' => 'Train'}}, "move field with a dot to one without";
+
+# preprocessing and variables
 
 $fixer = Catmandu::Fix->new(
     fixes      => ['t/variables.fix'],
