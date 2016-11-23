@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new index fix
+  - fix command line argument utf8 bug
 
 1.0303  2016-10-18 14:45:49 CEST
   - convert and export commands get a new id option
