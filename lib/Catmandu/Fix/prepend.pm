@@ -2,7 +2,7 @@ package Catmandu::Fix::prepend;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0303';
+our $VERSION = '1.0304';
 
 use Moo;
 use namespace::clean;
