@@ -7,7 +7,17 @@ our $VERSION = '1.0303';
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(pod_section);
 use Catmandu::Fix;
+use I18N::Langinfo qw(langinfo CODESET);
+use Encode qw(decode);
 use namespace::clean;
+
+# Internal required by App::Cmd;
+sub prepare {
+    my ($self, $app, @args) = @_;
+    my $codeset = langinfo(CODESET);
+    my @utf8_args = map { decode $codeset, $_ } @args;
+    $self->SUPER::prepare($app,@utf8_args);
+}
 
 # Internal required by App::Cmd
 sub opt_spec {
@@ -144,7 +154,7 @@ Catmandu::Cmd - A base class for extending the Catmandu command line
   sub command {
      my ($self, $opts, $args) = @_;
      my $greeting = $opts->greeting // 'Hello';
-     print "$greeting, World!\n" 
+     print "$greeting, World!\n"
   }
 
   =head1 NAME
@@ -165,12 +175,12 @@ Every command needs to implement 4 things:
 
   * command_opt_spec - which should return an array of command options with documentation
   * description - a long description of the command
-  * command - the body which is executed 
+  * command - the body which is executed
   * head1 NAME - a short description of the command
 
 =head1 METHODS
 
-=head2 command_opt_spec() 
+=head2 command_opt_spec()
 
 This method should be overridden to provide option specifications. (This is list of arguments passed to describe_options from Getopt::Long::Descriptive, after the first.)
 
