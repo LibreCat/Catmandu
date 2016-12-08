@@ -204,7 +204,7 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 <span class="kw">sudo</span> apt-get install libcatmandu*-perl</code></pre>
 <p>Alternatively, you can build newest Catmandu and dependencies from source:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get update
-<span class="kw">sudo</span> apt-get install cpanminus build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev
+<span class="kw">sudo</span> apt-get install cpanminus build-essential libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev libmodule-install-perl
 <span class="kw">cpanm</span> Catmandu Catmandu::MARC</code></pre>
 <p>Alternatively, you can build newest Catmandu as unofficial packages, using most possible official packages:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt update
@@ -306,7 +306,8 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 <span class="co"># Install a modern Perl</span>
 <span class="kw">plenv</span> install 5.22.0
 <span class="kw">plenv</span> rehash
-<span class="kw">cpan</span> App::cpanminus
+
+<span class="kw">brew</span> install cpanm
 <span class="co"># Install catmandu</span>
 <span class="kw">cpanm</span> Catmandu Catmandu::MARC
 <span class="kw">plenv</span> rehash</code></pre>
@@ -392,11 +393,14 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
      <span class="fu">options:</span>
         <span class="fu">url:</span> http://biblio.ugent.be
         <span class="fu">set:</span> public
+        <span class="fu">handler:</span> marcxml
+        <span class="fu">metadataPrefix:</span> marc21
 <span class="fu">store:</span>
   <span class="fu">ghentdb:</span>
      <span class="fu">package:</span> MongoDB
      <span class="fu">options:</span>
-        <span class="fu">database_name:</span> oai_data</code></pre>
+        <span class="fu">database_name:</span> oai_data
+        <span class="fu">default_bag:</span> data</code></pre>
 <p>When this file is available, an OAI-PMH harvest could be done with the shortened command:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert ghent</code></pre>
 <p>To store the <em>ghent</em> OAI-PMH import into the MongoDB database, one could write:</p>
@@ -452,11 +456,11 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert YAML</code></pre>
 <p>Read MARC input</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert MARC</code></pre>
-<p>Importer can accept options to be configured. For instance, the MARC importer can read in USMARC, MicroLIF, MARCMake, MARC-in-JSON, MARCXML and Aleph Sequential if the correct <em>type</em> argument is provided</p>
+<p>The Importer accepts configurable options. The following arguments to the MARC importer are currently supported: * <code>USMARC</code> (use <code>ISO</code> as an alias) * <code>MicroLIF</code> * <code>MARCMaker</code> * <code>MiJ</code> (for MARC-in-JSON) * <code>XML</code> (for MARCXML) * <code>RAW</code> * <code>Lint</code> * <code>ALEPHSEQ</code>(for Aleph Sequential)</p>
 <p>Read MARC-XML input</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert MARC --type XML <span class="kw">&lt;</span> marc.xml</code></pre>
 <p>Read Aleph sequential input</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert MARC --type ALEPHEQ <span class="kw">&lt;</span> marc.txt</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> convert MARC --type ALEPHSEQ <span class="kw">&lt;</span> marc.txt</code></pre>
 <p>Read more about the configuration options of importers by reading their manual pages:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> help import JSON
 $ <span class="kw">catmandu</span> help import YAML</code></pre>
@@ -1823,7 +1827,7 @@ Log::Log4perl::init(&#39;./log4perl.conf&#39;);
 
 # The lines above should be enough to activate logging for Catmandu.
 # Include the lines below to activate logging for your main program.
-my $logger = Catmandu-&gt;log;
+my $logger = Log::Log4perl-&gt;get_logger(&#39;myprog&#39;);
 
 $logger-&gt;info(&quot;Starting main program&quot;);
 
@@ -1872,6 +1876,8 @@ log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
 <p>As example, this is a skeleton for a ‘Foo’ Catmandu::Store which requires at least one ‘foo’ connection parameter:</p>
 <pre><code>package Catmandu::Store::Foo;
 use Moo;
+
+use Catmandu::Store::Foo::Bag;
 
 with &#39;Catmandu::Store&#39;;
 
@@ -2250,11 +2256,11 @@ git push origin dev</code></pre></li>
 <section id="selected-formats" class="level2">
 <h2><span class="header-section-number">9.1</span> selected formats</h2>
 <ul>
-<li><a href="https://metacpan.org/release/App-YAML-Filter">App::YAML::Filter</a></li>
 <li><a href="http://cocoon.apache.org/2.2/1290_1_1.html">Cocoon</a> - Apache Cocoon XML pipeline</li>
 <li><a href="https://csvkit.readthedocs.org/en/0.9.1/">csvkit</a> - Csvkit is a suite of utilities for converting to and working with CSV, the king of tabular file formats.</li>
 <li><a href="http://sourceforge.net/projects/dnb-conv-tools/?source=navbar">DNB-Conv-Tools</a> - Java conversion tools for MARC, ONIX, MAB, Pica and others</li>
 <li>easyM2R - https://github.com/cKlee/easyM2R</li>
+<li><a href="https://metacpan.org/release/ETL-Yertl">ETL-Yertl</a></li>
 <li><a href="http://stedolan.github.io/jq/">jq</a></li>
 <li><a href="https://github.com/libris/librisxl/">Librisxl</a> - Tools for conversion of libris.kb.se data</li>
 <li><a href="https://www.kobv.de/entwicklung/software/mable/">MABLE</a> - MABLE+ ist ein Java-gestütztes Software-Tool zur automatischen Daten- und Fehleranalyse von Bibliothekskatalogen.</li>
@@ -2265,6 +2271,7 @@ git push origin dev</code></pre></li>
 <li>MARCspec - http://cklee.github.io/marc-spec/marc-spec.html (mapping language for MARC)</li>
 <li>marctools - https://github.com/ubleipzig/marctools (various MARC command line utilities)</li>
 <li><a href="http://mayor2.dia.fi.upm.es/oeg-upm/index.php/en/technologies/228-marimba">MARiMbA</a> - is a command-line tool, designed with librarians in mind, to transform MARC (MAchine-Readable Cataloging) records to RDF</li>
+<li><a href="https://github.com/johnkerl/miller">miller</a> - is like sed, awk, cut, join, and sort for name-indexed data such as CSV and tabular JSON</li>
 <li><a href="https://github.com/edsu/pymarc">pymarc</a> - pymarc is a python library for working with bibliographic data encoded in MARC21</li>
 <li>solrmarc - https://code.google.com/p/solrmarc/</li>
 <li><a href="https://github.com/tarql/tarql/wiki/TARQL-Mapping-Language">TARQL</a> - a SPARQL-based data mapping language to convert CSV, XML, JSON to RDF</li>
@@ -2278,6 +2285,7 @@ git push origin dev</code></pre></li>
 <li><a href="http://www.comsode.eu/">COMSODE</a> - The project COMSODE is an SME-driven RTD project aimed at progressing the capabilities in the field of Open Data re-use.</li>
 <li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
 <li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a> - data management platform for enrichment, normalization and linkage of knowledge data structures.</li>
+<li><a href="https://metacpan.org/pod/ETL::Yertl">ETL::Yertl</a> - ETL with a Shell</li>
 <li><a href="https://github.com/dpla/heidrun">Heiðrún</a> - Heiðrún is the DPLA metadata ingestion and QA system, and is an implementation of the Kri-kri Rails engine.</li>
 <li><a href="https://code.google.com/p/jaql/">JAQL</a> - Query Language for JavaScript(r) Object Notation (JSON)</li>
 <li><a href="https://github.com/dpla/KriKri">Krikri</a> - DPLA Ruby on Rails engine for metadata aggregation, enhancement and quality control.</li>
@@ -2285,12 +2293,15 @@ git push origin dev</code></pre></li>
 <li>Metadata Interoperability Framework (MIF) - http://elag2014.org/programme/elag-workshops-list-page/11-5/ <a href="https://elag2014.files.wordpress.com/2014/06/11-5-alloing-s-mif.pptx">PPT</a></li>
 <li><a href="http://mint.image.ece.ntua.gr/redmine/projects/mint/wiki">MINT</a> - Metadata Interoperability Services</li>
 <li><a href="https://github.com/seecr?query=meresco">Meresco</a> - Under the Meresco name Dutch public institutions share quality software components related to metadata management and search.</li>
+<li><a href="https://github.com/ubpb/metacrunch">Metacrunch</a></li>
 <li><a href="https://github.com/culturegraph/metafacture-core/wiki">metafacture</a> - used in <a href="http://culturegraph.github.io">culturegraph</a></li>
 <li><a href="https://code.google.com/p/xcmetadataservicestoolkit/">Metadata Services Toolkit</a> - part of the eXtensible Catalog (XC)</li>
+<li><a href="http://more.dcu.gr/">Metadata &amp; Object Repository (MoRe)</a></li>
 <li><a href="https://github.com/walmartlabs/mupd8">MUPD8</a> - Data stream processing from Wallmartlabs.</li>
 <li><a href="http://openrefine.org/">OpenRefine</a> - (formerly Google Refine) a toolkit to work with tabular data.</li>
 <li><a href="https://petl.readthedocs.org/en/latest/">Petl</a> - Python ETL library</li>
 <li><a href="http://pig.apache.org/">Pig</a> - Apache Pig is a platform for analyzing large data sets that consists of a high-level language for expressing data analysis programs, coupled with infrastructure for evaluating these programs.</li>
+<li><a href="https://github.com/dailyburn/ratchet">Ratchet</a> - A library for performing data pipeline / ETL tasks in Go.</li>
 <li><a href="http://repox.ist.utl.pt/">REPOX</a> - Data Aggregation and Interoperability Manager</li>
 <li><a href="http://samza.apache.org/">Samza</a> - Apache Samza is a distributed stream processing framework.</li>
 <li><a href="https://www.assembla.com/wiki/show/silk/Silk_Single_Machine">Silk</a> - The Silk framework provides a declarative language for specifying which types of RDF links should be discovered between data sources as well as which conditions data items must fulfil in order to be interlinked.</li>
