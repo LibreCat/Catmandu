@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0303';
 
 use parent qw(App::Cmd::Command);
-use Catmandu::Util qw(pod_section);
+use Catmandu::Util qw(:is pod_section);
 use Catmandu::Fix;
 use I18N::Langinfo qw(langinfo CODESET);
 use Encode qw(decode);
