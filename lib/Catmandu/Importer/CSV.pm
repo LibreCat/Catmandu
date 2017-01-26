@@ -2,7 +2,7 @@ package Catmandu::Importer::CSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0304';
+our $VERSION = '1.0305';
 
 use Text::CSV;
 use List::Util qw(reduce);

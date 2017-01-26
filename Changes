@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0305  2017-01-26 09:32:09 CET
   - fix command line repeated argument bug
 
 1.0304  2016-11-23 11:21:32 CET

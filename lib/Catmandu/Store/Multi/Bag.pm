@@ -2,7 +2,7 @@ package Catmandu::Store::Multi::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0304';
+our $VERSION = '1.0305';
 
 use Catmandu::Hits;
 use Moo;
