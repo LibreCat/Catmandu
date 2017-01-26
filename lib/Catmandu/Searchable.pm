@@ -2,7 +2,7 @@ package Catmandu::Searchable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0303';
+our $VERSION = '1.0304';
 
 use Catmandu::Util qw(:is);
 use Moo::Role;

@@ -2,7 +2,7 @@ package Catmandu::Cmd;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0303';
+our $VERSION = '1.0304';
 
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(:is pod_section);
@@ -15,8 +15,8 @@ use namespace::clean;
 sub prepare {
     my ($self, $app, @args) = @_;
     my $codeset = langinfo(CODESET);
-    my @utf8_args = map { decode $codeset, $_ } @args;
-    $self->SUPER::prepare($app,@utf8_args);
+    my @utf8_args = map {decode $codeset, $_} @args;
+    $self->SUPER::prepare($app, @utf8_args);
 }
 
 # Internal required by App::Cmd

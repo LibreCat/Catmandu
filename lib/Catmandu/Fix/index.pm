@@ -2,7 +2,7 @@ package Catmandu::Fix::index;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0303';
+our $VERSION = '1.0304';
 
 use Moo;
 use namespace::clean;
@@ -21,7 +21,7 @@ sub emit_value {
     my $search   = $fixer->emit_string($self->search);
     my $multiple = $fixer->emit_string($self->multiple);
 
-    my $perl =<<EOF;
+    my $perl = <<EOF;
 if (${multiple}) {
     if (is_string(${var})) {
         ${var} = [ List::MoreUtils::indexes {\$_ eq ${search} } unpack('(A)*',${var}) ] ;

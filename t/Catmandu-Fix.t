@@ -202,11 +202,11 @@ is_deeply $fixer->fix({data => {1 => 1, 2 => 2}}),
 # path delimiter escapes
 
 $fixer = Catmandu::Fix->new(fixes => [q|add_field('with\.a\.dot', Train)|]);
-is_deeply $fixer->fix({}),
-    {'with.a.dot' => 'Train'}, "add field with.a.dot";
+is_deeply $fixer->fix({}), {'with.a.dot' => 'Train'}, "add field with.a.dot";
 $fixer = Catmandu::Fix->new(fixes => [q|copy_field('with\.a.dot', no.dot)|]);
 is_deeply $fixer->fix({'with.a' => {'dot' => 'Train'}}),
-    {'no' => {'dot' => 'Train'}, 'with.a' => {'dot' => 'Train'}}, "move field with a dot to one without";
+    {'no' => {'dot' => 'Train'}, 'with.a' => {'dot' => 'Train'}},
+    "move field with a dot to one without";
 
 # preprocessing and variables
 
