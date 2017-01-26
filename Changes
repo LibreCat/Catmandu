@@ -1,10 +1,11 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix command line repeated argument bug
 
 1.0304  2016-11-23 11:21:32 CET
   - new index fix
-  - fix command line utf8 bug and repeated argument bugs
+  - fix command line argument utf8 bug
 
 1.0303  2016-10-18 14:45:49 CEST
   - convert and export commands get a new id option
