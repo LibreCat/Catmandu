@@ -187,6 +187,13 @@ sub read_json {
     Cpanel::JSON::XS->new->decode($text);
 }
 
+##
+# Split a path on . or /, but not on \/ or \.
+sub split_path {
+    my ($path) = @_;
+    return [map { s/\\(?=[\.\/])//g; $_ } split /(?<!\\)[\.\/]/, trim($path)];
+}
+
 sub join_path {
     my $path = File::Spec->catfile(@_);
     $path =~ s!/\./!/!g;
@@ -215,7 +222,7 @@ sub segmented_path {
 sub parse_data_path {
     my ($path) = @_;
     check_string($path);
-    $path = [split /[\/\.]/, $path];
+    $path = split_path($path);
     my $key = pop @$path;
     return $path, $key;
 }
@@ -279,10 +286,10 @@ sub delete_data {
 sub data_at {
     my ($path, $data, %opts) = @_;
     if (ref $path) {
-        $path = [map {split /[\/\.]/} @$path];
+        $path = [map {split_path($_)} @$path];
     }
     else {
-        $path = [split /[\/\.]/, $path];
+        $path = split_path($path);
     }
     my $create = $opts{create};
     my $_key = $opts{_key} // $opts{key};

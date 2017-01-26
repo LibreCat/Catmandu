@@ -147,7 +147,7 @@ __END__
 Catmandu - a data toolkit
 
 =head1 SYNOPSIS
-    
+
     # From the command line
 
     # Convert data from one format to another
@@ -172,16 +172,16 @@ Catmandu - a data toolkit
     $ catmandu export ElasticSearch --index_name mystuff to CSV > data.csv
 
     # Copy data from one store to another
-    $ catmandu copy MongoDB --database_name mydb to ElasticSearch --index_name mydb 
+    $ catmandu copy MongoDB --database_name mydb to ElasticSearch --index_name mydb
 
     # Show the contents of catmandu.yml
-    $ catmandu config  
+    $ catmandu config
 
     # Count items in a store
     $ catmandu count test1
 
     # Delete items from store
-    $ catmandu delete test1 -q 'title:"My Rabbit"'
+    $ catmandu delete test1 --query 'title:"My Rabbit"'
 
     # run a fix script
     $ catmandu run myfixes.fix
@@ -219,21 +219,21 @@ Catmandu - a data toolkit
 
 =head1 DESCRIPTION
 
-Catmandu provides a command line client and a Perl API to ease the export (E) 
-transformation (T) and loading (L) of data into databases or data file, ETL in short. 
+Catmandu provides a command line client and a Perl API to ease the export (E)
+transformation (T) and loading (L) of data into databases or data file, ETL in short.
 
 Most of the daily work processing structured data can be done on the command line
-executing the C<catmandu> command. With our catmandu command ETL processing is available 
+executing the C<catmandu> command. With our catmandu command ETL processing is available
 in a Perl context. Catmandu is different from other
 ETL tools by its focus on command line processing with much support for dataformats
 available in (academic) libraries: MARC, MODS, OAI and SRU. But, also generic formats such
-as JSON, YAML, CVS, Excel, XML, RDF, Atom are supported. 
+as JSON, YAML, CVS, Excel, XML, RDF, Atom are supported.
 
 Read :
 
 =over
-  
-=item  * L<Catmandu::Introduction> for a primer on the command line capabilities of Catmandu. 
+
+=item  * L<Catmandu::Introduction> for a primer on the command line capabilities of Catmandu.
 
 =item  * L<Catmandu::Importer> for the basics of importing
 
@@ -243,13 +243,13 @@ Read :
 
 =item  * L<Catmandu::Store> for the basics of storing information
 
-=item  * Or, visit our website at L<http://librecat.org/> and our blog L<https://librecatproject.wordpress.com/> 
+=item  * Or, visit our website at L<http://librecat.org/> and our blog L<https://librecatproject.wordpress.com/>
     for many tutorials
 
 =back
 
 The documentation below describes the methods available when including Catmandu as
-part of a Perl script. For an overview of the command line tool itself read the 
+part of a Perl script. For an overview of the command line tool itself read the
 documentation on L<catmandu>.
 
 =head1 USE
@@ -265,7 +265,7 @@ provide them as a list to the C<use> command:
     use Catmandu qw(config store exporter);
 
 Catmandu can load configuration options for exports, importers, fixers via configuration
-files (see the CONFIG section below). When adding the --load option (optionally with a path) to the 
+files (see the CONFIG section below). When adding the --load option (optionally with a path) to the
 C<use> command, these configuration files will be loaded at the start of your script.
 
     use Catmandu -load;
