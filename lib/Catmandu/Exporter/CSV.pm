@@ -69,12 +69,12 @@ Catmandu::Exporter::CSV - a CSV exporter
     $ catmandu convert XSL to CSV < data.xls
 
     $ catmandu convert JSON to CSV --fix myfixes.txt --sep_char ';' < data.json
-    
+
     # In a Perl script
 
-    use Catmandu::Exporter::CSV;
+    use Catmandu;
 
-    my $exporter = Catmandu::Exporter::CSV->new(
+    my $exporter = Catmandu->exporter('CSV',
                 fix => 'myfix.txt',
                 quote_char => '"',
                 sep_char => ',',

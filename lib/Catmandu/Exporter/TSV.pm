@@ -59,9 +59,10 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 
     # In a Perl script
 
-    use Catmandu::Exporter::TSV;
+    use Catmandu;
 
-    my $exporter = Catmandu::Exporter::TSV->new(
+    my $exporter = Catmandu->exporter(
+                'TSV',
                 fix => 'myfix.txt',
                 header => 1);
 
@@ -79,9 +80,9 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 =head1 DESCRIPTION
 
 This C<Catmandu::Exporter> exports items as rows with tab-separated values
-(TSV). A header line with field names will be included if option C<header> is 
-set. See L<Catmandu::TabularExporter> on how to configure the field mapping 
-and column names. Newlines and tabulator values in field values are escaped 
+(TSV). A header line with field names will be included if option C<header> is
+set. See L<Catmandu::TabularExporter> on how to configure the field mapping
+and column names. Newlines and tabulator values in field values are escaped
 as C<\n>, C<\r>, and C<\t>.
 
 =head1 CONFIGURATION

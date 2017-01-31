@@ -39,10 +39,10 @@ Catmandu::Exporter::Mock - a exporter that doesn't export anything
 
     # From Perl
 
-    use Catmandu::Exporter::Mock;
+    use Catmandu;
 
     # Print to STDOUT
-    my $exporter = Catmandu::Exporter::Mock->new(fix => 'myfix.txt');
+    my $exporter = Catmandu->exporter('Mock',fix => 'myfix.txt');
 
     $exporter->add_many($arrayref);
     $exporter->add_many($iterator);
@@ -54,7 +54,7 @@ Catmandu::Exporter::Mock - a exporter that doesn't export anything
 
     # Get an array ref of all records exported
     my $data = $exporter->as_arrayref;
-    
+
 =head1 DESCRIPTION
 
 This exporter exports nothing and can be used as in situations where you e.g. export
