@@ -32,9 +32,9 @@ Catmandu::Importer::Mock - Mock importer used for testing purposes
 
 =head1 SYNOPSIS
 
-    use Catmandu::Importer::Mock;
+    use Catmandu;
 
-    my $importer = Catmandu::Importer::Mock->new();
+    my $importer = Catmandu->importer('Mock');
 
     my $n = $importer->each(sub {
         my $hashref = $_[0];
