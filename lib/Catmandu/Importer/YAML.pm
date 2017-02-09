@@ -60,10 +60,10 @@ Catmandu::Importer::YAML - Package that imports YAML data
     $ catmandu convert YAML to JSON < data.yaml
 
     # In a Perl script
-    
-    use Catmandu::Importer::YAML;
 
-    my $importer = Catmandu::Importer::YAML->new(file => "/foo/bar.yaml");
+    use Catmandu;
+
+    my $importer = Catmandu->importer('YAML',file => "/foo/bar.yaml");
 
     my $n = $importer->each(sub {
         my $hashref = $_[0];

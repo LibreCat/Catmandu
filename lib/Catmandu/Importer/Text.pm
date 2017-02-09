@@ -74,21 +74,21 @@ Catmandu::Importer::Text - Package that imports textual data
     # From the command line
 
     # separate fields by whitespace sequences just like awk
-    catmandu convert Text --split '\s+' 
+    catmandu convert Text --split '\s+'
 
-    # import all lines starting with '#', omitting this character 
+    # import all lines starting with '#', omitting this character
     catmandu convert Text --pattern '^#(.*)'
 
     # In a Perl script
 
-    use Catmandu::Importer::Text;
+    use Catmandu;
 
     my $importer = Catmandu->importer('Text' , file => "/foo/bar.txt" );
 
     # print all lines with line number
     $importer->each(sub {
         my $item = $_[0];
-        printf "%d: %s" , $item->{_id} , $item->{text};  
+        printf "%d: %s" , $item->{_id} , $item->{text};
     });
 
 =head1 DESCRIPTION
@@ -147,7 +147,7 @@ or as array with
 
 =head1 METHODS
 
-Every L<Catmandu::Importer> is a L<Catmandu::Iterable> with all its methods 
+Every L<Catmandu::Importer> is a L<Catmandu::Iterable> with all its methods
 inherited.
 
 =head1 SEE ALSO

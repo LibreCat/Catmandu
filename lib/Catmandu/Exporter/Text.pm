@@ -111,14 +111,14 @@ Catmandu::Exporter::Text - a Text exporter
 
     # In a Perl script
 
-    use Catmandu::Exporter::Text;
+    use Catmandu;
 
     # Print to STDOUT
-    my $exporter = Catmandu::Exporter::YAML->new(fix => 'myfix.txt');
+    my $exporter = Catmandu->exporter('Text', fix => 'myfix.txt');
 
     # Print to file or IO::Handle
-    my $exporter = Catmandu::Exporter::YAML->new(file => '/tmp/out.yml');
-    my $exporter = Catmandu::Exporter::YAML->new(file => $fh);
+    my $exporter = Catmandu->exporter('Text', file => '/tmp/out.yml');
+    my $exporter = Catmandu->exporter('Text', file => $fh);
 
     $exporter->add_many($arrayref);
     $exporter->add_many($iterator);
