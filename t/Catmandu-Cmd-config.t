@@ -32,4 +32,11 @@ like $result->stdout, qr/"YAML"/, 'got data';
 is $result->error,    undef,      'threw no exceptions';
 is $result->stderr,   '',         'nothing sent to sderr';
 
+$result = test_app(
+    qq|Catmandu::CLI| => [qw(config --fix add_field(foo:FOOBAR) to JSON)]);
+
+like $result->stdout, qr/"FOOBAR"/, 'got data';
+is $result->error,    undef,        'threw no exceptions';
+is $result->stderr,   '',           'nothing sent to sderr';
+
 done_testing;

@@ -9,45 +9,45 @@ use Catmandu::Util qw(data_at);
 use Catmandu;
 use namespace::clean;
 
+sub command_opt_spec {
+    (
+        ["fix=s@",        ""],
+        ["var=s%",        ""],
+        ["preprocess|pp", ""],
+    );
+}
+
 sub command {
     my ($self, $opts, $args) = @_;
-    my $path;
-    my $into_args = [];
-    my $into_opts = {};
+    my $from;
     my $into;
 
-    if (@$args == 1 || (@$args > 1 && $args->[1] eq 'to')) {
-        $path = shift @$args;
-    }
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
-    if (@$args && $args->[0] eq 'to') {
-        for (my $i = 1; $i < @$args; $i++) {
-            my $arg = $args->[$i];
-            if ($arg =~ s/^-+//) {
-                $arg =~ s/-/_/g;
-                if ($arg eq 'fix') {
-                    push @{$into_opts->{$arg} ||= []}, $args->[++$i];
-                }
-                else {
-                    $into_opts->{$arg} = $args->[++$i];
-                }
-            }
-            else {
-                push @$into_args, $arg;
-            }
-        }
+    if (@$from_args) {
+        $from = data_at($from_args->[0], Catmandu->config);
+    } else {
+        $from = Catmandu->config;
     }
 
     if (@$into_args || %$into_opts) {
         $into = Catmandu->exporter($into_args->[0], $into_opts);
     }
     else {
-        $into = Catmandu->exporter('JSON', pretty => 1, array => 0);
+        $into = $self->_default_exporter;
     }
 
-    $into->add(
-        defined $path ? data_at($path, Catmandu->config) : Catmandu->config);
+    if ($opts->fix) {
+        $from = $self->_build_fixer($opts)->fix($from);
+    }
+
+    $into->add($from);
     $into->commit;
+}
+
+sub _default_exporter {
+    Catmandu->exporter('JSON', pretty => 1, array => 0);
 }
 
 1;
