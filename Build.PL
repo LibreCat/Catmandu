@@ -15,7 +15,7 @@ my %module_build_args = (
   },
   "dist_abstract" => "a data toolkit",
   "dist_author" => [
-    "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
+    "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
   "dist_version" => "1.0305",
@@ -41,11 +41,10 @@ my %module_build_args = (
     "LWP::UserAgent" => 0,
     "LWP::UserAgent::Determined" => 0,
     "List::MoreUtils" => "0.33",
+    "Log::Any" => 0,
     "Log::Any::Adapter" => 0,
     "Module::Info" => 0,
     "Moo" => "1.004006",
-    "MooX::Aliases" => "0.001006",
-    "MooX::Role::Logger" => "0.005",
     "Parser::MGC" => "0.15",
     "Path::Tiny" => 0,
     "Ref::Util" => "0.020",
