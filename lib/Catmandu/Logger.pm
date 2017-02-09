@@ -5,12 +5,25 @@ use Catmandu::Sane;
 our $VERSION = '1.0305';
 
 use Moo::Role;
-use MooX::Aliases;
+use Log::Any ();
 use namespace::clean;
 
-with 'MooX::Role::Logger';
+has log => (is => 'lazy', init_arg => undef);
+has log_category => (is => 'lazy');
 
-alias log => '_logger';
+{
+    my $loggers = {};
+
+    sub _build_log {
+        my ($self) = @_;
+        my $category = $self->log_category;
+        $loggers->{$category} ||= Log::Any->get_logger(category => $category);
+    }
+}
+
+sub _build_log_category {
+    ref $_[0];
+}
 
 1;
 
@@ -124,12 +137,12 @@ or
 
 for specialized logging for your application.
 
+=head2 log_category
+
+Default is the class name.
+
 =head1 SEE ALSO
 
 L<Log::Any>
-
-=head1 ACKNOWLEDGMENTS
-
-Code and documentation blatantly stolen from C<MooX::Log::Any>.
 
 =cut

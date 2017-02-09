@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - config command has new fix and preprocess options
 
 1.0305  2017-01-26 09:32:09 CET
   - fix command line repeated argument bug

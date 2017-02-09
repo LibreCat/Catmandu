@@ -6,7 +6,6 @@ our $VERSION = '1.0305';
 
 use Cpanel::JSON::XS ();
 use Moo;
-use MooX::Aliases;
 use namespace::clean;
 
 with 'Catmandu::Exporter';
