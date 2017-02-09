@@ -10,11 +10,7 @@ use Catmandu;
 use namespace::clean;
 
 sub command_opt_spec {
-    (
-        ["fix=s@",        ""],
-        ["var=s%",        ""],
-        ["preprocess|pp", ""],
-    );
+    (["fix=s@", ""], ["var=s%", ""], ["preprocess|pp", ""],);
 }
 
 sub command {
@@ -27,7 +23,8 @@ sub command {
 
     if (@$from_args) {
         $from = data_at($from_args->[0], Catmandu->config);
-    } else {
+    }
+    else {
         $from = Catmandu->config;
     }
 
