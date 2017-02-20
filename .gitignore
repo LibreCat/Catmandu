@@ -1,4 +1,3 @@
-!*.t
 !.gitignore
 *.swp
 .DS_Store
@@ -17,3 +16,4 @@ blib
 cover_db
 cpanfile.snapshot
 local
+!*.t

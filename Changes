@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new error fix
 
 1.0306  2017-02-09 15:22:04 CET
   - config command has new fix and preprocess options
