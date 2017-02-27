@@ -33,7 +33,6 @@ You probably want to install more Catmandu tools like L<Catmandu::OAI>, L<Catman
     $ cpanm Catmandu::Store::MongoDB
     $ cpanm Catmandu::XLS
 
-
 To make full usage of the capabilities of Catmandu, database and search engines such as MongoDB, Elasticsearch, Solr, Postgres, MySQL can be installed on the system with the corresponding Catmandu tools. How to install these database on your local system falls outside the scope of this documentation. Please consult the installation guide of the database product for more information. For more information on the available Catmandu packages consult our L<Distributions|http://librecat.org/distributions.html> list.
 
 Here are some Catmandu installation hints for various platforms.
@@ -92,12 +91,10 @@ Alternatively, you can build newest Catmandu as unofficial packages, using most 
     $ sudo dpkg -i libcatmandu-twitter-perl_*.deb
     $ sudo dpkg -i ~/.cpan/build/libcatmandu-*-perl_*.deb
 
-
 =head2 Ubuntu Server
 
     $ sudo apt-get install build-essential libmodule-install-perl perl-doc libgdbm-dev libwrap0-dev libssl-dev libyaz-dev zlib1g zlib1g-dev libxml2-dev libexpat1-dev libxslt1-dev
     $ cpanm Catmandu
-
 
 =head2 CentOS 
 
@@ -123,12 +120,9 @@ Alternatively, you can build newest Catmandu as unofficial packages, using most 
 
 =head2 OpenBSD 53
 
-
     $ cpanm Catmandu
 
-
 =head2 OSX
-
 
     $ brew install libxml++ libxml2 xml2 libxslt
     # Install plenv from https://github.com/tokuhirom/plenv
@@ -145,13 +139,11 @@ Alternatively, you can build newest Catmandu as unofficial packages, using most 
     $ cpanm Catmandu
     $ plenv rehash
 
-
 =head2 Windows 
 
 We recommend to use L<Strawberry Perl|http://strawberryperl.com/> on Windows systems. After installation just run the follwing command from the I<cmd> shell:
 
     $ cpanm Catmandu
-
 
 =head2 Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)
 
@@ -160,11 +152,9 @@ Since Raspbian is based on Debian stable, you could follow the L<instructions|/D
     $ sudo apt-get install libboolean-perl libdevel-repl-perl libnet-twitter-perl 
     $ sudo apt-get install libxml-easy-perl libxslt1-dev libgdbm-dev
 
-
 =head2 Windows, Mac OSX, Linux 
 
 A L<docker image of Catmandu|https://registry.hub.docker.com/u/librecat/catmandu/> is build with each release. After L<installation of docker|https://docs.docker.com/installation/#installation> get and use the Catmandu image like this:
-
 
     # Upgrade to the latest version
     $ docker pull librecat/catmandu
