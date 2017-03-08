@@ -8,6 +8,8 @@ use Catmandu::Util qw(:is);
 use Moo::Role;
 use namespace::clean;
 
+with 'Catmandu::Logger';
+
 requires 'translate_sru_sortkeys';
 requires 'translate_cql_query';
 requires 'search';
@@ -41,6 +43,8 @@ my $AROUND_SEARCH = sub {
         $args{query} = $self->translate_cql_query($cql_query);
     }
     $args{query} = $self->normalize_query($args{query});
+
+    $self->log->debugf("called with params %s", [%args]);
     $orig->($self, %args);
 };
 
@@ -53,6 +57,8 @@ around delete_by_query => sub {
         $args{query} = $self->translate_cql_query($cql);
     }
     $args{query} = $self->normalize_query($args{query});
+
+    $self->log->debugf("called with params %s", [%args]);
     $orig->($self, %args);
     return;
 };
@@ -105,8 +111,8 @@ used to loop over the complete result set. The $query and $sort should implement
 query and sort syntax of the underlying search engine. If the CQL language is supported
 by the Store, then optionally a $cql_query search can be excuted on the Searchable.
 
-Optionally provide the index of the first result using the C<start> option. The number of records in 
-a page can be set using the C<limit> option. Sorting options are being sent verbatim to the underlying 
+Optionally provide the index of the first result using the C<start> option. The number of records in
+a page can be set using the C<limit> option. Sorting options are being sent verbatim to the underlying
 search engine.
 
 =head2 delete_by_query(query => $query)
