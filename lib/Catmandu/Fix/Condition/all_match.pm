@@ -35,6 +35,11 @@ Catmandu::Fix::Condition::all_match - only execute fixes if all path values matc
      upcase(foo) # foo => 'BAR'
    end
 
+   # case insensitive search for 'doogly' in all 'oogly'
+   if all_match(oogly.*, "(?i)doogly")
+     ...
+   end
+
 =head1 SEE ALSO
 
 L<Catmandu::Fix>

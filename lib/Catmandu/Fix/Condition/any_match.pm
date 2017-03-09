@@ -30,9 +30,14 @@ Catmandu::Fix::Condition::any_match - only execute fixes if any path value match
 
 =head1 SYNOPSIS
 
-   # uppercase the value of field 'foo' if field 'oogly' has the value 'doogly'
+   # uppercase the value of field 'foo' if at least one member of 'oogly' has the value 'doogly'
    if any_match(oogly, "doogly")
      upcase(foo) # foo => 'BAR'
+   end
+
+   # case insensitive search for 'doogly' in 'oogly' fields
+   if any_match(oogly.*, "(?i)doogly")
+     ...
    end
 
 =head1 SEE ALSO
