@@ -17,10 +17,13 @@ sub import {
     if (my $sym = $opts{as}) {
         my $sub = sub {
             my $data = shift;
+            state $fixer = $fix->new(@_);
+
             if ($opts{clone}) {
                 $data = Clone::clone($data);
             }
-            $fix->new(@_)->fix($data);
+        
+            $fixer->fix($data);
         };
         no strict 'refs';
         *{"${target}::$sym"} = $sub;
