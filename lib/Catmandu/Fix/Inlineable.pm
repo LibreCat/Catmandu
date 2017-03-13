@@ -17,12 +17,33 @@ sub import {
     if (my $sym = $opts{as}) {
         my $sub = sub {
             my $data = shift;
-            state $fixer = $fix->new(@_);
+            state $fixers = {};
+
+            # Keep a hash of existing fixers. Each invocation
+            # of an inline fix will create only one instantiation
+            # of a Fixer in memory. E.g.
+            #
+            # Perl: two fixers in memory
+            #     nothing();
+            #     nothing();
+            # Perl: one fixer in memory
+            #    while (1) {
+            #     nothing();
+            #    }
+            my ($package, $filename, $line) = caller;
+            my $calling_string = join("-",$package, $filename, $line);
+
+            my $fixer;
+
+            unless ($fixer = $fixers->{$calling_string}) {
+                $fixer = $fix->new(@_);
+                $fixers->{$calling_string} = $fixer;
+            }
 
             if ($opts{clone}) {
                 $data = Clone::clone($data);
             }
-        
+
             $fixer->fix($data);
         };
         no strict 'refs';
