@@ -8,7 +8,7 @@ use Test::Exception;
 my $pkg;
 
 BEGIN {
-    $pkg = 'Catmandu::Searchable';
+    $pkg = 'Catmandu::CQLSearchable';
     use_ok $pkg;
 }
 require_ok $pkg;
@@ -25,12 +25,14 @@ require_ok $pkg;
     sub search                 {die "not implemented"}
     sub searcher               {die "not implemented"}
     sub delete_by_query        {die "not implemented"}
+    sub translate_cql_query    {die "not implemented"}
+    sub translate_sru_sortkeys {die "not implemented"}
 }
 
 throws_ok {
     Role::Tiny->apply_role_to_package('T::EmptySearchable', $pkg)
 }
-qr/missing search, searcher, delete_by_query/;
+qr/missing translate_sru_sortkeys, translate_cql_query, search, searcher, delete_by_query/;
 
 my $iter = T::Searchable->new();
 
@@ -39,4 +41,5 @@ is $iter->default_maximum_limit, 1000;
 is $iter->normalize_query("foo bar"), "foo bar";
 
 done_testing;
+
 
