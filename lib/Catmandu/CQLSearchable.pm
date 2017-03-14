@@ -39,6 +39,8 @@ around delete_by_query => sub {
     return;
 };
 
+1;
+
 __END__
 
 =pod
