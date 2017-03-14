@@ -4,14 +4,12 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0306';
 
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(is_natural is_positive);
 use Moo::Role;
 use namespace::clean;
 
 with 'Catmandu::Logger';
 
-requires 'translate_sru_sortkeys';
-requires 'translate_cql_query';
 requires 'search';
 requires 'searcher';
 requires 'delete_by_query';
@@ -36,12 +34,7 @@ my $AROUND_SEARCH = sub {
     if (is_positive(my $page = delete $args{page})) {
         $args{start} = ($page - 1) * $args{limit};
     }
-    if (my $sru_sortkeys = delete $args{sru_sortkeys}) {
-        $args{sort} = $self->translate_sru_sortkeys($sru_sortkeys);
-    }
-    if (my $cql_query = delete $args{cql_query}) {
-        $args{query} = $self->translate_cql_query($cql_query);
-    }
+
     $args{query} = $self->normalize_query($args{query});
 
     $self->log->debugf("called with params %s", [%args]);
@@ -53,9 +46,7 @@ around searcher => $AROUND_SEARCH;
 
 around delete_by_query => sub {
     my ($orig, $self, %args) = @_;
-    if (my $cql = delete $args{cql_query}) {
-        $args{query} = $self->translate_cql_query($cql);
-    }
+
     $args{query} = $self->normalize_query($args{query});
 
     $self->log->debugf("called with params %s", [%args]);
