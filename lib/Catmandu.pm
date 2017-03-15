@@ -135,6 +135,13 @@ sub export_to_string {
     $exporter->commit;
     $str;
 }
+sub import_from_string {
+    my $class    = shift;
+    my $str      = shift;
+    my $name     = shift;
+    my %opts     = ref $_[0] ? %{$_[0]} : @_;
+    $class->_env->importer($name, %opts, file => \$str)->to_array();
+}
 
 1;
 
