@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Catmandu::Util qw(is_code_ref);
 use Role::Tiny;
 
 my $pkg;
@@ -36,13 +37,14 @@ throws_ok {Role::Tiny->apply_role_to_package('T::FixBaseWithoutEmit', $pkg)}
 qr/missing emit/;
 
 my $fb = T::FixBase->new;
-can_ok $fb, 'fixer';
 can_ok $fb, 'emit';
 can_ok $fb, 'import';
+can_ok $fb, 'fixer';
+can_ok $fb, 'fix';
 
-isa_ok $fb->fixer, 'Catmandu::Fix';
+ok is_code_ref($fb->fixer);
 
 is_deeply {fix => 'base'}, T::UseFixBase::do_fix_base({});
 
-done_testing 8;
+done_testing;
 

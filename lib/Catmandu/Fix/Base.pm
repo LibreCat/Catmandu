@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0306';
 
 use Catmandu::Fix;
-use Scalar::Util qw(weaken);
+use Catmandu::Util qw(is_hash_ref is_instance is_able is_code_ref is_array_ref);
 use Moo::Role;
 use namespace::clean;
 
@@ -17,14 +17,12 @@ has fixer => (is => 'lazy', init_arg => undef);
 
 sub _build_fixer {
     my ($self) = @_;
-    my $me = $self;
-    weaken $me;
-    Catmandu::Fix->new(fixes => [$me]);
+    Catmandu::Fix->new(fixes => [$self])->fixer;
 }
 
 sub fix {
     my ($self, $data) = @_;
-    $self->fixer->fix($data);
+    $self->fixer->($data);
 }
 
 1;

@@ -100,18 +100,52 @@ sub _build_fixes {
 
 sub _build_fixer {
     my ($self) = @_;
-    local $@;
-    _eval_emit($self->emit, $self->_captures) or Catmandu::Error->throw($@);
+
+    my $reject = $self->_reject;
+    my $sub = do {
+        local $@;
+        _eval_emit($self->emit, $self->_captures) or Catmandu::Error->throw($@);
+    };
+
+    sub {
+        my $data = $_[0];
+
+        if (is_hash_ref($data)) {
+            my $d = $sub->($data);
+            return if ref $d && $d == $reject;
+            return $d;
+        }
+
+        if (is_array_ref($data)) {
+            return [grep {!(ref $_ && $_ == $reject)} map {$sub->($_)} @$data];
+        }
+
+        if (is_code_ref($data)) {
+            return sub {
+                while (1) {
+                    my $d = $sub->($data->() // return);
+                    return if ref $d && $d == $reject;
+                    return $d;
+                }
+            };
+        }
+
+        if (   is_instance($data)
+            && is_able($data, 'does')
+            && $data->does('Catmandu::Iterable'))
+        {
+            return $data->map(sub {$sub->($_[0])})
+                ->reject(sub      {ref $_[0] && $_[0] == $reject});
+        }
+
+        Catmandu::BadArg->throw(
+            "must be hashref, arrayref, coderef or iterable object");
+    };
 }
 
 sub _build_reject_var {
     my ($self) = @_;
     $self->capture($self->_reject);
-}
-
-sub _is_reject {
-    my ($self, $data) = @_;
-    ref $data && $data == $self->_reject;
 }
 
 sub _build_fixes_var {
@@ -136,39 +170,7 @@ sub _preprocess {
 
 sub fix {
     my ($self, $data) = @_;
-
-    my $fixer = $self->fixer;
-
-    if (is_hash_ref($data)) {
-        my $d = $fixer->($data);
-        return if $self->_is_reject($d);
-        return $d;
-    }
-
-    if (   is_instance($data)
-        && is_able($data, 'does')
-        && $data->does('Catmandu::Iterable'))
-    {
-        return $data->map(sub {$fixer->($_[0])})
-            ->reject(sub      {$self->_is_reject($_[0])});
-    }
-
-    if (is_code_ref($data)) {
-        return sub {
-            while (1) {
-                my $d = $fixer->($data->() // return);
-                next if $self->_is_reject($d);
-                return $d;
-            }
-        };
-    }
-
-    if (is_array_ref($data)) {
-        return [grep {!$self->_is_reject($_)} map {$fixer->($_)} @$data];
-    }
-
-    Catmandu::BadArg->throw(
-        "must be hashref, arrayref, coderef or iterable object");
+    $self->fixer->($data);
 }
 
 sub generate_var {
