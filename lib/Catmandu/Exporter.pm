@@ -44,7 +44,7 @@ Catmandu::Exporter - Namespace for packages that can export
     $ catmandu convert JSON to YAML < data.json
 
     # OAI is an importer and JSON an exporter
-    $ catmandu convert OAI --url http://biblio.ugent.be/oai to JSON 
+    $ catmandu convert OAI --url http://biblio.ugent.be/oai to JSON
 
     # From Perl
     use Catmandu;
@@ -56,20 +56,23 @@ Catmandu::Exporter - Namespace for packages that can export
     $exporter->add_many([ { record => "one" } , { record => "two" } ]);
     $exporter->add_many($importer);
 
+    $exporter->commit;
+
+    undef($exporter); # Clean up memory
+
 =head1 DESCRIPTION
 
 A Catmandu::Exporter is a Perl package that can export data into JSON, YAML, XML
-or many other formats. By default, data is to STDOUT. Optionally provide a C<file> 
-or C<fh> parameter to write to a file, string, or handle. 
+or many other formats. By default, data is to STDOUT. Optionally provide a C<file>
+or C<fh> parameter to write to a file, string, or handle.
 
 Every Catmandu::Exporter is a L<Catmandu::Fixable> thus provides a C<fix>
 parameter and method to apply fixes to exported items:
-    
+
     my $exporter = Catmandu->exporter('JSON', fix => ['upcase(title)']);
 
     # This will be printed to STDOUT like: {"title":"MY TITLE"}
     $exporter->add({ title => "my title"});
-
 
 Every Catmandu::Exporter is a L<Catmandu::Addable> thus inherits the methods
 C<add> and C<add_many>.
@@ -90,6 +93,9 @@ Write the output to an L<IO::Handle>. If not specified,
 L<Catmandu::Util::io|Catmandu::Util/IO-functions> is used to create the output
 handle from the C<file> argument or by using STDOUT.
 
+It is the task of the Perl programmer to close any opened IO::Handles.
+Catmandu will not do this by itself.
+
 =item encoding
 
 Binmode of the output stream C<fh>. Set to "C<:utf8>" by default.
@@ -109,7 +115,7 @@ Adds one object to be exported.
 =head2 add_many
 
 Adds many objects to be exported. This can be either an ARRAY-ref or
-an L<Catmandu::Iterator>. Returns a true value when the export was 
+an L<Catmandu::Iterator>. Returns a true value when the export was
 successful or undef on error.
 
 =head2 count
@@ -119,6 +125,10 @@ Returns the number of items exported by this Catmandu::Exporter.
 =head2 log
 
 Returns the current logger.
+
+=head2 commit
+
+Commit all buffers to the output handle.
 
 =head1 CODING
 
@@ -140,6 +150,11 @@ writes a Perl hash to a file handle:
         $fh->print( "Hello, World!");
     }
 
+    sub commit {
+        my ($self) = @_;
+        # this will be called at the end of the record stream
+    }
+
     1;
 
 This exporter can be called from the command line as:
@@ -153,6 +168,10 @@ Or, via Perl
     my $exporter = Catmandu->exporter('Foo', file => "/tmp/output.txt");
 
     $exporter->add({test => 123});
+
+    $exporter->commit;
+
+    undef($exporter);
 
 =head1 SEE ALSO
 
