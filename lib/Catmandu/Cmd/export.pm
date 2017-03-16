@@ -43,7 +43,8 @@ sub command {
         $self->usage_error("Bag isn't searchable")
             if !$from->does('Catmandu::Searchable');
         $self->usage_error("Bag isn't CQL searchable")
-            if ($opts->cql_query || $opts->sru_sortkeys) && !$from->does('Catmandu::CQLSearchable');
+            if ($opts->cql_query || $opts->sru_sortkeys)
+            && !$from->does('Catmandu::CQLSearchable');
         $from = $from->searcher(
             cql_query    => $opts->cql_query,
             query        => $opts->query,

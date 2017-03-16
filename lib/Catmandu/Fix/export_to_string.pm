@@ -9,8 +9,8 @@ use Catmandu;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1);
-has name => (fix_arg => 1);
+has path        => (fix_arg => 1);
+has name        => (fix_arg => 1);
 has export_opts => (fix_opt => 'collect');
 
 with 'Catmandu::Fix::SimpleGetValue';
@@ -18,9 +18,9 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
 
-    my $name = $self->name();
-    my $export_opts = $fixer->capture( $self->export_opts );
-    my $perl = <<EOF;
+    my $name        = $self->name();
+    my $export_opts = $fixer->capture($self->export_opts);
+    my $perl        = <<EOF;
 
 if( is_hash_ref( ${var} ) || is_array_ref( ${var} ) ) {
 

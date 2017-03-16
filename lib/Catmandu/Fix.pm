@@ -102,9 +102,10 @@ sub _build_fixer {
     my ($self) = @_;
 
     my $reject = $self->_reject;
-    my $sub = do {
+    my $sub    = do {
         local $@;
-        _eval_emit($self->emit, $self->_captures) or Catmandu::Error->throw($@);
+        _eval_emit($self->emit, $self->_captures)
+            or Catmandu::Error->throw($@);
     };
 
     sub {
@@ -117,7 +118,8 @@ sub _build_fixer {
         }
 
         if (is_array_ref($data)) {
-            return [grep {!(ref $_ && $_ == $reject)} map {$sub->($_)} @$data];
+            return [grep {!(ref $_ && $_ == $reject)}
+                    map {$sub->($_)} @$data];
         }
 
         if (is_code_ref($data)) {
@@ -135,7 +137,7 @@ sub _build_fixer {
             && $data->does('Catmandu::Iterable'))
         {
             return $data->map(sub {$sub->($_[0])})
-                ->reject(sub      {ref $_[0] && $_[0] == $reject});
+                ->reject(sub {ref $_[0] && $_[0] == $reject});
         }
 
         Catmandu::BadArg->throw(

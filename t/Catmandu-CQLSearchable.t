@@ -42,4 +42,3 @@ is $s->normalize_query("foo bar"), "foo bar";
 
 done_testing;
 
-

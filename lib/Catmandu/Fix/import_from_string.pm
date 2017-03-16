@@ -9,16 +9,16 @@ use Catmandu;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1);
-has name => (fix_arg => 1);
+has path        => (fix_arg => 1);
+has name        => (fix_arg => 1);
 has import_opts => (fix_opt => 'collect');
 
 with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    my $import_opts = $fixer->capture( $self->import_opts );
-    my $name = $self->name();
+    my $import_opts = $fixer->capture($self->import_opts);
+    my $name        = $self->name();
     "${var} = Catmandu->import_from_string( ${var}, '$name', %${import_opts} );";
 }
 

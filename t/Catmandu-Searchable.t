@@ -22,9 +22,9 @@ require_ok $pkg;
     use Moo;
     with $pkg;
 
-    sub search                 {die "not implemented"}
-    sub searcher               {die "not implemented"}
-    sub delete_by_query        {die "not implemented"}
+    sub search          {die "not implemented"}
+    sub searcher        {die "not implemented"}
+    sub delete_by_query {die "not implemented"}
 }
 
 throws_ok {

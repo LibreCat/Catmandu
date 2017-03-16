@@ -11,14 +11,14 @@ use namespace::clean;
 use Sub::Exporter::Util qw(curry_method);
 use Sub::Exporter -setup => {
     exports => [
-        config           => curry_method,
-        log              => curry_method,
-        store            => curry_method,
-        fixer            => curry_method,
-        importer         => curry_method,
-        exporter         => curry_method,
-        export           => curry_method,
-        export_to_string => curry_method,
+        config             => curry_method,
+        log                => curry_method,
+        store              => curry_method,
+        fixer              => curry_method,
+        importer           => curry_method,
+        exporter           => curry_method,
+        export             => curry_method,
+        export_to_string   => curry_method,
         import_from_string => curry_method
     ],
     collectors => {'-load' => \'_import_load', ':load' => \'_import_load',},
@@ -136,11 +136,12 @@ sub export_to_string {
     $exporter->commit;
     $str;
 }
+
 sub import_from_string {
-    my $class    = shift;
-    my $str      = shift;
-    my $name     = shift;
-    my %opts     = ref $_[0] ? %{$_[0]} : @_;
+    my $class = shift;
+    my $str   = shift;
+    my $name  = shift;
+    my %opts  = ref $_[0] ? %{$_[0]} : @_;
     $class->_env->importer($name, %opts, file => \$str)->to_array();
 }
 
