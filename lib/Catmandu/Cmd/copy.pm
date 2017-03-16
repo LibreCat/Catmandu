@@ -10,16 +10,18 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        ["verbose|v",     ""],
-        ["fix=s@",        ""],
-        ["var=s%",        ""],
-        ["preprocess|pp", ""],
-        ["start=i",       ""],
-        ["limit=i",       ""],
-        ["total=i",       ""],
-        ["cql-query|q=s", ""],
-        ["query=s",       ""],
-        ["delete",        "delete existing objects first"],
+        ["verbose|v",      ""],
+        ["fix=s@",         ""],
+        ["var=s%",         ""],
+        ["preprocess|pp" , ""],
+        ["start=i",        ""],
+        ["limit=i",        ""],
+        ["total=i",        ""],
+        ["cql-query|q=s",  ""],
+        ["query=s",        ""],
+        ["sru-sortkeys=s", ""],
+        ["sort=s",         ""],
+        ["delete",         "delete existing objects first"],
     );
 }
 

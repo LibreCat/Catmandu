@@ -32,11 +32,11 @@ throws_ok {
 }
 qr/missing search, searcher, delete_by_query/;
 
-my $iter = T::Searchable->new;
+my $s = T::Searchable->new;
 
-is $iter->default_default_limit, 10;
-is $iter->default_maximum_limit, 1000;
-is $iter->normalize_query("foo bar"), "foo bar";
+is $s->default_default_limit, 10;
+is $s->default_maximum_limit, 1000;
+is $s->normalize_query("foo bar"), "foo bar";
 
 done_testing;
 

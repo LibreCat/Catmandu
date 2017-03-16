@@ -11,16 +11,18 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        ["verbose|v",     ""],
-        ["fix=s@",        ""],
-        ["var=s%",        ""],
-        ["preprocess|pp", ""],
-        ["start=i",       ""],
-        ["limit=i",       ""],
-        ["total=i",       ""],
-        ["cql-query|q=s", ""],
-        ["query=s",       ""],
-        ["id=s@",         ""],
+        ["verbose|v",      ""],
+        ["fix=s@",         ""],
+        ["var=s%",         ""],
+        ["preprocess|pp",  ""],
+        ["start=i",        ""],
+        ["limit=i",        ""],
+        ["total=i",        ""],
+        ["cql-query|q=s",  ""],
+        ["query=s",        ""],
+        ["sru-sortkeys=s", ""],
+        ["sort=s",         ""],
+        ["id=s@",          ""],
     );
 }
 
@@ -39,13 +41,17 @@ sub command {
     }
     elsif ($opts->query // $opts->cql_query) {
         $self->usage_error("Bag isn't searchable")
-            unless $from->can('searcher');
+            if !$from->does('Catmandu::Searchable');
+        $self->usage_error("Bag isn't CQL searchable")
+            if ($opts->cql_query || $opts->sru_sortkeys) && !$from->does('Catmandu::CQLSearchable');
         $from = $from->searcher(
-            cql_query => $opts->cql_query,
-            query     => $opts->query,
-            start     => $opts->start,
-            total     => $opts->total,
-            limit     => $opts->limit,
+            cql_query    => $opts->cql_query,
+            query        => $opts->query,
+            sru_sortkeys => $opts->sru_sortkeys,
+            sort         => $opts->sort,
+            start        => $opts->start,
+            total        => $opts->total,
+            limit        => $opts->limit,
         );
     }
     elsif ($opts->start // $opts->total) {
