@@ -12,7 +12,7 @@ with 'Catmandu::Fix::Inlineable', 'Catmandu::Logger';
 
 requires 'emit';
 
-has fixer => (is => 'lazy', init_arg => undef);
+has fixer => (is => 'lazy', init_arg => undef, weak_ref => 1);
 
 sub _build_fixer {
     my ($self) = @_;
