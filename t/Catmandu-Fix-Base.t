@@ -39,10 +39,7 @@ qr/missing emit/;
 my $fb = T::FixBase->new;
 can_ok $fb, 'emit';
 can_ok $fb, 'import';
-can_ok $fb, 'fixer';
 can_ok $fb, 'fix';
-
-ok is_code_ref($fb->fixer);
 
 is_deeply {fix => 'base'}, T::UseFixBase::do_fix_base({});
 
