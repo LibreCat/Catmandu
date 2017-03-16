@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0306';
 
 use Catmandu::Fix;
+use Scalar::Util qw(weaken);
 use Moo::Role;
 use namespace::clean;
 
@@ -12,11 +13,13 @@ with 'Catmandu::Fix::Inlineable', 'Catmandu::Logger';
 
 requires 'emit';
 
-has fixer => (is => 'lazy', init_arg => undef, weak_ref => 1);
+has fixer => (is => 'lazy', init_arg => undef);
 
 sub _build_fixer {
     my ($self) = @_;
-    Catmandu::Fix->new(fixes => [$self]);
+    my $me = $self;
+    weaken $me;
+    Catmandu::Fix->new(fixes => [$me]);
 }
 
 sub fix {
