@@ -27,7 +27,7 @@ is_deeply $pkg->new('record','YAML')->fix({ record => [{ "name" => "Nicolas" },{
 is_deeply $pkg->new('record','CSV')->fix({ record => { "name" => "Nicolas" } }),
     { record => qq(name\nNicolas\n) }, "convert hash to CSV";
 
-is_deeply $pkg->new('record','CSV')->fix({ record => [{ "name" => "Nicolas" },{ "name" => "Patrick" }] }),
-    { record => qq(name\nNicolas\nPatrick\n) }, "convert array of hashes to CSV";
+is_deeply $pkg->new('record','CSV','sep_char' => ';', fields => ["first_name","name"])->fix({ record => [{ "first_name" => "Nicolas",name => "Franck" },{ "first_name" => "Patrick",name => "Hochstenbach" }] }),
+    { record => qq(first_name;name\nNicolas;Franck\nPatrick;Hochstenbach\n) }, "convert array of hashes to CSV";
 
 done_testing;
