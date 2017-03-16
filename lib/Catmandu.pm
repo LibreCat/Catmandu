@@ -18,7 +18,8 @@ use Sub::Exporter -setup => {
         importer         => curry_method,
         exporter         => curry_method,
         export           => curry_method,
-        export_to_string => curry_method
+        export_to_string => curry_method,
+        import_from_string => curry_method
     ],
     collectors => {'-load' => \'_import_load', ':load' => \'_import_load',},
 };
@@ -134,6 +135,13 @@ sub export_to_string {
     is_hash_ref($data) ? $exporter->add($data) : $exporter->add_many($data);
     $exporter->commit;
     $str;
+}
+sub import_from_string {
+    my $class    = shift;
+    my $str      = shift;
+    my $name     = shift;
+    my %opts     = ref $_[0] ? %{$_[0]} : @_;
+    $class->_env->importer($name, %opts, file => \$str)->to_array();
 }
 
 1;
@@ -488,6 +496,20 @@ Export data using a default or named exporter to a string.
     my $yaml = "";
     Catmandu->export($importer, 'YAML', file => \$yaml);
 
+=head2 import_from_string
+
+Import data from a string using a default or named importer.
+Return value should be an array of hashes.
+
+    my $json = qq([{"name":"Nicolas"}]);
+    {
+        my $record = Catmandu->import_from_string( $json, "JSON" );
+    }
+    # is the same as
+    {
+        my $record = Catmandu->importer('JSON', file => \$json)->to_array()
+    }
+
 =head1 EXPORTS
 
 =over
@@ -515,6 +537,10 @@ Same as C<< Catmandu->export >>.
 =item export_to_string
 
 Same as C<< Catmandu->export_to_string >>.
+
+=item import_from_string
+
+Same as C<< Catmandu->import_from_string >>.
 
 =item fixer
 
