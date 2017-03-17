@@ -24,12 +24,15 @@ sub command_opt_spec {
             'override included directories (defaults to @INC)',
             {default => [@INC]}
         ],
-        ["verbose|v", ""]
+        ["verbose|v",     ""],
+        ["fix=s@",        ""],
+        ["var=s%",        ""],
+        ["preprocess|pp", ""],
     );
 }
 
-sub add_about {
-    my $item = shift;
+sub _add_about {
+    my $item = $_[0];
     my $name = pod_section($item->{file}, 'NAME');
     $name =~ s/[^-]+(\s*-?\s*)?//;
     $name =~ s/\n/ /mg;
@@ -71,40 +74,21 @@ sub command {
         $opts->{namespace} = [qw(Catmandu)];
     }
 
-    my $from_opts = {fix => [sub {add_about(@_)}]};
+    my ($from_args, $from_opts, $into_args, $into_opts)
+        = $self->_parse_options($args);
 
     for my $key (qw(inc namespace max_depth)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
 
-    my $from = Catmandu->importer('Modules', $from_opts);
-
-    my $into_args = [];
-    my $into_opts = {};
-    my $into;
-
-    if (@$args && $args->[0] eq 'to') {
-
-        # TODO: don't duplicate argument parsing
-        for (my $i = 1; $i < @$args; $i++) {
-            my $arg = $args->[$i];
-            if ($arg =~ s/^-+//) {
-                $arg =~ s/-/_/g;
-                if ($arg eq 'fix') {
-                    push @{$into_opts->{$arg} ||= []}, $args->[++$i];
-                }
-                else {
-                    $into_opts->{$arg} = $args->[++$i];
-                }
-            }
-            else {
-                push @$into_args, $arg;
-            }
-        }
-    }
+    my $from = Catmandu->importer('Modules', $from_opts)->tap(\&_add_about);
 
     if (@$into_args || %$into_opts) {
-        $into = Catmandu->exporter($into_args->[0], $into_opts);
+        if ($opts->fix) {
+            $from = $self->_build_fixer($opts)->fix($from);
+        }
+
+        my $into = Catmandu->exporter($into_args->[0], $into_opts);
         $into->add_many($from);
         $into->commit;
     }
