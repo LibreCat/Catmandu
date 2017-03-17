@@ -10,13 +10,14 @@ use namespace::clean;
 
 sub command_opt_spec {
     (
-        ["verbose|v",     ""],
-        ["fix=s@",        ""],
-        ["var=s%",        ""],
-        ["preprocess|pp", ""],
-        ["start=i",       ""],
-        ["total=i",       ""],
-        ["delete",        "delete existing objects first"],
+        ["verbose|v",      ""],
+        ["fix=s@",         ""],
+        ["var=s%",         ""],
+        ["preprocess|pp",  ""],
+        ["start=i",        ""],
+        ["total=i",        ""],
+        ["delete",         "delete existing objects first"],
+        ["transaction|tx", "wrap in a transaction"],
     );
 }
 
@@ -40,16 +41,26 @@ sub command {
         $from = $from->benchmark;
     }
 
-    if ($opts->delete) {
-        $into->delete_all;
-        $into->commit;
-    }
+    my $tx = sub {
+        if ($opts->delete) {
+            $into->delete_all;
+            $into->commit;
+        }
 
-    my $n = $into->add_many($from);
-    $into->commit;
-    if ($opts->verbose) {
-        say STDERR $n == 1 ? "imported 1 object" : "imported $n objects";
-        say STDERR "done";
+        my $n = $into->add_many($from);
+        $into->commit;
+        if ($opts->verbose) {
+            say STDERR $n == 1 ? "imported 1 object" : "imported $n objects";
+            say STDERR "done";
+        }
+    };
+
+    if ($opts->transaction) {
+        $self->usage_error("Bag isn't transactional") if !$into->does('Catmandu::Transactional');
+        $into->transaction($tx);
+    }
+    else {
+        $tx->();
     }
 }
 
