@@ -4,7 +4,9 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0306';
 
-use Clone ();
+use Clone qw(clone);
+use Catmandu::Util qw(is_value);
+use List::Util qw(all);
 use Moo::Role;
 use namespace::clean;
 
@@ -16,11 +18,18 @@ sub import {
 
     if (my $sym = $opts{as}) {
         my $sub = sub {
-            my $data  = shift;
-            my $fixer = $fix->new(@_);
+            my $data = shift;
+            my $fixer;
+
+            state $memo = {};
+            if (all { is_value($_) } @_) {
+                my $key = join('$$', @_);
+                $fixer = $memo->{$key} ||= $fix->new(@_);
+            }
+            $fixer ||= $fix->new(@_);
 
             if ($opts{clone}) {
-                $data = Clone::clone($data);
+                $data = clone($data);
             }
 
             $fixer->fix($data);

@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0306';
 
-use Hash::Util::FieldHash ();
+use Hash::Util::FieldHash qw(fieldhash);
 use Sub::Quote qw(quote_sub);
 use Moo::Role;
 use namespace::clean;
@@ -24,7 +24,7 @@ sub key_for {
 }
 
 {
-    Hash::Util::FieldHash::fieldhash my %bag_instances;
+    fieldhash my %bag_instances;
 
     sub bag {
         my $self = shift;
