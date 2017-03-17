@@ -31,7 +31,6 @@ requires 'File::Find::Rule', '0.33';
 requires 'Path::Tiny', '0';
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
-requires 'List::Util', '>=1.33';
 requires 'List::MoreUtils', '0.33';
 requires 'Log::Any', 0;
 requires 'Log::Any::Adapter', 0;

@@ -13,9 +13,14 @@ with 'Catmandu::Fix::Inlineable', 'Catmandu::Logger';
 
 requires 'emit';
 
+sub fixer {
+    my ($self) = @_;
+    Catmandu::Fix->new(fixes => [$self]);
+}
+
 sub fix {
     my ($self, $data) = @_;
-    Catmandu::Fix->new(fixes => [$self])->fix($data);
+    $self->fixer->fix($data);
 }
 
 1;

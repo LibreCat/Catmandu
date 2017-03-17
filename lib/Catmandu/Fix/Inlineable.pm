@@ -5,28 +5,34 @@ use Catmandu::Sane;
 our $VERSION = '1.0306';
 
 use Clone qw(clone);
-use Catmandu::Util qw(is_value);
-use List::Util qw(all);
 use Moo::Role;
 use namespace::clean;
 
 requires 'fix';
 
+sub is_cacheable {1}
+
 sub import {
     my $target = caller;
-    my ($fix, %opts) = @_;
+    my ($pkg, %opts) = @_;
 
     if (my $sym = $opts{as}) {
         my $sub = sub {
             my $data = shift;
             my $fixer;
 
-            state $memo = {};
-            if (all { is_value($_) } @_) {
-                my $key = join('$$', @_);
-                $fixer = $memo->{$key} ||= $fix->new(@_);
+            state $cache = {};
+            if ($pkg->is_cacheable) {
+                my $key = join('--', @_);
+                $fixer = $cache->{$key} ||= do {
+                    my $f = $pkg->new(@_);
+                    # memoize instance of Fix.pm if it's an emitting fix
+                    $f = $f->fixer if $f->can('fixer');
+                    $f;
+                };
             }
-            $fixer ||= $fix->new(@_);
+
+            $fixer ||= $pkg->new(@_);
 
             if ($opts{clone}) {
                 $data = clone($data);
