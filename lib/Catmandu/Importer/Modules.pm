@@ -8,7 +8,7 @@ use Module::Info;
 use File::Spec;
 use File::Find::Rule;
 use Moo;
-use Catmandu::Util qw(array_split pod_section);
+use Catmandu::Util qw(array_split pod_section read_file);
 use namespace::clean;
 
 with 'Catmandu::Importer';
@@ -77,8 +77,19 @@ sub generator {
                 }
 
                 my $data = {file => $file, name => $name, path => $dir,};
-                $data->{version} = "" . $info->version
-                    if defined $info->version;
+
+                if (defined $info->version && $info->version ne 'undef') {
+                    $data->{version} = "" . $info->version;
+                }
+                elsif (open(my $fh, '<:encoding(UTF-8)', $file)) {
+                    while (my $line = <$fh>) {
+                        if (my ($version) = $line =~ /^\s*our\s+\$VERSION\s*=\s*['"]([^'"]+)['"]\s*;/) {
+                            $data->{version} = $version;
+                            last;
+                        }
+                    }
+                    close($fh);
+                }
 
                 my $about = pod_section($file, 'NAME');
                 $about =~ s/^[^-]+(\s*-?\s*)?|\n.*$//sg;
