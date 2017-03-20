@@ -14,6 +14,7 @@ use parent qw(App::Cmd);
 sub deleted_commands {
     [
         qw(
+            Catmandu::Cmd::data
             Catmandu::Cmd::exporter_info
             Catmandu::Cmd::fix_info
             Catmandu::Cmd::importer_info

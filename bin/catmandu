@@ -250,51 +250,7 @@ See also L<Catmandu::Logger> to enable logging for your own Catmandu packages.
 
 =head1 DATA OPTIONS
 
-These low level options are available to the "catmandu data" command.
-
 =over 4
-
-=item --from-store STORE
-
-Read items from a Catmandu::Store such as: DBI, MongoDB, Solr, ElasticSearch, ...
-
-=item --from-importer IMPORTER
-
-Read items from a Catmandu::Importer such as: YAML, JSON, CSV, MARC, OAI ...
-
-=item --from-bag BAG_NAME
-
-This option should be used in combination with a --from-store. Select from the Store
-only the items belonging to the bag BAG_NAME.
-
-=item --from-OPTION OPTION_VALUE
-
-To include configuration options to a Catmandu::Store or Catmandu::Importer an
-argument with prefix '--from-' can be used. E.g. to provide an 'file' to an Importer
-use:
-
-  --from-file /my/path/to/file.txt
-
-=item --into-exporter EXPORTER
-
-Add each item read into a Catmandu::Exporter such as: JSON, YAML, Template, XLS, ...
-
-=item --into-store STORE
-
-Add each item read into a Catmandu::Store such as: DBI, MongoDB, Solr, ElasticSearch, ...
-
-=item --into-bag BAG_NAME
-
-This option should be used in combination with a --into-store. Add each item into the
-Store with bag BAG_NAME.
-
-=item --into-OPTION OPTION_VALUE
-
-To include configuration options to a Catmandu::Store or Catmandu::Exporter an
-argument with prefix '--into-' can be used. E.g. to provide an 'file' to an Exporter
-use:
-
-  --into-file /tmp/file.txt
 
 =item --fix EXPRESSION
 
@@ -321,6 +277,13 @@ When storing data first delete all the items in the Store or Bag.
 
 When a Store is searchable execute and return the results. Using the --cql-query or -q
 option the CQL query language can be used (if supported).
+
+=item --sort SORT
+
+=item --sru-sortkeys SORT
+
+Set the sort order for the results returned from a searchable Store. --sru-sortkeys
+is only available if the Store supports CQL.
 
 =item --limit NUM
 
