@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::Condition::greater_than - Excute fixes when a field is greater than a value
+Catmandu::Fix::Condition::greater_than - Execute fixes when a field is greater than a value
 
 =head1 SYNOPSIS
 
