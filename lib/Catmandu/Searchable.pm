@@ -22,6 +22,8 @@ sub default_maximum_limit {1000}
 
 sub normalize_query {$_[1]}
 
+sub normalize_sort {$_[1]}
+
 my $AROUND_SEARCH = sub {
     my ($orig, $self, %args) = @_;
     $args{limit} = $self->default_limit unless is_natural($args{limit});
@@ -36,6 +38,9 @@ my $AROUND_SEARCH = sub {
     }
 
     $args{query} = $self->normalize_query($args{query});
+    $args{sort} = $self->normalize_sort($args{sort});
+
+    defined $args->{$_} || delete $args->{$_} for keys %args;
 
     $self->log->debugf("called with params %s", [%args]);
     $orig->($self, %args);
