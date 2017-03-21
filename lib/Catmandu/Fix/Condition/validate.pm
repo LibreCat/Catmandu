@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0306';
 
 use Moo;
-use Catmandu::Util qw(require_package)
+use Catmandu::Util qw(require_package);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -17,7 +17,7 @@ has validator => (is => 'lazy', init_arg => undef);
 with 'Catmandu::Fix::Condition::SimpleAllTest';
 
 sub emit_test {
-    my ($self, $var) = @_;
+    my ($self, $var, $fixer) = @_;
     my $validator_var = $fixer->capture($self->validator);
     "${validator_var}\->is_valid(${var})";
 }
