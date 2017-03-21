@@ -40,7 +40,7 @@ my $AROUND_SEARCH = sub {
     $args{query} = $self->normalize_query($args{query});
     $args{sort} = $self->normalize_sort($args{sort});
 
-    defined $args->{$_} || delete $args->{$_} for keys %args;
+    defined $args{$_} || delete $args{$_} for keys %args;
 
     $self->log->debugf("called with params %s", [%args]);
     $orig->($self, %args);
