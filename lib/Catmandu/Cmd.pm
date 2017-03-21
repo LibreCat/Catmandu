@@ -66,18 +66,20 @@ sub command          { }
 
 # helpers
 sub _parse_options {
-    my ($self, $args) = @_;
+    my ($self, $args, %opts) = @_;
 
-    my $a = my $from_args = [];
-    my $o = my $from_opts = {};
-    my $into_args = [];
-    my $into_opts = {};
+    $opts{separator} //= 'to';
+
+    my $a = my $lft_args = [];
+    my $o = my $lft_opts = {};
+    my $rgt_args = [];
+    my $rgt_opts = {};
 
     for (my $i = 0; $i < @$args; $i++) {
         my $arg = $args->[$i];
-        if ($arg eq 'to') {
-            $a = $into_args;
-            $o = $into_opts;
+        if ($arg eq $opts{separator}) {
+            $a = $rgt_args;
+            $o = $rgt_opts;
         }
         elsif ($arg =~ s/^-+//) {
             $arg =~ s/-/_/g;
@@ -98,7 +100,7 @@ sub _parse_options {
         }
     }
 
-    return $from_args, $from_opts, $into_args, $into_opts;
+    return $lft_args, $lft_opts, $rgt_args, $rgt_opts;
 }
 
 sub _build_fixer {
