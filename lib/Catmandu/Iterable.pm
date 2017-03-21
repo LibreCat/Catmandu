@@ -471,6 +471,16 @@ sub stop_if {
     );
 }
 
+sub run {
+    my ($self) = @_;
+    my $next = $self->generator;
+    my $run = 0;
+    while (defined($next->())) {
+        $run ||= 1;
+    }
+    $run;
+}
+
 1;
 
 __END__
@@ -851,6 +861,20 @@ Returns a new iterator thats stops processing if the callback returns false.
         my $rec = shift;
         ...
     });
+
+=head2 run
+
+Simply invokes the iterator and returns 1 if any records were processed, 0 otherwise.
+
+    $it = $it->tap(sub {
+        # do something
+    });
+    $it = $it->tap(sub {
+        # do another thing
+    });
+    $it->run
+
+    print 'not empty' if $it->run;
 
 =head1 SEE ALSO
 
