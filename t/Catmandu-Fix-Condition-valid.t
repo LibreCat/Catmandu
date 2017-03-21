@@ -9,7 +9,7 @@ use Catmandu::Fix::set_field;
 my $pkg;
 
 BEGIN {
-    $pkg = 'Catmandu::Fix::Condition::validate';
+    $pkg = 'Catmandu::Fix::Condition::valid';
     use_ok $pkg;
 }
 

@@ -1,4 +1,4 @@
-package Catmandu::Fix::Condition::validate;
+package Catmandu::Fix::Condition::valid;
 
 use Catmandu::Sane;
 
@@ -35,10 +35,20 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::Condition::validate - Execute fixes if the data passes validation
+Catmandu::Fix::Condition::valid - Execute fixes if the data passes validation
+
+=head1 SYNOPSIS
+
+    # reject all items not conforming to a schema
+    select valid('', JSONSchema, schema: "my/schema.json")
+
+    # check the author field
+    unless valid(author, JSONSchema, schema: "my/author.schema.json")
+       ... # repair or give warning
+    end
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix::Condition::validate>
+L<Catmandu::Fix>
 
 =cut
