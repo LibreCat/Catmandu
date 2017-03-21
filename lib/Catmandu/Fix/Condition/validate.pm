@@ -19,7 +19,6 @@ with 'Catmandu::Fix::Condition::SimpleAllTest';
 sub emit_test {
     my ($self, $var) = @_;
     my $validator_var = $fixer->capture($self->validator);
-
     "${validator_var}\->is_valid(${var})";
 }
 
