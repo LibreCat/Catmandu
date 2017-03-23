@@ -25,9 +25,9 @@ around add => sub {
 
 around commit => sub {
     my ($orig, $self) = @_;
-    my $res = $orig->($self);
+    my(@res) = $orig->($self);
     $self->_commit(1);
-    $res;
+    @res;
 };
 
 sub add_many {
