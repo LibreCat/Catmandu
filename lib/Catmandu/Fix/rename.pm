@@ -56,6 +56,12 @@ __END__
 
 Catmandu::Fix::rename - rename fields with a regex
 
+=head1 SYNOPSIS
+
+   # ns => {'ns.foo' => 'val', list => {'ns.bar' => 'val'}}
+   rename(ns, '\.', '')
+   # ns => {'foo' => 'val', list => {'bar' => 'val'}}
+
 =head1 SEE ALSO
 
 L<Catmandu::Fix>
