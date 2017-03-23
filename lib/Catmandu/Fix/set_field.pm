@@ -12,13 +12,13 @@ use Catmandu::Fix::Has;
 with 'Catmandu::Fix::Base';
 
 has path  => (fix_arg => 1);
-has value => (fix_arg => 1);
+has value => (fix_arg => 1,default => sub { undef; });
 
 sub emit {
     my ($self, $fixer) = @_;
     my $path  = $fixer->split_path($self->path);
     my $key   = pop @$path;
-    my $value = $fixer->emit_value($self->value);
+    my $value = defined $self->value ? $fixer->emit_value($self->value) : 'undef';
 
     $fixer->emit_walk_path(
         $fixer->var,
@@ -52,6 +52,9 @@ if they are missing.
 
    # Change a deeply nested key
    set_field(my.deep.nested.key, hi)
+
+   # If the second argument is omitted the field has a null value
+   add_field(foo)
 
 =head1 SEE ALSO
 
