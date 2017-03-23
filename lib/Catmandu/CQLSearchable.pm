@@ -49,6 +49,28 @@ __END__
 
 Catmandu::CQLSearchable - Optional role for CQL searchable stores
 
+=head1 SYNOPSIS
+
+    my $hits  = $store->bag->search(
+           cql_query => 'keyword any dna',
+           sru_sortkeys  => 'title',
+           limit => 100,
+    );
+
+=head1 METHODS
+
+=head2 search(cql_query => $cql, sru_sortkeys => $sort, ...)
+
+This method behaves exactly like the C<search> method in L<Catmandu::Searchable> but with extra C<cql_query> and C<sru_sortkeys> arguments.
+
+=head2 searcher(cql_query => $cql, sru_sortkeys => $sort, ...)
+
+This method behaves exactly like the C<searcher> method in L<Catmandu::Searchable> but with extra C<cql_query> and C<sru_sortkeys> arguments.
+
+=head2 delete_by_query(cql_query => $cql, ...)
+
+This method behaves exactly like the C<delete_by_query> method in L<Catmandu::Searchable> but with an extra C<cql_query> argument.
+
 =head1 SEE ALSO
 
 L<Catmandu::Searchable>

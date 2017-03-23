@@ -89,12 +89,11 @@ Catmandu::Searchable - Optional role for searchable stores
 
 =head1 METHODS
 
-=head2 search(query => $query, start => $start, page => $page, limit => $num, sort => $sort, cql_query => $cql)
+=head2 search(query => $query, start => $start, page => $page, limit => $num, sort => $sort)
 
 Search the database and returns a L<Catmandu::Hits> on success. The Hits represents one
 result page of at most $num results. The $query and $sort should implement the
-query and sort syntax of the underlying search engine. If the CQL language is supported
-by the Store, then optionally a $cql_query search can be excuted on the Searchable.
+query and sort syntax of the underlying search engine.
 
 Optionally provide the index of the first result using the C<start> option, or the starting page using
 the C<page> option. The number of records in a result page can be set using the C<limit> option. Sorting
@@ -104,8 +103,7 @@ options are being sent verbatim to the underlying search engine.
 
 Search the database and return a L<Catmandu::Iterable> on success. This iterator can be
 used to loop over the complete result set. The $query and $sort should implement the
-query and sort syntax of the underlying search engine. If the CQL language is supported
-by the Store, then optionally a $cql_query search can be excuted on the Searchable.
+query and sort syntax of the underlying search engine.
 
 Optionally provide the index of the first result using the C<start> option. The number of records in
 a page can be set using the C<limit> option. Sorting options are being sent verbatim to the underlying
