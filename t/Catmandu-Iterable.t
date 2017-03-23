@@ -181,7 +181,7 @@ $iter->data([1, 2]);
 is $iter->run, 1;
 
 my $has_run = 0;
-$iter->tap(sub { $has_run = 1 })->run;
+$iter->tap(sub {$has_run = 1})->run;
 is $has_run, 1;
 
 # external iteration

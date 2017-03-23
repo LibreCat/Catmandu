@@ -473,8 +473,8 @@ sub stop_if {
 
 sub run {
     my ($self) = @_;
-    my $next = $self->generator;
-    my $run = 0;
+    my $next   = $self->generator;
+    my $run    = 0;
     while (defined($next->())) {
         $run ||= 1;
     }

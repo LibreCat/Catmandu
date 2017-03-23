@@ -56,7 +56,8 @@ sub command {
     };
 
     if ($opts->transaction) {
-        $self->usage_error("Bag isn't transactional") if !$into->does('Catmandu::Transactional');
+        $self->usage_error("Bag isn't transactional")
+            if !$into->does('Catmandu::Transactional');
         $into->transaction($tx);
     }
     else {

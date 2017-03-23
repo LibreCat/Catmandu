@@ -9,10 +9,10 @@ use Catmandu::Util qw(require_package);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path  => (fix_arg => 1);
-has name  => (fix_arg => 1);
-has opts  => (fix_opt => 'collect');
-has validator => (is => 'lazy', init_arg => undef);
+has path      => (fix_arg => 1);
+has name      => (fix_arg => 1);
+has opts      => (fix_opt => 'collect');
+has validator => (is      => 'lazy', init_arg => undef);
 
 with 'Catmandu::Fix::Condition::SimpleAllTest';
 

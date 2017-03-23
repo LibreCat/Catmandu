@@ -17,7 +17,7 @@ my $cond;
 my $pass = [Catmandu::Fix::set_field->new('test', 'pass')];
 my $fail = [Catmandu::Fix::set_field->new('test', 'fail')];
 
-$cond = $pkg->new('', 'Simple', handler => sub {});
+$cond = $pkg->new('', 'Simple', handler => sub { });
 $cond->pass_fixes($pass);
 $cond->fail_fixes($fail);
 

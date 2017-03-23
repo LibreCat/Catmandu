@@ -17,7 +17,7 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-    my $search = $self->search;
+    my $search  = $self->search;
     my $replace = $self->replace;
     my $renamer;
 

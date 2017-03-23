@@ -26,6 +26,7 @@ sub import {
                 my $key = join('--', @_);
                 $fixer = $cache->{$key} ||= do {
                     my $f = $pkg->new(@_);
+
                     # memoize instance of Fix.pm if it's an emitting fix
                     $f = $f->fixer if $f->can('fixer');
                     $f;

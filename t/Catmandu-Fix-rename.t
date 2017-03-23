@@ -12,7 +12,8 @@ BEGIN {
     use_ok $pkg;
 }
 
-is_deeply $pkg->new('dots', '\.', '-')->fix({dots => {'a.b' => [{'c.d' => ""}]}}),
+is_deeply $pkg->new('dots', '\.', '-')
+    ->fix({dots => {'a.b' => [{'c.d' => ""}]}}),
     {dots => {'a-b' => [{'c-d' => ""}]}};
 
 done_testing;

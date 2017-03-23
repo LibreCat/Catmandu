@@ -8,32 +8,32 @@ use Catmandu::Fix::Has;
 with 'Catmandu::Fix::Base';
 
 #options/arguments
-has path       => ( fix_arg => 1 );
-has store_name => ( fix_opt => 1, init_arg => 'store');
-has bag_name   => ( fix_opt => 1, init_arg => 'bag' );
-has limit      => ( fix_opt => 1, init_arg => undef, default => sub { 20 } );
-has start      => ( fix_opt => 1, init_arg => undef, default => sub { 0 } );
-has sort       => ( fix_opt => 1, init_arg => undef );
-has store_args => ( fix_opt => 'collect' );
+has path       => (fix_arg => 1);
+has store_name => (fix_opt => 1, init_arg => 'store');
+has bag_name   => (fix_opt => 1, init_arg => 'bag');
+has limit      => (fix_opt => 1, init_arg => undef, default => sub {20});
+has start      => (fix_opt => 1, init_arg => undef, default => sub {0});
+has sort => (fix_opt => 1, init_arg => undef);
+has store_args => (fix_opt => 'collect');
 
 #internal
-has store      => ( is => 'lazy', init_arg => undef, builder => '_build_store' );
-has bag        => ( is => 'lazy', init_arg => undef, builder => '_build_bag' );
+has store => (is => 'lazy', init_arg => undef, builder => '_build_store');
+has bag   => (is => 'lazy', init_arg => undef, builder => '_build_bag');
 
 sub _build_store {
     my $self = $_[0];
-    Catmandu->store( $self->store_name, %{ $self->store_args } );
+    Catmandu->store($self->store_name, %{$self->store_args});
 }
 
 sub _build_bag {
-    my ( $self ) = @_;
+    my ($self) = @_;
     defined $self->bag_name
         ? $self->store->bag($self->bag_name)
         : $self->store->bag;
 }
 
 sub emit {
-    my ( $self, $fixer ) = @_;
+    my ($self, $fixer) = @_;
 
     my $path    = $fixer->split_path($self->path);
     my $key     = pop @$path;
@@ -42,25 +42,32 @@ sub emit {
     my $start   = $self->start;
     my $sort    = $self->sort || "";
 
-    $fixer->emit_walk_path ( $fixer->var, $path, sub {
+    $fixer->emit_walk_path(
+        $fixer->var,
+        $path,
+        sub {
 
-        my $var = shift;
+            my $var = shift;
 
-        $fixer->emit_get_key ( $var, $key, sub {
+            $fixer->emit_get_key(
+                $var, $key,
+                sub {
 
-            my $val_var = shift;
+                    my $val_var = shift;
 
-            my $perl = <<EOF;
+                    my $perl = <<EOF;
 
 ${val_var}  = ${bag_var}->search( query => $val_var, start => ${start}, limit => ${limit}, sort => '${sort}' );
 ${val_var}  = { start => ${start}, limit => ${limit}, total => ${val_var}->total(), hits => ${val_var}->to_array() };
 
 EOF
 
-            $perl;
+                    $perl;
 
-        });
-    });
+                }
+            );
+        }
+    );
 }
 
 =head1 NAME

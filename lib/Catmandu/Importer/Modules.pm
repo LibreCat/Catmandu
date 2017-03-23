@@ -83,7 +83,11 @@ sub generator {
                 }
                 elsif (open(my $fh, '<:encoding(UTF-8)', $file)) {
                     while (my $line = <$fh>) {
-                        if (my ($version) = $line =~ /^\s*our\s+\$VERSION\s*=\s*['"]([^'"]+)['"]\s*;/) {
+                        if (my ($version)
+                            = $line
+                            =~ /^\s*our\s+\$VERSION\s*=\s*['"]([^'"]+)['"]\s*;/
+                            )
+                        {
                             $data->{version} = $version;
                             last;
                         }
