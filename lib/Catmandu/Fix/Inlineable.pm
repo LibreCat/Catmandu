@@ -10,19 +10,19 @@ use namespace::clean;
 
 requires 'fix';
 
-sub is_cacheable {1}
-
 sub import {
     my $target = caller;
     my ($pkg, %opts) = @_;
 
     if (my $sym = $opts{as}) {
+        $opts{cache} //= 1
+
         my $sub = sub {
             my $data = shift;
             my $fixer;
 
             state $cache = {};
-            if ($pkg->is_cacheable) {
+            if ($opts{cache}) {
                 my $key = join('--', @_);
                 $fixer = $cache->{$key} ||= do {
                     my $f = $pkg->new(@_);
@@ -86,7 +86,10 @@ Catmandu::Fix::Inlineable - Role for all Catmandu fixes that can be inlined
     package main;
 
     use Catmandu::Fix::my_fix1 as => 'my_fix1';
-    use Catmandu::Fix::my_fix2 as => 'my_fix2';
+    # disabling caching may be desirable with fixes that have side effects like
+    # writing to a file, the downside is that a new instance of the fix will be
+    # created with each invocation
+    use Catmandu::Fix::my_fix2 as => 'my_fix2', cache => 0;
 
     my $data = {};
 
