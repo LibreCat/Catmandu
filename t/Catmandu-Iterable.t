@@ -174,6 +174,16 @@ $iter->data([3, 21, 1]);
 is_deeply $iter->sorted->to_array, [1, 21, 3];
 is_deeply $iter->sorted(sub {$_[1] <=> $_[0]})->to_array, [21, 3, 1];
 
+$iter->data([]);
+is $iter->run, 0;
+
+$iter->data([1, 2]);
+is $iter->run, 1;
+
+my $has_run = 0;
+$iter->tap(sub { $has_run = 1 })->run;
+is $has_run, 1;
+
 # external iteration
 {
     $iter->data([{n => 1}, {n => 2}, {n => 3}]);

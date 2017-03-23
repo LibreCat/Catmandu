@@ -15,7 +15,7 @@ sub import {
     my ($pkg, %opts) = @_;
 
     if (my $sym = $opts{as}) {
-        $opts{cache} //= 1
+        $opts{cache} //= 1;
 
         my $sub = sub {
             my $data = shift;
