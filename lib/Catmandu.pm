@@ -358,6 +358,10 @@ C<undef> before C<load>.
 
 Returns the current configuration as a HASHREF.
 
+=head2 config($config)
+
+Set a new configuration and reload the environment.
+
 =head2 default_store
 
 Return the name of the default store.
