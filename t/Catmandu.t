@@ -75,4 +75,8 @@ my $exporter = Catmandu->exporter('Mock');
 Catmandu->export({n => 1}, $exporter);
 is_deeply($exporter->as_arrayref, [{n => 1}]);
 
+# Set config
+Catmandu->config({test => 'reload'});
+is(Catmandu->config->{test}, 'reload', 'reload config');
+
 done_testing;

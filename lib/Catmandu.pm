@@ -81,7 +81,13 @@ sub root {
 }
 
 sub config {
-    $_[0]->_env->config;
+    my ($class, $config) = @_;
+    if ($config) {
+        my $env = Catmandu::Env->new(load_paths => $class->_env->load_paths);
+        $env->_set_config($config);
+        $class->_env($env);
+    }
+    $class->_env->config;
 }
 
 sub default_store {$_[0]->_env->default_store}
