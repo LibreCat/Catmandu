@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.04  2017-03-23 13:56:32 CET
   - new error fix
   - new rename fix
   - new search_in_store fix

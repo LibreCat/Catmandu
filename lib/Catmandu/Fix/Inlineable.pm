@@ -2,7 +2,7 @@ package Catmandu::Fix::Inlineable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0306';
+our $VERSION = '1.04';
 
 use Clone qw(clone);
 use Moo::Role;

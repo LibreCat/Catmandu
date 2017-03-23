@@ -2,7 +2,7 @@ package Catmandu::Cmd::delete;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0306';
+our $VERSION = '1.04';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

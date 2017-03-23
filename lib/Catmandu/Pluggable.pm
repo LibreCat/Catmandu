@@ -2,7 +2,7 @@ package Catmandu::Pluggable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0306';
+our $VERSION = '1.04';
 
 use Moo::Role;
 use namespace::clean;
