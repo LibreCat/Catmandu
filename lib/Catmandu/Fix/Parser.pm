@@ -59,6 +59,8 @@ sub parse_condition {
     my $type       = $self->token_kw('if', 'unless');
     my $name       = $self->parse_name;
     my $args       = $self->parse_arguments;
+    # support deprecated separator
+    $self->maybe_expect(';');
     my $fixes      = $self->sequence_of('parse_statement');
     my $else_fixes = $self->maybe(
         sub {
@@ -68,6 +70,8 @@ sub parse_condition {
         }
     );
     $self->expect('end');
+    # support deprecated separator
+    $self->maybe_expect(';');
     my $cond = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
     if ($type eq 'if') {
         $cond->pass_fixes($fixes);
@@ -97,11 +101,15 @@ sub parse_filter {
 
 sub parse_bind {
     my ($self) = @_;
-    my $type  = $self->token_kw('do', 'doset');
+    my $type  = $self->token_kw('bind', 'do', 'doset');
     my $name  = $self->parse_name;
     my $args  = $self->parse_arguments;
+    # support deprecated separator
+    $self->maybe_expect(';');
     my $fixes = $self->sequence_of('parse_statement');
     $self->expect('end');
+    # support deprecated separator
+    $self->maybe_expect(';');
     my $bind = $self->_build_fix($name, 'Catmandu::Fix::Bind', $args);
     $bind->return($type eq 'doset');
     $bind->fixes($fixes);

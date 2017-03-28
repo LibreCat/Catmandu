@@ -86,6 +86,10 @@ $bar_exists->fail_fixes([]);
 cmp_deeply $parser->parse(
     "if exists(foo) if exists(bar) downcase(foo) end upcase(foo) end"),
     [$foo_exists,];
+# with optional deprecated separators
+cmp_deeply $parser->parse(
+    "if exists(foo); if exists(bar); downcase(foo); end; upcase(foo); end;"),
+    [$foo_exists,];
 
 $foo_exists->pass_fixes([]);
 $foo_exists->fail_fixes([$reject]);
