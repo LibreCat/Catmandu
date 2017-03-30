@@ -4,7 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '1.04';
 
-use Catmandu::Util qw(check_value is_instance is_able require_package);
+use Catmandu::Util qw(check_value is_array_ref is_instance is_able require_package);
+use Catmandu::Fix::reject;
 use Moo;
 use namespace::clean;
 
@@ -53,14 +54,32 @@ sub parse_statement {
     $statement;
 }
 
+sub parse_filter {
+    my ($self) = @_;
+    my $type  = $self->token_kw('select', 'reject');
+    my $name  = $self->parse_name;
+    my $args  = $self->parse_arguments;
+    # support deprecated separator
+    $self->maybe_expect(';');
+    $self->_build_condition($name, $args, $type eq 'reject', Catmandu::Fix::reject->new);
+}
+
 sub parse_if {
     my ($self) = @_;
     my $type = $self->token_kw('if');
-    my $cond = $self->_parse_condition(1);
+    my $name  = $self->parse_name;
+    my $args  = $self->parse_arguments;
+    # support deprecated separator
+    $self->maybe_expect(';');
+    my $cond = $self->_build_condition($name, $args, 1, $self->parse_statements);
     my $elsif_conditions = $self->sequence_of(
         sub {
             $self->token_kw('elsif');
-            $self->_parse_condition(1);
+            my $name  = $self->parse_name;
+            my $args  = $self->parse_arguments;
+            # support deprecated separator
+            $self->maybe_expect(';');
+            $self->_build_condition($name, $args, 1, $self->parse_statements);
         }
     );
     my $else_fixes = $self->maybe(
@@ -92,17 +111,15 @@ sub parse_if {
 sub parse_unless {
     my ($self) = @_;
     my $type = $self->token_kw('unless');
-    my $cond = $self->_parse_condition(0);
+    my $name  = $self->parse_name;
+    my $args  = $self->parse_arguments;
+    # support deprecated separator
+    $self->maybe_expect(';');
+    my $cond = $self->_build_condition($name, $args, 0, $self->parse_statements);
     $self->expect('end');
     # support deprecated separator
     $self->maybe_expect(';');
     $cond;
-}
-
-sub parse_filter {
-    my ($self) = @_;
-    my $type  = $self->token_kw('select', 'reject');
-    $self->_parse_condition($type eq 'reject', [require_package('Catmandu::Fix::reject')->new]);
 }
 
 sub parse_bind {
@@ -112,21 +129,39 @@ sub parse_bind {
     my $args  = $self->parse_arguments;
     # support deprecated separator
     $self->maybe_expect(';');
-    my $fixes = $self->parse_statements;
+    my $bind = $self->_build_bind($name, $args, $type eq 'doset', $self->parse_statements);
     $self->expect('end');
     # support deprecated separator
     $self->maybe_expect(';');
-    my $bind = $self->_build_fix($name, 'Catmandu::Fix::Bind', $args);
-    $bind->return($type eq 'doset');
-    $bind->fixes($fixes);
     $bind;
 }
 
 sub parse_fix {
     my ($self) = @_;
-    my $name   = $self->parse_name;
-    my $args   = $self->parse_arguments;
-    $self->_build_fix($name, 'Catmandu::Fix', $args);
+    my $lft_name = $self->parse_name;
+    my $lft_args = $self->parse_arguments;
+    my $bool = $self->maybe(sub {
+        $self->any_of(
+            sub { $self->expect(qr/and|&&/); 1 },
+            sub { $self->expect(qr/or|\|\|/); 0 },
+        );
+    });
+
+    my $fix;
+
+    if (defined $bool) {
+        $self->commit;
+        my $rgt_name = $self->parse_name;
+        my $rgt_args = $self->parse_arguments;
+        $fix = $self->_build_condition($lft_name, $lft_args, $bool, $self->_build_fix($rgt_name, $rgt_args));
+    } else {
+        $fix = $self->_build_fix($lft_name, $lft_args);
+    }
+
+    # support deprecated separator
+    $self->maybe_expect(';');
+
+    $fix;
 }
 
 sub parse_name {
@@ -185,14 +220,10 @@ sub parse_double_quoted_string {
     $str;
 }
 
-sub _parse_condition {
-    my ($self, $pass, $fixes) = @_;
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
-    # support deprecated separator
-    $self->maybe_expect(';');
-    $fixes ||= $self->parse_statements;
-    my $cond = $self->_build_fix($name, 'Catmandu::Fix::Condition', $args);
+sub _build_condition {
+    my ($self, $name, $args, $pass, $fixes) = @_;
+    $fixes = [$fixes] if !is_array_ref($fixes);
+    my $cond = $self->_build_fix_ns($name, 'Catmandu::Fix::Condition', $args);
     if ($pass) {
         $cond->pass_fixes($fixes);
     } else {
@@ -201,7 +232,21 @@ sub _parse_condition {
     $cond;
 }
 
+sub _build_bind {
+    my ($self, $name, $args, $return, $fixes) = @_;
+    $fixes = [$fixes] if !is_array_ref($fixes);
+    my $bind = $self->_build_fix_ns($name, 'Catmandu::Fix::Bind', $args);
+    $bind->return($return);
+    $bind->fixes($fixes);
+    $bind;
+}
+
 sub _build_fix {
+    my ($self, $name, $args) = @_;
+    $self->_build_fix_ns($name, 'Catmandu::Fix', $args);
+}
+
+sub _build_fix_ns {
     my ($self, $name, $ns, $args) = @_;
     my $pkg;
     try {
