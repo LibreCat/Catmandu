@@ -1,7 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - new fix language elsif statement
+  - fix language has new elsif statement
+  - fix language has new boolean keywords
   - fix language do statement aliased as bind
   - config is now reloadable
   - pod corrections
