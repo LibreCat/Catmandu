@@ -1,6 +1,10 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new fix language elsif statement
+  - fix language do statement aliased as bind
+  - config is now reloadable
+  - pod corrections
 
 1.04  2017-03-23 13:56:32 CET
   - new error fix
