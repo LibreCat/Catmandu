@@ -8,8 +8,8 @@ use Test::Exception;
 use Catmandu::Fix;
 use Catmandu::Fix::upcase;
 use Catmandu::Fix::downcase;
-use Catmandu::Fix::Condition::exists;
 use Catmandu::Fix::reject;
+use Catmandu::Fix::Condition::exists;
 
 my $pkg;
 
@@ -33,8 +33,11 @@ dies_ok {$parser->parse("foo()")} 'die on unknown fix';
 
 my $foo_exists   = Catmandu::Fix::Condition::exists->new("foo");
 my $bar_exists   = Catmandu::Fix::Condition::exists->new("bar");
+my $baz_exists   = Catmandu::Fix::Condition::exists->new("baz");
 my $upcase_foo   = Catmandu::Fix::upcase->new("foo");
 my $downcase_foo = Catmandu::Fix::downcase->new("foo");
+my $upcase_bar   = Catmandu::Fix::upcase->new("bar");
+my $downcase_bar   = Catmandu::Fix::downcase->new("bar");
 my $reject       = Catmandu::Fix::reject->new;
 
 cmp_deeply $parser->parse(""), [];
@@ -90,6 +93,32 @@ cmp_deeply $parser->parse(
 cmp_deeply $parser->parse(
     "if exists(foo); if exists(bar); downcase(foo); end; upcase(foo); end;"),
     [$foo_exists,];
+
+# if ... elsif
+$bar_exists->pass_fixes([$upcase_foo]);
+$bar_exists->fail_fixes([]);
+$foo_exists->pass_fixes([$downcase_foo]);
+$foo_exists->fail_fixes([$bar_exists]);
+cmp_deeply $parser->parse(
+    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) end"), [$foo_exists,];
+
+# if ... elsif ... else
+$bar_exists->pass_fixes([$upcase_foo]);
+$bar_exists->fail_fixes([$upcase_bar]);
+$foo_exists->pass_fixes([$downcase_foo]);
+$foo_exists->fail_fixes([$bar_exists]);
+cmp_deeply $parser->parse(
+    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) else upcase(bar) end"), [$foo_exists,];
+
+# if ... elsif ... elsif ... else
+$baz_exists->pass_fixes([$upcase_bar]);
+$baz_exists->fail_fixes([$downcase_bar]);
+$bar_exists->pass_fixes([$upcase_foo]);
+$bar_exists->fail_fixes([$baz_exists]);
+$foo_exists->pass_fixes([$downcase_foo]);
+$foo_exists->fail_fixes([$bar_exists]);
+cmp_deeply $parser->parse(
+    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) elsif exists(baz) upcase(bar) else downcase(bar) end"), [$foo_exists,];
 
 $foo_exists->pass_fixes([]);
 $foo_exists->fail_fixes([$reject]);
