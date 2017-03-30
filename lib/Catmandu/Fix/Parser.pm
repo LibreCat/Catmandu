@@ -5,7 +5,6 @@ use Catmandu::Sane;
 our $VERSION = '1.04';
 
 use Catmandu::Util qw(check_value is_array_ref is_instance is_able require_package);
-use Catmandu::Fix::reject;
 use Moo;
 use namespace::clean;
 
@@ -61,7 +60,7 @@ sub parse_filter {
     my $args  = $self->parse_arguments;
     # support deprecated separator
     $self->maybe_expect(';');
-    $self->_build_condition($name, $args, $type eq 'reject', Catmandu::Fix::reject->new);
+    $self->_build_condition($name, $args, $type eq 'reject', require_package('Catmandu::Fix::reject')->new);
 }
 
 sub parse_if {
