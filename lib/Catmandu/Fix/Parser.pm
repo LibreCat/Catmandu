@@ -59,7 +59,7 @@ sub parse_if {
     my $cond = $self->_parse_condition(1);
     my $elsif_conditions = $self->sequence_of(
         sub {
-            $self->expect('elsif');
+            $self->token_kw('elsif');
             $self->_parse_condition(1);
         }
     );
