@@ -6,6 +6,7 @@ Revision history for Catmandu
   - fix language has new boolean keywords
   - fix language do statement aliased as bind
   - config is now reloadable
+  - Plugin::Datestamps datetime format is now configurable
   - pod corrections
 
 1.04  2017-03-23 13:56:32 CET
