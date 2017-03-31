@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Windows build was broken since 1.0304, should now build again
   - fix language has new elsif statement
   - fix language has new boolean keywords
   - fix language do statement aliased as bind
