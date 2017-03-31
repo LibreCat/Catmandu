@@ -4,16 +4,36 @@ use Catmandu::Sane;
 
 our $VERSION = '1.04';
 
-use Role::Tiny;
 use POSIX qw(strftime);
+use Time::HiRes;
+use Moo::Role;
 use namespace::clean;
+
+has datestamp_format => (is => 'lazy');
 
 before add => sub {
     my ($self, $data) = @_;
-    my $now = strftime("%Y-%m-%dT%H:%M:%SZ", gmtime(time));
+    my $fmt = $self->datestamp_format;
+    my $now;
+
+    if ($fmt eq 'iso_date_time') {
+        $now = strftime('%Y-%m-%dT%H:%M:%SZ', gmtime(time));
+    }
+    elsif ($fmt eq 'iso_date_time_millis') {
+        my $t = Time::HiRes::time;
+        $now = strftime('%Y-%m-%dT%H:%M:%S', gmtime($t));
+        $now .= sprintf('.%03d', ($t-int($t))*1000);
+        $now .= 'Z';
+    }
+    else {
+        $now = strftime($fmt, gmtime(time));
+    }
+
     $data->{date_created} ||= $now;
     $data->{date_updated} = $now;
 };
+
+sub _build_datestamp_format { 'iso_date_time' }
 
 1;
 

@@ -26,16 +26,45 @@ ok $store->bag->get('001')->{date_updated}, 'has date_updated';
 
 my $created = $store->bag->get('001')->{date_created};
 my $updated = $store->bag->get('001')->{date_updated};
-my $obj     = $store->bag->get('001');
-$obj->{name} = 'John';
+my $rec     = $store->bag->get('001');
+$rec->{name} = 'John';
 
 sleep 2;
 
-ok $store->bag->add($obj), 'update something';
-ok $store->bag->get('001')->{date_updated}, 'has date_updated';
-ok $store->bag->get('001')->{date_updated} ne $updated, 'dates change';
-is $store->bag->get('001')->{date_created}, $created,
+ok $store->bag->add($rec), 'update something';
+$rec = $store->bag->get('001');
+ok $rec->{date_updated}, 'has date_updated';
+ok $rec->{date_updated} ne $updated, 'dates change';
+is $rec->{date_created}, $created,
     'but created dates dont change';
 
-done_testing 11;
+# formats
+like $rec->{date_created}, qr/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/;
+like $rec->{date_updated}, qr/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/;
+
+$store = Catmandu::Store::Hash->new(
+    bags => {data => {
+        plugins => [qw(Datestamps)],
+        datestamp_format => 'iso_date_time'}});
+$store->bag->add({_id => '001', name => 'Penguin'});
+$rec = $store->bag->get('001');
+like $rec->{date_created}, qr/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/;
+
+$store = Catmandu::Store::Hash->new(
+    bags => {data => {
+        plugins => [qw(Datestamps)],
+        datestamp_format => 'iso_date_time_millis'}});
+$store->bag->add({_id => '001', name => 'Penguin'});
+$rec = $store->bag->get('001');
+like $rec->{date_created}, qr/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/;
+
+$store = Catmandu::Store::Hash->new(
+    bags => {data => {
+        plugins => [qw(Datestamps)],
+        datestamp_format => '%Y/%m/%d'}});
+$store->bag->add({_id => '001', name => 'Penguin'});
+$rec = $store->bag->get('001');
+like $rec->{date_created}, qr/^\d{4}\/\d{2}\/\d{2}/;
+
+done_testing;
 
