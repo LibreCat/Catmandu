@@ -22,7 +22,7 @@ before add => sub {
     elsif ($fmt eq 'iso_date_time_millis') {
         my $t = Time::HiRes::time;
         $now = strftime('%Y-%m-%dT%H:%M:%S', gmtime($t));
-        $now .= sprintf('.%03d', ($t-int($t))*1000);
+        $now .= sprintf('.%03d', ($t - int($t)) * 1000);
         $now .= 'Z';
     }
     else {
@@ -33,7 +33,7 @@ before add => sub {
     $data->{date_updated} = $now;
 };
 
-sub _build_datestamp_format { 'iso_date_time' }
+sub _build_datestamp_format {'iso_date_time'}
 
 1;
 
@@ -71,16 +71,16 @@ Catmandu::Plugin::Datestamps - Automatically add datestamps to Catmandu::Store r
 
  # Or in your Perl program
  my $store = Catmandu::Store::MongoDB->new(
- 			database_name => 'test' ,
- 			bags => {
-				data => {
-				plugins => [qw(Datestamps)]
-			}
- 		});
+            database_name => 'test' ,
+            bags => {
+                data => {
+                plugins => [qw(Datestamps)]
+            }
+        });
 
  $store->bag->add({
-		'_id'  => '123',
-		'name' => 'John Doe'
+        '_id'  => '123',
+        'name' => 'John Doe'
  });
 
  my $obj = $store->bag->get('123');

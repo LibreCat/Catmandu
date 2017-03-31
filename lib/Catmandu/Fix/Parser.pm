@@ -4,7 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '1.04';
 
-use Catmandu::Util qw(check_value is_array_ref is_instance is_able require_package);
+use Catmandu::Util
+    qw(check_value is_array_ref is_instance is_able require_package);
 use Moo;
 use namespace::clean;
 
@@ -45,9 +46,11 @@ sub parse_statements {
 
 sub parse_statement {
     my ($self) = @_;
-    my $statement
-        = $self->any_of('parse_filter', 'parse_if', 'parse_unless', 'parse_bind',
-        'parse_fix',);
+    my $statement = $self->any_of(
+        'parse_filter', 'parse_if', 'parse_unless', 'parse_bind',
+        'parse_fix',
+    );
+
     # support deprecated separator
     $self->maybe_expect(';');
     $statement;
@@ -55,27 +58,35 @@ sub parse_statement {
 
 sub parse_filter {
     my ($self) = @_;
-    my $type  = $self->token_kw('select', 'reject');
-    my $name  = $self->parse_name;
-    my $args  = $self->parse_arguments;
+    my $type = $self->token_kw('select', 'reject');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
+
     # support deprecated separator
     $self->maybe_expect(';');
-    $self->_build_condition($name, $args, $type eq 'reject', require_package('Catmandu::Fix::reject')->new);
+    $self->_build_condition(
+        $name, $args,
+        $type eq 'reject',
+        require_package('Catmandu::Fix::reject')->new
+    );
 }
 
 sub parse_if {
     my ($self) = @_;
-    my $type = $self->token_kw('if');
-    my $name  = $self->parse_name;
-    my $args  = $self->parse_arguments;
+    my $type   = $self->token_kw('if');
+    my $name   = $self->parse_name;
+    my $args   = $self->parse_arguments;
+
     # support deprecated separator
     $self->maybe_expect(';');
-    my $cond = $self->_build_condition($name, $args, 1, $self->parse_statements);
+    my $cond
+        = $self->_build_condition($name, $args, 1, $self->parse_statements);
     my $elsif_conditions = $self->sequence_of(
         sub {
             $self->token_kw('elsif');
-            my $name  = $self->parse_name;
-            my $args  = $self->parse_arguments;
+            my $name = $self->parse_name;
+            my $args = $self->parse_arguments;
+
             # support deprecated separator
             $self->maybe_expect(';');
             $self->_build_condition($name, $args, 1, $self->parse_statements);
@@ -88,6 +99,7 @@ sub parse_if {
         }
     );
     $self->expect('end');
+
     # support deprecated separator
     $self->maybe_expect(';');
 
@@ -109,13 +121,16 @@ sub parse_if {
 
 sub parse_unless {
     my ($self) = @_;
-    my $type = $self->token_kw('unless');
-    my $name  = $self->parse_name;
-    my $args  = $self->parse_arguments;
+    my $type   = $self->token_kw('unless');
+    my $name   = $self->parse_name;
+    my $args   = $self->parse_arguments;
+
     # support deprecated separator
     $self->maybe_expect(';');
-    my $cond = $self->_build_condition($name, $args, 0, $self->parse_statements);
+    my $cond
+        = $self->_build_condition($name, $args, 0, $self->parse_statements);
     $self->expect('end');
+
     # support deprecated separator
     $self->maybe_expect(';');
     $cond;
@@ -123,28 +138,33 @@ sub parse_unless {
 
 sub parse_bind {
     my ($self) = @_;
-    my $type  = $self->token_kw('bind', 'do', 'doset');
-    my $name  = $self->parse_name;
-    my $args  = $self->parse_arguments;
+    my $type = $self->token_kw('bind', 'do', 'doset');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
+
     # support deprecated separator
     $self->maybe_expect(';');
-    my $bind = $self->_build_bind($name, $args, $type eq 'doset', $self->parse_statements);
+    my $bind = $self->_build_bind($name, $args, $type eq 'doset',
+        $self->parse_statements);
     $self->expect('end');
+
     # support deprecated separator
     $self->maybe_expect(';');
     $bind;
 }
 
 sub parse_fix {
-    my ($self) = @_;
+    my ($self)   = @_;
     my $lft_name = $self->parse_name;
     my $lft_args = $self->parse_arguments;
-    my $bool = $self->maybe(sub {
-        $self->any_of(
-            sub { $self->expect(qr/and|&&/); 1 },
-            sub { $self->expect(qr/or|\|\|/); 0 },
-        );
-    });
+    my $bool     = $self->maybe(
+        sub {
+            $self->any_of(
+                sub {$self->expect(qr/and|&&/);  1},
+                sub {$self->expect(qr/or|\|\|/); 0},
+            );
+        }
+    );
 
     my $fix;
 
@@ -152,8 +172,10 @@ sub parse_fix {
         $self->commit;
         my $rgt_name = $self->parse_name;
         my $rgt_args = $self->parse_arguments;
-        $fix = $self->_build_condition($lft_name, $lft_args, $bool, $self->_build_fix($rgt_name, $rgt_args));
-    } else {
+        $fix = $self->_build_condition($lft_name, $lft_args, $bool,
+            $self->_build_fix($rgt_name, $rgt_args));
+    }
+    else {
         $fix = $self->_build_fix($lft_name, $lft_args);
     }
 
@@ -225,7 +247,8 @@ sub _build_condition {
     my $cond = $self->_build_fix_ns($name, 'Catmandu::Fix::Condition', $args);
     if ($pass) {
         $cond->pass_fixes($fixes);
-    } else {
+    }
+    else {
         $cond->fail_fixes($fixes);
     }
     $cond;

@@ -13,6 +13,7 @@ use namespace::clean;
 # Internal required by App::Cmd;
 sub prepare {
     my ($self, $app, @args) = @_;
+
     # not always available
     eval {
         require I18N::Langinfo;

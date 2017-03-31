@@ -30,9 +30,6 @@ is_deeply $pkg->new('deeply.nested.$append.job', 'fixer')
 is_deeply $pkg->new('test', '0123')->fix({}), {test => '0123'},
     "add a number";
 
-is_deeply
-    $pkg->new('test')->fix({}),
-    {test => undef},
-    "set key to undef";
+is_deeply $pkg->new('test')->fix({}), {test => undef}, "set key to undef";
 
 done_testing;

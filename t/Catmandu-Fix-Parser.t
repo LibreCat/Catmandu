@@ -37,7 +37,7 @@ my $baz_exists   = Catmandu::Fix::Condition::exists->new("baz");
 my $upcase_foo   = Catmandu::Fix::upcase->new("foo");
 my $downcase_foo = Catmandu::Fix::downcase->new("foo");
 my $upcase_bar   = Catmandu::Fix::upcase->new("bar");
-my $downcase_bar   = Catmandu::Fix::downcase->new("bar");
+my $downcase_bar = Catmandu::Fix::downcase->new("bar");
 my $reject       = Catmandu::Fix::reject->new;
 
 cmp_deeply $parser->parse(""), [];
@@ -89,6 +89,7 @@ $bar_exists->fail_fixes([]);
 cmp_deeply $parser->parse(
     "if exists(foo) if exists(bar) downcase(foo) end upcase(foo) end"),
     [$foo_exists,];
+
 # with optional deprecated separators
 cmp_deeply $parser->parse(
     "if exists(foo); if exists(bar); downcase(foo); end; upcase(foo); end;"),
@@ -100,7 +101,8 @@ $bar_exists->fail_fixes([]);
 $foo_exists->pass_fixes([$downcase_foo]);
 $foo_exists->fail_fixes([$bar_exists]);
 cmp_deeply $parser->parse(
-    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) end"), [$foo_exists,];
+    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) end"),
+    [$foo_exists,];
 
 # if ... elsif ... else
 $bar_exists->pass_fixes([$upcase_foo]);
@@ -108,7 +110,8 @@ $bar_exists->fail_fixes([$upcase_bar]);
 $foo_exists->pass_fixes([$downcase_foo]);
 $foo_exists->fail_fixes([$bar_exists]);
 cmp_deeply $parser->parse(
-    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) else upcase(bar) end"), [$foo_exists,];
+    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) else upcase(bar) end"
+), [$foo_exists,];
 
 # if ... elsif ... elsif ... else
 $baz_exists->pass_fixes([$upcase_bar]);
@@ -118,35 +121,34 @@ $bar_exists->fail_fixes([$baz_exists]);
 $foo_exists->pass_fixes([$downcase_foo]);
 $foo_exists->fail_fixes([$bar_exists]);
 cmp_deeply $parser->parse(
-    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) elsif exists(baz) upcase(bar) else downcase(bar) end"), [$foo_exists,];
+    "if exists(foo) downcase(foo) elsif exists(bar) upcase(foo) elsif exists(baz) upcase(bar) else downcase(bar) end"
+), [$foo_exists,];
 
 # and, or
 $foo_exists->pass_fixes([$downcase_foo]);
 $foo_exists->fail_fixes([]);
-cmp_deeply $parser->parse(
-    "exists(foo) and downcase(foo)"), [$foo_exists,];
-cmp_deeply $parser->parse(
-    "exists(foo) && downcase(foo)"), [$foo_exists,];
-cmp_deeply $parser->parse(
-    "exists(foo) && downcase(foo);"), [$foo_exists,];
+cmp_deeply $parser->parse("exists(foo) and downcase(foo)"), [$foo_exists,];
+cmp_deeply $parser->parse("exists(foo) && downcase(foo)"),  [$foo_exists,];
+cmp_deeply $parser->parse("exists(foo) && downcase(foo);"), [$foo_exists,];
 
 $foo_exists->pass_fixes([]);
 $foo_exists->fail_fixes([$downcase_bar]);
-cmp_deeply $parser->parse(
-    "exists(foo) or downcase(bar)"), [$foo_exists,];
-cmp_deeply $parser->parse(
-    "exists(foo) || downcase(bar)"), [$foo_exists,];
+cmp_deeply $parser->parse("exists(foo) or downcase(bar)"), [$foo_exists,];
+cmp_deeply $parser->parse("exists(foo) || downcase(bar)"), [$foo_exists,];
 
 $foo_exists->pass_fixes([$upcase_foo]);
 $foo_exists->fail_fixes([]);
 $bar_exists->pass_fixes([$upcase_bar]);
 $bar_exists->fail_fixes([]);
 cmp_deeply $parser->parse(
-    "exists(foo) && upcase(foo) exists(bar) && upcase(bar)"), [$foo_exists,$bar_exists,];
+    "exists(foo) && upcase(foo) exists(bar) && upcase(bar)"),
+    [$foo_exists, $bar_exists,];
 cmp_deeply $parser->parse(
-    "exists(foo) && upcase(foo); exists(bar) && upcase(bar)"), [$foo_exists,$bar_exists,];
+    "exists(foo) && upcase(foo); exists(bar) && upcase(bar)"),
+    [$foo_exists, $bar_exists,];
 
-dies_ok {$parser->parse("exists(foo) || if exists(foo) downcase(foo) end")} 'die on bool without fix';
+dies_ok {$parser->parse("exists(foo) || if exists(foo) downcase(foo) end")}
+'die on bool without fix';
 dies_ok {$parser->parse("|| downcase(foo)")} 'die on bool without condition';
 
 # select, reject
