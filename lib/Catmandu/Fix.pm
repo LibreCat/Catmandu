@@ -792,18 +792,37 @@ where C<script.fix> contains:
 
 Conditionals can be used to provide the logic when to execute fixes:
 
-    if exists(deep.nested.field)
-        add_field(nested,"ok!")
+    if exists(error)
+        set_field(valid, 0)
     end
 
-    unless all_match(title,"PERL")
-        add_field(is_perl,"noooo")
+    if exists(error)
+        set_field(is_valid, 0)
+    elsif exists(warning)
+        set_field(is_valid, 1)
+        log(...)
+    else
+        set_field(is_valid, 1)
     end
+
+    unless all_match(title, "PERL")
+        add_field(is_perl, "noooo")
+    end
+
+    exists(error) and set_field(is_valid, 0)
+    exists(error) && set_field(is_valid, 0)
+
+    exists(title) or log('title missing')
+    exists(title) || log('title missing')
 
 Binds are used to manipulate the context in which Fixes are executed. E.g.
 execute a fix on every item in a list:
 
      # 'demo' is an array of hashes
+     bind list(path:demo)
+        add_field(foo,bar)
+     end
+     # do is an alias for bind
      do list(path:demo)
         add_field(foo,bar)
      end
