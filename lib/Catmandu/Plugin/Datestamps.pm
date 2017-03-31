@@ -99,6 +99,25 @@ set the plugin to the default bag 'data' that is created in every Catmandu::Stor
 In Catmandu::Store-s that don't have a dynamic schema (e.g. Solr, DBI) these new date fields should be
 predefined (e.g by changing the schema.xml or tables fields).
 
+=head1 CONFIGURATION
+
+=over
+
+=item datestamp_format
+
+Use a custom C<strftime> format. There are also 2 builtin formats,
+C<iso_date_time> and C<iso_date_time_millis>.  C<iso_date_time> is equivalent
+to C<%Y-%m-%dT%H:%M:%SZ>. C<iso_date_time_millis> is the same, but with added
+milliseconds.
+
+    my $store = Catmandu::Store::MyDB->new(bags => {book => {plugins =>
+        ['Datestamps'], datestamp_format => '%Y/%m/%d'}});
+
+    my $store = Catmandu::Store::MyDB->new(bags => {book => {plugins =>
+        ['Datestamps'], datestamp_format => 'iso_date_time_millis'}});
+
+=back
+
 =head1 SEE ALSO
 
 L<Catmandu::Store>, L<Catmandu::Bag>
