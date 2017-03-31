@@ -2,7 +2,7 @@ package Catmandu::Fix::lookup_in_store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 use Catmandu;
 use Moo;

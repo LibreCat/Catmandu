@@ -2,7 +2,7 @@ package Catmandu::Fix::uri_encode;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 use Moo;
 use URI::Escape ();

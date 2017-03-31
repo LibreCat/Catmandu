@@ -2,7 +2,7 @@ package Catmandu::Exporter::YAML;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 use YAML::XS ();
 use Moo;

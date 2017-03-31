@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.05  2017-03-31 13:51:48 CEST
   - Windows build was broken since 1.0304, should now build again
   - fix language has new elsif statement
   - fix language has new boolean keywords

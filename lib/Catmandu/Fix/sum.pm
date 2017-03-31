@@ -2,7 +2,7 @@ package Catmandu::Fix::sum;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 use List::Util ();
 use Moo;
