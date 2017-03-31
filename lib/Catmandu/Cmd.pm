@@ -5,18 +5,22 @@ use Catmandu::Sane;
 our $VERSION = '1.04';
 
 use parent qw(App::Cmd::Command);
-use Catmandu::Util qw(:is pod_section);
+use Catmandu::Util qw(is_array_ref pod_section);
 use Catmandu::Fix;
-use I18N::Langinfo qw(langinfo CODESET);
 use Encode qw(decode);
 use namespace::clean;
 
 # Internal required by App::Cmd;
 sub prepare {
     my ($self, $app, @args) = @_;
-    my $codeset = langinfo(CODESET);
-    my @utf8_args = map {decode $codeset, $_} @args;
-    $self->SUPER::prepare($app, @utf8_args);
+    # not always available
+    eval {
+        require I18N::Langinfo;
+        I18N::Langinfo->import(qw(langinfo CODESET));
+        my $codeset = langinfo(CODESET());
+        @args = map {decode $codeset, $_} @args;
+    };
+    $self->SUPER::prepare($app, @args);
 }
 
 # Internal required by App::Cmd
