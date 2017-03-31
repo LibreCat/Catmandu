@@ -300,7 +300,8 @@ sub emit_clear_hash_ref {
 sub emit_value {
     my ($self, $val) = @_;
 
-# Number should look like number and don't start with a 0 (no support for octals)
+    # numbers should look like number and not start with a 0 (no support for
+    # octals)
     is_number($val) && $val !~ /^0+/ ? $val : $self->emit_string($val);
 }
 
