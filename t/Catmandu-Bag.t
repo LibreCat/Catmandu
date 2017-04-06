@@ -184,6 +184,21 @@ isnt $b->get($data->{my_id}), undef;
 $b->delete($data->{my_id});
 is $b->get($data->{my_id}), undef;
 
+# id_field alias
+
+$b = T::Bag->new(
+    store  => T::Store->new(key_prefix => '__'),
+    name   => 'test',
+    id_field => 'my_id'
+);
+$data = $b->add({});
+is $data->{_id},  undef;
+is $data->{__id}, undef;
+ok exists($data->{my_id});
+isnt $b->get($data->{my_id}), undef;
+$b->delete($data->{my_id});
+is $b->get($data->{my_id}), undef;
+
 # custom id generator
 
 $b = T::Bag->new(
