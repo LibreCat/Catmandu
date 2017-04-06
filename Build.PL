@@ -45,6 +45,7 @@ my %module_build_args = (
     "Log::Any::Adapter" => 0,
     "Module::Info" => 0,
     "Moo" => "1.004006",
+    "MooX::Aliases" => "0.001006",
     "Parser::MGC" => "0.15",
     "Path::Tiny" => 0,
     "Ref::Util" => "0.020",

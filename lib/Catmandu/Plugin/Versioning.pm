@@ -7,11 +7,12 @@ our $VERSION = '1.05';
 use Catmandu::Util qw(is_value is_array_ref check_value check_positive);
 use Data::Compare;
 use Moo::Role;
+use MooX::Aliases;
 use namespace::clean;
 
 has version_bag_name => (is => 'lazy', init_arg => 'version_bag');
 has version_bag      => (is => 'lazy', init_arg => undef);
-has version_key      => (is => 'lazy');
+has version_key      => (is => 'lazy', alias    => 'version_field');
 
 has version_compare_ignore => (
     is     => 'lazy',
@@ -290,7 +291,7 @@ versioned bag with '_version' appended.
 =item version_key
 
 Use a custom key to hold the version number in this bag. Default is '_version'
-unless the store has a custom C<key_prefix>.
+unless the store has a custom C<key_prefix>. Also aliased as C<version_field>.
 
 =back
 

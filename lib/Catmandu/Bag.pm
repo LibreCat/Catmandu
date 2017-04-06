@@ -7,6 +7,7 @@ our $VERSION = '1.05';
 use Catmandu::Util qw(:check is_string require_package);
 use Catmandu::Bag::IdGenerator::UUID;
 use Moo::Role;
+use MooX::Aliases;
 use namespace::clean;
 
 with 'Catmandu::Logger';
@@ -18,9 +19,9 @@ requires 'get';
 requires 'delete';
 requires 'delete_all';
 
-has store => (is => 'ro', required => 1);
-has name  => (is => 'ro', required => 1);
-has id_key => (is => 'lazy',);
+has store  => (is => 'ro',   required => 1);
+has name   => (is => 'ro',   required => 1);
+has id_key => (is => 'lazy', alias    => 'id_field');
 has id_generator => (
     is     => 'lazy',
     coerce => sub {
@@ -35,6 +36,10 @@ has id_generator => (
 
 sub _build_id_key {
     $_[0]->store->key_for('id');
+}
+
+sub _build_bag_key {
+    $_[0]->store->key_for('bag');
 }
 
 sub _build_id_generator {
@@ -161,7 +166,7 @@ By default L<Catmandu::IdGenerator::UUID> is used.
 =item id_key
 
 Use a custom key to hold id's in this bag. See L<Catmandu::Store> for the
-default or store wide value.
+default or store wide value. Also aliased as C<id_field>.
 
 =back
 
