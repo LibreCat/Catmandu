@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - id_key and version_key aliased as id_field and version_field
 
 1.05  2017-03-31 13:51:48 CEST
   - Windows build was broken since 1.0304, should now build again
