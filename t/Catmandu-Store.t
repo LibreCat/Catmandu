@@ -24,11 +24,11 @@ require_ok $pkg;
     use Moo;
     with 'Catmandu::Bag';
 
-    sub generator {}
-    sub add {}
-    sub get {}
-    sub delete {}
-    sub delete_all {}
+    sub generator  { }
+    sub add        { }
+    sub get        { }
+    sub delete     { }
+    sub delete_all { }
 
     package T::CustomBagClass;
     use Moo;
@@ -74,8 +74,8 @@ is(T::Store->new(key_prefix => 'catmandu_')->key_prefix, 'catmandu_');
 # custom store wide id_key
 
 $s = T::Store->new(id_key => 'my_id');
-is($s->key_prefix, '_');
-is($s->id_key, 'my_id');
+is($s->key_prefix,  '_');
+is($s->id_key,      'my_id');
 is($s->bag->id_key, 'my_id');
 
 done_testing;
