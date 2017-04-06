@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - id_key is now also a store wide option
 
 1.0501  2017-04-06 14:34:00 CEST
   - id_key and version_key aliased as id_field and version_field
