@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0502  2017-04-06 15:15:57 CEST
   - id_key is now also a store wide option
 
 1.0501  2017-04-06 14:34:00 CEST

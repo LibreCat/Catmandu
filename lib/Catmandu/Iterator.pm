@@ -2,7 +2,7 @@ package Catmandu::Iterator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0501';
+our $VERSION = '1.0502';
 
 use Role::Tiny::With;
 use namespace::clean;
