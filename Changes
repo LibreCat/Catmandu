@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0503  2017-04-06 15:20:58 CEST
   - the store wide id_key is also aliased as id_field
 
 1.0502  2017-04-06 15:15:57 CEST
