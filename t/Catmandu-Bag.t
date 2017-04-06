@@ -187,8 +187,8 @@ is $b->get($data->{my_id}), undef;
 # id_field alias
 
 $b = T::Bag->new(
-    store  => T::Store->new(key_prefix => '__'),
-    name   => 'test',
+    store    => T::Store->new(key_prefix => '__'),
+    name     => 'test',
     id_field => 'my_id'
 );
 $data = $b->add({});
