@@ -19,8 +19,14 @@ has bags => (is => 'ro', default => sub {+{}},);
 
 has key_prefix => (is => 'lazy', default => sub {'_'},);
 
+has id_key => (is => 'lazy', alias => 'id_field');
+
 sub key_for {
     $_[0]->key_prefix . $_[1];
+}
+
+sub _build_id_key {
+    $_[0]->key_for('id');
 }
 
 {
@@ -158,6 +164,12 @@ plugins or stores may add their own special keys.
 
     # this store will use the my_id key to hold id's
     Catmandu::Store::MyDB->new(key_prefix => 'my_')
+
+=item id_key
+
+Define a custom key to hold id's for all bags of this store. See C<key_prefix>
+for the default value. Also aliased as C<id_field>. Note that this can also be
+overriden on a per bag basis.
 
 =back
 

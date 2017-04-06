@@ -35,11 +35,7 @@ has id_generator => (
 );
 
 sub _build_id_key {
-    $_[0]->store->key_for('id');
-}
-
-sub _build_bag_key {
-    $_[0]->store->key_for('bag');
+    $_[0]->store->id_key;
 }
 
 sub _build_id_generator {

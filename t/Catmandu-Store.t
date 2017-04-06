@@ -22,6 +22,13 @@ require_ok $pkg;
 
     package T::Store::Bag;
     use Moo;
+    with 'Catmandu::Bag';
+
+    sub generator {}
+    sub add {}
+    sub get {}
+    sub delete {}
+    sub delete_all {}
 
     package T::CustomBagClass;
     use Moo;
@@ -63,6 +70,13 @@ is(T::Store->new(key_prefix => 'catmandu_')->key_prefix, 'catmandu_');
 
 # there are more key_prefix tests in Catmandu-Bag.t and
 # Catmandu-Plugin-Versioning.t
+
+# custom store wide id_key
+
+$s = T::Store->new(id_key => 'my_id');
+is($s->key_prefix, '_');
+is($s->id_key, 'my_id');
+is($s->bag->id_key, 'my_id');
 
 done_testing;
 
