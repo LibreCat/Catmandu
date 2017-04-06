@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0501  2017-04-06 14:34:00 CEST
   - id_key and version_key aliased as id_field and version_field
 
 1.05  2017-03-31 13:51:48 CEST

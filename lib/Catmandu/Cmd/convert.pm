@@ -2,7 +2,7 @@ package Catmandu::Cmd::convert;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.05';
+our $VERSION = '1.0501';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
