@@ -78,5 +78,10 @@ is($s->key_prefix,  '_');
 is($s->id_key,      'my_id');
 is($s->bag->id_key, 'my_id');
 
+$s = T::Store->new(id_field => 'my_id');
+is($s->key_prefix,  '_');
+is($s->id_key,      'my_id');
+is($s->bag->id_key, 'my_id');
+
 done_testing;
 

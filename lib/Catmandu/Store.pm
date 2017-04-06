@@ -7,6 +7,7 @@ our $VERSION = '1.0502';
 use Hash::Util::FieldHash qw(fieldhash);
 use Sub::Quote qw(quote_sub);
 use Moo::Role;
+use MooX::Aliases;
 use namespace::clean;
 
 with 'Catmandu::Logger';
