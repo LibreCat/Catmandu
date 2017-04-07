@@ -79,8 +79,8 @@ $store = Catmandu::Store::Hash->new(
     bags => {
         data => {
             plugins          => [qw(Datestamps)],
-            datestamp_field_created => 'created',
-            datestamp_field_updated => 'updated'
+            datestamp_created_field => 'created',
+            datestamp_updated_field => 'updated'
         }
     }
 );

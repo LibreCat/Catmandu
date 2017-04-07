@@ -6,22 +6,21 @@ our $VERSION = '1.0503';
 
 use POSIX qw(strftime);
 use Time::HiRes;
+use Catmandu::Util qw(check_string);
 use Moo::Role;
-use Catmandu::Util qw(:check);
+use MooX::Aliases;
 use namespace::clean;
 
 has datestamp_format => (is => 'lazy');
-has datestamp_field_created => (
-    is => 'ro',
-    isa => sub { check_string($_[0]) },
-    lazy => 1,
-    default => sub { "date_created" }
+has datestamp_created_key => (
+    is => 'lazy',
+    isa => \&check_string,
+    alias => 'datestamp_created_field',
 );
-has datestamp_field_updated => (
-    is => 'ro',
-    isa => sub { check_string($_[0]) },
-    lazy => 1,
-    default => sub { "date_updated" }
+has datestamp_updated_key => (
+    is => 'lazy',
+    isa => \&check_string,
+    alias => 'datestamp_updated_field',
 );
 
 before add => sub {
@@ -42,11 +41,13 @@ before add => sub {
         $now = strftime($fmt, gmtime(time));
     }
 
-    $data->{ $self->datestamp_field_created() } ||= $now;
-    $data->{ $self->datestamp_field_updated() } = $now;
+    $data->{ $self->datestamp_created_key } ||= $now;
+    $data->{ $self->datestamp_updated_key } = $now;
 };
 
 sub _build_datestamp_format {'iso_date_time'}
+sub _build_datestamp_created_key { 'date_created' }
+sub _build_datestamp_updated_key { 'date_updated' }
 
 1;
 
@@ -116,13 +117,15 @@ predefined (e.g by changing the schema.xml or tables fields).
 
 =over
 
-=item datestamp_field_created
+=item datestamp_created_key
 
-Field name where the creation date is stored. Defaults to 'date_created'.
+Field name where the creation date is stored. Defaults to 'date_created'. Also
+aliased as C<datestamp_created_field>.
 
-=item datestamp_field_updated
+=item datestamp_updated_key
 
-Field name where the update date is stored. Defaults to 'date_updated'.
+Field name where the update date is stored. Defaults to 'date_updated'. Also
+aliased as C<datestamp_updated_field>.
 
 =item datestamp_format
 
