@@ -7,9 +7,22 @@ our $VERSION = '1.0503';
 use POSIX qw(strftime);
 use Time::HiRes;
 use Moo::Role;
+use Catmandu::Util qw(:check);
 use namespace::clean;
 
 has datestamp_format => (is => 'lazy');
+has datestamp_field_created => (
+    is => 'ro',
+    isa => sub { check_string($_[0]) },
+    lazy => 1,
+    default => sub { "date_created" }
+);
+has datestamp_field_updated => (
+    is => 'ro',
+    isa => sub { check_string($_[0]) },
+    lazy => 1,
+    default => sub { "date_updated" }
+);
 
 before add => sub {
     my ($self, $data) = @_;
@@ -29,8 +42,8 @@ before add => sub {
         $now = strftime($fmt, gmtime(time));
     }
 
-    $data->{date_created} ||= $now;
-    $data->{date_updated} = $now;
+    $data->{ $self->datestamp_field_created() } ||= $now;
+    $data->{ $self->datestamp_field_updated() } = $now;
 };
 
 sub _build_datestamp_format {'iso_date_time'}
@@ -102,6 +115,14 @@ predefined (e.g by changing the schema.xml or tables fields).
 =head1 CONFIGURATION
 
 =over
+
+=item datestamp_field_created
+
+Field name where the creation date is stored. Defaults to 'date_created'.
+
+=item datestamp_field_updated
+
+Field name where the update date is stored. Defaults to 'date_updated'.
 
 =item datestamp_format
 

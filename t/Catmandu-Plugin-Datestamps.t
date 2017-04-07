@@ -74,5 +74,20 @@ $store->bag->add({_id => '001', name => 'Penguin'});
 $rec = $store->bag->get('001');
 like $rec->{date_created}, qr/^\d{4}\/\d{2}\/\d{2}/;
 
+#fields
+$store = Catmandu::Store::Hash->new(
+    bags => {
+        data => {
+            plugins          => [qw(Datestamps)],
+            datestamp_field_created => 'created',
+            datestamp_field_updated => 'updated'
+        }
+    }
+);
+$store->bag->add({_id => '001', name => 'Penguin'});
+$rec = $store->bag->get('001');
+like $rec->{created}, qr/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/;
+like $rec->{updated}, qr/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/;
+
 done_testing;
 
