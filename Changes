@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Datestamps plugin field names are now configurable
 
 1.0503  2017-04-06 15:20:58 CEST
   - the store wide id_key is also aliased as id_field
