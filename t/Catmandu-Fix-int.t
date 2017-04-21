@@ -13,8 +13,8 @@ BEGIN {
 }
 
 is_deeply $pkg->new('int')->fix({}), {};
-is_deeply $pkg->new('int')->fix({int => ""}), {int => 0};
-is_deeply $pkg->new('int')->fix({int => "0"}), {int => 0};
+is_deeply $pkg->new('int')->fix({int => ""}),              {int => 0};
+is_deeply $pkg->new('int')->fix({int => "0"}),             {int => 0};
 is_deeply $pkg->new('int')->fix({int => "+0"}),            {int => 0};
 is_deeply $pkg->new('int')->fix({int => "-0"}),            {int => 0};
 is_deeply $pkg->new('int')->fix({int => "abc-123"}),       {int => -123};
