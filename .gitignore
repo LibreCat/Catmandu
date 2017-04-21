@@ -1,3 +1,4 @@
+!t/Catmandu-*
 *.swp
 .DS_Store
 .build
@@ -5,7 +6,6 @@
 .tidyall.d/
 Build
 Catmandu-*
-!t/Catmandu-*
 LICENSE
 MANIFEST*
 META.json
