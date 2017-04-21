@@ -2,7 +2,7 @@ package Catmandu::Exporter::Text;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0503';
+our $VERSION = '1.0504';
 
 use Moo;
 use Catmandu::Util;

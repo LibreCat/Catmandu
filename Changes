@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0504  2017-04-21 12:22:59 CEST
   - new string fix
   - new int fix
   - Datestamps plugin field names are now configurable

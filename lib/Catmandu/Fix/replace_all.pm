@@ -2,7 +2,7 @@ package Catmandu::Fix::replace_all;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0503';
+our $VERSION = '1.0504';
 
 use Moo;
 use namespace::clean;
