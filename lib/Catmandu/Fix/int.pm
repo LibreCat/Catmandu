@@ -15,7 +15,7 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $match_var = $fixer->generate_var;
-<<EOF;
+    <<EOF;
 if (is_string(${var}) and my (${match_var}) = ${var} =~ /([+-]?\\d+)/) {
     ${var} = ${match_var} + 0;
 } elsif (is_array_ref(${var})) {

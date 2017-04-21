@@ -15,7 +15,7 @@ with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-<<EOF;
+    <<EOF;
 if (is_string(${var})) {
     ${var} = '' . ${var};
 } elsif (is_array_ref(${var}) && List::Util::all { is_value(\$_) } \@{${var}}) {

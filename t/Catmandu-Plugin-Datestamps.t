@@ -78,7 +78,7 @@ like $rec->{date_created}, qr/^\d{4}\/\d{2}\/\d{2}/;
 $store = Catmandu::Store::Hash->new(
     bags => {
         data => {
-            plugins          => [qw(Datestamps)],
+            plugins                 => [qw(Datestamps)],
             datestamp_created_field => 'created',
             datestamp_updated_field => 'updated'
         }

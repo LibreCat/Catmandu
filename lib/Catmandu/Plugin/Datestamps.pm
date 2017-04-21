@@ -13,13 +13,13 @@ use namespace::clean;
 
 has datestamp_format => (is => 'lazy');
 has datestamp_created_key => (
-    is => 'lazy',
-    isa => \&check_string,
+    is    => 'lazy',
+    isa   => \&check_string,
     alias => 'datestamp_created_field',
 );
 has datestamp_updated_key => (
-    is => 'lazy',
-    isa => \&check_string,
+    is    => 'lazy',
+    isa   => \&check_string,
     alias => 'datestamp_updated_field',
 );
 
@@ -41,13 +41,13 @@ before add => sub {
         $now = strftime($fmt, gmtime(time));
     }
 
-    $data->{ $self->datestamp_created_key } ||= $now;
-    $data->{ $self->datestamp_updated_key } = $now;
+    $data->{$self->datestamp_created_key} ||= $now;
+    $data->{$self->datestamp_updated_key} = $now;
 };
 
-sub _build_datestamp_format {'iso_date_time'}
-sub _build_datestamp_created_key { 'date_created' }
-sub _build_datestamp_updated_key { 'date_updated' }
+sub _build_datestamp_format      {'iso_date_time'}
+sub _build_datestamp_created_key {'date_created'}
+sub _build_datestamp_updated_key {'date_updated'}
 
 1;
 
