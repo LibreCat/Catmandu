@@ -1,4 +1,4 @@
-package Catmandu::Fix::compact_array;
+package Catmandu::Fix::compact;
 
 use Catmandu::Sane;
 use Moo;
@@ -24,7 +24,7 @@ sub emit {
                     my $var = shift;
 
                     "if (is_array_ref(${var})) {"
-                        . "${var} = [ grep { defined \$_ } \@{${var}} ];"
+                        . "${var} = [grep defined, \@{${var}}];"
                         . "}";
                 }
             );
@@ -35,12 +35,13 @@ sub emit {
 
 =head1 NAME
 
-Catmandu::Fix::compact_array - clear invalid values from array
+Catmandu::Fix::compact - remove undefined values from an array
 
 =head1 SYNOPSIS
 
-   #array => [undef,"hello",undef,"world"]
-   #result => ['Hello','world']
+   # list => [undef,"hello",undef,"world"]
+   compact(list)
+   # list => ["Hello","world"]
 
 =head1 SEE ALSO
 
