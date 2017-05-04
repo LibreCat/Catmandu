@@ -106,7 +106,7 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
     my $store = Catmandu::Store::DBI->new(
             data_source => 'DBI:mysql:database=test',
             bags => { journals => {
-                            fixes => [ ... ] ,
+                            fix => [ ... ] ,
                             autocommit => 1 ,
                             plugins => [ ... ] ,
                             id_generator => Catmandu::IdGenerator::UUID->new ,
@@ -141,9 +141,9 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
 
 =over
 
-=item fixes
+=item fix
 
-An array of fixes to apply before importing or exporting data from the bag.
+Contains an array of fixes (or Fix files) to be applied before importing data into the bag.
 
 =item plugins
 
