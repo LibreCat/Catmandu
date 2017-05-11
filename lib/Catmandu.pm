@@ -673,6 +673,20 @@ Dave Sherohman, C<< dave.sherohman at ub.lu.se >>
 
 Jakob Voss, C<< nichtich at cpan.org >>
 
+Snorri Briem, C<< snorri.briem at ub.lu.se >>
+
+Johann Rolschewski, C<< jorol at cpan.org >>
+
+Pieter De Praetere, C<< pieter.de.praetere at helptux.be >>
+
+Doug Bell
+
+Upsana, C<< me at upasana.me >>
+
+Stefan Weil
+
+Tom Hukins
+
 =head1 QUESTIONS, ISSUES & BUG REPORTS
 
 For any questions on the use of our modules please join our mailing list at:
