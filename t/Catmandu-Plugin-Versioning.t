@@ -26,6 +26,9 @@ my $obj = $store->bag->get('001');
 ok $obj , 'get 001';
 is $obj->{name}, 'Penguin', 'get values';
 
+ok $store->bag->get_version('001', 1), 'get version 1, no versions stored yet';
+is $store->bag->get_version('001', 1)->{_version}, 1, 'get version 1, no versions stored yet';
+
 $obj->{name} = 'Polar Bear';
 ok $store->bag->add($obj), 'change object and store';
 is $store->bag->get('001')->{name}, 'Polar Bear', 'check change';
@@ -38,6 +41,8 @@ is $version->{name}, 'Polar Bear', 'correct item in history';
 ok $store->bag->get_version('001', 1), 'get_version 1';
 is $store->bag->get_version('001', 1)->{name}, 'Penguin',
     'get_version 1 name';
+
+ok $store->bag->get_version('001', 2), 'get latest version';
 
 ok $store->bag->get_previous_version('001'), 'get_previous_version';
 is $store->bag->get_previous_version('001')->{name}, 'Penguin',
