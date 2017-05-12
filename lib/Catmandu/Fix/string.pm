@@ -2,7 +2,7 @@ package Catmandu::Fix::string;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0504';
+our $VERSION = '1.0505';
 
 use List::Util ();
 use Moo;
