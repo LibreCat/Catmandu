@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Versioning plugin get_version can now also return the current version
 
 1.0505  2017-05-12 12:52:18 CEST
   - new compact fix

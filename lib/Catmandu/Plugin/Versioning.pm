@@ -107,10 +107,15 @@ sub get_version {
     my ($self, $id, $version) = @_;
     check_value($id);
     check_positive($version);
-    my $data = $self->version_bag->get($self->_version_id($id, $version));
-    return $self->get($id) if !defined $data && $version == 1;
-    return if !defined $data;
-    $data->{data};
+    my $data;
+    my $version_id = $self->_version_id($id, $version);
+    if ($data = $self->version_bag->get($version_id)) {
+        return $data->{data};
+    }
+    if ($data = $self->get($id) and $data->{$self->version_key} == $version) {
+        return $data;
+    }
+    return;
 }
 
 sub restore_version {
