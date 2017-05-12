@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0506  2017-05-12 16:36:03 CEST
   - Catmandu gets new define_importer, define_exporter, define_store and
     define_fixer convenience methods
   - Versioning plugin get_version can now also return the current version

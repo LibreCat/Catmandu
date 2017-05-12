@@ -2,7 +2,7 @@ package Catmandu::Addable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0505';
+our $VERSION = '1.0506';
 
 use Catmandu::Util qw(:is :check);
 use Moo::Role;
