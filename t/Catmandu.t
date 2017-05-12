@@ -81,13 +81,16 @@ is(Catmandu->config->{test}, 'reload', 'reload config');
 
 # Define
 Catmandu->define_importer(foo => JSON => line_delimited => 1);
-is_deeply(Catmandu->config->{importer}{foo}, {package => 'JSON', options => {line_delimited => 1}});
+is_deeply(Catmandu->config->{importer}{foo},
+    {package => 'JSON', options => {line_delimited => 1}});
 
 Catmandu->define_exporter(foo => JSON => line_delimited => 1);
-is_deeply(Catmandu->config->{exporter}{foo}, {package => 'JSON', options => {line_delimited => 1}});
+is_deeply(Catmandu->config->{exporter}{foo},
+    {package => 'JSON', options => {line_delimited => 1}});
 
 Catmandu->define_store(foo => HASH => init_data => [{_id => 1}]);
-is_deeply(Catmandu->config->{store}{foo}, {package => 'HASH', options => {init_data => [{_id => 1}]}});
+is_deeply(Catmandu->config->{store}{foo},
+    {package => 'HASH', options => {init_data => [{_id => 1}]}});
 
 Catmandu->define_fixer(foo => ['capitalize(foo)']);
 is_deeply(Catmandu->config->{fixer}{foo}, ['capitalize(foo)']);

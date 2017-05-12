@@ -156,7 +156,8 @@ sub define_importer {
     my $name    = shift;
     my $package = shift;
     my $options = ref $_[0] ? $_[0] : {@_};
-    $class->config->{importer}{$name} = {package => $package, options => $options};
+    $class->config->{importer}{$name}
+        = {package => $package, options => $options};
 }
 
 sub define_exporter {
@@ -164,7 +165,8 @@ sub define_exporter {
     my $name    = shift;
     my $package = shift;
     my $options = ref $_[0] ? $_[0] : {@_};
-    $class->config->{exporter}{$name} = {package => $package, options => $options};
+    $class->config->{exporter}{$name}
+        = {package => $package, options => $options};
 }
 
 sub define_store {
@@ -172,7 +174,8 @@ sub define_store {
     my $name    = shift;
     my $package = shift;
     my $options = ref $_[0] ? $_[0] : {@_};
-    $class->config->{store}{$name} = {package => $package, options => $options};
+    $class->config->{store}{$name}
+        = {package => $package, options => $options};
 }
 
 sub define_fixer {
@@ -562,7 +565,7 @@ Configure a new named importer.
         say $book->{title};
     });
 
-    # this method is equivalent to
+    # this is equivalent to
 
     Catmandu->config->{importer}{books} = {
         package => 'CSV',
@@ -578,7 +581,7 @@ Configure a new named exporter.
     Catmandu->define_exporter('books', 'CSV', fix => 'capitalize(title)');
     my $csv = Catmandu->export_to_string({title => 'nexus'}, 'books');
 
-    # this method is equivalent to
+    # this is equivalent to
 
     Catmandu->config->{exporter}{books} = {
         package => 'CSV',
@@ -594,7 +597,7 @@ Configure a new named store.
     Catmandu->define_store(mydb => MongoDB => (database_name => 'mydb'));
     Catmandu->store->bag('books')->get(1234);
 
-    # this method is equivalent to
+    # this is equivalent to
 
     Catmandu->config->{store}{mydb} = {
         package => 'MongoDB',
