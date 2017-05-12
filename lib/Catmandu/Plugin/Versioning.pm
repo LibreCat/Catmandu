@@ -107,8 +107,9 @@ sub get_version {
     my ($self, $id, $version) = @_;
     check_value($id);
     check_positive($version);
-    my $data = $self->version_bag->get($self->_version_id($id, $version))
-        || return;
+    my $data = $self->version_bag->get($self->_version_id($id, $version));
+    return $self->get($id) if !defined $data && $version == 1;
+    return if !defined $data;
     $data->{data};
 }
 

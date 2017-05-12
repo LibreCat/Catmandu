@@ -67,11 +67,16 @@ sub generate_id {
     $self->id_generator->generate($self);
 }
 
+sub exists {
+    my ($self, $id) = @_;
+    defined $self->get($id) ? 1 : 0;
+}
+
 sub get_or_add {
     my ($self, $id, $data) = @_;
     check_value($id);
     check_hash_ref($data);
-    $self->get($id) || do {
+    $self->get($id) // do {
         $data->{$self->id_key} = $id;
         $self->add($data);
     };
@@ -132,6 +137,10 @@ Catmandu::Bag - A Catmandu::Store compartment to persist data
     # Commit changes...
     $bag->commit;
 
+    if ($bag->exists($id)) {
+        # ...
+    }
+
     my $obj = $bag->get($id);
     $bag->delete($id);
 
@@ -182,6 +191,10 @@ Add or update one or more items to the bag.
 =head2 get($id)
 
 Retrieves the item with identifier $id from the bag.
+
+=head2 exists($id)
+
+Returns C<1> if the item with identifier $id exists in the bag.
 
 =head2 get_or_add($id, $hash)
 
