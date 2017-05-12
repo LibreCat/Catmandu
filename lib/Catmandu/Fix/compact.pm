@@ -24,8 +24,7 @@ sub emit {
                     my $var = shift;
 
                     "if (is_array_ref(${var})) {"
-                        . "${var} = [grep defined, \@{${var}}];"
-                        . "}";
+                        . "${var} = [grep defined, \@{${var}}];" . "}";
                 }
             );
         }
