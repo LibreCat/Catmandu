@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Catmandu gets new define_importer, define_exporter, define_store and
+    define_fixer convenience methods
   - Versioning plugin get_version can now also return the current version
 
 1.0505  2017-05-12 12:52:18 CEST
