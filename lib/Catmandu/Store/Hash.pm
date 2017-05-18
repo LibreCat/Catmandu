@@ -47,9 +47,9 @@ Catmandu::Store::Hash - An in-memory store
 
 =head1 SYNOPSIS
 
-   use Catmandu::Store::Hash;
+   use Catmandu;
 
-   my $store = Catmandu::Store::Hash->new();
+   my $store = Catmandu->store('Hash');
 
    my $obj1 = $store->bag->add({ name => 'Patrick' });
 
