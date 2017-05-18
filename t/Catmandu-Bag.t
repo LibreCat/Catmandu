@@ -129,6 +129,7 @@ ok $b->does('Catmandu::Iterable');
 ok $b->does('Catmandu::Addable');
 can_ok $b, 'generate_id';
 can_ok $b, 'commit';
+can_ok $b, 'exists';
 can_ok $b, 'get_or_add';
 can_ok $b, 'to_hash';
 
@@ -154,9 +155,11 @@ my $data = {a => {shrimp => 'shrieks'}};
 $b->add($data);
 ok Catmandu::Util::is_value($data->{_id});
 is_deeply $b->get($data->{_id}), $data;
+is $b->exists($data->{_id}),     1;
 
 $b->delete($data->{_id});
-is $b->get($data->{_id}), undef;
+is $b->get($data->{_id}),    undef;
+is $b->exists($data->{_id}), 0;
 
 $b->add($data);
 

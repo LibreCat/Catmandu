@@ -2,7 +2,7 @@ package Catmandu::Env;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0504';
+our $VERSION = '1.0505';
 
 use Catmandu::Util qw(require_package use_lib read_yaml read_json :is :check);
 use Catmandu::Fix;
@@ -158,12 +158,12 @@ sub fixer {
         return Catmandu::Fix->new(fixes => $_[0]);
     }
 
-    # a single fix instance
+    # a single fix
     if (is_able($_[0], 'fix')) {
         return Catmandu::Fix->new(fixes => [$_[0]]);
     }
 
-    # try to laod from config
+    # try to load from config
     my $key = $_[0] || $self->default_fixer;
 
     my $fixers = $self->fixers;
@@ -173,7 +173,7 @@ sub fixer {
             return $fixers->{$key} = Catmandu::Fix->new(fixes => $fixes);
         }
         return Catmandu::Fix->new(fixes => [@_]);
-        }
+    };
 }
 
 sub importer {

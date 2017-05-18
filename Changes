@@ -1,7 +1,15 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Catmandu gets new define_importer, define_exporter, define_store and
+    define_fixer convenience methods
+  - Versioning plugin get_version can now also return the current version
+
+1.0505  2017-05-12 12:52:18 CEST
   - new compact fix
+  - bag gets a convenience exists method
+  - Versioning plugin get_version($id, 1) behaves correctly if no versions have
+    been created yet
 
 1.0504  2017-04-21 12:22:59 CEST
   - new string fix
