@@ -212,7 +212,7 @@ sub parse_bare_string {
 sub parse_single_quoted_string {
     my ($self) = @_;
 
-    my $str = $self->generic_token(string => qr/'(?:[^']|\\')*'/);
+    my $str = $self->generic_token(string => qr/'(?:\\?+.)*?'/);
     $str = substr($str, 1, length($str) - 2);
 
     $str =~ s{\\'}{'}gxms;
@@ -223,7 +223,7 @@ sub parse_single_quoted_string {
 sub parse_double_quoted_string {
     my ($self) = @_;
 
-    my $str = $self->generic_token(string => qr/"(?:[^"]|\\")*"/);
+    my $str = $self->generic_token(string => qr/"(?:\\?+.)*?"/);
     $str = substr($str, 1, length($str) - 2);
 
     if (index($str, '\\') != -1) {
