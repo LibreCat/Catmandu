@@ -2,7 +2,7 @@ package Catmandu::Logger;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0506';
+our $VERSION = '1.0507';
 
 use Moo::Role;
 use Log::Any ();
