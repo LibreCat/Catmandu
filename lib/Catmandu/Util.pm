@@ -800,13 +800,13 @@ Alias for C<binmode>.
 
 =item read_file($path);
 
-[deprecated]: use tools like use tools like File::Slurp::Tiny instead.
+[deprecated]: use tools like Path::Tiny instead.
 
 Reads the file at C<$path> into a string.
 
     my $str = read_file('/path/to/file.txt');
 
-Throws a Catmandu::Error on failure. 
+Throws a Catmandu::Error on failure.
 
 =item read_io($io)
 
@@ -822,7 +822,7 @@ Writes the string C<$str> to a file at C<$path>.
 
     write_file('/path/to/file.txt', "contents");
 
-Throws a Catmandu::Error on failure. 
+Throws a Catmandu::Error on failure.
 
 =item read_yaml($path);
 
@@ -964,7 +964,7 @@ with C<is_same()>.
 
 =item array_split($array | $string)
 
-Returns C<$array> or a new array by splitting C<$string> at commas. 
+Returns C<$array> or a new array by splitting C<$string> at commas.
 
 =back
 
