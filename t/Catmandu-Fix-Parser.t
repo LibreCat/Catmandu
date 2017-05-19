@@ -183,8 +183,29 @@ throws_ok {
 }
 
 # string and regex escapes
+
 {
     my $fixes;
+    lives_ok {
+        $parser->parse(
+            q|set_field(test, "\"")|);
+    };
+    dies_ok {
+        $parser->parse(
+            q|set_field(test, "\\\\"")|);
+    };
+    lives_ok {
+        $parser->parse(
+            q|set_field(test, '\'')|);
+    };
+    dies_ok {
+        $parser->parse(
+            q|set_field(test, '\\\\'')|);
+    };
+    lives_ok {
+        $parser->parse(
+            q|replace_all(test, '\+(\d{2}):(\d{2})', '+$1$2')|);
+    };
     lives_ok {
         $fixes = $parser->parse(
             q|replace_all(test, '\+(\d{2}):(\d{2})', '+$1$2')|);

@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - correctly handle escapes in fix langauge quoted strings
 
 1.0506  2017-05-12 16:36:03 CEST
   - Catmandu gets new define_importer, define_exporter, define_store and
