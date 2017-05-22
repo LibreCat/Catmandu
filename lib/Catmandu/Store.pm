@@ -5,7 +5,6 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Hash::Util::FieldHash qw(fieldhash);
-use Sub::Quote qw(quote_sub);
 use Moo::Role;
 use MooX::Aliases;
 use namespace::clean;
@@ -49,29 +48,6 @@ sub _build_id_key {
                 $pkg->new(store => $self, name => $name);
             }
         };
-    }
-}
-
-# forward methods to default bag
-{
-    my $pkg      = __PACKAGE__;
-    my @delegate = (
-
-        # Catmandu::Iterable methods
-        qw(to_array count slice each tap any many all map reduce first rest
-            take pluck invoke contains includes group interleave max min
-            benchmark),
-
-        # Catmandu::Addable methods
-        qw(add add_many commit),
-
-        # Catmandu::Bag methods
-        qw(get delete delete_all get_or_add to_hash),
-    );
-
-    for my $sub (@delegate) {
-        quote_sub("${pkg}::${sub}",
-            "my \$self = shift; \$self->bag->${sub}(\@_)");
     }
 }
 
