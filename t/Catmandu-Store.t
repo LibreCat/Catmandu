@@ -40,7 +40,6 @@ require_ok $pkg;
 my $s = T::Store->new;
 can_ok $s, 'bag_class';
 can_ok $s, 'default_bag';
-can_ok $s, 'bags';
 can_ok $s, 'bag';
 
 is $s->bag_class, 'T::Store::Bag';
@@ -56,12 +55,11 @@ is $b->store, $s;
 is $b->name,  'data';
 $b = $s->bag('foo');
 is $b->name, 'foo';
-$s->bags->{foo}{prop} = 'another val';
-$s->bags->{bar}{prop} = 'val';
-$s->bags->{bar}{name} = 'baz';
-isnt $s->bag('foo')->prop, 'another val';
-is $s->bag('bar')->prop,   'val';
-isnt $s->bag('bar')->name, 'baz';
+$s = T::Store->new(bag_class => 'T::CustomBagClass',
+    bags => {foo => {prop => 'val', store => 'junk', name => 'junk'}});
+is $s->bag('foo')->prop, 'val', "options are passed to bag";
+isnt $s->bag('foo')->store, 'junk', "store can't be overriden";
+isnt $s->bag('foo')->name, 'junk', "name can't be overriden";
 
 # custom key_prefix
 

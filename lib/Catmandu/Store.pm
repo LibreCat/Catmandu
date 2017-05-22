@@ -15,7 +15,7 @@ has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
 
 has default_bag => (is => 'ro', default => sub {'data'},);
 
-has bags => (is => 'ro', default => sub {+{}},);
+has bag_options => (is => 'ro', init_arg => 'bags', default => sub {+{}},);
 
 has key_prefix => (is => 'lazy', default => sub {'_'},);
 
@@ -29,25 +29,29 @@ sub _build_id_key {
     $_[0]->key_for('id');
 }
 
+sub new_bag {
+    my ($self, $name, $options) = @_;
+    $options ||= {};
+    $options->{store} = $self;
+    $options->{name}  = $name // $self->default_bag;
+    if (my $default = $self->bag_options->{$name}) {
+        $options = {%$default, %$options};
+    }
+
+    my $pkg = delete($options->{class}) // $self->bag_class;
+    if (my $plugins = delete $options->{plugins}) {
+        $pkg = $pkg->with_plugins($plugins);
+    }
+    $pkg->new($options);
+}
+
 {
     fieldhash my %bag_instances;
 
     sub bag {
-        my $self = shift;
-        my $name = shift // $self->default_bag;
-        $bag_instances{$self}{$name} ||= do {
-            my $pkg = $self->bag_class;
-            if (my $options = $self->bags->{$name}) {
-                $options = {%$options};
-                if (my $plugins = delete $options->{plugins}) {
-                    $pkg = $pkg->with_plugins($plugins);
-                }
-                $pkg->new(%$options, store => $self, name => $name);
-            }
-            else {
-                $pkg->new(store => $self, name => $name);
-            }
-        };
+        my ($self, $name) = @_;
+        $name ||= $self->default_bag;
+        $bag_instances{$self}{$name} ||= $self->new_bag($name);
     }
 }
 
