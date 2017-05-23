@@ -18,7 +18,7 @@ sub _build_index {
     my $pkg        = $self->index_class;
     my $index_name = $self->index_bag;
 
-    if (my $options = $self->bags->{$index_name}) {
+    if (my $options =  $self->bag_options->{$index_name}) {
         $options = {%$options};
 
         if (my $plugins = delete $options->{plugins}) {
@@ -44,7 +44,7 @@ sub bag {
     elsif ($self->index->exists($name)) {
         $pkg = $self->bag_class;
 
-        if (my $options = $self->bags->{$name}) {
+        if (my $options = $self->bag_options->{$name}) {
             $options = {%$options};
             if (my $plugins = delete $options->{plugins}) {
                 $pkg = $pkg->with_plugins($plugins);
