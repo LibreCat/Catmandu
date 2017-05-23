@@ -1,6 +1,6 @@
 package Catmandu::Store::Simple::Index;
 
-our $VERSION = '0.01';
+our $VERSION = '1.0507';
 
 use Catmandu::Sane;
 use Moo;
@@ -67,7 +67,7 @@ sub add {
     if (exists $data->{_stream}) {
         croak "Can't add a file to the index";
     }
-    
+
     my $path = $self->store->path_string($id);
 
     unless (defined $path) {

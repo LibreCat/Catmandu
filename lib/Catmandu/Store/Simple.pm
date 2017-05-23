@@ -1,6 +1,6 @@
 package Catmandu::Store::Simple;
 
-our $VERSION = '0.01';
+our $VERSION = '1.0507';
 
 use Catmandu::Sane;
 use Moo;
@@ -65,7 +65,7 @@ Catmandu::Store::Simple - A Catmandu::FileStore to store files on disk
 
     # Download the file 'myfile.txt' from the container '1234'
     $ catmandu stream Simple --root t/data --bag 1234 --id myfile.txt to /tmp/output.txt
-    
+
     # From Perl
     use Catmandu;
 
