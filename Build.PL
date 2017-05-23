@@ -43,6 +43,7 @@ my %module_build_args = (
     "List::MoreUtils" => "0.33",
     "Log::Any" => 0,
     "Log::Any::Adapter" => 0,
+    "MIME::Types" => 0,
     "Module::Info" => 0,
     "Moo" => "1.004006",
     "MooX::Aliases" => "0.001006",
