@@ -19,11 +19,6 @@ has var   => (fix_opt => 1);
 
 has funcs => (is => 'rw', default => sub {[]});
 
-sub zero {
-    my ($self) = @_;
-    +{};
-}
-
 sub unit {
     my ($self, $data) = @_;
     $data;
