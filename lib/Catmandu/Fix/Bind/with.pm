@@ -5,14 +5,14 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Moo;
+use Clone ();
 use Catmandu::Util;
-use Catmandu::ArrayIterator;
 use namespace::clean;
+use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind';
+extends 'Catmandu::Fix::Bind::identity';
 
-has path => (is => 'ro');
-has flag => (is => 'rw');
+has path => (fix_opt => 1);
 
 sub zero {
     my ($self) = @_;
@@ -21,70 +21,49 @@ sub zero {
 
 sub unit {
     my ($self, $data) = @_;
-
-    my $ref;
-
-    if (defined $self->path) {
-        $ref = Catmandu::Util::data_at($self->path, $data);
-    }
-    else {
-        $ref = $data;
-    }
-
-    # Set a flag so that all the bind fixes are only run once...
-    $self->flag(0);
-
-    return $ref;
+    defined $self->path ? Catmandu::Util::data_at($self->path, $data) : $data;
 }
 
 sub bind {
-    my ($self, $mvar, $func, $name, $fixer) = @_;
+    my ($self, $mvar, $code) = @_;
 
-# The fixer contains all the fixes no every separate fix.
-# Set a flag so that the fixes are only run once, creating an implicit do identity() ... end block
+    if (Catmandu::Util::is_hash_ref($mvar)) {
+        my $copy = Clone::clone($mvar);
 
-    return $mvar unless $self->flag == 0;
+        $copy = $code->($copy);
 
-    my $ref;
+        if (ref($copy) eq 'reject') {
+            #map { delete $mvar->{$_} } (keys %$mvar);
+            %$mvar = ();
+        }
+        else {
+            %$mvar = %$copy;
+        }
 
-    if (!defined $mvar) {
-        $ref = $fixer->fix($self->zero);
+        return $mvar;
     }
     elsif (Catmandu::Util::is_array_ref($mvar)) {
-        $ref = $fixer->fix($mvar);
-    }
-    elsif (Catmandu::Util::is_hash_ref($mvar)) {
-        $ref = $fixer->fix($mvar);
+        my $idx = 0;
+        for my $item (@$mvar) {
+            $item = $code->($item);
+
+            if (ref($item) eq 'reject') {
+                splice(@$mvar,$idx,1);
+            }
+
+            $idx++;
+        }
+        return $mvar;
     }
     else {
-        $ref = $fixer->fix($self->zero);
+        return $self->zero;
     }
-
-    inline_copy($mvar, $ref);
-
-    $self->flag(1);
-
-    $mvar;
 }
 
-sub result {
-    my ($self, $mvar) = @_;
-    $self->flag(0);
-    $mvar;
-}
-
-sub inline_copy {
-    my ($old, $new) = @_;
-
-    if (Catmandu::Util::is_array_ref($old)) {
-        undef @{$old};
-        for (@$new) {
-            push @$old, $_;
-        }
-    }
-    elsif (!defined $new) {
-        undef %{$old};
-    }
+sub reject {
+    my ($self,$var) = @_;
+    return bless $var , 'reject' if ref($var);
+    return bless \$var , 'reject';
 }
 
 1;
@@ -98,7 +77,7 @@ __END__
 Catmandu::Fix::Bind::with - a binder that computes Fix-es in the context of a path
 
 =head1 SYNOPSIS
-    
+
      # Input data
      data:
      - name: patrick
@@ -115,7 +94,7 @@ Catmandu::Fix::Bind::with - a binder that computes Fix-es in the context of a pa
     data:
      - name: patrick
 
-    
+
 =head1 DESCRIPTION
 
 The C<with> bind allows to run fixes in the scope of a path.
@@ -137,7 +116,7 @@ these two fixes are equal:
 
 =head1 CONFIGURATION
 
-=head2 path 
+=head2 path
 
 The path to a list in the data.
 

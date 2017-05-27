@@ -258,8 +258,8 @@ sub _build_bind {
     my ($self, $name, $args, $return, $fixes) = @_;
     $fixes = [$fixes] if !is_array_ref($fixes);
     my $bind = $self->_build_fix_ns($name, 'Catmandu::Fix::Bind', $args);
-    $bind->return($return);
-    $bind->fixes($fixes);
+    $bind->__return__($return);
+    $bind->__fixes__($fixes);
     $bind;
 }
 
@@ -324,8 +324,8 @@ Catmandu::Fix::Parser - the parser of the Catmandu::Fix language
     EOF
     }
     catch {
-        printf "[%s]\nscript:\n%s\nerror: %s\n" 
-                , ref($_) 
+        printf "[%s]\nscript:\n%s\nerror: %s\n"
+                , ref($_)
                 , $_->source
                 , $_->message;
     };

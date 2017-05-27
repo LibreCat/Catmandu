@@ -9,6 +9,11 @@ use namespace::clean;
 
 with 'Catmandu::Fix::Bind';
 
+sub BUILD {
+    my ($self) = @_;
+    $self->{__group__} = 1;
+}
+
 1;
 
 __END__
@@ -43,7 +48,7 @@ Catmandu::Fix::Bind::identity - a binder that doesn't influence computation
 
 =head1 DESCRIPTION
 
-The identity binder doesn't embody any computational strategy. It simply 
+The identity binder doesn't embody any computational strategy. It simply
 applies the bound fix functions to its input without any modification.
 
 =head1 SEE ALSO

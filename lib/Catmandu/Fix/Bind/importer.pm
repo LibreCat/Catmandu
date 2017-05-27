@@ -9,14 +9,13 @@ use Catmandu::Util qw(:is);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind';
+extends 'Catmandu::Fix::Bind::identity';
 
 has importer_name => (fix_arg => 1);
 has step          => (fix_opt => 1);
 has importer_args => (fix_opt => 'collect');
 
 has importer => (is => 'lazy');
-has flag => (is => 'rw', default => sub {0});
 
 sub _build_importer {
     my ($self) = @_;
@@ -29,31 +28,19 @@ sub unit {
 }
 
 sub bind {
-    my ($self, $mvar, $func, $name, $fixer) = @_;
-
-    return if $self->flag;
+    my ($self, $mvar, $code) = @_;
 
     if ($self->step) {
         my $next = $self->importer->next;
-        $fixer->fix($next) if $next;
+        $code->($next) if $next;
     }
     else {
         $self->importer->each(
             sub {
-                $fixer->fix($_[0]);
+                $code->($_[0]);
             }
         );
     }
-
-    $self->flag(1);
-
-    $mvar;
-}
-
-sub result {
-    my ($self, $mvar) = @_;
-
-    $self->flag(0);
 
     $mvar;
 }
@@ -70,11 +57,11 @@ Catmandu::Fix::Bind::importer - a binder runs fixes on records from an importer
 
 =head1 SYNOPSIS
 
-    # 
+    #
     catmandu run myfix.fix
 
     # with myfix.fix
-    do importer(OAI,url: "http://lib.ugent.be/oai") 
+    do importer(OAI,url: "http://lib.ugent.be/oai")
       retain(_id)
       add_to_exporter(.,YAML)
     end
@@ -89,7 +76,7 @@ Catmandu::Fix::Bind::importer - a binder runs fixes on records from an importer
     # Or:
 
     #!/usr/bin/env catmandu run
-    do importer(OAI,url: "http://lib.ugent.be/oai") 
+    do importer(OAI,url: "http://lib.ugent.be/oai")
       retain(_id)
       add_to_exporter(.,YAML)
     end
@@ -99,7 +86,7 @@ Catmandu::Fix::Bind::importer - a binder runs fixes on records from an importer
 
 The import binder computes all the Fix function on records read from the given importer.
 This importer doesn't change the current importer to the given one! Use the 'catmandu run'
-command line command to control importers solely by the Fix script. 
+command line command to control importers solely by the Fix script.
 
 =head1 CONFIGURATION
 
@@ -117,7 +104,7 @@ latter option can become handy in nested iterators:
     #  {"n":2}
     #  {"m":2}
     # ...
-    do importer(Mock,size:20) 
+    do importer(Mock,size:20)
         move_field(n,brol)
         add_to_exporter(.,JSON)
 
@@ -129,7 +116,7 @@ latter option can become handy in nested iterators:
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix::Bind>, 
+L<Catmandu::Fix::Bind>,
 L<Catmandu::Cmd::run>
 
 =cut

@@ -9,7 +9,7 @@ use Catmandu::Util qw(:is);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind';
+extends 'Catmandu::Fix::Bind::identity';
 
 has exporter   => (fix_opt => 1);
 has store      => (fix_opt => 1);
@@ -17,7 +17,6 @@ has uniq       => (fix_opt => 1, default => sub {0});
 has count      => (fix_opt => 1);
 has join       => (fix_opt => 1);
 has extra_args => (fix_opt => 'collect');
-has flag       => (is      => 'rw', default => sub {0});
 has hash       => (is      => 'lazy');
 
 sub _build_hash {
@@ -38,11 +37,9 @@ sub add_to_hash {
 }
 
 sub bind {
-    my ($self, $data, $code, $name, $fixer) = @_;
+    my ($self, $data, $code) = @_;
 
-    return if $self->flag;
-
-    $data = $fixer->fix($data);
+    $data = $code->($data);
 
     my $key   = $data->{key};
     my $value = $data->{value};
@@ -61,17 +58,7 @@ sub bind {
         }
     }
 
-    $self->flag(1);
-
     $data;
-}
-
-sub result {
-    my ($self, $mvar) = @_;
-
-    $self->flag(0);
-
-    $mvar;
 }
 
 sub DESTROY {

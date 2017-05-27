@@ -5,19 +5,16 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Moo;
-use Clone ();
 use Catmandu::Util;
-use namespace::clean;
 use Catmandu::Fix::Has;
+use namespace::clean;
 
-with 'Catmandu::Fix::Bind';
+extends 'Catmandu::Fix::Bind::identity';
 
 has start => (fix_opt => 1);
 has end   => (fix_opt => 1);
 has step  => (fix_opt => 1);
 has var   => (fix_opt => 1);
-
-has funcs => (is => 'rw', default => sub {[]});
 
 sub unit {
     my ($self, $data) = @_;
@@ -26,14 +23,6 @@ sub unit {
 
 sub bind {
     my ($self, $mvar, $func, $name, $fixer) = @_;
-
-    push @{$self->{funcs}} , $func;
-
-    return $mvar;
-}
-
-sub result {
-    my ($self, $mvar) = @_;
 
     my $start = $self->start;
     my $end   = $self->end;
@@ -44,10 +33,8 @@ sub result {
         Catmandu::Util::is_number($end) &&
         Catmandu::Util::is_number($step)) {
         for (my $i = $start ; $i <= $end ; $i = $i + $step) {
-          for my $func (@{$self->{funcs}}) {
             $mvar->{$var}  = $i if defined($var);
             $mvar = $func->($mvar);
-          }
         }
     }
 

@@ -10,13 +10,12 @@ use Catmandu::Util;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind';
+extends 'Catmandu::Fix::Bind::identity';
 
 has path => (fix_opt => 1);
 has var  => (fix_opt => 1);
 
-has _root_ => (is => 'rw');
-has flag => (is => 'rw', default => sub {0});
+has root => (is => 'rw');
 
 sub zero {
     my ($self) = @_;
@@ -26,79 +25,38 @@ sub zero {
 sub unit {
     my ($self, $data) = @_;
 
-    $self->_root_($data);
-
-    # Set a flag so that all the bind fixes are only run once...
-    $self->flag(0);
+    $self->root($data);
 
     defined $self->path ? Catmandu::Util::data_at($self->path, $data) : $data;
 }
 
 sub bind {
-    my ($self, $mvar, $func, $name, $fixer) = @_;
+    my ($self, $mvar, $code) = @_;
+
+    my $root = $self->root;
+    my $var  = $self->var;
 
     if (Catmandu::Util::is_hash_ref($mvar)) {
-
         # Ignore all specialized processing when not an array
-        $mvar = $func->($mvar);
+        $mvar = $code->($mvar);
+        return $mvar;
     }
     elsif (Catmandu::Util::is_array_ref($mvar)) {
-        return $mvar if $self->flag;
-
-        # Run only these fixes once: no need for do identity() ... end
-        $self->flag(1);
-
-        my $idx = 0;
-
-        [
-            map {
-                my $scope;
-                my $has_default_context_variable = 0;
-
-                # Switch context to the variable set by the user
-                if ($self->var) {
-                    $scope = $self->_root_;
-                    $scope->{$self->var} = $_;
-                }
-                elsif (!ref($_)) {
-                    $scope                        = [$_];
-                    $has_default_context_variable = 1;
-                }
-                else {
-                    $scope = $_;
-                }
-
-                # Run /all/ the fixes on the scope
-                my $res = $fixer->fix($scope);
-
-                # Check for rejects()
-                if (defined $res) {
-                    if ($self->var) {
-                        $mvar->[$idx] = $scope->{$self->var};
-                    }
-                    elsif ($has_default_context_variable) {
-                        $mvar->[$idx] = $res->[0];
-                    }
-                    $idx++;
-                }
-                else {
-                    splice(@$mvar, $idx, 1);
-                }
-
-                delete $scope->{$self->var} if $self->var;
-            } @$mvar
-        ];
+        for my $item (@$mvar) {
+            if (defined $var) {
+                $root->{$var} = $item ;
+                $root = $code->($root);
+                delete $root->{$var};
+            }
+            else {
+                $item = $code->($item);
+            }
+        }
+        return $mvar;
     }
     else {
         return $self->zero;
     }
-}
-
-# Flatten an array: [ [A] , [A] , [A] ] -> [ A, A, A ]
-sub plus {
-    my ($self, $prev, $next) = @_;
-
-    Catmandu::Util::is_array_ref($next) ? [$prev, @$next] : [$prev, $next];
 }
 
 1;
@@ -119,7 +77,7 @@ Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a
      #    - green
      #    - yellow
 
-     # Add a foo field to every item in the demo list, by default all 
+     # Add a foo field to every item in the demo list, by default all
      # fixes will be in context of the iterated path. If the context
      # is a list, then '.' will be the path of the temporary context
      # variable
@@ -153,19 +111,19 @@ Catmandu::Fix::Bind::list - a binder that computes Fix-es for every element in a
 
 =head1 DESCRIPTION
 
-The list binder will iterate over all the elements in a list and fixes the 
+The list binder will iterate over all the elements in a list and fixes the
 values in context of that list.
 
 =head1 CONFIGURATION
 
-=head2 path 
+=head2 path
 
 The path to a list in the data.
 
 =head2 var
 
-The loop variable to be iterated over. When used, a magic temporary field will 
-be available in the root of the record containing the iterated data. 
+The loop variable to be iterated over. When used, a magic temporary field will
+be available in the root of the record containing the iterated data.
 
 =head1 SEE ALSO
 
