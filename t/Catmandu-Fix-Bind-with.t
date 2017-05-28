@@ -70,7 +70,7 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {}, 'testing reject';
+is_deeply $fixer->fix({foo => 'bar'}), +{}, 'testing reject';
 
 $fixes = <<EOF;
 do with()
@@ -120,8 +120,7 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => [{bar => 1}, {bar => 2}]}),
-    {foo => [{bar => 1}]}, 'specific testing';
+is_deeply $fixer->fix({foo => [{bar => 1}, {bar => 2}]}),{foo => [{bar => 1}]}, 'specific testing';
 
 $fixes = <<EOF;
 do with(path => colors)
