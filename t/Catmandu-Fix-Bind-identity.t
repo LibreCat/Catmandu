@@ -106,7 +106,7 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({foo => 'bar'}), {foo => 'bar'}, 'testing nesting';
+is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing nesting';
 
 $fixes = <<EOF;
 add_field(before,ok)

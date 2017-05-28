@@ -48,15 +48,45 @@ sub emit {
     my $sub_fixer     = Catmandu::Fix->new(fixes => $self->__fixes__);
     my $sub_fixer_var = $fixer->capture($sub_fixer);
 
-    # Allow for local overrides to the emit_reject
-    local *Catmandu::Fix::emit_reject;
+    no warnings 'redefine';
+
+    # Allow for local patching of the emit_reject
+    local *Catmandu::Fix::emit_reject = *Catmandu::Fix::emit_reject;
 
     if ($self->can('reject')) {
         *Catmandu::Fix::emit_reject = sub { "return ${bind_var}->reject(${var});"; };
     }
-    else {
-        *Catmandu::Fix::emit_reject = sub {
-            "goto " . $fixer->_reject_label . ";";
+
+    # Allow for local patching of the emit_fixes
+    local *Catmandu::Fix::emit_fixes = *Catmandu::Fix::emit_fixes;
+
+    # If there is no group, then all fixes are agained pulled into a bind
+    if ($self->__group__ == 0) {
+        *Catmandu::Fix::emit_fixes = sub {
+            my ($this, $fixes) = @_;
+            my $perl = '';
+
+            $perl .= "my ${unit} = ${bind_var}->unit(${var});";
+
+            for (my $i = 0; $i < @{$fixes}; $i++) {
+                my $fix  = $fixes->[$i];
+                my $name = ref($fix);
+                my $var  = $this->var;
+                my $original_code = $this->emit_fix($fix);
+                my $generated_code
+                    = "sub { my ${var} = shift; $original_code ; ${var} }";
+                $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code, '$name');";
+            }
+
+            if ($self->can('result')) {
+                $perl .= "${unit} = ${bind_var}->result(${unit});";
+            }
+
+            if ($self->__return__) {
+                $perl .= "${var} = ${unit};";
+            }
+
+            $perl;
         };
     }
 
@@ -83,9 +113,8 @@ sub emit {
             my $generated_code
                 = "sub { my ${var} = shift; $original_code ; ${var} }";
 
-            # Warning: $name and $sub_fixer_var should be deprecated...
             $perl
-                .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name',${sub_fixer_var});";
+                .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name');";
         }
     }
 
