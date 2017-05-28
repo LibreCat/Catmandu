@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Moo::Role;
+use Package::Stash;
 use namespace::clean;
 
 with 'Catmandu::Logger';
@@ -45,24 +46,20 @@ sub emit {
     my $var           = $fixer->var;
     my $bind_var      = $fixer->capture($self);
     my $unit          = $fixer->generate_var;
-    my $sub_fixer     = Catmandu::Fix->new(fixes => $self->__fixes__);
-    my $sub_fixer_var = $fixer->capture($sub_fixer);
 
-    no warnings 'redefine';
+    my $fix_stash     = Package::Stash->new('Catmandu::Fix');
+    my $fix_emit_reject;
+    my $fix_emit_fixes;
 
-    # Allow for local patching of the emit_reject
-    local *Catmandu::Fix::emit_reject = *Catmandu::Fix::emit_reject;
-
+    # Allow Bind-s to overwrite the default reject behavior
     if ($self->can('reject')) {
-        *Catmandu::Fix::emit_reject = sub { "return ${bind_var}->reject(${var});"; };
+        $fix_emit_reject = $fix_stash->get_symbol('&emit_reject');
+        $fix_stash->add_symbol('&emit_reject' => sub { "return ${bind_var}->reject(${var});"; });
     }
-
-    # Allow for local patching of the emit_fixes
-    local *Catmandu::Fix::emit_fixes = *Catmandu::Fix::emit_fixes;
-
-    # If there is no group, then all fixes are agained pulled into a bind
+    # Allow Bind-s to bind to all fixes in if-unless-else statements
     if ($self->__group__ == 0) {
-        *Catmandu::Fix::emit_fixes = sub {
+        $fix_emit_fixes   = $fix_stash->get_symbol('&emit_fixes');
+        $fix_stash->add_symbol('&emit_fixes' => sub {
             my ($this, $fixes) = @_;
             my $perl = '';
 
@@ -87,7 +84,7 @@ sub emit {
             }
 
             $perl;
-        };
+        });
     }
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
@@ -125,6 +122,9 @@ sub emit {
     if ($self->__return__) {
         $perl .= "${var} = ${unit};";
     }
+
+    $fix_stash->add_symbol('&emit_reject' => $fix_emit_reject) if $fix_emit_reject;
+    $fix_stash->add_symbol('&emit_fixes'  => $fix_emit_fixes)  if $fix_emit_fixes;
 
     $perl;
 }
