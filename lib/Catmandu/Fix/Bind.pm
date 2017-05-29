@@ -171,7 +171,7 @@ Bind is a package that wraps Catmandu::Fix-es and other Catmandu::Bind-s togethe
 the programmer further control on the excution of fixes. With Catmandu::Fix::Bind you can simulate
 the 'before', 'after' and 'around' modifiers as found in Moo or Dancer.
 
-To wrap Fix functions, the Fix language has a 'do' statement:
+To wrap Fix functions, the Fix language introduces the 'do' statement:
 
   do BIND
      FIX1
@@ -242,7 +242,7 @@ A trivial, but verbose, implementaion of 'bind' is:
 =head1 REQUIREMENTS
 
 Bind modules are simplified implementations of Monads. They should answer the formal definition of Monads, codified
-in 3  monadic laws:
+in 3 monadic laws:
 
 =head2 left unit: unit acts as a neutral element of bind
 
