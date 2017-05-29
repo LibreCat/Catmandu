@@ -10,7 +10,7 @@ use Catmandu::Util;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-extends 'Catmandu::Fix::Bind::identity';
+with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
 
 has path => (fix_opt => 1);
 has var  => (fix_opt => 1);

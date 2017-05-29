@@ -10,7 +10,7 @@ use Catmandu::Util;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-extends 'Catmandu::Fix::Bind::identity';
+with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
 
 has path => (fix_opt => 1);
 
@@ -84,7 +84,7 @@ Catmandu::Fix::Bind::with - a binder that computes Fix-es in the context of a pa
      - name: nicolas
 
     # Fix
-    do with(path => data)
+    do with(path:data)
         if all_match(name,nicolas)
             reject()
         end
@@ -110,7 +110,7 @@ these two fixes are equal:
 
     add_field(my.deep.field.style, funk)
 
-    do with(path => my.deep.field)
+    do with(path:my.deep.field)
         add_field(style,funk)
     end
 

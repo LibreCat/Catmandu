@@ -7,12 +7,7 @@ our $VERSION = '1.0507';
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Fix::Bind';
-
-sub BUILD {
-    my ($self) = @_;
-    $self->{__group__} = 1;
-}
+with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
 
 1;
 

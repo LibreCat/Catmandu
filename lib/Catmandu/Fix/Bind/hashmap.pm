@@ -9,7 +9,7 @@ use Catmandu::Util qw(:is);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-extends 'Catmandu::Fix::Bind::identity';
+with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
 
 has exporter   => (fix_opt => 1);
 has store      => (fix_opt => 1);

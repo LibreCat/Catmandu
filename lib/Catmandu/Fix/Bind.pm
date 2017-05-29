@@ -15,7 +15,6 @@ requires 'bind';
 
 has __return__ => (is => 'rw', default => sub {[0]});
 has __fixes__  => (is => 'rw', default => sub {[]});
-has __group__  => (is => 'ro', default => sub {0});
 
 around bind => sub {
     my ($orig, $self, $prev, @args) = @_;
@@ -57,7 +56,7 @@ sub emit {
         $fix_stash->add_symbol('&emit_reject' => sub { "return ${bind_var}->reject(${var});"; });
     }
     # Allow Bind-s to bind to all fixes in if-unless-else statements
-    if ($self->__group__ == 0) {
+    unless ($self->does('Catmandu::Fix::Bind::Group')) {
         $fix_emit_fixes   = $fix_stash->get_symbol('&emit_fixes');
         $fix_stash->add_symbol('&emit_fixes' => sub {
             my ($this, $fixes) = @_;
@@ -89,8 +88,8 @@ sub emit {
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-    # If __group__ is set, then all fixes are executed as one block in a bind
-    if ($self->__group__) {
+    # If this is a Bind::Group, then all fixes are executed as one block in a bind
+    if ($self->does("Catmandu::Fix::Bind::Group")) {
         my $generated_code = "sub { my ${var} = shift;";
 
         for my $fix (@{$self->__fixes__}) {
@@ -102,7 +101,7 @@ sub emit {
 
         $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code);";
     }
-    # If __group__ isn't set, then bind will be executed for each seperate fix
+    #  If this isn't a Bind::Group, then bind will be executed for each seperate fix
     else {
         for my $fix (@{$self->__fixes__}) {
             my $name          = ref($fix);
