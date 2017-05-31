@@ -23,13 +23,20 @@ sub generator {
 
     # Loop of all stores and find the first one that implements the bag
     # and can create a generator
+    my $gen;
     for my $store (@{$self->store->stores}) {
         my $bag = $store->bag($self->name);
-        my $gen = $bag ? $bag->generator : undef ;
-        return $gen if defined($gen);
+        $gen = $bag ? $bag->generator : undef ;
+        last if defined($gen);
     }
 
-    return undef;
+    return undef unless $gen;
+
+    sub {
+        my $item = $gen->();
+        return undef unless $item;
+        return $self->get($item->{_id});
+    };
 }
 
 sub get {
@@ -50,14 +57,13 @@ sub get {
         }
     }
 
-    $found ? $result : undef;
+    return $found ? $result : undef;
 }
 
 sub add {
     my ($self, $data) = @_;
 
     # By default try to add the data to all the stores
-
     for my $store (@{$self->store->stores}) {
         my $bag  = $store->bag($self->name);
         $bag->add($data) if $bag;
