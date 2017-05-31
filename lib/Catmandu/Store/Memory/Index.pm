@@ -54,8 +54,6 @@ sub add {
 
     $self->store->_files->{$name}->{$id} = +{
         _id      => $id ,
-        created  => time ,
-        modified => time ,
     };
 
     return $self->get($id);

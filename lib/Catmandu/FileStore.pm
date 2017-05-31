@@ -8,7 +8,7 @@ use namespace::clean;
 
 with 'Catmandu::Store';
 
-has index_bag   => (is => 'ro', default => sub {'bags'},);
+has index_bag   => (is => 'ro', default => sub {'data'},);
 has index_class => (is => 'ro', default => sub {ref($_[0]) . '::Index'},);
 has index       => (is => 'lazy');
 

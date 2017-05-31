@@ -15,18 +15,18 @@ BEGIN {
 require_ok $pkg;
 
 my $store = Catmandu::Store::Simple->new(root => 't/data2');
-my $bags;
+my $index;
 
-note("bags");
+note("index");
 {
-    $bags = $store->bag('bags');
+    $index = $store->bag();
 
-    ok $bags , 'got the "bags" bags';
+    ok $index , 'got the index bag';
 }
 
 note("list");
 {
-    my $array = $bags->to_array;
+    my $array = $index->to_array;
 
     ok $array , 'list got a response';
 
@@ -40,32 +40,32 @@ note("list");
 note("exists");
 {
     for (1..3) {
-        ok $bags->exists($_) , "exists($_)";
+        ok $index->exists($_) , "exists($_)";
         my $zero_key = ("0" x $_) . $_;
-        ok $bags->exists($zero_key) , "exists($zero_key)";
+        ok $index->exists($zero_key) , "exists($zero_key)";
     }
 }
 
 note("get");
 {
     for (1..3) {
-        ok $bags->get($_) , "get($_)";
+        ok $index->get($_) , "get($_)";
         my $zero_key = ("0" x $_) . $_;
-        ok $bags->get($zero_key) , "get($zero_key)";
+        ok $index->get($zero_key) , "get($zero_key)";
     }
 }
 
 $store = Catmandu::Store::Simple->new(root => 't/data');
-$bags  = $store->bag('bags');
+$index  = $store->bag('data');
 
 note("add");
 {
-    throws_ok { $bags->add({ }) } 'Catmandu::BadArg' , 'add() fails';
-    throws_ok { $bags->add({ _id => 'abcd' }) } 'Catmandu::BadArg' , 'failed to add(abcd)';
-    throws_ok { $bags->add({ _id => '1234567890'}) } 'Catmandu::BadArg' , 'failed to add(1234567890)';
-    throws_ok { $bags->add({ _id => '00000000001234' }) } 'Catmandu::BadArg' , 'failed to add(00000000001234)';
+    throws_ok { $index->add({ }) } 'Catmandu::BadArg' , 'add() fails';
+    throws_ok { $index->add({ _id => 'abcd' }) } 'Catmandu::BadArg' , 'failed to add(abcd)';
+    throws_ok { $index->add({ _id => '1234567890'}) } 'Catmandu::BadArg' , 'failed to add(1234567890)';
+    throws_ok { $index->add({ _id => '00000000001234' }) } 'Catmandu::BadArg' , 'failed to add(00000000001234)';
 
-    my $c = $bags->add({ _id => '1234' });
+    my $c = $index->add({ _id => '1234' });
 
     ok $c , 'add(1234)';
 
@@ -75,14 +75,14 @@ note("add");
 
 note("delete");
 {
-    ok $bags->delete('1234') , 'delete(1234)';
+    ok $index->delete('1234') , 'delete(1234)';
 
     ok ! -d "t/data/000/001/234" , 'container on disk was deleted';
 }
 
 note("delete_all");
 {
-    lives_ok { $bags->delete_all() } 'delete_all';
+    lives_ok { $index->delete_all() } 'delete_all';
 }
 
 done_testing();

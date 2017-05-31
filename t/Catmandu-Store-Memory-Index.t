@@ -15,26 +15,26 @@ BEGIN {
 require_ok $pkg;
 
 my $store = Catmandu::Store::Memory->new();
-my $bags;
+my $index;
 
-note("bags");
+note("index");
 {
-    $bags = $store->bag('bags');
+    $index = $store->bag();
 
-    ok $bags , 'got the "bags" bags';
+    ok $index , 'got the index bag';
 }
 
 note("add");
 {
-    throws_ok { $bags->add({ }) } 'Catmandu::BadArg' , 'add() fails';
-    ok $bags->add({ _id => '1' }) , 'add({_id => 1})';
-    ok $bags->add({ _id => '2' }) , 'add({_id => 2})';
-    ok $bags->add({ _id => '3' }) , 'add({_id => 3})';
+    throws_ok { $index->add({ }) } 'Catmandu::BadArg' , 'add() fails';
+    ok $index->add({ _id => '1' }) , 'add({_id => 1})';
+    ok $index->add({ _id => '2' }) , 'add({_id => 2})';
+    ok $index->add({ _id => '3' }) , 'add({_id => 3})';
 }
 
 note("list");
 {
-    my $array = [ sort @{$bags->map(sub { shift->{_id} })->to_array} ];
+    my $array = [ sort @{$index->map(sub { shift->{_id} })->to_array} ];
 
     ok $array , 'list got a response';
 
@@ -44,27 +44,27 @@ note("list");
 note("exists");
 {
     for (1..3) {
-        ok $bags->exists($_) , "exists($_)";
+        ok $index->exists($_) , "exists($_)";
     }
 }
 
 note("get");
 {
     for (1..3) {
-        ok $bags->get($_) , "get($_)";
+        ok $index->get($_) , "get($_)";
     }
 }
 
 note("delete");
 {
-    ok $bags->delete('1') , 'delete(1)';
+    ok $index->delete('1') , 'delete(1)';
 }
 
 note("delete_all");
 {
-    lives_ok { $bags->delete_all() } 'delete_all';
+    lives_ok { $index->delete_all() } 'delete_all';
 
-    my $array = $bags->to_array;
+    my $array = $index->to_array;
 
     is_deeply $array , [] , 'got correct response';
 }

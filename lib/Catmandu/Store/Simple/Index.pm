@@ -54,7 +54,7 @@ sub exists {
 
     my $path = $self->store->path_string($id);
 
-    -d $path;
+    defined($path) && -d $path;
 }
 
 sub add {
@@ -104,8 +104,6 @@ sub get {
 
     return +{
         _id      => $id ,
-        created  => $stat[10],
-        modified => $stat[9],
     };
 }
 
