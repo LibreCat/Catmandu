@@ -244,10 +244,6 @@ sub emit_fixes {
 
     for (my $i = 0; $i < @{$fixes}; $i++) {
         my $fix = $fixes->[$i];
-        $perl
-            .= $self->_current_fix_var . " = "
-            . $self->_fixes_var
-            . "->[${i}];";
         $perl .= $self->emit_fix($fix);
     }
 

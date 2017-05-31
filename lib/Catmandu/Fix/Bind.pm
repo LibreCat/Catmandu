@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Moo::Role;
+use Package::Stash;
 use namespace::clean;
 
 with 'Catmandu::Logger';
@@ -12,8 +13,8 @@ with 'Catmandu::Logger';
 requires 'unit';
 requires 'bind';
 
-has return => (is => 'rw', default => sub {[0]});
-has fixes  => (is => 'rw', default => sub {[]});
+has __return__ => (is => 'rw', default => sub {[0]});
+has __fixes__  => (is => 'rw', default => sub {[]});
 
 around bind => sub {
     my ($orig, $self, $prev, @args) = @_;
@@ -44,28 +45,85 @@ sub emit {
     my $var           = $fixer->var;
     my $bind_var      = $fixer->capture($self);
     my $unit          = $fixer->generate_var;
-    my $sub_fixer     = Catmandu::Fix->new(fixes => $self->fixes);
-    my $sub_fixer_var = $fixer->capture($sub_fixer);
+
+    my $fix_stash     = Package::Stash->new('Catmandu::Fix');
+    my $fix_emit_reject;
+    my $fix_emit_fixes;
+
+    # Allow Bind-s to overwrite the default reject behavior
+    if ($self->can('reject')) {
+        $fix_emit_reject = $fix_stash->get_symbol('&emit_reject');
+        $fix_stash->add_symbol('&emit_reject' => sub { "return ${bind_var}->reject(${var});"; });
+    }
+    # Allow Bind-s to bind to all fixes in if-unless-else statements
+    unless ($self->does('Catmandu::Fix::Bind::Group')) {
+        $fix_emit_fixes   = $fix_stash->get_symbol('&emit_fixes');
+        $fix_stash->add_symbol('&emit_fixes' => sub {
+            my ($this, $fixes) = @_;
+            my $perl = '';
+
+            $perl .= "my ${unit} = ${bind_var}->unit(${var});";
+
+            for (my $i = 0; $i < @{$fixes}; $i++) {
+                my $fix  = $fixes->[$i];
+                my $name = ref($fix);
+                my $var  = $this->var;
+                my $original_code = $this->emit_fix($fix);
+                my $generated_code
+                    = "sub { my ${var} = shift; $original_code ; ${var} }";
+                $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code, '$name');";
+            }
+
+            if ($self->can('result')) {
+                $perl .= "${unit} = ${bind_var}->result(${unit});";
+            }
+
+            if ($self->__return__) {
+                $perl .= "${var} = ${unit};";
+            }
+
+            $perl;
+        });
+    }
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-    for my $fix (@{$self->fixes}) {
-        my $name          = ref($fix);
-        my $original_code = $fixer->emit_fix($fix);
-        my $generated_code
-            = "sub { my ${var} = shift; $original_code ; ${var} }";
+    # If this is a Bind::Group, then all fixes are executed as one block in a bind
+    if ($self->does("Catmandu::Fix::Bind::Group")) {
+        my $generated_code = "sub { my ${var} = shift;";
 
-        $perl
-            .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name',${sub_fixer_var});";
+        for my $fix (@{$self->__fixes__}) {
+            my $original_code = $fixer->emit_fix($fix);
+            $generated_code .= "$original_code ;";
+        }
+
+        $generated_code .= "${var} }";
+
+        $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code);";
+    }
+    #  If this isn't a Bind::Group, then bind will be executed for each seperate fix
+    else {
+        for my $fix (@{$self->__fixes__}) {
+            my $name          = ref($fix);
+            my $original_code = $fixer->emit_fix($fix);
+            my $generated_code
+                = "sub { my ${var} = shift; $original_code ; ${var} }";
+
+            $perl
+                .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'$name');";
+        }
     }
 
     if ($self->can('result')) {
         $perl .= "${unit} = ${bind_var}->result(${unit});";
     }
 
-    if ($self->return) {
+    if ($self->__return__) {
         $perl .= "${var} = ${unit};";
     }
+
+    $fix_stash->add_symbol('&emit_reject' => $fix_emit_reject) if $fix_emit_reject;
+    $fix_stash->add_symbol('&emit_fixes'  => $fix_emit_fixes)  if $fix_emit_fixes;
 
     $perl;
 }
@@ -106,14 +164,14 @@ Catmandu::Fix::Bind - a wrapper for Catmandu::Fix-es
   executing fix1
   executing fix2
   executing fix3
-   
+
 =head1 DESCRIPTION
 
 Bind is a package that wraps Catmandu::Fix-es and other Catmandu::Bind-s together. This gives
 the programmer further control on the excution of fixes. With Catmandu::Fix::Bind you can simulate
 the 'before', 'after' and 'around' modifiers as found in Moo or Dancer.
 
-To wrap Fix functions, the Fix language has a 'do' statement:
+To wrap Fix functions, the Fix language introduces the 'do' statement:
 
   do BIND
      FIX1
@@ -134,7 +192,7 @@ to the record data. In pseudo-code this will look like:
   return $data;
 
  An alternative form exists, 'doset' which will overwrite the record data with results of the last
- fix. 
+ fix.
 
   doset BIND
         FIX1
@@ -156,8 +214,8 @@ A Catmandu::Fix::Bind needs to implement two methods: 'unit' and 'bind'.
 
 =head2 unit($data)
 
-The unit method receives a Perl $data HASH and should return it, possibly converted to a new type. 
-The 'unit' method is called before all Fix methods are executed. A trivial, but verbose, implementation 
+The unit method receives a Perl $data HASH and should return it, possibly converted to a new type.
+The 'unit' method is called before all Fix methods are executed. A trivial, but verbose, implementation
 of 'unit' is:
 
   sub unit {
@@ -166,25 +224,25 @@ of 'unit' is:
       return $wrapped_data;
   }
 
-=head2 bind($wrapped_data,$code,$name,$perl)
+=head2 bind($wrapped_data,$code)
 
 The bind method is executed for every Catmandu::Fix method in the fix script. It receives the $wrapped_data
-(wrapped by 'unit'), the fix method as anonymous subroutine and the name of the fix. It should return data 
-with the same type as returned by 'unit'. 
+(wrapped by 'unit'), the fix method as anonymous subroutine and the name of the fix. It should return data
+with the same type as returned by 'unit'.
 A trivial, but verbose, implementaion of 'bind' is:
 
   sub bind {
-    my ($self,$wrapped_data,$code,$name,$perl) = @_;
+    my ($self,$wrapped_data,$code) = @_;
     my $data = $wrapped_data;
     $data = $code->($data);
     # we don't need to wrap it again because the $data and $wrapped_data have the same type
     $data;
-  } 
+  }
 
 =head1 REQUIREMENTS
 
-Bind modules are simplified implementations of Monads. They should answer the formal definition of Monads, codified 
-in 3  monadic laws:
+Bind modules are simplified implementations of Monads. They should answer the formal definition of Monads, codified
+in 3 monadic laws:
 
 =head2 left unit: unit acts as a neutral element of bind
 

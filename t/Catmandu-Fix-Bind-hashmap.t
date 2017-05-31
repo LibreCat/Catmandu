@@ -138,10 +138,8 @@ EOF
     my ($stdout, $stderr, $exit) = capture {
         $fixes = <<EOF;
   do hashmap(exporter: JSON, uniq: 1)
-   do identity()
     copy_field(isbn,key)
     copy_field(_id,value)
-   end
   end
 EOF
         $fixer = Catmandu::Fix->new(fixes => [$fixes]);
@@ -165,10 +163,8 @@ EOF
     my ($stdout, $stderr, $exit) = capture {
         $fixes = <<EOF;
   do hashmap(exporter: CSV, count: 1)
-   do identity()
     copy_field(isbn,key)
     copy_field(_id,value)
-   end
   end
 EOF
         $fixer = Catmandu::Fix->new(fixes => [$fixes]);

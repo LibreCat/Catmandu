@@ -8,7 +8,7 @@ use Moo;
 use Catmandu::Util;
 use namespace::clean;
 
-with 'Catmandu::Fix::Bind';
+with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
 
 has path => (is => 'ro');
 
@@ -98,12 +98,12 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::Bind::visitor - a binder that computes Fix-es for every element in record 
+Catmandu::Fix::Bind::visitor - a binder that computes Fix-es for every element in record
 
 =head1 SYNOPSIS
 
  # If data is like:
- 
+
    numbers:
       - one
       - two
@@ -166,7 +166,7 @@ Process a Fix on every array value. E.g.
 
    sort_field(array)
 
-Values need to be put in the 'array' field to be available for fixes. The scope of 
+Values need to be put in the 'array' field to be available for fixes. The scope of
 the array is limited to the array visited.
 
 =item hash
@@ -175,7 +175,7 @@ Process a Fix on every hash value. E.g.
 
    copy_field(hash.age,hash.age2)
 
-Values need to be put in the 'hash' field to be available for fixes. The scope of 
+Values need to be put in the 'hash' field to be available for fixes. The scope of
 the hash is limited to the hash visited.
 
 =item key
@@ -191,7 +191,7 @@ Provides access to the key on which the scalar,array or hash value is found. Eg.
 
 =head1 CONFIGURATION
 
-=head2 path 
+=head2 path
 
 A path in the data to visit:
 
