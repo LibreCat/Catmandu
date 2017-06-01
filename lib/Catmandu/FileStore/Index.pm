@@ -9,8 +9,6 @@ use utf8;
 use Catmandu::Util qw(:check);
 use namespace::clean;
 
-with 'Catmandu::Bag';
-
 1;
 
 __END__

@@ -11,7 +11,7 @@ use Catmandu::Store::Simple::Index;
 use Catmandu::Store::Simple::Bag;
 use namespace::clean;
 
-with 'Catmandu::FileStore';
+with 'Catmandu::FileStore', 'Catmandu::Droppable';
 
 has root     => (is => 'ro', required => '1');
 has keysize  => (is => 'ro', default => 9 , trigger => 1);
@@ -38,6 +38,12 @@ sub path_string {
     my $path = $self->root . "/" . join("/", unpack('(A3)*', $long_key));
 
     $path;
+}
+
+sub drop {
+    my ($self) = @_;
+
+    $self->index->delete_all;
 }
 
 1;

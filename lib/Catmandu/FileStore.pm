@@ -4,23 +4,28 @@ our $VERSION = '1.0507';
 
 use Catmandu::Sane;
 use Moo::Role;
+use Catmandu::Util;
 use namespace::clean;
 
 with 'Catmandu::Store';
 
-has index_bag   => (is => 'ro', default => sub {'data'},);
+has index_bag   => (is => 'ro', default => sub {'index'},);
 has index_class => (is => 'ro', default => sub {ref($_[0]) . '::Index'},);
 has index       => (is => 'lazy');
+
+sub _build_default_bag {
+    $_[0]->index_bag;
+}
 
 sub _build_index {
     my ($self) = @_;
 
-    my $pkg        = $self->index_class;
-    my $index_name = $self->index_bag;
-
     my $inst;
 
     try {
+        my $pkg        = Catmandu::Util::require_package($self->index_class);
+        my $index_name = $self->index_bag;
+
         if (my $options =  $self->bag_options->{$index_name}) {
             $options = {%$options};
 
@@ -35,7 +40,7 @@ sub _build_index {
         }
     }
     catch {
-        $self->log->warn("no instance of $inst created");
+        $self->log->warn("no instance of " . $self->index_class . " created : $_");
     };
 
     $inst;
@@ -51,7 +56,7 @@ sub bag {
         $self->index;
     }
     elsif ($self->index->exists($name)) {
-        $pkg = $self->bag_class;
+        $pkg = Catmandu::Util::require_package($self->bag_class);
 
         if (my $options = $self->bag_options->{$name}) {
             $options = {%$options};

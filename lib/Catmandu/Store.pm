@@ -13,7 +13,7 @@ with 'Catmandu::Logger';
 
 has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
 
-has default_bag => (is => 'ro', default => sub {'data'},);
+has default_bag => (is => 'lazy');
 
 has bag_options => (is => 'ro', init_arg => 'bags', default => sub {+{}},);
 
@@ -27,6 +27,10 @@ sub key_for {
 
 sub _build_id_key {
     $_[0]->key_for('id');
+}
+
+sub _build_default_bag {
+    'data';
 }
 
 sub new_bag {

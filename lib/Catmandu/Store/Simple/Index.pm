@@ -10,7 +10,7 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::FileStore::Index';
+with 'Catmandu::Bag', 'Catmandu::FileStore::Index';
 
 sub generate_id {
     Catmandu::BadArg->throw('need an _id');

@@ -9,9 +9,15 @@ use Catmandu::Store::Memory::Index;
 use Catmandu::Store::Memory::Bag;
 use namespace::clean;
 
-with 'Catmandu::FileStore';
+with 'Catmandu::FileStore' , 'Catmandu::Droppable';
 
 has _files      => (is => 'ro' , lazy => 1  , default => sub { + {} });
+
+sub drop {
+    my ($self) = @_;
+
+    $self->index->delete_all;
+}
 
 1;
 

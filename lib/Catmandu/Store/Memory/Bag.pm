@@ -8,7 +8,7 @@ use Catmandu::Util;
 use Catmandu::FileStore::MimeType;
 use namespace::clean;
 
-with 'Catmandu::FileStore::Bag';
+with 'Catmandu::Bag','Catmandu::FileStore::Bag';
 
 has _mimeType => (is => 'lazy');
 

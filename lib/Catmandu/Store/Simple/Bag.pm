@@ -15,7 +15,7 @@ use Catmandu::FileStore::MimeType;
 use namespace::clean;
 use utf8;
 
-with 'Catmandu::FileStore::Bag';
+with 'Catmandu::Bag','Catmandu::FileStore::Bag';
 
 has _path     => (is => 'lazy');
 has _mimeType => (is => 'lazy');

@@ -56,7 +56,7 @@ note("get");
 }
 
 $store = Catmandu::Store::Simple->new(root => 't/data');
-$index  = $store->bag('data');
+$index  = $store->bag();
 
 note("add");
 {
