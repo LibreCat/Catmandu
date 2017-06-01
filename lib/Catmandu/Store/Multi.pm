@@ -5,11 +5,12 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Catmandu::Util qw(:is);
+use Hash::Util::FieldHash qw(fieldhash);
 use Catmandu::Store::Multi::Bag;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Store';
+with 'Catmandu::Store','Catmandu::FileStore';
 
 has stores => (
     is      => 'ro',
@@ -28,6 +29,25 @@ has stores => (
         ];
     },
 );
+
+sub _build_index {
+    my ($self) = @_;
+    for my $store (@{$self->store->stores}) {
+        if ($store->does('Catmandu::FileStore')) {
+            return $store->index;
+        }
+    }
+}
+
+{
+    fieldhash my %bag_instances;
+
+    sub bag {
+        my ($self, $name) = @_;
+        $name ||= $self->default_bag;
+        $bag_instances{$self}{$name} ||= $self->new_bag($name);
+    }
+}
 
 sub drop {
     my ($self) = @_;
@@ -49,7 +69,7 @@ Catmandu::Store::Multi - A store that adds your data to multiple stores
 =head1 SYNOPSIS
     # On the Command line
 
-    # Configure the Multis tore with a catmandu.yml file
+    # Configure the Multi store with a catmandu.yml file
     $ cat catmandu.yml
     ---
     store:
@@ -118,19 +138,21 @@ from L<Catmandu::Store> and L<Catmandu::FileStore>.
 The Multi store can be used to store structured records in two or more L<Catmandu::Store>-s
 (for instance a L<Catmandu::Store::DBI> and a L<Catmandu::Store::ElasticSearch>)). Or,
 combinations of L<Catmandu::Store> with L<Catmandu::FileStore> can be used to store
-structured and unstructured data using one access point.
+structured and unstructured data using one access point (for intstance a
+L<Catmandu::Store::ElasticSearch> combined with a L<Catmandu::Store::Simple>). Or,
+a combination of many L<Catmandu::FileStore>-s.
 
 By default, the Multi store tries to update records in all configured backend
-stores. Importing, exporting, drop, delete and stream will be executed against
-all stores when possible.
+stores. Importing, exporting, drop, delete, stream and upload will be executed against
+all backend stores when possible.
 
 =head1 CAVECATS
 
-When combining L<Catmandu::Store>-s with L<Catmandu::FileStore>-s in a
-L<Catmandu::Store::Multi> then all record identifiers '_id' B<must> respect the
-limitations of the backend FileStore. E.g. when using a L<Catmandu::Store::Simple>
-this means that all _id fields should be integers with a maximum defined
-by the Simple store.
+When combining L<Catmandu::Store>-s with L<Catmandu::FileStore>-s  the L<Catmandu::Store::Multi>
+is limited by the restrictions of the backend stores.
+
+E.g. when combining a L<Catmandu::Store::Simple> into a Multi store, then all
+imported records B<must> have an integer identifier with a maximum size.
 
 =head1 SEE ALSO
 

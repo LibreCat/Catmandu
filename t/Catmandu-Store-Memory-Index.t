@@ -26,7 +26,6 @@ note("index");
 
 note("add");
 {
-    throws_ok { $index->add({ }) } 'Catmandu::BadArg' , 'add() fails';
     ok $index->add({ _id => '1' }) , 'add({_id => 1})';
     ok $index->add({ _id => '2' }) , 'add({_id => 2})';
     ok $index->add({ _id => '3' }) , 'add({_id => 3})';

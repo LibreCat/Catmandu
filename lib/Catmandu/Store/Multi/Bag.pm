@@ -12,12 +12,6 @@ use namespace::clean;
 
 with 'Catmandu::Bag' , 'Catmandu::FileStore::Bag';
 
-sub generate_id {
-    my ($self) = @_;
-    # uncoverable statement
-    Catmandu::Error->throw( 'generate_id called from ' . __PACKAGE__ . '?!' );
-}
-
 sub generator {
     my ($self) = @_;
 

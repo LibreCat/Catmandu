@@ -18,18 +18,27 @@ sub _build_index {
     my $pkg        = $self->index_class;
     my $index_name = $self->index_bag;
 
-    if (my $options =  $self->bag_options->{$index_name}) {
-        $options = {%$options};
+    my $inst;
 
-        if (my $plugins = delete $options->{plugins}) {
-            $pkg = $pkg->with_plugins($plugins);
+    try {
+        if (my $options =  $self->bag_options->{$index_name}) {
+            $options = {%$options};
+
+            if (my $plugins = delete $options->{plugins}) {
+                $pkg = $pkg->with_plugins($plugins);
+            }
+
+            $inst = $pkg->new(%$options, store => $self, name => $index_name);
         }
+        else {
+            $inst = $pkg->new(store => $self, name => $index_name);
+        }
+    }
+    catch {
+        $self->log->warn("no instance of $inst created");
+    };
 
-        $pkg->new(%$options, store => $self, name => $index_name);
-    }
-    else {
-        $pkg->new(store => $self, name => $index_name);
-    }
+    $inst;
 }
 
 sub bag {

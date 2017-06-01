@@ -9,7 +9,7 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::FileStore::Bag';
+with 'Catmandu::FileStore::Index';
 
 sub generator {
     my ($self) = @_;

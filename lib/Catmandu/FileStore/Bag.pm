@@ -11,10 +11,6 @@ use namespace::clean;
 
 with 'Catmandu::Bag';
 
-sub generate_id {
-    Catmandu::BadArg->throw('need an _id');
-}
-
 sub stream {
     my ($self,$io,$data) = @_;
     check_hash_ref($data);
