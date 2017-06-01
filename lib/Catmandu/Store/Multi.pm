@@ -13,9 +13,10 @@ use namespace::clean;
 with 'Catmandu::Store';
 
 has stores => (
-    is      => 'ro',
-    default => sub {[]},
-    coerce  => sub {
+    is       => 'ro',
+    required => 1,
+    default  => sub {[]},
+    coerce   => sub {
         my $stores = $_[0];
         return [
             map {
@@ -48,6 +49,7 @@ __END__
 Catmandu::Store::Multi - A store that adds data to multiple stores
 
 =head1 SYNOPSIS
+
     # On the Command line
 
     # Configure the Multi store with a catmandu.yml file
@@ -95,8 +97,7 @@ Catmandu::Store::Multi - A store that adds data to multiple stores
 
     my $item = $store->bag->get('1234');
 
-    # This will delete the item and the associated files
-    $store->delete('1234');
+    $store->bag->delete('1234');
 
 =head1 DESCRIPTION
 
@@ -107,6 +108,15 @@ from L<Catmandu::Store>.
 By default, the Multi store tries to update records in all configured backend
 stores. Importing, exporting, delete and drop will be executed against
 all backend stores when possible.
+
+=head1 CONFIGURATION
+
+=head2 stores ARRAY(string)
+
+=head2 stores ARRAY(Catmandu::Store)
+
+The C<store> configuration parameter contains an array of references to
+L<Catmandu::Store>-s based on their name in a configuration file or instances.
 
 =head1 SEE ALSO
 
