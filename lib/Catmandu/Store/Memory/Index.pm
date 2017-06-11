@@ -9,7 +9,7 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::Bag' , 'Catmandu::FileStore::Index';
+with 'Catmandu::Bag' , 'Catmandu::FileStore::Index' , 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;
@@ -92,6 +92,10 @@ sub delete_all {
     });
 
     1;
+}
+
+sub drop {
+    $_[0]->delete_all;
 }
 
 1;

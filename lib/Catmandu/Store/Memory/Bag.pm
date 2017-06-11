@@ -8,7 +8,7 @@ use Catmandu::Util;
 use Catmandu::FileStore::MimeType;
 use namespace::clean;
 
-with 'Catmandu::Bag','Catmandu::FileStore::Bag';
+with 'Catmandu::Bag', 'Catmandu::FileStore::Bag', 'Catmandu::Droppable';
 
 has _mimeType => (is => 'lazy');
 
@@ -101,6 +101,10 @@ sub delete_all {
     });
 
     1;
+}
+
+sub drop {
+    $_[0]->delete_all;
 }
 
 sub commit {

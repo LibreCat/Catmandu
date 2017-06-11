@@ -10,7 +10,7 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::Bag', 'Catmandu::FileStore::Index';
+with 'Catmandu::Bag', 'Catmandu::FileStore::Index' , 'Catmandu::Droppable';
 
 sub generate_id {
     Catmandu::BadArg->throw('need an _id');
@@ -45,7 +45,8 @@ sub generator {
         $line =~ s/$root//;
         $line =~ s/\///g;
         $line =~ s/^0+//;
-        +{ _id => $line };
+
+        $self->get($line);
     };
 }
 
@@ -140,6 +141,10 @@ sub delete_all {
         my $key = shift->{_id};
         $self->delete($key);
     });
+}
+
+sub drop {
+    $_[0]->delete_all;
 }
 
 sub commit {

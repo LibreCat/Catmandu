@@ -12,21 +12,6 @@ use namespace::clean;
 
 with 'Catmandu::FileStore';
 
-has metadata => (
-    is      => 'ro',
-    coerce  => sub {
-        my $store = $_[0];
-        if (is_string($store)) {
-            Catmandu->store($store);
-        }
-        else {
-            $store;
-        }
-    }
-);
-
-has metadata_bag => (is => 'ro' , default => sub { 'data' });
-
 has stores => (
     is       => 'ro',
     required => 1,
@@ -48,10 +33,6 @@ has stores => (
 
 sub drop {
     my ($self) = @_;
-
-    if ($self->metadata && $self->metadata->does('Catmandu::Droppable')) {
-        $self->metadata->drop;
-    }
 
     for my $store (@{$self->stores}) {
         $store->drop if $store->does('Catmandu::Droppable');

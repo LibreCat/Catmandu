@@ -15,7 +15,7 @@ use Catmandu::FileStore::MimeType;
 use namespace::clean;
 use utf8;
 
-with 'Catmandu::Bag','Catmandu::FileStore::Bag';
+with 'Catmandu::Bag', 'Catmandu::FileStore::Bag' , 'Catmandu::Droppable';
 
 has _path     => (is => 'lazy');
 has _mimeType => (is => 'lazy');
@@ -153,6 +153,10 @@ sub delete_all {
     });
 
     1;
+}
+
+sub drop {
+    $_[0]->delete_all;
 }
 
 sub commit {

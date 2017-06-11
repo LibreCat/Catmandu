@@ -175,7 +175,7 @@ Catmandu::Plugin::Versioning - Automatically adds versioning to Catmandu::Store 
  $ echo '{"_id":"001",hello":"world"}' | catmandu import JSON to test
  $ echo '{"_id":"001",hello":"world2"}' | catmandu import JSON to test
 
- # In the store we see only the latest version 
+ # In the store we see only the latest version
  $ catmandu export test to YAML
  ---
  _id: '001'
@@ -192,14 +192,14 @@ Catmandu::Plugin::Versioning - Automatically adds versioning to Catmandu::Store 
   hello: world
 
  # Or in your Perl program
- my $store = Catmandu::Store::MongoDB->new(
+ my $store = Catmandu->store('MongoDB',
             database_name => 'test' ,
             bags => {
                 data => {
                 plugins => [qw(Versioning)]
             }
         });
- 
+
  $store->bag->add({ _id => '001' , hello => 'world'});
  $store->bag->add({ _id => '001' , hello => 'world2'});
 
@@ -212,7 +212,7 @@ Catmandu::Plugin::Versioning - Automatically adds versioning to Catmandu::Store 
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::Versioning plugin automatically adds a new 'version' bag to your Catmandu::Store
-containing previous versions of newly created records. The name of the version is created by appending 
+containing previous versions of newly created records. The name of the version is created by appending
 '_version' to your original bag name. E.g. when add the Versioning plugin to a 'test' bag then 'test_version'
 will contain the previous version of all your records.
 
@@ -225,8 +225,8 @@ predefined (e.g. create new Solr cores or database tables).
 
 =item version_compare_ignore
 
-By default every change to a record with trigger the creation of a new version. Use the version_compare_ignore option 
-to specify fields that should be ignored when testing for new updates. E.g. in the example below we configured the 
+By default every change to a record with trigger the creation of a new version. Use the version_compare_ignore option
+to specify fields that should be ignored when testing for new updates. E.g. in the example below we configured the
 MongoDB store to add versioning to the default 'data' bag. We want to ignore changes to the 'date_updated' field
 when creating new version records
 

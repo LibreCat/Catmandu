@@ -30,6 +30,7 @@ sub _build_index {
             $options = {%$options};
 
             if (my $plugins = delete $options->{plugins}) {
+                use Data::Dumper;
                 $pkg = $pkg->with_plugins($plugins);
             }
 
