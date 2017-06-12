@@ -39,7 +39,7 @@ note("Simple stores");
     ok -d "t/data3/000/001/234";
 
     note("...bag");
-    my $bag   = $store->bag('1234');
+    my $bag   = $store->bag->files('1234');
 
     ok $bag , 'got bag(1234)';
 

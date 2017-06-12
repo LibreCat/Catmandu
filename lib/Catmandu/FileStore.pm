@@ -116,7 +116,7 @@ Catmandu::FileStore - Namespace for packages that can make files persistent
     $store->bag->add({ _id => '1234' });
 
     # Get the container
-    my $container = $store->bag('1234');
+    my $container = $store->bag->files('1234');
 
     # Add a file to the container
     $container->upload(IO::File->new('<foobar.txt'), 'foobar.txt');

@@ -65,10 +65,10 @@ sub upload_file {
     my ($self,$store,$bag_name,$id_name,$filename) = @_;
 
     unless ($store->bag->exists($bag_name)) {
-         $store->bag->add({ _id => $bag_name });
+        $store->bag->add({ _id => $bag_name });
     }
 
-    my $bag = $store->bag($bag_name);
+    my $bag = $store->bag->files($bag_name);
 
     my $io;
 
@@ -92,7 +92,7 @@ sub download_file {
         carp "No such bag `$bag_name`";
     }
 
-    my $bag = $store->bag($bag_name);
+    my $bag = $store->bag->files($bag_name);
 
     my $file = $bag->get($id_name);
 

@@ -7,6 +7,7 @@ our $VERSION = '1.0507';
 use Catmandu::Util qw(:is);
 use Hash::Merge::Simple 'merge';
 use Moo::Role;
+use Package::Stash;
 use Carp;
 use namespace::clean;
 
@@ -29,6 +30,20 @@ has sidecar => (
 );
 
 has sidecar_bag => (is => 'ro' , default => sub { 'data' });
+
+sub BUILD {
+    my ($self) = @_;
+
+    my $sidecar = $self->sidecar->bag($self->sidecar_bag);
+
+    unless ($self->does('Catmandu::FileStore')) {
+        my $stash = Package::Stash->new(ref $self);
+        $stash->add_symbol('&files' => sub {
+            my ($self,$id) = @_;
+            return $sidecar->files($id);
+        });
+    }
+}
 
 around get => sub {
     my ( $orig, $self, @args ) = @_;
@@ -103,76 +118,6 @@ around commit => sub {
 
     $self->$orig(@args);
 };
-
-sub stream {
-    my ($self,$id,$io,$name) = @_;
-
-    croak "usage: upload(id,IO::File,name)" unless defined($id) && defined($io) && defined($name);
-
-    my @file_stores;
-
-    if ($self->does('Catmandu::FileStore')) {
-        push @file_stores , $self;
-    }
-
-    if ($self->sidecar->does('Catmandu::FileStore')) {
-        push @file_stores , $self->sidecar;
-    }
-
-    unless (@file_stores) {
-        Catmandu::Error->throw($self->sidecar . " isn't a Catmandu::FileStore");
-    }
-
-    my $store = pop @file_stores;
-
-    my $file = $store->bag($id)->get($name);
-
-    return undef unless $file;
-
-    $store->bag($id)->stream($io,$file);
-}
-
-sub upload {
-    my ($self,$id,$io,$name) = @_;
-
-    croak "usage: upload(id,IO::File,name)" unless defined($id) && defined($io) && defined($name);
-
-    my @file_stores;
-
-    if ($self->does('Catmandu::FileStore')) {
-        push @file_stores , $self;
-    }
-
-    if ($self->sidecar->does('Catmandu::FileStore')) {
-        push @file_stores , $self->sidecar;
-    }
-
-    unless (@file_stores) {
-        Catmandu::Error->throw($self->sidecar . " isn't a Catmandu::FileStore");
-    }
-
-    my $rewind;
-
-    for my $store (@file_stores) {
-        if ($rewind) {
-            # Rewind the stream after first use...
-            Catmandu::BadVal->throw("IO stream needs to seekable") unless $io->isa('IO::Seekable');
-            $io->seek(0,0);
-        }
-
-        my $index = $store->index;
-
-        $index->add({ _id => $id}) unless $index->exists($id);
-
-        my $container = $store->bag($id);
-
-        $container->upload($io,$name);
-
-        $rewind = 1;
-    }
-
-    1;
-}
 
 1;
 
@@ -253,7 +198,7 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
 
  $index->add({ _id => '1234' , colors => [qw(red green blue)] , name => 'test'});
 
- $store->bag('1234')->upload(IO::File->new('</tmp/test.txt'), 'test.txt');
+ $index->files('1234')->upload(IO::File->new('</tmp/test.txt'), 'test.txt');
 
 =head1 DESCRIPTION
 

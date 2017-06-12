@@ -125,16 +125,17 @@ note("Combined Hash + Simple sidecar");
     ok $store->bag->add({ _id => '1234' , name => 'patrick'}) , 'adding a record';
 
     note("...upload");
-    ok $store->bag->upload('1234', IO::File->new('t/data2/000/000/001/test.txt'), 'test1.txt');
+    ok $store->bag->files('1234')->upload(IO::File->new('t/data2/000/000/001/test.txt'), 'test1.txt');
 
     ok -f 't/data3/000/001/234/test1.txt' , 'test1.txt exists (2)';
 
-    note("...stream");
-    my $str = '';
-    my $io = IO::String->new($str);
-    ok $store->bag->stream('1234',$io,'test1.txt') , 'stream';
+    note("...get");
+    my $file = $store->bag->files('1234')->get("test1.txt");
 
-    utf8::decode($str);
+    ok $file;
+
+    note("...stream");
+    my $str = $store->bag->files('1234')->as_string_utf8($file);
 
     ok $str , 'can stream the data';
 
