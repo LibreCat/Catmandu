@@ -293,6 +293,8 @@ L<Catmandu::File::Store>
 
 Stream for record $id the contents of $name to the IO::File handle.
 
+=back
+
 =head1 SEE ALSO
 
 L<Catmandu::Store>, L<Catmandu::Bag>,
