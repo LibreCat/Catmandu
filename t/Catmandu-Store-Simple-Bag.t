@@ -16,7 +16,7 @@ BEGIN {
 
 require_ok $pkg;
 
-my $store = Catmandu::Store::Simple->new(root => 't/data');
+my $store = Catmandu::Store::Simple->new(root => 't/data', keysize => 9);
 my $index  = $store->bag;
 
 ok $store , 'got a store';

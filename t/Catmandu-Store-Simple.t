@@ -15,7 +15,7 @@ require_ok $pkg;
 
 dies_ok { $pkg->new } 'dies ok on not enough parameters';
 
-my $store = $pkg->new( root => 't/data2');
+my $store = $pkg->new( root => 't/data2' , keysize => 9);
 
 ok $store , 'got a store';
 

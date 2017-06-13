@@ -6,20 +6,21 @@ use Catmandu::Sane;
 use Moo;
 use Path::Tiny;
 use Carp;
+use POSIX qw(ceil);
 use namespace::clean;
 
 use Data::Dumper;
 
 with 'Catmandu::Bag', 'Catmandu::FileStore::Index' , 'Catmandu::Droppable';
 
-sub generate_id {
-    Catmandu::BadArg->throw('need an _id');
-}
-
 sub generator {
     my ($self) = @_;
 
-    my $root = $self->store->root;
+    my $root     = $self->store->root;
+    my $keysize  = $self->store->keysize;
+
+    my $mindepth = ceil($keysize / 3);
+    my $maxdepth = $mindepth + 1;
 
     unless (-d $root) {
         $self->log->error("no root $root found");
@@ -31,7 +32,7 @@ sub generator {
         state $io;
 
         unless (defined($io)) {
-            open($io, "find -L $root -mindepth 3 -maxdepth 4 -type d|");
+            open($io, "find -L $root -mindepth $mindepth -maxdepth $maxdepth -type d|");
         }
 
         my $line = <$io>;

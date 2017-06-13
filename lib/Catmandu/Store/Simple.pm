@@ -14,7 +14,9 @@ use namespace::clean;
 with 'Catmandu::FileStore', 'Catmandu::Droppable';
 
 has root     => (is => 'ro', required => '1');
-has keysize  => (is => 'ro', default => 9 , trigger => 1);
+
+# By default support UUID
+has keysize  => (is => 'ro', default => 36 , trigger => 1);
 
 sub _trigger_keysize {
     my $self = shift;
@@ -27,15 +29,25 @@ sub path_string {
 
     my $keysize = $self->keysize;
 
-    return undef unless $key =~ /^\d+$/;
+    # Allow all hexidecimal numbers
+    $key =~ s{[^A-F0-9-]}{}g;
 
-    return undef unless length($key) && length($key) <= $keysize;
+    # If the key is a UUID then the matches need to be exact
+    if (length($key) == 36) {
+        try {
+            Data::UUID->new->from_string($key);
+        }
+        catch {
+            return undef;
+        };
+    }
+    else {
+        return undef unless length($key) && length($key) <= $keysize;
+        $key =~ s/^0+//;
+        $key = sprintf "%-${keysize}.${keysize}d", $key;
+    }
 
-    $key =~ s/^0+//;
-
-    my $long_key = sprintf "%-${keysize}.${keysize}d", $key;
-
-    my $path = $self->root . "/" . join("/", unpack('(A3)*', $long_key));
+    my $path = $self->root . "/" . join("/", unpack('(A3)*', $key));
 
     $path;
 }

@@ -19,8 +19,8 @@ require_ok $pkg;
 note("Simple stores");
 {
     my $stores = [
-        Catmandu::Store::Simple->new( root => 't/data' ) ,
-        Catmandu::Store::Simple->new( root => 't/data3' ) ,
+        Catmandu::Store::Simple->new( root => 't/data' , keysize => 9) ,
+        Catmandu::Store::Simple->new( root => 't/data3' , keysize => 9 ) ,
     ];
 
     my $store = $pkg->new(stores => $stores);

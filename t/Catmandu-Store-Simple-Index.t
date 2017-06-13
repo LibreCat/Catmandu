@@ -14,7 +14,7 @@ BEGIN {
 
 require_ok $pkg;
 
-my $store = Catmandu::Store::Simple->new(root => 't/data2');
+my $store = Catmandu::Store::Simple->new(root => 't/data2', keysize => 9);
 my $index;
 
 note("index");
@@ -55,12 +55,11 @@ note("get");
     }
 }
 
-$store = Catmandu::Store::Simple->new(root => 't/data');
+$store = Catmandu::Store::Simple->new(root => 't/data' , keysize => 9);
 $index  = $store->bag();
 
 note("add");
 {
-    throws_ok { $index->add({ }) } 'Catmandu::BadArg' , 'add() fails';
     throws_ok { $index->add({ _id => 'abcd' }) } 'Catmandu::BadArg' , 'failed to add(abcd)';
     throws_ok { $index->add({ _id => '1234567890'}) } 'Catmandu::BadArg' , 'failed to add(1234567890)';
     throws_ok { $index->add({ _id => '00000000001234' }) } 'Catmandu::BadArg' , 'failed to add(00000000001234)';
