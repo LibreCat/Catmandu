@@ -65,26 +65,16 @@ Catmandu::Store::MultiFiles - A store that adds files to multiple stores
        package: Simple
        options:
           root: /data1/files_copy
-      metadata:
-       package: ElasticSearch
-       options:
-           client: '1_0::Direct'
-           index_name: catmandu
       multi:
        package: MultiFiles
        options:
-           metadata: metadata
-           metadata_bag: data
            stores:
                - files1
                - files2
     ...
 
-    # Add a YAML record to the multi store
-    $ catmandu import YAML to multi < data.yml
-
-    # Extract all the records from the multi store as YAML
-    $ catmandu export multi to YAML > data.yml
+    # List all the folder in the multi store as YAML
+    $ catmandu export multi to YAML
 
     # Add a file to the multi store with ID 7890 and stored name data.dat
     $ catmandu stream /tmp/data.dat to multi --bag 7890 --id data.dat
@@ -95,32 +85,47 @@ Catmandu::Store::MultiFiles - A store that adds files to multiple stores
     # In Perl
     use Catmandu;
 
-    my $store = Catmandu->store('Multi' , stores [
-        Catmandu->store('DBI', data_source => 'DBI:mysql:database=catmandu') ,
-        Catmandu->store('ElasticSearch', client => '1_0::Direct', index_name => 'catmandu') ,
+    my $store = Catmandu->store('MultiFiles' , stores [
+        Catmandu->store('Simple', root => '/data1/files') ,
+        Catmandu->store('Simple', root => '/data1/files_copy') ,
     ]);
 
     my $index = $store->index;
 
     $store->index->each(sub {
         my $item = shift;
-
         printf "%s\n" , $item->{_id};
     });
 
-    $store->index->add({ _id => 1234 , foo => 'bar' , test => [qw(1 2 3 4)]});
+    # Add a folder to the multi store
+    my $item = $store->add({ _id => '1234');
 
-    # The index has data about a colletion of file (like a folder)
-    my $item = $store->index->get('1234');
+    # Retrieve the folder bag
+    my $files = $store->files(1234);
 
-    # The bag container contains all the files associated with the folder
-    my $container = $store->bag('1234');
+    # Listing of all files
+    $files->each(sub {
+        my $file = shift;
 
-    $container->upload(IO::File->new("</tmp/data.dat"),"data.dat");
+        my $name         = $file->_id;
+        my $size         = $file->size;
+        my $content_type = $file->content_type;
+        my $created      = $file->created;
+        my $modified     = $file->modified;
 
-    $container->download(IO::File->new(">/tmp/data.dat"),"data.dat");
+        $file->stream(IO::File->new(">/tmp/$name"), file);
+    });
 
-    # This will delete the item and the associated files
+    # Add a new file
+    $files->upload(IO::File->new("</tmp/data.dat"),"data.dat");
+
+    # Retrieve a file
+    my $file = $files->get('data.dat');
+
+    # Stream the file to an IO::Handle
+    $container->stream(IO::File->new(">/tmp/data.dat"),$file);
+
+    # This will delete the folder and files
     $index->delete('1234');
 
 =head1 DESCRIPTION
@@ -142,22 +147,12 @@ all backend stores when possible.
 The C<store> configuration parameter contains an array of references to
 L<Catmandu::Store>-s based on their name in a configuration file or instances.
 
-=head2 metadata string
-
-=head2 metadata Catmandu::Store
-
-Optionally. A L<Catmandu::Store> can be linked to the MultiFiles store. For every
-item in the MultiFiles store a record will be updated in the metadata store with the
-same C<_id>.
-
-When records are updated in the MultiFiles store with structured data, then the metadata
-store is updated too. When records are deleted (or dropped) from the MultiFiles store
-they will also be deleted (or dropped) from the MultiFiles store.
-
 =head1 SEE ALSO
 
+L<Catmandu::Store::MultiFiles::Index> ,
+L<Catmandu::Store::MultiFiles::Bag> ,
 L<Catmandu::FileStore> ,
-L<Catmandu::Store::Multi> ,
+L<Catmandu::Plugin::SideCar>
 L<Catmandu::Store> ,
 L<Catmandu::Bag>
 

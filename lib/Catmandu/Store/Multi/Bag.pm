@@ -18,6 +18,6 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::MultiFiles::Bag - Bag implementation for the MultiFiles store
+Catmandu::Store::Multi::Bag - Bag implementation for the MultiFiles store
 
 =cut

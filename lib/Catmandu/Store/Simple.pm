@@ -77,30 +77,35 @@ Catmandu::Store::Simple - A Catmandu::FileStore to store files on disk
 
     my $store = Catmandu->store('Simple' , root => 't/data');
 
-    # List all containers
-    $store->bag->each(sub {
+    my $index = $store->index;
+
+    # List all folder
+    $index->bag->each(sub {
         my $container = shift;
 
         print "%s\n" , $container->{_id};
     });
 
-    # Add a new container
-    $store->bag->add({ _id => '1234' });
+    # Add a new folder
+    $index->add({ _id => '1234' });
 
-    # Get the container
-    my $container = $store->bag('1234');
+    # Get the folder
+    my $files = $index->files('1234');
 
-    # Add a file to the container
-    $container->upload(IO::File->new('<foobar.txt'), 'foobar.txt');
+    # Add a file to the folder
+    $files->upload(IO::File->new('<foobar.txt'), 'foobar.txt');
+
+    # Retrieve a file
+    my $file = $files->get('foobar.txt');
 
     # Stream the contents of a file
-    $container->stream(IO::File->new('>foobar.txt'), 'foobar.txt');
+    $files->stream(IO::File->new('>foobar.txt'), $file);
 
     # Delete a file
-    $container->delete('foobar.txt');
+    $files->delete('foobar.txt');
 
-    # Delete a container
-    $store->bag->delete('1234');
+    # Delete a folder
+    $index->delete('1234');
 
 =head1 DESCRIPTION
 
@@ -135,7 +140,8 @@ All the container keys of a L<Catmandu::Store::Simple> must be integers.
 
 =head1 SEE ALSO
 
-L<Catmandu::FileStore::Memory>,
-L<Catmandu::FileStore::Bag>
+L<Catmandu::Store::Simple::Index>,
+L<Catmandu::Store::Simple::Bag>,
+L<Catmandu::FileStore>
 
 =cut

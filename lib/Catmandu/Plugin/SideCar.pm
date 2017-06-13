@@ -198,14 +198,60 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
 
  $index->add({ _id => '1234' , colors => [qw(red green blue)] , name => 'test'});
 
- $index->files('1234')->upload(IO::File->new('</tmp/test.txt'), 'test.txt');
+ my $files = $index->files('1234');
+ $files->upload(IO::File->new('</tmp/test.txt'), 'test.txt');
 
+ my $file = $files->get('text.txt');
+
+ $files->steam(IO::File->new('>/tmp/test.txt'),$file);
+ 
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::SideCar can be used to combine L<Catmandu::Store>-s , L<Catmandu::FileStore>-s
 (and L<Catmandu::Store::Multi> , L<Catmandu::Store::MultiFiles> as one access point.
 Every get,add,delete,drop and commit action in the store will be first executed in the original
 store and re-executed in the SideCar store.
+
+=head1 COMBINING A FILESTORE WITH A STORE
+
+To add metadata to a L<Catmandu::FileStore> a SideCar needs to be added to the C<index>
+bag of the FileStore:
+
+    package: Simple
+    options:
+        root: /data/test123
+        bags:
+            index:
+                plugins:
+                    - SideCar
+                sidecar:
+                        package: ElasticSearch
+                        options:
+                            client: '1_0::Direct'
+                            index_name: catmandu
+
+=head1 COMBINING A STORE WITH A FILESTORE
+
+To add files to a L<Catmandu::Store> a SideCar needs to be added to the bag containing
+the metadata (by default C<data>):
+
+    package: ElasticSearch
+    options:
+        client: '1_0::Direct'
+        index_name: catmandu
+        bags:
+            data:
+                plugins:
+                    - SideCar
+                sidecar:
+                        package: Simple
+                        options:
+                            root: /data/test123
+
+=head1 RESTRICTIONS
+
+Some L<Catmandu::FileStore>-s may set restrictions on the C<_id>-s that can be
+used in records.
 
 =head1 CONFIGURATION
 
@@ -222,21 +268,6 @@ The pointer to a configured Catmandu::Store or Catmandu::FileStore.
 =item sidecar_bag
 
 The SideCar L<Catmandu::Bag> into which to store the data (default 'bag').
-
-=back
-
-=head1 METHODS
-
-=over
-
-=item upload($id, IO::File, $name)
-
-Upload an IO::File for record $id with filename $name in case the original store or the SideCar is a
-L<Catmandu::File::Store>
-
-=item stream($id, IO::File, $name)
-
-Stream for record $id the contents of $name to the IO::File handle.
 
 =back
 
