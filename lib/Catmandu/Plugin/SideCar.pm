@@ -204,7 +204,7 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
  my $file = $files->get('text.txt');
 
  $files->steam(IO::File->new('>/tmp/test.txt'),$file);
- 
+
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::SideCar can be used to combine L<Catmandu::Store>-s , L<Catmandu::FileStore>-s
@@ -247,6 +247,10 @@ the metadata (by default C<data>):
                         package: Simple
                         options:
                             root: /data/test123
+                            uuid: 1
+
+Notice that we added for the L<Catmandu::Store::Simple> the requires C<uuid> options
+because the L<Catmandu::Store::ElasticSearch> is using UUIDs as default identifiers
 
 =head1 RESTRICTIONS
 

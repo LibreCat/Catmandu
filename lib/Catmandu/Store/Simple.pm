@@ -14,14 +14,19 @@ use namespace::clean;
 with 'Catmandu::FileStore', 'Catmandu::Droppable';
 
 has root     => (is => 'ro', required => '1');
-
-# By default support UUID
-has keysize  => (is => 'ro', default => 36 , trigger => 1);
+has uuid     => (is => 'ro', trigger => 1);
+has keysize  => (is => 'ro', default => 9 , trigger => 1);
 
 sub _trigger_keysize {
     my $self = shift;
 
     croak "keysize needs to be a multiple of 3" unless $self->keysize % 3 == 0;
+}
+
+sub _trigger_uuid {
+    my $self = shift;
+
+    $self->{keysize} == 36;
 }
 
 sub path_string {
@@ -33,7 +38,7 @@ sub path_string {
     $key =~ s{[^A-F0-9-]}{}g;
 
     # If the key is a UUID then the matches need to be exact
-    if (length($key) == 36) {
+    if ($self->uuid) {
         try {
             Data::UUID->new->from_string($key);
         }
@@ -147,6 +152,10 @@ The root directory where to store all the files. Required.
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
 All the container keys of a L<Catmandu::Store::Simple> must be integers.
+
+=item uuid
+
+If the to a true value, then the Simple store will require UUID-s as keys
 
 =back
 
