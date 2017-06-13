@@ -242,6 +242,13 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 <span class="kw">sudo</span> apt install <span class="st">&#39;libcatmandu-*&#39;</span>
 <span class="kw">sudo</span> dpkg -i libcatmandu-twitter-perl_*.deb
 <span class="kw">sudo</span> dpkg -i ~/.cpan/build/libcatmandu-*-perl_*.deb</code></pre>
+<section id="catmanduoai" class="level4 unnumbered">
+<h4>Catmandu::OAI</h4>
+<p>Alternatively, if you want to install as many packages as possible from the Debian repositories but also to have an additional package like <code>Catmandu::OAI</code>, you need to install packages and build just that module (with any dependency which would conflict if installed from the repositories):</p>
+<pre><code>sudo apt-get install build-essential libcatmandu*-perl libexpat1-dev libssl-dev libxml2-dev libxslt1-dev libgdbm-dev libmodule-install-perl dh-make-perl liblocal-lib-perl apt-file libtest-fatal-perl libmodule-build-tiny-perl libmoo-perl libmodule-pluggable-perl libcapture-tiny-perl libclass-load-perl libgetopt-long-descriptive-perl libio-tiecombine-perl libstring-rewriteprefix-perl libio-handle-util-perl libtest-simple-perl libtest-needsdisplay-perl libtest-lwp-useragent-perl cpanminus
+sudo cpanm Catmandu::OAI</code></pre>
+<p>(Tested in Debian 8 / Jessie. Compared to the advice above, we add <code>libtest-simple-perl libtest-needsdisplay-perl libtest-lwp-useragent-perl</code> and avoid <code>libhttp-oai-perl</code> which produces <code>Installed version (3.27) of HTTP::OAI is not in range '4.03'</code>.)</p>
+</section>
 </section>
 <section id="ubuntu-server-12.04.4-lts" class="level3">
 <h3><span class="header-section-number">2.0.2</span> Ubuntu Server 12.04.4 LTS</h3>
@@ -280,7 +287,7 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">yum</span> group install <span class="st">&quot;Development Tools&quot;</span>
 <span class="kw">yum</span> install perl-devel perl-YAML perl-CPAN perl-App-cpanminus -y
 <span class="kw">yum</span> install openssl-devel tcp_wrappers-devel expat expat-devel libxml2 libxml2-devel libxslt libxslt-devel -y
-<span class="kw">cpanm</span> Test::More Catmandu Catmandu::MARC</code></pre>
+<span class="kw">cpanm</span> autodie Catmandu Catmandu::MARC</code></pre>
 </section>
 <section id="opensuse" class="level3">
 <h3><span class="header-section-number">2.0.5</span> openSUSE</h3>
@@ -296,6 +303,7 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 </section>
 <section id="osx" class="level3">
 <h3><span class="header-section-number">2.0.7</span> OSX</h3>
+<p>Install XCode from the app store first and homebrew from https://brew.sh</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">brew</span> install libxml++ libxml2 xml2 libxslt
 <span class="co"># Install plenv from https://github.com/tokuhirom/plenv</span>
 <span class="kw">git</span> clone https://github.com/tokuhirom/plenv.git ~/.plenv
@@ -306,8 +314,9 @@ $ <span class="kw">sudo</span> cpanm  Catmandu::XLS</code></pre>
 <span class="co"># Install a modern Perl</span>
 <span class="kw">plenv</span> install 5.22.0
 <span class="kw">plenv</span> rehash
+<span class="kw">plenv</span> install-cpanm
+<span class="kw">plenv</span> global 5.22.0
 
-<span class="kw">brew</span> install cpanm
 <span class="co"># Install catmandu</span>
 <span class="kw">cpanm</span> Catmandu Catmandu::MARC
 <span class="kw">plenv</span> rehash</code></pre>
@@ -661,7 +670,7 @@ year
 <pre><code>upcase(my.colors.*)</code></pre>
 <p>When list are nested inside lists, then wildcards can also be nested:</p>
 <pre><code>my.*.colors.*</code></pre>
-<p>The above above can be used when the <em>my</em> field contains a list which contains a <em>color</em> field which contains again a list of data. E.g.</p>
+<p>The above trick can be used when the <em>my</em> field contains a list which contains a <em>color</em> field which contains again a list of data. E.g.</p>
 <pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
 <span class="fu">my:</span>
  <span class="kw">-</span> <span class="fu">colors:</span>
@@ -738,21 +747,17 @@ replace_all(authors.*,&quot;a&quot;,&quot;AB&quot;)</code></pre>
 <p>The command above will return all the MARC items in the input file.</p>
 <p>Selectors are of little use when used in isolation. Most of the time they are combined with <a href="#conditionals">Conditionals</a>. To select only the MARC records that have “Tsjechov” in the 100a field one can write:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">catmandu</span> MARC to YAML --fix <span class="st">&quot;select marc_match(100a,&#39;.*Tsjechov.*&#39;) &quot;</span> <span class="kw">&lt;</span> data.mrc</code></pre>
-<p>There are two alternative ways to combine selector with a conditional. In the <em>guard</em> syntax, the conditional is written <em>after</em> after the selector:</p>
+<p>There are two alternative ways to combine selector with a conditional. Using the <em>guard</em> syntax, the conditional is written <em>after</em> the selector:</p>
 <pre><code>reject exits(error.field)
 reject all_match(publisher,&#39;xyz&#39;)
 select any_match(years,2005)</code></pre>
-<p>In the <em>if/then/else</em> syntax the conditional is written explicitly:</p>
+<p>Using the <em>if/then/else</em> syntax the conditional is written explicitly:</p>
 <pre><code>if exists(error.field)
    reject()
 end
 
 if all_match(publisher,&#39;xyz&#39;)
    reject()
-end
-
-if any_match(years,2005)
-   select()
 end</code></pre>
 </section>
 <section id="conditionals" class="level2">
@@ -761,7 +766,7 @@ end</code></pre>
 <pre><code>if exists(error)
   reject()
 end</code></pre>
-<p>A condition contains an <em>if</em> or <em>unless</em> statement a <strong>Conditional</strong> (Fix functions which can be true or false), a <em>body</em> of zero or more Fix functions and an optional <em>else</em> clause:</p>
+<p>A condition contains an <em>if</em> or <em>unless</em> statement a <strong>Conditional</strong> (Fix functions which can be true or false), a <em>body</em> of zero or more Fix functions and an optional <em>elsif</em> or <em>else</em> clause:</p>
 <pre><code>if exists(error)
    # Write here all the Fix functions when the field &#39;error&#39; exists
 end</code></pre>
@@ -770,9 +775,14 @@ end</code></pre>
 end</code></pre>
 <pre><code>if exists(error)
    # If error exists then do this
+elsif exists(warning)
+   # If warning exists then do this
 else
    # otherwise do this
 end</code></pre>
+<p>Catmandu also supports a limited number of boolean operators:</p>
+<pre><code>exist(foo)  and add_field(ok,1)     # only execute add_field() when &#39;foo&#39; exists
+exists(foo) or  add_field(error,1)  # only execute add_field() when &#39;foo&#39; doesn&#39;t exist</code></pre>
 <p>Below follows some basic fix functions that are implemented in Catmandu. Check the manual pages of the individual Catmandu extensions for more elaborate Conditionals.</p>
 <section id="all_equalpathvalue" class="level4 unnumbered">
 <h4>all_equal(<em>path</em>,<em>value</em>)</h4>
@@ -1026,6 +1036,8 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 <span class="kw">move_field</span>(<span class="st">&quot;my.name&quot;</span>,<span class="st">&quot;your.name&quot;</span>)
 <span class="kw">copy_field</span>(<span class="st">&quot;your.name&quot;</span>,<span class="st">&quot;your.name2&quot;</span>)
 <span class="kw">remove_field</span>(<span class="st">&quot;your.name&quot;</span>)
+<span class="co"># Replace in all the field names in &#39;foo&#39; all dots into underscores</span>
+<span class="kw">rename</span>(foo,<span class="st">&quot;\.&quot;</span>,<span class="st">&quot;_&quot;</span>)
 
 <span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>)                           <span class="co"># Create an empty array foo =&gt; []</span>
 <span class="kw">set_array</span>(<span class="st">&quot;foo&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;b&quot;</span>,<span class="st">&quot;c&quot;</span>)               <span class="co"># Create an array with three values foo =&gt; [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]</span>
@@ -1111,6 +1123,9 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
                                            <span class="co"># replace it with the data found</span>
 <span class="kw">lookup_in_store</span>(<span class="st">&#39;title&#39;</span>, <span class="st">&#39;MongoDB&#39;</span>, default:<span class="st">&#39;default value&#39;</span> , delete:1) 
 
+<span class="co"># Query a Solr index with the query stored in the &#39;query&#39; field and overwrite it with all the results</span>
+<span class="kw">search_in_store</span>(<span class="st">&#39;query&#39;</span>,<span class="st">&#39;Solr&#39;</span>,url:<span class="st">&quot;http://localhost:8983/solr&quot;</span>,limit:10)
+
 <span class="co"># Replace the data in foo.bar with an external file or url</span>
 <span class="kw">import</span>(foo.bar, JSON, file: <span class="st">&quot;http://foo.com/bar.json&quot;</span>, data_path: data.*)
 
@@ -1163,7 +1178,23 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 <span class="kw">to_json</span>(<span class="st">&#39;my.field&#39;</span>)                        <span class="co"># convert a value of a field to json</span>
 <span class="kw">from_json</span>(<span class="st">&#39;my.field&#39;</span>)                      <span class="co"># replace the json field with the parsed value</span>
 
+<span class="kw">export_to_string</span>(<span class="st">&#39;my.field&#39;</span>,CSV,sep_char:<span class="st">&quot;;&quot;</span>)   <span class="co"># convert the value of a field into CSV</span>
+<span class="kw">import_from_string</span>(<span class="st">&#39;my.field&#39;</span>,CSV,sep_char:<span class="st">&quot;;&quot;</span>) <span class="co"># replace a CSV field with the parsed value</span>
+
+<span class="kw">error</span>(<span class="st">&quot;eek!&quot;</span>)                              <span class="co"># abort the processing and say &quot;eek!&quot;</span>
 <span class="fu">nothing()</span>                                  <span class="co"># do nothing (used in benchmarking)</span>
+
+<span class="co"># Include fixes from another file</span>
+<span class="kw">include</span>(<span class="st">&#39;/path/to/myfixes.txt&#39;</span>)
+
+<span class="co"># Send debug messages to a logger</span>
+<span class="kw">log</span>(<span class="st">&#39;test123&#39;</span>)
+<span class="kw">log</span>(<span class="st">&#39;hello world&#39;</span> , level: <span class="st">&#39;DEBUG&#39;</span>)
+
+<span class="co"># Boolean AND and OR, need a Condition + &#39;and&#39;/&#39;or&#39; + a Fix </span>
+<span class="kw">exists</span>(foo) <span class="kw">and</span> log(<span class="st">&#39;foo exists&#39;</span> , level: INFO)
+<span class="kw">exists</span>(foo) <span class="kw">or</span> log(<span class="st">&#39;foo doesnt exist&#39;</span> , level: INFO)
+<span class="kw">valid</span>(<span class="st">&#39;&#39;</span>, JSONSchema, schema: <span class="st">&quot;my/schema.json&quot;</span>) <span class="kw">or</span> log(<span class="st">&#39;this record is wrong&#39;</span>, level: ERROR)
 
 <span class="co"># &#39;3%A9&#39; =&gt; &#39;café&#39;</span>
 <span class="kw">uri_decode</span>(place)
@@ -1210,13 +1241,6 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
 <span class="co"># Map all 650 subjects into an array </span>
 <span class="kw">marc_map</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;subject&#39;</span>, join:<span class="st">&#39;###&#39;</span>) 
 <span class="kw">split_field</span>(<span class="st">&#39;subject&#39;</span>,<span class="st">&#39;###&#39;</span>)
-
-<span class="co"># Include fixes from another file</span>
-<span class="kw">include</span>(<span class="st">&#39;/path/to/myfixes.txt&#39;</span>)
-
-<span class="co"># Send debug messages to a logger</span>
-<span class="kw">log</span>(<span class="st">&#39;test123&#39;</span>)
-<span class="kw">log</span>(<span class="st">&#39;hello world&#39;</span> , level =<span class="kw">&gt;</span> <span class="st">&#39;DEBUG&#39;</span>)
 
 <span class="co"># uppercase the value of field &#39;foo&#39; if all members of &#39;oogly&#39; have the value &#39;doogly&#39;</span>
 <span class="kw">if</span> <span class="kw">all_match</span>(<span class="st">&#39;oogly.*&#39;</span>, <span class="st">&#39;doogly&#39;</span>)
@@ -1310,12 +1334,17 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
   <span class="kw">set_field</span>(data,<span class="st">&quot;I&#39;m empty!&quot;</span>)
 <span class="kw">end</span>
 
-<span class="co"># Evaludates true when a marc (sub)field matches a regular expression</span>
+<span class="co"># Evaluates true when a marc (sub)field matches a regular expression</span>
 <span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;My funny title&#39;</span>)
   <span class="kw">add_field</span>(<span class="st">&#39;funny.title&#39;</span>,<span class="st">&#39;yes&#39;</span>)
 <span class="kw">end</span>
 <span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
   <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
+<span class="kw">end</span>
+
+<span class="co"># Evaluates true when the JSON fragment is valid against a JSON Schema</span>
+<span class="kw">if</span> <span class="kw">valid</span>(data,JSONSchema,schema:myschema.json)
+   <span class="kw">...</span>
 <span class="kw">end</span>
 
 <span class="co">## Binds (needs Catmandu 0.92 or better)</span>
@@ -2252,7 +2281,7 @@ git push origin dev</code></pre></li>
 </section>
 <section id="related-projects" class="level1">
 <h1><span class="header-section-number">9</span> Related Projects <a href="https://github.com/LibreCat/Catmandu/wiki/Related%20Projects">✎</a></h1>
-<p>Here we provide a list of related projects that also provide library data processing tools.</p>
+<p>Here we provide a list of related projects that also provide ETL/data processing tools.</p>
 <section id="selected-formats" class="level2">
 <h2><span class="header-section-number">9.1</span> selected formats</h2>
 <ul>
@@ -2282,6 +2311,8 @@ git push origin dev</code></pre></li>
 <ul>
 <li><a href="http://akara.info/">Akara</a> - Akara is a platform for developing data services available on the Web, using REST architecture. Akara is open source software written in Python and C</li>
 <li><a href="https://github.com/benbernard/RecordStream">App::RecordStream</a> - App::RecordStream - recs - A system for command-line analysis of data.</li>
+<li><a href="https://attx-project.github.io/ETL-Artifacts.html">ATTX</a> - Putting Linked Data to Work (University of Helsinki)</li>
+<li><a href="https://haskell-lang.org/library/conduit">Conduit</a> - Haskell framework for dealing with streaming data</li>
 <li><a href="http://www.comsode.eu/">COMSODE</a> - The project COMSODE is an SME-driven RTD project aimed at progressing the capabilities in the field of Open Data re-use.</li>
 <li><a href="http://www.d-net.research-infrastructures.eu/node/43">DNet</a></li>
 <li><a href="http://dmp.slub-dresden.de/en/datenmanagement/">d:swarm</a> - data management platform for enrichment, normalization and linkage of knowledge data structures.</li>
@@ -2307,6 +2338,7 @@ git push origin dev</code></pre></li>
 <li><a href="https://www.assembla.com/wiki/show/silk/Silk_Single_Machine">Silk</a> - The Silk framework provides a declarative language for specifying which types of RDF links should be discovered between data sources as well as which conditions data items must fulfil in order to be interlinked.</li>
 <li><a href="http://spark.apache.org/docs/latest/streaming-programming-guide.html">Spark Streaming</a> - Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams.</li>
 <li><a href="http://storm.apache.org/">Storm</a> - Apache Storm is a distributed stream processing framework.</li>
+<li><a href="https://www.freerobotcollective.com/">Strukt</a> - The most interactive way to work with all kinds of tabular data</li>
 <li><a href="http://digitalnz.github.io/supplejack/about.html">Supplejack</a> - Supplejack was designed to provide assurance to the quality of data management activities when working at scale.</li>
 <li><a href="https://github.com/polettix/teepee">TeePee</a> - Command line tool to extract data from structures</li>
 </ul>
