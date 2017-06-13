@@ -36,6 +36,7 @@ sub BUILD {
 
     my $sidecar = $self->sidecar->bag($self->sidecar_bag);
 
+    # Insert a Catmandu::FileStore 'files' method into Catmandu::Store-s
     unless ($self->does('Catmandu::FileStore')) {
         my $stash = Package::Stash->new(ref $self);
         $stash->add_symbol('&files' => sub {
@@ -48,75 +49,76 @@ sub BUILD {
 around get => sub {
     my ( $orig, $self, @args ) = @_;
 
-    my $result = {};
+    my $orig_item = $self->$orig(@args);
+
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
-    my $metadata_item = $bag ? $bag->get(@args) : {};
+    my $sidecar_item = $bag ? $bag->get(@args) : {};
 
-    my $file_item = $self->$orig(@args);
+    return unless $sidecar_item || $orig_item;
 
-    return unless $metadata_item || $file_item;
-
-    merge $metadata_item , $file_item // +{};
+    merge $sidecar_item , $orig_item // +{};
 };
 
 around add => sub {
     my ( $orig, $self, @args ) = @_;
 
-    my $result = {};
+    my $orig_item = $self->$orig(@args);
+
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
-    my $metadata_item = $bag ? $bag->add(@args) : {};
+    my $sidecar_item = $bag ? $bag->add(@args) : {};
 
-    my $file_item = $self->$orig(@args);
+    return unless $sidecar_item || $orig_item;
 
-    return unless $metadata_item || $file_item;
-
-    merge $metadata_item , $file_item // +{};
+    merge $sidecar_item , $orig_item // +{};
 };
 
 around delete => sub {
     my ( $orig, $self, @args ) = @_;
 
-    my $result = {};
+    $self->$orig(@args);
+
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
-    my $metadata_item = $bag ? $bag->delete(@args) : {};
 
-    $self->$orig(@args);
+    $bag->delete(@args) if $bag;
 };
 
 around delete_all => sub {
     my ( $orig, $self, @args ) = @_;
 
+    $self->$orig(@args);
+
     my $result = {};
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
-    my $metadata_item = $bag ? $bag->delete_all(@args) : {};
 
-    $self->$orig(@args);
+    $bag->delete_all(@args) if $bag;
 };
 
 around drop => sub {
     my ( $orig, $self, @args ) = @_;
 
+    $self->$orig(@args);
+
     my $result = {};
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
-    my $metadata_item = $bag ? $bag->drop(@args) : {};
 
-    $self->$orig(@args);
+    $bag->drop(@args) if $bag;
 };
 
 around commit => sub {
     my ( $orig, $self, @args ) = @_;
 
+    $self->$orig(@args);
+
     my $result = {};
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
-    my $metadata_item = $bag ? $bag->commit(@args) : {};
 
-    $self->$orig(@args);
+    $bag->commit(@args) if $bag;
 };
 
 1;
