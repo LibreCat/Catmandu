@@ -250,7 +250,7 @@ the metadata (by default C<data>):
                             uuid: 1
 
 Notice that we added for the L<Catmandu::Store::Simple> the requires C<uuid> options
-because the L<Catmandu::Store::ElasticSearch> is using UUIDs as default identifiers
+because the L<Catmandu::Store::ElasticSearch> is using UUIDs as default identifiers.
 
 =head1 RESTRICTIONS
 
