@@ -9,6 +9,7 @@ use Catmandu;
 use Catmandu::Util;
 use Catmandu::Store::Simple::Index;
 use Catmandu::Store::Simple::Bag;
+use Data::UUID;
 use namespace::clean;
 
 with 'Catmandu::FileStore', 'Catmandu::Droppable';
