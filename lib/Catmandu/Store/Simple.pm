@@ -27,7 +27,7 @@ sub _trigger_keysize {
 sub _trigger_uuid {
     my $self = shift;
 
-    $self->{keysize} == 36;
+    $self->{keysize} = 36;
 }
 
 sub path_string {
