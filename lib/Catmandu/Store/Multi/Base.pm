@@ -9,8 +9,6 @@ use Moo::Role;
 use Hash::Merge::Simple 'merge';
 use namespace::clean;
 
-with 'Catmandu::Bag';
-
 sub generator {
     my ($self) = @_;
 
@@ -19,7 +17,7 @@ sub generator {
     my $gen;
     for my $store (@{$self->store->stores}) {
         my $bag = $store->bag($self->name);
-        $gen = $bag ? $bag->generator : undef ;
+        $gen = $bag ? $bag->generator : undef;
         last if defined($gen);
     }
 
@@ -42,7 +40,7 @@ sub get {
     my $result = {};
 
     for my $store (@{$self->store->stores}) {
-        my $bag  = $store->bag($self->name);
+        my $bag = $store->bag($self->name);
         my $item = $bag ? $bag->get($id) : undef;
         if ($item) {
             $found = 1;
@@ -58,7 +56,7 @@ sub add {
 
     # By default try to add the data to all the stores
     for my $store (@{$self->store->stores}) {
-        my $bag  = $store->bag($self->name);
+        my $bag = $store->bag($self->name);
         $bag->add($data) if $bag;
     }
 }
@@ -69,7 +67,7 @@ sub delete {
     # By default try to delete the data from all the stores
 
     for my $store (@{$self->store->stores}) {
-        my $bag  = $store->bag($self->name);
+        my $bag = $store->bag($self->name);
         $bag->delete($id) if $bag;
     }
 }
@@ -80,7 +78,7 @@ sub delete_all {
     # By default try to drop the data from all the stores
 
     for my $store (@{$self->store->stores}) {
-        my $bag  = $store->bag($self->name);
+        my $bag = $store->bag($self->name);
         $bag->delete_all if $bag;
     }
 }
@@ -91,7 +89,7 @@ sub drop {
     # By default try to delete the data from all the stores
 
     for my $store (@{$self->store->stores}) {
-        my $bag  = $store->bag($self->name);
+        my $bag = $store->bag($self->name);
         $bag->drop if $bag && $bag->does('Catmandu::Droppable');
     }
 }
@@ -102,7 +100,7 @@ sub commit {
     # By default try to commit the data to all the stores
 
     for my $store (@{$self->store->stores}) {
-        my $bag  = $store->bag($self->name);
+        my $bag = $store->bag($self->name);
         $bag->commit if $bag;
     }
 }

@@ -10,7 +10,7 @@ use Catmandu::Util;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
+with 'Catmandu::Fix::Bind', 'Catmandu::Fix::Bind::Group';
 
 has path => (fix_opt => 1);
 has var  => (fix_opt => 1);
@@ -37,6 +37,7 @@ sub bind {
     my $var  = $self->var;
 
     if (Catmandu::Util::is_hash_ref($mvar)) {
+
         # Ignore all specialized processing when not an array
         $mvar = $code->($mvar);
         return $mvar;
@@ -44,7 +45,7 @@ sub bind {
     elsif (Catmandu::Util::is_array_ref($mvar)) {
         for my $item (@$mvar) {
             if (defined $var) {
-                $root->{$var} = $item ;
+                $root->{$var} = $item;
                 $root = $code->($root);
                 delete $root->{$var};
             }

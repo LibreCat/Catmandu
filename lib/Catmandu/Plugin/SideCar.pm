@@ -12,8 +12,8 @@ use Carp;
 use namespace::clean;
 
 has sidecar => (
-    is      => 'ro',
-    coerce  => sub {
+    is     => 'ro',
+    coerce => sub {
         my $store = $_[0];
         if (is_string($store)) {
             Catmandu->store($store);
@@ -21,7 +21,7 @@ has sidecar => (
         elsif (is_hash_ref($store)) {
             my $package = $store->{package};
             my $options = $store->{options} // +{};
-            Catmandu->store($package,%$options);
+            Catmandu->store($package, %$options);
         }
         else {
             $store;
@@ -29,7 +29,7 @@ has sidecar => (
     }
 );
 
-has sidecar_bag => (is => 'ro' , default => sub { 'data' });
+has sidecar_bag => (is => 'ro', default => sub {'data'});
 
 sub BUILD {
     my ($self) = @_;
@@ -39,20 +39,22 @@ sub BUILD {
     # Insert a Catmandu::FileStore 'files' method into Catmandu::Store-s
     unless ($self->does('Catmandu::FileStore')) {
         my $stash = Package::Stash->new(ref $self);
-        $stash->add_symbol('&files' => sub {
-            my ($self,$id) = @_;
-            return $sidecar->files($id);
-        });
+        $stash->add_symbol(
+            '&files' => sub {
+                my ($self, $id) = @_;
+                return $sidecar->files($id);
+            }
+        );
     }
 }
 
 around get => sub {
-    my ( $orig, $self, @args ) = @_;
+    my ($orig, $self, @args) = @_;
 
     my $orig_item = $self->$orig(@args);
 
-    my $bag_name = $self->sidecar_bag;
-    my $bag      = $self->sidecar->bag($bag_name);
+    my $bag_name     = $self->sidecar_bag;
+    my $bag          = $self->sidecar->bag($bag_name);
     my $sidecar_item = $bag ? $bag->get(@args) : {};
 
     return unless $sidecar_item || $orig_item;
@@ -61,12 +63,12 @@ around get => sub {
 };
 
 around add => sub {
-    my ( $orig, $self, @args ) = @_;
+    my ($orig, $self, @args) = @_;
 
     my $orig_item = $self->$orig(@args);
 
-    my $bag_name = $self->sidecar_bag;
-    my $bag      = $self->sidecar->bag($bag_name);
+    my $bag_name     = $self->sidecar_bag;
+    my $bag          = $self->sidecar->bag($bag_name);
     my $sidecar_item = $bag ? $bag->add(@args) : {};
 
     return unless $sidecar_item || $orig_item;
@@ -75,7 +77,7 @@ around add => sub {
 };
 
 around delete => sub {
-    my ( $orig, $self, @args ) = @_;
+    my ($orig, $self, @args) = @_;
 
     $self->$orig(@args);
 
@@ -86,11 +88,11 @@ around delete => sub {
 };
 
 around delete_all => sub {
-    my ( $orig, $self, @args ) = @_;
+    my ($orig, $self, @args) = @_;
 
     $self->$orig(@args);
 
-    my $result = {};
+    my $result   = {};
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
 
@@ -98,11 +100,11 @@ around delete_all => sub {
 };
 
 around drop => sub {
-    my ( $orig, $self, @args ) = @_;
+    my ($orig, $self, @args) = @_;
 
     $self->$orig(@args);
 
-    my $result = {};
+    my $result   = {};
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
 
@@ -110,11 +112,11 @@ around drop => sub {
 };
 
 around commit => sub {
-    my ( $orig, $self, @args ) = @_;
+    my ($orig, $self, @args) = @_;
 
     $self->$orig(@args);
 
-    my $result = {};
+    my $result   = {};
     my $bag_name = $self->sidecar_bag;
     my $bag      = $self->sidecar->bag($bag_name);
 
@@ -210,7 +212,7 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::SideCar can be used to combine L<Catmandu::Store>-s , L<Catmandu::FileStore>-s
-(and L<Catmandu::Store::Multi> , L<Catmandu::Store::MultiFiles> as one access point.
+(and L<Catmandu::Store::Multi> , L<Catmandu::Store::File::Multi> as one access point.
 Every get,add,delete,drop and commit action in the store will be first executed in the original
 store and re-executed in the SideCar store.
 
@@ -251,7 +253,7 @@ the metadata (by default C<data>):
                             root: /data/test123
                             uuid: 1
 
-Notice that we added for the L<Catmandu::Store::Simple> the requires C<uuid> options
+Notice that we added for the L<Catmandu::Store::File::Simple> the requires C<uuid> options
 because the L<Catmandu::Store::ElasticSearch> is using UUIDs as default identifiers.
 
 =head1 RESTRICTIONS

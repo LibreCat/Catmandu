@@ -1,4 +1,4 @@
-package Catmandu::Store::Simple::Bag;
+package Catmandu::Store::File::Simple::Bag;
 
 our $VERSION = '1.0507';
 
@@ -9,24 +9,18 @@ use IO::File;
 use Path::Tiny;
 use File::Spec;
 use File::Copy;
-use Catmandu::Util;
+use Catmandu::Util qw(content_type);
 use URI::Escape;
-use Catmandu::FileStore::MimeType;
 use namespace::clean;
 use utf8;
 
-with 'Catmandu::Bag', 'Catmandu::FileStore::Bag' , 'Catmandu::Droppable';
+with 'Catmandu::FileBag', 'Catmandu::Droppable';
 
-has _path     => (is => 'lazy');
-has _mimeType => (is => 'lazy');
+has _path => (is => 'lazy');
 
 sub _build__path {
     my $self = shift;
     $self->store->path_string($self->name);
-}
-
-sub _build__mimeType {
-    Catmandu::FileStore::MimeType->new;
 }
 
 sub generator {
@@ -34,13 +28,13 @@ sub generator {
     my $path = $self->_path;
 
     sub {
-        state $children = [ path($path)->children ];
+        state $children = [path($path)->children];
 
         my $child = shift @$children;
 
         return undef unless $child;
 
-        my ($volume,$directories,$file) = File::Spec->splitpath($child);
+        my ($volume, $directories, $file) = File::Spec->splitpath($child);
 
         next if index($file, ".") == 0;
 
@@ -56,7 +50,7 @@ sub exists {
 
     my $packed_key = $self->pack_key($id);
 
-    my $file = File::Spec->catfile($path,$packed_key);
+    my $file = File::Spec->catfile($path, $packed_key);
 
     -f $file;
 }
@@ -67,7 +61,7 @@ sub get {
 
     my $packed_key = $self->pack_key($id);
 
-    my $file = File::Spec->catfile($path,$packed_key);
+    my $file = File::Spec->catfile($path, $packed_key);
 
     return undef unless -f $file;
 
@@ -79,7 +73,7 @@ sub get {
     my $modified = $stat->[9];
     my $created  = $stat->[10];    # no real creation time exists on Unix
 
-    my $content_type = $self->_mimeType->content_type($id);
+    my $content_type = content_type($id);
 
     return {
         _id          => $id,
@@ -89,10 +83,11 @@ sub get {
         created      => $created,
         modified     => $modified,
         _stream      => sub {
-            my $out = $_[0];
+            my $out   = $_[0];
             my $bytes = 0;
 
-            Catmandu::Error->throw("no io defined or not writable") unless defined($out);
+            Catmandu::Error->throw("no io defined or not writable")
+                unless defined($out);
 
             while (!$data->eof) {
                 my $buffer;
@@ -119,7 +114,7 @@ sub add {
 
     my $packed_key = $self->pack_key($id);
 
-    my $file = File::Spec->catfile($path,$packed_key);
+    my $file = File::Spec->catfile($path, $packed_key);
 
     if (Catmandu::Util::is_invocant($io)) {
         return copy($io, $file);
@@ -137,7 +132,7 @@ sub delete {
 
     my $packed_key = $self->pack_key($id);
 
-    my $file = File::Spec->catfile($path,$packed_key);
+    my $file = File::Spec->catfile($path, $packed_key);
 
     return undef unless -f $file;
 
@@ -147,10 +142,12 @@ sub delete {
 sub delete_all {
     my ($self) = @_;
 
-    $self->each(sub {
-        my $key = shift->{_id};
-        $self->delete($key);
-    });
+    $self->each(
+        sub {
+            my $key = shift->{_id};
+            $self->delete($key);
+        }
+    );
 
     1;
 }
@@ -186,7 +183,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::Simple::Bag - Index of all "files" in a Catmandu::Store::Simple "folder"
+Catmandu::Store::File::Simple::Bag - Index of all "files" in a Catmandu::Store::File::Simple "folder"
 
 =head1 SYNOPSIS
 
@@ -244,8 +241,8 @@ Catmandu::Store::Simple::Bag - Index of all "files" in a Catmandu::Store::Simple
 
 =head1 DESCRIPTION
 
-A L<Catmandu::Store::Simple::Bag> contains all "files" available in a
-L<Catmandu::Store::Simple> FileStore "folder". All methods of L<Catmandu::Bag>,
+A L<Catmandu::Store::File::Simple::Bag> contains all "files" available in a
+L<Catmandu::Store::File::Simple> FileStore "folder". All methods of L<Catmandu::Bag>,
 L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
 implemented.
 
@@ -253,8 +250,8 @@ Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
 
 =head1 FOLDERS
 
-All files in a L<Catmandu::Store::Simple> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::Simple::Index> :
+All files in a L<Catmandu::Store::File::Simple> are organized in "folders". To add
+a "folder" a new record needs to be added to the L<Catmandu::Store::File::Simple::Index> :
 
     $index->add({_id => '1234'});
 
@@ -324,8 +321,8 @@ Write the contents of the $file returned by C<get> to the IO::Handle.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Simple::Bag> ,
-L<Catmandu::Store::Simple> ,
+L<Catmandu::Store::File::Simple::Bag> ,
+L<Catmandu::Store::File::Simple> ,
 L<Catmandu::FileStore::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,

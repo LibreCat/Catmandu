@@ -1,17 +1,17 @@
-package Catmandu::Store::Memory;
+package Catmandu::Store::File::Memory;
 
 our $VERSION = '1.0507';
 
 use Catmandu::Sane;
 use Moo;
 use Carp;
-use Catmandu::Store::Memory::Index;
-use Catmandu::Store::Memory::Bag;
+use Catmandu::Store::File::Memory::Index;
+use Catmandu::Store::File::Memory::Bag;
 use namespace::clean;
 
-with 'Catmandu::FileStore' , 'Catmandu::Droppable';
+with 'Catmandu::FileStore', 'Catmandu::Droppable';
 
-has _files      => (is => 'ro' , lazy => 1  , default => sub { + {} });
+has _files => (is => 'ro', lazy => 1, default => sub {+{}});
 
 sub drop {
     my ($self) = @_;
@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::Memory - A Catmandu::FileStore to keep files in memory
+Catmandu::Store::File::Memory - A Catmandu::FileStore to keep files in memory
 
 =head1 SYNOPSIS
 
@@ -68,8 +68,8 @@ Catmandu::Store::Memory - A Catmandu::FileStore to keep files in memory
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Memory::Index>,
-L<Catmandu::Store::Memory::Bag>,
+L<Catmandu::Store::File::Memory::Index>,
+L<Catmandu::Store::File::Memory::Bag>,
 L<Catmandu::FileStore>
 
 =cut

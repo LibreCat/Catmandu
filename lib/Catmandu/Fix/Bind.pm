@@ -42,53 +42,58 @@ sub emit {
     my ($self, $fixer, $label) = @_;
     my $perl = "";
 
-    my $var           = $fixer->var;
-    my $bind_var      = $fixer->capture($self);
-    my $unit          = $fixer->generate_var;
+    my $var      = $fixer->var;
+    my $bind_var = $fixer->capture($self);
+    my $unit     = $fixer->generate_var;
 
-    my $fix_stash     = Package::Stash->new('Catmandu::Fix');
+    my $fix_stash = Package::Stash->new('Catmandu::Fix');
     my $fix_emit_reject;
     my $fix_emit_fixes;
 
     # Allow Bind-s to overwrite the default reject behavior
     if ($self->can('reject')) {
         $fix_emit_reject = $fix_stash->get_symbol('&emit_reject');
-        $fix_stash->add_symbol('&emit_reject' => sub { "return ${bind_var}->reject(${var});"; });
+        $fix_stash->add_symbol(
+            '&emit_reject' => sub {"return ${bind_var}->reject(${var});";});
     }
+
     # Allow Bind-s to bind to all fixes in if-unless-else statements
     unless ($self->does('Catmandu::Fix::Bind::Group')) {
-        $fix_emit_fixes   = $fix_stash->get_symbol('&emit_fixes');
-        $fix_stash->add_symbol('&emit_fixes' => sub {
-            my ($this, $fixes) = @_;
-            my $perl = '';
+        $fix_emit_fixes = $fix_stash->get_symbol('&emit_fixes');
+        $fix_stash->add_symbol(
+            '&emit_fixes' => sub {
+                my ($this, $fixes) = @_;
+                my $perl = '';
 
-            $perl .= "my ${unit} = ${bind_var}->unit(${var});";
+                $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-            for (my $i = 0; $i < @{$fixes}; $i++) {
-                my $fix  = $fixes->[$i];
-                my $name = ref($fix);
-                my $var  = $this->var;
-                my $original_code = $this->emit_fix($fix);
-                my $generated_code
-                    = "sub { my ${var} = shift; $original_code ; ${var} }";
-                $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code, '$name');";
+                for (my $i = 0; $i < @{$fixes}; $i++) {
+                    my $fix           = $fixes->[$i];
+                    my $name          = ref($fix);
+                    my $var           = $this->var;
+                    my $original_code = $this->emit_fix($fix);
+                    my $generated_code
+                        = "sub { my ${var} = shift; $original_code ; ${var} }";
+                    $perl
+                        .= "${unit} = ${bind_var}->bind(${unit}, $generated_code, '$name');";
+                }
+
+                if ($self->can('result')) {
+                    $perl .= "${unit} = ${bind_var}->result(${unit});";
+                }
+
+                if ($self->__return__) {
+                    $perl .= "${var} = ${unit};";
+                }
+
+                $perl;
             }
-
-            if ($self->can('result')) {
-                $perl .= "${unit} = ${bind_var}->result(${unit});";
-            }
-
-            if ($self->__return__) {
-                $perl .= "${var} = ${unit};";
-            }
-
-            $perl;
-        });
+        );
     }
 
     $perl .= "my ${unit} = ${bind_var}->unit(${var});";
 
-    # If this is a Bind::Group, then all fixes are executed as one block in a bind
+# If this is a Bind::Group, then all fixes are executed as one block in a bind
     if ($self->does("Catmandu::Fix::Bind::Group")) {
         my $generated_code = "sub { my ${var} = shift;";
 
@@ -101,7 +106,8 @@ sub emit {
 
         $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code);";
     }
-    #  If this isn't a Bind::Group, then bind will be executed for each seperate fix
+
+#  If this isn't a Bind::Group, then bind will be executed for each seperate fix
     else {
         for my $fix (@{$self->__fixes__}) {
             my $name          = ref($fix);
@@ -122,8 +128,10 @@ sub emit {
         $perl .= "${var} = ${unit};";
     }
 
-    $fix_stash->add_symbol('&emit_reject' => $fix_emit_reject) if $fix_emit_reject;
-    $fix_stash->add_symbol('&emit_fixes'  => $fix_emit_fixes)  if $fix_emit_fixes;
+    $fix_stash->add_symbol('&emit_reject' => $fix_emit_reject)
+        if $fix_emit_reject;
+    $fix_stash->add_symbol('&emit_fixes' => $fix_emit_fixes)
+        if $fix_emit_fixes;
 
     $perl;
 }

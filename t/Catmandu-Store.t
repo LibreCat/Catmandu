@@ -55,11 +55,13 @@ is $b->store, $s;
 is $b->name,  'data';
 $b = $s->bag('foo');
 is $b->name, 'foo';
-$s = T::Store->new(bag_class => 'T::CustomBagClass',
-    bags => {foo => {prop => 'val', store => 'junk', name => 'junk'}});
-is $s->bag('foo')->prop, 'val', "options are passed to bag";
+$s = T::Store->new(
+    bag_class => 'T::CustomBagClass',
+    bags      => {foo => {prop => 'val', store => 'junk', name => 'junk'}}
+);
+is $s->bag('foo')->prop,    'val',  "options are passed to bag";
 isnt $s->bag('foo')->store, 'junk', "store can't be overriden";
-isnt $s->bag('foo')->name, 'junk', "name can't be overriden";
+isnt $s->bag('foo')->name,  'junk', "name can't be overriden";
 
 # custom key_prefix
 

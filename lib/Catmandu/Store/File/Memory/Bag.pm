@@ -1,29 +1,22 @@
-package Catmandu::Store::Memory::Bag;
+package Catmandu::Store::File::Memory::Bag;
 
 our $VERSION = '1.0507';
 
 use Catmandu::Sane;
 use Moo;
-use Catmandu::Util;
-use Catmandu::FileStore::MimeType;
+use Catmandu::Util qw(content_type);
 use namespace::clean;
 
-with 'Catmandu::Bag', 'Catmandu::FileStore::Bag', 'Catmandu::Droppable';
-
-has _mimeType => (is => 'lazy');
-
-sub _build__mimeType {
-    Catmandu::FileStore::MimeType->new;
-}
+with 'Catmandu::FileBag', 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;
 
-    my $name  = $self->name;
+    my $name = $self->name;
     my $files = $self->store->_files->{$name} // {};
 
     sub {
-        state $ids = [ keys %$files ];
+        state $ids = [keys %$files];
 
         my $id = pop @$ids;
 
@@ -36,7 +29,7 @@ sub generator {
 sub exists {
     my ($self, $id) = @_;
 
-    my $name  = $self->name;
+    my $name = $self->name;
     my $files = $self->store->_files->{$name} // {};
 
     exists $files->{$id};
@@ -45,7 +38,7 @@ sub exists {
 sub get {
     my ($self, $id) = @_;
 
-    my $name  = $self->name;
+    my $name = $self->name;
     my $files = $self->store->_files->{$name} // {};
 
     $files->{$id};
@@ -54,29 +47,30 @@ sub get {
 sub add {
     my ($self, $data) = @_;
 
-    my $id    = $data->{_id};
-    my $io    = $data->{_stream};
+    my $id = $data->{_id};
+    my $io = $data->{_stream};
 
     delete $data->{_stream};
 
-    my $name  = $self->name;
+    my $name = $self->name;
 
     my $str = Catmandu::Util::read_io($io);
 
     $self->store->_files->{$name}->{$id} = {
-        _id      => $id ,
-        size     => length $str ,
-        md5      => '' ,
-        content_type => $self->_mimeType->content_type($id) ,
-        created  => time ,
-        modified => time ,
-        _stream  => sub {
+        _id          => $id,
+        size         => length $str,
+        md5          => '',
+        content_type => content_type($id),
+        created      => time,
+        modified     => time,
+        _stream      => sub {
             my $io = $_[0];
 
-            Catmandu::Error->throw("no io defined or not writable") unless defined($io);
+            Catmandu::Error->throw("no io defined or not writable")
+                unless defined($io);
 
             $io->write($str);
-        } ,
+        },
         %$data
     };
 
@@ -86,7 +80,7 @@ sub add {
 sub delete {
     my ($self, $id) = @_;
 
-    my $name  = $self->name;
+    my $name = $self->name;
     my $files = $self->store->_files->{$name} // {};
 
     delete $files->{$id};
@@ -95,10 +89,12 @@ sub delete {
 sub delete_all {
     my ($self) = @_;
 
-    $self->each(sub {
-        my $key = shift->{_id};
-        $self->delete($key);
-    });
+    $self->each(
+        sub {
+            my $key = shift->{_id};
+            $self->delete($key);
+        }
+    );
 
     1;
 }
@@ -119,7 +115,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::Memory::Bag - Index of all "files" in a Catmandu::Store::Memory "folder"
+Catmandu::Store::File::Memory::Bag - Index of all "files" in a Catmandu::Store::File::Memory "folder"
 
 =head1 SYNOPSIS
 
@@ -177,8 +173,8 @@ Catmandu::Store::Memory::Bag - Index of all "files" in a Catmandu::Store::Memory
 
 =head1 DESCRIPTION
 
-A L<Catmandu::Store::Memory::Bag> contains all "files" available in a
-L<Catmandu::Store::Memory> FileStore "folder". All methods of L<Catmandu::Bag>,
+A L<Catmandu::Store::File::Memory::Bag> contains all "files" available in a
+L<Catmandu::Store::File::Memory> FileStore "folder". All methods of L<Catmandu::Bag>,
 L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
 implemented.
 
@@ -186,8 +182,8 @@ Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
 
 =head1 FOLDERS
 
-All files in a L<Catmandu::Store::Memory> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::Memory::Index> :
+All files in a L<Catmandu::Store::File::Memory> are organized in "folders". To add
+a "folder" a new record needs to be added to the L<Catmandu::Store::File::Memory::Index> :
 
     $index->add({_id => '1234'});
 
@@ -257,8 +253,8 @@ Write the contents of the $file returned by C<get> to the IO::Handle.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Memory::Bag> ,
-L<Catmandu::Store::Memory> ,
+L<Catmandu::Store::File::Memory::Bag> ,
+L<Catmandu::Store::File::Memory> ,
 L<Catmandu::FileStore::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,

@@ -7,7 +7,7 @@ use Test::Exception;
 my $pkg;
 
 BEGIN {
-    $pkg = 'Catmandu::Store::MultiFiles::Index';
+    $pkg = 'Catmandu::Store::File::Multi::Index';
     use_ok $pkg;
 }
 

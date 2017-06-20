@@ -9,7 +9,7 @@ use Catmandu::Util qw(:is);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
+with 'Catmandu::Fix::Bind', 'Catmandu::Fix::Bind::Group';
 
 has importer_name => (fix_arg => 1);
 has step          => (fix_opt => 1);

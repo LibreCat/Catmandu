@@ -1,4 +1,4 @@
-package Catmandu::Store::MultiFiles::Index;
+package Catmandu::Store::File::Multi::Index;
 
 use Catmandu::Sane;
 
@@ -19,13 +19,13 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::MultiFiles::Index - Index of all "Folders" in a Catmandu::Store::MultiFiles
+Catmandu::Store::File::Multi::Index - Index of all "Folders" in a Catmandu::Store::File::Multi
 
 =head1 SYNOPSIS
 
     use Catmandu;
 
-    my $store = Catmandu->store('MultiFiles' , stores [
+    my $store = Catmandu->store('File::Multi' , stores [
         Catmandu->store('Simple', root => '/data1/files') ,
         Catmandu->store('Simple', root => '/data1/files_copy') ,
     ]);
@@ -80,8 +80,8 @@ Catmandu::Store::MultiFiles::Index - Index of all "Folders" in a Catmandu::Store
 
 =head1 DESCRIPTION
 
-A L<Catmandu::Store::MultiFiles::Index> contains all "folders" available in a
-L<Catmandu::Store::MultiFiles> FileStore. All methods of L<Catmandu::Bag>,
+A L<Catmandu::Store::File::Multi::Index> contains all "folders" available in a
+L<Catmandu::Store::File::Multi> FileStore. All methods of L<Catmandu::Bag>,
 L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
 implemented.
 
@@ -89,13 +89,13 @@ Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
 
 =head1 FOLDERS
 
-All files in a L<Catmandu::Store::MultiFiles> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::MultiFiles::Index> :
+All files in a L<Catmandu::Store::File::Multi> are organized in "folders". To add
+a "folder" a new record needs to be added to the L<Catmandu::Store::File::Multi::Index> :
 
     $index->add({_id => '1234'});
 
-The C<_id> field is the only metadata available in MultiFiles stores. To add more
-metadata fields to a MultiFiles store a L<Catmandu::Plugin::SideCar> is required.
+The C<_id> field is the only metadata available in File::Multi stores. To add more
+metadata fields to a File::Multi store a L<Catmandu::Plugin::SideCar> is required.
 
 =head1 FILES
 
@@ -116,7 +116,7 @@ to retrieve files from a "folder".
 
 =head2 each(\&callback)
 
-Execute C<callback> on every "folder" in the MultiFiles store. See L<Catmandu::Iterable> for more
+Execute C<callback> on every "folder" in the File::Multi store. See L<Catmandu::Iterable> for more
 iterator functions
 
 =head2 exists($id)
@@ -125,16 +125,16 @@ Returns true when a "folder" with identifier $id exists.
 
 =head2 add($hash)
 
-Adds a new "folder" to the MultiFiles store. The $hash must contain an C<_id> field.
+Adds a new "folder" to the File::Multi store. The $hash must contain an C<_id> field.
 
 =head2 get($id)
 
-Returns a hash containing the metadata of the folder. In the MultiFiles store this hash
+Returns a hash containing the metadata of the folder. In the File::Multi store this hash
 will contain only the "folder" idenitifier.
 
 =head2 files($id)
 
-Return the L<Catmandu::Store::MultiFiles::Bag> that contains all "files" in the "folder"
+Return the L<Catmandu::Store::File::Multi::Bag> that contains all "files" in the "folder"
 with identifier $id.
 
 =head2 delete($id)
@@ -151,8 +151,8 @@ Delete the store.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::MultiFiles::Bag> ,
-L<Catmandu::Store::MultiFiles> ,
+L<Catmandu::Store::File::Multi::Bag> ,
+L<Catmandu::Store::File::Multi> ,
 L<Catmandu::FileStore::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,

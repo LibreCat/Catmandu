@@ -10,7 +10,7 @@ use Catmandu::Util;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
+with 'Catmandu::Fix::Bind', 'Catmandu::Fix::Bind::Group';
 
 has path => (fix_opt => 1);
 
@@ -33,6 +33,7 @@ sub bind {
         $copy = $code->($copy);
 
         if (ref($copy) eq 'reject') {
+
             #map { delete $mvar->{$_} } (keys %$mvar);
             %$mvar = ();
         }
@@ -48,7 +49,7 @@ sub bind {
             $item = $code->($item);
 
             if (ref($item) eq 'reject') {
-                splice(@$mvar,$idx,1);
+                splice(@$mvar, $idx, 1);
             }
 
             $idx++;
@@ -61,9 +62,9 @@ sub bind {
 }
 
 sub reject {
-    my ($self,$var) = @_;
-    return bless $var , 'reject' if ref($var);
-    return bless \$var , 'reject';
+    my ($self, $var) = @_;
+    return bless $var, 'reject' if ref($var);
+    return bless \$var, 'reject';
 }
 
 1;

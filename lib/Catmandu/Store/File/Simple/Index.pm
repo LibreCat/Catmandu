@@ -1,4 +1,4 @@
-package Catmandu::Store::Simple::Index;
+package Catmandu::Store::File::Simple::Index;
 
 our $VERSION = '1.0507';
 
@@ -11,13 +11,13 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::Bag', 'Catmandu::FileStore::Index' , 'Catmandu::Droppable';
+with 'Catmandu::Bag', 'Catmandu::FileStore::Index', 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;
 
-    my $root     = $self->store->root;
-    my $keysize  = $self->store->keysize;
+    my $root    = $self->store->root;
+    my $keysize = $self->store->keysize;
 
     my $mindepth = ceil($keysize / 3);
     my $maxdepth = $mindepth + 1;
@@ -32,7 +32,9 @@ sub generator {
         state $io;
 
         unless (defined($io)) {
-            open($io, "find -L $root -mindepth $mindepth -maxdepth $maxdepth -type d|");
+            open($io,
+                "find -L $root -mindepth $mindepth -maxdepth $maxdepth -type d|"
+            );
         }
 
         my $line = <$io>;
@@ -68,7 +70,7 @@ sub add {
 
     croak "Need an id" unless defined $data && exists $data->{_id};
 
-    my $id  = $data->{_id};
+    my $id = $data->{_id};
 
     if (exists $data->{_stream}) {
         croak "Can't add a file to the index";
@@ -77,7 +79,10 @@ sub add {
     my $path = $self->store->path_string($id);
 
     unless (defined $path) {
-        my $err = "Failed to create path from $id need a number of max " . $self->store->keysize . " digits";
+        my $err
+            = "Failed to create path from $id need a number of max "
+            . $self->store->keysize
+            . " digits";
         $self->log->error($err);
         Catmandu::BadArg->throw($err);
     }
@@ -98,7 +103,10 @@ sub get {
     my $path = $self->store->path_string($id);
 
     unless ($path) {
-        $self->log->error("Failed to create path from $id need a number of max " . $self->store->keysize . " digits");
+        $self->log->error(
+                  "Failed to create path from $id need a number of max "
+                . $self->store->keysize
+                . " digits");
         return undef;
     }
 
@@ -108,9 +116,7 @@ sub get {
 
     my @stat = stat $path;
 
-    return +{
-        _id      => $id ,
-    };
+    return +{_id => $id,};
 }
 
 sub delete {
@@ -138,10 +144,12 @@ sub delete {
 sub delete_all {
     my ($self) = @_;
 
-    $self->each(sub {
-        my $key = shift->{_id};
-        $self->delete($key);
-    });
+    $self->each(
+        sub {
+            my $key = shift->{_id};
+            $self->delete($key);
+        }
+    );
 }
 
 sub drop {
@@ -160,7 +168,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::Simple::Index - Index of all "Folders" in a Catmandu::Store::Simple
+Catmandu::Store::File::Simple::Index - Index of all "Folders" in a Catmandu::Store::File::Simple
 
 =head1 SYNOPSIS
 
@@ -218,8 +226,8 @@ Catmandu::Store::Simple::Index - Index of all "Folders" in a Catmandu::Store::Si
 
 =head1 DESCRIPTION
 
-A L<Catmandu::Store::Simple::Index> contains all "folders" available in a
-L<Catmandu::Store::Simple> FileStore. All methods of L<Catmandu::Bag>,
+A L<Catmandu::Store::File::Simple::Index> contains all "folders" available in a
+L<Catmandu::Store::File::Simple> FileStore. All methods of L<Catmandu::Bag>,
 L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
 implemented.
 
@@ -227,8 +235,8 @@ Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
 
 =head1 FOLDERS
 
-All files in a L<Catmandu::Store::Simple> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::Simple::Index> :
+All files in a L<Catmandu::Store::File::Simple> are organized in "folders". To add
+a "folder" a new record needs to be added to the L<Catmandu::Store::File::Simple::Index> :
 
     $index->add({_id => '1234'});
 
@@ -272,7 +280,7 @@ will contain only the "folder" idenitifier.
 
 =head2 files($id)
 
-Return the L<Catmandu::Store::Simple::Bag> that contains all "files" in the "folder"
+Return the L<Catmandu::Store::File::Simple::Bag> that contains all "files" in the "folder"
 with identifier $id.
 
 =head2 delete($id)
@@ -289,8 +297,8 @@ Delete the store.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Simple::Bag> ,
-L<Catmandu::Store::Simple> ,
+L<Catmandu::Store::File::Simple::Bag> ,
+L<Catmandu::Store::File::Simple> ,
 L<Catmandu::FileStore::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,

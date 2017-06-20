@@ -9,7 +9,7 @@ use Catmandu::Util;
 use Catmandu::Fix::Has;
 use namespace::clean;
 
-with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
+with 'Catmandu::Fix::Bind', 'Catmandu::Fix::Bind::Group';
 
 has start => (fix_opt => 1);
 has end   => (fix_opt => 1);
@@ -29,11 +29,12 @@ sub bind {
     my $step  = $self->step // 1;
     my $var   = $self->var;
 
-    if (Catmandu::Util::is_number($start) &&
-        Catmandu::Util::is_number($end) &&
-        Catmandu::Util::is_number($step)) {
-        for (my $i = $start ; $i <= $end ; $i = $i + $step) {
-            $mvar->{$var}  = $i if defined($var);
+    if (   Catmandu::Util::is_number($start)
+        && Catmandu::Util::is_number($end)
+        && Catmandu::Util::is_number($step))
+    {
+        for (my $i = $start; $i <= $end; $i = $i + $step) {
+            $mvar->{$var} = $i if defined($var);
             $mvar = $func->($mvar);
         }
     }

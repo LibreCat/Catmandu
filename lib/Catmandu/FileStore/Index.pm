@@ -10,7 +10,7 @@ use Catmandu::Util qw(:check);
 use namespace::clean;
 
 sub files {
-    my ( $self, $id ) = @_;
+    my ($self, $id) = @_;
     return $self->store->bag($id);
 }
 
@@ -58,18 +58,18 @@ Catmandu::FileStore::Index - Flag a Bag as a FileStore Index
 
 =head1 DESCRIPTION
 
-Each L<Catmandu::FileStore::Bag> is a L<Catmandu::Bag> and inherits all its methods.
+Each L<Catmandu::FileBag> is a L<Catmandu::Bag> and inherits all its methods.
 
 =head1 METHODS
 
 =head2 files($id)
 
-Return the L<Catmandu::FileStore::Bag> for this L<Catmandu::FileStore> containing
+Return the L<Catmandu::FileBag> for this L<Catmandu::FileStore> containing
 all the files
 
 =head1 SEE ALSO
 
 L<Catmandu::FileStore> ,
-L<Catmandu::FileStore::Bag>
+L<Catmandu::FileBag>
 
 =cut

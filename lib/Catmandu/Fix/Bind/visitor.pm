@@ -8,7 +8,7 @@ use Moo;
 use Catmandu::Util;
 use namespace::clean;
 
-with 'Catmandu::Fix::Bind' , 'Catmandu::Fix::Bind::Group';
+with 'Catmandu::Fix::Bind', 'Catmandu::Fix::Bind::Group';
 
 has path => (is => 'ro');
 

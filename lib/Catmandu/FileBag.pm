@@ -1,23 +1,24 @@
-package Catmandu::FileStore::Bag;
+package Catmandu::FileBag;
 
 our $VERSION = '1.0507';
 
 use Catmandu::Sane;
-use Moo::Role;
 use IO::String;
-use utf8;
 use Catmandu::Util qw(:check);
+use Moo::Role;
 use namespace::clean;
 
+with 'Catmandu::Bag';
+
 sub stream {
-    my ($self,$io,$data) = @_;
+    my ($self, $io, $data) = @_;
     check_hash_ref($data);
     check_invocant($io);
     $data->{_stream}->($io);
 }
 
 sub as_string {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     check_hash_ref($data);
     my $str;
     my $io = IO::String->new($str);
@@ -26,7 +27,7 @@ sub as_string {
 }
 
 sub as_string_utf8 {
-    my ($self,$data) = @_;
+    my ($self, $data) = @_;
     check_hash_ref($data);
     my $str;
     my $io = IO::String->new($str);
@@ -36,10 +37,10 @@ sub as_string_utf8 {
 }
 
 sub upload {
-    my ($self,$io,$id) = @_;
+    my ($self, $io, $id) = @_;
     check_string($id);
     check_invocant($io);
-    $self->add({ _id => $id , _stream => $io});
+    $self->add({_id => $id, _stream => $io});
 }
 
 1;
@@ -50,7 +51,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::FileStore::Bag - A Catmandu::FileStore compartment to persist binary data
+Catmandu::FileBag - A Catmandu::FileStore compartment to persist binary data
 
 =head1 SYNOPSIS
 
@@ -86,26 +87,26 @@ Catmandu::FileStore::Bag - A Catmandu::FileStore compartment to persist binary d
 
 =head1 DESCRIPTION
 
-Each L<Catmandu::FileStore::Bag> is a L<Catmandu::Bag> and inherits all its methods.
+Each L<Catmandu::FileBag> is a L<Catmandu::Bag> and inherits all its methods.
 
 =head1 METHODS
 
 =head2 upload($io, $file_name)
 
-An helper application to add an IO::Handle $io to the L<Catmandu::FileStore::Bag>
+An helper application to add an IO::Handle $io to the L<Catmandu::FileBag>
 
 =head2 stream($io, $file)
 
-A helper application to stream the contents of a L<Catmandu::FileStore::Bag> item
+A helper application to stream the contents of a L<Catmandu::FileBag> item
 to an IO::Handle.
 
 =head2 as_string($file)
 
-Return the contents of the L<Catmandu::FileStore::Bag> item as a string.
+Return the contents of the L<Catmandu::FileBag> item as a string.
 
 =head2 as_string_utf8($file)
 
-Return the contents of the L<Catmandu::FileStore::Bag> item as an UTF-8 string.
+Return the contents of the L<Catmandu::FileBag> item as an UTF-8 string.
 
 =head1 SEE ALSO
 

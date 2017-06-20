@@ -39,11 +39,11 @@ note("upload");
         ]
     );
 
-    ok ! $result->stdout;
+    ok !$result->stdout;
 
     is $result->error, undef, 'threw no exceptions';
 
-    ok -f "t/data/000/000/456/test.txt" , "found the correct file";
+    ok -f "t/data/000/000/456/test.txt", "found the correct file";
 
     unlink "t/data/000/000/456/test.txt";
 }

@@ -120,7 +120,7 @@ L<Catmandu::Store>-s based on their name in a configuration file or instances.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::MultiFiles> ,
+L<Catmandu::Store::File::Multi> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Store> ,
 L<Catmandu::Bag>

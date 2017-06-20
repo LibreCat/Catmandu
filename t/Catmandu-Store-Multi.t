@@ -5,8 +5,8 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use Catmandu::Store::Hash;
-use Catmandu::Store::Simple;
-use Catmandu::Store::Memory;
+use Catmandu::Store::File::Simple;
+use Catmandu::Store::File::Memory;
 use utf8;
 
 my $pkg;

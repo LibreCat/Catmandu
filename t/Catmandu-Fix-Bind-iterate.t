@@ -118,8 +118,7 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({}),
-    {test => [0,1,2,3,4,5,6,7,8,9]},
+is_deeply $fixer->fix({}), {test => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]},
     'specific testing';
 
 done_testing 12;

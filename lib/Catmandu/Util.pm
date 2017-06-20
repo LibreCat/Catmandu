@@ -16,11 +16,12 @@ use File::Spec;
 use YAML::XS            ();
 use Cpanel::JSON::XS    ();
 use Hash::Merge::Simple ();
+use MIME::Types;
 
 our %EXPORT_TAGS = (
     io => [
         qw(io read_file read_io write_file read_yaml read_json join_path
-            normalize_path segmented_path)
+            normalize_path segmented_path content_type)
     ],
     data  => [qw(parse_data_path get_data set_data delete_data data_at)],
     array => [
@@ -217,6 +218,25 @@ sub segmented_path {
     defined $base_path
         ? File::Spec->catdir($base_path, @path)
         : File::Spec->catdir(@path);
+}
+
+sub content_type {
+    my ($self, $filename) = @_;
+
+    state $mime_types = MIME::Types->new(only_complete => 1);
+
+    return undef unless $filename;
+
+    my ($ext) = $filename =~ /\.(.+?)$/;
+
+    my $type = 'application/octet-stream';
+
+    my $mime = $mime_types->mimeTypeOf($ext);
+
+    # Require explicit stringification!
+    $type = sprintf "%s", $mime->type if $mime;
+
+    return $type;
 }
 
 sub parse_data_path {
@@ -496,19 +516,19 @@ sub check_maybe_instance {
 }
 
 Data::Util::install_subroutine(__PACKAGE__,
-    hash_merge => \&Hash::Merge::Simple::merge,
-    is_same => \&Data::Compare::Compare,
-    is_invocant => \&Data::Util::is_invocant,
+    hash_merge    => \&Hash::Merge::Simple::merge,
+    is_same       => \&Data::Compare::Compare,
+    is_invocant   => \&Data::Util::is_invocant,
     is_scalar_ref => \&Data::Util::is_scalar_ref,
-    is_array_ref => \&Data::Util::is_array_ref,
-    is_hash_ref => \&Data::Util::is_hash_ref,
-    is_code_ref => \&Data::Util::is_code_ref,
-    is_regex_ref => \&Data::Util::is_rx,
-    is_glob_ref => \&Data::Util::is_glob_ref,
-    is_value => \&Data::Util::is_value,
-    is_string => \&Data::Util::is_string,
-    is_number => \&Data::Util::is_number,
-    is_integer => \&Data::Util::is_integer,
+    is_array_ref  => \&Data::Util::is_array_ref,
+    is_hash_ref   => \&Data::Util::is_hash_ref,
+    is_code_ref   => \&Data::Util::is_code_ref,
+    is_regex_ref  => \&Data::Util::is_rx,
+    is_glob_ref   => \&Data::Util::is_glob_ref,
+    is_value      => \&Data::Util::is_value,
+    is_string     => \&Data::Util::is_string,
+    is_number     => \&Data::Util::is_number,
+    is_integer    => \&Data::Util::is_integer,
 );
 
 for my $sym (
@@ -526,18 +546,26 @@ for my $sym (
     push @{$EXPORT_TAGS{check}}, "check_$sym", "check_maybe_$sym";
 
     unless (Data::Util::get_code_ref(__PACKAGE__, "is_maybe_$sym")) {
-        my $sub = Sub::Quote::quote_sub("!defined(\$_[0]) || is_$sym(\$_[0])");
+        my $sub
+            = Sub::Quote::quote_sub("!defined(\$_[0]) || is_$sym(\$_[0])");
         Data::Util::install_subroutine(__PACKAGE__, "is_maybe_$sym" => $sub);
     }
 
     unless (Data::Util::get_code_ref(__PACKAGE__, "check_$sym")) {
-        my $sub = Sub::Quote::quote_sub("is_$sym(\$_[0]) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]");
+        my $sub
+            = Sub::Quote::quote_sub(
+            "is_$sym(\$_[0]) || Catmandu::BadVal->throw('should be $err_name'); \$_[0]"
+            );
         Data::Util::install_subroutine(__PACKAGE__, "check_$sym" => $sub);
     }
 
     unless (Data::Util::get_code_ref(__PACKAGE__, "check_maybe_$sym")) {
-        my $sub = Sub::Quote::quote_sub("is_maybe_$sym(\$_[0]) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]");
-        Data::Util::install_subroutine(__PACKAGE__, "check_maybe_$sym" => $sub);
+        my $sub
+            = Sub::Quote::quote_sub(
+            "is_maybe_$sym(\$_[0]) || Catmandu::BadVal->throw('should be undef or $err_name'); \$_[0]"
+            );
+        Data::Util::install_subroutine(__PACKAGE__,
+            "check_maybe_$sym" => $sub);
     }
 }
 
@@ -783,6 +811,13 @@ Normalizes a relative path to an absolute path.
     # => "FB41/144C/F0ED/11E1/A9DE/61C8/94A0/A6B4"
     segmented_path($id, segment_size => 2, base_path => "/files");
     # => "/files/FB/41/14/4C/F0/ED/11/E1/A9/DE/61/C8/94/A0/A6/B4"
+
+=item content_type($filename);
+
+Guess the content type of a file name.
+
+    content_type("book.pdf");
+    # => "application/pdf"
 
 =back
 

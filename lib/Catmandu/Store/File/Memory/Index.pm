@@ -1,4 +1,4 @@
-package Catmandu::Store::Memory::Index;
+package Catmandu::Store::File::Memory::Index;
 
 our $VERSION = '1.0507';
 
@@ -9,22 +9,22 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::Bag' , 'Catmandu::FileStore::Index' , 'Catmandu::Droppable';
+with 'Catmandu::Bag', 'Catmandu::FileStore::Index', 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;
 
-    my $name       = $self->name;
+    my $name = $self->name;
     my $containers = $self->store->_files->{$name} // {};
 
     return sub {
-        state $list = [ keys %$containers ];
+        state $list = [keys %$containers];
 
         my $key = pop @$list;
 
         return undef unless $key;
 
-        +{ _id => $key };
+        +{_id => $key};
     };
 }
 
@@ -33,7 +33,7 @@ sub exists {
 
     croak "Need an id" unless defined $id;
 
-    my $name       = $self->name;
+    my $name = $self->name;
     my $containers = $self->store->_files->{$name} // {};
 
     return exists $containers->{$id};
@@ -44,7 +44,7 @@ sub add {
 
     croak "Need an id" unless defined $data && exists $data->{_id};
 
-    my $id   = $data->{_id};
+    my $id = $data->{_id};
 
     if (exists $data->{_stream}) {
         croak "Can't add a file to the index";
@@ -52,9 +52,7 @@ sub add {
 
     my $name = $self->name;
 
-    $self->store->_files->{$name}->{$id} = +{
-        _id      => $id ,
-    };
+    $self->store->_files->{$name}->{$id} = +{_id => $id,};
 
     return $self->get($id);
 }
@@ -64,7 +62,7 @@ sub get {
 
     croak "Need an $id" unless defined $id;
 
-    my $name       = $self->name;
+    my $name = $self->name;
     my $containers = $self->store->_files->{$name} // {};
 
     return $containers->{$id};
@@ -75,7 +73,7 @@ sub delete {
 
     croak "Need an $id" unless defined $id;
 
-    my $name       = $self->name;
+    my $name = $self->name;
     my $containers = $self->store->_files->{$name} // {};
 
     delete $containers->{$id};
@@ -86,10 +84,12 @@ sub delete {
 sub delete_all {
     my ($self) = @_;
 
-    $self->each(sub {
-        my $id = shift->{_id};
-        $self->delete($id);
-    });
+    $self->each(
+        sub {
+            my $id = shift->{_id};
+            $self->delete($id);
+        }
+    );
 
     1;
 }
@@ -106,7 +106,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::Memory::Index - Index of all "Folders" in a Catmandu::Store::Memory
+Catmandu::Store::File::Memory::Index - Index of all "Folders" in a Catmandu::Store::File::Memory
 
 =head1 SYNOPSIS
 
@@ -164,17 +164,16 @@ Catmandu::Store::Memory::Index - Index of all "Folders" in a Catmandu::Store::Me
 
 =head1 DESCRIPTION
 
-A L<Catmandu::Store::Memory::Index> contains all "folders" available in a
-L<Catmandu::Store::Memory> FileStore. All methods of L<Catmandu::Bag>,
+A L<Catmandu::Store::File::Memory::Index> contains all "folders" available in a
+L<Catmandu::Store::File::Memory> FileStore. All methods of L<Catmandu::Bag>,
 L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
 implemented.
 
 Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
 
 =head1 FOLDERS
-
-All files in a L<Catmandu::Store::Memory> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::Memory::Index> :
+All files in a L<Catmandu::Store::File::Memory> are organized in "folders". To add
+a "folder" a new record needs to be added to the L<Catmandu::Store::File::Memory::Index> :
 
     $index->add({_id => '1234'});
 
@@ -218,7 +217,7 @@ will contain only the "folder" idenitifier.
 
 =head2 files($id)
 
-Return the L<Catmandu::Store::Memory::Bag> that contains all "files" in the "folder"
+Return the L<Catmandu::Store::File::Memory::Bag> that contains all "files" in the "folder"
 with identifier $id.
 
 =head2 delete($id)
@@ -235,8 +234,8 @@ Delete the store.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Memory::Bag> ,
-L<Catmandu::Store::Memory> ,
+L<Catmandu::Store::File::Memory::Bag> ,
+L<Catmandu::Store::File::Memory> ,
 L<Catmandu::FileStore::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,

@@ -13,10 +13,7 @@ use IO::File;
 use namespace::clean;
 
 sub command_opt_spec {
-    (
-        ["verbose|v",      ""],
-        ["delete",         "delete existing objects first"],
-    );
+    (["verbose|v", ""], ["delete", "delete existing objects first"],);
 }
 
 sub command {
@@ -34,7 +31,7 @@ sub command {
 
     if ($bag_name = $from_opts->{bag}) {
         delete $from_opts->{bag};
-        $id_name    = $from_opts->{id} // $self->usage_error("need a --id");
+        $id_name = $from_opts->{id} // $self->usage_error("need a --id");
         delete $from_opts->{id};
         $store_name = $from_args->[0];
         $store_opts = $from_opts;
@@ -43,12 +40,12 @@ sub command {
     }
     elsif ($bag_name = $into_opts->{bag}) {
         delete $into_opts->{bag};
-        $id_name    = $into_opts->{id} // $self->usage_error("need a --id");
+        $id_name = $into_opts->{id} // $self->usage_error("need a --id");
         delete $into_opts->{id};
         $store_name = $into_args->[0];
         $store_opts = $into_opts;
         $filename   = $from_args->[0];
-        $upload = 1;
+        $upload     = 1;
     }
     else {
         $self->usage_error("need a --bag");
@@ -56,16 +53,16 @@ sub command {
 
     my $store = Catmandu->store($store_name, $store_opts);
 
-    return $upload ?
-            $self->upload_file($store,$bag_name,$id_name,$filename) :
-            $self->download_file($store,$bag_name,$id_name,$filename);
+    return $upload
+        ? $self->upload_file($store, $bag_name, $id_name, $filename)
+        : $self->download_file($store, $bag_name, $id_name, $filename);
 }
 
 sub upload_file {
-    my ($self,$store,$bag_name,$id_name,$filename) = @_;
+    my ($self, $store, $bag_name, $id_name, $filename) = @_;
 
     unless ($store->bag->exists($bag_name)) {
-        $store->bag->add({ _id => $bag_name });
+        $store->bag->add({_id => $bag_name});
     }
 
     my $bag = $store->bag->files($bag_name);
@@ -74,7 +71,7 @@ sub upload_file {
 
     if (!defined($filename) || $filename eq '-') {
         $io = IO::Handle->new();
-        $io->fdopen(fileno(STDIN),"r");
+        $io->fdopen(fileno(STDIN), "r");
     }
     else {
         $io = IO::File->new("<$filename");
@@ -86,7 +83,7 @@ sub upload_file {
 }
 
 sub download_file {
-    my ($self,$store,$bag_name,$id_name,$filename) = @_;
+    my ($self, $store, $bag_name, $id_name, $filename) = @_;
 
     unless ($store->bag->exists($bag_name)) {
         carp "No such bag `$bag_name`";
@@ -103,7 +100,9 @@ sub download_file {
     my $io;
 
     if (!defined($filename) || $filename eq '-') {
-        $io = bless(\*STDOUT => 'IO::File')
+        $io = bless(
+            \*STDOUT => 'IO::File'
+            );
     }
     else {
         $io = IO::File->new(">$filename");
@@ -113,7 +112,7 @@ sub download_file {
 
     croak "can't open $filename for writing" unless defined($io);
 
-    $bag->stream($io,$file);
+    $bag->stream($io, $file);
 }
 
 1;

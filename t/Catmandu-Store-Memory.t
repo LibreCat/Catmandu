@@ -7,7 +7,7 @@ use Test::Exception;
 my $pkg;
 
 BEGIN {
-    $pkg = 'Catmandu::Store::Memory';
+    $pkg = 'Catmandu::Store::File::Memory';
     use_ok $pkg;
 }
 
@@ -21,14 +21,14 @@ my $bags = $store->bag();
 
 ok $bags , 'store->bag()';
 
-isa_ok $bags , 'Catmandu::Store::Memory::Index';
+isa_ok $bags , 'Catmandu::Store::File::Memory::Index';
 
 ok $bags , 'create memory store';
 
-ok $bags->add({ _id => '1234' }) , 'adding `1234` bag';
+ok $bags->add({_id => '1234'}), 'adding `1234` bag';
 
-throws_ok { $store->bag('1235') } 'Catmandu::Error' , 'bag(1235) doesnt exist';
+throws_ok {$store->bag('1235')} 'Catmandu::Error', 'bag(1235) doesnt exist';
 
-lives_ok { $store->bag('1234') } 'bag(1234) exists';
+lives_ok {$store->bag('1234')} 'bag(1234) exists';
 
 done_testing;

@@ -37,7 +37,7 @@ sub new_bag {
     my ($self, $name, $options) = @_;
     $options ||= {};
     $options->{store} = $self;
-    $options->{name}  = $name // $self->default_bag;
+    $options->{name} = $name // $self->default_bag;
     if (my $default = $self->bag_options->{$name}) {
         $options = {%$default, %$options};
     }

@@ -1,4 +1,4 @@
-package Catmandu::Store::Simple;
+package Catmandu::Store::File::Simple;
 
 our $VERSION = '1.0507';
 
@@ -7,21 +7,22 @@ use Moo;
 use Carp;
 use Catmandu;
 use Catmandu::Util;
-use Catmandu::Store::Simple::Index;
-use Catmandu::Store::Simple::Bag;
+use Catmandu::Store::File::Simple::Index;
+use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
 use namespace::clean;
 
 with 'Catmandu::FileStore', 'Catmandu::Droppable';
 
-has root     => (is => 'ro', required => '1');
-has uuid     => (is => 'ro', trigger => 1);
-has keysize  => (is => 'ro', default => 9 , trigger => 1);
+has root    => (is => 'ro', required => '1');
+has uuid    => (is => 'ro', trigger  => 1);
+has keysize => (is => 'ro', default  => 9, trigger => 1);
 
 sub _trigger_keysize {
     my $self = shift;
 
-    croak "keysize needs to be a multiple of 3" unless $self->keysize % 3 == 0;
+    croak "keysize needs to be a multiple of 3"
+        unless $self->keysize % 3 == 0;
 }
 
 sub _trigger_uuid {
@@ -31,7 +32,7 @@ sub _trigger_uuid {
 }
 
 sub path_string {
-    my ($self,$key) = @_;
+    my ($self, $key) = @_;
 
     my $keysize = $self->keysize;
 
@@ -72,7 +73,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::Simple - A Catmandu::FileStore to store files on disk
+Catmandu::Store::File::Simple - A Catmandu::FileStore to store files on disk
 
 =head1 SYNOPSIS
 
@@ -127,8 +128,8 @@ Catmandu::Store::Simple - A Catmandu::FileStore to store files on disk
 
 =head1 DESCRIPTION
 
-L<Catmandu::Store::Simple> is a L<Catmandu::FileStore> implementation to
-store files in a directory structure. Each L<Catmandu::FileStore::Bag> is
+L<Catmandu::Store::File::Simple> is a L<Catmandu::FileStore> implementation to
+store files in a directory structure. Each L<Catmandu::FileBag> is
 a deeply nested directory based on the numeric identifier of the bag. E.g.
 
     $store->bag(1234)
@@ -137,7 +138,7 @@ is stored as
 
     ${ROOT}/000/001/234
 
-In this directory all the L<Catmandu::FileStore::Bag> items are stored as
+In this directory all the L<Catmandu::FileBag> items are stored as
 flat files.
 
 =head1 CONFIGURATION
@@ -152,7 +153,7 @@ The root directory where to store all the files. Required.
 
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
-All the container keys of a L<Catmandu::Store::Simple> must be integers.
+All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =item uuid
 
@@ -162,8 +163,8 @@ If the to a true value, then the Simple store will require UUID-s as keys
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::Simple::Index>,
-L<Catmandu::Store::Simple::Bag>,
+L<Catmandu::Store::File::Simple::Index>,
+L<Catmandu::Store::File::Simple::Bag>,
 L<Catmandu::FileStore>
 
 =cut

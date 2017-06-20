@@ -26,7 +26,7 @@ sub _build_index {
         my $pkg        = Catmandu::Util::require_package($self->index_class);
         my $index_name = $self->index_bag;
 
-        if (my $options =  $self->bag_options->{$index_name}) {
+        if (my $options = $self->bag_options->{$index_name}) {
             $options = {%$options};
 
             if (my $plugins = delete $options->{plugins}) {
@@ -40,14 +40,15 @@ sub _build_index {
         }
     }
     catch {
-        $self->log->warn("no instance of " . $self->index_class . " created : $_");
+        $self->log->warn(
+            "no instance of " . $self->index_class . " created : $_");
     };
 
     $inst;
 }
 
 sub bag {
-    my $self = shift;
+    my $self       = shift;
     my $name       = shift // $self->index_bag;
     my $pkg        = $self->index_class;
     my $index_name = $self->index_bag;
@@ -136,12 +137,12 @@ Each L<Catmandu::FileStore> is a L<Catmandu::Store> and inherits all its methods
 
 A L<Catmandu::FileStore> is package to store and retrieve binary content in
 an filesystem, memory or a network. A C<Catmandu::FileStore> contains one or more
-C<Catmandu::FileStore::Bag> which is a kind of folder.
+C<Catmandu::FileBag> which is a kind of folder.
 
-Each C<Catmandu::FileStore::Bag> contains one or more files.
+Each C<Catmandu::FileBag> contains one or more files.
 
-One special C<Catmandu::FileStore::Bag> is the C<index> and contains the listing
-of all C<Catmandu::FileStore::Bag> in the C<Catmandu::FileStore>.
+One special C<Catmandu::FileBag> is the C<index> and contains the listing
+of all C<Catmandu::FileBag> in the C<Catmandu::FileStore>.
 
 =head1 CONFIGURATION
 
@@ -150,7 +151,7 @@ of all C<Catmandu::FileStore::Bag> in the C<Catmandu::FileStore>.
 =item index_bag
 
 The name of the index bag to use when no bag name is give. The index bag is a
-bag containing a listing of all C<Catmandu::FileStore::Bag>-s in the Store.
+bag containing a listing of all C<Catmandu::FileBag>-s in the Store.
 
     my $index = $store->index;
 
@@ -162,7 +163,7 @@ bag containing a listing of all C<Catmandu::FileStore::Bag>-s in the Store.
 
 =item index_class
 
-The default class implementation to use for an index of C<Catmandu::FileStore::Bag>-s.
+The default class implementation to use for an index of C<Catmandu::FileBag>-s.
 By default this is the C<Catmandu::FileStore> implementation with '::Index' added.
 
 =back
@@ -171,11 +172,11 @@ By default this is the C<Catmandu::FileStore> implementation with '::Index' adde
 
 =head2 bag($name)
 
-Create or retieve a bag with name C<$name>. Returns a L<Catmandu::FileStore::Bag>.
+Create or retieve a bag with name C<$name>. Returns a L<Catmandu::FileBag>.
 
 =head2 index
 
-Returns the index  L<Catmandu::FileStore::Bag> for the L<Catmandu::FileStore>.
+Returns the index  L<Catmandu::FileBag> for the L<Catmandu::FileStore>.
 
   my $index = $store->index;
 
@@ -208,9 +209,9 @@ See also: L<Catmandu> for activating the logger in your main code.
 
 =head1 SEE ALSO
 
-L<Catmandu::FileStore::Simple>,
-L<Catmandu::FileStore::Memory>,
-L<Catmandu::FileStore::Bag>
+L<Catmandu::Store::File::Simple>,
+L<Catmandu::Store::File::Memory>,
+L<Catmandu::FileBag>
 
 =head1 LICENSE AND COPYRIGHT
 

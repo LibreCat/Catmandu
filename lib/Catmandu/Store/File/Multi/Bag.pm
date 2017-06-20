@@ -1,4 +1,4 @@
-package Catmandu::Store::MultiFiles::Bag;
+package Catmandu::Store::File::Multi::Bag;
 
 use Catmandu::Sane;
 
@@ -8,10 +8,10 @@ use Catmandu::Hits;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Store::Multi::Base', 'Catmandu::FileStore::Bag';
+with 'Catmandu::Store::Multi::Base', 'Catmandu::FileBag';
 
 sub upload {
-    my ($self,$io,$id) = @_;
+    my ($self, $io, $id) = @_;
 
     # Upload in a FileStore should send data, in a normal Store it adds an
     # empty record
@@ -20,25 +20,26 @@ sub upload {
 
     for my $store (@{$self->store->stores}) {
         if ($store->does('Catmandu::FileStore')) {
-            my $bag  = $store->bag($self->name);
+            my $bag = $store->bag($self->name);
             next unless $bag;
             if ($rewind) {
+
                 # Rewind the stream after first use...
-                Catmandu::BadVal->throw("IO stream needs to seekable") unless $io->isa('IO::Seekable');
-                $io->seek(0,0);
+                Catmandu::BadVal->throw("IO stream needs to seekable")
+                    unless $io->isa('IO::Seekable');
+                $io->seek(0, 0);
             }
-            $store->bag($self->name)->upload($io,$id) || return undef;
+            $store->bag($self->name)->upload($io, $id) || return undef;
             $rewind = 1;
         }
         else {
             my $bag = $store->bag($self->name);
-            $bag->add({ _id => $id}) if $bag;
+            $bag->add({_id => $id}) if $bag;
         }
     }
 
     1;
 }
-
 
 1;
 
@@ -48,13 +49,13 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::MultiFiles::Bag - Index of all "files" in a Catmandu::Store::MultiFiles "folder"
+Catmandu::Store::File::Multi::Bag - Index of all "files" in a Catmandu::Store::File::Multi "folder"
 
 =head1 SYNOPSIS
 
     use Catmandu;
 
-    my $store = Catmandu->store('MultiFiles' , stores [
+    my $store = Catmandu->store('File::Multi' , stores [
         Catmandu->store('Simple', root => '/data1/files') ,
         Catmandu->store('Simple', root => '/data1/files_copy') ,
     ]);
@@ -109,8 +110,8 @@ Catmandu::Store::MultiFiles::Bag - Index of all "files" in a Catmandu::Store::Mu
 
 =head1 DESCRIPTION
 
-A L<Catmandu::Store::MultiFiles::Bag> contains all "files" available in a
-L<Catmandu::Store::MultiFiles> FileStore "folder". All methods of L<Catmandu::Bag>,
+A L<Catmandu::Store::File::Multi::Bag> contains all "files" available in a
+L<Catmandu::Store::File::Multi> FileStore "folder". All methods of L<Catmandu::Bag>,
 L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
 implemented.
 
@@ -118,13 +119,13 @@ Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
 
 =head1 FOLDERS
 
-All files in a L<Catmandu::Store::MultiFiles> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::MultiFiles::Index> :
+All files in a L<Catmandu::Store::File::Multi> are organized in "folders". To add
+a "folder" a new record needs to be added to the L<Catmandu::Store::File::Multi::Index> :
 
     $index->add({_id => '1234'});
 
-The C<_id> field is the only metadata available in MultiFiles stores. To add more
-metadata fields to a MultiFiles store a L<Catmandu::Plugin::SideCar> is required.
+The C<_id> field is the only metadata available in File::Multi stores. To add more
+metadata fields to a File::Multi store a L<Catmandu::Plugin::SideCar> is required.
 
 =head1 FILES
 
@@ -145,7 +146,7 @@ to retrieve files from a "folder".
 
 =head2 each(\&callback)
 
-Execute C<callback> on every "file" in the MultiFiles store "folder". See L<Catmandu::Iterable> for more
+Execute C<callback> on every "file" in the File::Multi store "folder". See L<Catmandu::Iterable> for more
 iterator functions
 
 =head2 exists($name)
@@ -154,7 +155,7 @@ Returns true when a "file" with identifier $name exists.
 
 =head2 add($hash)
 
-Adds a new "file" to the MultiFiles store "folder". It is very much advised to use the
+Adds a new "file" to the File::Multi store "folder". It is very much advised to use the
 C<upload> method below to add new files
 
 =head2 get($id)
@@ -181,7 +182,7 @@ Delete all files in this folder.
 
 =head2 upload(IO::Handle,$name)
 
-Upload the IO::Handle reference to the MultiFiles store "folder" and use $name as identifier.
+Upload the IO::Handle reference to the File::Multi store "folder" and use $name as identifier.
 
 =head2 stream(IO::Handle,$file)
 
@@ -189,8 +190,8 @@ Write the contents of the $file returned by C<get> to the IO::Handle.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::MultiFiles::Bag> ,
-L<Catmandu::Store::MultiFiles> ,
+L<Catmandu::Store::File::Multi::Bag> ,
+L<Catmandu::Store::File::Multi> ,
 L<Catmandu::FileStore::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,

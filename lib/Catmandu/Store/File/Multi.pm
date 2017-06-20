@@ -1,4 +1,4 @@
-package Catmandu::Store::MultiFiles;
+package Catmandu::Store::File::Multi;
 
 use Catmandu::Sane;
 
@@ -47,13 +47,13 @@ __END__
 
 =head1 NAME
 
-Catmandu::Store::MultiFiles - A store that adds files to multiple stores
+Catmandu::Store::File::Multi - A store that adds files to multiple stores
 
 =head1 SYNOPSIS
 
     # On the Command line
 
-    # Configure the MultiFiles store with a catmandu.yml file
+    # Configure the File::Multi store with a catmandu.yml file
     $ cat catmandu.yml
     ---
     store:
@@ -66,7 +66,7 @@ Catmandu::Store::MultiFiles - A store that adds files to multiple stores
        options:
           root: /data1/files_copy
       multi:
-       package: MultiFiles
+       package: File::Multi
        options:
            stores:
                - files1
@@ -85,7 +85,7 @@ Catmandu::Store::MultiFiles - A store that adds files to multiple stores
     # In Perl
     use Catmandu;
 
-    my $store = Catmandu->store('MultiFiles' , stores [
+    my $store = Catmandu->store('File::Multi' , stores [
         Catmandu->store('Simple', root => '/data1/files') ,
         Catmandu->store('Simple', root => '/data1/files_copy') ,
     ]);
@@ -149,8 +149,8 @@ L<Catmandu::Store>-s based on their name in a configuration file or instances.
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::MultiFiles::Index> ,
-L<Catmandu::Store::MultiFiles::Bag> ,
+L<Catmandu::Store::File::Multi::Index> ,
+L<Catmandu::Store::File::Multi::Bag> ,
 L<Catmandu::FileStore> ,
 L<Catmandu::Plugin::SideCar>
 L<Catmandu::Store> ,
