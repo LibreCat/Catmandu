@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.06  2017-06-20 15:48:00 CEST
   - new FileStores for handling binary data
   - new iterator bind
   - better bind performance
