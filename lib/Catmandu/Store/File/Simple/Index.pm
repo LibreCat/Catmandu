@@ -174,7 +174,7 @@ Catmandu::Store::File::Simple::Index - Index of all "Folders" in a Catmandu::Sto
 
     use Catmandu;
 
-    my $store = Catmandu->store('Simple' , root => 't/data');
+    my $store = Catmandu->store('File::Simple' , root => 't/data');
 
     my $index = $store->index;
 

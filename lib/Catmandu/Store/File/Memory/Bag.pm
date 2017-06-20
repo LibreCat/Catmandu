@@ -121,7 +121,7 @@ Catmandu::Store::File::Memory::Bag - Index of all "files" in a Catmandu::Store::
 
     use Catmandu;
 
-    my $store = Catmandu->store('Memory');
+    my $store = Catmandu->store('File::Memory');
 
     my $index = $store->index;
 

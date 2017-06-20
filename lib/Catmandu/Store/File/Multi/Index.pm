@@ -28,8 +28,8 @@ Catmandu::Store::File::Multi::Index - Index of all "Folders" in a Catmandu::Stor
     use Catmandu;
 
     my $store = Catmandu->store('File::Multi' , stores [
-        Catmandu->store('Simple', root => '/data1/files') ,
-        Catmandu->store('Simple', root => '/data1/files_copy') ,
+        Catmandu->store('File::Simple', root => '/data1/files') ,
+        Catmandu->store('File::Simple', root => '/data1/files_copy') ,
     ]);
 
     my $index = $store->index;
