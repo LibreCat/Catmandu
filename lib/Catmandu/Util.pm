@@ -41,6 +41,7 @@ our @EXPORT_OK = map {@$_} values %EXPORT_TAGS;
 
 $EXPORT_TAGS{all} = \@EXPORT_OK;
 
+
 my $HUMAN_CONTENT_TYPES = {
 
     # txt
@@ -220,10 +221,12 @@ sub segmented_path {
         : File::Spec->catdir(@path);
 }
 
-sub content_type {
-    my ($self, $filename) = @_;
+my $MIME_TYPES;
 
-    state $mime_types = MIME::Types->new(only_complete => 1);
+sub content_type {
+    my ($filename) = @_;
+
+    $MIME_TYPES ||= MIME::Types->new(only_complete => 1);
 
     return undef unless $filename;
 
@@ -231,12 +234,12 @@ sub content_type {
 
     my $type = 'application/octet-stream';
 
-    my $mime = $mime_types->mimeTypeOf($ext);
+    my $mime = $MIME_TYPES->mimeTypeOf($ext);
 
     # Require explicit stringification!
     $type = sprintf "%s", $mime->type if $mime;
 
-    return $type;
+    $type;
 }
 
 sub parse_data_path {

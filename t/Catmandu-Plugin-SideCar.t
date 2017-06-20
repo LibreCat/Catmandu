@@ -18,7 +18,7 @@ require_ok $pkg;
 note("Combined Simple + Hash sidecar");
 {
     my $store = Catmandu->store(
-        'Simple',
+        'File::Simple',
         root    => 't/data3',
         keysize => 9,
         bags    => {
@@ -110,7 +110,7 @@ note("Combined Hash + Simple sidecar");
             data => {
                 plugins => [qw(SideCar)],
                 sidecar => {
-                    package => "Simple",
+                    package => "File::Simple",
                     options => {'root' => 't/data3', 'keysize' => 9,}
                 },
                 sidecar_bag => 'index'

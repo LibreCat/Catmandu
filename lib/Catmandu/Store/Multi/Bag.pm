@@ -4,11 +4,12 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0507';
 
-use Catmandu::Hits;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Store::Multi::Base';
+extends 'Catmandu::Store::Multi::Base';
+
+with 'Catmandu::Bag';
 
 1;
 

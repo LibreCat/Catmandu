@@ -9,7 +9,9 @@ use Moo;
 use Hash::Merge::Simple 'merge';
 use namespace::clean;
 
-with 'Catmandu::Store::Multi::Base', 'Catmandu::FileStore::Index';
+extends 'Catmandu::Store::Multi::Base';
+
+with 'Catmandu::Bag', 'Catmandu::FileStore::Index';
 
 1;
 

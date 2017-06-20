@@ -22,7 +22,7 @@ note("download");
 {
     my $result = test_app(
         qq|Catmandu::CLI| => [
-            qw(stream Simple --root t/data2 --keysize 9 --bag 1 --id test.txt to -)
+            qw(stream File::Simple --root t/data2 --keysize 9 --bag 1 --id test.txt to -)
         ]
     );
 
@@ -35,7 +35,7 @@ note("upload");
 {
     my $result = test_app(
         qq|Catmandu::CLI| => [
-            qw(stream cpanfile to Simple --root t/data  --keysize 9 --bag 456 --id test.txt)
+            qw(stream cpanfile to File::Simple --root t/data  --keysize 9 --bag 456 --id test.txt)
         ]
     );
 

@@ -8,7 +8,9 @@ use Catmandu::Hits;
 use Moo;
 use namespace::clean;
 
-with 'Catmandu::Store::Multi::Base', 'Catmandu::FileBag';
+extends 'Catmandu::Store::Multi::Base';
+
+with 'Catmandu::FileBag';
 
 sub upload {
     my ($self, $io, $id) = @_;

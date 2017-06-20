@@ -5,8 +5,8 @@ use Catmandu::Sane;
 our $VERSION = '1.0507';
 
 use Catmandu::Hits;
-use Moo::Role;
-use Hash::Merge::Simple 'merge';
+use Moo;
+use Hash::Merge::Simple qw(merge);
 use namespace::clean;
 
 sub generator {
