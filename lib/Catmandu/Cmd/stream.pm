@@ -127,9 +127,9 @@ Catmandu::Cmd::stream - import and export streams into a Catmandu::FileStore
 
 =head1 EXAMPLES
 
-  catmandu stream /tmp/data.txt to Simple --root t/data --bag 1234
+  catmandu stream /tmp/data.txt to File::Simple --root t/data --bag 1234
 
-  catmandu stream Simple --root t/data --bag 1234 to /tmp/data
+  catmandu stream File::Simple --root t/data --bag 1234 to /tmp/data
 
   catmandu help stream
 

@@ -58,11 +58,11 @@ Catmandu::Store::File::Multi - A store that adds files to multiple stores
     ---
     store:
       files1:
-       package: Simple
+       package: File::Simple
        options:
           root: /data1/files
       files1:
-       package: Simple
+       package: File::Simple
        options:
           root: /data1/files_copy
       multi:
@@ -130,9 +130,9 @@ Catmandu::Store::File::Multi - A store that adds files to multiple stores
 
 =head1 DESCRIPTION
 
-The L<Catmandu::Store::Multi> is a combination of many L<Catmandu::Store>-s
+The L<Catmandu::Store::File::Multi> is a combination of many L<Catmandu::FileStore>-s
 as one access point. The Multi store inherits all the methods
-from L<Catmandu::Store>.
+from L<Catmandu::FileStore>.
 
 By default, the Multi store tries to update records in all configured backend
 stores. Importing, exporting, delete and drop will be executed against
@@ -142,10 +142,10 @@ all backend stores when possible.
 
 =head2 stores ARRAY(string)
 
-=head2 stores ARRAY(Catmandu::Store)
+=head2 stores ARRAY(Catmandu::FileStore)
 
 The C<store> configuration parameter contains an array of references to
-L<Catmandu::Store>-s based on their name in a configuration file or instances.
+L<Catmandu::FileStore>-s based on their name in a configuration file or instances.
 
 =head1 SEE ALSO
 

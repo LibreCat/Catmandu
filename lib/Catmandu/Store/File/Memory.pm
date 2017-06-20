@@ -34,7 +34,7 @@ Catmandu::Store::File::Memory - A Catmandu::FileStore to keep files in memory
     # From Perl
     use Catmandu;
 
-    my $store = Catmandu->store('Mempory');
+    my $store = Catmandu->store('File::Mempory');
 
     my $index = $store->index;
 

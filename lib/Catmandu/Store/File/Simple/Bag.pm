@@ -189,7 +189,7 @@ Catmandu::Store::File::Simple::Bag - Index of all "files" in a Catmandu::Store::
 
     use Catmandu;
 
-    my $store = Catmandu->store('Simple' , root => 't/data');
+    my $store = Catmandu->store('File::Simple' , root => 't/data');
 
     my $index = $store->index;
 

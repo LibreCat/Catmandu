@@ -141,7 +141,7 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
  ---
  store:
      files:
-      package: Simple
+      package: File::Simple
       options:
           root: /data/test123
           bags:
@@ -183,7 +183,7 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
  ...
 
  # Or in your Perl program
- my $store = Catmandu->store('Simple',
+ my $store = Catmandu->store('File::Simple',
             root => 'data/test123'
             bags => {
                 index => {
@@ -221,7 +221,7 @@ store and re-executed in the SideCar store.
 To add metadata to a L<Catmandu::FileStore> a SideCar needs to be added to the C<index>
 bag of the FileStore:
 
-    package: Simple
+    package: File::Simple
     options:
         root: /data/test123
         bags:
@@ -248,7 +248,7 @@ the metadata (by default C<data>):
                 plugins:
                     - SideCar
                 sidecar:
-                        package: Simple
+                        package: File::Simple
                         options:
                             root: /data/test123
                             uuid: 1

@@ -112,7 +112,7 @@ Catmandu::Store::File::Memory::Index - Index of all "Folders" in a Catmandu::Sto
 
     use Catmandu;
 
-    my $store = Catmandu->store('Memory');
+    my $store = Catmandu->store('File::Memory');
 
     my $index = $store->index;
 
