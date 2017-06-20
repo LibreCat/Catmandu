@@ -1,6 +1,10 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new FileStores for handling binary data
+  - new iterator bind
+  - better bind performance
+  - more pod
 
 1.0507  2017-05-19 17:32:57 CEST
   - correctly handle escapes in fix langauge quoted strings
