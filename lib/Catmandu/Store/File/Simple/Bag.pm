@@ -243,7 +243,7 @@ Catmandu::Store::File::Simple::Bag - Index of all "files" in a Catmandu::Store::
 
 A L<Catmandu::Store::File::Simple::Bag> contains all "files" available in a
 L<Catmandu::Store::File::Simple> FileStore "folder". All methods of L<Catmandu::Bag>,
-L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
+L<Catmandu::FileBag::Index> and L<Catmandu::Droppable> are
 implemented.
 
 Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
@@ -323,7 +323,7 @@ Write the contents of the $file returned by C<get> to the IO::Handle.
 
 L<Catmandu::Store::File::Simple::Bag> ,
 L<Catmandu::Store::File::Simple> ,
-L<Catmandu::FileStore::Index> ,
+L<Catmandu::FileBag::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,
 L<Catmandu::Droppable> ,

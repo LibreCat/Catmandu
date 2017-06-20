@@ -111,6 +111,6 @@ Return the contents of the L<Catmandu::FileBag> item as an UTF-8 string.
 =head1 SEE ALSO
 
 L<Catmandu::FileStore> ,
-L<Catmandu::FileStore::Index>
+L<Catmandu::FileBag::Index>
 
 =cut

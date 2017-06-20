@@ -11,7 +11,7 @@ use namespace::clean;
 
 extends 'Catmandu::Store::Multi::Base';
 
-with 'Catmandu::Bag', 'Catmandu::FileStore::Index';
+with 'Catmandu::Bag', 'Catmandu::FileBag::Index';
 
 1;
 
@@ -84,7 +84,7 @@ Catmandu::Store::File::Multi::Index - Index of all "Folders" in a Catmandu::Stor
 
 A L<Catmandu::Store::File::Multi::Index> contains all "folders" available in a
 L<Catmandu::Store::File::Multi> FileStore. All methods of L<Catmandu::Bag>,
-L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
+L<Catmandu::FileBag::Index> and L<Catmandu::Droppable> are
 implemented.
 
 Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
@@ -155,7 +155,7 @@ Delete the store.
 
 L<Catmandu::Store::File::Multi::Bag> ,
 L<Catmandu::Store::File::Multi> ,
-L<Catmandu::FileStore::Index> ,
+L<Catmandu::FileBag::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,
 L<Catmandu::Droppable> ,
