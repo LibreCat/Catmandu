@@ -1,4 +1,4 @@
-package Catmandu::FileStore::Index;
+package Catmandu::FileBag::Index;
 
 our $VERSION = '1.0507';
 
@@ -22,7 +22,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::FileStore::Index - Flag a Bag as a FileStore Index
+Catmandu::FileBag::Index - Flag a Bag as a FileStore Index
 
 =head1 SYNOPSIS
 

@@ -9,7 +9,7 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::Bag', 'Catmandu::FileStore::Index', 'Catmandu::Droppable';
+with 'Catmandu::Bag', 'Catmandu::FileBag::Index', 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;
@@ -166,7 +166,7 @@ Catmandu::Store::File::Memory::Index - Index of all "Folders" in a Catmandu::Sto
 
 A L<Catmandu::Store::File::Memory::Index> contains all "folders" available in a
 L<Catmandu::Store::File::Memory> FileStore. All methods of L<Catmandu::Bag>,
-L<Catmandu::FileStore::Index> and L<Catmandu::Droppable> are
+L<Catmandu::FileBag::Index> and L<Catmandu::Droppable> are
 implemented.
 
 Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
@@ -236,7 +236,7 @@ Delete the store.
 
 L<Catmandu::Store::File::Memory::Bag> ,
 L<Catmandu::Store::File::Memory> ,
-L<Catmandu::FileStore::Index> ,
+L<Catmandu::FileBag::Index> ,
 L<Catmandu::Plugin::SideCar> ,
 L<Catmandu::Bag> ,
 L<Catmandu::Droppable> ,
