@@ -100,9 +100,7 @@ sub download_file {
     my $io;
 
     if (!defined($filename) || $filename eq '-') {
-        $io = bless(
-            \*STDOUT => 'IO::File'
-            );
+        $io = bless(\*STDOUT => 'IO::File');
     }
     else {
         $io = IO::File->new(">$filename");
