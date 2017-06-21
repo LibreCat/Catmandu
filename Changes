@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - bugfix release
 
 1.06  2017-06-20 15:48:00 CEST
   - new FileStores for handling binary data
