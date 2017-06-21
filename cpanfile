@@ -29,6 +29,7 @@ requires 'Data::Compare', '1.22';
 requires 'Data::Util', '0.66';
 requires 'Data::UUID', '1.217';
 requires 'File::Find::Rule', '0.33';
+requires 'Path::Iterator::Rule','0';
 requires 'Path::Tiny', '0';
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';

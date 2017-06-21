@@ -7,6 +7,8 @@ use Moo;
 use Path::Tiny;
 use Carp;
 use POSIX qw(ceil);
+use Path::Iterator::Rule;
+use File::Spec;
 use namespace::clean;
 
 use Data::Dumper;
@@ -16,11 +18,11 @@ with 'Catmandu::Bag', 'Catmandu::FileBag::Index', 'Catmandu::Droppable';
 sub generator {
     my ($self) = @_;
 
-    my $root    = $self->store->root;
-    my $keysize = $self->store->keysize;
+    my $root       = $self->store->root;
+    my $keysize    = $self->store->keysize;
+    my @root_split = File::Spec->splitdir($root);
 
     my $mindepth = ceil($keysize / 3);
-    my $maxdepth = $mindepth + 1;
 
     unless (-d $root) {
         $self->log->error("no root $root found");
@@ -28,28 +30,28 @@ sub generator {
     }
 
     $self->log->debug("creating generator for root: $root");
+
+    my $rule = Path::Iterator::Rule->new;
+    $rule->min_depth($mindepth);
+    $rule->max_depth($mindepth);
+    $rule->directory;
+
     return sub {
-        state $io;
+        state $iter = $rule->iter($root, { depthfirst => 1 });
 
-        unless (defined($io)) {
-            open($io,
-                "find -L $root -mindepth $mindepth -maxdepth $maxdepth -type d|"
-            );
+        my $path = $iter->();
+
+        return undef unless defined($path);
+
+        # Strip of the root part and translate the path to an identifier
+        my @split_path = File::Spec->splitdir($path);
+        my $id = join("",splice(@split_path,int(@root_split)));
+
+        unless ($self->store->uuid) {
+            $id =~ s/^0+//;
         }
 
-        my $line = <$io>;
-
-        unless (defined($line)) {
-            close($io);
-            return undef;
-        }
-
-        chop($line);
-        $line =~ s/$root//;
-        $line =~ s/\///g;
-        $line =~ s/^0+//;
-
-        $self->get($line);
+        $self->get($id);
     };
 }
 
