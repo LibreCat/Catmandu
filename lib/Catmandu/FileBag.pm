@@ -8,8 +8,6 @@ use Catmandu::Util qw(:check);
 use Moo::Role;
 use namespace::clean;
 
-with 'Catmandu::Bag';
-
 sub stream {
     my ($self, $io, $data) = @_;
     check_hash_ref($data);

@@ -4,11 +4,10 @@ use Catmandu::Sane;
 
 our $VERSION = '1.06';
 
-use Catmandu::Hits;
 use Moo;
 use namespace::clean;
 
-extends 'Catmandu::Store::Multi::Base';
+extends 'Catmandu::Store::Multi::Bag';
 
 with 'Catmandu::FileBag';
 

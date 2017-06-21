@@ -7,7 +7,7 @@ use Moo;
 use Catmandu::Util qw(content_type);
 use namespace::clean;
 
-with 'Catmandu::FileBag', 'Catmandu::Droppable';
+with 'Catmandu::Bag', 'Catmandu::FileBag', 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;

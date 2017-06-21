@@ -1,8 +1,9 @@
 package Catmandu::Store::File::Simple::Bag;
 
+use Catmandu::Sane;
+
 our $VERSION = '1.06';
 
-use Catmandu::Sane;
 use Moo;
 use Carp;
 use IO::File;
@@ -12,9 +13,8 @@ use File::Copy;
 use Catmandu::Util qw(content_type);
 use URI::Escape;
 use namespace::clean;
-use utf8;
 
-with 'Catmandu::FileBag', 'Catmandu::Droppable';
+with 'Catmandu::Bag', 'Catmandu::FileBag', 'Catmandu::Droppable';
 
 has _path => (is => 'lazy');
 

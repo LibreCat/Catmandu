@@ -4,14 +4,12 @@ use Catmandu::Sane;
 
 our $VERSION = '1.06';
 
-use Catmandu::Hits;
 use Moo;
-use Hash::Merge::Simple 'merge';
 use namespace::clean;
 
-extends 'Catmandu::Store::Multi::Base';
+extends 'Catmandu::Store::Multi::Bag';
 
-with 'Catmandu::Bag', 'Catmandu::FileBag::Index';
+with 'Catmandu::FileBag::Index';
 
 1;
 
