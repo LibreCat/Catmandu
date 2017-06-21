@@ -37,7 +37,7 @@ sub generator {
     $rule->directory;
 
     return sub {
-        state $iter = $rule->iter($root, { depthfirst => 1 });
+        state $iter = $rule->iter($root, {depthfirst => 1});
 
         my $path = $iter->();
 
@@ -45,7 +45,7 @@ sub generator {
 
         # Strip of the root part and translate the path to an identifier
         my @split_path = File::Spec->splitdir($path);
-        my $id = join("",splice(@split_path,int(@root_split)));
+        my $id = join("", splice(@split_path, int(@root_split)));
 
         unless ($self->store->uuid) {
             $id =~ s/^0+//;

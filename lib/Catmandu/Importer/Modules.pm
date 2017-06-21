@@ -52,7 +52,7 @@ sub generator {
             my $rule = Path::Iterator::Rule->new;
             $rule->file->name('*.pm');
             $rule->max_depth($self->max_depth) if $self->has_max_depth;
-            $rule->iter($cur->[0], { depthfirst => 1 });
+            $rule->iter($cur->[0], {depthfirst => 1});
         };
 
         while (1) {
@@ -107,7 +107,7 @@ sub generator {
                 my $rule = Path::Iterator::Rule->new;
                 $rule->file->name('*.pm');
                 $rule->max_depth($self->max_depth) if $self->has_max_depth;
-                $iter = $rule->iter($cur->[0], { depthfirst => 1 });
+                $iter = $rule->iter($cur->[0], {depthfirst => 1});
             }
         }
     };
