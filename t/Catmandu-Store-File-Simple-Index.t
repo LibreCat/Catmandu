@@ -31,7 +31,7 @@ note("list");
 
     ok $array , 'list got a response';
 
-    is_deeply @$array , [{_id => 1}, {_id => 2}, {_id => 3},],
+    is_deeply $array , [{_id => 1}, {_id => 2}, {_id => 3},],
         'got correct response';
 }
 
