@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::maybe;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.06';
+our $VERSION = '1.0601';
 
 use Moo;
 use Scalar::Util qw(reftype);

@@ -2,7 +2,7 @@ package Catmandu::Paged;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.06';
+our $VERSION = '1.0601';
 
 use Moo::Role;
 use namespace::clean;

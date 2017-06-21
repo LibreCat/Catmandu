@@ -2,7 +2,7 @@ package Catmandu::Store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.06';
+our $VERSION = '1.0601';
 
 use Hash::Util::FieldHash qw(fieldhash);
 use Moo::Role;

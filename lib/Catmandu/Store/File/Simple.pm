@@ -1,6 +1,6 @@
 package Catmandu::Store::File::Simple;
 
-our $VERSION = '1.06';
+our $VERSION = '1.0601';
 
 use Catmandu::Sane;
 use Moo;

@@ -2,7 +2,7 @@ package Catmandu::Fix::lookup;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.06';
+our $VERSION = '1.0601';
 
 use Catmandu::Importer::CSV;
 use Moo;
