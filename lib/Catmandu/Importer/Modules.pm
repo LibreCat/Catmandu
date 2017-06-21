@@ -6,7 +6,7 @@ our $VERSION = '1.06';
 
 use Module::Info;
 use File::Spec;
-use File::Find::Rule;
+use Path::Iterator::Rule;
 use Moo;
 use Catmandu::Util qw(array_split pod_section read_file);
 use namespace::clean;
@@ -48,16 +48,17 @@ sub generator {
 
         state $cur = shift(@$search) // return;
 
-        state $rule = do {
-            my $r = File::Find::Rule->new->file->name('*.pm');
-            $r->maxdepth($self->max_depth) if $self->has_max_depth;
-            $r->start($cur->[0]);
+        state $iter = do {
+            my $rule = Path::Iterator::Rule->new;
+            $rule->file->name('*.pm');
+            $rule->max_depth($self->max_depth) if $self->has_max_depth;
+            $rule->iter($cur->[0], { depthfirst => 1 });
         };
 
         while (1) {
             my ($dir, $ns) = @$cur;
 
-            if (defined(my $file = $rule->match)) {
+            if (defined(my $file = $iter->())) {
                 my $path = File::Spec->abs2rel($file, $dir);
                 my $name = join('::', File::Spec->splitdir($path));
                 $name =~ s/\.pm$//;
@@ -103,7 +104,10 @@ sub generator {
             }
             else {
                 $cur = shift(@$search) // return;
-                $rule->start($cur->[0]);
+                my $rule = Path::Iterator::Rule->new;
+                $rule->file->name('*.pm');
+                $rule->max_depth($self->max_depth) if $self->has_max_depth;
+                $iter = $rule->iter($cur->[0], { depthfirst => 1 });
             }
         }
     };
