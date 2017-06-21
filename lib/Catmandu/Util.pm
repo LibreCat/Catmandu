@@ -2,7 +2,7 @@ package Catmandu::Util;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0507';
+our $VERSION = '1.06';
 
 use Exporter qw(import);
 use Sub::Quote    ();
@@ -40,7 +40,6 @@ our %EXPORT_TAGS = (
 our @EXPORT_OK = map {@$_} values %EXPORT_TAGS;
 
 $EXPORT_TAGS{all} = \@EXPORT_OK;
-
 
 my $HUMAN_CONTENT_TYPES = {
 

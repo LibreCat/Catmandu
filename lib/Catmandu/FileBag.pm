@@ -1,14 +1,12 @@
 package Catmandu::FileBag;
 
-our $VERSION = '1.0507';
+our $VERSION = '1.06';
 
 use Catmandu::Sane;
 use IO::String;
 use Catmandu::Util qw(:check);
 use Moo::Role;
 use namespace::clean;
-
-with 'Catmandu::Bag';
 
 sub stream {
     my ($self, $io, $data) = @_;

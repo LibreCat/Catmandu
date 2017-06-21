@@ -2,7 +2,7 @@ package Catmandu::Cmd;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0507';
+our $VERSION = '1.06';
 
 use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(is_array_ref pod_section);
