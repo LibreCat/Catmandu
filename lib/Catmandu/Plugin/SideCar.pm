@@ -233,6 +233,7 @@ bag of the FileStore:
                         options:
                             client: '1_0::Direct'
                             index_name: catmandu
+                sidecar_bag: data
 
 =head1 COMBINING A STORE WITH A FILESTORE
 
@@ -252,6 +253,7 @@ the metadata (by default C<data>):
                         options:
                             root: /data/test123
                             uuid: 1
+                sidecar_bag: index
 
 Notice that we added for the L<Catmandu::Store::File::Simple> the requires C<uuid> options
 because the L<Catmandu::Store::ElasticSearch> is using UUIDs as default identifiers.
