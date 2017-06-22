@@ -212,7 +212,7 @@ Catmandu::Plugin::SideCar - Automatically update a parallel Catmandu::Store with
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::SideCar can be used to combine L<Catmandu::Store>-s , L<Catmandu::FileStore>-s
-(and L<Catmandu::Store::Multi> , L<Catmandu::Store::File::Multi> as one access point.
+(and L<Catmandu::Store::Multi> , L<Catmandu::Store::File::Multi>) as one access point.
 Every get,add,delete,drop and commit action in the store will be first executed in the original
 store and re-executed in the SideCar store.
 
