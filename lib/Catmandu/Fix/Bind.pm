@@ -48,8 +48,9 @@ sub emit {
 
     #---The subfixer is only provided for backwards compatibility
     # with older Bind implementations and is deprecated
-    my $sub_fixer     = Catmandu::Fix->new(fixes => $self->__fixes__);
+    my $sub_fixer = Catmandu::Fix->new(fixes => $self->__fixes__);
     my $sub_fixer_var = $fixer->capture($sub_fixer);
+
     #---
 
     my $fix_stash = Package::Stash->new('Catmandu::Fix');
@@ -110,7 +111,8 @@ sub emit {
 
         $generated_code .= "${var} }";
 
-        $perl .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'::group::',${sub_fixer_var});";
+        $perl
+            .= "${unit} = ${bind_var}->bind(${unit}, $generated_code,'::group::',${sub_fixer_var});";
     }
 
 #  If this isn't a Bind::Group, then bind will be executed for each seperate fix

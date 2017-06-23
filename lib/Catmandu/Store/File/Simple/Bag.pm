@@ -83,7 +83,8 @@ sub get {
         _stream      => sub {
             my $out   = $_[0];
             my $bytes = 0;
-            my $data  = IO::File->new($file, "r") || Catmandu::Error->throw("$file not readable");
+            my $data  = IO::File->new($file, "r")
+                || Catmandu::Error->throw("$file not readable");
 
             Catmandu::Error->throw("no io defined or not writable")
                 unless defined($out);
