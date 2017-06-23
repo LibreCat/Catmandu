@@ -1,6 +1,6 @@
 package Catmandu::Store::File::Memory::Index;
 
-our $VERSION = '1.0601';
+our $VERSION = '1.0602';
 
 use Catmandu::Sane;
 use Moo;
