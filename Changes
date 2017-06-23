@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix filestore permission bug on Windows
 
 1.0601  2017-06-21 14:49:30 CEST
   - bugfix release
