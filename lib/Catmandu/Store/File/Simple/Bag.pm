@@ -65,9 +65,7 @@ sub get {
 
     return undef unless -f $file;
 
-    my $data = IO::File->new($file, "r");
-
-    my $stat = [$data->stat];
+    my $stat = [stat($file)];
 
     my $size     = $stat->[7];
     my $modified = $stat->[9];
@@ -85,6 +83,7 @@ sub get {
         _stream      => sub {
             my $out   = $_[0];
             my $bytes = 0;
+            my $data  = IO::File->new($file, "r") || Catmandu::Error->throw("$file not readable");
 
             Catmandu::Error->throw("no io defined or not writable")
                 unless defined($out);
