@@ -90,21 +90,21 @@ Catmandu::FileStore - Namespace for packages that can make files persistent
     # From the command line
 
     # Export a list of all file containers
-    $ catmandu export Simple --root t/data to YAML
+    $ catmandu export File::Simple --root t/data to YAML
 
     # Export a list of all files in container '1234'
-    $ catmandu export Simple --root t/data --bag 1234 to YAML
+    $ catmandu export File::Simple --root t/data --bag 1234 to YAML
 
     # Add a file to the container '1234'
-    $ catmandu stream /tmp/myfile.txt to Simple --root t/data --bag 1234 --id myfile.txt
+    $ catmandu stream /tmp/myfile.txt to File::Simple --root t/data --bag 1234 --id myfile.txt
 
     # Download the file 'myfile.txt' from the container '1234'
-    $ catmandu stream Simple --root t/data --bag 1234 --id myfile.txt to /tmp/output.txt
+    $ catmandu stream File::Simple --root t/data --bag 1234 --id myfile.txt to /tmp/output.txt
 
     # From Perl
     use Catmandu;
 
-    my $store = Catmandu->store('Simple' , root => 't/data');
+    my $store = Catmandu->store('File::Simple' , root => 't/data');
 
     # List all containers
     $store->bag->each(sub {
