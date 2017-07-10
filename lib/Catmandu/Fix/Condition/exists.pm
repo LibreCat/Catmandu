@@ -27,7 +27,7 @@ sub emit {
             if ($key eq '$first' || $key eq '$last') {
                 $perl .= "is_array_ref(${var}) && \@{${var}}";
             }
-            elsif ($key =~ /^\d+$/) {
+            elsif ($key =~ /^[0-9]+$/) {
                 $perl
                     .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
             }

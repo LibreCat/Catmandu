@@ -187,7 +187,7 @@ sub parse_fix {
 
 sub parse_name {
     my ($self) = @_;
-    $self->generic_token(name => qr/[a-z][_\da-zA-Z]*/);
+    $self->generic_token(name => qr/[a-z][_0-9a-zA-Z]*/);
 }
 
 sub parse_arguments {

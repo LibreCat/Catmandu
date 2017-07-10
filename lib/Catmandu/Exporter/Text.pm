@@ -28,7 +28,7 @@ sub _define_backslash_escapes {
 # $original_string = unbackslash( $special_characters_escaped );
 sub unbackslash ($) {
     local $_ = (defined $_[0] ? $_[0] : '');
-    s/ (\A|\G|[^\\]) [\\] ( [0]\d\d | [x][\da-fA-F]{2} | . ) / $1 . ( $Interpolated{lc($2) }) /gsxe;
+    s/ (\A|\G|[^\\]) [\\] ( [0][0-9][0-9] | [x][0-9a-fA-F]{2} | . ) / $1 . ( $Interpolated{lc($2) }) /gsxe;
     return $_;
 }
 
