@@ -31,22 +31,22 @@ sub _build_default_bag {
 }
 
 sub new_bag {
-    my ($self, $name, $args) = @_;
-    $args ||= {};
-    $args->{store} = $self;
-    $args->{name}  = $name // $self->default_bag;
-    if (my $default = $self->bag_args->{$name}) {
-        $args = {%$default, %$args};
+    my ($self, $name, $opts) = @_;
+    $opts ||= {};
+    $opts->{store} = $self;
+    $opts->{name}  = $name // $self->default_bag;
+    if (my $default_opts = $self->bag_options->{$name}) {
+        $opts = {%$default_opts, %$opts};
     }
-    my $pkg = delete($args->{class}) // $self->bag_class;
+    my $pkg = delete($opts->{class}) // $self->bag_class;
     my $default_plugins = $self->default_plugins;
-    my $plugins = delete $args->{plugins};
+    my $plugins = delete $opts->{plugins};
     if ($default_plugins || $plugins) {
         $plugins ||= [];
         unshift @$plugins, @$default_plugins;
         $pkg = $pkg->with_plugins($plugins);
     }
-    $pkg->new($args);
+    $pkg->new($opts);
 }
 
 {
