@@ -32,9 +32,9 @@ require_ok $pkg;
 
     package T::CustomBagClass;
     use Moo;
-    has store => (is => 'ro');
-    has name  => (is => 'ro');
-    has prop  => (is => 'ro');
+    extends 'T::Store::Bag';
+
+    has prop => (is => 'ro');
 }
 
 my $s = T::Store->new;
@@ -83,5 +83,20 @@ is($s->key_prefix,  '_');
 is($s->id_key,      'my_id');
 is($s->bag->id_key, 'my_id');
 
-done_testing;
+# plugins
 
+$b = T::Store->new(bags => {foo => {plugins => [qw(Datestamps)]}})
+    ->bag('foo');
+ok $b->does('Catmandu::Plugin::Datestamps'), 'apply plugins';
+
+$b = T::Store->new(default_plugins => [qw(Datestamps)])->bag('foo');
+ok $b->does('Catmandu::Plugin::Datestamps'), 'apply default plugins';
+
+$b = T::Store->new(
+    default_plugins => [qw(Datestamps)],
+    bags            => {foo => {plugins => [qw(Versioning)]}}
+)->bag('foo');
+ok $b->does('Catmandu::Plugin::Datestamps')
+    && $b->does('Catmandu::Plugin::Versioning'), 'prepend default plugins';
+
+done_testing;

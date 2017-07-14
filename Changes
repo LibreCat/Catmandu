@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - bags can have default plugins applied
 
 1.0602  2017-06-23 10:16:48 CEST
   - fix filestore permission bug on Windows
