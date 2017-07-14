@@ -43,7 +43,7 @@ sub new_bag {
     my $plugins = delete $opts->{plugins};
     if ($default_plugins || $plugins) {
         $plugins ||= [];
-        unshift @$plugins, @$default_plugins if $default_plugins;
+        unshift @$plugins, @$default_plugins;
         $pkg = $pkg->with_plugins($plugins);
     }
     $pkg->new($opts);
