@@ -12,10 +12,13 @@ use namespace::clean;
 with 'Catmandu::Logger';
 
 has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
+
 has default_bag => (is => 'lazy');
-has default_plugins => (is => 'ro');
+
 has bag_options => (is => 'ro', init_arg => 'bags', default => sub {+{}},);
+
 has key_prefix => (is => 'lazy', default => sub {'_'},);
+
 has id_key => (is => 'lazy', alias => 'id_field');
 
 sub key_for {
@@ -31,22 +34,19 @@ sub _build_default_bag {
 }
 
 sub new_bag {
-    my ($self, $name, $args) = @_;
-    $args ||= {};
-    $args->{store} = $self;
-    $args->{name}  = $name // $self->default_bag;
-    if (my $default = $self->bag_args->{$name}) {
-        $args = {%$default, %$args};
+    my ($self, $name, $options) = @_;
+    $options ||= {};
+    $options->{store} = $self;
+    $options->{name} = $name // $self->default_bag;
+    if (my $default = $self->bag_options->{$name}) {
+        $options = {%$default, %$options};
     }
-    my $pkg = delete($args->{class}) // $self->bag_class;
-    my $default_plugins = $self->default_plugins;
-    my $plugins = delete $args->{plugins};
-    if ($default_plugins || $plugins) {
-        $plugins ||= [];
-        unshift @$plugins, @$default_plugins;
+
+    my $pkg = delete($options->{class}) // $self->bag_class;
+    if (my $plugins = delete $options->{plugins}) {
         $pkg = $pkg->with_plugins($plugins);
     }
-    $pkg->new($args);
+    $pkg->new($options);
 }
 
 {
@@ -129,12 +129,6 @@ Specify configuration for individual bags.
     $store->bag('stuff')
     # this bag won't
     $store->bag('otherbag')
-
-=item default_plugins
-
-Plugins that will be applied to everybag in the store.
-
-    my $store = Catmandu::Store::MyDB->new(default_plugins => ['Datestamps']);
 
 =item bag_class
 
