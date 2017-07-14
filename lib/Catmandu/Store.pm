@@ -112,6 +112,12 @@ Some stores can be searched using L<Catmandu::Searchable> methods.
 
 =over
 
+=item default_plugins
+
+Specify plugins that will be applied to every bag in the store.
+
+    my $store = Catmandu::Store::MyDB->new(default_plugins => ['Datestamps']);
+
 =item default_bag
 
 The name of the bag to use if no explicit bag is given. Default is 'data'.
