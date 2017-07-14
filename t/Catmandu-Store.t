@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use Catmandu::Util qw(is_instance);
 use Test::More;
 use Test::Exception;
 use Role::Tiny;
@@ -83,5 +84,23 @@ is($s->key_prefix,  '_');
 is($s->id_key,      'my_id');
 is($s->bag->id_key, 'my_id');
 
-done_testing;
+# plugins
 
+$s = T::Store->new(
+    bag_class => 'T::CustomBagClass',
+    default_plugins => [qw(Datestamps)]
+);
+ok is_instance($s->bag('foo'), 'Catmandu::Plugin::Datestamps'), "default plugins get applied";
+$s = T::Store->new(
+    bag_class => 'T::CustomBagClass',
+    bags      => {foo => {plugins => [qw(Datestamps)]}}
+);
+ok is_instance($s->bag('foo'), 'Catmandu::Plugin::Datestamps'), "plugins get applied";
+$s = T::Store->new(
+    bag_class => 'T::CustomBagClass',
+    default_plugins => [qw(Datestamps)]
+    bags      => {foo => {plugins => [qw(Versioning)]}}
+i);
+ok is_instance($s->bag('foo'), 'Catmandu::Plugin::Datestamps', 'Catmandu::Plugin::Versioning'), "default plugins are prepended";
+
+done_testing;
