@@ -41,6 +41,7 @@ my %module_build_args = (
     "LWP::UserAgent" => 0,
     "LWP::UserAgent::Determined" => 0,
     "List::MoreUtils" => "0.33",
+    "List::MoreUtils::XS" => 0,
     "Log::Any" => 0,
     "Log::Any::Adapter" => 0,
     "MIME::Types" => 0,
