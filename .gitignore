@@ -4,8 +4,7 @@
 .perl-version
 .tidyall.d/
 Build
-Catmandu-*
-!t/Catmandu-*
+/Catmandu-*
 LICENSE
 MANIFEST*
 META.json
