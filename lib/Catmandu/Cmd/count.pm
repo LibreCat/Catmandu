@@ -2,7 +2,7 @@ package Catmandu::Cmd::count;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0602';
+our $VERSION = '1.0603';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0603  2017-09-04 10:16:55 CEST
   - bags can have default plugins applied
   - add hard dependency on List::MoreUtils::XS
 
