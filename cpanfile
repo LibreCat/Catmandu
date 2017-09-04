@@ -18,6 +18,7 @@ on 'develop', sub {
   requires 'Text::Diff', 0; # undeclared Test::Code::TidyAll plugin dependency
   };
 
+requires 'List::MoreUtils::XS', 0;
 requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '0.33';
 requires 'asa', 0; # undeclared dependency?
