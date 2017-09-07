@@ -11,6 +11,7 @@ use Moo;
 use namespace::clean;
 
 with 'Catmandu::Store';
+with 'Catmandu::Droppable';
 
 has stores => (
     is       => 'ro',
@@ -109,20 +110,39 @@ By default, the Multi store tries to update records in all configured backend
 stores. Importing, exporting, delete and drop will be executed against
 all backend stores when possible.
 
-=head1 CONFIGURATION
+=head1 METHODS
 
-=head2 stores ARRAY(string)
+=head2 new(stores => [...])
 
-=head2 stores ARRAY(Catmandu::Store)
+Create a new Catmandu::Store::Multi.The C<store> configuration parameter
+contains an array of references to L<Catmandu::Store>-s based on their name in
+a configuration file or instances.
 
-The C<store> configuration parameter contains an array of references to
-L<Catmandu::Store>-s based on their name in a configuration file or instances.
+=head1 INHERITED METHODS
+
+This Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Store>
+
+=item L<Catmandu::Droppable>
+
+=back
+
+Each Catmandu::Bag in this Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Bag>
+
+=item L<Catmandu::Droppable>
+
+=back
 
 =head1 SEE ALSO
 
 L<Catmandu::Store::File::Multi> ,
-L<Catmandu::Plugin::SideCar> ,
-L<Catmandu::Store> ,
-L<Catmandu::Bag>
+L<Catmandu::Plugin::SideCar>
 
 =cut

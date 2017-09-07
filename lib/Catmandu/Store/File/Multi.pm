@@ -11,6 +11,7 @@ use Moo;
 use namespace::clean;
 
 with 'Catmandu::FileStore';
+with 'Catmandu::Droppable';
 
 has stores => (
     is       => 'ro',
@@ -138,22 +139,54 @@ By default, the Multi store tries to update records in all configured backend
 stores. Importing, exporting, delete and drop will be executed against
 all backend stores when possible.
 
-=head1 CONFIGURATION
+=head1 METHODS
 
-=head2 stores ARRAY(string)
+=head2 new(stores => [...])
 
-=head2 stores ARRAY(Catmandu::FileStore)
-
-The C<store> configuration parameter contains an array of references to
+Create a new Catmandu::Store::File::Multi. The C<stores> configuration parameter contains an array of references to
 L<Catmandu::FileStore>-s based on their name in a configuration file or instances.
+
+=head1 INHERITED METHODS
+
+This Catmandu::FileStore implements:
+
+=over 3
+
+=item L<Catmandu::FileStore>
+
+=item L<Catmandu::Droppable>
+
+=back
+
+The index Catmandu::Bag in this Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Bag>
+
+=item L<Catmandu::FileBag::Index>
+
+=item L<Catmandu::Droppable>
+
+=back
+
+The file Catmandu::Bag in this Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Bag>
+
+=item L<Catmandu::FileBag>
+
+=item L<Catmandu::Droppable>
+
+=back
 
 =head1 SEE ALSO
 
-L<Catmandu::Store::File::Multi::Index> ,
-L<Catmandu::Store::File::Multi::Bag> ,
-L<Catmandu::FileStore> ,
+L<Catmandu::Store::File::Multi::Index>,
+L<Catmandu::Store::File::Multi::Bag>,
+L<Catmandu::Store::Multi> ,
 L<Catmandu::Plugin::SideCar>
-L<Catmandu::Store> ,
-L<Catmandu::Bag>
 
 =cut

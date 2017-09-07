@@ -9,6 +9,7 @@ use Hash::Merge::Simple qw(merge);
 use namespace::clean;
 
 with 'Catmandu::Bag';
+with 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;

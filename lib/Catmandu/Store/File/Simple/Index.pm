@@ -13,7 +13,9 @@ use namespace::clean;
 
 use Data::Dumper;
 
-with 'Catmandu::Bag', 'Catmandu::FileBag::Index', 'Catmandu::Droppable';
+with 'Catmandu::Bag';
+with 'Catmandu::FileBag::Index';
+with 'Catmandu::Droppable';
 
 sub generator {
     my ($self) = @_;
@@ -260,51 +262,18 @@ to retrieve files from a "folder".
 
     $files->download(IO::File->new(">/tmp/data.txt"),$file);
 
-=head1 METHODS
+=head1 INHERITED METHODS
 
-=head2 each(\&callback)
+This Catmandu::Bag implements:
 
-Execute C<callback> on every "folder" in the Simple store. See L<Catmandu::Iterable> for more
-iterator functions
+=over 3
 
-=head2 exists($id)
+=item L<Catmandu::Bag>
 
-Returns true when a "folder" with identifier $id exists.
+=item L<Catmandu::FileBag::Index>
 
-=head2 add($hash)
+=item L<Catmandu::Droppable>
 
-Adds a new "folder" to the Simple store. The $hash must contain an C<_id> field.
-
-=head2 get($id)
-
-Returns a hash containing the metadata of the folder. In the Simple store this hash
-will contain only the "folder" idenitifier.
-
-=head2 files($id)
-
-Return the L<Catmandu::Store::File::Simple::Bag> that contains all "files" in the "folder"
-with identifier $id.
-
-=head2 delete($id)
-
-Delete the "folder" with identifier $id, if exists.
-
-=head2 delete_all()
-
-Delete all folders in this store.
-
-=head2 drop()
-
-Delete the store.
-
-=head1 SEE ALSO
-
-L<Catmandu::Store::File::Simple::Bag> ,
-L<Catmandu::Store::File::Simple> ,
-L<Catmandu::FileBag::Index> ,
-L<Catmandu::Plugin::SideCar> ,
-L<Catmandu::Bag> ,
-L<Catmandu::Droppable> ,
-L<Catmandu::Iterable>
+=back
 
 =cut

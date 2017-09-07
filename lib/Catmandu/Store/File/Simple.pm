@@ -12,7 +12,8 @@ use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
 use namespace::clean;
 
-with 'Catmandu::FileStore', 'Catmandu::Droppable';
+with 'Catmandu::FileStore';
+with 'Catmandu::Droppable';
 
 has root    => (is => 'ro', required => '1');
 has uuid    => (is => 'ro', trigger  => 1);
@@ -144,7 +145,12 @@ is stored as
 In this directory all the L<Catmandu::FileBag> items are stored as
 flat files.
 
-=head1 CONFIGURATION
+=head1 METHODS
+
+=head2 new(root => $path , [ keysize => NUM , uuid => 1])
+
+Create a new Catmandu::Store::File::Simple with the following configuration
+parameters:
 
 =over
 
@@ -164,10 +170,47 @@ If the to a true value, then the Simple store will require UUID-s as keys
 
 =back
 
+=head1 INHERITED METHODS
+
+This Catmandu::FileStore implements:
+
+=over 3
+
+=item L<Catmandu::FileStore>
+
+=item L<Catmandu::Droppable>
+
+=back
+
+The index Catmandu::Bag in this Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Bag>
+
+=item L<Catmandu::FileBag::Index>
+
+=item L<Catmandu::Droppable>
+
+=back
+
+The file Catmandu::Bag in this Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Bag>
+
+=item L<Catmandu::FileBag>
+
+=item L<Catmandu::Droppable>
+
+=back
+
 =head1 SEE ALSO
 
 L<Catmandu::Store::File::Simple::Index>,
 L<Catmandu::Store::File::Simple::Bag>,
+L<Catmandu::Plugin::SideCar>,
 L<Catmandu::FileStore>
 
 =cut

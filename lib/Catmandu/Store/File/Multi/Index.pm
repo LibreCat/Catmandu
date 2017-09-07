@@ -78,85 +78,18 @@ Catmandu::Store::File::Multi::Index - Index of all "Folders" in a Catmandu::Stor
     # Delete a folders
     $index->delete("1234");
 
-=head1 DESCRIPTION
+=head1 INHERITED METHODS
 
-A L<Catmandu::Store::File::Multi::Index> contains all "folders" available in a
-L<Catmandu::Store::File::Multi> FileStore. All methods of L<Catmandu::Bag>,
-L<Catmandu::FileBag::Index> and L<Catmandu::Droppable> are
-implemented.
+This Catmandu::Bag implements:
 
-Every L<Catmandu::Bag> is also an L<Catmandu::Iterable>.
+=over 3
 
-=head1 FOLDERS
+=item L<Catmandu::Bag>
 
-All files in a L<Catmandu::Store::File::Multi> are organized in "folders". To add
-a "folder" a new record needs to be added to the L<Catmandu::Store::File::Multi::Index> :
+=item L<Catmandu::FileBag::Index>
 
-    $index->add({_id => '1234'});
+=item L<Catmandu::Droppable>
 
-The C<_id> field is the only metadata available in File::Multi stores. To add more
-metadata fields to a File::Multi store a L<Catmandu::Plugin::SideCar> is required.
-
-=head1 FILES
-
-Files can be accessed via the "folder" identifier:
-
-    my $files = $index->files('1234');
-
-Use the C<upload> method to add new files to a "folder". Use the C<download> method
-to retrieve files from a "folder".
-
-    $files->upload(IO::File->new("</tmp/data.txt"),'data.txt');
-
-    my $file = $files->get('data.txt');
-
-    $files->download(IO::File->new(">/tmp/data.txt"),$file);
-
-=head1 METHODS
-
-=head2 each(\&callback)
-
-Execute C<callback> on every "folder" in the File::Multi store. See L<Catmandu::Iterable> for more
-iterator functions
-
-=head2 exists($id)
-
-Returns true when a "folder" with identifier $id exists.
-
-=head2 add($hash)
-
-Adds a new "folder" to the File::Multi store. The $hash must contain an C<_id> field.
-
-=head2 get($id)
-
-Returns a hash containing the metadata of the folder. In the File::Multi store this hash
-will contain only the "folder" idenitifier.
-
-=head2 files($id)
-
-Return the L<Catmandu::Store::File::Multi::Bag> that contains all "files" in the "folder"
-with identifier $id.
-
-=head2 delete($id)
-
-Delete the "folder" with identifier $id, if exists.
-
-=head2 delete_all()
-
-Delete all folders in this store.
-
-=head2 drop()
-
-Delete the store.
-
-=head1 SEE ALSO
-
-L<Catmandu::Store::File::Multi::Bag> ,
-L<Catmandu::Store::File::Multi> ,
-L<Catmandu::FileBag::Index> ,
-L<Catmandu::Plugin::SideCar> ,
-L<Catmandu::Bag> ,
-L<Catmandu::Droppable> ,
-L<Catmandu::Iterable>
+=back
 
 =cut

@@ -14,7 +14,9 @@ use Catmandu::Util qw(content_type);
 use URI::Escape;
 use namespace::clean;
 
-with 'Catmandu::Bag', 'Catmandu::FileBag', 'Catmandu::Droppable';
+with 'Catmandu::Bag';
+with 'Catmandu::FileBag';
+with 'Catmandu::Droppable';
 
 has _path => (is => 'lazy');
 
@@ -273,60 +275,18 @@ to retrieve files from a "folder".
 
     $files->download(IO::File->new(">/tmp/data.txt"),$file);
 
-=head1 METHODS
+=head1 INHERITED METHODS
 
-=head2 each(\&callback)
+This Catmandu::Bag implements:
 
-Execute C<callback> on every "file" in the Simple store "folder". See L<Catmandu::Iterable> for more
-iterator functions
+=over 3
 
-=head2 exists($name)
+=item L<Catmandu::Bag>
 
-Returns true when a "file" with identifier $name exists.
+=item L<Catmandu::FileBag>
 
-=head2 add($hash)
+=item L<Catmandu::Droppable>
 
-Adds a new "file" to the Simple store "folder". It is very much advised to use the
-C<upload> method below to add new files
-
-=head2 get($id)
-
-Returns a hash containing the metadata of the file. The hash contains:
-
-    * _id : the file name
-    * size : file file size
-    * content_type : the content_type
-    * created : the creation date of the file
-    * modified : the modification date of the file
-    * _stream: a callback function to write the contents of a file to an L<IO::Handle>
-
-If is very much advised to use the C<stream> method below to retrieve files from
-the store.
-
-=head2 delete($name)
-
-Delete the "file" with name $name, if exists.
-
-=head2 delete_all()
-
-Delete all files in this folder.
-
-=head2 upload(IO::Handle,$name)
-
-Upload the IO::Handle reference to the Simple store "folder" and use $name as identifier.
-
-=head2 stream(IO::Handle,$file)
-
-Write the contents of the $file returned by C<get> to the IO::Handle.
-
-=head1 SEE ALSO
-
-L<Catmandu::Store::File::Simple::Bag> ,
-L<Catmandu::Store::File::Simple> ,
-L<Catmandu::FileBag::Index> ,
-L<Catmandu::Plugin::SideCar> ,
-L<Catmandu::Bag> ,
-L<Catmandu::Droppable> ,
-L<Catmandu::Iterable>
+=back
 
 =cut

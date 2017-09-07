@@ -98,12 +98,29 @@ ref of data:
                - _id: 2
                  data: bar
 
-=head2 bag($name)
 
-Create or retieve a bag with name $name. Returns a Catmandu::Bag.
+=head1 INHERITED METHODS
 
-=head1 SEE ALSO
+This Catmandu::Store implements:
 
-L<Catmandu::Bag>, L<Catmandu::Searchable>
+=over 3
+
+=item L<Catmandu::Store>
+
+=item L<Catmandu::Droppable>
+
+=item L<Catmandu::Transactional>
+
+=back
+
+Each Catmandu::Bag in this Catmandu::Store implements:
+
+=over 3
+
+=item L<Catmandu::Bag>
+
+=item L<Catmandu::Droppable>
+
+=back
 
 =cut
