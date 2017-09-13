@@ -4,9 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0603';
 
-use POSIX qw(strftime);
-use Time::HiRes;
-use Catmandu::Util qw(check_string);
+use Catmandu::Util qw(check_string now);
 use Moo::Role;
 use MooX::Aliases;
 use namespace::clean;
@@ -25,21 +23,8 @@ has datestamp_updated_key => (
 
 before add => sub {
     my ($self, $data) = @_;
-    my $fmt = $self->datestamp_format;
-    my $now;
 
-    if ($fmt eq 'iso_date_time') {
-        $now = strftime('%Y-%m-%dT%H:%M:%SZ', gmtime(time));
-    }
-    elsif ($fmt eq 'iso_date_time_millis') {
-        my $t = Time::HiRes::time;
-        $now = strftime('%Y-%m-%dT%H:%M:%S', gmtime($t));
-        $now .= sprintf('.%03d', ($t - int($t)) * 1000);
-        $now .= 'Z';
-    }
-    else {
-        $now = strftime($fmt, gmtime(time));
-    }
+    my $now = now($self->datestamp_format);
 
     $data->{$self->datestamp_created_key} ||= $now;
     $data->{$self->datestamp_updated_key} = $now;
@@ -129,10 +114,7 @@ aliased as C<datestamp_updated_field>.
 
 =item datestamp_format
 
-Use a custom C<strftime> format. There are also 2 builtin formats,
-C<iso_date_time> and C<iso_date_time_millis>.  C<iso_date_time> is equivalent
-to C<%Y-%m-%dT%H:%M:%SZ>. C<iso_date_time_millis> is the same, but with added
-milliseconds.
+Use a custom C<strftime> format. See L<Catmandu::Util::now> for possible format values.
 
     my $store = Catmandu::Store::MyDB->new(bags => {book => {plugins =>
         ['Datestamps'], datestamp_format => '%Y/%m/%d'}});
