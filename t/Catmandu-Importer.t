@@ -140,27 +140,67 @@ $i = T::Importer->new(file => 'http://demo.org');
 
 is ref($i->_http_client), 'LWP::UserAgent', 'Got a real client';
 
+# http retry
+$i = T::Importer->new(
+    user_agent  => user_agent(),
+    file        => 'http://demo.org/retry',
+);
+
+throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
+
+$i = T::Importer->new(
+    user_agent  => user_agent(),
+    file        => 'http://demo.org/retry',
+    http_retry  => 1,
+);
+
+throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
+
+$i = T::Importer->new(
+    user_agent  => user_agent(),
+    file        => 'http://demo.org/retry',
+    http_retry  => 2,
+);
+
+lives_ok {$i->fh->getline};
+
+$i = T::Importer->new(
+    user_agent  => user_agent(),
+    file        => 'http://demo.org/retry',
+    http_timing  => '1',
+);
+
+throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
+
+$i = T::Importer->new(
+    user_agent  => user_agent(),
+    file        => 'http://demo.org/retry',
+    http_timing  => '1,1',
+);
+
+lives_ok {$i->fh->getline};
+
 done_testing;
 
 sub user_agent {
     my $ua = Test::LWP::UserAgent->new(agent => 'Test/1.0');
 
     $ua->map_response(
-        qr{^http://demo.org/$},
+        qr{^http://demo\.org/$},
         HTTP::Response->new(
             '200', 'OK', ['Content-Type' => 'text/plain'], 'test123'
         )
     );
 
     $ua->map_response(
-        qr{^http://demo.org/1234$},
+        qr{^http://demo\.org/1234$},
         HTTP::Response->new(
             '200', 'OK', ['Content-Type' => 'text/plain'], 'test1234'
         )
     );
 
     $ua->map_response(
-        qr{^http://demo.org/red,green,blue$},
+        qr{^http://demo\.org/red,green,blue$},
         HTTP::Response->new(
             '200', 'OK',
             ['Content-Type' => 'text/plain'], 'RED-GREEN-BLUE'
@@ -168,10 +208,28 @@ sub user_agent {
     );
 
     $ua->map_response(
-        qr{^http://demo.org/post$},
+        qr{^http://demo\.org/post$},
         HTTP::Response->new(
             '200', 'OK', ['Content-Type' => 'text/plain'], 'POST'
         )
+    );
+
+    my $tries = 0;
+    $ua->map_response(
+        qr{^http://demo\.org/retry$},
+        sub {
+            $tries += 1;
+            if ($tries < 3) {
+                HTTP::Response->new(
+                    '408', 'Request Timeout', ['Content-Type' => 'text/plain'], 'GET'
+                )
+            } else {
+                HTTP::Response->new(
+                    '200', 'OK', ['Content-Type' => 'text/plain'], 'GET'
+                )
+            }
+
+        }
     );
 
     $ua;

@@ -6,7 +6,6 @@ our $VERSION = '1.0603';
 
 use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
 use LWP::UserAgent;
-use LWP::UserAgent::Determined;
 use HTTP::Request ();
 use URI           ();
 use URI::Template ();
@@ -65,6 +64,7 @@ has _http_client => (
     builder  => '_build_http_client',
     init_arg => 'user_agent'
 );
+has _http_timing_tries => (is => 'lazy');
 has ignore_404 => (is => 'ro');
 
 sub _build_encoding {
@@ -132,7 +132,17 @@ sub _build_fh {
         }
 
         my $res = $self->_http_client->request($req);
-        unless ($res->is_success) {
+
+        if ($res->code =~ /^408|500|502|503|504$/ && $self->_http_timing_tries) {
+            my @tries = @{$self->_http_timing_tries};
+            while (my $sleep = shift @tries) {
+                sleep $sleep;
+                $res = $self->_http_client->request($req->clone);
+                last if $res->code !~ /^408|500|502|503|504$/;
+            }
+        }
+
+        if (!$res->is_success) {
             my $res_headers = [];
             for my $header ($res->header_field_names) {
                 my $val = $res->header($header);
@@ -167,21 +177,24 @@ sub _build_http_method {
     'GET';
 }
 
-sub _build_http_client {
+sub _build__http_timing_tries {
     my ($self) = @_;
-    my $ua;
+
     if ($self->has_http_timing) {
-        $ua = LWP::UserAgent::Determined->new;
-        $ua->timing($self->http_timing);
+        my @timing_tries = $self->http_timing =~ /(\d+(?:\.\d+)*)/g;
+        return \@timing_tries;
     }
     elsif ($self->has_http_retry) {
-        $ua = LWP::UserAgent::Determined->new;
-        $ua->timing(join(',', ($self->http_timeout) x $self->http_retry));
+        my @timing_tries = (1) x $self->http_retry;
+        return \@timing_tries;
     }
-    else {
-        $ua = LWP::UserAgent->new;
-        $ua->timeout($self->http_timeout);
-    }
+    return;
+}
+
+sub _build_http_client {
+    my ($self) = @_;
+    my $ua = LWP::UserAgent->new;
+    $ua->timeout($self->http_timeout);
     $ua->agent($self->http_agent) if $self->has_http_agent;
     $ua->max_redirect($self->http_max_redirect)
         if $self->has_http_max_redirect;

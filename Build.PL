@@ -15,7 +15,7 @@ my %module_build_args = (
   },
   "dist_abstract" => "a data toolkit",
   "dist_author" => [
-    "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
+    "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
   "dist_version" => "1.0603",
@@ -39,7 +39,6 @@ my %module_build_args = (
     "Hash::Merge::Simple" => 0,
     "IO::Handle::Util" => "0.01",
     "LWP::UserAgent" => 0,
-    "LWP::UserAgent::Determined" => 0,
     "List::MoreUtils" => "0.33",
     "List::MoreUtils::XS" => 0,
     "Log::Any" => 0,
