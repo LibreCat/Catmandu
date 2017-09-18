@@ -81,7 +81,7 @@ Catmandu::FileBag - A Catmandu::FileStore compartment to persist binary data
     $files->delete('foobar.txt');
 
     # Delete a folder
-    $store->bag->delete('1234');
+    $store->index->delete('1234');
 
 
 =head1 DESCRIPTION
