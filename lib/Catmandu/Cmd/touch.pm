@@ -1,4 +1,4 @@
-package Catmandu::Cmd::count;
+package Catmandu::Cmd::touch;
 
 use Catmandu::Sane;
 
@@ -9,7 +9,7 @@ use Catmandu;
 use namespace::clean;
 
 sub command_opt_spec {
-    (["cql-query|q=s", ""], ["query=s", ""],);
+    (["key|field=s", "", {required => 1}], ["format=s", ""],);
 }
 
 sub command {
@@ -20,16 +20,7 @@ sub command {
     my $from_bag = delete $from_opts->{bag};
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
 
-    if ($opts->query // $opts->cql_query) {
-        $self->usage_error("Bag isn't searchable")
-            unless $from->can('searcher');
-        $from = $from->searcher(
-            cql_query => $opts->cql_query,
-            query     => $opts->query,
-        );
-    }
-
-    say $from->count;
+    $from->touch($opts->key, $opts->format);
 }
 
 1;
@@ -40,7 +31,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::count - count the number of objects in a bag
+Catmandu::Cmd::touch - add the current datetime to the objects in a bag
 
 =head1 EXAMPLES
 

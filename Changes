@@ -1,6 +1,9 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new touch command and bag touch method
+  - new Util::now function
+  - remove dependency on LWP::UserAgent::Determined
   - add a basic vim syntax definiton for fix files
 
 1.0603  2017-09-04 10:16:55 CEST

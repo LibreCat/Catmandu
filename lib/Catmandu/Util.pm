@@ -17,6 +17,8 @@ use YAML::XS            ();
 use Cpanel::JSON::XS    ();
 use Hash::Merge::Simple ();
 use MIME::Types;
+use POSIX ();
+use Time::HiRes ();
 
 our %EXPORT_TAGS = (
     io => [
@@ -35,6 +37,7 @@ our %EXPORT_TAGS = (
     human  => [qw(human_number human_content_type human_byte_size)],
     xml    => [qw(xml_declaration xml_escape)],
     misc   => [qw(require_package use_lib pod_section)],
+    date   => [qw(now)],
 );
 
 our @EXPORT_OK = map {@$_} values %EXPORT_TAGS;
@@ -689,6 +692,24 @@ sub require_package {
     $pkg;
 }
 
+sub now {
+    my $format = $_[0];
+    my $now;
+
+    if (!defined $format || $format eq 'iso_date_time') {
+        $now = POSIX::strftime('%Y-%m-%dT%H:%M:%SZ', gmtime(time));
+    }
+    elsif ($format eq 'iso_date_time_millis') {
+        my $t = Time::HiRes::time;
+        $now = POSIX::strftime('%Y-%m-%dT%H:%M:%S', gmtime($t));
+        $now .= sprintf('.%03d', ($t - int($t)) * 1000);
+        $now .= 'Z';
+    }
+    else {
+        $now = POSIX::strftime($format, gmtime(time));
+    }
+}
+
 1;
 
 __END__
@@ -1245,6 +1266,19 @@ Throws a Catmandu::Error on failure.
 
 Get documentation of a package for a selected section. Additional options are
 passed to L<Pod::Usage>.
+
+=item now($format)
+
+Returns the current datetime as a string. C<$format>can be any
+C<strftime> format. There are also 2 builtin formats, C<iso_date_time>
+and C<iso_date_time_millis>.  C<iso_date_time> is equivalent to
+C<%Y-%m-%dT%H:%M:%SZ>. C<iso_date_time_millis> is the same, but with
+added milliseconds.
+
+    now('%Y/%m/%d');
+    now('iso_date_time_millis');
+
+The default format is C<iso_date_time>;
 
 =back
 

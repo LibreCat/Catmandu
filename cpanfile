@@ -37,7 +37,6 @@ requires 'List::MoreUtils', '0.33';
 requires 'Log::Any', 0;
 requires 'Log::Any::Adapter', 0;
 requires 'LWP::UserAgent', 0;
-requires 'LWP::UserAgent::Determined', 0;
 requires 'MIME::Types',0;
 requires 'Module::Info', 0;
 requires 'Moo', '>=1.004006';
