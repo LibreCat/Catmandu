@@ -110,29 +110,29 @@ Catmandu::FileStore - Namespace for packages that can make files persistent
     my $store = Catmandu->store('File::Simple' , root => 't/data');
 
     # List all containers
-    $store->bag->each(sub {
+    $store->index->each(sub {
         my $container = shift;
 
         print "%s\n" , $container->{_id};
     });
 
     # Add a new container
-    $store->bag->add({ _id => '1234' });
+    $store->index->add({ _id => '1234' });
 
     # Get the container
-    my $container = $store->bag->files('1234');
+    my $files = $store->index->files('1234');
 
     # Add a file to the container
-    $container->upload(IO::File->new('<foobar.txt'), 'foobar.txt');
+    $files->upload(IO::File->new('<foobar.txt'), 'foobar.txt');
 
     # Stream the contents of a file
-    $container->stream(IO::File->new('>foobar.txt'), 'foobar.txt');
+    $files->stream(IO::File->new('>foobar.txt'), 'foobar.txt');
 
     # Delete a file
-    $container->delete('foobar.txt');
+    $files->delete('foobar.txt');
 
     # Delete a container
-    $store->bag->delete('1234');
+    $store->index->delete('1234');
 
 =head1 DESCRIPTION
 
