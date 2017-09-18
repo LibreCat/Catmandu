@@ -74,7 +74,8 @@ Catmandu::FileBag - A Catmandu::FileStore compartment to persist binary data
     $files->upload(IO::File->new('<foobar.txt'), 'foobar.txt');
 
     # Stream the contents of a file
-    $files->stream(IO::File->new('>foobar.txt'), 'foobar.txt');
+    my $file = $files->get('foobar.txt');
+    $files->stream(IO::File->new('>foobar.txt'), $file);
 
     # Delete a file
     $files->delete('foobar.txt');
