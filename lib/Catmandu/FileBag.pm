@@ -91,12 +91,13 @@ Each L<Catmandu::FileBag> is a L<Catmandu::Bag> and inherits all its methods.
 
 =head2 upload($io, $file_name)
 
-An helper application to add an IO::Handle $io to the L<Catmandu::FileBag>
+An helper application to add an IO::Handle $io to the L<Catmandu::FileBag>. Returns
+the number of bytes written.
 
 =head2 stream($io, $file)
 
 A helper application to stream the contents of a L<Catmandu::FileBag> item
-to an IO::Handle.
+to an IO::Handle. Returns the nuber of bytes written.
 
 =head2 as_string($file)
 
