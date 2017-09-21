@@ -1,6 +1,6 @@
 package Catmandu::Store::File::Memory::Bag;
 
-our $VERSION = '1.0603';
+our $VERSION = '1.0604';
 
 use Catmandu::Sane;
 use Moo;

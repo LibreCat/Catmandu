@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0604  2017-09-21 10:35:26 CEST
   - new touch command and bag touch method
   - new Util::now function
   - remove dependency on LWP::UserAgent::Determined
