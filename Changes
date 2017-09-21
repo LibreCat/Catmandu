@@ -5,6 +5,7 @@ Revision history for Catmandu
   - new Util::now function
   - remove dependency on LWP::UserAgent::Determined
   - add a basic vim syntax definiton for fix files
+  - add, copy, join, move, remove, set, sort and split fix shortcuts
 
 1.0603  2017-09-04 10:16:55 CEST
   - bags can have default plugins applied
