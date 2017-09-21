@@ -221,14 +221,14 @@ sub user_agent {
             $tries += 1;
             if ($tries < 3) {
                 HTTP::Response->new(
-                    '408', 'Request Timeout',
+                    '408',
+                    'Request Timeout',
                     ['Content-Type' => 'text/plain'], 'GET'
-                    );
+                );
             }
             else {
-                HTTP::Response->new(
-                    '200', 'OK', ['Content-Type' => 'text/plain'], 'GET'
-                    );
+                HTTP::Response->new('200', 'OK',
+                    ['Content-Type' => 'text/plain'], 'GET');
             }
 
         }
