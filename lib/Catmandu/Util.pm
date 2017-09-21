@@ -17,7 +17,7 @@ use YAML::XS            ();
 use Cpanel::JSON::XS    ();
 use Hash::Merge::Simple ();
 use MIME::Types;
-use POSIX ();
+use POSIX       ();
 use Time::HiRes ();
 
 our %EXPORT_TAGS = (

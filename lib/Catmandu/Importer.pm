@@ -65,7 +65,7 @@ has _http_client => (
     init_arg => 'user_agent'
 );
 has _http_timing_tries => (is => 'lazy');
-has ignore_404 => (is => 'ro');
+has ignore_404         => (is => 'ro');
 
 sub _build_encoding {
     ':utf8';
@@ -133,7 +133,9 @@ sub _build_fh {
 
         my $res = $self->_http_client->request($req);
 
-        if ($res->code =~ /^408|500|502|503|504$/ && $self->_http_timing_tries) {
+        if (   $res->code =~ /^408|500|502|503|504$/
+            && $self->_http_timing_tries)
+        {
             my @tries = @{$self->_http_timing_tries};
             while (my $sleep = shift @tries) {
                 sleep $sleep;

@@ -168,7 +168,7 @@ is_deeply $b->get_or_add($data->{_id}, {a => {pony => 'wails'}}), $data;
 is_deeply $b->to_hash, {$data->{_id} => $data};
 
 $b->touch('datestamp');
-ok $b->all(sub { $_[0]->{datestamp} });
+ok $b->all(sub {$_[0]->{datestamp}});
 
 # store custom key_prefix
 
