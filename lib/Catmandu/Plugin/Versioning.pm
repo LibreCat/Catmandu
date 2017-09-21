@@ -2,7 +2,7 @@ package Catmandu::Plugin::Versioning;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0604';
+our $VERSION = '1.0605';
 
 use Catmandu::Util qw(is_value is_array_ref check_value check_positive);
 use Data::Compare;

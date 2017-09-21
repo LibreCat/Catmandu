@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::valid;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0604';
+our $VERSION = '1.0605';
 
 use Moo;
 use Catmandu::Util qw(require_package);
