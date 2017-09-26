@@ -167,7 +167,11 @@ sub _build_hogan {
 sub _preprocess {
     my ($self, $text) = @_;
     return $text unless $self->preprocess || $self->_hogan_vars;
-    $self->_hogan->compile($text)->render($self->_hogan_vars || {});
+    my $vars = $self->_hogan_vars || {};
+    for my $var (keys %$vars) {
+        my $val = $vars->{$var};
+    }
+    $self->_hogan->compile($text, {numeric_string_as_string => 1})->render($vars);
 }
 
 sub fix {

@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix bug with numeric strings in fix preprocessing
 
 1.0605  2017-09-21 10:58:21 CEST
   - fix touch command pod
