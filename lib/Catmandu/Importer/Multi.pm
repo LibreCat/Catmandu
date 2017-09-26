@@ -2,7 +2,7 @@ package Catmandu::Importer::Multi;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0605';
+our $VERSION = '1.0606';
 
 use Catmandu::Util qw(is_string);
 use Catmandu;

@@ -2,7 +2,7 @@ package Catmandu::Cmd::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0605';
+our $VERSION = '1.0606';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

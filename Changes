@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.0606  2017-09-26 10:42:35 CEST
   - fix bug with numeric strings in fix preprocessing
 
 1.0605  2017-09-21 10:58:21 CEST
