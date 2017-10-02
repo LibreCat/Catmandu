@@ -110,7 +110,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#importers"><span class="toc-section-number">4.2</span> Importers <a href="https://github.com/LibreCat/Catmandu/wiki/Importers">✎</a></a></li>
 <li><a href="#exporters"><span class="toc-section-number">4.3</span> Exporters <a href="https://github.com/LibreCat/Catmandu/wiki/Exporters">✎</a></a></li>
 <li><a href="#stores"><span class="toc-section-number">4.4</span> Stores <a href="https://github.com/LibreCat/Catmandu/wiki/Stores">✎</a></a></li>
-<li><a href="#fixes"><span class="toc-section-number">4.5</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes">✎</a></a></li>
+<li><a href="#filestore"><span class="toc-section-number">4.5</span> FileStore <a href="https://github.com/LibreCat/Catmandu/wiki/FileStore">✎</a></a><ul>
+<li><a href="#bag"><span class="toc-section-number">4.5.1</span> Bag</a></li>
+<li><a href="#index"><span class="toc-section-number">4.5.2</span> Index</a></li>
+<li><a href="#technical-metadata"><span class="toc-section-number">4.5.3</span> Technical Metadata</a></li>
+<li><a href="#configuration-1"><span class="toc-section-number">4.5.4</span> Configuration</a></li>
+</ul></li>
+<li><a href="#fixes"><span class="toc-section-number">4.6</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes">✎</a></a></li>
 </ul></li>
 <li><a href="#fix-language"><span class="toc-section-number">5</span> Fix language <a href="https://github.com/LibreCat/Catmandu/wiki/Fix%20language">✎</a></a><ul>
 <li><a href="#paths"><span class="toc-section-number">5.1</span> Paths <a href="https://github.com/LibreCat/Catmandu/wiki/Paths">✎</a></a><ul>
@@ -130,7 +136,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#copy"><span class="toc-section-number">6.1.3</span> Copy</a></li>
 <li><a href="#count"><span class="toc-section-number">6.1.4</span> Count</a></li>
 <li><a href="#delete"><span class="toc-section-number">6.1.5</span> Delete</a></li>
-<li><a href="#configuration-1"><span class="toc-section-number">6.1.6</span> Configuration</a></li>
+<li><a href="#configuration-2"><span class="toc-section-number">6.1.6</span> Configuration</a></li>
+<li><a href="#stream"><span class="toc-section-number">6.1.7</span> Stream</a></li>
 </ul></li>
 <li><a href="#fixes-cheat-sheet"><span class="toc-section-number">6.2</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet">✎</a></a></li>
 <li><a href="#example-fix-script"><span class="toc-section-number">6.3</span> Example Fix Script <a href="https://github.com/LibreCat/Catmandu/wiki/Example%20Fix%20Script">✎</a></a></li>
@@ -182,7 +189,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>use a simple <a href="#fix-language">Fix language</a> to convert metadata into any format you like.</li>
 </ul>
 <p>Catmandu is used in the <a href="#librecat">LibreCat</a> project to build institutional repositories and search engines. Catmandu is used on the <a href="#-command-line-client">command line</a> for quick and dirty reports but also as part of larger programming projects processing millions of records per day. For a short overview of use-cases, see our <a href="http://librecat.org/use-cases.html">Homepage</a>.</p>
-<p>There are than 60 Catmandu projects available at <a href="https://github.com/organizations/LibreCat">GitHub LibreCat</a>.</p>
+<p>There are more than 60 Catmandu projects available at <a href="https://github.com/organizations/LibreCat">GitHub LibreCat</a>.</p>
 </section>
 <section id="installation" class="level1">
 <h1><span class="header-section-number">2</span> Installation <a href="https://github.com/LibreCat/Catmandu/wiki/Installation">✎</a></h1>
@@ -329,9 +336,8 @@ sudo cpanm Catmandu::OAI</code></pre>
 
 <span class="co"># Run the docker command</span>
 <span class="kw">docker</span> run -it librecat/catmandu</code></pre>
-<p>Or, in case you want a native install use <strong>ActivePerl</strong></p>
-<p>via <a href="http://www.activestate.com/activeperl/downloads">ActivePerl</a></p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">ppm</span> install Catmandu</code></pre>
+<p>Or, in case you want a native install use <a href="http://strawberryperl.com/">Strawberry Perl</a>. Catmandu installations have been tested up to version 5.24.1.1. After installation of the EXE, reboot your machine, start the <code>cmd.exe</code> command line and execute:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">cpanm</span> Catmandu Catmandu::MARC </code></pre>
 </section>
 <section id="raspbian-gnulinux-7-on-the-raspberry-pi-armhf" class="level3">
 <h3><span class="header-section-number">2.0.9</span> Raspbian GNU/Linux 7 on the Raspberry Pi (armhf)</h3>
@@ -548,8 +554,88 @@ marc_map(&#39;245a&#39;,&#39;title_short&#39;)
 .</code></pre>
 <p>In reality the Fix script will contain many mappings and data transformations to clean data. See <a href="#example-fix-script">Example Fix Script</a> for a long example of such a data cleaning in action.</p>
 </section>
+<section id="filestore" class="level2">
+<h2><span class="header-section-number">4.5</span> FileStore <a href="https://github.com/LibreCat/Catmandu/wiki/FileStore">✎</a></h2>
+<p><a href="#stores">Stores</a> are Catmandu packages to store Catmandu <a href="#items">Items</a> in a database. A <strong>FileStore</strong> is a Store where you can store binary content (unstructured data). Out of the box, one FileStore implementation is provided: <strong>File::Simple</strong> which stores files in a directory structure on the local file system.</p>
+<p>The command below stores the <code>/tmp/myfile.txt</code> in the <code>File::Simple</code> FileStore in the “container” <code>1234</code> with the file identifier <code>myfile.txt</code>:</p>
+<pre class="(bash)"><code>$ catmandu stream /tmp/myfile.txt to File::Simple --root t/data --bag 1234 --id myfile.txt</code></pre>
+<p>The <code>root</code> parameter is mandatory for the <code>File::Simple</code> FileStore. It defines the location where all stored files are written. The other two parameters <code>bag</code> and <code>id</code> are mandatory for every FileStore (see below).</p>
+<p>To extract a file from a FileStore the <code>stream</code> command can be used in the opposite direction:</p>
+<pre class="(bash)"><code>$ catmandu stream File::Simple --root t/data --bag 1234 --id myfile.txt to /tmp/myfile.txt</code></pre>
+<p>From the <code>File::Simple</code> the file <code>myfile.txt</code> is extracted from the container with identifier <code>1234</code>.</p>
+<p>Every FileStore inherits the functionality of a Store. In this way the <code>drop</code> and <code>delete</code> commands can be used to delete data from a FileStore:</p>
+<pre class="(bash)"><code># Delete a &quot;file&quot;
+$ catmandu delete File::Simple --root t/data --bag 1234 --id myfile.txt
+
+# Delete a &quot;folder&quot;
+$ catmandu drop File::Simple --root t/data --bag 1234</code></pre>
+<section id="bag" class="level3">
+<h3><span class="header-section-number">4.5.1</span> Bag</h3>
+<p>A FileStore contains one or more <strong>Bag</strong>s. These Bags are containers (or “folders”) to store zero or more files. The name of these container, indicated with the <code>bag</code> option in the Catmandu commands, is an identifier. In the case of the <code>File::Simple</code> this identifier needs to be a number, or when setting the <code>uuid</code> option a UUID identifier.</p>
+<p>The binary data (files) stored in these Bags also needs an identifier, indicated with the <code>id</code> option. Usually the file name is a good choice to use.</p>
+<p>Both the <code>bag</code> name option and <code>id</code> options are required when uploading or streaming data from a FileStore.</p>
+<p>Within a FileStore Bag there is no deeper hierarchy possible. A Bag contains a flat list of files. To store deeply nested folders and files, mechanisms such as ZIP files need to be created and imported.</p>
+<pre class="(bash)"><code>$ zip -r /tmp/files.zip /mnt/data/files
+$ catmandu stream /tmp/files.zip --root t/data --bag 1234 --id files.zip</code></pre>
+</section>
+<section id="index" class="level3">
+<h3><span class="header-section-number">4.5.2</span> Index</h3>
+<p>Every FileStore has a default Bag called <code>index</code> which contains a list of all available Bags in the store (like the listing of all folders). Using the <code>export</code> command a listing of bags can be requested from the FileStore:</p>
+<pre><code>$ catmandu export File::Simple --root t/data to YAML</code></pre>
+<p>To retrieve a listing of all files stored in a bag the <code>bag</code> option needs to be provided:</p>
+<pre><code>$ catmandu export File::Simple --root t/data --bag 1234 to YAML</code></pre>
+</section>
+<section id="technical-metadata" class="level3">
+<h3><span class="header-section-number">4.5.3</span> Technical Metadata</h3>
+<p>Each Bag (“container”) in a FileStore contains at least the <code>_id</code> as metadata. Some FileStores may contain more metadata. To retrieve a listing of all containers use the <code>export</code> command on the FileStore:</p>
+<pre class="(bash)"><code>$ catmandu export File::Simple --root t/data 
+[{&quot;_id&quot;:&quot;1234&quot;},{&quot;_id&quot;:&quot;1235&quot;},{&quot;_id&quot;:&quot;1236&quot;}]</code></pre>
+<p>Every “file” in a FileStore contains at least the following fields:</p>
+<ul>
+<li>**_id** : the name of the file</li>
+<li>**_stream** : a callback function to download the contents of the file (pass it an IO::Handle)</li>
+<li><strong>created</strong> : the creation date time of the file as a UNIX timestamp</li>
+<li><strong>modified</strong> : the last modification date time of the file as a UNIX timestamp</li>
+<li><strong>content_type</strong> : the content type of the file</li>
+<li><strong>size</strong> : the file size in bytes</li>
+<li><strong>md5</strong> : an MD5 checksum if the FileStore support is, or an empty string</li>
+</ul>
+<p>NOTE: Not every exporter can serialise the code reference in the <code>stream</code> field. For instance, when exporting to JSON this error message will be show up:</p>
+<pre class="(bash)"><code>$ catmandu export File::Simple --root t/data --bag 1234
+Oops! encountered CODE(0x7f99685f4390), but JSON can only represent references to arrays or hashes at /Users/hochsten/.plenv/versions/5.24.0/lib/perl5/site_perl/5.24.0/Catmandu/Exporter/JSON.pm line 36.</code></pre>
+<p>This field can be ignored from the output using the <code>remove_field</code> fix:</p>
+<pre class="(bash)"><code>$ catmandu export File::Simple --root t/data --bag 1234 --fix &#39;remove_field(_stream)&#39;
+[{&quot;_id&quot;:&quot;files.pdf&quot;,&quot;content_type&quot;:&quot;application/pdf&quot;,&quot;modified&quot;:1498122646,&quot;md5&quot;:&quot;&quot;,&quot;size&quot;:883202,&quot;created&quot;:1498122646}]</code></pre>
+<p>Always use the <code>stream</code> command in Catmandu to extract files from a FileStore:</p>
+<pre class="(bash)"><code>$ catmandu stream File::Simple --root t/data --bag 1234 --id &#39;files.pdf&#39; &gt; output.pdf</code></pre>
+</section>
+<section id="configuration-1" class="level3">
+<h3><span class="header-section-number">4.5.4</span> Configuration</h3>
+<p>As for Stores, the configuration parameters for FileStore can be written in a <code>catmandu.yml</code> configuration file. In this way the Catmandu commands can be shortened:</p>
+<pre><code>$ cat catmandu.yml
+---
+store:
+  files
+    package: File::Simple
+    options:
+        root: t/data
+
+# Get a &quot;directory&quot; listing
+$ catmandu export files to YAML
+
+# Get a &quot;file&quot; listing
+$ catmandu export files --bag 1234 to YAML
+
+# Add a file
+$ catmandu stream /tmp/myfile.txt to files --bag 1234 --id myfile.txt
+
+# Download a file
+$ catmandu stream files --bag 1234 --id myfile.txt to /tmp/myfile.txt
+</code></pre>
+</section>
+</section>
 <section id="fixes" class="level2">
-<h2><span class="header-section-number">4.5</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes">✎</a></h2>
+<h2><span class="header-section-number">4.6</span> Fixes <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes">✎</a></h2>
 <p><strong>Fixes</strong> are used for easy data transformations by non programmers. Using a small <a href="#fix-language">Fix language</a> non-programmers can manipulate Catmandu <a href="#-items">Items</a>.</p>
 <p>To introduce the capabilities of Fix, an example will be provided below to extract data from a MARC input.</p>
 <p>First, make sure that Catmandu::MARC is installed on your system.</p>
@@ -668,7 +754,7 @@ year
 <pre><code>my.colors.*</code></pre>
 <p>To upcase all the colors use:</p>
 <pre><code>upcase(my.colors.*)</code></pre>
-<p>When list are nested inside lists, then wildcards can also be nested:</p>
+<p>When lists are nested inside lists, then wildcards can also be nested:</p>
 <pre><code>my.*.colors.*</code></pre>
 <p>The above trick can be used when the <em>my</em> field contains a list which contains a <em>color</em> field which contains again a list of data. E.g.</p>
 <pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
@@ -993,7 +1079,7 @@ $ <span class="kw">catmandu</span> delete ElasticSearch --index-name items --bag
 <span class="co"># delete all items</span>
 $ <span class="kw">catmandu</span> delete ElasticSearch --index-name items --bag book</code></pre>
 </section>
-<section id="configuration-1" class="level3">
+<section id="configuration-2" class="level3">
 <h3><span class="header-section-number">6.1.6</span> Configuration</h3>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cat</span> catmandu.yml
 <span class="kw">---</span>
@@ -1024,10 +1110,19 @@ $ <span class="kw">cat</span> fixes.txt
 <span class="kw">marc_map</span>(<span class="st">&quot;008_/10-13&quot;</span>,<span class="st">&quot;language&quot;</span>);
 $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></pre>
 </section>
+<section id="stream" class="level3">
+<h3><span class="header-section-number">6.1.7</span> Stream</h3>
+<pre class="(bash)"><code># Add a file to a FileStore
+$ catmandu stream /tmp/myfile.txt to File::Simple --root t/data --bag 1234 --id myfile.txt
+
+# Download a file from a FileStore
+$ catmandu stream File::Simple --root t/data --bag 1234 --id myfile.txt to /tmp/output.txt
+</code></pre>
+</section>
 </section>
 <section id="fixes-cheat-sheet" class="level2">
 <h2><span class="header-section-number">6.2</span> Fixes Cheat Sheet <a href="https://github.com/LibreCat/Catmandu/wiki/Fixes%20Cheat%20Sheet">✎</a></h2>
-<p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>.</p>
+<p>This cheat sheet summarizes the <a href="#fix-language">fix language</a>. For more on the <code>marc_*</code> methods, see <a href="https://github.com/LibreCat/Catmandu-MARC/wiki/Mapping-rules">MARC mapping rules</a>.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># Fixes clean your data. As input you get a Perl HASH. Each fix function is a command</span>
 <span class="co"># to transform the Perl HASH. Some fixes such as marc_map contain logic to transform</span>
 <span class="co"># complex data structures such as MARC.</span>
@@ -1466,7 +1561,6 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
     <span class="co">#- Title</span>
     <span class="kw">marc_map</span>(<span class="st">&#39;245ab&#39;</span>,<span class="st">&#39;title&#39;</span>, join:<span class="st">&#39; &#39;</span>)
     <span class="kw">replace_all</span>(<span class="st">&#39;title&#39;</span>,<span class="st">&#39;\[(.*)\]&#39;</span>,<span class="st">&#39;$1&#39;</span>)
-    <span class="kw">replace_all</span>(<span class="st">&#39;title&#39;</span>,<span class="st">&#39;((\s+\W\s*)+|\.)$&#39;</span>,<span class="st">&#39;&#39;</span>)
     <span class="kw">copy_field</span>(<span class="st">&#39;title&#39;</span>,<span class="st">&#39;title_sort&#39;</span>)
     <span class="kw">replace_all</span>(<span class="st">&#39;title_sort&#39;</span>,<span class="st">&#39;\W+&#39;</span>,<span class="st">&#39;&#39;</span>)
     <span class="kw">substring</span>(<span class="st">&#39;title_sort&#39;</span>,0,50)
@@ -1474,7 +1568,6 @@ $ <span class="kw">catmandu</span> import MARC to test2 --fix fixes.txt</code></
     <span class="kw">copy_field</span>(<span class="st">&#39;title&#39;</span>,<span class="st">&#39;json.title&#39;</span>)
     <span class="kw">marc_map</span>(<span class="st">&#39;246&#39;</span>,<span class="st">&#39;json.title_remainder&#39;</span>, join:<span class="st">&#39; &#39;</span>)
     <span class="kw">marc_map</span>(<span class="st">&#39;245a&#39;</span>,<span class="st">&#39;title_short&#39;</span>)
-    <span class="kw">replace_all</span>(<span class="st">&#39;title_short&#39;</span>,<span class="st">&#39;((\s+\W\s*)+|\.)$&#39;</span>,<span class="st">&#39;&#39;</span>)
 
     <span class="co">#- Author</span>
     <span class="kw">marc_map</span>(<span class="st">&#39;100ab&#39;</span>,<span class="st">&#39;author.$append&#39;</span>, join:<span class="st">&#39; &#39;</span>)
@@ -2132,6 +2225,7 @@ Hello, World?
 <li><strong>LibreCat/Catmandu-PLoS</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
 <li><strong>LibreCat/Catmandu-Plack-REST</strong> - <span class="citation" data-cites="phochste">@phochste</span></li>
 <li><strong>LibreCat/Catmandu-PubMed</strong> - <span class="citation" data-cites="pietsch">@pietsch</span>, <span class="citation" data-cites="vpeil">@vpeil</span></li>
+<li><strong>LibreCat/Catmandu-Pure</strong> - <span class="citation" data-cites="snorri">@snorri</span></li>
 <li><strong>LibreCat/Catmandu-RDF</strong> - <span class="citation" data-cites="nichtich">@nichtich</span></li>
 <li><strong>LibreCat/Catmandu-SRU</strong> - <span class="citation" data-cites="pietsch">@pietsch</span></li>
 <li><strong>LibreCat/Catmandu-Serializer-messagepack</strong> - <span class="citation" data-cites="nicolasfranck">@nicolasfranck</span></li>
