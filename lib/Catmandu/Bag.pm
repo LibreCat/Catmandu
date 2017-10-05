@@ -2,7 +2,7 @@ package Catmandu::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0603';
+our $VERSION = '1.0606';
 
 use Catmandu::Util qw(:check is_string require_package now);
 use Catmandu::Bag::IdGenerator::UUID;
@@ -99,7 +99,6 @@ sub touch {
     $self->add_many($self->tap(sub {$_[0]->{$key} = now($format)}));
     $self->commit;
 }
-
 
 1;
 

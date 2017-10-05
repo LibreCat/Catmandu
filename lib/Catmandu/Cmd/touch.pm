@@ -2,7 +2,7 @@ package Catmandu::Cmd::touch;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0603';
+our $VERSION = '1.0606';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -35,11 +35,8 @@ Catmandu::Cmd::touch - add the current datetime to the objects in a bag
 
 =head1 EXAMPLES
 
-  catmandu count <STORE> <OPTIONS>
+  catmandu touch <STORE> <OPTIONS>
 
-  catmandu count ElasticSearch --index-name shop --bag products \
-                               --query 'brand:Acme'
-
-  catmandu help store ElasticSearch
+  catmandu touch MongoDB --index-name shop --bag products --field date_updated
 
 =cut

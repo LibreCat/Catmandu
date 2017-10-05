@@ -142,24 +142,24 @@ is ref($i->_http_client), 'LWP::UserAgent', 'Got a real client';
 
 # http retry
 $i = T::Importer->new(
-    user_agent  => user_agent(),
-    file        => 'http://demo.org/retry',
+    user_agent => user_agent(),
+    file       => 'http://demo.org/retry',
 );
 
 throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
 
 $i = T::Importer->new(
-    user_agent  => user_agent(),
-    file        => 'http://demo.org/retry',
-    http_retry  => 1,
+    user_agent => user_agent(),
+    file       => 'http://demo.org/retry',
+    http_retry => 1,
 );
 
 throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
 
 $i = T::Importer->new(
-    user_agent  => user_agent(),
-    file        => 'http://demo.org/retry',
-    http_retry  => 2,
+    user_agent => user_agent(),
+    file       => 'http://demo.org/retry',
+    http_retry => 2,
 );
 
 lives_ok {$i->fh->getline};
@@ -167,7 +167,7 @@ lives_ok {$i->fh->getline};
 $i = T::Importer->new(
     user_agent  => user_agent(),
     file        => 'http://demo.org/retry',
-    http_timing  => '1',
+    http_timing => '1',
 );
 
 throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
@@ -175,7 +175,7 @@ throws_ok {$i->fh->getline} 'Catmandu::HTTPError';
 $i = T::Importer->new(
     user_agent  => user_agent(),
     file        => 'http://demo.org/retry',
-    http_timing  => '1,1',
+    http_timing => '1,1',
 );
 
 lives_ok {$i->fh->getline};
@@ -221,12 +221,14 @@ sub user_agent {
             $tries += 1;
             if ($tries < 3) {
                 HTTP::Response->new(
-                    '408', 'Request Timeout', ['Content-Type' => 'text/plain'], 'GET'
-                )
-            } else {
-                HTTP::Response->new(
-                    '200', 'OK', ['Content-Type' => 'text/plain'], 'GET'
-                )
+                    '408',
+                    'Request Timeout',
+                    ['Content-Type' => 'text/plain'], 'GET'
+                );
+            }
+            else {
+                HTTP::Response->new('200', 'OK',
+                    ['Content-Type' => 'text/plain'], 'GET');
             }
 
         }

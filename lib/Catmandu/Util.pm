@@ -2,7 +2,7 @@ package Catmandu::Util;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0603';
+our $VERSION = '1.0606';
 
 use Exporter qw(import);
 use Sub::Quote    ();
@@ -17,7 +17,7 @@ use YAML::XS            ();
 use Cpanel::JSON::XS    ();
 use Hash::Merge::Simple ();
 use MIME::Types;
-use POSIX ();
+use POSIX       ();
 use Time::HiRes ();
 
 our %EXPORT_TAGS = (
