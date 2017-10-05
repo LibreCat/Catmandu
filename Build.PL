@@ -15,7 +15,7 @@ my %module_build_args = (
   },
   "dist_abstract" => "a data toolkit",
   "dist_author" => [
-    "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
+    "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
   ],
   "dist_name" => "Catmandu",
   "dist_version" => "1.0603",
