@@ -939,8 +939,7 @@ Returns a copy of C<$array> without the head.
 
 =item array_uniq($array)
 
-Returns a copy of C<$array> with all duplicates removed. Comparison is done
-with C<is_same()>.
+Returns a copy of C<$array> with all duplicates removed.
 
 =item array_split($array | $string)
 
