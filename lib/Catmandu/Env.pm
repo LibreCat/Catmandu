@@ -59,10 +59,6 @@ has fixes_namespace => (is => 'ro', default => sub {'Catmandu::Fix'})
 has importer_namespace => (is => 'ro', default => sub {'Catmandu::Importer'});
 has exporter_namespace => (is => 'ro', default => sub {'Catmandu::Exporter'});
 
-sub default_config_extensions {
-    [qw(yaml yml json pl)];
-}
-
 sub BUILD {
     my ($self) = @_;
 
