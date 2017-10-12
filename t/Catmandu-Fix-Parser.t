@@ -179,7 +179,8 @@ throws_ok {
 
 {
     my $fixes = $parser->parse(q|add_field(022, 022)|);
-    is $fixes->[0]->path, '022';
+    my $path = $fixes->[0]->path;
+    is "$path", '022';
 }
 
 # string and regex escapes

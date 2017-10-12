@@ -5,19 +5,26 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
+use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1);
+has path => (fix_arg => 1, coerce => \&as_path);
+has updater => (is => 'lazy');
 
-with 'Catmandu::Fix::SimpleGetValue';
+sub _build_updater {
+    my ($self) = @_;
+    $self->path->updater(
+        if => [
+            array_ref => sub {scalar @{$_[0]}},
+            hash_ref  => sub {scalar keys %{$_[0]}},
+        ],
+    );
+}
 
-sub emit_value {
-    my ($self, $var) = @_;
-    "if (is_array_ref(${var})) {"
-        . "${var} = scalar \@{${var}};"
-        . "} elsif (is_hash_ref(${var})) {"
-        . "${var} = scalar keys \%{${var}};" . "}";
+sub fix {
+    $_[0]->updater->($_[1]);
+    $_[1];
 }
 
 1;

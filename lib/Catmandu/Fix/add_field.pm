@@ -5,13 +5,23 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
+use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
-
-has path => (fix_arg => 1);
+has path => (fix_arg => 1, coerce => \&as_path);
 has value => (fix_arg => 1, default => sub {undef;});
+has creator => (is => 'lazy');
+
+sub _build_creator {
+    my ($self) = @_;
+    $self->path->creator(value => $self->value);
+}
+
+sub fix {
+    $_[0]->creator->($_[1]);
+    $_[1];
+}
 
 sub emit {
     my ($self, $fixer) = @_;

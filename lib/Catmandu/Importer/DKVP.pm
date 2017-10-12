@@ -10,12 +10,12 @@ use namespace::clean;
 with 'Catmandu::Importer';
 
 has pair_sep_char => (is => 'ro', default => sub {'='});
-has sep_char => (is => 'ro', default => sub {','});
-has _re => (is => 'lazy');
+has sep_char      => (is => 'ro', default => sub {','});
+has _re           => (is => 'lazy');
 
 sub _build__re {
-    my ($self) = @_;
-    my $sep_char = $self->sep_char;
+    my ($self)        = @_;
+    my $sep_char      = $self->sep_char;
     my $pair_sep_char = $self->pair_sep_char;
     qr/([^$pair_sep_char]+)$pair_sep_char([^$sep_char]+)(?:$sep_char|$)/;
 }
