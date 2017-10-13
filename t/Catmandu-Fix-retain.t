@@ -21,5 +21,5 @@ is_deeply $pkg->new('keep', 'maybe.keep')
     {remove => 'me', keep => 'me', maybe => {keep => 'me', remove => 'me'}}),
     {keep => 'me', maybe => {keep => 'me'}};
 
-done_testing 4;
+done_testing;
 

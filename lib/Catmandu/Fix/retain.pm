@@ -5,59 +5,32 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
+use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
+has paths => (fix_arg => 'collect', default => sub {[]}, coerce => sub { [map { as_path($_)} @{$_[0]}]});
+has getters_and_creators => (is => 'lazy');
 
-has paths => (fix_arg => 'collect', default => sub {[]});
+sub _build_getters_and_creators {
+    my ($self) = @_;
+    [map {[$_->getter, $_->creator]} @{$self->paths}];
+}
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $paths   = $self->paths;
-    my $var     = $fixer->var;
-    my $tmp_var = $fixer->generate_var;
-    my $perl    = $fixer->emit_declare_vars($tmp_var, '{}');
-    for (@$paths) {
-        my $path = $fixer->split_path($_);
-        my $key  = pop @$path;
-        $perl .= $fixer->emit_walk_path(
-            $var, $path,
-            sub {
-                my ($var) = @_;
-                $fixer->emit_get_key(
-                    $var, $key,
-                    sub {
-                        my ($var) = @_;
-                        $fixer->emit_create_path(
-                            $tmp_var,
-                            [@$path, $key],
-                            sub {
-                                my ($tmp_var) = @_;
-                                "${tmp_var} = ${var};";
-                            }
-                        );
-                    }
-                );
-            }
-        );
-    }
-
-    # clear data
-    $perl .= $fixer->emit_clear_hash_ref($var);
-
-    # copy tmp data
-    $perl .= $fixer->emit_foreach_key(
-        $tmp_var,
-        sub {
-            my ($key) = @_;
-            "${var}\->{${key}} = ${tmp_var}\->{${key}};";
+sub fix {
+    my ($self, $data) = @_;
+    my $tmp = {};
+    for my $pair (@{$self->getters_and_creators}) {
+        my $vals = $pair->[0]->($data);
+        while (@$vals) {
+            $pair->[1]->($tmp, shift @$vals);
         }
-    );
-
-    # free tmp data
-    $perl .= "undef ${tmp_var};";
-    $perl;
+    }
+    undef %$data;
+    for my $key (keys %$tmp) {
+        $data->{$key} = $tmp->{$key};
+    }
+    $data;
 }
 
 1;
