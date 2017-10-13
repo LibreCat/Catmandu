@@ -24,19 +24,19 @@ sub fix {
 }
 
 #sub emit {
-    #my ($self, $fixer) = @_;
-    #my $path = $fixer->split_path($self->path);
-    #my $value
-        #= defined $self->value ? $fixer->emit_value($self->value) : 'undef';
+#my ($self, $fixer) = @_;
+#my $path = $fixer->split_path($self->path);
+#my $value
+#= defined $self->value ? $fixer->emit_value($self->value) : 'undef';
 
-    #$fixer->emit_create_path(
-        #$fixer->var,
-        #$path,
-        #sub {
-            #my $var = shift;
-            #"${var} = ${value};";
-        #}
-    #);
+#$fixer->emit_create_path(
+#$fixer->var,
+#$path,
+#sub {
+#my $var = shift;
+#"${var} = ${value};";
+#}
+#);
 #}
 
 1;

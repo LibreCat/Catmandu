@@ -4,7 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0606';
 
-use Catmandu::Util qw(is_hash_ref is_array_ref is_value is_string is_code_ref trim);
+use Catmandu::Util
+    qw(is_hash_ref is_array_ref is_value is_string is_code_ref trim);
 use Moo;
 use namespace::clean;
 
@@ -152,21 +153,22 @@ sub creator {
             my $var = $_[0];
             "${var} = ${val_var}->(${var});";
         };
-    } elsif (exists $opts{value}) {
+    }
+    elsif (exists $opts{value}) {
         my $val = $self->_emit_value($opts{value});
         $cb = sub {
             my $var = $_[0];
             "${var} = ${val};";
         };
-    } else {
+    }
+    else {
         push @$args, $val_var;
         $cb = sub {
             my $var = $_[0];
-            "if (is_code_ref(${val_var})) {".
-            "${var} = ${val_var}->(${var});" .
-            '} else {' .
-            "${var} = ${val_var};" .
-            '}';
+            "if (is_code_ref(${val_var})) {"
+                . "${var} = ${val_var}->(${var});"
+                . '} else {'
+                . "${var} = ${val_var};" . '}';
         };
     }
 
@@ -413,6 +415,7 @@ sub _emit_create_path {
 
     $perl;
 }
+
 sub _emit_delete_key {
     my ($self, $var, $key, $cb) = @_;
 

@@ -69,6 +69,7 @@ sub _emit_foreach {
 sub _emit_value {
     my ($self, $val) = @_;
     return 'undef' unless defined $val;
+
     # numbers should look like number and not start with a 0 (no support
     # for octals)
     return $val if is_number($val) && $val !~ /^0+/;

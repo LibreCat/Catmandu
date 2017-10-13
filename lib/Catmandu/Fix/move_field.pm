@@ -12,9 +12,9 @@ use Catmandu::Fix::Has;
 
 has old_path => (fix_arg => 1, coerce => \&as_path);
 has new_path => (fix_arg => 1, coerce => \&as_path);
-has getter => (is => 'lazy');
-has deleter => (is => 'lazy');
-has creator => (is => 'lazy');
+has getter   => (is      => 'lazy');
+has deleter  => (is      => 'lazy');
+has creator  => (is      => 'lazy');
 
 sub _build_getter {
     my ($self) = @_;
