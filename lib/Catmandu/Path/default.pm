@@ -181,15 +181,16 @@ sub deleter {
     my $key      = pop @$path;
     my $data_var = $self->_generate_var;
 
-    $self->_emit_walk_path(
+    my $body = $self->_emit_walk_path(
         $data_var,
         $path,
         sub {
             my $var = $_[0];
-            $self->emit_delete_key($var, $key);
+            $self->_emit_delete_key($var, $key);
         }
     );
 
+    $self->_eval_sub($body, args => [$data_var]);
 }
 
 sub _emit_walk_path {
