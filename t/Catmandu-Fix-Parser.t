@@ -179,7 +179,7 @@ throws_ok {
 
 {
     my $fixes = $parser->parse(q|add_field(022, 022)|);
-    my $path = $fixes->[0]->path;
+    my $path  = $fixes->[0]->path;
     is "$path", '022';
 }
 

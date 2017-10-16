@@ -15,9 +15,12 @@ BEGIN {
 is_deeply $pkg->new('name')->fix({name => 'joe'}), {name => "Joe"},
     "capitalize value";
 
+is_deeply $pkg->new('names.*')->fix({names => ['joe', 'rick']}),
+    {names => ['Joe', 'Rick']}, "capitalize wildcard values";
+
 is_deeply $pkg->new('names.*.name')
     ->fix({names => [{name => 'joe'}, {name => 'rick'}]}),
     {names => [{name => 'Joe'}, {name => 'Rick'}]},
     "capitalize wildcard values";
 
-done_testing 3;
+done_testing;

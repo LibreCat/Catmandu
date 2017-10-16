@@ -56,12 +56,38 @@ sub _emit_declare_vars {
     "my ${var};";
 }
 
-sub _emit_foreach {
+#sub _emit_foreach {
+    #my ($self, $var, $cb) = @_;
+    #my $perl = "";
+    #my $v    = $self->_generate_var;
+    #my $i    = $self->_generate_var;
+
+    ## loop backwards so that deletions are safe
+    #$perl .= "for (my ${i} = \@{${var}} - 1; ${i} >= 0; ${i}--) {";
+    #$perl .= $cb->("${var}->[${i}]", $i);
+    #$perl .= "}";
+    #$perl;
+#}
+
+sub _emit_iterate_array {
     my ($self, $var, $cb) = @_;
     my $perl = "";
-    my $v    = $self->_generate_var;
-    $perl .= "foreach my $v (\@{${var}}) {";
-    $perl .= $cb->($v);
+    my $i    = $self->_generate_var;
+
+    # loop backwards so that deletions are safe
+    $perl .= "for (my ${i} = \@{${var}} - 1; ${i} >= 0; ${i}--) {";
+    $perl .= $cb->("${var}->[${i}]", up_var => $var, index => $i);
+    $perl .= "}";
+    $perl;
+}
+
+sub _emit_iterate_hash {
+    my ($self, $var, $cb) = @_;
+    my $perl = "";
+    my $k    = $self->generate_var;
+
+    $perl .= "for my ${k} (keys(\%{${var}})) {";
+    $perl .= $cb->("${var}->{${k}}", up_var => $var, key => $k);
     $perl .= "}";
     $perl;
 }

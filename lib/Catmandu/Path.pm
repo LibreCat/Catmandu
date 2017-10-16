@@ -14,4 +14,13 @@ requires 'creator';
 requires 'updater';
 requires 'deleter';
 
+#sub cancel {
+#state $guard = sub { die "too many mice" };
+#}
+
+#sub delete {
+#state $guard = sub { die "too many mice" };
+
+#}
+
 1;

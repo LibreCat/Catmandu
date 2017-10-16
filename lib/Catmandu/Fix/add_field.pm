@@ -10,7 +10,7 @@ use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1, coerce => \&as_path);
-has value => (fix_arg => 1, default => sub {undef;});
+has value => (fix_arg => 1, default => sub {undef});
 has creator => (is => 'lazy');
 
 sub _build_creator {
@@ -22,22 +22,6 @@ sub fix {
     $_[0]->creator->($_[1]);
     $_[1];
 }
-
-#sub emit {
-#my ($self, $fixer) = @_;
-#my $path = $fixer->split_path($self->path);
-#my $value
-#= defined $self->value ? $fixer->emit_value($self->value) : 'undef';
-
-#$fixer->emit_create_path(
-#$fixer->var,
-#$path,
-#sub {
-#my $var = shift;
-#"${var} = ${value};";
-#}
-#);
-#}
 
 1;
 

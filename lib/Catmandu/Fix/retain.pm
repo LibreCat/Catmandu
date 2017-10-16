@@ -9,7 +9,13 @@ use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has paths => (fix_arg => 'collect', default => sub {[]}, coerce => sub { [map { as_path($_)} @{$_[0]}]});
+has paths => (
+    fix_arg => 'collect',
+    default => sub {[]},
+    coerce  => sub {
+        [map {as_path($_)} @{$_[0]}];
+    }
+);
 has getters_and_creators => (is => 'lazy');
 
 sub _build_getters_and_creators {
