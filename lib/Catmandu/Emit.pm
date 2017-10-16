@@ -92,6 +92,19 @@ sub _emit_iterate_hash {
     $perl;
 }
 
+sub _emit_assign {
+    my ($self, $var, $val, %opts) = @_;
+    my $l_var  = $var;
+    my $up_var = $opts{up_var};
+    if (my $key = $opts{key}) {
+        $l_var = "${up_var}->{${key}}";
+    }
+    elsif (my $index = $opts{index}) {
+        $l_var = "${up_var}->[${index}]";
+    }
+    "${l_var} = ${val};";
+}
+
 sub _emit_value {
     my ($self, $val) = @_;
     return 'undef' unless defined $val;

@@ -99,7 +99,7 @@ sub updater {
                 $perl
                     .= 'if ('
                     . join(' || ', map {"is_${_}(${var})"} @$pred) . ') {'
-                    . $self->_emit_assign_cb($val_var, $var, %opts) . '}';
+                    . $self->_emit_assign($var, "${val_var}->(${var})", %opts) . '}';
             }
             $perl;
         };
@@ -114,7 +114,7 @@ sub updater {
         }
         $cb = sub {
             my ($var, %opts) = @_;
-            $self->_emit_assign_cb($val_var, $var, %opts);
+            $self->_emit_assign($var, "${val_var}->(${var})", %opts);
         };
     }
 
@@ -123,8 +123,8 @@ sub updater {
     $self->_eval_sub($body, args => $args, captures => $captures);
 }
 
-sub _emit_assign_cb {
-    my ($self, $cb_var, $var, %opts) = @_;
+sub _emit_assign {
+    my ($self, $var, $val, %opts) = @_;
     my $l_var  = $var;
     my $up_var = $opts{up_var};
     if (my $key = $opts{key}) {
@@ -133,7 +133,7 @@ sub _emit_assign_cb {
     elsif (my $index = $opts{index}) {
         $l_var = "${up_var}->[${index}]";
     }
-    "${l_var} = ${cb_var}->(${var});";
+    "${l_var} = ${val};";
 }
 
 sub creator {
