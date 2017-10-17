@@ -71,7 +71,7 @@ Catmandu::Fix::SimpleGetValue - helper class for creating emit Fix-es
 Catmandu::Fix::SimpleGetValue eases the creation of emit Fixes that transform
 values on a JSON path. A Fix package implementing Catmandu::Fix::SimpleGetValue
 needs to implement a method C<emit_value> which accepts the variable name on
-which the Fix operates and an instance of Catmandu::Fixer. The method should
+which the Fix operates and an instance of Catmandu::Fix. The method should
 return a string containing the Perl code to transform values on a JSON path.
 
 It is not possible to inspect in an emit Fix the actual value on which this Fix

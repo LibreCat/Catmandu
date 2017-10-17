@@ -9,18 +9,14 @@ use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1, coerce => \&as_path);
+with 'Catmandu::Fix::Builder';
+
+has path => (fix_arg => 1);
 has value => (fix_arg => 1, default => sub {undef});
-has creator => (is => 'lazy');
 
-sub _build_creator {
+sub _build_fixer {
     my ($self) = @_;
-    $self->path->creator(value => $self->value);
-}
-
-sub fix {
-    $_[0]->creator->($_[1]);
-    $_[1];
+    as_path($self->path)->creator(value => $self->value);
 }
 
 1;

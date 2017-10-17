@@ -9,22 +9,18 @@ use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1, coerce => \&as_path);
-has updater => (is => 'lazy');
+with 'Catmandu::Fix::Builder';
 
-sub _build_updater {
+has path => (fix_arg => 1);
+
+sub _build_fixer {
     my ($self) = @_;
-    $self->path->updater(
+    as_path($self->path)->updater(
         if => [
             array_ref => sub {scalar @{$_[0]}},
             hash_ref  => sub {scalar keys %{$_[0]}},
         ],
     );
-}
-
-sub fix {
-    $_[0]->updater->($_[1]);
-    $_[1];
 }
 
 1;

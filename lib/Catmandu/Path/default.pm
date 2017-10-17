@@ -53,26 +53,32 @@ sub setter {
     my $key      = pop @$path;
     my $data_var = $self->_generate_var;
     my $val_var  = $self->_generate_var;
+    my $captures = {};
+    my $args     = [$data_var];
+    my $val;
+
+    if (is_code_ref($opts{value})) {
+        $captures->{$val_var} = $opts{value};
+        $val = "${val_var}->()";
+    }
+    elsif (exists $opts{value}) {
+        $val = $self->_emit_value($opts{value});
+    }
+    else {
+        push @$args, $val_var;
+        $val = "is_code_ref(${val_var}) ? ${val_var}->() : ${val_var}";
+    }
 
     my $body = $self->_emit_get(
         $data_var,
         $path,
         sub {
             my $var = $_[0];
-            $self->_emit_set_key($var, $key, $val_var);
+            $self->_emit_set_key($var, $key, $val);
         },
     ) . "return;";
 
-    if (my $val = $opts{value}) {
-        $self->_eval_sub(
-            $body,
-            args     => [$data_var],
-            captures => {$val_var => $val}
-        );
-    }
-    else {
-        $self->_eval_sub($body, args => [$data_var, $val_var]);
-    }
+    $self->_eval_sub($body, args => $args, captures => $captures);
 }
 
 sub updater {
@@ -121,19 +127,6 @@ sub updater {
     my $body = $self->_emit_get($data_var, $path, $cb) . 'return;';
 
     $self->_eval_sub($body, args => $args, captures => $captures);
-}
-
-sub _emit_assign {
-    my ($self, $var, $val, %opts) = @_;
-    my $l_var  = $var;
-    my $up_var = $opts{up_var};
-    if (my $key = $opts{key}) {
-        $l_var = "${up_var}->{${key}}";
-    }
-    elsif (my $index = $opts{index}) {
-        $l_var = "${up_var}->[${index}]";
-    }
-    "${l_var} = ${val};";
 }
 
 sub creator {
@@ -254,46 +247,6 @@ sub _emit_get {
 
     $perl;
 }
-
-#sub _emit_get_key {
-#my ($self, $var, $key, $cb) = @_;
-
-#return $cb->($var) unless defined $key;
-
-#my $str_key = $self->_emit_string($key);
-#my $perl    = "";
-
-#if ($key =~ /^[0-9]+$/) {
-#$perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
-#$perl .= $cb->("${var}->{${str_key}}");
-#$perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
-#$perl .= $cb->("${var}->[${key}]");
-#$perl .= "}";
-#}
-#elsif ($key eq '$first') {
-#$perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
-#$perl .= $cb->("${var}->[0]");
-#$perl .= "}";
-#}
-#elsif ($key eq '$last') {
-#$perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
-#$perl .= $cb->("${var}->[\@{${var}} - 1]");
-#$perl .= "}";
-#}
-#elsif ($key eq '*') {
-#my $i = $self->_generate_var;
-#$perl .= "if (is_array_ref(${var})) {";
-#$perl .= $self->_emit_foreach($var, $cb);
-#$perl .= "}";
-#}
-#else {
-#$perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
-#$perl .= $cb->("${var}->{${str_key}}");
-#$perl .= "}";
-#}
-
-#$perl;
-#}
 
 sub _emit_set_key {
     my ($self, $var, $key, $val) = @_;

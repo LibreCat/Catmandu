@@ -56,19 +56,6 @@ sub _emit_declare_vars {
     "my ${var};";
 }
 
-#sub _emit_foreach {
-    #my ($self, $var, $cb) = @_;
-    #my $perl = "";
-    #my $v    = $self->_generate_var;
-    #my $i    = $self->_generate_var;
-
-    ## loop backwards so that deletions are safe
-    #$perl .= "for (my ${i} = \@{${var}} - 1; ${i} >= 0; ${i}--) {";
-    #$perl .= $cb->("${var}->[${i}]", $i);
-    #$perl .= "}";
-    #$perl;
-#}
-
 sub _emit_iterate_array {
     my ($self, $var, $cb) = @_;
     my $perl = "";

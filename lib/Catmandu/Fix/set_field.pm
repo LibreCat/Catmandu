@@ -9,18 +9,14 @@ use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1, coerce => \&as_path);
+with 'Catmandu::Fix::Builder';
+
+has path => (fix_arg => 1);
 has value => (fix_arg => 1, default => sub {undef});
-has setter => (is => 'lazy');
 
-sub _build_setter {
+sub _build_fixer {
     my ($self) = @_;
-    $self->path->setter(value => $self->value);
-}
-
-sub fix {
-    $_[0]->setter->($_[1]);
-    $_[1];
+    as_path($self->path)->setter(value => $self->value);
 }
 
 1;

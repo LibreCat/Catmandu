@@ -261,7 +261,13 @@ sub emit_fix {
     my ($self, $fix) = @_;
     my $perl;
 
-    if ($fix->can('emit')) {
+    if ($fix->isa('Catmandu::Fix::Builder')) {
+        my $var = $self->var;
+        my $fixer_var = $self->generate_var;
+        $self->_captures->{$fixer_var} = $fix->fixer;
+        $perl = "${var} = ${fixer_var}->(${var});";
+    }
+    elsif ($fix->can('emit')) {
         $perl = $self->emit_block(
             sub {
                 my ($label) = @_;
@@ -269,11 +275,13 @@ sub emit_fix {
             }
         );
     }
-    else {
+    elsif ($fix->can('fix')) {
         my $var = $self->var;
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
         $perl = "${var} = ${ref}->fix(${var});";
+    } else {
+        Catmandu::Error->throw('not a fix');
     }
 
     $perl;

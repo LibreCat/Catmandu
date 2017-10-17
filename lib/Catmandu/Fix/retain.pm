@@ -9,34 +9,36 @@ use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Builder';
+
 has paths => (
     fix_arg => 'collect',
     default => sub {[]},
-    coerce  => sub {
-        [map {as_path($_)} @{$_[0]}];
-    }
 );
-has getters_and_creators => (is => 'lazy');
 
-sub _build_getters_and_creators {
+sub _build_fixer {
     my ($self) = @_;
-    [map {[$_->getter, $_->creator]} @{$self->paths}];
-}
+    my $paths = [map {as_path($_)} @{$self->paths}];
+    my $getters = [map {$_->getter} @$paths];
+    my $creators = [map {$_->creator} @$paths];
 
-sub fix {
-    my ($self, $data) = @_;
-    my $tmp = {};
-    for my $pair (@{$self->getters_and_creators}) {
-        my $vals = $pair->[0]->($data);
-        while (@$vals) {
-            $pair->[1]->($tmp, shift @$vals);
+    sub {
+        my $data = $_[0];
+        my $temp = {};
+        for (my $i = 0; $i < @$getters; $i++) {
+            my $getter = $getters->[$i];
+            my $creator = $creators->[$i];
+            my $values = $getter->($data);
+            while (@$values) {
+                $creator->($temp, shift @$values);
+            }
         }
-    }
-    undef %$data;
-    for my $key (keys %$tmp) {
-        $data->{$key} = $tmp->{$key};
-    }
-    $data;
+        undef %$data;
+        for my $key (keys %$temp) {
+            $data->{$key} = $temp->{$key};
+        }
+        $data;
+    };
 }
 
 1;

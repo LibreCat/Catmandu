@@ -9,18 +9,14 @@ use Catmandu::Util qw(as_path as_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1, coerce => \&as_path);
-has updater => (is => 'lazy');
+has path => (fix_arg => 1);
 
-sub _build_updater {
+with 'Catmandu::Fix::Builder';
+
+sub _build_fixer {
     my ($self) = @_;
-    $self->path->updater(if => [string => sub {ucfirst(lc(as_utf8($_[0])))}],
+    as_path($self->path)->updater(if => [string => sub {ucfirst(lc(as_utf8($_[0])))}],
     );
-}
-
-sub fix {
-    $_[0]->updater->($_[1]);
-    $_[1];
 }
 
 1;

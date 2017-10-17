@@ -10,35 +10,28 @@ use Clone qw(clone);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has old_path => (fix_arg => 1, coerce => \&as_path);
-has new_path => (fix_arg => 1, coerce => \&as_path);
-has getter   => (is      => 'lazy');
-has deleter  => (is      => 'lazy');
-has creator  => (is      => 'lazy');
+with 'Catmandu::Fix::Builder';
 
-sub _build_getter {
+has old_path => (fix_arg => 1);
+has new_path => (fix_arg => 1);
+
+sub _build_fixer {
     my ($self) = @_;
-    $self->old_path->getter;
-}
+    my $old_path = as_path($self->old_path);
+    my $new_path = as_path($self->new_path);
+    my $getter = $old_path->getter;
+    my $deleter = $old_path->deleter;
+    my $creator = $new_path->creator;
 
-sub _build_deleter {
-    my ($self) = @_;
-    $self->old_path->deleter;
-}
-
-sub _build_creator {
-    my ($self) = @_;
-    $self->new_path->creator;
-}
-
-sub fix {
-    my ($self, $data) = @_;
-    my $vals = [map {clone($_)} @{$self->getter->($data)}];
-    $self->deleter->($data);
-    while (@$vals) {
-        $self->creator->($data, shift @$vals);
-    }
-    $data;
+    sub {
+        my $data = $_[0];
+        my $values = [map {clone($_)} @{$getter->($data)}];
+        $deleter->($data);
+        while (@$values) {
+            $creator->($data, shift @$values);
+        }
+        $data;
+    };
 }
 
 1;
