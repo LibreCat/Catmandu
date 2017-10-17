@@ -262,7 +262,7 @@ sub emit_fix {
     my $perl;
 
     if ($fix->isa('Catmandu::Fix::Builder')) {
-        my $var = $self->var;
+        my $var       = $self->var;
         my $fixer_var = $self->generate_var;
         $self->_captures->{$fixer_var} = $fix->fixer;
         $perl = "${var} = ${fixer_var}->(${var});";
@@ -280,7 +280,8 @@ sub emit_fix {
         my $ref = $self->generate_var;
         $self->_captures->{$ref} = $fix;
         $perl = "${var} = ${ref}->fix(${var});";
-    } else {
+    }
+    else {
         Catmandu::Error->throw('not a fix');
     }
 

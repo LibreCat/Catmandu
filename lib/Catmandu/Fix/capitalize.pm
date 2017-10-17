@@ -15,8 +15,8 @@ with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
     my ($self) = @_;
-    as_path($self->path)->updater(if => [string => sub {ucfirst(lc(as_utf8($_[0])))}],
-    );
+    as_path($self->path)
+        ->updater(if => [string => sub {ucfirst(lc(as_utf8($_[0])))}],);
 }
 
 1;

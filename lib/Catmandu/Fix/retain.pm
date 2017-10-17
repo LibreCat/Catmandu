@@ -11,24 +11,21 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Builder';
 
-has paths => (
-    fix_arg => 'collect',
-    default => sub {[]},
-);
+has paths => (fix_arg => 'collect', default => sub {[]},);
 
 sub _build_fixer {
     my ($self) = @_;
-    my $paths = [map {as_path($_)} @{$self->paths}];
-    my $getters = [map {$_->getter} @$paths];
+    my $paths    = [map {as_path($_)} @{$self->paths}];
+    my $getters  = [map {$_->getter} @$paths];
     my $creators = [map {$_->creator} @$paths];
 
     sub {
         my $data = $_[0];
         my $temp = {};
         for (my $i = 0; $i < @$getters; $i++) {
-            my $getter = $getters->[$i];
+            my $getter  = $getters->[$i];
             my $creator = $creators->[$i];
-            my $values = $getter->($data);
+            my $values  = $getter->($data);
             while (@$values) {
                 $creator->($temp, shift @$values);
             }

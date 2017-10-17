@@ -16,12 +16,12 @@ has old_path => (fix_arg => 1);
 has new_path => (fix_arg => 1);
 
 sub _build_fixer {
-    my ($self) = @_;
+    my ($self)   = @_;
     my $old_path = as_path($self->old_path);
     my $new_path = as_path($self->new_path);
-    my $getter = $old_path->getter;
-    my $deleter = $old_path->deleter;
-    my $creator = $new_path->creator;
+    my $getter   = $old_path->getter;
+    my $deleter  = $old_path->deleter;
+    my $creator  = $new_path->creator;
 
     sub {
         my $data = $_[0];

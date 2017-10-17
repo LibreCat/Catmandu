@@ -105,7 +105,8 @@ sub updater {
                 $perl
                     .= 'if ('
                     . join(' || ', map {"is_${_}(${var})"} @$pred) . ') {'
-                    . $self->_emit_assign($var, "${val_var}->(${var})", %opts) . '}';
+                    . $self->_emit_assign($var, "${val_var}->(${var})", %opts)
+                    . '}';
             }
             $perl;
         };
