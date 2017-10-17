@@ -5,19 +5,20 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
+use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 has split_char => (fix_arg => 1, default => sub {qr'\s+'});
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $split_char = $fixer->emit_string($self->split_char);
-
-    "${var} = [split ${split_char}, ${var}] if is_value(${var});";
+sub _build_fixer {
+    my ($self) = @_;
+    my $split_char = $self->split_char;
+    as_path($self->path)
+        ->updater(if => [value => sub {[split $split_char, $_[0]]}],);
 }
 
 1;
