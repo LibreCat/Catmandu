@@ -17,7 +17,7 @@ has values => (fix_arg => 'collect', default => sub {[]});
 sub _build_fixer {
     my ($self) = @_;
     my $values = $self->values;
-    as_path($self->path)->setter(value => sub {+{@$values}});
+    as_path($self->path)->setter(sub {+{@$values}});
 }
 
 1;

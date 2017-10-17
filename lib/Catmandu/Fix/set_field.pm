@@ -16,7 +16,7 @@ has value => (fix_arg => 1, default => sub {undef});
 
 sub _build_fixer {
     my ($self) = @_;
-    as_path($self->path)->setter(value => $self->value);
+    as_path($self->path)->setter($self->value);
 }
 
 1;

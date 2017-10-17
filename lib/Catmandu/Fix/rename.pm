@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
-use Catmandu::Util qw(is_hash_ref is_array_ref);
+use Catmandu::Util qw(as_path is_hash_ref is_array_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -13,14 +13,13 @@ has path    => (fix_arg => 1);
 has search  => (fix_arg => 1);
 has replace => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
+sub _build_fixer {
+    my ($self) = @_;
     my $search  = $self->search;
     my $replace = $self->replace;
     my $renamer;
-
     $renamer = sub {
         my $data = $_[0];
 
@@ -42,8 +41,7 @@ sub emit_value {
         $data;
     };
 
-    my $renamer_var = $fixer->capture($renamer);
-    "${renamer_var}->(${var});";
+    as_path($self->path)->updater($renamer);
 }
 
 1;

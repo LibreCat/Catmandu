@@ -48,7 +48,8 @@ sub getter {
 }
 
 sub setter {
-    my ($self, %opts) = @_;
+    my $self = shift;
+    my %opts = @_ == 1 ? (value => $_[0]) : @_;
     my $path     = $self->split_path;
     my $key      = pop @$path;
     my $data_var = $self->_generate_var;
@@ -82,7 +83,8 @@ sub setter {
 }
 
 sub updater {
-    my ($self, %opts) = @_;
+    my $self = shift;
+    my %opts = @_ == 1 ? (value => $_[0]) : @_;
     my $path     = $self->split_path;
     my $data_var = $self->_generate_var;
     my $captures = {};
@@ -131,7 +133,8 @@ sub updater {
 }
 
 sub creator {
-    my ($self, %opts) = @_;
+    my $self = shift;
+    my %opts = @_ == 1 ? (value => $_[0]) : @_;
     my $path     = $self->split_path;
     my $data_var = $self->_generate_var;
     my $val_var  = $self->_generate_var;
