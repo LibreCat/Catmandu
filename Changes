@@ -2,6 +2,7 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - new DKVP importer for delimited key-value pairs
+  - new Store default_options for bag
 
 1.0606  2017-09-26 10:42:35 CEST
   - fix bug with numeric strings in fix preprocessing
