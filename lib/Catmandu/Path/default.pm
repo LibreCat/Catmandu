@@ -184,7 +184,7 @@ sub deleter {
             my $var = $_[0];
             $self->_emit_delete_key($var, $key);
         }
-    );
+    ) . "return;";
 
     $self->_eval_sub($body, args => [$data_var]);
 }
@@ -382,7 +382,7 @@ sub _emit_create_path {
     $perl;
 }
 
-sub _emit_delete_key {
+sub _emit_delete_key { # TODO is $cb still needed?
     my ($self, $var, $key, $cb) = @_;
 
     my $str_key = $self->_emit_string($key);
