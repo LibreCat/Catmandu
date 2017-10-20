@@ -16,6 +16,7 @@ has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
 
 has default_bag => (is => 'lazy');
 has default_plugins => (is => 'ro', default => sub {[]},);
+has default_options => (is => 'ro', default => sub {+{}},);
 has bag_options => (is => 'ro', init_arg => 'bags', default => sub {+{}},);
 has key_prefix => (is => 'lazy', default => sub {'_'},);
 has id_key => (is => 'lazy', alias => 'id_field');
@@ -37,9 +38,9 @@ sub new_bag {
     $opts ||= {};
     $opts->{store} = $self;
     $opts->{name} = $name // $self->default_bag;
-    if (my $default = $self->bag_options->{$name}) {
-        $opts = {%$default, %$opts};
-    }
+    my $default_opts = $self->default_options;
+    my $bag_opts = $self->bag_options->{$opts->{name}} //= {};
+    $opts = {%$default_opts, %$bag_opts, %$opts};
 
     my $pkg = require_package(delete($opts->{class}) // $self->bag_class);
     my $default_plugins = $self->default_plugins;
