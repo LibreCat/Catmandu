@@ -4,6 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0606';
 
+use Catmandu::Util qw(as_utf8);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -11,21 +12,50 @@ use Catmandu::Fix::Has;
 has path => (fix_arg => 1);
 has args => (fix_arg => 'collect');
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
+sub _build_fixer {
+    my ($self) = @_;
     my $args = $self->args;
-    my $str_args = @$args > 1 ? join(", ", @$args[0, 1]) : $args->[0];
+    my $cb;
 
-    if (@$args < 3) {
-        return
-            "eval { ${var} = substr(as_utf8(${var}), ${str_args}) } if is_value(${var});";
+    if (@$args == 1) {
+        $cb = sub {
+            my $val = $_[0];
+            my $new_val;
+            eval {
+                no warnings 'substr';
+                $new_val = substr(as_utf8($val), $args->[0]);
+            };
+            return $new_val if defined $new_val;
+            return undef, 1, 0;
+        };
     }
-    my $replace = $fixer->emit_string($args->[2]);
-    "if (is_value(${var})) {"
-        . "utf8::upgrade(${var});"
-        . "eval { substr(${var}, ${str_args}) = ${replace} };" . "}";
+    elsif (@$args == 2) {
+        $cb = sub {
+            my $val = $_[0];
+            my $new_val;
+            eval {
+                no warnings 'substr';
+                $new_val = substr(as_utf8($val), $args->[0], $args->[1]);
+            };
+            return $new_val if defined $new_val;
+            return undef, 1, 0;
+        };
+    }
+    else {
+        $cb = sub {
+            my $val     = $_[0];
+            my $new_val = as_utf8($val);
+            eval {
+                no warnings 'substr';
+                substr($new_val, $args->[0], $args->[1]) = $args->[2];
+            } // return undef, 1, 0;
+            $new_val;
+        };
+    }
+
+    $self->_as_path($self->path)->updater(if => [value => $cb]);
 }
 
 1;
