@@ -79,6 +79,22 @@ sub _emit_iterate_hash {
     $perl;
 }
 
+sub _emit_assign_cb {
+    my ($self, $var, $cb_var, %opts) = @_;
+    my $val_var    = $self->_generate_var;
+    my $cancel_var = $self->_generate_var;
+    my $delete_var = $self->_generate_var;
+    my $perl       = "";
+    $perl
+        .= "my (${val_var}, ${cancel_var}, ${delete_var}) = ${cb_var}->(${var});";
+    $perl .= "if (${delete_var}) {";
+    $perl .= $self->_emit_delete(%opts);
+    $perl .= "} elsif (!${cancel_var}) {";
+    $perl .= $self->_emit_assign($var, $val_var, %opts);
+    $perl .= "}";
+    $perl;
+}
+
 sub _emit_assign {
     my ($self, $var, $val, %opts) = @_;
     my $l_var  = $var;
@@ -90,6 +106,17 @@ sub _emit_assign {
         $l_var = "${up_var}->[${index}]";
     }
     "${l_var} = ${val};";
+}
+
+sub _emit_delete {
+    my ($self, %opts) = @_;
+    my $up_var = $opts{up_var};
+    if (my $key = $opts{key}) {
+        return "delete ${up_var}->{${key}}";
+    }
+    elsif (my $index = $opts{index}) {
+        return "splice(\@{${up_var}}, ${index}, 1)";
+    }
 }
 
 sub _emit_value {

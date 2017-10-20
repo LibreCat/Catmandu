@@ -16,7 +16,7 @@ has replace => (fix_arg => 1);
 with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
-    my ($self) = @_;
+    my ($self)  = @_;
     my $search  = $self->search;
     my $replace = $self->replace;
     my $renamer;

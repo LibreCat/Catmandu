@@ -9,9 +9,9 @@ use Catmandu::Util qw(as_path as_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1);
-
 with 'Catmandu::Fix::Builder';
+
+has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
