@@ -43,7 +43,7 @@ sub _regex {
     qr/$str/;
 }
 
-sub _substitution {
+sub _substituter {
     my ($self, $search, $replace) = @_;
     $search  = $self->_regex($search);
     $replace = $self->_escape_regex($replace);
