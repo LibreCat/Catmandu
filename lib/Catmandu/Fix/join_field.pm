@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
-use Catmandu::Util qw(is_value as_path);
+use Catmandu::Util qw(is_value);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -17,7 +17,7 @@ with 'Catmandu::Fix::Builder';
 sub _build_fixer {
     my ($self) = @_;
     my $join_char = $self->join_char;
-    as_path($self->path)->updater(
+    $self->_as_path($self->path)->updater(
         if => [
             array_ref => sub {
                 join $join_char, grep {is_value($_)} @{$_[0]};

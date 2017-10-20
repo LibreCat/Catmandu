@@ -25,7 +25,6 @@ our %EXPORT_TAGS = (
         qw(io read_file read_io write_file read_yaml read_json join_path
             normalize_path segmented_path content_type)
     ],
-    path  => [qw(as_path)],
     data  => [qw(parse_data_path get_data set_data delete_data data_at)],
     array => [
         qw(array_exists array_group_by array_pluck array_to_sentence
@@ -243,16 +242,6 @@ sub content_type {
     $type = sprintf "%s", $mime->type if $mime;
 
     $type;
-}
-
-sub as_path {
-    my ($path) = @_;
-    if (is_value($path)) {
-        require_package('default', 'Catmandu::Path')->new({path => $path});
-    }
-    else {
-        $path;
-    }
 }
 
 sub parse_data_path {

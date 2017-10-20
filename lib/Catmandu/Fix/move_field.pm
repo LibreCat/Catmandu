@@ -5,7 +5,6 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
-use Catmandu::Util qw(as_path);
 use Clone qw(clone);
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -17,8 +16,8 @@ has new_path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self)   = @_;
-    my $old_path = as_path($self->old_path);
-    my $new_path = as_path($self->new_path);
+    my $old_path = $self->_as_path($self->old_path);
+    my $new_path = $self->_as_path($self->new_path);
     my $getter   = $old_path->getter;
     my $deleter  = $old_path->deleter;
     my $creator  = $new_path->creator;

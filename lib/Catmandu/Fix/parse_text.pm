@@ -11,23 +11,31 @@ use Catmandu::Fix::Has;
 has path    => (fix_arg => 1);
 has pattern => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $pattern = $fixer->emit_match($self->pattern);
-
-    "if (is_string(${var}) && ${var} =~ ${pattern}) {" . "if (\@+ < 2) { " .
-
-        # # no capturing groups
-        "}" . "elsif (\%+) { " .
-
-        # named capturing groups
-        "${var} = { \%+ }; " . "} else {" .
-
-        # numbered capturing groups
-        "no strict 'refs';"
-        . "${var} = [ map { \${\$_} } 1..(\@{+} - 1) ];" . "}" . "}";
+sub _build_fixer {
+    my ($self) = @_;
+    my $regex = $self->_regex($self->pattern);
+    $self->_as_path($self->path)->updater(
+        if => [
+            string => sub {
+                my $val = $_[0];
+                if ($val =~ m/$regex/) {
+                    if (@+ < 2) {    # no capturing groups
+                        return undef, 1, 0;
+                    }
+                    elsif (%+) {     # named capturing groups
+                        return +{%+};
+                    }
+                    else {           # numbered capturing groups
+                        no strict 'refs';
+                        return [map {${$_}} 1 .. (@+ - 1)];
+                    }
+                }
+                return undef, 1, 0;
+            }
+        ]
+    );
 }
 
 1;

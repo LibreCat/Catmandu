@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Catmandu::Importer::CSV;
-use Catmandu::Util qw(is_value as_path);
+use Catmandu::Util qw(is_value);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -38,7 +38,7 @@ sub _build_dictionary {
 
 sub _build_fixer {
     my ($self)      = @_;
-    my $path        = as_path($self->path);
+    my $path        = $self->_as_path($self->path);
     my $dict        = $self->dictionary;
     my $has_default = $self->has_default;
     my $default     = $self->default;

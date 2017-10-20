@@ -5,7 +5,6 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Catmandu;
-use Catmandu::Util qw(as_path);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -19,8 +18,8 @@ has ignore_404 => (fix_opt => 1);
 has opts       => (fix_opt => 'collect');
 
 sub _build_fixer {
-    my ($self)      = @_;
-    my $path        = as_path($self->path);
+    my ($self)     = @_;
+    my $path       = $self->_as_path($self->path);
     my $name       = $self->name;
     my $opts       = $self->opts;
     my $delete     = $self->delete;

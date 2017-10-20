@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
-use Catmandu::Util qw(as_path as_utf8);
+use Catmandu::Util qw(as_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -15,7 +15,7 @@ has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
-    as_path($self->path)
+    $self->_as_path($self->path)
         ->updater(if => [string => sub {ucfirst(lc(as_utf8($_[0])))}],);
 }
 

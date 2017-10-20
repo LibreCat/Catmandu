@@ -5,7 +5,6 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
-use Catmandu::Util qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -17,7 +16,7 @@ with 'Catmandu::Fix::Builder';
 sub _build_fixer {
     my ($self) = @_;
     my $split_char = $self->split_char;
-    as_path($self->path)
+    $self->_as_path($self->path)
         ->updater(if => [value => sub {[split $split_char, $_[0]]}],);
 }
 
