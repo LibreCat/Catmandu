@@ -13,7 +13,7 @@ has exporter_name => (fix_arg => 1);
 has exporter_args => (fix_opt => 'collect');
 has exporter      => (is      => 'lazy', init_arg => undef);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
 sub _build_exporter {
     my ($self) = @_;
@@ -24,11 +24,14 @@ sub _build_exporter {
     );
 }
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $exporter_var = $fixer->capture($self->exporter);
-
-    "${exporter_var}->add(${var});"
+sub _build_fixer {
+    my ($self)   = @_;
+    my $exporter = $self->exporter;
+    my $getter   = $self->_as_path($self->path)->getter;
+    sub {
+        my $values = $getter->($_[0]);
+        $exporter->add($_) for @$values;
+    };
 }
 
 1;
