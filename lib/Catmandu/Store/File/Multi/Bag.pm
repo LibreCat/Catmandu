@@ -24,7 +24,6 @@ sub upload {
             my $bag = $store->bag($self->name);
             next unless $bag;
             if ($rewind) {
-
                 # Rewind the stream after first use...
                 Catmandu::BadVal->throw("IO stream needs to seekable")
                     unless $io->isa('IO::Seekable');
@@ -35,7 +34,8 @@ sub upload {
         }
         else {
             my $bag = $store->bag($self->name);
-            $bag->add({_id => $id}) if $bag;
+            next unless $bag;
+            $bag->add({_id => $id});
         }
     }
 

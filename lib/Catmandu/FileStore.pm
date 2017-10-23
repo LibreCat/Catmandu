@@ -75,7 +75,7 @@ sub bag {
         $pkg->new(%$opts);
     }
     else {
-        Catmandu::Error->throw("no bag `$name` exists");
+        return undef;
     }
 }
 

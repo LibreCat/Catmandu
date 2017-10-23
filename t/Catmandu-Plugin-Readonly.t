@@ -22,36 +22,24 @@ my $store = Catmandu::Store::Hash->new(
 ok $store->does('Catmandu::Store'),
     'create Catmandu-Store with Readonly plugin';
 
-ok $store->bag->add({_id => '001', name => 'Penguin'}), 'store something';
+my ($ret,$err) = $store->bag->add({_id => '001', name => 'Penguin'});
 
-ok ! $store->bag->get('001'), 'didn\'t store anything';
+ok !defined($ret) , 'add returned undef';
+isa_ok $err, 'Catmandu::NotImplemented';
 
-ok $store->bag->delete('001'), 'delete something';
+($ret,$err) = $store->bag->get('001');
 
-ok $store->drop , 'drop database';
+ok !defined($ret) , 'get returned undef';
+ok !defined($err) , 'no error thrown';
 
-note("throw errors");
+($ret,$err) = $store->bag->delete('001');
 
-$store = Catmandu::Store::Hash->new(
-    default_plugins => [qw(Readonly)] ,
-    default_options => { readonly_throw_error => 1 }
-);
+ok !defined($ret) , 'delete returned undef';
+isa_ok $err, 'Catmandu::NotImplemented';
 
-ok $store->does('Catmandu::Store'),
-    'create Catmandu-Store with Readonly plugin';
+($ret,$err) =  $store->drop;
 
-throws_ok {
-    $store->bag->add({_id => '001', name => 'Penguin'})
-} 'Catmandu::NotImplemented' , 'store something';
-
-ok ! $store->bag->get('001');
-
-throws_ok {
-    $store->bag->delete('001')
-} 'Catmandu::NotImplemented' , 'delete something';
-
-throws_ok {
-    $store->drop
-} 'Catmandu::NotImplemented' , 'drop database';
+ok !defined($ret) , 'drop returned undef';
+isa_ok $err, 'Catmandu::NotImplemented';
 
 done_testing;

@@ -73,7 +73,7 @@ is $s->bag,   $b;
 is $b->store, $s;
 is $b->name,  'index';
 
-throws_ok { $s->bag('foo') } 'Catmandu::Error';
+ok ! $s->bag('foo') , 'unkown bag';
 
 note("options");
 $s = T::Store->new(
