@@ -4,7 +4,7 @@ our $VERSION = '1.0606';
 
 use Catmandu::Sane;
 use IO::String;
-use Catmandu::Util qw(:check);
+use Catmandu::Util qw(:is :check);
 use Moo::Role;
 use namespace::clean;
 
@@ -38,7 +38,8 @@ sub upload {
     my ($self, $io, $id) = @_;
     check_string($id);
     check_invocant($io);
-    $self->add({_id => $id, _stream => $io});
+
+    is_hash_ref $self->add({_id => $id, _stream => $io});
 }
 
 1;

@@ -32,7 +32,7 @@ is $store->path_string('0001234'), 't/data2/000/001/234',
 
 ok !$store->path_string('00000001234'), 'path_string(00000001234) fails';
 
-throws_ok {$store->bag('1235')} 'Catmandu::Error', 'bag(1235) doesnt exist';
+ok !$store->bag('1235'), 'bag(1235) doesnt exist';
 
 lives_ok {$store->bag('1')} 'bag(1) exists';
 
