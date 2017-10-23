@@ -54,10 +54,15 @@ sub new_bag {
 {
     fieldhash my %bag_instances;
 
+    sub bags {
+        my ($self) = @_;
+        $bag_instances{$self} ||= {};
+    }
+
     sub bag {
         my ($self, $name) = @_;
         $name ||= $self->default_bag;
-        $bag_instances{$self}{$name} ||= $self->new_bag($name);
+        $self->bags->{$name} ||= $self->new_bag($name);
     }
 }
 
