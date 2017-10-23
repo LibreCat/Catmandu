@@ -69,4 +69,8 @@ is $bag2->count, 1, "Bags stay alive";
 my $bag3 = $store->bag('foo');
 ok !$bag3->get('123'), "foo doesnt have 123";
 
+ok $store->drop;
+
+use Data::Dumper;
+warn Dumper($store);
 done_testing;
