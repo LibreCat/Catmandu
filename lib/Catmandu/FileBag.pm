@@ -39,7 +39,20 @@ sub upload {
     check_string($id);
     check_invocant($io);
 
-    is_hash_ref $self->add({_id => $id, _stream => $io});
+    $self->add({_id => $id, _stream => $io});
+
+    my $file = $self->get($id);
+
+    if (!defined($file)) {
+        return 0;
+    }
+    elsif (is_hash_ref($file)) {
+        return $file->{size};
+    }
+    else {
+        $self->log->error("expecting a HASH but got `$file'");
+        return 0;
+    }
 }
 
 1;
@@ -99,7 +112,7 @@ the number of bytes written.
 =head2 stream($io, $file)
 
 A helper application to stream the contents of a L<Catmandu::FileBag> item
-to an IO::Handle. Returns the nuber of bytes written.
+to an IO::Handle. Returns the number of bytes written.
 
 =head2 as_string($file)
 

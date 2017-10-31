@@ -5,6 +5,8 @@ use Catmandu::Sane;
 our $VERSION = '1.0606';
 
 use Moo;
+use Catmandu::Util qw(:is);
+use Catmandu::Logger;
 use namespace::clean;
 
 extends 'Catmandu::Store::Multi::Bag';
@@ -29,7 +31,8 @@ sub upload {
                     unless $io->isa('IO::Seekable');
                 $io->seek(0, 0);
             }
-            $store->bag($self->name)->upload($io, $id) || return undef;
+            $store->bag($self->name)->upload($io, $id) ||
+                $self->log->error("failed to upload $id to " . $self->name);
             $rewind = 1;
         }
         else {
@@ -39,7 +42,18 @@ sub upload {
         }
     }
 
-    1;
+    my $file = $self->get($id);
+
+    if (!defined($file)) {
+        return 0;
+    }
+    elsif (is_hash_ref($file)) {
+        return $file->{size};
+    }
+    else {
+        $self->log->error("expecting a HASH but got `$file'");
+        return 0;
+    }
 }
 
 1;

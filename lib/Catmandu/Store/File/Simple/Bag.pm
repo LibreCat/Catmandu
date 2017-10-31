@@ -119,13 +119,13 @@ sub add {
     my $file = File::Spec->catfile($path, $packed_key);
 
     if (Catmandu::Util::is_invocant($io)) {
-        return copy($io, $file);
+        copy($io, $file) || Catmandu::Error->throw("failed to write file : $!");
     }
     else {
-        return Catmandu::Util::write_file($file, $io);
+        Catmandu::Util::write_file($file, $io) || Catmandu::Error->throw("failed to write file : $!");
     }
 
-    return $self->get($id);
+    1;
 }
 
 sub delete {
