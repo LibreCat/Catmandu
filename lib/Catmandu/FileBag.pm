@@ -39,9 +39,20 @@ sub upload {
     check_string($id);
     check_invocant($io);
 
-    $self->add({_id => $id, _stream => $io});
+    my $file = {_id => $id, _stream => $io};
 
-    my $file = $self->get($id);
+    $self->add($file);
+
+    # The add() method of FileBags should inline data the passed $file with
+    # file metadata. Use a get($id) when this inline update wasn't implemented
+    # by the Bag.
+    if (exists $file->{size}) {
+        # all ok
+    }
+    else {
+        $self->log->warn("$self doesn't inline update \$data in add(\$data) method");
+        $file = $self->get($id);
+    }
 
     if (!defined($file)) {
         return 0;

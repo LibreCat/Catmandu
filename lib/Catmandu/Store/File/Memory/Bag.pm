@@ -4,8 +4,10 @@ our $VERSION = '1.0606';
 
 use Catmandu::Sane;
 use Moo;
+use Clone 'clone';
 use Catmandu::Util qw(content_type);
 use namespace::clean;
+require bytes;
 
 with 'Catmandu::Bag';
 with 'Catmandu::FileBag';
@@ -58,23 +60,22 @@ sub add {
 
     my $str = Catmandu::Util::read_io($io);
 
-    $self->store->_files->{$name}->{$id} = {
-        _id          => $id,
-        size         => length $str,
-        md5          => '',
-        content_type => content_type($id),
-        created      => time,
-        modified     => time,
-        _stream      => sub {
-            my $io = $_[0];
+    $data->{_id}          = $id;
+    $data->{size}         = bytes::length($str);
+    $data->{md5}          = '';
+    $data->{content_type} = content_type($id);
+    $data->{created}      = time;
+    $data->{modified}     = time;
+    $data->{_stream}      = sub {
+        my $io = $_[0];
 
-            Catmandu::Error->throw("no io defined or not writable")
-                unless defined($io);
+        Catmandu::Error->throw("no io defined or not writable")
+            unless defined($io);
 
-            $io->write($str);
-        },
-        %$data
+        $io->write($str);
     };
+
+    $self->store->_files->{$name}->{$id} = clone($data);
 
     1;
 }

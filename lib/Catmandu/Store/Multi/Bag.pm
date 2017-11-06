@@ -61,6 +61,8 @@ sub add {
         my $bag = $store->bag($self->name);
         $bag->add($data) if $bag;
     }
+
+    1;
 }
 
 sub delete {
@@ -72,6 +74,8 @@ sub delete {
         my $bag = $store->bag($self->name);
         $bag->delete($id) if $bag;
     }
+
+    1;
 }
 
 sub delete_all {
@@ -83,6 +87,8 @@ sub delete_all {
         my $bag = $store->bag($self->name);
         $bag->delete_all if $bag;
     }
+
+    1;
 }
 
 sub drop {
@@ -94,6 +100,8 @@ sub drop {
         my $bag = $store->bag($self->name);
         $bag->drop if $bag && $bag->does('Catmandu::Droppable');
     }
+
+    1;
 }
 
 sub commit {
@@ -105,6 +113,8 @@ sub commit {
         my $bag = $store->bag($self->name);
         $bag->commit if $bag;
     }
+
+    1;
 }
 
 1;

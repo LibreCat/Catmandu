@@ -13,6 +13,61 @@ extends 'Catmandu::Store::Multi::Bag';
 
 with 'Catmandu::FileBag';
 
+sub add {
+    my ($self, $data) = @_;
+
+    # Overwrite the Multi::Bag add an store each stream in the backend store
+
+    my $rewind = 0;
+    my $id     = $data->{_id};
+    my $stream = $data->{_stream};
+
+    my $new_data = {};
+
+    # By default try to add the data to all the stores
+    for my $store (@{$self->store->stores}) {
+        my $bag = $store->bag($self->name);
+        next unless $bag;
+
+        if ($rewind) {
+            # Rewind the stream after first use...
+            Catmandu::BadVal->throw("IO stream needs to seekable")
+                unless $stream->isa('IO::Seekable');
+            $stream->seek(0, 0);
+        }
+
+        my $file = {_id => $id , _stream => $stream};
+        $bag->add($file);
+
+        for (keys %$file) {
+            $new_data->{$_} = $file->{$_} unless exists $new_data->{$_};
+        }
+
+        $rewind = 1;
+    }
+
+    # Check if the returned record contains the minimum required fields
+    # (otherwise we have a File::Store implementation that doesn't inline
+    # update the passed $data in add($data))
+    if (exists $new_data->{size} && exists $new_data->{created} &&
+        exists $new_data->{modified}) {
+        # all is ok
+    }
+    else {
+        $self->log->warn("$self doesn't inline update \$data in add(\$data) method");
+        $new_data = $self->get($id);
+    }
+
+    if ($new_data) {
+        $data->{$_} = $new_data->{$_} for keys %$new_data;
+    }
+    else {
+        $self->log->error("can't find $id in $self!");
+    }
+
+    1;
+}
+
 sub upload {
     my ($self, $io, $id) = @_;
 
@@ -20,6 +75,8 @@ sub upload {
     # empty record
 
     my $rewind;
+
+    my $bytes = 0;
 
     for my $store (@{$self->store->stores}) {
         if ($store->does('Catmandu::FileStore')) {
@@ -31,7 +88,7 @@ sub upload {
                     unless $io->isa('IO::Seekable');
                 $io->seek(0, 0);
             }
-            $store->bag($self->name)->upload($io, $id) ||
+            $bytes = $store->bag($self->name)->upload($io, $id) ||
                 $self->log->error("failed to upload $id to " . $self->name);
             $rewind = 1;
         }
@@ -42,18 +99,7 @@ sub upload {
         }
     }
 
-    my $file = $self->get($id);
-
-    if (!defined($file)) {
-        return 0;
-    }
-    elsif (is_hash_ref($file)) {
-        return $file->{size};
-    }
-    else {
-        $self->log->error("expecting a HASH but got `$file'");
-        return 0;
-    }
+    return $bytes;
 }
 
 1;

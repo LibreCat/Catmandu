@@ -31,9 +31,23 @@ ok $bag , 'got bag(1234)';
 
 note("add");
 {
-    ok $bag->upload(io('t/data2/000/000/001/test.txt'), 'test1.txt');
-    ok $bag->upload(io('t/data2/000/000/002/test.txt'), 'test2.txt');
-    ok $bag->upload(io('t/data2/000/000/003/test.txt'), 'test3.txt');
+    my $n1 = $bag->upload(io('t/data2/000/000/001/test.txt'), 'test1.txt');
+
+    ok $n1 , 'upload test1.txt';
+
+    is $n1 , 16 , '16 bytes';
+
+    my $n2 = $bag->upload(io('t/data2/000/000/002/test.txt'), 'test2.txt');
+
+    ok $n2 , 'upload test2.txt';
+
+    is $n2 , 6 , '6 bytes';
+
+    my $n3 = $bag->upload(io('t/data2/000/000/003/test.txt'), 'test3.txt');
+
+    ok $n3 , 'upload test3.txt';
+
+    is $n3 , 6 , '6 bytes';
 }
 
 note("list");
