@@ -56,7 +56,11 @@ sub add {
 
     $self->store->_files->{$name}->{$id} = +{_id => $id,};
 
-    return $self->get($id);
+    my $new_data = $self->get($id);
+
+    $data->{$_} = $new_data->{$_} for keys %$new_data;
+
+    1;
 }
 
 sub get {
