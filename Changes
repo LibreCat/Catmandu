@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new Readonly plugin
   - new DKVP importer for delimited key-value pairs
   - new Store bags method
   - new Store default_options for bag

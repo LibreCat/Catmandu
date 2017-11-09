@@ -1,5 +1,7 @@
 package Catmandu::Plugin::Readonly;
 
+our $VERSION = '1.0606';
+
 use Moo::Role;
 use MooX::Aliases;
 use Package::Stash;
