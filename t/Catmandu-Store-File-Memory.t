@@ -27,7 +27,7 @@ ok $bags , 'create memory store';
 
 ok $bags->add({_id => '1234'}), 'adding `1234` bag';
 
-ok ! $store->bag('1235') , 'bag(1235) doesnt exist';
+ok !$store->bag('1235'), 'bag(1235) doesnt exist';
 
 lives_ok {$store->bag('1234')} 'bag(1234) exists';
 

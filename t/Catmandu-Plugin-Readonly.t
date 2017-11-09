@@ -22,24 +22,24 @@ my $store = Catmandu::Store::Hash->new(
 ok $store->does('Catmandu::Store'),
     'create Catmandu-Store with Readonly plugin';
 
-my ($ret,$err) = $store->bag->add({_id => '001', name => 'Penguin'});
+my ($ret, $err) = $store->bag->add({_id => '001', name => 'Penguin'});
 
-ok !defined($ret) , 'add returned undef';
+ok !defined($ret), 'add returned undef';
 isa_ok $err, 'Catmandu::NotImplemented';
 
-($ret,$err) = $store->bag->get('001');
+($ret, $err) = $store->bag->get('001');
 
-ok !defined($ret) , 'get returned undef';
-ok !defined($err) , 'no error thrown';
+ok !defined($ret), 'get returned undef';
+ok !defined($err), 'no error thrown';
 
-($ret,$err) = $store->bag->delete('001');
+($ret, $err) = $store->bag->delete('001');
 
-ok !defined($ret) , 'delete returned undef';
+ok !defined($ret), 'delete returned undef';
 isa_ok $err, 'Catmandu::NotImplemented';
 
-($ret,$err) =  $store->drop;
+($ret, $err) = $store->drop;
 
-ok !defined($ret) , 'drop returned undef';
+ok !defined($ret), 'drop returned undef';
 isa_ok $err, 'Catmandu::NotImplemented';
 
 done_testing;

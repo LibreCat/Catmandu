@@ -119,16 +119,18 @@ sub add {
     my $file = File::Spec->catfile($path, $packed_key);
 
     if (Catmandu::Util::is_invocant($io)) {
-        copy($io, $file) || Catmandu::Error->throw("failed to write file : $!");
+        copy($io, $file)
+            || Catmandu::Error->throw("failed to write file : $!");
     }
     else {
-        Catmandu::Util::write_file($file, $io) || Catmandu::Error->throw("failed to write file : $!");
+        Catmandu::Util::write_file($file, $io)
+            || Catmandu::Error->throw("failed to write file : $!");
     }
 
     my $new_data = $self->get($id);
 
     $data->{$_} = $new_data->{$_} for keys %$new_data;
-    
+
     1;
 }
 

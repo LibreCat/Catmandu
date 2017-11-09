@@ -9,9 +9,10 @@ use namespace::clean;
 
 sub BUILD {
     my ($self) = @_;
-    my $name   = ref($self->store);
+    my $name = ref($self->store);
 
     if ($self->store->does('Catmandu::Droppable')) {
+
         # Overwrite the drop method of the Catmandu::Store implementation
         my $stash = Package::Stash->new($name);
         $stash->add_symbol(
@@ -19,12 +20,13 @@ sub BUILD {
                 $self->log->warn("trying to drop a readonly store");
                 my $err = Catmandu::NotImplemented->new("$name is readonly");
                 return undef, $err;
-            });
+            }
+        );
     }
-};
+}
 
 around add => sub {
-    my ($orig,$self,$data) = @_;
+    my ($orig, $self, $data) = @_;
     my $name = ref($self);
     $self->log->warn("trying to add to readonly store");
     my $err = Catmandu::NotImplemented->new("$name is readonly");
@@ -32,7 +34,7 @@ around add => sub {
 };
 
 around delete => sub {
-    my ($orig,$self) = @_;
+    my ($orig, $self) = @_;
     my $name = ref($self);
     $self->log->warn("trying to delete from readonly store");
     my $err = Catmandu::NotImplemented->new("$name is readonly");
@@ -40,7 +42,7 @@ around delete => sub {
 };
 
 around delete_all => sub {
-    my ($orig,$self) = @_;
+    my ($orig, $self) = @_;
     my $name = ref($self);
     $self->log->warn("trying to delete_all on readonly store");
     my $err = Catmandu::NotImplemented->new("$name is readonly");
@@ -48,7 +50,7 @@ around delete_all => sub {
 };
 
 around drop => sub {
-    my ($orig,$self) = @_;
+    my ($orig, $self) = @_;
     my $name = ref($self);
     $self->log->warn("trying to drop a readonly store");
     my $err = Catmandu::NotImplemented->new("$name is readonly");

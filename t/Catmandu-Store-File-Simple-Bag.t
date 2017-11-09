@@ -31,35 +31,41 @@ ok $bag , 'got bag(1234)';
 
 note("add");
 {
-    my $n1 = $bag->upload(IO::File->new('t/data2/000/000/001/test.txt'),'test1.txt');
+    my $n1 = $bag->upload(IO::File->new('t/data2/000/000/001/test.txt'),
+        'test1.txt');
 
     ok $n1 , 'upload test1.txt';
 
-    is $n1 , 16 , '16 bytes';
+    is $n1 , 16, '16 bytes';
 
     ok -f 't/data/000/001/234/test1.txt', 'test1.txt exists';
 
-    my $n2 = $bag->upload(IO::File->new('t/data2/000/000/002/test.txt'), 'test2.txt');
+    my $n2 = $bag->upload(IO::File->new('t/data2/000/000/002/test.txt'),
+        'test2.txt');
 
     ok $n2 , 'upload test2.txt';
 
-    is $n2 , 6 , '6 bytes';
+    is $n2 , 6, '6 bytes';
 
     ok -f 't/data/000/001/234/test2.txt', 'test2.txt exists';
 
-    my $n3  = $bag->upload(IO::File->new('t/data2/000/000/003/test.txt'),'test3.txt');
+    my $n3 = $bag->upload(IO::File->new('t/data2/000/000/003/test.txt'),
+        'test3.txt');
 
     ok $n3 , 'upload test3.txt';
 
-    is $n3 , 6 , '6 bytes';
+    is $n3 , 6, '6 bytes';
 
     ok -f 't/data/000/001/234/test3.txt', 'test3.txt exists';
 
-    my $data = { _id => 'test3.txt' , _stream => IO::File->new('t/data2/000/000/003/test.txt') };
+    my $data = {
+        _id     => 'test3.txt',
+        _stream => IO::File->new('t/data2/000/000/003/test.txt')
+    };
 
-    ok $bag->add($data) , 'add({ ..test3.. })';
+    ok $bag->add($data), 'add({ ..test3.. })';
 
-    is $data->{size} , 6 , '$data->{size}';
+    is $data->{size}, 6, '$data->{size}';
 }
 
 note("list");

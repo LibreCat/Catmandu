@@ -47,10 +47,12 @@ sub upload {
     # file metadata. Use a get($id) when this inline update wasn't implemented
     # by the Bag.
     if (exists $file->{size}) {
+
         # all ok
     }
     else {
-        $self->log->warn("$self doesn't inline update \$data in add(\$data) method");
+        $self->log->warn(
+            "$self doesn't inline update \$data in add(\$data) method");
         $file = $self->get($id);
     }
 

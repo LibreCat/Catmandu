@@ -15,9 +15,8 @@ BEGIN {
 
 require_ok $pkg;
 
-my $stores = [
-    Catmandu::Store::File::Simple->new(root => 't/data2',  keysize => 9),
-];
+my $stores
+    = [Catmandu::Store::File::Simple->new(root => 't/data2', keysize => 9),];
 
 my $store = Catmandu::Store::File::Multi->new(stores => $stores);
 my $index;

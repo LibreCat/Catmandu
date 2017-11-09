@@ -19,11 +19,11 @@ sub _build_default_bag {
 
 sub _build_index {
     my ($self) = @_;
-    my $name   = $self->index_bag;
+    my $name = $self->index_bag;
     my $inst;
 
     try {
-        my $opts        = { store => $self , name => $name };
+        my $opts         = {store => $self, name => $name};
         my $default_opts = $self->default_options;
         my $bag_opts     = $self->bag_options->{$name} //= {};
         $opts = {%$default_opts, %$bag_opts, %$opts};
@@ -57,13 +57,15 @@ sub bag {
     if ($name eq $index_name) {
         $self->index;
     }
+
     # Otherwise load the container for files
     elsif ($self->index->exists($name)) {
-        my $opts         = { store => $self , name => $name };
+        my $opts         = {store => $self, name => $name};
         my $default_opts = $self->default_options;
         my $bag_opts     = $self->bag_options->{$name} //= {};
         $opts = {%$default_opts, %$bag_opts, %$opts};
-        my $pkg = Catmandu::Util::require_package(delete($opts->{class}) // $self->bag_class);
+        my $pkg = Catmandu::Util::require_package(delete($opts->{class})
+                // $self->bag_class);
 
         my $default_plugins = $self->default_plugins;
         my $plugins = delete($opts->{plugins}) // [];
