@@ -99,6 +99,17 @@ Catmandu::Fix::Bind::each - a binder that executes fixes for every (key, value) 
     #   - 'Tuin der lusten'
     #   - 'The Garden of Earthly Delights'
 
+    # Upcase every key in the root hash
+    # foo: bar
+    # test: 1234
+    do each(path:., var: t)
+       upcase(t.key)
+    end
+
+    # This will result in
+    # FOO: bar
+    # TEST: 1234
+
 =head1 DESCRIPTION
 
 The each binder will iterate over a hash and return a (key, value)
