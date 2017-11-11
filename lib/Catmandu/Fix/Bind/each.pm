@@ -42,7 +42,8 @@ sub bind {
         $code->($data);
     }
     else {
-        for my $key (sort keys %{$data}) {
+        my @keys = sort keys %{$data};
+        for my $key (@keys) {
             my $value = $data->{$key};
 
             my $scope = $self->_root_;
@@ -53,6 +54,14 @@ sub bind {
             };
 
             $code->($scope);
+
+            # Key and values can be updated
+            if (my $mkey = $scope->{$self->var}->{key}) {
+                $data->{$mkey} = $scope->{$self->var}->{value};
+                if ($mkey ne $key) {
+                    delete $data->{$key};
+                }
+            }
 
             delete $scope->{$self->var}
         }

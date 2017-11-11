@@ -115,6 +115,9 @@ $fixes = <<'EOF';
 do each(path:demo, var: t)
  if all_match(t.key,en)
     copy_field(t.value, titles.$append)
+ else
+    upcase(t.key)
+    upcase(t.value)
  end
 end
 EOF
@@ -128,7 +131,7 @@ is_deeply $fixer->fix({
     }
 }), {
     demo => {
-        nl => 'Tuin der lusten',
+        NL => 'TUIN DER LUSTEN',
         en => 'The Garden of Earthly Delights'
     },
     titles => [
