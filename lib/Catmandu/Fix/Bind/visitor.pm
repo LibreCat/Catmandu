@@ -156,7 +156,7 @@ Catmandu::Fix::Bind::visitor - a binder that computes Fix-es for every element i
   end
 
   do visitor()
-    # upcase all the keys in the record
+    # upcase all the field names in the record
     upcase(key)
   end
 
