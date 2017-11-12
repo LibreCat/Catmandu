@@ -37,7 +37,6 @@ sub bind {
     my $var  = $self->var;
 
     if (Catmandu::Util::is_hash_ref($mvar)) {
-
         # Ignore all specialized processing when not an array
         $mvar = $code->($mvar);
         return $mvar;

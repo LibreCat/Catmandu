@@ -33,7 +33,6 @@ sub bind {
         $copy = $code->($copy);
 
         if (ref($copy) eq 'reject') {
-
             #map { delete $mvar->{$_} } (keys %$mvar);
             %$mvar = ();
         }

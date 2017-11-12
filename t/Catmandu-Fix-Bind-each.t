@@ -140,4 +140,33 @@ is_deeply $fixer->fix({
 }
     , 'specific testing';
 
+$fixes = <<'EOF';
+do each(path:demo)
+ if all_match(key,en)
+    copy_field(value, titles.$append)
+ else
+    upcase(key)
+    upcase(value)
+ end
+end
+EOF
+
+$fixer = Catmandu::Fix->new(fixes => [$fixes]);
+
+is_deeply $fixer->fix({
+    demo => {
+        nl => 'Tuin der lusten',
+        en => 'The Garden of Earthly Delights'
+    }
+}), {
+    demo => {
+        NL => 'TUIN DER LUSTEN',
+        en => 'The Garden of Earthly Delights',
+        titles => [
+            'The Garden of Earthly Delights'
+        ]
+    },
+}
+    , 'specific testing 2';
+
 done_testing;

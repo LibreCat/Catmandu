@@ -17,21 +17,18 @@ with 'Catmandu::Fix::Bind','Catmandu::Fix::Bind::Group';
 has path      => (fix_opt => 1);
 has var       => (fix_opt => 1);
 
-has _root_ => (is => 'rw');
+has _root_    => (is => 'rw');
 
 sub unit {
     my ($self, $data) = @_;
 
-    croak "need a path" unless $self->path;
-    croak "need a var"  unless $self->var;
-
     $self->_root_($data);
 
-    if ($self->path eq "." || ! length($self->path)) {
-        return $data;
+    if ($self->path && $self->path ne '.') {
+        return Catmandu::Util::data_at($self->path, $data);
     }
     else {
-        return Catmandu::Util::data_at($self->path, $data);
+        return $data;
     }
 }
 
@@ -45,25 +42,46 @@ sub bind {
         my @keys = sort keys %{$data};
         for my $key (@keys) {
             my $value = $data->{$key};
+            my $scope;
 
-            my $scope = $self->_root_;
+            if ($self->var) {
+                $scope = $self->_root_;
 
-            $scope->{$self->var} = {
-                    'key'   => $key,
-                    'value' => $value
-            };
+                $scope->{$self->var} = {
+                        'key'   => $key,
+                        'value' => $value
+                };
+            }
+            else {
+                $scope = $data;
+                $scope->{'key'} = $key;
+                $scope->{'value'} = $value;
+            }
 
             $code->($scope);
 
-            # Key and values can be updated
-            if (my $mkey = $scope->{$self->var}->{key}) {
-                $data->{$mkey} = $scope->{$self->var}->{value};
-                if ($mkey ne $key) {
-                    delete $data->{$key};
+            if ($self->var) {
+                # Key and values can be updated
+                if (my $mkey = $scope->{$self->var}->{key}) {
+                    $data->{$mkey} = $scope->{$self->var}->{value};
+                    if ($mkey ne $key) {
+                        delete $data->{$key};
+                    }
                 }
-            }
 
-            delete $scope->{$self->var}
+                delete $scope->{$self->var}
+            }
+            else {
+                if (my $mkey = $scope->{key}) {
+                    $data->{$mkey} = $scope->{value};
+                    if ($mkey ne $key) {
+                        delete $data->{$key};
+                    }
+                }
+
+                delete $scope->{'key'};
+                delete $scope->{'value'};
+            }
         }
     }
 
