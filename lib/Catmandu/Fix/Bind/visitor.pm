@@ -53,11 +53,11 @@ sub bind_array {
     for (my $i = 0; $i < @$mvar; $i++) {
         my $item = $mvar->[$i];
         if (Catmandu::Util::is_array_ref($item)) {
-            my ($newkey,$newvalue) = $self->bind_array($item, $func, $i);
+            my ($newkey, $newvalue) = $self->bind_array($item, $func, $i);
             $mvar->[$i] = $newvalue;
         }
         elsif (Catmandu::Util::is_hash_ref($item)) {
-            my ($newkey,$newvalue) = $self->bind_hash($item, $func, $i);
+            my ($newkey, $newvalue) = $self->bind_hash($item, $func, $i);
             $mvar->[$i] = $newvalue;
         }
         else {
@@ -66,7 +66,7 @@ sub bind_array {
         }
     }
 
-    return ($result->{key},$result->{array});
+    return ($result->{key}, $result->{array});
 }
 
 sub bind_hash {
@@ -78,14 +78,16 @@ sub bind_hash {
         my $item = $mvar->{$key};
 
         if (Catmandu::Util::is_array_ref($item)) {
+
             # Keys can update themselves
-            my ($newkey,$newvalue) = $self->bind_array($item, $func, $key);
+            my ($newkey, $newvalue) = $self->bind_array($item, $func, $key);
             $mvar->{$newkey} = $newvalue;
             delete $mvar->{$key} if ($newkey ne $key);
         }
         elsif (Catmandu::Util::is_hash_ref($item)) {
+
             # Keys can update themselves
-            my ($newkey,$newvalue) = $self->bind_hash($item, $func, $key);
+            my ($newkey, $newvalue) = $self->bind_hash($item, $func, $key);
             $mvar->{$newkey} = $newvalue;
             delete $mvar->{$key} if ($newkey ne $key);
         }

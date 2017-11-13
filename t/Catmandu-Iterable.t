@@ -71,6 +71,9 @@ is $iter->all(sub {$_[0] > 0}), 1;
 is $iter->all(sub {$_[0] > 1}), 0;
 
 is_deeply $iter->map(sub {$_[0] + 1})->to_array, [2, 3, 4];
+is_deeply $iter->map(sub {return $_[0] + 1, $_[0]})->to_array,
+    [2, 1, 3, 2, 4, 3];
+is_deeply $iter->map(sub {return})->to_array, [];
 
 is $iter->reduce(sub {my ($memo, $num) = @_; $memo + $num;}), 6;
 is $iter->reduce(1, sub {my ($memo, $num) = @_; $memo + $num;}), 7;
