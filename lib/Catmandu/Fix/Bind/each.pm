@@ -12,12 +12,12 @@ use Catmandu::Util;
 use Catmandu::Fix::Has;
 use Carp;
 
-with 'Catmandu::Fix::Bind','Catmandu::Fix::Bind::Group';
+with 'Catmandu::Fix::Bind', 'Catmandu::Fix::Bind::Group';
 
-has path      => (fix_opt => 1);
-has var       => (fix_opt => 1);
+has path => (fix_opt => 1);
+has var  => (fix_opt => 1);
 
-has _root_    => (is => 'rw');
+has _root_ => (is => 'rw');
 
 sub unit {
     my ($self, $data) = @_;
@@ -47,20 +47,18 @@ sub bind {
             if ($self->var) {
                 $scope = $self->_root_;
 
-                $scope->{$self->var} = {
-                        'key'   => $key,
-                        'value' => $value
-                };
+                $scope->{$self->var} = {'key' => $key, 'value' => $value};
             }
             else {
-                $scope = $data;
-                $scope->{'key'} = $key;
+                $scope            = $data;
+                $scope->{'key'}   = $key;
                 $scope->{'value'} = $value;
             }
 
             $code->($scope);
 
             if ($self->var) {
+
                 # Key and values can be updated
                 if (my $mkey = $scope->{$self->var}->{key}) {
                     $data->{$mkey} = $scope->{$self->var}->{value};
@@ -69,7 +67,9 @@ sub bind {
                     }
                 }
 
-                delete $scope->{$self->var}
+                delete $scope->{
+                    $self->var
+                    };
             }
             else {
                 if (my $mkey = $scope->{key}) {

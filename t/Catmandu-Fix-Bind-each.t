@@ -26,7 +26,8 @@ my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
 ok $fixer , 'create fixer';
 
-is_deeply $fixer->fix({ok => 1}), {ok => 1,foo => 'bar'}, 'testing add_field';
+is_deeply $fixer->fix({ok => 1}), {ok => 1, foo => 'bar'},
+    'testing add_field';
 
 $fixes = <<EOF;
 do each(path:.,var:i)
@@ -48,7 +49,7 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({ok => 1}), {ok => 1,foo => 'bar'}, 'testing unless';
+is_deeply $fixer->fix({ok => 1}), {ok => 1, foo => 'bar'}, 'testing unless';
 
 $fixes = <<EOF;
 do each(path:.,var:i)
@@ -124,21 +125,17 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({
-    demo => {
-        nl => 'Tuin der lusten',
-        en => 'The Garden of Earthly Delights'
+is_deeply $fixer->fix(
+    {
+        demo =>
+            {nl => 'Tuin der lusten', en => 'The Garden of Earthly Delights'}
     }
-}), {
-    demo => {
-        NL => 'TUIN DER LUSTEN',
-        en => 'The Garden of Earthly Delights'
+    ),
+    {
+    demo => {NL => 'TUIN DER LUSTEN', en => 'The Garden of Earthly Delights'},
+    titles => ['The Garden of Earthly Delights']
     },
-    titles => [
-        'The Garden of Earthly Delights'
-    ]
-}
-    , 'specific testing';
+    'specific testing';
 
 $fixes = <<'EOF';
 do each(path:demo)
@@ -153,20 +150,19 @@ EOF
 
 $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-is_deeply $fixer->fix({
-    demo => {
-        nl => 'Tuin der lusten',
-        en => 'The Garden of Earthly Delights'
+is_deeply $fixer->fix(
+    {
+        demo =>
+            {nl => 'Tuin der lusten', en => 'The Garden of Earthly Delights'}
     }
-}), {
+    ),
+    {
     demo => {
-        NL => 'TUIN DER LUSTEN',
-        en => 'The Garden of Earthly Delights',
-        titles => [
-            'The Garden of Earthly Delights'
-        ]
+        NL     => 'TUIN DER LUSTEN',
+        en     => 'The Garden of Earthly Delights',
+        titles => ['The Garden of Earthly Delights']
     },
-}
-    , 'specific testing 2';
+    },
+    'specific testing 2';
 
 done_testing;
