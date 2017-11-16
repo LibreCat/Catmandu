@@ -115,18 +115,18 @@ Catmandu::Fix::Bind::hashmap - a binder to add key/value pairs to an internal ha
 
 =head1 SYNOPSIS
 
- # Find all ISBN in a stream
- do hashmap(exporter: JSON, join: ',')
+ # Find non unique ISBN numbers in the record stream
+ do hashmap(join: ',')
     copy_field(isbn,key)
     copy_field(_id,value)
  end
 
- # will export to the YAML exporter a hash map containing all isbn occurrences in the stream
+ # will export to the JSON exporter a hash map containing all isbn occurrences in the stream
 
- { "_id": "ISBN1" , "value": "0121,12912,121" }
- { "_id": "ISBN2" , "value": "102012" }
+ { "_id": "9781565920422" , "value": "rec0001,rec0329,rec1032" }
+ { "_id": "9780596004927" , "value": "rec0718" }
 
- # Count the number of ISBN occurrences in a stream
+ # Ignore the values. Count the number of ISBN occurrences in a stream
  # File: count.fix:
  do hashmap(count: 1)
     copy_field(isbn,key)
@@ -165,7 +165,9 @@ Send the output to a store instead of an exporter. Extra parameters can be added
 
 =head2 uniq: 0|1
 
-All the values for the a key will be unique.
+When set to 1, then multiple occurences of key,value pairs will not be
+joined. When set to 0, then all occurences of key,value pairs will be reported.
+Default 0
 
 =head2 join: CHAR
 
