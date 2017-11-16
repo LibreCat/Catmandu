@@ -137,13 +137,17 @@ Catmandu::Fix::Bind::hashmap - a binder to add key/value pairs to an internal ha
 
 =head1 DESCRIPTION
 
-The hashmap binder will insert all key/value pairs given to a internal hashmap that can be exported
-using an Catmandu::Exporter.
+The hashmap binder will insert all key/value pairs given to a internal hashmap
+that can be exported using an Catmandu::Exporter.
 
-If the key is an ARRAY, then multiple key/value pairs will be inserted into the hashmap.
+The 'key' fields in the internal hashmap will be exported as '_id' field.
 
-By default all the values will be added as an array to the hashmap. Every key will have one
-or more values.
+If the key in the hashmap Bind is an ARRAY, then multiple key/value pairs will
+be inserted into the hashmap.
+
+By default all the values will be added as an array to the hashmap. Every key
+will have one or more values. Use the 'join' parameter to create a string
+out of this array.
 
 =head1 CONFIGURATION
 
@@ -165,9 +169,7 @@ Send the output to a store instead of an exporter. Extra parameters can be added
 
 =head2 uniq: 0|1
 
-When set to 1, then multiple occurences of key,value pairs will not be
-joined. When set to 0, then all occurences of key,value pairs will be reported.
-Default 0
+When set to 1, then all values in the key 'value' will be made unique
 
 =head2 join: CHAR
 
