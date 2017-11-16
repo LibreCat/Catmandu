@@ -132,9 +132,9 @@ specified value, but it does prevent fixes to have any effect when the timeout h
 
     # This script will run 10 seconds
     do timeout(time:5, units:seconds)
-       reject() # This will be ignored
+       add_field(foo,ok) # This will be ignored
        sleep(10,seconds)
-       add_field(foo,bar) # This will be ignored
+       set_field(foo,error) # This will be ignored
     end
 
 At timeout a log message of level WARN will be generated.
