@@ -36,7 +36,7 @@ our %EXPORT_TAGS = (
     check  => [qw(check_same check_different)],
     human  => [qw(human_number human_content_type human_byte_size)],
     xml    => [qw(xml_declaration xml_escape)],
-    misc   => [qw(require_package use_lib pod_section)],
+    misc   => [qw(require_package alias_package use_lib pod_section)],
     date   => [qw(now)],
 );
 
@@ -692,6 +692,25 @@ sub require_package {
     $pkg;
 }
 
+sub alias_package {
+    my ($orig,$alias) = @_;
+
+    require_package($orig);
+
+    do {
+        # From  Package::Alias by joshua@cpan.org & jpierce@cpan.org
+        no strict 'refs';
+
+        if (scalar keys %{$alias . "::" }) {
+              Catmandu::BadVal->throw("Cowardly refusing to alias over '$alias' because it's already in use");
+        }
+
+        *{$alias . "::"} = \*{$orig . "::"};
+    };
+
+    1;
+}
+
 sub now {
     my $format = $_[0];
     my $now;
@@ -1254,6 +1273,16 @@ Load package C<$pkg> at runtime with C<require> and return it's full name.
     # => "Catmandu::Util"
 
 Throws a Catmandu::Error on failure.
+
+=item alias_package($orig,$alias)
+
+The package C<$orig> will be made availabe as the C<$alias>.
+
+    alias_package("Foo::Bar::fixme","Catmandu::Fix::fixme");
+
+    my $fixer = Catmandu->fixer('fixme()');
+
+    $fixer->fix({}); # This will execute Foo::Bar::fixme code
 
 =item use_lib(@dirs)
 
