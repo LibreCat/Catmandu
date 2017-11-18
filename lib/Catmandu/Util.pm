@@ -700,11 +700,6 @@ sub alias_package {
     do {
         # From  Package::Alias by joshua@cpan.org & jpierce@cpan.org
         no strict 'refs';
-
-        if (scalar keys %{$alias . "::" }) {
-              Catmandu::BadVal->throw("Cowardly refusing to alias over '$alias' because it's already in use");
-        }
-
         *{$alias . "::"} = \*{$orig . "::"};
     };
 
