@@ -2,22 +2,41 @@ package Catmandu::Fix::library;
 
 use Moo;
 use namespace::clean;
+use Catmandu::Util;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Base';
 
 has module => (fix_arg => 1);
+has as     => (fix_opt => 1);
 
 sub BUILD {
     my ($self, $args) = @_;
 
-    my $pkg = Catmandu::Util::require_package($args->{module});
+    my $module = $args->{module};
+    my $as     = $args->{as};
 
-    for my $module ($pkg->manifest) {
-      $module =~ s{^$pkg\::}{};
-      my $orig  = $pkg . '::' . $module;
-      my $alias = 'Catmandu::Fix::' . $module;
-      Catmandu::Util::alias_package($orig,$alias);
+    my $pkg = Catmandu::Util::require_package($module);
+
+    for my $part ($pkg->manifest) {
+      $part     =~ s{^$pkg\::}{};
+      my $orig  = $pkg . '::' . $part ;
+
+      if (Catmandu::Util::is_string($as)) {
+          if ($part =~ /^Condition::(\S+)/) {
+              $part = "Condition::$as\::$1";
+          }
+          elsif ($part =~ /^Bind::(\S+)/) {
+              $part = "Bind::$as\::$1";
+          }
+          else {
+              $part = "$as\::$part";
+          }
+      }
+
+      my $alias = 'Catmandu::Fix::' . $part ;
+
+      Catmandu::Util::alias_package($orig,$alias, brave => 1) unless ($orig eq $alias);
     }
 }
 
@@ -38,13 +57,18 @@ Catmandu::Fix::library - import fixes, conditions and binds from an external lib
 
 =head1 SYNOPSIS
 
-   # Import fixes methods from an external library
+   # Import fixes, conditions and binds from an external libraries
    library("foobar")
 
    # Use the methods from the 'foobar' library
-   foobar_method1()
-   foobar_method2()
+   method1()
+   method2()
    ...
+
+   # Import with a pkg name
+   library("foobar",as:foo)
+   foo::method1()
+   foo::method2()
 
 =head1 SEE ALSO
 

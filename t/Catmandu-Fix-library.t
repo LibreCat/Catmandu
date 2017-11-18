@@ -23,7 +23,15 @@ BEGIN {
 
   ok $fixer , 'got a fixer';
 
-  is_deeply $fixer->fix({n => '42'}) , { test => 'ok' , con => 'ok' , n => 42} , 'got the expected results';
+  is_deeply $fixer->fix({n => '42'}) , { test => 'ok' , con => 'ok' , n => 42 } , 'got the expected results';
 }
 
-done_testing 4;
+{
+  my $fixer = Catmandu->fixer('library("T::Foo::Bar",as:bar); bar::test(); if bar::is_42(n) add_field(con,ok) end');
+
+  ok $fixer , 'got a fixer';
+
+  is_deeply $fixer->fix({n => '42'}) , { test => 'ok' , con => 'ok' , n => 42 } , 'got the expected results';
+}
+
+done_testing;

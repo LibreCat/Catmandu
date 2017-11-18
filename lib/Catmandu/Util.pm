@@ -693,13 +693,18 @@ sub require_package {
 }
 
 sub alias_package {
-    my ($orig,$alias) = @_;
+    my ($orig,$alias,%opts) = @_;
 
     require_package($orig);
 
     do {
         # From  Package::Alias by joshua@cpan.org & jpierce@cpan.org
         no strict 'refs';
+
+        if (scalar keys %{$alias . "::" } && ! $opts{brave}) {
+            Catmandu::Error->throw("Cowardly refusing to alias over '$alias' because it's already in use");
+        }
+
         *{$alias . "::"} = \*{$orig . "::"};
     };
 
@@ -1269,9 +1274,10 @@ Load package C<$pkg> at runtime with C<require> and return it's full name.
 
 Throws a Catmandu::Error on failure.
 
-=item alias_package($orig,$alias)
+=item alias_package($orig,$alias,[,brave=>1])
 
-The package C<$orig> will be made availabe as the C<$alias>.
+The package C<$orig> will be made availabe as the C<$alias>. Existing aliases
+will not be redefined unless the C<brave> option is passed.
 
     alias_package("Foo::Bar::fixme","Catmandu::Fix::fixme");
 
