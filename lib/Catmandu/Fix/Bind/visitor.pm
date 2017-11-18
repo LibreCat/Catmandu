@@ -46,17 +46,19 @@ sub bind_scalar {
 sub bind_array {
     my ($self, $mvar, $func, $parent) = @_;
 
-    $mvar = $func->({'key' => $parent, 'array' => $mvar})->{'array'};
+    my $result = $func->({'key' => $parent, 'array' => $mvar});
 
     my $new_var = [];
 
     for (my $i = 0; $i < @$mvar; $i++) {
         my $item = $mvar->[$i];
         if (Catmandu::Util::is_array_ref($item)) {
-            $mvar->[$i] = $self->bind_array($item, $func, $i);
+            my ($newkey, $newvalue) = $self->bind_array($item, $func, $i);
+            $mvar->[$i] = $newvalue;
         }
         elsif (Catmandu::Util::is_hash_ref($item)) {
-            $mvar->[$i] = $self->bind_hash($item, $func, $i);
+            my ($newkey, $newvalue) = $self->bind_hash($item, $func, $i);
+            $mvar->[$i] = $newvalue;
         }
         else {
             $mvar->[$i]
@@ -64,30 +66,40 @@ sub bind_array {
         }
     }
 
-    return $mvar;
+    return ($result->{key}, $result->{array});
 }
 
 sub bind_hash {
     my ($self, $mvar, $func, $parent) = @_;
 
-    $mvar = $func->({'key' => $parent, 'hash' => $mvar})->{'hash'};
+    my $result = $func->({'key' => $parent, 'hash' => $mvar});
 
     for my $key (keys %$mvar) {
         my $item = $mvar->{$key};
 
         if (Catmandu::Util::is_array_ref($item)) {
-            $mvar->{$key} = $self->bind_array($item, $func, $key);
+
+            # Keys can update themselves
+            my ($newkey, $newvalue) = $self->bind_array($item, $func, $key);
+            $mvar->{$newkey} = $newvalue;
+            delete $mvar->{$key} if ($newkey ne $key);
         }
         elsif (Catmandu::Util::is_hash_ref($item)) {
-            $mvar->{$key} = $self->bind_hash($item, $func, $key);
+
+            # Keys can update themselves
+            my ($newkey, $newvalue) = $self->bind_hash($item, $func, $key);
+            $mvar->{$newkey} = $newvalue;
+            delete $mvar->{$key} if ($newkey ne $key);
         }
         else {
-            $mvar->{$key}
-                = $func->({'key' => $key, 'scalar' => $item})->{'scalar'};
+            # Keys can update themselves
+            my $result = $func->({'key' => $key, 'scalar' => $item});
+            $mvar->{$result->{'key'}} = $result->{'scalar'};
+            delete $mvar->{$key} if ($result->{'key'} ne $key);
         }
     }
 
-    return $mvar;
+    return ($result->{key}, $result->{hash});
 }
 
 1;
@@ -143,6 +155,11 @@ Catmandu::Fix::Bind::visitor - a binder that computes Fix-es for every element i
     if all_match(key,name)
       upcase(scalar)
     end
+  end
+
+  do visitor()
+    # upcase all the field names in the record
+    upcase(key)
   end
 
 =head1 DESCRIPTION
@@ -201,7 +218,7 @@ A path in the data to visit:
   end
 
   # Visit only the fields at my.deep.field
-  do visitor(-path => my.deep.field )
+  do visitor(path: my.deep.field)
     ...
   end
 
