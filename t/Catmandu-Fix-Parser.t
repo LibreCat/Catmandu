@@ -179,12 +179,18 @@ throws_ok {
 # use
 
 {
-    lives_ok { $parser->parse(q|use(t.fix)|) };
-    lives_ok { $parser->parse(q|use(t.fix) t.fix.test() if t.fix.is_42(n) end|) };
-    lives_ok { $parser->parse(q|use(t.fix, as: my) my.test() if my.is_42(n) end|) };
-    throws_ok { $parser->parse(q|my.test()|) } 'Catmandu::FixParseError';
-    throws_ok { $parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|) } 'Catmandu::FixParseError';
-    throws_ok { $parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|) } qr/Unknown namespace/;
+    lives_ok {$parser->parse(q|use(t.fix)|)};
+    lives_ok {
+        $parser->parse(q|use(t.fix) t.fix.test() if t.fix.is_42(n) end|)
+    };
+    lives_ok {
+        $parser->parse(q|use(t.fix, as: my) my.test() if my.is_42(n) end|)
+    };
+    throws_ok {$parser->parse(q|my.test()|)} 'Catmandu::FixParseError';
+    throws_ok {$parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|)}
+    'Catmandu::FixParseError';
+    throws_ok {$parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|)}
+    qr/Unknown namespace/;
 }
 
 # bare strings

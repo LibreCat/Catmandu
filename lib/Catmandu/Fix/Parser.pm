@@ -12,8 +12,8 @@ use namespace::clean;
 
 extends 'Parser::MGC';
 
-has default_namespace => (is => 'ro', default => sub { 'Catmandu::Fix' });
-has env_stack => (is => 'ro', default => sub { [] });
+has default_namespace => (is => 'ro', default => sub {'Catmandu::Fix'});
+has env_stack         => (is => 'ro', default => sub {[]});
 
 sub FOREIGNBUILDARGS {
     my ($class, $opts) = @_;
@@ -39,8 +39,10 @@ sub env_get {
 
 sub env_add {
     my ($self, $key, $val) = @_;
-    # TODO check if already exists
-    $self->env_stack->[-1]->{$key} = $val;
+    my $env = $self->env_stack->[-1];
+    Catmandu::FixParseError->throw("Already defined: $key")
+        if exists $env->{$key};
+    $env->{$key} = $val;
 }
 
 sub block {
@@ -48,6 +50,7 @@ sub block {
     my $envs = $self->env_stack;
     push @$envs, +{};
     my $res = $block->();
+
     # TODO ensure env gets popped after exception
     pop @$envs;
     $res;
@@ -68,7 +71,8 @@ sub parse {
             $err->throw;
         }
         Catmandu::FixParseError->throw(message => $err, source => $source,);
-    } finally {
+    }
+    finally {
         $self->clear_env;
     };
 }
@@ -79,15 +83,16 @@ sub pattern_comment {
 
 sub parse_statements {
     my ($self) = @_;
-    my $statements = $self->block(sub { $self->sequence_of('parse_statement') });
+    my $statements
+        = $self->block(sub {$self->sequence_of('parse_statement')});
     [grep defined, @$statements];
 }
 
 sub parse_statement {
     my ($self) = @_;
     my $statement = $self->any_of(
-        'parse_use', 'parse_filter', 'parse_if', 'parse_unless', 'parse_bind',
-        'parse_fix',
+        'parse_use',  'parse_filter', 'parse_if', 'parse_unless',
+        'parse_bind', 'parse_fix',
     );
 
     # support deprecated separator
@@ -96,12 +101,12 @@ sub parse_statement {
 }
 
 sub parse_use {
-    my ($self) = @_;
-    my $type = $self->token_kw('use');
-    my $args = $self->parse_arguments;
-    my $ns = check_string(shift(@$args));
+    my ($self)   = @_;
+    my $type     = $self->token_kw('use');
+    my $args     = $self->parse_arguments;
+    my $ns       = check_string(shift(@$args));
     my $ns_alias = $ns;
-    $ns = join('::', map { camelize($_) } split(/\./, $ns));
+    $ns = join('::', map {camelize($_)} split(/\./, $ns));
     my %opts = @$args;
     if ($opts{as}) {
         $ns_alias = $opts{as};
@@ -241,7 +246,8 @@ sub parse_fix {
 
 sub parse_name {
     my ($self) = @_;
-    $self->generic_token(name => qr/(?:[a-z][_0-9a-zA-Z]*\.)*[a-z][_0-9a-zA-Z]*/);
+    $self->generic_token(
+        name => qr/(?:[a-z][_0-9a-zA-Z]*\.)*[a-z][_0-9a-zA-Z]*/);
 }
 
 sub parse_arguments {
@@ -329,7 +335,8 @@ sub _build_fix_ns {
     my $ns;
     if (@name_parts) {
         my $ns_alias = join('.', @name_parts);
-        $ns = $self->env_get($ns_alias) // Catmandu::FixParseError->throw("Unknown namespace: $ns_alias");
+        $ns = $self->env_get($ns_alias)
+            // Catmandu::FixParseError->throw("Unknown namespace: $ns_alias");
     }
 
     $ns //= $self->default_namespace;
