@@ -23,6 +23,7 @@ requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '0.33';
 requires 'asa', 0; # undeclared dependency?
 requires 'CGI::Expand', '2.02';
+requires 'String::CamelCase', 0;
 requires 'Clone', '0.31';
 requires 'Config::Onion', '1.004';
 requires 'Cpanel::JSON::XS', '3.0213';

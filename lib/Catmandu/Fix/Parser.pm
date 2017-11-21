@@ -5,16 +5,53 @@ use Catmandu::Sane;
 our $VERSION = '1.07';
 
 use Catmandu::Util
-    qw(check_value is_array_ref is_instance is_able require_package);
+    qw(check_value check_string is_array_ref is_instance is_able require_package);
+use String::CamelCase qw(camelize);
 use Moo;
 use namespace::clean;
 
 extends 'Parser::MGC';
 
+has default_namespace => (is => 'ro', default => sub { 'Catmandu::Fix' });
+has env_stack => (is => 'ro', default => sub { [] });
+
 sub FOREIGNBUILDARGS {
     my ($class, $opts) = @_;
     $opts->{toplevel} = 'parse_statements';
     %$opts;
+}
+
+sub clear_env {
+    my ($self) = @_;
+    my $envs = $self->env_stack;
+    splice(@$envs);
+    $envs;
+}
+
+sub env_get {
+    my ($self, $key, $default) = @_;
+    my $envs = $self->env_stack;
+    for my $env (@$envs) {
+        return $env->{$key} if exists $env->{$key};
+    }
+    $default;
+}
+
+sub env_add {
+    my ($self, $key, $val) = @_;
+    # TODO check if already exists
+    $self->env_stack->[-1]->{$key} = $val;
+}
+
+sub block {
+    my ($self, $block) = @_;
+    my $envs = $self->env_stack;
+    push @$envs, +{};
+    try {
+        $block->();
+    } finally {
+        pop @$envs;
+    };
 }
 
 sub parse {
@@ -32,6 +69,8 @@ sub parse {
             $err->throw;
         }
         Catmandu::FixParseError->throw(message => $err, source => $source,);
+    } finally {
+        $self->clear_env;
     };
 }
 
@@ -41,19 +80,36 @@ sub pattern_comment {
 
 sub parse_statements {
     my ($self) = @_;
-    $self->sequence_of('parse_statement');
+    my $statements = $self->block(sub { $self->sequence_of('parse_statement') });
+    [grep defined, @$statements];
 }
 
 sub parse_statement {
     my ($self) = @_;
     my $statement = $self->any_of(
-        'parse_filter', 'parse_if', 'parse_unless', 'parse_bind',
+        'parse_use', 'parse_filter', 'parse_if', 'parse_unless', 'parse_bind',
         'parse_fix',
     );
 
     # support deprecated separator
     $self->maybe_expect(';');
     $statement;
+}
+
+# TODO abstract parsing directives
+sub parse_use {
+    my ($self) = @_;
+    my $type = $self->token_kw('use');
+    my $args = $self->parse_arguments;
+    my $ns = check_string(shift(@$args));
+    my $ns_alias = $ns;
+    $ns = join('::', map { camelize($_) } split(/\./, $ns));
+    my %opts = @$args;
+    if ($opts{as}) {
+        $ns_alias = $opts{as};
+    }
+    $self->env_add($ns_alias, $ns);
+    return;
 }
 
 sub parse_filter {
@@ -187,7 +243,7 @@ sub parse_fix {
 
 sub parse_name {
     my ($self) = @_;
-    $self->generic_token(name => qr/([a-z][_0-9a-zA-Z]*::)?[a-z][_0-9a-zA-Z]*/);
+    $self->generic_token(name => qr/(?:[a-z][_0-9a-zA-Z]*\.)*[a-z][_0-9a-zA-Z]*/);
 }
 
 sub parse_arguments {
@@ -243,8 +299,8 @@ sub parse_double_quoted_string {
 
 sub _build_condition {
     my ($self, $name, $args, $pass, $fixes) = @_;
-    $fixes = [$fixes] if !is_array_ref($fixes);
-    my $cond = $self->_build_fix_ns($name, 'Catmandu::Fix::Condition', $args);
+    $fixes = [$fixes] unless is_array_ref($fixes);
+    my $cond = $self->_build_fix_ns($name, $args, 'Condition');
     if ($pass) {
         $cond->pass_fixes($fixes);
     }
@@ -256,8 +312,8 @@ sub _build_condition {
 
 sub _build_bind {
     my ($self, $name, $args, $return, $fixes) = @_;
-    $fixes = [$fixes] if !is_array_ref($fixes);
-    my $bind = $self->_build_fix_ns($name, 'Catmandu::Fix::Bind', $args);
+    $fixes = [$fixes] unless is_array_ref($fixes);
+    my $bind = $self->_build_fix_ns($name, $args, 'Bind');
     $bind->__return__($return);
     $bind->__fixes__($fixes);
     $bind;
@@ -265,11 +321,25 @@ sub _build_bind {
 
 sub _build_fix {
     my ($self, $name, $args) = @_;
-    $self->_build_fix_ns($name, 'Catmandu::Fix', $args);
+    $self->_build_fix_ns($name, $args);
 }
 
 sub _build_fix_ns {
-    my ($self, $name, $ns, $args) = @_;
+    my ($self, $name, $args, $sub_ns) = @_;
+    my @name_parts = split(/\./, $name);
+    $name = pop @name_parts;
+    my $ns;
+    if (@name_parts) {
+        my $ns_alias = join('.', @name_parts);
+        $ns = $self->env_get($ns_alias) // Catmandu::FixParseError->throw("Unknown namespace: $ns_alias");
+    }
+
+    $ns //= $self->default_namespace;
+
+    if (defined $sub_ns) {
+        $ns = join('::', $ns, $sub_ns);
+    }
+
     my $pkg;
     try {
         $pkg = require_package($name, $ns);

@@ -1,4 +1,4 @@
-package T::Foo::Bar::Condition::is_42;
+package T::Fix::Condition::is_42;
 
 use Catmandu::Sane;
 
@@ -12,7 +12,7 @@ with 'Catmandu::Fix::Condition::SimpleAllTest';
 
 sub emit_test {
     my ($self, $var) = @_;
-    "(${var} == 42)";
+    "${var} == 42";
 }
 
 1;

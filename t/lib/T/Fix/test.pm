@@ -1,11 +1,9 @@
-package T::Foo::Bar::test;
+package T::Fix::test;
 use Moo;
 
 sub fix {
-  my ($self,$data) = @_;
-
+  my ($self, $data) = @_;
   $data->{test} = 'ok';
-
   $data;
 }
 

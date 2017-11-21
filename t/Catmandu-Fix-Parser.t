@@ -175,6 +175,14 @@ throws_ok {
 }
 'Catmandu::FixParseError', 'syntax errors throw FixParseError';
 
+# use
+
+{
+    lives_ok { $parser->parse(q|use(t.fix)|) };
+    #lives_ok { $parser->parse(q|use(t.fix); t.fix.test(); if t.fix.is_42(n) add_field(con, ok) end|) };
+    #lives_ok { $parser->parse(q|use(t.fix, as: my); my.test(); if my.is_42(n) add_field(con, ok) end|) };
+}
+
 # bare strings
 
 {
