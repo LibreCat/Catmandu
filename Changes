@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Support for namespaced fixes
   - Iterable map method can now return multiple values (or none)
 
 1.07  2017-11-09 10:03:51 CET
