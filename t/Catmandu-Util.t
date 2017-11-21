@@ -59,10 +59,6 @@ require_ok $pkg;
     package T::Foo;
     use Moo;
     sub bar {'bar'}
-
-    package T::Foo::Bar::fixme;
-    use Moo;
-    sub fix {$_[1]->{foo}->{bar} = 1; $_[1]}
 }
 
 for my $sym (qw(same different)) {
@@ -121,13 +117,6 @@ for my $sym (
     lives_ok {Catmandu::Util::check_maybe_regex_ref($val)};
     $val = qr/re/;
     lives_ok {Catmandu::Util::check_regex_ref($val)};
-}
-
-{
-    can_ok $pkg , 'alias_package';
-    Catmandu::Util::alias_package('T::Foo::Bar::fixme','Catmandu::Fix::fixme');
-    my $fix = Catmandu::Util::require_package('Catmandu::Fix::fixme')->new;
-    is_deeply $fix->fix({}), { foo => { bar => 1 }};
 }
 
 for my $sym (qw(require_package use_lib)) {
