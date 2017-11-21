@@ -47,11 +47,10 @@ sub block {
     my ($self, $block) = @_;
     my $envs = $self->env_stack;
     push @$envs, +{};
-    try {
-        $block->();
-    } finally {
-        pop @$envs;
-    };
+    my $res = $block->();
+    # TODO ensure env gets popped after exception
+    pop @$envs;
+    $res;
 }
 
 sub parse {
@@ -96,7 +95,6 @@ sub parse_statement {
     $statement;
 }
 
-# TODO abstract parsing directives
 sub parse_use {
     my ($self) = @_;
     my $type = $self->token_kw('use');
