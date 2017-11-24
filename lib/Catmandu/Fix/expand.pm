@@ -49,8 +49,8 @@ Catmandu::Fix::expand - convert a flat hash into nested data using the TT2 dot c
    expand()
 
    # optionally provide a path separator
-   collapse(-sep => '/')
-   expand(-sep => '/')
+   collapse(sep: '/')
+   expand(sep: '/')
 
 =head1 SEE ALSO
 
