@@ -50,6 +50,7 @@ my %module_build_args = (
     "Parser::MGC" => "0.15",
     "Path::Iterator::Rule" => 0,
     "Path::Tiny" => 0,
+    "String::CamelCase" => 0,
     "Sub::Exporter" => "0.982",
     "Sub::Quote" => 0,
     "Text::CSV" => "1.21",
