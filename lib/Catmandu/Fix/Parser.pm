@@ -45,7 +45,7 @@ sub env_add {
     $env->{$key} = $val;
 }
 
-sub block {
+sub scope {
     my ($self, $block) = @_;
     my $envs = $self->env_stack;
     push @$envs, +{};
@@ -84,15 +84,15 @@ sub pattern_comment {
 sub parse_statements {
     my ($self) = @_;
     my $statements
-        = $self->block(sub {$self->sequence_of('parse_statement')});
-    [grep defined, @$statements];
+        = $self->scope(sub {$self->sequence_of('parse_statement')});
+    [grep defined, map {is_array_ref($_) ? @$_ : $_} @$statements];
 }
 
 sub parse_statement {
     my ($self) = @_;
     my $statement = $self->any_of(
-        'parse_use',  'parse_filter', 'parse_if', 'parse_unless',
-        'parse_bind', 'parse_fix',
+        'parse_block',  'parse_use',  'parse_filter', 'parse_if',
+        'parse_unless', 'parse_bind', 'parse_fix',
     );
 
     # support deprecated separator
@@ -100,9 +100,17 @@ sub parse_statement {
     $statement;
 }
 
+sub parse_block {
+    my ($self) = @_;
+    $self->token_kw('block');
+    my $statements = $self->parse_statements;
+    $self->expect('end');
+    $statements;
+}
+
 sub parse_use {
-    my ($self)   = @_;
-    my $type     = $self->token_kw('use');
+    my ($self) = @_;
+    $self->token_kw('use');
     my $args     = $self->parse_arguments;
     my $ns       = check_string(shift(@$args));
     my $ns_alias = $ns;
@@ -132,9 +140,9 @@ sub parse_filter {
 
 sub parse_if {
     my ($self) = @_;
-    my $type   = $self->token_kw('if');
-    my $name   = $self->parse_name;
-    my $args   = $self->parse_arguments;
+    $self->token_kw('if');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
 
     # support deprecated separator
     $self->maybe_expect(';');
@@ -180,9 +188,9 @@ sub parse_if {
 
 sub parse_unless {
     my ($self) = @_;
-    my $type   = $self->token_kw('unless');
-    my $name   = $self->parse_name;
-    my $args   = $self->parse_arguments;
+    $self->token_kw('unless');
+    my $name = $self->parse_name;
+    my $args = $self->parse_arguments;
 
     # support deprecated separator
     $self->maybe_expect(';');

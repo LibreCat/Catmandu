@@ -196,6 +196,22 @@ throws_ok {
     qr/Unknown namespace/;
 }
 
+# block
+
+{
+    lives_ok {$parser->parse(q|block end|)};
+    throws_ok {$parser->parse(q|block upcase(foo)|)}
+    'Catmandu::FixParseError';
+    cmp_deeply $parser->parse(
+        "block upcase(foo) end block downcase(foo) end"),
+        [$upcase_foo, $downcase_foo];
+    lives_ok {
+        $parser->parse(q|block use(t.fix, as: my) my.test() end|)
+    };
+    throws_ok {$parser->parse(q|block use(t.fix, as: my) end) my.test()|)}
+    'Catmandu::FixParseError';
+}
+
 # bare strings
 
 {

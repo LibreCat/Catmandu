@@ -1,7 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - support for namespaced fixes
+  - fix language gets support for namespaces
+  - fix language gets support lexical blocks
   - filter fix gets a new invert option
   - Iterable map method can now return multiple values (or none)
   - cleanup cli error handling code
