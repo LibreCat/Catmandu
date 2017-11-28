@@ -47,6 +47,6 @@ is_deeply $cond->fix({foo => '0'}), {foo => '0', test => 'fail'};
 is_deeply $cond->fix({foo => 'false'}), {foo => 'false', test => 'fail'};
 
 is $cond->fix({foo => Cpanel::JSON::XS::false})->{test}, 'pass';
-is $cond->fix({foo => Cpanel::JSON::XS::true})->{test}, 'fail';
+is $cond->fix({foo => Cpanel::JSON::XS::true})->{test},  'fail';
 
 done_testing;
