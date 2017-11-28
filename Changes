@@ -2,7 +2,9 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - Support for namespaced fixes
+  - filter fix gets a new invert option
   - Iterable map method can now return multiple values (or none)
+  - cleanup cli error handling code
 
 1.07  2017-11-09 10:03:51 CET
   - new Readonly plugin
