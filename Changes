@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Support for namespaced fixes
   - filter fix gets a new invert option
   - Iterable map method can now return multiple values (or none)
   - cleanup cli error handling code

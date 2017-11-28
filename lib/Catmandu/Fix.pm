@@ -846,6 +846,18 @@ Comments in Fix scripts are all lines (or parts of a line) that start with a has
     # This is ignored
     add_field(test,123)  # This is also a comment
 
+You can load fixes from another namespace with the C<use> statement:
+
+    # this will look for fixes in the Foo::Bar namespace and make them
+    # available prefixed by fb
+    use(foo.bar, as: fb)
+    fb.baz()
+
+    # conditions will be loaded from C<::Condition> and binds from C<::Bind>
+    # this will look for is_baz in the Foo::Bar::Condition namespace:
+    if fb.is_baz()
+    end
+
 =head1 PATHS
 
 Most of the Fix commandsuse paths to point to values
