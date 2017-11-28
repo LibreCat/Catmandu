@@ -853,10 +853,13 @@ You can load fixes from another namespace with the C<use> statement:
     use(foo.bar, as: fb)
     fb.baz()
 
-    # conditions will be loaded from C<::Condition> and binds from C<::Bind>
-    # this will look for is_baz in the Foo::Bar::Condition namespace:
+    # this will look for Foo::Bar::Condition::is_baz
     if fb.is_baz()
     end
+
+    # the import option makes them available without prefix
+    use(foo.bar, import: 1)
+    baz()
 
 =head1 PATHS
 

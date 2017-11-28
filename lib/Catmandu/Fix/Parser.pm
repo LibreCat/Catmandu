@@ -7,18 +7,27 @@ our $VERSION = '1.07';
 use Catmandu::Util
     qw(check_value check_string is_array_ref is_instance is_able require_package);
 use String::CamelCase qw(camelize);
+use Module::Info;
 use Moo;
 use namespace::clean;
 
 extends 'Parser::MGC';
 
-has default_namespace => (is => 'ro', default => sub {'Catmandu::Fix'});
-has env_stack         => (is => 'ro', default => sub {[]});
+has default_namespace => (is => 'lazy');
+has env_stack         => (is => 'lazy');
 
 sub FOREIGNBUILDARGS {
     my ($class, $opts) = @_;
     $opts->{toplevel} = 'parse_statements';
     %$opts;
+}
+
+sub _build_default_namespace {
+    'Catmandu::Fix';
+}
+
+sub _build_env_stack {
+    [{_ns => []}];
 }
 
 sub clear_env {
@@ -43,6 +52,28 @@ sub env_add {
     Catmandu::FixParseError->throw("Already defined: $key")
         if exists $env->{$key};
     $env->{$key} = $val;
+}
+
+sub add_namespace {
+    my ($self, $ns) = @_;
+    my $env = $self->env_stack->[-1];
+    my $nss = $env->{_ns} //= [];
+    push @$nss, $ns;
+}
+
+sub namespace_for {
+    my ($self, $name, $sub_ns) = @_;
+    my $envs = $self->env_stack;
+    for my $env (@$envs) {
+        my $nss = $env->{_ns} // next;
+        for my $ns (@$nss) {
+            $ns .= "::$sub_ns" if defined $sub_ns;
+            return $ns if Module::Info->new_from_module("${ns}::${name}");
+        }
+    }
+    my $ns = $self->default_namespace;
+    $ns .= "::$sub_ns" if defined $sub_ns;
+    $ns;
 }
 
 sub scope {
@@ -111,15 +142,16 @@ sub parse_block {
 sub parse_use {
     my ($self) = @_;
     $self->token_kw('use');
-    my $args     = $self->parse_arguments;
-    my $ns       = check_string(shift(@$args));
-    my $ns_alias = $ns;
-    $ns = join('::', map {camelize($_)} split(/\./, $ns));
+    my $args = $self->parse_arguments;
+    my $as   = check_string(shift(@$args));
+    my $ns   = join('::', map {camelize($_)} split(/\./, $as));
     my %opts = @$args;
-    if ($opts{as}) {
-        $ns_alias = $opts{as};
+    if ($opts{import}) {
+        $self->add_namespace($ns);
     }
-    $self->env_add($ns_alias, $ns);
+    else {
+        $self->env_add($opts{as} // $as, $ns);
+    }
     return;
 }
 
@@ -342,15 +374,13 @@ sub _build_fix_ns {
     $name = pop @name_parts;
     my $ns;
     if (@name_parts) {
-        my $ns_alias = join('.', @name_parts);
-        $ns = $self->env_get($ns_alias)
-            // Catmandu::FixParseError->throw("Unknown namespace: $ns_alias");
+        my $as = join('.', @name_parts);
+        $ns = $self->env_get($as)
+            // Catmandu::FixParseError->throw("Unknown namespace: $as");
+        $ns = join('::', $ns, $sub_ns) if defined $sub_ns;
     }
-
-    $ns //= $self->default_namespace;
-
-    if (defined $sub_ns) {
-        $ns = join('::', $ns, $sub_ns);
+    else {
+        $ns = $self->namespace_for($name, $sub_ns);
     }
 
     my $pkg;

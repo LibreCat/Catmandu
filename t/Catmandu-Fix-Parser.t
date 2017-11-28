@@ -184,16 +184,21 @@ throws_ok {
         $parser->parse(q|use(t.fix) t.fix.test() if t.fix.is_42(n) end|)
     };
     lives_ok {
-        $parser->parse(q|use(t.fix, as: my) my.test() if my.is_42(n) end|)
-    };
-    lives_ok {
         $parser->parse(q|use(t.fix, as: my) if my.is_42(n) my.test() end|)
     };
-    throws_ok {$parser->parse(q|my.test()|)} 'Catmandu::FixParseError';
     throws_ok {$parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|)}
     'Catmandu::FixParseError';
     throws_ok {$parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|)}
     qr/Unknown namespace/;
+    lives_ok {
+        $parser->parse(q|use(t.fix, import: 1) if is_42(n) test() end|)
+    };
+    throws_ok {$parser->parse(q|if is_42(n) end|)}
+    'Catmandu::NoSuchFixPackage';
+    throws_ok {
+        $parser->parse(q|if exists(n) use(t.fix, import: 1) end test()|)
+    }
+    'Catmandu::NoSuchFixPackage';
 }
 
 # block
