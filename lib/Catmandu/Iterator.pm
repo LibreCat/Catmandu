@@ -2,7 +2,7 @@ package Catmandu::Iterator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Role::Tiny::With;
 use namespace::clean;
@@ -31,8 +31,9 @@ Catmandu::Iterator - Base class for all Catmandu iterators
 
   package My::MockIterator;
 
+  use Catmandu;
   use Moo;
-  
+
   with 'Catmandu::Iterable';
 
   sub generator {
@@ -40,13 +41,13 @@ Catmandu::Iterator - Base class for all Catmandu iterators
         # Generator some random data
         +{ random => rand };
     }
-  } 
+  }
 
   package main;
- 
+
   my $it = My::MockIterator->new;
 
-  my first = $it->first;
+  my $first = $it->first;
 
   $it->each(sub {
   my $item = shift;

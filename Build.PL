@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.0606",
+  "dist_version" => "1.07",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -50,6 +50,7 @@ my %module_build_args = (
     "Parser::MGC" => "0.15",
     "Path::Iterator::Rule" => 0,
     "Path::Tiny" => 0,
+    "String::CamelCase" => 0,
     "Sub::Exporter" => "0.982",
     "Sub::Quote" => 0,
     "Text::CSV" => "1.21",

@@ -28,7 +28,7 @@ sub getter {
 sub setter {
     my $self = shift;
     my %opts = @_ == 1 ? (value => $_[0]) : @_;
-    my $key = $self->path;
+    my $key  = $self->path;
 
     if (exists $opts{value}) {
         my $value = $opts{value};
@@ -36,7 +36,8 @@ sub setter {
             my $data = $_[0];
             if (is_code_ref($value)) {
                 $data->{$key} = $value->();
-            } else {
+            }
+            else {
                 $data->{$key} = $value;
             }
             return;
@@ -47,14 +48,15 @@ sub setter {
         my ($data, $value) = @_;
         if (is_code_ref($value)) {
             $data->{$key} = $value->();
-        } else {
+        }
+        else {
             $data->{$key} = $value;
         }
-            return;
+        return;
     };
 }
 
-sub creator { # same as setter in this simple case
+sub creator {    # same as setter in this simple case
     my $self = shift;
     $self->setter(@_);
 
@@ -63,7 +65,7 @@ sub creator { # same as setter in this simple case
 sub updater {
     my $self = shift;
     my %opts = @_ == 1 ? (value => $_[0]) : @_;
-    my $key = $self->path;
+    my $key  = $self->path;
 
     if (my $predicates = $opts{if}) {
         return sub {
@@ -75,10 +77,10 @@ sub updater {
 
             for (my $i = 0; $i < @$predicates; $i += 2) {
                 my $tests = $predicates->[$i];
-                my $cb  = $predicates->[$i + 1];
+                my $cb    = $predicates->[$i + 1];
                 $tests = [$tests] if is_string($tests);
-                $tests = [map { Catmandu::Util->can("is_$_") } @$tests];
-                next unless any { $_->($value) } @$tests;
+                $tests = [map {Catmandu::Util->can("is_$_")} @$tests];
+                next unless any {$_->($value)} @$tests;
                 $data->{$key} = $cb->($value);
                 last;
             }

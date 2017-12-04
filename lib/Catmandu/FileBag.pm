@@ -1,10 +1,10 @@
 package Catmandu::FileBag;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Catmandu::Sane;
 use IO::String;
-use Catmandu::Util qw(:check);
+use Catmandu::Util qw(:is :check);
 use Moo::Role;
 use namespace::clean;
 
@@ -38,7 +38,34 @@ sub upload {
     my ($self, $io, $id) = @_;
     check_string($id);
     check_invocant($io);
-    $self->add({_id => $id, _stream => $io});
+
+    my $file = {_id => $id, _stream => $io};
+
+    $self->add($file);
+
+    # The add() method of FileBags should inline data the passed $file with
+    # file metadata. Use a get($id) when this inline update wasn't implemented
+    # by the Bag.
+    if (exists $file->{size}) {
+
+        # all ok
+    }
+    else {
+        $self->log->warn(
+            "$self doesn't inline update \$data in add(\$data) method");
+        $file = $self->get($id);
+    }
+
+    if (!defined($file)) {
+        return 0;
+    }
+    elsif (is_hash_ref($file)) {
+        return $file->{size};
+    }
+    else {
+        $self->log->error("expecting a HASH but got `$file'");
+        return 0;
+    }
 }
 
 1;
@@ -98,7 +125,7 @@ the number of bytes written.
 =head2 stream($io, $file)
 
 A helper application to stream the contents of a L<Catmandu::FileBag> item
-to an IO::Handle. Returns the nuber of bytes written.
+to an IO::Handle. Returns the number of bytes written.
 
 =head2 as_string($file)
 

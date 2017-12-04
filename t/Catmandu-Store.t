@@ -66,16 +66,16 @@ isnt $s->bag('foo')->name,  'junk', "name can't be overriden";
 # default options
 
 $s = T::Store->new(
-    bag_class => 'T::CustomBagClass',
+    bag_class       => 'T::CustomBagClass',
     default_options => {prop => 'bar'},
-    bags      => {foo => {store => 'junk', name => 'junk'}}
+    bags            => {foo => {store => 'junk', name => 'junk'}}
 );
 is $s->bag('foo')->prop, 'bar';
 
 $s = T::Store->new(
-    bag_class => 'T::CustomBagClass',
+    bag_class       => 'T::CustomBagClass',
     default_options => {prop => 'bar'},
-    bags      => {foo => {prop => 'baz', store => 'junk', name => 'junk'}}
+    bags => {foo => {prop => 'baz', store => 'junk', name => 'junk'}}
 );
 is $s->bag('foo')->prop, 'baz';
 

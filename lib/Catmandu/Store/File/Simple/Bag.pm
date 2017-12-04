@@ -2,7 +2,7 @@ package Catmandu::Store::File::Simple::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Moo;
 use Carp;
@@ -119,13 +119,19 @@ sub add {
     my $file = File::Spec->catfile($path, $packed_key);
 
     if (Catmandu::Util::is_invocant($io)) {
-        return copy($io, $file);
+        copy($io, $file)
+            || Catmandu::Error->throw("failed to write file : $!");
     }
     else {
-        return Catmandu::Util::write_file($file, $io);
+        Catmandu::Util::write_file($file, $io)
+            || Catmandu::Error->throw("failed to write file : $!");
     }
 
-    return $self->get($id);
+    my $new_data = $self->get($id);
+
+    $data->{$_} = $new_data->{$_} for keys %$new_data;
+
+    1;
 }
 
 sub delete {

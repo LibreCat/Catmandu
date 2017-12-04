@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::benchmark;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Moo;
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -67,7 +67,7 @@ Catmandu::Fix::Bind::benchmark - a binder that calculates the execution time of 
 
 =head1 SYNOPSIS
 
- do benchmark(output => /dev/stderr)
+ do benchmark(output:/dev/stderr)
     foo()
  end
 
@@ -84,7 +84,7 @@ calculates the execution time of all wrapped functions over all input records.
 
 =head1 CONFIGURATION
 
-=head2 output 
+=head2 output
 
 Required. The path of a file to which the benchmark statistics will be written.
 

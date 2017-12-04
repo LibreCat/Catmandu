@@ -2,7 +2,7 @@ package Catmandu::Fix::expand;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Moo;
 use namespace::clean;
@@ -49,8 +49,8 @@ Catmandu::Fix::expand - convert a flat hash into nested data using the TT2 dot c
    expand()
 
    # optionally provide a path separator
-   collapse(-sep => '/')
-   expand(-sep => '/')
+   collapse(sep: '/')
+   expand(sep: '/')
 
 =head1 SEE ALSO
 

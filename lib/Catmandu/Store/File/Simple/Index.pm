@@ -1,6 +1,6 @@
 package Catmandu::Store::File::Simple::Index;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Catmandu::Sane;
 use Moo;
@@ -96,7 +96,11 @@ sub add {
     # Throws an exception when the path can't be created
     path($path)->mkpath;
 
-    return $self->get($id);
+    my $new_data = $self->get($id);
+
+    $data->{$_} = $new_data->{$_} for keys %$new_data;
+
+    1;
 }
 
 sub get {

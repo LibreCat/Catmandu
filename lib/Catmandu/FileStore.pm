@@ -1,6 +1,6 @@
 package Catmandu::FileStore;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Catmandu::Sane;
 use Moo::Role;
@@ -19,25 +19,26 @@ sub _build_default_bag {
 
 sub _build_index {
     my ($self) = @_;
-
+    my $name = $self->index_bag;
     my $inst;
 
     try {
+        my $opts         = {store => $self, name => $name};
+        my $default_opts = $self->default_options;
+        my $bag_opts     = $self->bag_options->{$name} //= {};
+        $opts = {%$default_opts, %$bag_opts, %$opts};
+
         my $pkg        = Catmandu::Util::require_package($self->index_class);
         my $index_name = $self->index_bag;
 
-        if (my $options = $self->bag_options->{$index_name}) {
-            $options = {%$options};
+        my $default_plugins = $self->default_plugins;
+        my $plugins = delete($opts->{plugins}) // [];
 
-            if (my $plugins = delete $options->{plugins}) {
-                $pkg = $pkg->with_plugins($plugins);
-            }
+        if (@$default_plugins || @$plugins) {
+            $pkg = $pkg->with_plugins(@$default_plugins, @$plugins);
+        }
 
-            $inst = $pkg->new(%$options, store => $self, name => $index_name);
-        }
-        else {
-            $inst = $pkg->new(store => $self, name => $index_name);
-        }
+        $inst = $pkg->new(%$opts);
     }
     catch {
         $self->log->warn(
@@ -50,28 +51,33 @@ sub _build_index {
 sub bag {
     my $self       = shift;
     my $name       = shift // $self->index_bag;
-    my $pkg        = $self->index_class;
     my $index_name = $self->index_bag;
 
+    # Return the index when requested
     if ($name eq $index_name) {
         $self->index;
     }
-    elsif ($self->index->exists($name)) {
-        $pkg = Catmandu::Util::require_package($self->bag_class);
 
-        if (my $options = $self->bag_options->{$name}) {
-            $options = {%$options};
-            if (my $plugins = delete $options->{plugins}) {
-                $pkg = $pkg->with_plugins($plugins);
-            }
-            $pkg->new(%$options, store => $self, name => $name);
+    # Otherwise load the container for files
+    elsif ($self->index->exists($name)) {
+        my $opts         = {store => $self, name => $name};
+        my $default_opts = $self->default_options;
+        my $bag_opts     = $self->bag_options->{$name} //= {};
+        $opts = {%$default_opts, %$bag_opts, %$opts};
+        my $pkg = Catmandu::Util::require_package(delete($opts->{class})
+                // $self->bag_class);
+
+        my $default_plugins = $self->default_plugins;
+        my $plugins = delete($opts->{plugins}) // [];
+
+        if (@$default_plugins || @$plugins) {
+            $pkg = $pkg->with_plugins(@$default_plugins, @$plugins);
         }
-        else {
-            $pkg->new(store => $self, name => $name);
-        }
+
+        $pkg->new(%$opts);
     }
     else {
-        Catmandu::Error->throw("no bag `$name` exists");
+        return undef;
     }
 }
 

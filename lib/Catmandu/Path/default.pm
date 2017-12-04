@@ -382,7 +382,7 @@ sub _emit_create_path {
     $perl;
 }
 
-sub _emit_delete_key { # TODO is $cb still needed?
+sub _emit_delete_key {    # TODO is $cb still needed?
     my ($self, $var, $key, $cb) = @_;
 
     my $str_key = $self->_emit_string($key);

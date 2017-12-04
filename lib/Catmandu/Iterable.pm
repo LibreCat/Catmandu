@@ -2,7 +2,7 @@ package Catmandu::Iterable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
 use Catmandu::Util qw(:is :check);
 use Time::HiRes qw(gettimeofday tv_interval);
@@ -157,7 +157,9 @@ sub map {
         sub {
             sub {
                 state $next = $self->generator;
-                $sub->($next->() // return);
+                state @buff;
+                @buff = $sub->($next->() // return) unless @buff;
+                shift @buff;
                 }
         }
     );
@@ -803,7 +805,9 @@ Returns true if all the items generate a true value when executing callback.
 
 =head2 map(\&callback)
 
-Returns a new Iterator containing for each item the result of the callback.
+Returns a new Iterator containing for each item the result of the callback. If
+the callback returns multiple or no items, the resulting iterator will grow or
+shrink.
 
 =head2 reduce([START],\&callback)
 

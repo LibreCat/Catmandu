@@ -2,9 +2,9 @@ package Catmandu::CLI;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.0606';
+our $VERSION = '1.07';
 
-use Catmandu::Util qw(is_instance is_able is_string);
+use Catmandu::Util qw(is_instance);
 use Catmandu;
 use Log::Any::Adapter;
 use Data::Dumper;
@@ -130,115 +130,32 @@ sub run {
     $self->set_global_options($global_opts);
     my ($cmd, $opts, @args) = $self->prepare_command(@$argv);
 
+    my $err;
+
     try {
         $self->execute_command($cmd, $opts, @args);
     }
     catch {
-        if (is_instance $_, 'Catmandu::NoSuchPackage') {
-            my $pkg_name = $_->package_name;
-
-            if ($pkg_name eq 'Catmandu::Importer::help') {
-                say STDERR "Oops! Did you mean 'catmandu $ARGV[1] $ARGV[0]'?";
-            }
-            elsif (my ($type, $name)
-                = $pkg_name =~ /^Catmandu::(Importer|Exporter|Store)::(\S+)/)
-            {
-                say STDERR "Oops! Can't find the "
-                    . lc($type)
-                    . " '$name' in your configuration file or $pkg_name is not installed.";
-            }
-            elsif ($pkg_name =~ /^Catmandu::Fix::\S+/) {
-                my ($fix_name) = $pkg_name =~ /([^:]+)$/;
-                if ($fix_name =~ /^[a-z]/) {
-                    say STDERR
-                        "Oops! Tried to execute the fix '$fix_name' but can't find $pkg_name on your system.";
-                }
-                else {    # not a fix
-                    say STDERR "Oops! Failed to load $pkg_name";
-                }
-            }
-            else {
-                say STDERR "Oops! Failed to load $pkg_name";
-            }
-
-            if (is_able $_, 'source') {
-                $self->print_source($_->source);
-            }
-
-            goto ERROR;
+        my $e = $_;
+        if (is_instance($e, 'Catmandu::NoSuchPackage')
+            && $e->package_name eq 'Catmandu::Importer::help')
+        {
+            $err = "Did you mean 'catmandu $ARGV[1] $ARGV[0]'?";
         }
-        elsif (is_instance $_, 'Catmandu::BadFixArg') {
-            my $fix_name = $_->fix_name;
-            my $source   = $_->source;
-            say STDERR
-                "Oops! The fix '$fix_name' was called with missing or wrong arguments.";
-            $self->print_source($_->source);
-        }
-        elsif (is_instance $_, 'Catmandu::FixParseError') {
-            my $message = $_->message;
-
-            say STDERR "Oops! Syntax error in your fixes...";
-            say STDERR "\n\t$message\n";
-            $self->print_source($_->source);
-
-            goto ERROR;
-        }
-        elsif (is_instance $_, 'Catmandu::FixError') {
-            my $message = $_->message;
-            my $data    = $_->data;
-            my $fix     = $_->fix;
-
-            say STDERR "Oops! One of your fixes threw an error...";
-            say STDERR "Source: " . $_->fix;
-            say STDERR "Error: $message";
-
-            say STDERR "Input:\n" . Dumper($data) if defined $data;
-
-            goto ERROR;
-        }
-        elsif (is_instance $_, 'Catmandu::HTTPError') {
-            my $message       = $_->message;
-            my $code          = $_->code;
-            my $url           = $_->url;
-            my $method        = $_->method;
-            my $request_body  = $_->request_body;
-            my $response_body = $_->response_body;
-
-            say STDERR "Oops! Got a HTTP error...";
-            say STDERR "Code: $code";
-            say STDERR "Error: $message";
-            say STDERR "URL: $url";
-            say STDERR "Method: $method";
-            say STDERR "Request headers:\n" . Dumper($_->request_headers);
-            say STDERR "Request body:\n$request_body"
-                if is_string $request_body;
-            say STDERR "Response headers:\n" . Dumper($_->response_headers);
-            say STDERR "Response body:\n$response_body"
-                if is_string $response_body;
-
-            goto ERROR;
+        elsif (is_instance($e, 'Catmandu::Error')) {
+            $err = $e->log_message;
         }
         else {
-            say STDERR "Oops! $_";
-
-            goto ERROR;
+            $err = $e;
         }
     };
 
-    return 1;
-
-ERROR:
-    return undef;
-}
-
-sub print_source {
-    my ($self, $source) = @_;
-    if (is_string $source) {
-        say STDERR "Source:\n";
-        for (split(/\n/, $source)) {
-            print STDERR "\t$_\n";
-        }
+    if (defined $err) {
+        say STDERR "Oops! $err";
+        return;
     }
+
+    1;
 }
 
 sub should_ignore {

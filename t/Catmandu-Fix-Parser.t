@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use lib 't/lib';
 use Test::More;
 use Test::Deep;
 use Test::Exception;
@@ -174,6 +175,47 @@ throws_ok {
     $parser->parse('syntax_error((((((');
 }
 'Catmandu::FixParseError', 'syntax errors throw FixParseError';
+
+# use
+
+{
+    lives_ok {$parser->parse(q|use(t.fix)|)};
+    lives_ok {
+        $parser->parse(q|use(t.fix) t.fix.test() if t.fix.is_42(n) end|)
+    };
+    lives_ok {
+        $parser->parse(q|use(t.fix, as: my) if my.is_42(n) my.test() end|)
+    };
+    throws_ok {$parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|)}
+    'Catmandu::FixParseError';
+    throws_ok {$parser->parse(q|if exists(n) use(t.fix) end t.fix.test()|)}
+    qr/Unknown namespace/;
+    lives_ok {
+        $parser->parse(q|use(t.fix, import: 1) if is_42(n) test() end|)
+    };
+    throws_ok {$parser->parse(q|if is_42(n) end|)}
+    'Catmandu::NoSuchFixPackage';
+    throws_ok {
+        $parser->parse(q|if exists(n) use(t.fix, import: 1) end test()|)
+    }
+    'Catmandu::NoSuchFixPackage';
+}
+
+# block
+
+{
+    lives_ok {$parser->parse(q|block end|)};
+    throws_ok {$parser->parse(q|block upcase(foo)|)}
+    'Catmandu::FixParseError';
+    cmp_deeply $parser->parse(
+        "block upcase(foo) end block downcase(foo) end"),
+        [$upcase_foo, $downcase_foo];
+    lives_ok {
+        $parser->parse(q|block use(t.fix, as: my) my.test() end|)
+    };
+    throws_ok {$parser->parse(q|block use(t.fix, as: my) end) my.test()|)}
+    'Catmandu::FixParseError';
+}
 
 # bare strings
 
