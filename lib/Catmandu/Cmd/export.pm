@@ -39,11 +39,11 @@ sub command {
     if (my $ids = $opts->id) {
         $from = Catmandu::ArrayIterator->new([map {$from->get($_)} @$ids]);
     }
-    elsif ($opts->query // $opts->cql_query) {
+    elsif ($opts->query // $opts->cql_query // $opts->sort // $opts->sru_sortkeys) {
         $self->usage_error("Bag isn't searchable")
             if !$from->does('Catmandu::Searchable');
         $self->usage_error("Bag isn't CQL searchable")
-            if ($opts->cql_query || $opts->sru_sortkeys)
+            if ($opts->cql_query // $opts->sru_sortkeys)
             && !$from->does('Catmandu::CQLSearchable');
         $from = $from->searcher(
             cql_query    => $opts->cql_query,
