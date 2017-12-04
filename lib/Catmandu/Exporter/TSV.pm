@@ -8,6 +8,8 @@ use Catmandu::Exporter::CSV;
 use Moo;
 use namespace::clean;
 
+has csv => (is => 'lazy', handles => [qw(add)]);
+
 with 'Catmandu::TabularExporter';
 
 has sep_char => (
@@ -19,7 +21,6 @@ has sep_char => (
         return $sep_char;
     }
 );
-has csv => (is => 'lazy');
 
 sub _build_csv {
     my ($self) = @_;
@@ -34,11 +35,6 @@ sub _build_csv {
     $csv->{fields}  = $self->fields;
     $csv->{columns} = $self->columns;
     $csv;
-}
-
-sub add {
-    my ($self, $data) = @_;
-    $self->csv->add($data);
 }
 
 1;
