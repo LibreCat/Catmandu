@@ -114,31 +114,41 @@ sub root {
 sub store {
     my $self = shift;
     my $name = shift;
+    my $key  = $name // $self->default_store;
 
-    my $stores = $self->stores;
+    # return cached instance if no arguments are given
+    if (!@_ and my $cached_store = $self->stores->{$key}) {
+        return $cached_store;
+    }
 
-    my $key = $name || $self->default_store;
+    my $ns = $self->store_namespace;
 
-    $stores->{$key} || do {
-        my $ns = $self->store_namespace;
-        if (my $c = $self->config->{store}{$key}) {
-            check_hash_ref($c);
-            check_string(my $package = $c->{package});
-            my $opts = $c->{options} || {};
-            if (@_ > 1) {
-                $opts = {%$opts, @_};
-            }
-            elsif (@_ == 1) {
-                $opts = {%$opts, %{$_[0]}};
-            }
-            return $stores->{$key}
-                = require_package($package, $ns)->new($opts);
+    # store name is key in config
+    if (my $c = $self->config->{store}{$key}) {
+        check_hash_ref($c);
+        check_string(my $package = $c->{package});
+        my $opts = $c->{options} || {};
+        if (@_ > 1) {
+            $opts = {%$opts, @_};
         }
-        if ($name) {
-            return require_package($name, $ns)->new(@_);
+        elsif (@_ == 1) {
+            $opts = {%$opts, %{$_[0]}};
         }
-        Catmandu::BadArg->throw("unknown store " . $self->default_store);
+        my $store = require_package($package, $ns)->new($opts);
+
+        # cache this instance if no arguments are given
+        if (!@_) {
+            $self->stores->{$key} = $store;
         }
+        return $store;
+    }
+
+    # store name is package name
+    if ($name) {
+        return require_package($name, $ns)->new(@_);
+    }
+
+    Catmandu::BadArg->throw("unknown store $key");
 }
 
 sub fixer {
