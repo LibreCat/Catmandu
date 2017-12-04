@@ -42,14 +42,24 @@ sub add {
             $val;
         } @$fields
     ];
-    my $fh = $self->fh;
 
-    # header
+    $self->_print_header;
+    $self->csv->print($self->fh, $row);
+}
+
+sub commit {
+    my ($self) = @_;
+
+    # ensure header gets printed even if there are no records
+    $self->_print_header;
+}
+
+sub _print_header {
+    my ($self) = @_;
     if (!$self->count && $self->header) {
-        $self->csv->print($fh, $self->columns || $fields);
+        my $row = $self->columns || $self->fields;
+        $self->csv->print($self->fh, $row) if $row && @$row;
     }
-
-    $self->csv->print($fh, $row);
 }
 
 1;

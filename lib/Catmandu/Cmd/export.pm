@@ -39,11 +39,13 @@ sub command {
     if (my $ids = $opts->id) {
         $from = Catmandu::ArrayIterator->new([map {$from->get($_)} @$ids]);
     }
-    elsif ($opts->query // $opts->cql_query) {
+    elsif ($opts->query // $opts->cql_query // $opts->sort
+        // $opts->sru_sortkeys)
+    {
         $self->usage_error("Bag isn't searchable")
             if !$from->does('Catmandu::Searchable');
         $self->usage_error("Bag isn't CQL searchable")
-            if ($opts->cql_query || $opts->sru_sortkeys)
+            if ($opts->cql_query // $opts->sru_sortkeys)
             && !$from->does('Catmandu::CQLSearchable');
         $from = $from->searcher(
             cql_query    => $opts->cql_query,
@@ -90,6 +92,8 @@ Catmandu::Cmd::export - export objects from a store
   catmandu export <STORE> <OPTIONS> to <EXPORTER> <OPTIONS>
 
   catmandu export MongoDB --database-name items --bag book to YAML
+
+  catmandu export ElasticSearch --bag book --sru-sortkeys 'title,,1' --cql-query '(title = "test")'
 
   catmandu help store MongoDB
   catmandu help exporter YAML

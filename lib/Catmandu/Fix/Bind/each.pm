@@ -67,9 +67,7 @@ sub bind {
                     }
                 }
 
-                delete $scope->{
-                    $self->var
-                    };
+                delete $scope->{$self->var};
             }
             else {
                 if (my $mkey = $scope->{key}) {

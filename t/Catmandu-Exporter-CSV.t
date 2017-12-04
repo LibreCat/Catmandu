@@ -75,4 +75,20 @@ $exporter->add_many($fixer->fix($importer));
 $csv = "fob\ntest\n";
 is $out, $csv, "custom column names as HASH with reject fix";
 
+# empty exports
+$out = "";
+$exporter = $pkg->new(file => \$out, header => 0);
+$exporter->commit;
+is $out, "";
+$out = "";
+$exporter = $pkg->new(file => \$out);
+$exporter->commit;
+is $out, "";
+$out = "";
+$exporter = $pkg->new(file => \$out, fields => 'a,b');
+$exporter->commit;
+$csv = <<EOF;
+a,b
+EOF
+
 done_testing;

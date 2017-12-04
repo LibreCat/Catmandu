@@ -266,7 +266,8 @@ sub log_message {
     $msg .= "\nCode: $code";
     $msg .= "\nURL: $url";
     $msg .= "\nMethod: $method";
-    $msg .= "\nRequest headers: " . $self->_headers_to_string($request_headers);
+    $msg .= "\nRequest headers: "
+        . $self->_headers_to_string($request_headers);
 
     if (Catmandu::Util::is_string($request_body)) {
         $msg .= "\nRequest body: \n" . $self->_indent($request_body);
