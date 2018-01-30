@@ -5,6 +5,7 @@ use Test::More;
 use Test::Exception;
 use Catmandu::Store::File::Simple;
 use Catmandu::Store::File::Multi;
+use Path::Tiny;
 
 my $pkg;
 
@@ -57,9 +58,12 @@ note("get");
     }
 }
 
+path("t/tmp/multi-index/a")->mkpath;
+path("t/tmp/multi-index/b")->mkpath;
+
 $stores = [
-    Catmandu::Store::File::Simple->new(root => 't/data',  keysize => 9),
-    Catmandu::Store::File::Simple->new(root => 't/data3', keysize => 9),
+    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-index/a',  keysize => 9),
+    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-index/b', keysize => 9),
 ];
 
 $store = Catmandu::Store::File::Multi->new(stores => $stores);
@@ -78,19 +82,22 @@ note("add");
 
     ok $c , 'add(1234)';
 
-    ok -d "t/data/000/001/234", 'found a container on disk';
+    ok -d "t/tmp/multi-index/a/000/001/234", 'found a container on disk';
 }
 
 note("delete");
 {
     ok $index->delete('1234'), 'delete(1234)';
 
-    ok !-d "t/data/000/001/234", 'container on disk was deleted';
+    ok !-d "t/tmp/multi-index/a/000/001/234", 'container on disk was deleted';
 }
 
 note("delete_all");
 {
     lives_ok {$index->delete_all()} 'delete_all';
 }
+
+path("t/tmp/multi-index/a")->remove_tree;
+path("t/tmp/multi-index/b")->remove_tree;
 
 done_testing();

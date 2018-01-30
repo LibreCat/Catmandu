@@ -5,6 +5,7 @@ use Test::More;
 use Test::Exception;
 use IO::String;
 use Catmandu::Store::File::Simple;
+use Path::Tiny;
 use utf8;
 
 my $pkg;
@@ -16,8 +17,10 @@ BEGIN {
 
 require_ok $pkg;
 
+path("t/tmp/file-simple-bag")->mkpath;
+
 my $store
-    = Catmandu::Store::File::Simple->new(root => 't/data', keysize => 9);
+    = Catmandu::Store::File::Simple->new(root => 't/tmp/file-simple-bag', keysize => 9);
 my $index = $store->bag;
 
 ok $store , 'got a store';
@@ -38,7 +41,7 @@ note("add");
 
     is $n1 , 16, '16 bytes';
 
-    ok -f 't/data/000/001/234/test1.txt', 'test1.txt exists';
+    ok -f 't/tmp/file-simple-bag/000/001/234/test1.txt', 'test1.txt exists';
 
     my $n2 = $bag->upload(IO::File->new('t/data2/000/000/002/test.txt'),
         'test2.txt');
@@ -47,7 +50,7 @@ note("add");
 
     is $n2 , 6, '6 bytes';
 
-    ok -f 't/data/000/001/234/test2.txt', 'test2.txt exists';
+    ok -f 't/tmp/file-simple-bag/000/001/234/test2.txt', 'test2.txt exists';
 
     my $n3 = $bag->upload(IO::File->new('t/data2/000/000/003/test.txt'),
         'test3.txt');
@@ -56,7 +59,7 @@ note("add");
 
     is $n3 , 6, '6 bytes';
 
-    ok -f 't/data/000/001/234/test3.txt', 'test3.txt exists';
+    ok -f 't/tmp/file-simple-bag/000/001/234/test3.txt', 'test3.txt exists';
 
     my $data = {
         _id     => 'test3.txt',
@@ -119,5 +122,7 @@ note("delete_all");
 
     is_deeply $array , [], 'got correct response';
 }
+
+path("t/tmp/file-simple-bag")->remove_tree;
 
 done_testing();

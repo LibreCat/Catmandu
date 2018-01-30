@@ -5,6 +5,7 @@ use Test::More;
 use Test::Exception;
 use Catmandu::Store::File::Simple;
 use Catmandu::Store::File::Multi;
+use Path::Tiny;
 use utf8;
 
 my $pkg;
@@ -16,9 +17,12 @@ BEGIN {
 
 require_ok $pkg;
 
+path("t/tmp/multi-bag/a")->mkpath;
+path("t/tmp/multi-bag/b")->mkpath;
+
 my $stores = [
-    Catmandu::Store::File::Simple->new(root => 't/data',  keysize => 9),
-    Catmandu::Store::File::Simple->new(root => 't/data3', keysize => 9),
+    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-bag/a',  keysize => 9),
+    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-bag/b', keysize => 9),
 ];
 
 my $store = Catmandu::Store::File::Multi->new(stores => $stores);
@@ -27,11 +31,11 @@ my $index = $store->index;
 ok $store , 'got a store';
 ok $index , 'got an index';
 
-ok $index->add({_id => 1234}), 'adding bag `1234`';
+ok $index->add({_id => 7012}), 'adding bag `7012`';
 
-my $bag = $store->bag('1234');
+my $bag = $store->bag('7012');
 
-ok $bag , 'got bag(1234)';
+ok $bag , 'got bag(7012)';
 
 note("add");
 {
@@ -42,9 +46,9 @@ note("add");
 
     is $n1 , 16, '16 bytes';
 
-    ok -f 't/data/000/001/234/test1.txt', 'test1.txt exists';
+    ok -f 't/tmp/multi-bag/a/000/007/012/test1.txt', 'test1.txt exists';
 
-    ok -f 't/data3/000/001/234/test1.txt', 'test1.txt exists';
+    ok -f 't/tmp/multi-bag/b/000/007/012/test1.txt', 'test1.txt exists';
 
     my $n2 = $bag->upload(IO::File->new('t/data2/000/000/002/test.txt'),
         'test2.txt');
@@ -53,9 +57,9 @@ note("add");
 
     is $n2 , 6, '6 bytes';
 
-    ok -f 't/data/000/001/234/test2.txt', 'test2.txt exists';
+    ok -f 't/tmp/multi-bag/a/000/007/012/test2.txt', 'test2.txt exists';
 
-    ok -f 't/data3/000/001/234/test2.txt', 'test1.txt exists';
+    ok -f 't/tmp/multi-bag/b/000/007/012/test2.txt', 'test1.txt exists';
 
     my $n3 = $bag->upload(IO::File->new('t/data2/000/000/003/test.txt'),
         'test3.txt');
@@ -64,9 +68,9 @@ note("add");
 
     is $n3 , 6, '6 bytes';
 
-    ok -f 't/data/000/001/234/test3.txt', 'test3.txt exists';
+    ok -f 't/tmp/multi-bag/a/000/007/012/test3.txt', 'test3.txt exists';
 
-    ok -f 't/data3/000/001/234/test3.txt', 'test1.txt exists';
+    ok -f 't/tmp/multi-bag/b/000/007/012/test3.txt', 'test1.txt exists';
 
     my $data = {
         _id     => 'test4.txt',
@@ -130,5 +134,8 @@ note("...delete_all (index)");
 
     is_deeply $array , [], 'got correct response';
 }
+
+path("t/tmp/multi-bag/a")->remove_tree;
+path("t/tmp/multi-bag/b")->remove_tree;
 
 done_testing();

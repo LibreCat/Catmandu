@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 use Catmandu;
+use Path::Tiny;
 use utf8;
 
 my $pkg;
@@ -15,11 +16,13 @@ BEGIN {
 }
 require_ok $pkg;
 
+path("t/tmp/sidecar")->mkpath;
+
 note("Combined Simple + Hash sidecar");
 {
     my $store = Catmandu->store(
         'File::Simple',
-        root    => 't/data3',
+        root    => 't/tmp/sidecar',
         keysize => 9,
         bags    => {
             index =>
@@ -33,33 +36,33 @@ note("Combined Simple + Hash sidecar");
     ok $index , 'got an index';
 
     note("...exists");
-    ok !$index->exists('1234');
+    ok !$index->exists('9012');
 
     note("...add");
-    ok $index->add({_id => 1234, foo => 'bar', test => [1, 2, 3]}),
-        'adding bag `1234`';
+    ok $index->add({_id => 9012, foo => 'bar', test => [1, 2, 3]}),
+        'adding bag `9012`';
 
-    ok -d "t/data3/000/001/234";
+    ok -d "t/tmp/sidecar/000/009/012";
 
     note("...get");
 
-    my $item = $index->get('1234');
+    my $item = $index->get('9012');
 
     ok $item;
 
-    is_deeply $item , {_id => 1234, foo => 'bar', test => [1, 2, 3]},
+    is_deeply $item , {_id => 9012, foo => 'bar', test => [1, 2, 3]},
         'found combined metadata and file data';
 
     note("...bag");
-    my $container = $store->bag('1234');
+    my $container = $store->bag('9012');
 
-    ok $container , 'got bag(1234)';
+    ok $container , 'got bag(9012)';
 
     note("...upload");
     ok $container->upload(IO::File->new('t/data2/000/000/001/test.txt'),
         'test1.txt');
 
-    ok -f 't/data3/000/001/234/test1.txt', 'test1.txt exists (2)';
+    ok -f 't/tmp/sidecar/000/009/012/test1.txt', 'test1.txt exists (2)';
 
     note("...list");
     my $array = [sort @{$container->map(sub {shift->{_id}})->to_array}];
@@ -91,8 +94,7 @@ note("Combined Simple + Hash sidecar");
 
     is_deeply $array , [], 'got correct response';
 
-    ok !-f 't/data/000/001/234/test1.txt',  'test1.txt doesnt exists (1)';
-    ok !-f 't/data3/000/001/234/test1.txt', 'test1.txt doesnt exists (2)';
+    ok !-f 't/tmp/sidecar/000/009/012/test1.txt', 'test1.txt doesnt exists (2)';
 
     note("...delete_all (index)");
     lives_ok {$index->delete_all()} 'delete_all';
@@ -111,7 +113,7 @@ note("Combined Hash + Simple sidecar");
                 plugins => [qw(SideCar)],
                 sidecar => {
                     package => "File::Simple",
-                    options => {'root' => 't/data3', 'keysize' => 9,}
+                    options => {'root' => 't/tmp/sidecar', 'keysize' => 9,}
                 },
                 sidecar_bag => 'index'
             }
@@ -120,22 +122,22 @@ note("Combined Hash + Simple sidecar");
 
     ok $store , 'got a store';
 
-    ok $store->bag->add({_id => '1234', name => 'patrick'}),
+    ok $store->bag->add({_id => '9012', name => 'patrick'}),
         'adding a record';
 
     note("...upload");
-    ok $store->bag->files('1234')
+    ok $store->bag->files('9012')
         ->upload(IO::File->new('t/data2/000/000/001/test.txt'), 'test1.txt');
 
-    ok -f 't/data3/000/001/234/test1.txt', 'test1.txt exists (2)';
+    ok -f 't/tmp/sidecar/000/009/012/test1.txt', 'test1.txt exists (2)';
 
     note("...get");
-    my $file = $store->bag->files('1234')->get("test1.txt");
+    my $file = $store->bag->files('9012')->get("test1.txt");
 
     ok $file;
 
     note("...stream");
-    my $str = $store->bag->files('1234')->as_string_utf8($file);
+    my $str = $store->bag->files('9012')->as_string_utf8($file);
 
     ok $str , 'can stream the data';
 
@@ -148,5 +150,7 @@ note("Combined Hash + Simple sidecar");
 
     is_deeply $array , [], 'got correct response';
 }
+
+path("t/tmp/sidecar")->remove_tree;
 
 done_testing;

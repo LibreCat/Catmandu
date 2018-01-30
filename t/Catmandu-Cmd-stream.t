@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 use App::Cmd::Tester::CaptureExternal;
 use Cpanel::JSON::XS;
+use Path::Tiny;
 use utf8;
 
 my $pkg;
@@ -17,6 +18,8 @@ BEGIN {
 require_ok $pkg;
 
 use Catmandu::CLI;
+
+path("t/tmp/cmd-stream")->mkpath;
 
 note("download");
 {
@@ -35,7 +38,7 @@ note("upload");
 {
     my $result = test_app(
         qq|Catmandu::CLI| => [
-            qw(stream cpanfile to File::Simple --root t/data  --keysize 9 --bag 456 --id test.txt)
+            qw(stream cpanfile to File::Simple --root t/tmp/cmd-stream --keysize 9 --bag 456 --id test.txt)
         ]
     );
 
@@ -43,9 +46,11 @@ note("upload");
 
     is $result->error, undef, 'threw no exceptions';
 
-    ok -f "t/data/000/000/456/test.txt", "found the correct file";
+    ok -f "t/tmp/cmd-stream/000/000/456/test.txt", "found the correct file";
 
-    unlink "t/data/000/000/456/test.txt";
+    unlink "t/tmp/cmd-stream/000/000/456/test.txt";
 }
+
+path("t/tmp/cmd-stream")->remove_tree;
 
 done_testing;
