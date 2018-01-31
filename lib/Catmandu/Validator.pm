@@ -162,6 +162,8 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
         publish_record($record);
     });
 
+See L<Catmandu::Fix::validate> and L<Catmandu::Fix::Condition::valid> to use validators in fixes (L<Catmandu::Fix>).
+
 =head1 DESCRIPTION
 
 A Catmandu::Validator is a base class for Perl packages that can validate data.
