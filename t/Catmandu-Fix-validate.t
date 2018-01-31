@@ -30,4 +30,7 @@ is_deeply $validator->fix(record),
     record( warnings => [{ foo => 'bar'}] ),
     "got errors with error_field";
 
+$validator = $pkg->new( '', 'Simple', handler => sub { [{},1,{}] });
+ $validator->fix(record);
+
 done_testing;
