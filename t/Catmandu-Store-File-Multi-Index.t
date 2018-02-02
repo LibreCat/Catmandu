@@ -62,8 +62,14 @@ path("t/tmp/multi-index/a")->mkpath;
 path("t/tmp/multi-index/b")->mkpath;
 
 $stores = [
-    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-index/a',  keysize => 9),
-    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-index/b', keysize => 9),
+    Catmandu::Store::File::Simple->new(
+        root    => 't/tmp/multi-index/a',
+        keysize => 9
+    ),
+    Catmandu::Store::File::Simple->new(
+        root    => 't/tmp/multi-index/b',
+        keysize => 9
+    ),
 ];
 
 $store = Catmandu::Store::File::Multi->new(stores => $stores);

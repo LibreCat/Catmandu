@@ -57,7 +57,10 @@ note("get");
 
 path("t/tmp/file-simple-index")->mkpath;
 
-$store = Catmandu::Store::File::Simple->new(root => 't/tmp/file-simple-index', keysize => 9);
+$store = Catmandu::Store::File::Simple->new(
+    root    => 't/tmp/file-simple-index',
+    keysize => 9
+);
 $index = $store->bag();
 
 note("add");
@@ -80,7 +83,8 @@ note("delete");
 {
     ok $index->delete('1234'), 'delete(1234)';
 
-    ok !-d "t/tmp/file-simple-index/000/001/234", 'container on disk was deleted';
+    ok !-d "t/tmp/file-simple-index/000/001/234",
+        'container on disk was deleted';
 }
 
 note("delete_all");

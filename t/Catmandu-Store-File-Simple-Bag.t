@@ -19,8 +19,10 @@ require_ok $pkg;
 
 path("t/tmp/file-simple-bag")->mkpath;
 
-my $store
-    = Catmandu::Store::File::Simple->new(root => 't/tmp/file-simple-bag', keysize => 9);
+my $store = Catmandu::Store::File::Simple->new(
+    root    => 't/tmp/file-simple-bag',
+    keysize => 9
+);
 my $index = $store->bag;
 
 ok $store , 'got a store';
