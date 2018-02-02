@@ -49,6 +49,6 @@ Catmandu::Fix::Condition::valid - Execute fixes if the data passes validation
 
 =head1 SEE ALSO
 
-See L<Catmandu::Fix::validate> to check and get validation errors.
+L<Catmandu::Fix>
 
 =cut
