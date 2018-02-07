@@ -45,7 +45,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::delete - delete objects from a store
+Catmandu::Cmd::delete - delete items from a store
 
 =head1 EXAMPLES
 

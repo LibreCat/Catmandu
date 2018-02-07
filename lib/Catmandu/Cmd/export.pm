@@ -72,7 +72,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR $n == 1 ? "exported 1 object" : "exported $n objects";
+        say STDERR $n == 1 ? "exported 1 item" : "exported $n items";
         say STDERR "done";
     }
 }
@@ -85,7 +85,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::export - export objects from a store
+Catmandu::Cmd::export - export items from a store
 
 =head1 EXAMPLES
 

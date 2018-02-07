@@ -40,7 +40,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::count - count the number of objects in a bag
+Catmandu::Cmd::count - count the number of items in a bag
 
 =head1 EXAMPLES
 

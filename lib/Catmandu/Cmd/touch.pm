@@ -31,7 +31,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::touch - add the current datetime to the objects in a bag
+Catmandu::Cmd::touch - add the current datetime to the items in a bag
 
 =head1 EXAMPLES
 
