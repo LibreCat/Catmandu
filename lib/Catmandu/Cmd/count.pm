@@ -51,4 +51,8 @@ Catmandu::Cmd::count - count the number of items in a bag
 
   catmandu help store ElasticSearch
 
+=head1 SEE ALSO
+
+To count the number of items from an importer, use L<Catmandu::Exporter::Count>.
+
 =cut
