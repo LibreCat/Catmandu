@@ -2,7 +2,7 @@ package Catmandu::Fix::sort_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use List::MoreUtils ();
 use Moo;
