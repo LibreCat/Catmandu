@@ -20,7 +20,6 @@ with 'Catmandu::Fix::SimpleGetValue';
 sub emit_value {
     my ($self, $var, $fixer) = @_;
     my $validator_var = $fixer->capture($self->validator);
-    my $verbose       = $fixer->capture($self->verbose);
     my $errors_var    = $fixer->generate_var;
     my $error_field
         = $self->error_field ? $fixer->split_path($self->error_field) : undef;
