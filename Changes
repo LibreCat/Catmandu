@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.08  2018-02-02 14:48:51 CET
   - fix language gets support for namespaces
   - fix language gets support lexical blocks
   - filter fix gets a new invert option

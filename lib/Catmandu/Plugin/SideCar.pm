@@ -2,7 +2,7 @@ package Catmandu::Plugin::SideCar;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Catmandu::Util qw(:is);
 use Hash::Merge::Simple 'merge';
