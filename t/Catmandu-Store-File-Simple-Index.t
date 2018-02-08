@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Path::Tiny;
 use Catmandu::Store::File::Simple;
 
 my $pkg;
@@ -54,7 +55,12 @@ note("get");
     }
 }
 
-$store = Catmandu::Store::File::Simple->new(root => 't/data', keysize => 9);
+path("t/tmp/file-simple-index")->mkpath;
+
+$store = Catmandu::Store::File::Simple->new(
+    root    => 't/tmp/file-simple-index',
+    keysize => 9
+);
 $index = $store->bag();
 
 note("add");
@@ -70,19 +76,22 @@ note("add");
 
     ok $c , 'add(1234)';
 
-    ok -d "t/data/000/001/234", 'found a container on disk';
+    ok -d "t/tmp/file-simple-index/000/001/234", 'found a container on disk';
 }
 
 note("delete");
 {
     ok $index->delete('1234'), 'delete(1234)';
 
-    ok !-d "t/data/000/001/234", 'container on disk was deleted';
+    ok !-d "t/tmp/file-simple-index/000/001/234",
+        'container on disk was deleted';
 }
 
 note("delete_all");
 {
     lives_ok {$index->delete_all()} 'delete_all';
 }
+
+path("t/tmp/file-simple-index")->remove_tree;
 
 done_testing();

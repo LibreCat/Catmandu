@@ -2,7 +2,7 @@ package Catmandu::Cmd::touch;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -31,7 +31,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::touch - add the current datetime to the objects in a bag
+Catmandu::Cmd::touch - add the current datetime to the items in a bag
 
 =head1 EXAMPLES
 

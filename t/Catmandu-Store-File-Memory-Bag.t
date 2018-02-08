@@ -23,11 +23,11 @@ my $index = $store->bag;
 ok $store , 'got a store';
 ok $index , 'got an index';
 
-ok $index->add({_id => 1234}), 'adding bag `1234`';
+ok $index->add({_id => 8012}), 'adding bag `8012`';
 
-my $bag = $store->bag('1234');
+my $bag = $store->bag('8012');
 
-ok $bag , 'got bag(1234)';
+ok $bag , 'got bag(8012)';
 
 note("add");
 {

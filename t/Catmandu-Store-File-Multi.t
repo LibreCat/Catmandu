@@ -6,6 +6,7 @@ use Test::More;
 use Test::Exception;
 use Catmandu::Store::File::Simple;
 use Catmandu::Store::Hash;
+use Path::Tiny;
 use utf8;
 
 my $pkg;
@@ -16,11 +17,20 @@ BEGIN {
 }
 require_ok $pkg;
 
+path("t/tmp/multi/a")->mkpath;
+path("t/tmp/multi/b")->mkpath;
+
 note("Simple stores");
 {
     my $stores = [
-        Catmandu::Store::File::Simple->new(root => 't/data',  keysize => 9),
-        Catmandu::Store::File::Simple->new(root => 't/data3', keysize => 9),
+        Catmandu::Store::File::Simple->new(
+            root    => 't/tmp/multi/a',
+            keysize => 9
+        ),
+        Catmandu::Store::File::Simple->new(
+            root    => 't/tmp/multi/b',
+            keysize => 9
+        ),
     ];
 
     my $store = $pkg->new(stores => $stores);
@@ -30,25 +40,25 @@ note("Simple stores");
     ok $index , 'got an index';
 
     note("...exists");
-    ok !$index->exists('1234');
+    ok !$index->exists('6012');
 
     note("...add");
-    ok $index->add({_id => 1234}), 'adding bag `1234`';
+    ok $index->add({_id => 6012}), 'adding bag `6012`';
 
-    ok -d "t/data/000/001/234";
-    ok -d "t/data3/000/001/234";
+    ok -d "t/tmp/multi/a/000/006/012";
+    ok -d "t/tmp/multi/b/000/006/012";
 
     note("...bag");
-    my $bag = $store->bag->files('1234');
+    my $bag = $store->bag->files('6012');
 
-    ok $bag , 'got bag(1234)';
+    ok $bag , 'got bag(6012)';
 
     note("...upload");
     ok $bag->upload(IO::File->new('t/data2/000/000/001/test.txt'),
         'test1.txt');
 
-    ok -f 't/data/000/001/234/test1.txt',  'test1.txt exists (1)';
-    ok -f 't/data3/000/001/234/test1.txt', 'test1.txt exists (2)';
+    ok -f 't/tmp/multi/a/000/006/012/test1.txt', 'test1.txt exists (1)';
+    ok -f 't/tmp/multi/b/000/006/012/test1.txt', 'test1.txt exists (2)';
 
     note("...list");
     my $array = [sort @{$bag->map(sub {shift->{_id}})->to_array}];
@@ -80,8 +90,10 @@ note("Simple stores");
 
     is_deeply $array , [], 'got correct response';
 
-    ok !-f 't/data/000/001/234/test1.txt',  'test1.txt doesnt exists (1)';
-    ok !-f 't/data3/000/001/234/test1.txt', 'test1.txt doesnt exists (2)';
+    ok !-f 't/tmp/multi/a/000/006/012/test1.txt',
+        'test1.txt doesnt exists (1)';
+    ok !-f 't/tmp/multi/b/000/006/012/test1.txt',
+        'test1.txt doesnt exists (2)';
 
     note("...delete_all (index)");
     lives_ok {$index->delete_all()} 'delete_all';
@@ -90,5 +102,8 @@ note("Simple stores");
 
     is_deeply $array , [], 'got correct response';
 }
+
+path("t/tmp/multi/a")->remove_tree;
+path("t/tmp/multi/b")->remove_tree;
 
 done_testing;

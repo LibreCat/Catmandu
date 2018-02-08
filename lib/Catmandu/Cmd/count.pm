@@ -2,7 +2,7 @@ package Catmandu::Cmd::count;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -40,7 +40,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::count - count the number of objects in a bag
+Catmandu::Cmd::count - count the number of items in a bag
 
 =head1 EXAMPLES
 
@@ -50,5 +50,9 @@ Catmandu::Cmd::count - count the number of objects in a bag
                                --query 'brand:Acme'
 
   catmandu help store ElasticSearch
+
+=head1 SEE ALSO
+
+To count the number of items from an importer, use L<Catmandu::Exporter::Count>.
 
 =cut

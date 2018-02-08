@@ -2,7 +2,7 @@ package Catmandu::Exporter::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Moo;
 use namespace::clean;
@@ -50,7 +50,7 @@ Catmandu::Exporter::Mock - a exporter that doesn't export anything
 
     $exporter->add($hashref);
 
-    printf "exported %d objects\n" , $exporter->count;
+    printf "exported %d items\n" , $exporter->count;
 
     # Get an array ref of all records exported
     my $data = $exporter->as_arrayref;

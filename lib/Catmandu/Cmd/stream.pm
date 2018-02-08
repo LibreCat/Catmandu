@@ -13,7 +13,7 @@ use IO::File;
 use namespace::clean;
 
 sub command_opt_spec {
-    (["verbose|v", ""], ["delete", "delete existing objects first"],);
+    (["verbose|v", ""], ["delete", "delete existing items first"],);
 }
 
 sub command {

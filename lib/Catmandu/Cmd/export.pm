@@ -2,7 +2,7 @@ package Catmandu::Cmd::export;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -39,11 +39,13 @@ sub command {
     if (my $ids = $opts->id) {
         $from = Catmandu::ArrayIterator->new([map {$from->get($_)} @$ids]);
     }
-    elsif ($opts->query // $opts->cql_query) {
+    elsif ($opts->query // $opts->cql_query // $opts->sort
+        // $opts->sru_sortkeys)
+    {
         $self->usage_error("Bag isn't searchable")
             if !$from->does('Catmandu::Searchable');
         $self->usage_error("Bag isn't CQL searchable")
-            if ($opts->cql_query || $opts->sru_sortkeys)
+            if ($opts->cql_query // $opts->sru_sortkeys)
             && !$from->does('Catmandu::CQLSearchable');
         $from = $from->searcher(
             cql_query    => $opts->cql_query,
@@ -70,7 +72,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR $n == 1 ? "exported 1 object" : "exported $n objects";
+        say STDERR $n == 1 ? "exported 1 item" : "exported $n items";
         say STDERR "done";
     }
 }
@@ -83,13 +85,15 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::export - export objects from a store
+Catmandu::Cmd::export - export items from a store
 
 =head1 EXAMPLES
 
   catmandu export <STORE> <OPTIONS> to <EXPORTER> <OPTIONS>
 
   catmandu export MongoDB --database-name items --bag book to YAML
+
+  catmandu export ElasticSearch --bag book --sru-sortkeys 'title,,1' --cql-query '(title = "test")'
 
   catmandu help store MongoDB
   catmandu help exporter YAML

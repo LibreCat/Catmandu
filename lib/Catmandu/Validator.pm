@@ -2,7 +2,7 @@ package Catmandu::Validator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Catmandu::Util qw(:is);
 use Moo::Role;
@@ -161,6 +161,8 @@ Catmandu::Validator - Namespace for packages that can validate records in Catman
         my $record = shift;
         publish_record($record);
     });
+
+See L<Catmandu::Fix::validate> and L<Catmandu::Fix::Condition::valid> to use validators in fixes (L<Catmandu::Fix>).
 
 =head1 DESCRIPTION
 

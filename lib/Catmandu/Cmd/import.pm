@@ -2,7 +2,7 @@ package Catmandu::Cmd::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -16,7 +16,7 @@ sub command_opt_spec {
         ["preprocess|pp",  ""],
         ["start=i",        ""],
         ["total=i",        ""],
-        ["delete",         "delete existing objects first"],
+        ["delete",         "delete existing items first"],
         ["transaction|tx", "wrap in a transaction"],
     );
 }
@@ -50,7 +50,7 @@ sub command {
         my $n = $into->add_many($from);
         $into->commit;
         if ($opts->verbose) {
-            say STDERR $n == 1 ? "imported 1 object" : "imported $n objects";
+            say STDERR $n == 1 ? "imported 1 item" : "imported $n items";
             say STDERR "done";
         }
     };
@@ -73,7 +73,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::import - import objects into a store
+Catmandu::Cmd::import - import items into a store
 
 =head1 EXAMPLES
 

@@ -1,6 +1,6 @@
 package Catmandu::FileStore;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Catmandu::Sane;
 use Moo::Role;
@@ -131,8 +131,10 @@ Catmandu::FileStore - Namespace for packages that can make files persistent
     # Add a file to the container
     $files->upload(IO::File->new('<foobar.txt'), 'foobar.txt');
 
+    my $file = $files->get('foobar.txt');
+
     # Stream the contents of a file
-    $files->stream(IO::File->new('>foobar.txt'), 'foobar.txt');
+    $files->stream(IO::File->new('>foobar.txt'), $file);
 
     # Delete a file
     $files->delete('foobar.txt');

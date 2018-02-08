@@ -2,11 +2,13 @@ package Catmandu::Exporter::TSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Catmandu::Exporter::CSV;
 use Moo;
 use namespace::clean;
+
+has csv => (is => 'lazy', handles => [qw(add)]);
 
 with 'Catmandu::TabularExporter';
 
@@ -19,7 +21,6 @@ has sep_char => (
         return $sep_char;
     }
 );
-has csv => (is => 'lazy');
 
 sub _build_csv {
     my ($self) = @_;
@@ -34,11 +35,6 @@ sub _build_csv {
     $csv->{fields}  = $self->fields;
     $csv->{columns} = $self->columns;
     $csv;
-}
-
-sub add {
-    my ($self, $data) = @_;
-    $self->csv->add($data);
 }
 
 1;
@@ -75,7 +71,7 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 
     $exporter->add($hashref);
 
-    printf "exported %d objects\n" , $exporter->count;
+    printf "exported %d items\n" , $exporter->count;
 
 =head1 DESCRIPTION
 

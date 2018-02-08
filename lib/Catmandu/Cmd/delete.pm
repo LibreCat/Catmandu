@@ -2,7 +2,7 @@ package Catmandu::Cmd::delete;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -45,7 +45,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::delete - delete objects from a store
+Catmandu::Cmd::delete - delete items from a store
 
 =head1 EXAMPLES
 
