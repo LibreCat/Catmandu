@@ -44,6 +44,8 @@ in the input data.
 
 =head1 SEE ALSO
 
+L<Catmandu::Cmd::count>
+
 L<Catmandu::Exporter::Null>
 
 =cut

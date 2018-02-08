@@ -21,8 +21,14 @@ path("t/tmp/multi-bag/a")->mkpath;
 path("t/tmp/multi-bag/b")->mkpath;
 
 my $stores = [
-    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-bag/a',  keysize => 9),
-    Catmandu::Store::File::Simple->new(root => 't/tmp/multi-bag/b', keysize => 9),
+    Catmandu::Store::File::Simple->new(
+        root    => 't/tmp/multi-bag/a',
+        keysize => 9
+    ),
+    Catmandu::Store::File::Simple->new(
+        root    => 't/tmp/multi-bag/b',
+        keysize => 9
+    ),
 ];
 
 my $store = Catmandu::Store::File::Multi->new(stores => $stores);

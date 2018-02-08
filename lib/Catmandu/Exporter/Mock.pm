@@ -50,7 +50,7 @@ Catmandu::Exporter::Mock - a exporter that doesn't export anything
 
     $exporter->add($hashref);
 
-    printf "exported %d objects\n" , $exporter->count;
+    printf "exported %d items\n" , $exporter->count;
 
     # Get an array ref of all records exported
     my $data = $exporter->as_arrayref;

@@ -45,9 +45,7 @@ sub command {
         $into->commit;
 
         if ($opts->verbose) {
-            say STDERR $n == 1
-                ? "converted 1 object"
-                : "converted $n objects";
+            say STDERR $n == 1 ? "converted 1 item" : "converted $n items";
             say STDERR "done";
         }
     }

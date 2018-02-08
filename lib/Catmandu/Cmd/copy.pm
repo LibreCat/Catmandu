@@ -21,7 +21,7 @@ sub command_opt_spec {
         ["query=s",        ""],
         ["sru-sortkeys=s", ""],
         ["sort=s",         ""],
-        ["delete",         "delete existing objects first"],
+        ["delete",         "delete existing items first"],
         ["transaction|tx", "wrap in a transaction"],
     );
 }
@@ -67,7 +67,7 @@ sub command {
         my $n = $into->add_many($from);
         $into->commit;
         if ($opts->verbose) {
-            say STDERR $n == 1 ? "copied 1 object" : "copied $n objects";
+            say STDERR $n == 1 ? "copied 1 item" : "copied $n items";
             say STDERR "done";
         }
     };
@@ -90,7 +90,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::copy - copy objects from one store to another
+Catmandu::Cmd::copy - copy items from one store to another
 
 =head1 EXAMPLES
 

@@ -71,7 +71,7 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 
     $exporter->add($hashref);
 
-    printf "exported %d objects\n" , $exporter->count;
+    printf "exported %d items\n" , $exporter->count;
 
 =head1 DESCRIPTION
 

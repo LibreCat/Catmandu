@@ -110,11 +110,11 @@ An ARRAY of one or more fixes or file scripts to be applied to exported items.
 
 =head2 add
 
-Adds one object to be exported.
+Adds one item to be exported.
 
 =head2 add_many
 
-Adds many objects to be exported. This can be either an ARRAY-ref or
+Adds many items to be exported. This can be either an ARRAY-ref or
 an L<Catmandu::Iterator>. Returns a true value when the export was
 successful or undef on error.
 
