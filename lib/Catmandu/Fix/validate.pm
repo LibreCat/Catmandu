@@ -9,50 +9,39 @@ use Catmandu::Util qw(require_package);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path		=> (fix_arg => 1);
-has name 		=> (fix_arg => 1);
-has verbose     => (fix_opt => 1);
-has error_field => (fix_opt => 1, default => 'errors');
-has opts 		=> (fix_opt => 'collect');
-has validator 	=> (is => 'lazy', init_arg => undef);
+has path           => (fix_arg => 1);
+has name           => (fix_arg => 1);
+has error_field    => (fix_opt => 1, default => 'errors');
+has validator_opts => (fix_opt => 'collect');
+has validator      => (is      => 'lazy', init_arg => undef);
 
 with 'Catmandu::Fix::SimpleGetValue';
 
 sub emit_value {
     my ($self, $var, $fixer) = @_;
-	my $validator_var = $fixer->capture($self->validator);
-	my $verbose = $fixer->capture($self->verbose);
-    my $errors = $fixer->generate_var;
-	my $error_field = $self->error_field
-		? $fixer->split_path($self->error_field) : undef;
+    my $validator_var = $fixer->capture($self->validator);
+    my $verbose       = $fixer->capture($self->verbose);
+    my $errors_var    = $fixer->generate_var;
+    my $error_field
+        = $self->error_field ? $fixer->split_path($self->error_field) : undef;
 
-    my $perl = $fixer->emit_declare_vars($errors)
-        . "${errors} = ${validator_var}->last_errors;"
+    "unless (${validator_var}->is_valid(${var})) {"
+        . $fixer->emit_declare_vars($errors_var)
+        . "${errors_var} = ${validator_var}->last_errors;"
         . $fixer->emit_create_path(
-            $fixer->var,
-            $error_field,
-            sub {
-                my $var = shift;
-                "${var} = ${errors}";
-            }
-        )
-        . "if(${verbose}) {"
-        . $fixer->emit_foreach(
-            $errors,
-            sub {
-                my $v = shift;
-                "say STDERR is_ref(${v})"
-                ."? Catmandu->export_to_string(${v},'JSON',array=>0) : ${v}"
-            }
-        )
-        . "}";
-
-    "unless (${validator_var}->is_valid(${var})) { $perl }";
+        $fixer->var,
+        $error_field,
+        sub {
+            my $var = shift;
+            "${var} = ${errors_var}";
+        }
+        ) . "}";
 }
 
 sub _build_validator {
     my ($self) = @_;
-    require_package($self->name, 'Catmandu::Validator')->new($self->opts);
+    require_package($self->name, 'Catmandu::Validator')
+        ->new($self->validator_opts);
 }
 
 1;
@@ -88,10 +77,6 @@ errors in field C<errors> for further inspection.
 =item error_field
 
 Path where to store errors. Set to C<errors> by default.
-
-=item verbose
-
-Print errors to STDERR. Non-scalar errors are serialized to JSON.
 
 =back
 

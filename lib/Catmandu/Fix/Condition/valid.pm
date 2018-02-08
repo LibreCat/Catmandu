@@ -9,22 +9,23 @@ use Catmandu::Util qw(require_package);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path      => (fix_arg => 1);
-has name      => (fix_arg => 1);
-has opts      => (fix_opt => 'collect');
-has validator => (is      => 'lazy', init_arg => undef);
+has path           => (fix_arg => 1);
+has name           => (fix_arg => 1);
+has validator_opts => (fix_opt => 'collect');
+has validator      => (is      => 'lazy', init_arg => undef);
 
 with 'Catmandu::Fix::Condition::SimpleAllTest';
 
 sub emit_test {
     my ($self, $var, $fixer) = @_;
     my $validator_var = $fixer->capture($self->validator);
-    "${validator_var}\->is_valid(${var})";
+    "${validator_var}->is_valid(${var})";
 }
 
 sub _build_validator {
     my ($self) = @_;
-    require_package($self->name, 'Catmandu::Validator')->new($self->opts);
+    require_package($self->name, 'Catmandu::Validator')
+        ->new($self->validator_opts);
 }
 
 1;
