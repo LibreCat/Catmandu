@@ -2,7 +2,7 @@ package Catmandu::Exporter::TSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Catmandu::Exporter::CSV;
 use Moo;
@@ -71,7 +71,7 @@ Catmandu::Exporter::TSV - a tab-delimited TSV exporter
 
     $exporter->add($hashref);
 
-    printf "exported %d objects\n" , $exporter->count;
+    printf "exported %d items\n" , $exporter->count;
 
 =head1 DESCRIPTION
 

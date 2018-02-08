@@ -2,7 +2,7 @@ package Catmandu::Exporter::JSON;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use Cpanel::JSON::XS ();
 use Moo;
@@ -97,7 +97,7 @@ Catmandu::Exporter::JSON - a JSON exporter
 
     $exporter->add($hashref);
 
-    printf "exported %d objects\n" , $exporter->count;
+    printf "exported %d items\n" , $exporter->count;
 
 =head1 DESCRIPTION
 
@@ -148,7 +148,7 @@ Structure the data as a JSON array. Default is C<1>.
 
 =item line_delimited
 
-Export objects as newline delimited JSON. Default is C<0>. The C<array>, C<pretty>, C<indent>, C<space_before> and C<space_after> options will be ignored if C<line_delimited> is C<1>.
+Export items as newline delimited JSON. Default is C<0>. The C<array>, C<pretty>, C<indent>, C<space_before> and C<space_after> options will be ignored if C<line_delimited> is C<1>.
 
 =back
 

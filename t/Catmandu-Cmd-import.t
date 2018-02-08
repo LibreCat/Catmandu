@@ -19,7 +19,7 @@ use Catmandu::CLI;
 my $result = test_app(
     qq|Catmandu::CLI| => [qw(import CSV -v --file t/planets.csv to Hash)]);
 
-like $result->stderr, qr/imported 4 objects/, 'imported 4 objects';
+like $result->stderr, qr/imported 4 items/, 'imported 4 items';
 is $result->error, undef, 'threw no exceptions';
 
 done_testing 4;

@@ -2,7 +2,7 @@ package Catmandu::Cmd::convert;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.07';
+our $VERSION = '1.08';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -48,7 +48,7 @@ sub command {
     my $n = $into->add_many($from);
     $into->commit;
     if ($opts->verbose) {
-        say STDERR $n == 1 ? "converted 1 object" : "converted $n objects";
+        say STDERR $n == 1 ? "converted 1 item" : "converted $n items";
         say STDERR "done";
     }
 }
@@ -61,7 +61,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Cmd::convert - convert objects
+Catmandu::Cmd::convert - convert items
 
 =head1 EXAMPLES
 

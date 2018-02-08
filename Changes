@@ -1,11 +1,15 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new validate fix and valid fix condition
+
+1.08  2018-02-02 14:48:51 CET
   - fix language gets support for namespaces
   - fix language gets support lexical blocks
   - filter fix gets a new invert option
   - Iterable map method can now return multiple values (or none)
   - cleanup cli error handling code
+  - file store tests are now threadsafe
 
 1.07  2017-11-09 10:03:51 CET
   - new Readonly plugin

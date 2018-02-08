@@ -23,8 +23,14 @@ path("t/tmp/multi/b")->mkpath;
 note("Simple stores");
 {
     my $stores = [
-        Catmandu::Store::File::Simple->new(root => 't/tmp/multi/a',  keysize => 9),
-        Catmandu::Store::File::Simple->new(root => 't/tmp/multi/b', keysize => 9),
+        Catmandu::Store::File::Simple->new(
+            root    => 't/tmp/multi/a',
+            keysize => 9
+        ),
+        Catmandu::Store::File::Simple->new(
+            root    => 't/tmp/multi/b',
+            keysize => 9
+        ),
     ];
 
     my $store = $pkg->new(stores => $stores);
@@ -51,7 +57,7 @@ note("Simple stores");
     ok $bag->upload(IO::File->new('t/data2/000/000/001/test.txt'),
         'test1.txt');
 
-    ok -f 't/tmp/multi/a/000/006/012/test1.txt',  'test1.txt exists (1)';
+    ok -f 't/tmp/multi/a/000/006/012/test1.txt', 'test1.txt exists (1)';
     ok -f 't/tmp/multi/b/000/006/012/test1.txt', 'test1.txt exists (2)';
 
     note("...list");
@@ -84,8 +90,10 @@ note("Simple stores");
 
     is_deeply $array , [], 'got correct response';
 
-    ok !-f 't/tmp/multi/a/000/006/012/test1.txt',  'test1.txt doesnt exists (1)';
-    ok !-f 't/tmp/multi/b/000/006/012/test1.txt', 'test1.txt doesnt exists (2)';
+    ok !-f 't/tmp/multi/a/000/006/012/test1.txt',
+        'test1.txt doesnt exists (1)';
+    ok !-f 't/tmp/multi/b/000/006/012/test1.txt',
+        'test1.txt doesnt exists (2)';
 
     note("...delete_all (index)");
     lives_ok {$index->delete_all()} 'delete_all';

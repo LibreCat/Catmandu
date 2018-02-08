@@ -94,7 +94,8 @@ note("Combined Simple + Hash sidecar");
 
     is_deeply $array , [], 'got correct response';
 
-    ok !-f 't/tmp/sidecar/000/009/012/test1.txt', 'test1.txt doesnt exists (2)';
+    ok !-f 't/tmp/sidecar/000/009/012/test1.txt',
+        'test1.txt doesnt exists (2)';
 
     note("...delete_all (index)");
     lives_ok {$index->delete_all()} 'delete_all';
