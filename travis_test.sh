@@ -17,7 +17,7 @@ if [ -d cover_db ]; then
     rm -rf cover_db/
 fi
 
-if [ "${FILE}" != ""]; then
+if [ "${FILE}" != "" ]; then
     carton exec "PERL5OPT=-MDevel::Cover env perl -Ilib ${FILE}"
 else
     carton exec 'cover -test'
@@ -26,4 +26,5 @@ fi
 if [ -d cover_db ]; then
     rm -rf cover_db/
 fi
+
 carton exec './Build realclean'
