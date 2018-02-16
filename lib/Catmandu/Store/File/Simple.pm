@@ -10,54 +10,54 @@ use Catmandu::Util;
 use Catmandu::Store::File::Simple::Index;
 use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
+use Catmandu::Path::UUID;
+use Catmandu::Path::Number;
 use namespace::clean;
 
 with 'Catmandu::FileStore';
 with 'Catmandu::Droppable';
 
 has root    => (is => 'ro', required => '1');
-has uuid    => (is => 'ro', trigger  => 1);
-has keysize => (is => 'ro', default  => 9, trigger => 1);
+#DEPRECATED
+has uuid    => (is => 'ro');
+#DEPRECATED
+has keysize => (
+    is => 'ro',
+    isa => sub {
+        Catmandu::Util::check_natural($_[0]);
+        croak "keysize needs to be a multiple of 3"
+            unless $_[0] % 3 == 0;
+    },
+    default  => 9
+);
+#TODO: make configurable from the CLI and configuration
+has path_generator => (
+    is => "ro",
+    lazy => 1,
+    init_arg => undef,
+    builder => "_build_path_generator"
+);
 
-sub _trigger_keysize {
-    my $self = shift;
+sub _build_path_generator {
 
-    croak "keysize needs to be a multiple of 3"
-        unless $self->keysize % 3 == 0;
-}
+    my $self = $_[0];
 
-sub _trigger_uuid {
-    my $self = shift;
+    if ( $self->uuid() ) {
 
-    $self->{keysize} = 36;
-}
+        Catmandu::Path::UUID->new(
+            base_dir => $self->root()
+        );
 
-sub path_string {
-    my ($self, $key) = @_;
-
-    my $keysize = $self->keysize;
-
-    # Allow all hexidecimal numbers
-    $key =~ s{[^A-F0-9-]}{}g;
-
-    # If the key is a UUID then the matches need to be exact
-    if ($self->uuid) {
-        try {
-            Data::UUID->new->from_string($key);
-        }
-        catch {
-            return undef;
-        };
     }
     else {
-        return undef unless length($key) && length($key) <= $keysize;
-        $key =~ s/^0+//;
-        $key = sprintf "%-${keysize}.${keysize}d", $key;
+
+        Catmandu::Path::Number->new(
+            base_dir => $self->root(),
+            keysize => $self->keysize()
+        );
+
     }
 
-    my $path = $self->root . "/" . join("/", unpack('(A3)*', $key));
-
-    $path;
 }
 
 sub drop {

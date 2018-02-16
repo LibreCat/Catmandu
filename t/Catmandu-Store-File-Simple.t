@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Exception;
+use Cwd;
+use File::Spec;
 
 my $pkg;
 
@@ -15,7 +17,9 @@ require_ok $pkg;
 
 dies_ok {$pkg->new} 'dies ok on not enough parameters';
 
-my $store = $pkg->new(root => 't/data2', keysize => 9);
+my $pwd = getcwd;
+my $root = File::Spec->catdir($pwd,'t/data2');
+my $store = $pkg->new(root => $root, keysize => 9);
 
 ok $store , 'got a store';
 
@@ -25,12 +29,9 @@ ok $bags , 'store->bag()';
 
 isa_ok $bags , 'Catmandu::Store::File::Simple::Index';
 
-is $store->path_string('1234'), 't/data2/000/001/234', 'path_string(1234)';
+is $store->path_generator->to_path('1234'), File::Spec->catdir($root,qw(000 001 234)), 'path_generator->to_path(1234)';
 
-is $store->path_string('0001234'), 't/data2/000/001/234',
-    'path_string(0001234)';
-
-ok !$store->path_string('00000001234'), 'path_string(00000001234) fails';
+dies_ok sub { $store->path_generator->to_path('00000001234') }, 'path_generator->to_path(00000001234) fails';
 
 ok !$store->bag('1235'), 'bag(1235) doesnt exist';
 
