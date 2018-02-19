@@ -30,11 +30,17 @@ has keysize => (
     },
     default  => 9
 );
-#TODO: make configurable from the CLI and configuration
+has id_path_package => (
+    is => "ro"
+);
+has id_path_options => (
+    is => "ro",
+    lazy => 1,
+    default => sub { +{}; }
+);
 has id_path => (
     is => "ro",
     lazy => 1,
-    init_arg => undef,
     builder => "_build_id_path"
 );
 
@@ -42,7 +48,20 @@ sub _build_id_path {
 
     my $self = $_[0];
 
-    if ( $self->uuid() ) {
+
+    if ( $self->id_path_package() ) {
+
+        Catmandu::Util::require_package(
+            $self->id_path_package(), "Catmandu::IdPath"
+        )->new(
+            %{
+                $self->id_path_options(),
+            },
+            base_dir => $self->root()
+        );
+
+    }
+    elsif ( $self->uuid() ) {
 
         Catmandu::IdPath::UUID->new(
             base_dir => $self->root()
@@ -160,13 +179,27 @@ The root directory where to store all the files. Required.
 
 =item keysize
 
+DEPRECATED: use id_path_package and id_path_options
+
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
 All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =item uuid
 
+DEPRECATED: use id_path_package and id_path_options
+
 If the to a true value, then the Simple store will require UUID-s as keys
+
+=item id_path_package
+
+package that translates between id and path.
+
+Default: L<Catmandu::IdPath::Number>
+
+=item id_path_options
+
+Options for the id_path (see above)
 
 =back
 

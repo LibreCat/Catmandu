@@ -23,15 +23,19 @@ has base_dir => (
     coerce => sub { Cwd::abs_path( $_[0] ); }
 );
 has lookup_store => (
-    is => "ro",
-    lazy => 1
+    is => "ro"
 );
 has lookup_bag => (
-    is => "ro",
-    lazy => 1
+    is => "ro"
 );
 has lookup => (
     is => "ro",
+    isa => sub {
+        my $l = $_[0];
+        #check_instance( $l, "Catmandu::Bag" ) returns false ..
+        check_instance( $l );
+        $l->does( "Catmandu::Bag" ) or die( "lookup should be Catmandu::Bag implementation" );
+    },
     lazy => 1,
     builder => "_build_lookup"
 );
@@ -40,11 +44,7 @@ sub _build_lookup {
 
     my $self = $_[0];
 
-    Catmandu->store(
-        $self->lookup_store()
-    )->bag(
-        $self->lookup_bag()
-    );
+    Catmandu->store( $self->lookup_store )->bag( $self->lookup_bag );
 
 }
 
@@ -183,15 +183,15 @@ Catmandu::IdPath::Map - translates between id and path using a bag as lookup
 
     The method to_path uses this method to select the mapping:
 
-        $bag->get( $id );
+        $lookup->get( $id );
 
     ..when not found it is created:
 
-        $bag->add( { _id => $id, _path => $path } );
+        $lookup->add( { _id => $id, _path => $path } );
 
     The method from_path uses this method to select the mapping:
 
-        $bag->select( _path => $path )->first();
+        $lookup->select( _path => $path )->first();
 
     So make sure that a select on the attribute "_path" is efficient.
 
@@ -222,9 +222,9 @@ Ignored when lookup is provided (see below).
 
 =item lookup
 
-Catmandu::Bag instance that does the lookup. If not provided,
+Catmandu::Bag instance that does the lookup.
 
-the lookup defaults to:
+If not provided the lookup defaults to:
 
     Catmandu->store( $self->lookup_store )->bag( $self->lookup_bag );
 
