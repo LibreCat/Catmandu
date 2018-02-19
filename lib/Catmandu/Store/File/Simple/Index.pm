@@ -17,7 +17,7 @@ sub generator {
 
     return sub {
 
-        state $iter = $self->store->path_generator->generator();
+        state $iter = $self->store->id_path()->generator();
 
         my $mapping = $iter->();
 
@@ -35,7 +35,7 @@ sub exists {
 
     $self->log->debug("Checking exists $id");
 
-    my $path = $self->store->path_generator->to_path($id);
+    my $path = $self->store->id_path->to_path($id);
 
     defined($path) && -d $path;
 }
@@ -51,7 +51,7 @@ sub add {
         croak "Can't add a file to the index";
     }
 
-    my $path = $self->store->path_generator->to_path($id);
+    my $path = $self->store->id_path->to_path($id);
 
     unless (defined $path) {
         my $err = "Failed to create path from $id";
@@ -76,7 +76,7 @@ sub get {
 
     croak "Need an id" unless defined $id;
 
-    my $path = $self->store->path_generator->to_path($id);
+    my $path = $self->store->id_path->to_path($id);
 
     unless ($path) {
         $self->log->error(
@@ -99,7 +99,7 @@ sub delete {
 
     croak "Need a key" unless defined $id;
 
-    my $path = $self->store->path_generator->to_path($id);
+    my $path = $self->store->id_path->to_path($id);
 
     unless ($path) {
         $self->log->error("Failed to create path from $id");

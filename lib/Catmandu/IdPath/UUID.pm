@@ -1,18 +1,27 @@
-package Catmandu::Path::UUID;
+package Catmandu::IdPath::UUID;
 
 our $VERSION = '1.08';
 
 use Catmandu::Sane;
-use Catmandu::Util qw(:is);
+use Catmandu::Util qw(:is :check);
 use Moo;
+use Cwd;
 use Path::Tiny;
 use Path::Iterator::Rule;
 use File::Spec;
 use Data::UUID;
 use Carp;
+use Catmandu::BadArg;
 use namespace::clean;
 
-with "Catmandu::Path";
+with "Catmandu::IdPath";
+
+has base_dir => (
+    is => "ro",
+    isa => sub { check_string( $_[0] ); },
+    required => 1,
+    coerce => sub { Cwd::abs_path( $_[0] ); }
+);
 
 sub is_uuid {
 
@@ -25,7 +34,7 @@ sub to_path {
 
     my ( $self, $id ) = @_;
 
-    croak "need valid uuid" unless is_uuid( $id );
+    Catmandu::BadArg->throw( "need valid uuid" ) unless is_uuid( $id );
 
     File::Spec->catdir(
         $self->base_dir, unpack( "(A3)*", $id )
@@ -40,7 +49,10 @@ sub from_path {
     my @split_path = File::Spec->splitdir( $path );
     my $id = join( "", splice(@split_path, scalar(File::Spec->splitdir( $self->base_dir )) ) );
 
-    return is_uuid( $id ) ? $id : undef;
+    Catmandu::BadArg->throw( "invalid uuid detected: $id" ) unless is_uuid( $id );
+
+    $id;
+
 }
 
 sub generator {
@@ -69,8 +81,6 @@ sub generator {
 
         my $id = $self->from_path( $path );
 
-        croak "$base_dir is not uuid based directory" unless defined( $id );
-
         +{ _id => $id, _path => $path };
     };
 
@@ -84,13 +94,13 @@ __END__
 
 =head1 NAME
 
-Catmandu::Path::UUID - A uuid based path translator
+Catmandu::IdPath::UUID - A uuid based path translator
 
 =head1 SYNOPSIS
 
-    use Catmandu::Path::UUID;
+    use Catmandu::IdPath::UUID;
 
-    my $p = Catmandu::Path::UUID->new(
+    my $p = Catmandu::IdPath::UUID->new(
         base_dir => "/data"
     );
 
@@ -100,7 +110,7 @@ Catmandu::Path::UUID - A uuid based path translator
     #translate $path back to "9A581C80-1189-11E8-AB6D-46BC153F89DB"
     my $id = $p->from_path( $path );
 
-    #Catmandu::Path::Number is a Catmandu::Iterable
+    #Catmandu::IdPath::Number is a Catmandu::Iterable
     #Returns list of records: [{ _id => 1234, _path => "/data/000/001/234" }]
     my $id_paths = $p->to_array();
 
@@ -108,7 +118,7 @@ Catmandu::Path::UUID - A uuid based path translator
 
 =head2 new( base_dir => $path )
 
-Create a new Catmandu::Path::UUID with the following configuration
+Create a new Catmandu::IdPath::UUID with the following configuration
 parameters:
 
 =over
@@ -121,16 +131,16 @@ The base directory where the files are stored. Required
 
 =head1 INHERITED METHODS
 
-This Catmandu::Path::Number implements:
+This Catmandu::IdPath::Number implements:
 
 =over 3
 
-=item L<Catmandu::Path>
+=item L<Catmandu::IdPath>
 
 =back
 
 =head1 SEE ALSO
 
-L<Catmandu::Path>
+L<Catmandu::IdPath>
 
 =cut

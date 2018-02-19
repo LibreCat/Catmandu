@@ -10,8 +10,8 @@ use Catmandu::Util;
 use Catmandu::Store::File::Simple::Index;
 use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
-use Catmandu::Path::UUID;
-use Catmandu::Path::Number;
+use Catmandu::IdPath::UUID;
+use Catmandu::IdPath::Number;
 use namespace::clean;
 
 with 'Catmandu::FileStore';
@@ -31,27 +31,27 @@ has keysize => (
     default  => 9
 );
 #TODO: make configurable from the CLI and configuration
-has path_generator => (
+has id_path => (
     is => "ro",
     lazy => 1,
     init_arg => undef,
-    builder => "_build_path_generator"
+    builder => "_build_id_path"
 );
 
-sub _build_path_generator {
+sub _build_id_path {
 
     my $self = $_[0];
 
     if ( $self->uuid() ) {
 
-        Catmandu::Path::UUID->new(
+        Catmandu::IdPath::UUID->new(
             base_dir => $self->root()
         );
 
     }
     else {
 
-        Catmandu::Path::Number->new(
+        Catmandu::IdPath::Number->new(
             base_dir => $self->root(),
             keysize => $self->keysize()
         );

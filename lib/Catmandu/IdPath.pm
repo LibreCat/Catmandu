@@ -1,22 +1,13 @@
-package Catmandu::Path;
+package Catmandu::IdPath;
 
 use Catmandu::Sane;
 
 our $VERSION = '1.08';
 
 use Moo::Role;
-use Catmandu::Util qw(:check :is);
-use Cwd;
 use namespace::clean;
 
 with "Catmandu::Iterable";
-
-has base_dir => (
-    is => "ro",
-    isa => sub { check_string( $_[0] ); },
-    required => 1,
-    coerce => sub { Cwd::abs_path( $_[0] ); }
-);
 
 requires "to_path";
 requires "from_path";
@@ -29,7 +20,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Path - A base role for record based path translators
+Catmandu::IdPath - A base role to calculate directory to FileBags
 
 =head1 SYNOPSIS
 
@@ -39,7 +30,7 @@ Catmandu::Path - A base role for record based path translators
     use File::Spec;
     use File:Basename;
 
-    with "Catmandu::Path";
+    with "Catmandu::IdPath";
 
     #required method: translate id to directory
     sub to_path {
@@ -103,21 +94,6 @@ Catmandu::Path - A base role for record based path translators
         say $p->to_path( $_[0] );
     });
 
-=head1 METHODS
-
-=head2 new( base_dir => $path )
-
-Create a new Catmandu::Path::UUID with the following configuration
-parameters:
-
-=over
-
-=item base_dir
-
-The base directory where the files are stored. Required
-
-=back
-
 =head1 METHODS TO IMPLEMENT
 
 Implementors must implement these methods
@@ -132,6 +108,12 @@ Implementors must implement these methods
 
 * Returns directory as string
 
+This method should throw an error when it detects an invalid id.
+
+Only the implementor can decide what should be a valid id.
+
+This method should not create the path. That is the responsibility of the user.
+
 =item from_path( $path )
 
 * Accepts directory as string
@@ -140,11 +122,15 @@ Implementors must implement these methods
 
 * Returns id as string.
 
+This method should throw an error when it detects an invalid id.
+
+Only the implementor can decide what should be a valid id.
+
 =back
 
 =head1 INHERITED METHODS
 
-This Catmandu::Path inherits:
+This Catmandu::IdPath inherits:
 
 =over 3
 
@@ -154,7 +140,7 @@ This Catmandu::Path inherits:
 
 =head1 SEE ALSO
 
-L<Catmandu::Path::UUID> ,
-L<Catmandu::Path::Number>
+L<Catmandu::IdPath::UUID> ,
+L<Catmandu::IdPath::Number>
 
 =cut
