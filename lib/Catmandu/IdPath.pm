@@ -20,7 +20,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::IdPath - A base role to calculate directory to FileBags
+Catmandu::IdPath - A base role to translate between id and path
 
 =head1 SYNOPSIS
 
