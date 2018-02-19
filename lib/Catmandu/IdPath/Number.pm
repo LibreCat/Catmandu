@@ -42,12 +42,12 @@ sub format_id {
         if $n_id < 0;
 
     my $keysize = $self->keysize();
-    my $f_id = sprintf "%-${keysize}.${keysize}d", $n_id;
 
     Catmandu::BadArg->throw( "id '$id' does not fit into configured keysize $keysize" )
-        if length( $f_id ) > $keysize;
+        if length( "$id" ) > $keysize;
 
-    $f_id;
+    sprintf "%-${keysize}.${keysize}d", $n_id;
+
 }
 
 sub to_path {

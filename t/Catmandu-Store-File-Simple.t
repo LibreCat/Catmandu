@@ -17,9 +17,11 @@ require_ok $pkg;
 
 dies_ok {$pkg->new} 'dies ok on not enough parameters';
 
-my $pwd = getcwd;
-my $root = File::Spec->catdir($pwd,'t/data2');
-my $store = $pkg->new(root => $root, keysize => 9);
+my $dir = File::Spec->catdir(
+    Cwd::getcwd,
+    "t","data2"
+);
+my $store = $pkg->new(root => $dir, keysize => 9);
 
 ok $store , 'got a store';
 
@@ -29,20 +31,29 @@ ok $bags , 'store->bag()';
 
 isa_ok $bags , 'Catmandu::Store::File::Simple::Index';
 
-is $store->path_generator->to_path('1234'), File::Spec->catdir($root,qw(000 001 234)), 'path_generator->to_path(1234)';
+my $expected_path = File::Spec->catdir(
+    $dir, "000", "001", "234"
+);
 
-dies_ok sub { $store->path_generator->to_path('00000001234') }, 'path_generator->to_path(00000001234) fails';
+is $store->id_path->to_path('1234'), $expected_path, 'id_path->to_path(1234)';
+
+is $store->id_path->to_path('0001234'), $expected_path,
+    'id_path->to_path(0001234)';
+
+dies_ok sub {
+    $store->id_path->to_path('00000001234');
+}, 'id_path->to_path(00000001234) must die';
 
 ok !$store->bag('1235'), 'bag(1235) doesnt exist';
 
 lives_ok {$store->bag('1')} 'bag(1) exists';
 
 dies_ok sub {
-    $pkg->new(root => 't/data2', keysize => 13);
+    $pkg->new(root => $dir, keysize => 13);
 }, 'dies on wrong keysize';
 
 lives_ok sub {
-    $pkg->new(root => 't/data2', keysize => 12);
+    $pkg->new(root => $dir, keysize => 12);
 }, 'dies on connecting to a store with the wrong keysize';
 
 done_testing;

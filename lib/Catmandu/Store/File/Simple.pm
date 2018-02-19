@@ -197,9 +197,19 @@ package that translates between id and path.
 
 Default: L<Catmandu::IdPath::Number>
 
+Ignored when id_path is given.
+
 =item id_path_options
 
 Options for the id_path (see above)
+
+Ignored when id_path is given.
+
+=item id_path
+
+Object that does the translation between id and path.
+
+Must be instance of L<Catmandu::IdPath>.
 
 =back
 

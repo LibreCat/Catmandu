@@ -37,13 +37,15 @@ note("list");
 
     # Order is not important in a list
     is_deeply [sort({$a->{_id} cmp $b->{_id}} @$array)],
-        [{_id => 1}, {_id => 2}, {_id => 3},], 'got correct response';
+        [{_id => "000000001"}, {_id => "000000002"}, {_id => "000000003"},], 'got correct response';
 }
 
 note("exists");
 {
     for (1 .. 3) {
         ok $index->exists($_), "exists($_)";
+        my $zero_key = ("0" x $_) . $_;
+        ok $index->exists($zero_key), "exists($zero_key)";
     }
 }
 
@@ -51,6 +53,8 @@ note("get");
 {
     for (1 .. 3) {
         ok $index->get($_), "get($_)";
+        my $zero_key = ("0" x $_) . $_;
+        ok $index->get($zero_key), "get($zero_key)";
     }
 }
 
