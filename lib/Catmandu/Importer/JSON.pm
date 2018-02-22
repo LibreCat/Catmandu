@@ -10,8 +10,9 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has line_delimited => (is => 'ro', default => sub {0});
-has json => (is => 'lazy');
+has line_delimited   => (is => 'ro', default => sub {0});
+has byte_buffer_size => (is => 'ro', default => sub {256});
+has json             => (is => 'lazy');
 
 sub _build_json {
     my ($self) = @_;
@@ -34,13 +35,14 @@ sub generator {
         };
     }
 
-    # switch to slower incremental parser
+    # switch to incremental parser
     sub {
-        state $json = $self->json;
-        state $fh   = $self->fh;
+        state $json     = $self->json;
+        state $fh       = $self->fh;
+        state $buf_size = $self->byte_buffer_size;
 
         for (;;) {
-            my $res = sysread($fh, my $buf, 512);
+            my $res = sysread($fh, my $buf, $buf_size);
             $res // Catmandu::Error->throw($!);
             $json->incr_parse($buf);    # void context, so no parsing
             $json->incr_text =~ s/^[^{]+//;
@@ -54,7 +56,7 @@ sub generator {
                 return $data;
             }
 
-            my $res = sysread($fh, my $buf, 512);
+            my $res = sysread($fh, my $buf, $buf_size);
             $res // Catmandu::Error->throw($!);
             $res
                 || Catmandu::Error->throw(
@@ -132,7 +134,12 @@ An ARRAY of one or more fixes or file scripts to be applied to imported items.
 
 =item line_delimited
 
-Read line-delimited JSON with a faster, non-incremental parser.
+Read line-delimited JSON line-by-line with a non-incremental parser.
+
+=item byte_buffer_size
+
+Number of bytes that is read by each iteration of the incremental parser.
+Ignored if C<line_delinmited> is C<1>. Default is C<256>.
 
 =back
 

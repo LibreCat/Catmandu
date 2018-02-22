@@ -28,7 +28,7 @@ sub generator {
     sub {
         my $item = $gen->();
         return undef unless $item;
-        return $self->get($item->{_id});
+        return $item;
     };
 }
 
