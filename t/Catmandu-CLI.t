@@ -46,7 +46,7 @@ if ($^O ne 'MSWin32') {    # /dev/null required
         ]
     );
     ok !$res->error;
-    like $res->stderr, qr/Oops! Can't find the exporter 'NotFound'/;
+    like $res->stderr, qr/Can't find the exporter 'NotFound'/;
 }
 
 {
@@ -64,13 +64,13 @@ if ($^O ne 'MSWin32') {    # /dev/null required
 {
     my $result = test_app(
         qq|Catmandu::CLI| => [qw(convert Null to Null --fix testing123() )]);
-    like $result->stderr, qr/Oops/, 'wrong fix error';
+    like $result->stderr, qr/testing123/, 'wrong fix error';
 }
 
 {
     my $result = test_app(
         qq|Catmandu::CLI| => [qw(convert Null to Null --fix), "test("]);
-    like $result->stderr, qr/Oops/, 'syntax error';
+    like $result->stderr, qr/Syntax error/, 'syntax error';
 }
 
 {
@@ -82,7 +82,7 @@ if ($^O ne 'MSWin32') {    # /dev/null required
 {
     my $result = test_app(
         qq|Catmandu::CLI| => [qw(convert Null to Null --fix add_field())]);
-    like $result->stderr, qr/Oops/, 'wrong arguments';
+    like $result->stderr, qr/add_field/, 'wrong arguments';
 }
 
 {
@@ -131,7 +131,7 @@ EOF
 {
     my $result = test_app(qq|Catmandu::CLI| =>
             [qw(convert JSON --file http://google.com/nonononono to Null)]);
-    like $result->stderr, qr/Oops! Got a HTTP error/, 'Got an HTTP error';
+    like $result->stderr, qr/Got a HTTP error/, 'Got an HTTP error';
 }
 
 done_testing;

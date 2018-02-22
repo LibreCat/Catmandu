@@ -322,6 +322,7 @@ Catmandu::Error - Catmandu error hierarchy
     ];
 
 =head1 CURRRENT ERROR HIERARCHY
+
     Throwable::Error
         Catmandu::Error
             Catmandu::BadVal
