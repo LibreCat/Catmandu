@@ -97,12 +97,12 @@ sub _build_file {
 
 sub _build_fh {
     my ($self) = @_;
-    my $file = $self->file;
-    my $body;
-    if (is_string($file) && $file =~ m!^https?://!) {
-        my $req = HTTP::Request->new($self->http_method, $file,
-            $self->http_headers);
 
+    my $file = $self->file;
+
+    # get remote content
+    if (is_string($file) && $file =~ m!^https?://!) {
+        my $body;
         if ($self->has_http_body) {
             $body = $self->http_body;
 
@@ -127,44 +127,16 @@ sub _build_fh {
                     }
                 }
             }
-
-            $req->content($body);
         }
 
-        my $res = $self->_http_client->request($req);
+        my $content = $self->_http_request(
+            $self->http_method,
+            $file,
+            $self->http_headers,
+            $body,
+            $self->_http_timing_tries,
+        );
 
-        if (   $res->code =~ /^408|500|502|503|504$/
-            && $self->_http_timing_tries)
-        {
-            my @tries = @{$self->_http_timing_tries};
-            while (my $sleep = shift @tries) {
-                sleep $sleep;
-                $res = $self->_http_client->request($req->clone);
-                last if $res->code !~ /^408|500|502|503|504$/;
-            }
-        }
-
-        if (!$res->is_success) {
-            my $res_headers = [];
-            for my $header ($res->header_field_names) {
-                my $val = $res->header($header);
-                push @$res_headers, $header, $val;
-            }
-            Catmandu::HTTPError->throw(
-                {
-                    code             => $res->code,
-                    message          => $res->status_line,
-                    url              => $file,
-                    method           => $self->http_method,
-                    request_headers  => $self->http_headers,
-                    request_body     => $body,
-                    response_headers => $res_headers,
-                    response_body    => $res->decoded_content,
-                }
-            );
-        }
-
-        my $content = $res->decoded_content;
         return io(\$content, mode => 'r', binmode => $_[0]->encoding);
     }
 
@@ -204,6 +176,52 @@ sub _build_http_client {
     $ua->protocols_allowed([qw(http https)]);
     $ua->env_proxy;
     $ua;
+}
+
+sub _http_request {
+    my ($self, $method, $url, $headers, $body, $timing_tries) = @_;
+
+    my $client = $self->_http_client;
+
+    my $req = HTTP::Request->new($method, $url, $headers || []);
+    $req->content($body) if defined $body;
+
+    my $res = $client->request($req);
+
+    if (   $res->code =~ /^408|500|502|503|504$/
+        && $timing_tries)
+    {
+        my @tries = @$timing_tries;
+        while (my $sleep = shift @tries) {
+            sleep $sleep;
+            $res = $client->request($req->clone);
+            last if $res->code !~ /^408|500|502|503|504$/;
+        }
+    }
+
+    my $res_body = $res->decoded_content;
+
+    unless ($res->is_success) {
+        my $res_headers = [];
+        for my $header ($res->header_field_names) {
+            my $val = $res->header($header);
+            push @$res_headers, $header, $val;
+        }
+        Catmandu::HTTPError->throw(
+            {
+                code             => $res->code,
+                message          => $res->status_line,
+                url              => $url,
+                method           => $method,
+                request_headers  => $headers,
+                request_body     => $body,
+                response_headers => $res_headers,
+                response_body    => $res_body,
+            }
+        );
+    }
+
+    $res_body;
 }
 
 sub readline {
