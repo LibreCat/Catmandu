@@ -70,6 +70,9 @@ sub execute {
                 }
             }
         }
+    } elsif (@$args == 1 && $args->[0] =~ qr/^fix(es)?$/) {
+        $self->help_fixes;
+        return;
     }
 
     App::Cmd::Command::help::execute(@_);
@@ -122,6 +125,26 @@ sub help_about {
     }
 }
 
+sub help_fixes {
+    my ($self) = @_;
+
+    my $fixes = Catmandu
+        ->importer('Modules', namespace => 'Catmandu::Fix', primary => 1)
+        ->select( name => qr/::[a-z][^:]*$/ )
+        ->map(sub {
+           $_[0]->{name} =~ s/.*:://;
+           $_[0];
+        });
+
+    my $len = $fixes->max(sub { length $_[0]->{name} });
+    $fixes->sorted('name')->each(sub {
+        say sprintf "%-${len}s %s", $_[0]->{name}, $_[0]->{about}
+    });
+
+    say "\nGet additional help with: catmandu help fix <NAME>";
+}
+
+
 1;
 
 __END__
@@ -137,5 +160,6 @@ Catmandu::Cmd::help - show help
   catmandu help convert
   catmandu help import JSON
   catmandu help help
+  catmandu help fix set_field
 
 =cut
