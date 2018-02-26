@@ -58,3 +58,5 @@ requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';
+
+requires 'Catmandu::DBI','0';

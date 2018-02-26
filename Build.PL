@@ -30,6 +30,7 @@ my %module_build_args = (
     "Any::URI::Escape" => 0,
     "App::Cmd" => "0.33",
     "CGI::Expand" => "2.02",
+    "Catmandu::DBI" => 0,
     "Clone" => "0.31",
     "Config::Onion" => "1.004",
     "Cpanel::JSON::XS" => "3.0213",
