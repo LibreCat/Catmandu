@@ -26,5 +26,7 @@ isa_ok $env->importer('mock'), qq|Catmandu::Importer::Mock|,
     qq|importer(mock)|;
 isa_ok $env->exporter, qq|Catmandu::Exporter::YAML|, qq|importer()|;
 isa_ok $env->exporter('csv'), qq|Catmandu::Exporter::CSV|, qq|importer(csv)|;
+isa_ok $env->validator, qq|Catmandu::Validator::Blind|, qq|validator()|;
+is $env->validator('random')->rate, 0.5, qq|validator(random)|;
 
-done_testing 12;
+done_testing 14;
