@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Add validator method to Catmandu
+  - new Env validator
   - new validate fix and valid fix condition
   - JSON importer byte buffer size is now configurable to optimize performance
 

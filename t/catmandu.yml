@@ -27,6 +27,11 @@ store:
               value: Luna
             - _id: Earth
               value: Terra
+validator:
+    test:
+        package: Env
+        options:
+            message: invalid
 fixer:
    default:
       - nothing()

@@ -45,19 +45,22 @@ has config => (is => 'rwp', default => sub {+{}});
 has stores => (is => 'ro', default => sub {+{}});
 has fixers => (is => 'ro', default => sub {+{}});
 
-has default_store            => (is => 'ro', default => sub {'default'});
-has default_fixer            => (is => 'ro', default => sub {'default'});
-has default_importer         => (is => 'ro', default => sub {'default'});
-has default_exporter         => (is => 'ro', default => sub {'default'});
-has default_importer_package => (is => 'ro', default => sub {'JSON'});
-has default_exporter_package => (is => 'ro', default => sub {'JSON'});
+has default_store             => (is => 'ro', default => sub {'default'});
+has default_fixer             => (is => 'ro', default => sub {'default'});
+has default_importer          => (is => 'ro', default => sub {'default'});
+has default_exporter          => (is => 'ro', default => sub {'default'});
+has default_validator         => (is => 'ro', default => sub {'default'});
 
-has store_namespace => (is => 'ro', default => sub {'Catmandu::Store'});
-has fixes_namespace => (is => 'ro', default => sub {'Catmandu::Fix'})
+has default_importer_package  => (is => 'ro', default => sub {'JSON'});
+has default_exporter_package  => (is => 'ro', default => sub {'JSON'});
+has default_validator_package => (is => 'ro', default => sub {'Env'});
+
+has store_namespace     => (is => 'ro', default => sub {'Catmandu::Store'});
+has fixes_namespace     => (is => 'ro', default => sub {'Catmandu::Fix'})
     ;    # TODO unused
-
-has importer_namespace => (is => 'ro', default => sub {'Catmandu::Importer'});
-has exporter_namespace => (is => 'ro', default => sub {'Catmandu::Exporter'});
+has importer_namespace  => (is => 'ro', default => sub {'Catmandu::Importer'});
+has exporter_namespace  => (is => 'ro', default => sub {'Catmandu::Exporter'});
+has validator_namespace => (is => 'ro', default => sub {'Catmandu::Validator'});
 
 sub BUILD {
     my ($self) = @_;
@@ -184,41 +187,35 @@ sub fixer {
 
 sub importer {
     my $self = shift;
-    my $name = shift;
-    my $ns   = $self->importer_namespace;
-    if (exists $self->config->{importer}) {
-        if (my $c
-            = $self->config->{importer}{$name || $self->default_importer})
-        {
-            check_hash_ref($c);
-            my $package = $c->{package} || $self->default_importer_package;
-            my $opts    = $c->{options} || {};
-            if (@_ > 1) {
-                $opts = {%$opts, @_};
-            }
-            elsif (@_ == 1) {
-                $opts = {%$opts, %{$_[0]}};
-            }
-            return require_package($package, $ns)->new($opts);
-        }
-    }
-    require_package($name || $self->default_importer_package, $ns)->new(@_);
+    $self->named_package('importer', @_);
 }
 
 sub exporter {
     my $self = shift;
+    $self->named_package('exporter', @_);
+}
+
+sub validator {
+    my $self = shift;
+    $self->named_package('validator', @_);
+}
+
+sub named_package {
+    my $self = shift;
+    my $type = shift;
     my $name = shift;
 
-    return $name
-        if (is_invocant($name) && ref($name) =~ /^Catmandu::Exporter/);
+    my $ns   = $self->{$type.'_namespace'};
 
-    my $ns = $self->exporter_namespace;
-    if (exists $self->config->{exporter}) {
+    return $name
+        if (is_invocant($name) && index($name, $ns) == 0);
+
+    if (exists $self->config->{$type}) {
         if (my $c
-            = $self->config->{exporter}{$name || $self->default_exporter})
+            = $self->config->{$type}{$name || $self->{"default_$type"}})
         {
             check_hash_ref($c);
-            my $package = $c->{package} || $self->default_exporter_package;
+            my $package = $c->{package} || $self->{"default_{$type}_package"};
             my $opts    = $c->{options} || {};
             if (@_ > 1) {
                 $opts = {%$opts, @_};
@@ -229,7 +226,7 @@ sub exporter {
             return require_package($package, $ns)->new($opts);
         }
     }
-    require_package($name || $self->default_exporter_package, $ns)->new(@_);
+    require_package($name || $self->{"default_${type}_package"}, $ns)->new(@_);
 }
 
 1;
@@ -258,7 +255,7 @@ Catmandu::Env - A catmandu configuration file loader
 =head1 DESCRIPTION
 
 This class loads the catmandu.*.pl, catmandu.*.json, catmandu.*.yml and catmandu.*.yaml file from
-all provided load_paths. Programmers are advised *not* to use this class directly 
+all provided load_paths. Programmers are advised I<not> to use this class directly 
 but use the equivalent functionality provided in the Catmandu package:
 
      Catmandu->load('/etc/catmandu');
