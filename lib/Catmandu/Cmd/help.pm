@@ -39,7 +39,18 @@ my %MODULES = (
             "catmandu copy   %n [options] ...",
         ]
     },
-    Fix => {re => qr/^fix$/i, usage => ["%n( [options] )"]},
+    Fix => {
+        re => qr/^fix$/i,
+        usage => ["%n( [options] )"]
+    },
+    'Fix::Bind' => {
+        re => qr/^bind$/i,
+        usage => ["do %n( [options] ) ... end"]
+    },
+    'Fix::Condition' => {
+        re => qr/^condition$/i,
+        usage => ["if %n( [options] ) ... end"]
+    },
 );
 
 sub execute {
@@ -67,7 +78,26 @@ sub execute {
 sub help_about {
     my ($self, $type, $name) = @_;
 
-    my $class = "Catmandu::${type}::$name";
+    my $class;
+    if ($type eq 'Fix') {
+        foreach ('Fix', 'Fix::Bind', 'Fix::Condition') {
+            $type = $_;
+            try {
+                require_package($name, "Catmandu::$type");
+                $class = "Catmandu::${type}::$name";
+            } catch { };
+            last if $class;
+        }
+        unless ($class) {
+            Catmandu::NoSuchFixPackage->throw({
+                message      => "No such fix package: $name",
+                package_name => "Catmandu::Fix::(Bind::|Condition::)?$name",
+                fix_name     => $name,
+            })
+        }
+    }
+
+    $class = "Catmandu::${type}::$name";
     require_package($class);
 
     my $about = pod_section($class, "name");
