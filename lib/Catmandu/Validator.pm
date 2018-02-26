@@ -116,7 +116,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Validator - Namespace for packages that can validate records in Catmandu.
+Catmandu::Validator - Namespace for packages that can validate items in Catmandu
 
 =head1 SYNOPSIS
 
@@ -217,6 +217,8 @@ Returns the number of invalid records from the last validate operation.
 
 =head1 SEE ALSO
 
-L<Catmandu::Validator::Simple>, L<Catmandu::Iterable>
+L<Catmandu::Validator::Blind> and L<Catmandu::Validator::Simple>.
+
+L<Catmandu::Iterable>
 
 =cut
