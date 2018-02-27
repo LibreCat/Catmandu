@@ -18,7 +18,7 @@ travis:
 ifeq ($(strip $(FILE)),)
 	carton exec 'cover -test'
 else
-	carton exec "PERL5OPT=-MDevel::Cover env perl -Ilib ${FILE}"
+	carton exec "PERL5OPT=-MDevel::Cover env perl -Ilib $(FILE)"
 endif
 	if [ -d cover_db ]; then rm -rf cover_db/ ; fi
 	carton exec './Build realclean'
