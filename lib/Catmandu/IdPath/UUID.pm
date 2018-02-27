@@ -55,6 +55,34 @@ sub from_path {
 
 }
 
+sub delete {
+
+    my ( $self, $id ) = @_;
+
+    my $path = $self->to_path( $id );
+
+    my $err;
+    File::Path::rmtree( $path, { error => $err } );
+
+    if ( @$err ) {
+
+        my @messages;
+
+        for my $diag ( @$err ) {
+
+            my ( $file, $message ) = %$diag;
+            push @messages, $message;
+
+        }
+
+        Catmandu::Error->throw( join( ",", @messages ) );
+
+    }
+
+    1;
+
+}
+
 sub generator {
 
     my $self = $_[0];

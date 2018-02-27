@@ -11,6 +11,8 @@ use Path::Iterator::Rule;
 use File::Spec;
 use Carp;
 use Catmandu::BadArg;
+use Catmandu::Error;
+use File::Path;
 use namespace::clean;
 
 with "Catmandu::IdPath";
@@ -70,6 +72,33 @@ sub from_path {
     my $id = join( "", splice(@split_path, scalar(File::Spec->splitdir( $self->base_dir )) ) );
 
     $self->format_id( $id );
+
+}
+sub delete {
+
+    my ( $self, $id ) = @_;
+
+    my $path = $self->to_path( $id );
+
+    my $err;
+    File::Path::rmtree( $path, { error => $err } );
+
+    if ( @$err ) {
+
+        my @messages;
+
+        for my $diag ( @$err ) {
+
+            my ( $file, $message ) = %$diag;
+            push @messages, $message;
+
+        }
+
+        Catmandu::Error->throw( join( ",", @messages ) );
+
+    }
+
+    1;
 
 }
 

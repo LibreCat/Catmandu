@@ -11,6 +11,7 @@ with "Catmandu::Iterable";
 
 requires "to_path";
 requires "from_path";
+requires "delete";
 
 1;
 
@@ -108,6 +109,12 @@ implementation.
 * Returns id as string.
 
 This method should throw an error when it detects an invalid id.
+
+=item delete ( $id )
+
+* Accepts id as string
+
+* Implementation must decide what it means to "delete".
 
 =back
 

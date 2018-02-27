@@ -12,6 +12,8 @@ use Digest::MD5 qw();
 use POSIX qw();
 use Data::Dumper;
 use Moo;
+use File::Path;
+use Catmandu::Error;
 use namespace::clean;
 
 with "Catmandu::IdPath";
@@ -97,6 +99,34 @@ sub from_path {
     return unless defined $mapping;
 
     return $mapping->{_id};
+
+}
+
+sub delete {
+
+    my ( $self, $id ) = @_;
+
+    my $path = $self->to_path( $id );
+
+    my $err;
+    File::Path::rmtree( $path, { error => $err } );
+
+    if ( @$err ) {
+
+        my @messages;
+
+        for my $diag ( @$err ) {
+
+            my ( $file, $message ) = %$diag;
+            push @messages, $message;
+
+        }
+
+        Catmandu::Error->throw( join( ",", @messages ) );
+
+    }
+
+    $self->lookup()->delete( $id );
 
 }
 
