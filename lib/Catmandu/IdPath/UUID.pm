@@ -104,14 +104,14 @@ Catmandu::IdPath::UUID - A uuid based path translator
         base_dir => "/data"
     );
 
-    #get path for record: "/data/9A5/81C/80-/118/9-1/1E8/-AB/6D-/46B/C15/3F8/9DB"
+    # Returns a path like: "/data/9A5/81C/80-/118/9-1/1E8/-AB/6D-/46B/C15/3F8/9DB"
     my $path = $p->to_path("9A581C80-1189-11E8-AB6D-46BC153F89DB");
 
-    #translate $path back to "9A581C80-1189-11E8-AB6D-46BC153F89DB"
+    # Translate $path back to "9A581C80-1189-11E8-AB6D-46BC153F89DB"
     my $id = $p->from_path( $path );
 
-    #Catmandu::IdPath::Number is a Catmandu::Iterable
-    #Returns list of records: [{ _id => 1234, _path => "/data/000/001/234" }]
+    # Catmandu::IdPath::Number is a Catmandu::Iterable
+    # Returns list of records: [{ _id => 1234, _path => "/data/000/001/234" }]
     my $id_paths = $p->to_array();
 
 =head1 METHODS

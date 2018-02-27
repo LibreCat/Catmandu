@@ -136,11 +136,9 @@ Catmandu::IdPath::Map - translates between id and path using a bag as lookup
     use Catmandu::IdPath::Map;
     use Catmandu::Store::DBI;
 
-    #lookup bag
+    # Bag to store/retrieve all path -> directory mapping
     my $bag = Catmandu::Store::DBI->new(
-
         data_source => "dbi:sqlite:dbname=/data/index.db"
-
     )->bag("paths");
 
     my $p = Catmandu::IdPath::Map->new(
@@ -148,19 +146,19 @@ Catmandu::IdPath::Map - translates between id and path using a bag as lookup
         lookup => $lookup
     );
 
-    #get path for record: "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661"
+    # Returns a path like: "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661"
     my $path = $p->to_path("a");
 
-    #translate $path back to id: "a"
+    # Translates $path back to the id: "a"
     my $id = $p->from_path( $path );
 
-    #Catmandu::IdPath::Map is a Catmandu::Iterable
-    #Returns list of records: [{ _id => "a", _path => "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661" }]
+    # Catmandu::IdPath::Map is a Catmandu::Iterable
+    # Returns list of records: [{ _id => "a", _path => "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661" }]
     my $id_paths = $p->to_array();
 
 =head1 DESCRIPTION
 
-    This package uses a Catmandu::Bag as lookup to translate between id and path.
+    This package uses a Catmandu::Bag backend to translate between ids and paths.
 
     Each record looks like this:
 
@@ -177,23 +175,8 @@ Catmandu::IdPath::Map - translates between id and path using a bag as lookup
     * $s: current second
     * $md5_id: the md5 of the _id
 
-    So a directory always looks like this:
-
-        $base_dir/$Y/$M/$D/$h/$m/$s/$md5
-
-    The method to_path uses this method to select the mapping:
-
-        $lookup->get( $id );
-
-    ..when not found it is created:
-
-        $lookup->add( { _id => $id, _path => $path } );
-
-    The method from_path uses this method to select the mapping:
-
-        $lookup->select( _path => $path )->first();
-
-    So make sure that a select on the attribute "_path" is efficient.
+    Every call to C<to_path> will generate a directory entry in the backend database,
+    if it didn't already exist.
 
 =head1 METHODS
 

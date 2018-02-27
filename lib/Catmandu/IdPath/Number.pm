@@ -123,14 +123,14 @@ Catmandu::IdPath::Number - A number based path translator
         keysize => 9
     );
 
-    #get path for record: "/data/000/001/234"
+    # Return path like record: "/data/000/001/234"
     my $path = $p->to_path(1234);
 
-    #translate $path back to "000001234"
+    # Translates $path back to "000001234"
     my $id = $p->from_path( $path );
 
-    #Catmandu::IdPath::Number is a Catmandu::Iterable
-    #Returns list of records: [{ _id => "000001234", _path => "/data/000/001/234" }]
+    # Catmandu::IdPath::Number is a Catmandu::Iterable
+    # Returns list of records: [{ _id => "000001234", _path => "/data/000/001/234" }]
     my $id_paths = $p->to_array();
 
 =head1 METHODS

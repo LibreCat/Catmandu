@@ -32,53 +32,39 @@ Catmandu::IdPath - A base role to translate between id and path
 
     with "Catmandu::IdPath";
 
-    #required method: translate id to directory
+    # required method: translate id to directory
     sub to_path {
-
         my ( $self, $id ) = @_;
         File::Spec->catdir( $self->base_dir(), $id );
-
     }
 
-    #required method: translate path back to id
+    # required method: translate path back to id
     sub from_path {
-
         my ( $self, $path ) = @_;
-
         my @split_path = File::Spec->splitdir( $path );
         @splice_path = splice(@split_path, scalar(File::Spec->splitdir( $self->base_dir )) );
         $splice_path[-1];
-
     }
 
-    #return a generator that returns list of records, that maps _id and _path
+    # return a generator that returns list of records, that maps _id and _path
     sub generator {
-
         my $self = $_[0];
         return sub {
-
             state $records;
 
             if ( !defined( $records ) ) {
-
                 $records = [];
 
                 opendir my $dh, $self->base_dir() or die($!);
-
                 while( my $entry = readdir( $dh ) ){
-
                     if ( -d $entry ) {
-
                         push @$records, {
                             _id => $entry,
                             _path => File::Spec->catfile( $self->base_dir, $entry )
                         };
-
                     }
                 }
-
                 closedir $dh;
-
             }
 
             shift( @$records );
@@ -110,9 +96,8 @@ Implementors must implement these methods
 
 This method should throw an error when it detects an invalid id.
 
-Only the implementor can decide what should be a valid id.
-
-This method should not create the path. That is the responsibility of the user.
+This method should not create the path, which should be done in the L<Catmandu::FileStore>
+implementation.
 
 =item from_path( $path )
 
@@ -123,8 +108,6 @@ This method should not create the path. That is the responsibility of the user.
 * Returns id as string.
 
 This method should throw an error when it detects an invalid id.
-
-Only the implementor can decide what should be a valid id.
 
 =back
 
@@ -140,6 +123,7 @@ This Catmandu::IdPath inherits:
 
 =head1 SEE ALSO
 
+L<Catmandu::Store::File::Simple> ,
 L<Catmandu::IdPath::UUID> ,
 L<Catmandu::IdPath::Number>
 
