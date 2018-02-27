@@ -432,13 +432,13 @@ Verify the SSL certificate.
 =item http_retry
 
 Maximum times to retry the HTTP request if it temporarily fails. Default is not
-to retry.  See L<LWP::User::UserAgent::Determined> for the HTTP status codes
+to retry.  See L<LWP::UserAgent::Determined> for the HTTP status codes
 that initiate a retry.
 
 =item http_timing
 
 Maximum times and timeouts to retry the HTTP request if it temporarily fails. Default is not
-to retry.  See L<LWP::User::UserAgent::Determined> for the HTTP status codes
+to retry.  See L<LWP::UserAgent::Determined> for the HTTP status codes
 that initiate a retry and the format of the timing value.
 
 =back
