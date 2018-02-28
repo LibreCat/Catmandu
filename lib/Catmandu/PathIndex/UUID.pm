@@ -1,4 +1,4 @@
-package Catmandu::IdPath::UUID;
+package Catmandu::PathIndex::UUID;
 
 our $VERSION = '1.08';
 
@@ -10,11 +10,10 @@ use Path::Tiny;
 use Path::Iterator::Rule;
 use File::Spec;
 use Data::UUID;
-use Carp;
 use Catmandu::BadArg;
 use namespace::clean;
 
-with "Catmandu::IdPath";
+with "Catmandu::PathIndex";
 
 has base_dir => (
     is => "ro",
@@ -30,7 +29,7 @@ sub is_uuid {
 
 }
 
-sub to_path {
+sub _to_path {
 
     my ( $self, $id ) = @_;
 
@@ -42,7 +41,7 @@ sub to_path {
 
 }
 
-sub from_path {
+sub _from_path {
 
     my ( $self, $path ) = @_;
 
@@ -55,31 +54,47 @@ sub from_path {
 
 }
 
+sub get {
+
+    my ( $self, $id ) = @_;
+
+    my $path = $self->_to_path( $id );
+
+    is_string( $path ) && -d $path ? { _id => $id, _path => $path } : undef;
+
+}
+
+sub add {
+
+    my ( $self, $id ) = @_;
+
+    my $path = $self->_to_path( $id );
+
+    path( $path )->mkpath( $path ) unless -d $path;
+
+    { _id => $id, _path => $path };
+
+}
+
 sub delete {
 
     my ( $self, $id ) = @_;
 
-    my $path = $self->to_path( $id );
+    my $path = $self->_to_path( $id );
 
-    my $err;
-    File::Path::rmtree( $path, { error => $err } );
+    if ( is_string( $path ) && -d $path ) {
 
-    if ( @$err ) {
-
-        my @messages;
-
-        for my $diag ( @$err ) {
-
-            my ( $file, $message ) = %$diag;
-            push @messages, $message;
-
-        }
-
-        Catmandu::Error->throw( join( ",", @messages ) );
+        path( $path )->remove_tree();
 
     }
 
     1;
+
+}
+
+sub delete_all {
+
+    path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
 
 }
 
@@ -107,7 +122,7 @@ sub generator {
 
         return unless defined $path;
 
-        my $id = $self->from_path( $path );
+        my $id = $self->_from_path( $path );
 
         +{ _id => $id, _path => $path };
     };
@@ -122,31 +137,32 @@ __END__
 
 =head1 NAME
 
-Catmandu::IdPath::UUID - A uuid based path translator
+Catmandu::PathIndex::UUID - A uuid based path translator
 
 =head1 SYNOPSIS
 
-    use Catmandu::IdPath::UUID;
+    use Catmandu::PathIndex::UUID;
 
-    my $p = Catmandu::IdPath::UUID->new(
+    my $p = Catmandu::PathIndex::UUID->new(
         base_dir => "/data"
     );
 
-    # Returns a path like: "/data/9A5/81C/80-/118/9-1/1E8/-AB/6D-/46B/C15/3F8/9DB"
-    my $path = $p->to_path("9A581C80-1189-11E8-AB6D-46BC153F89DB");
+    # Returns mapping like { _id  => "9A581C80-1189-11E8-AB6D-46BC153F89DB", "/data/9A5/81C/80-/118/9-1/1E8/-AB/6D-/46B/C15/3F8/9DB" }
+    # Can be undef
+    my $mapping = $p->get("9A581C80-1189-11E8-AB6D-46BC153F89DB");
 
-    # Translate $path back to "9A581C80-1189-11E8-AB6D-46BC153F89DB"
-    my $id = $p->from_path( $path );
+    # Create path and return mapping
+    my $mapping = $p->add("9A581C80-1189-11E8-AB6D-46BC153F89DB");
 
-    # Catmandu::IdPath::Number is a Catmandu::Iterable
+    # Catmandu::PathIndex::Number is a Catmandu::Iterable
     # Returns list of records: [{ _id => 1234, _path => "/data/000/001/234" }]
-    my $id_paths = $p->to_array();
+    my $mappings = $p->to_array();
 
 =head1 METHODS
 
 =head2 new( base_dir => $path )
 
-Create a new Catmandu::IdPath::UUID with the following configuration
+Create a new Catmandu::PathIndex::UUID with the following configuration
 parameters:
 
 =over
@@ -159,16 +175,16 @@ The base directory where the files are stored. Required
 
 =head1 INHERITED METHODS
 
-This Catmandu::IdPath::Number implements:
+This Catmandu::PathIndex::Number implements:
 
 =over 3
 
-=item L<Catmandu::IdPath>
+=item L<Catmandu::PathIndex>
 
 =back
 
 =head1 SEE ALSO
 
-L<Catmandu::IdPath>
+L<Catmandu::PathIndex>
 
 =cut

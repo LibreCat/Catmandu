@@ -1,4 +1,4 @@
-package Catmandu::IdPath::Number;
+package Catmandu::PathIndex::Number;
 
 our $VERSION = '1.08';
 
@@ -6,16 +6,13 @@ use Catmandu::Sane;
 use Catmandu::Util qw(:is :check);
 use Moo;
 use Cwd;
-use Path::Tiny;
+use Path::Tiny qw(path);
 use Path::Iterator::Rule;
 use File::Spec;
-use Carp;
 use Catmandu::BadArg;
-use Catmandu::Error;
-use File::Path;
 use namespace::clean;
 
-with "Catmandu::IdPath";
+with "Catmandu::PathIndex";
 
 has base_dir => (
     is => "ro",
@@ -27,10 +24,10 @@ has base_dir => (
 has keysize => (is => 'ro', default  => 9, trigger => 1);
 
 sub _trigger_keysize {
-    my $self = shift;
 
-    croak "keysize needs to be a multiple of 3"
-        unless $self->keysize % 3 == 0;
+    Catmandu::BadArg->throw( "keysize needs to be a multiple of 3" )
+        unless $_[0]->keysize % 3 == 0;
+
 }
 sub format_id {
     my ( $self, $id ) = @_;
@@ -52,19 +49,17 @@ sub format_id {
 
 }
 
-sub to_path {
+sub _to_path {
 
     my ( $self, $id ) = @_;
 
-    my $f_id = $self->format_id( $id );
-
     File::Spec->catdir(
-        $self->base_dir, unpack( "(A3)*", $f_id )
+        $self->base_dir, unpack( "(A3)*", $id )
     );
 
 }
 
-sub from_path {
+sub _from_path {
 
     my ( $self, $path ) = @_;
 
@@ -74,31 +69,51 @@ sub from_path {
     $self->format_id( $id );
 
 }
+
+sub get {
+
+    my ( $self, $id ) = @_;
+
+    my $f_id = $self->format_id( $id );
+    my $path = $self->_to_path( $f_id );
+
+    is_string( $path ) && -d $path ? { _id => $f_id, _path => $path } : undef;
+
+}
+
+sub add {
+
+    my ( $self, $id ) = @_;
+
+    my $f_id = $self->format_id( $id );
+    my $path = $self->_to_path( $f_id );
+
+    path( $path )->mkpath( $path ) unless -d $path;
+
+    +{ _id => $f_id, _path => $path };
+
+}
+
 sub delete {
 
     my ( $self, $id ) = @_;
 
-    my $path = $self->to_path( $id );
+    my $f_id = $self->format_id( $id );
+    my $path = $self->_to_path( $f_id );
 
-    my $err;
-    File::Path::rmtree( $path, { error => $err } );
+    if ( is_string( $path ) && -d $path ) {
 
-    if ( @$err ) {
-
-        my @messages;
-
-        for my $diag ( @$err ) {
-
-            my ( $file, $message ) = %$diag;
-            push @messages, $message;
-
-        }
-
-        Catmandu::Error->throw( join( ",", @messages ) );
+        path( $path )->remove_tree();
 
     }
 
     1;
+
+}
+
+sub delete_all {
+
+    path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
 
 }
 
@@ -126,7 +141,7 @@ sub generator {
 
         return unless defined $path;
 
-        my $id = $self->from_path( $path );
+        my $id = $self->_from_path( $path );
 
         +{ _id => $id, _path => $path };
     };
@@ -141,32 +156,33 @@ __END__
 
 =head1 NAME
 
-Catmandu::IdPath::Number - A number based path translator
+Catmandu::PathIndex::Number - A number based path translator
 
 =head1 SYNOPSIS
 
-    use Catmandu::IdPath::Number;
+    use Catmandu::PathIndex::Number;
 
-    my $p = Catmandu::IdPath::Number->new(
+    my $p = Catmandu::PathIndex::Number->new(
         base_dir => "/data",
         keysize => 9
     );
 
-    # Return path like record: "/data/000/001/234"
-    my $path = $p->to_path(1234);
+    # get mapping for id: { _id => 1234, _path => "/data/000/001/234" }
+    # can be undef
+    my $mapping = $p->get(1234);
 
-    # Translates $path back to "000001234"
-    my $id = $p->from_path( $path );
+    # create mapping for id. Path created if necessary
+    my $mapping = $p->add(1234);
 
-    # Catmandu::IdPath::Number is a Catmandu::Iterable
+    # Catmandu::PathIndex::Number is a Catmandu::Iterable
     # Returns list of records: [{ _id => "000001234", _path => "/data/000/001/234" }]
-    my $id_paths = $p->to_array();
+    my $mappings = $p->to_array();
 
 =head1 METHODS
 
 =head2 new( base_dir => $path , keysize => NUM )
 
-Create a new Catmandu::IdPath::Number with the following configuration
+Create a new Catmandu::PathIndex::Number with the following configuration
 parameters:
 
 =over
@@ -185,16 +201,16 @@ All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =head1 INHERITED METHODS
 
-This Catmandu::IdPath::Number implements:
+This Catmandu::PathIndex::Number implements:
 
 =over 3
 
-=item L<Catmandu::IdPath>
+=item L<Catmandu::PathIndex>
 
 =back
 
 =head1 SEE ALSO
 
-L<Catmandu::IdPath>
+L<Catmandu::PathIndex>
 
 =cut

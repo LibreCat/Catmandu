@@ -17,7 +17,7 @@ sub generator {
 
     return sub {
 
-        state $iter = $self->store->id_path()->generator();
+        state $iter = $self->store->_path_index()->generator();
 
         my $mapping = $iter->();
 
@@ -35,9 +35,7 @@ sub exists {
 
     $self->log->debug("Checking exists $id");
 
-    my $path = $self->store->id_path->to_path($id);
-
-    defined($path) && -d $path;
+    defined( $self->store->_path_index->get( $id ) );
 }
 
 sub add {
@@ -51,24 +49,7 @@ sub add {
         croak "Can't add a file to the index";
     }
 
-    my $path = $self->store->id_path->to_path($id);
-
-    unless (defined $path) {
-        my $err = "Failed to create path from $id";
-        $self->log->error($err);
-        Catmandu::BadArg->throw($err);
-    }
-
-    $self->log->debug("Generating path $path for key $id");
-
-    # Throws an exception when the path can't be created
-    path($path)->mkpath;
-
-    my $new_data = $self->get($id);
-
-    $data->{$_} = $new_data->{$_} for keys %$new_data;
-
-    1;
+    $self->store->_path_index->add($id);
 }
 
 sub get {
@@ -76,22 +57,9 @@ sub get {
 
     croak "Need an id" unless defined $id;
 
-    my $path = $self->store->id_path->to_path($id);
+    my $mapping = $self->store->_path_index->get($id);
 
-    unless ($path) {
-        $self->log->error(
-            "Failed to create path from $id"
-        );
-        return undef;
-    }
-
-    $self->log->debug("Loading path $path for id $id");
-
-    return undef unless -d $path;
-
-    my @stat = stat $path;
-
-    return +{_id => $id,};
+    defined( $mapping ) ? { _id => $id } : undef;
 }
 
 sub delete {
@@ -99,32 +67,13 @@ sub delete {
 
     croak "Need a key" unless defined $id;
 
-    my $path = $self->store->id_path->to_path($id);
-
-    unless ($path) {
-        $self->log->error("Failed to create path from $id");
-        return undef;
-    }
-
-    $self->log->debug("Destoying path $path for key $id");
-
-    return undef unless -d $path;
-
-    # Throws an exception when the path can't be created
-    path($path)->remove_tree;
-
-    1;
+    $self->store->_path_index->delete( $id );
 }
 
 sub delete_all {
     my ($self) = @_;
 
-    $self->each(
-        sub {
-            my $key = shift->{_id};
-            $self->delete($key);
-        }
-    );
+    $self->store->_path_index->delete_all;
 }
 
 sub drop {

@@ -10,8 +10,8 @@ use Catmandu::Util;
 use Catmandu::Store::File::Simple::Index;
 use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
-use Catmandu::IdPath::UUID;
-use Catmandu::IdPath::Number;
+use Catmandu::PathIndex::UUID;
+use Catmandu::PathIndex::Number;
 use namespace::clean;
 
 with 'Catmandu::FileStore';
@@ -30,32 +30,32 @@ has keysize => (
     },
     default  => 9
 );
-has id_path_package => (
+has path_index => (
     is => "ro"
 );
-has id_path_options => (
+has path_index_options => (
     is => "ro",
     lazy => 1,
     default => sub { +{}; }
 );
-has id_path => (
+has _path_index => (
     is => "ro",
     lazy => 1,
-    builder => "_build_id_path"
+    builder => "_build__path_index"
 );
 
-sub _build_id_path {
+sub _build__path_index {
 
     my $self = $_[0];
 
 
-    if ( $self->id_path_package() ) {
+    if ( $self->path_index() ) {
 
         Catmandu::Util::require_package(
-            $self->id_path_package(), "Catmandu::IdPath"
+            $self->path_index(), "Catmandu::PathIndex"
         )->new(
             %{
-                $self->id_path_options(),
+                $self->path_index_options(),
             },
             base_dir => $self->root()
         );
@@ -63,14 +63,14 @@ sub _build_id_path {
     }
     elsif ( $self->uuid() ) {
 
-        Catmandu::IdPath::UUID->new(
+        Catmandu::PathIndex::UUID->new(
             base_dir => $self->root()
         );
 
     }
     else {
 
-        Catmandu::IdPath::Number->new(
+        Catmandu::PathIndex::Number->new(
             base_dir => $self->root(),
             keysize => $self->keysize()
         );
@@ -179,7 +179,7 @@ The root directory where to store all the files. Required.
 
 =item keysize
 
-DEPRECATED: use id_path_package and id_path_options
+DEPRECATED: use path_index and path_index_options
 
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
@@ -187,29 +187,19 @@ All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =item uuid
 
-DEPRECATED: use id_path_package and id_path_options
+DEPRECATED: use path_index and path_index_options
 
 If the to a true value, then the Simple store will require UUID-s as keys
 
-=item id_path_package
+=item path_index
 
 package that translates between id and path.
 
-Default: L<Catmandu::IdPath::Number>
+Default: L<Catmandu::PathIndex::Number>
 
-Ignored when id_path is given.
+=item path_index_options
 
-=item id_path_options
-
-Options for the id_path (see above)
-
-Ignored when id_path is given.
-
-=item id_path
-
-Object that does the translation between id and path.
-
-Must be instance of L<Catmandu::IdPath>.
+Options for the path_index (see above)
 
 =back
 
