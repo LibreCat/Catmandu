@@ -22,7 +22,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::PathIndex - A base role to store relation between id and path
+Catmandu::PathIndex - A base role to store relations between id-s and path-s
 
 =head1 SYNOPSIS
 
@@ -42,39 +42,32 @@ Catmandu::PathIndex - A base role to store relation between id and path
     }
 
     sub get {
-
         my ( $self, $id ) = @_;
         my $path = $self->_to_path( $id );
 
         is_string( $path ) && -d $path ? { _id => $id, _path => $path } : undef;
-
     }
-    sub add {
 
+    sub add {
         my ( $self, $id ) = @_;
         my $path = $self->_to_path( $id );
 
         path( $path )->mkpath unless -d $path;
 
         { _id => $id, _path => $path };
-
     }
-    sub delete {
 
+    sub delete {
         my ( $self, $id ) = @_;
         my $path = $self->_to_path( $id );
 
         if ( is_string( $path ) && -d $path ) {
-
             path( $path )->remove_tree();
-
         }
-
     }
+
     sub delete_all {
-
         path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
-
     }
 
     # return a generator that returns list of records, that maps _id and _path
@@ -100,7 +93,6 @@ Catmandu::PathIndex - A base role to store relation between id and path
 
             shift( @$records );
         };
-
     }
 
     package main;
@@ -108,11 +100,9 @@ Catmandu::PathIndex - A base role to store relation between id and path
     my $p = MyPath->new( base_dir => "/tmp" );
 
     Catmandu->store->bag->each(sub {
-
         my $r = $_[0];
         my $mapping = $p->get( $r->{_id} ) || $p->add( $r->{_id} );
         say $id . " => " . $mapping->{path};
-
     });
 
 =head1 METHODS TO IMPLEMENT
@@ -183,6 +173,7 @@ This Catmandu::PathIndex inherits:
 
 L<Catmandu::Store::File::Simple> ,
 L<Catmandu::PathIndex::UUID> ,
-L<Catmandu::PathIndex::Number>
+L<Catmandu::PathIndex::Number> ,
+L<Catmandu::PathIndex::Map>
 
 =cut
