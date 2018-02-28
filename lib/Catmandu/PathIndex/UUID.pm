@@ -25,7 +25,7 @@ has base_dir => (
 sub is_uuid {
 
     my $id = $_[0];
-    is_string( $id ) && $id =~ /^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}$/o;
+    is_string( $id ) && $id =~ /^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/o;
 
 }
 
@@ -48,6 +48,8 @@ sub _from_path {
     my @split_path = File::Spec->splitdir( $path );
     my $id = join( "", splice(@split_path, scalar(File::Spec->splitdir( $self->base_dir )) ) );
 
+    $id = uc( $id );
+
     Catmandu::BadArg->throw( "invalid uuid detected: $id" ) unless is_uuid( $id );
 
     $id;
@@ -58,9 +60,10 @@ sub get {
 
     my ( $self, $id ) = @_;
 
-    my $path = $self->_to_path( $id );
+    my $f_id = uc( $id );
+    my $path = $self->_to_path( $f_id );
 
-    is_string( $path ) && -d $path ? { _id => $id, _path => $path } : undef;
+    is_string( $path ) && -d $path ? { _id => $f_id, _path => $path } : undef;
 
 }
 
@@ -68,11 +71,12 @@ sub add {
 
     my ( $self, $id ) = @_;
 
-    my $path = $self->_to_path( $id );
+    my $f_id = uc( $id );
+    my $path = $self->_to_path( $f_id );
 
     path( $path )->mkpath( $path ) unless -d $path;
 
-    { _id => $id, _path => $path };
+    { _id => $f_id, _path => $path };
 
 }
 
@@ -80,7 +84,8 @@ sub delete {
 
     my ( $self, $id ) = @_;
 
-    my $path = $self->_to_path( $id );
+    my $f_id = uc( $id );
+    my $path = $self->_to_path( $f_id );
 
     if ( is_string( $path ) && -d $path ) {
 
