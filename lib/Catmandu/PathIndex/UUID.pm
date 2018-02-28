@@ -23,14 +23,11 @@ has base_dir => (
 );
 
 sub is_uuid {
-
     my $id = $_[0];
     is_string( $id ) && $id =~ /^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/o;
-
 }
 
 sub _to_path {
-
     my ( $self, $id ) = @_;
 
     Catmandu::BadArg->throw( "need valid uuid" ) unless is_uuid( $id );
@@ -38,11 +35,9 @@ sub _to_path {
     File::Spec->catdir(
         $self->base_dir, unpack( "(A3)*", $id )
     );
-
 }
 
 sub _from_path {
-
     my ( $self, $path ) = @_;
 
     my @split_path = File::Spec->splitdir( $path );
@@ -53,11 +48,9 @@ sub _from_path {
     Catmandu::BadArg->throw( "invalid uuid detected: $id" ) unless is_uuid( $id );
 
     $id;
-
 }
 
 sub get {
-
     my ( $self, $id ) = @_;
 
     my $f_id = uc( $id );
@@ -68,7 +61,6 @@ sub get {
 }
 
 sub add {
-
     my ( $self, $id ) = @_;
 
     my $f_id = uc( $id );
@@ -81,7 +73,6 @@ sub add {
 }
 
 sub delete {
-
     my ( $self, $id ) = @_;
 
     my $f_id = uc( $id );
@@ -94,17 +85,13 @@ sub delete {
     }
 
     1;
-
 }
 
 sub delete_all {
-
     path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
-
 }
 
 sub generator {
-
     my $self = $_[0];
 
     return sub {
@@ -131,7 +118,6 @@ sub generator {
 
         +{ _id => $id, _path => $path };
     };
-
 }
 
 1;

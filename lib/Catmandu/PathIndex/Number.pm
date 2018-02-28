@@ -24,11 +24,10 @@ has base_dir => (
 has keysize => (is => 'ro', default  => 9, trigger => 1);
 
 sub _trigger_keysize {
-
     Catmandu::BadArg->throw( "keysize needs to be a multiple of 3" )
         unless $_[0]->keysize % 3 == 0;
-
 }
+
 sub format_id {
     my ( $self, $id ) = @_;
 
@@ -46,43 +45,35 @@ sub format_id {
         if length( "$id" ) > $keysize;
 
     sprintf "%-${keysize}.${keysize}d", $n_id;
-
 }
 
 sub _to_path {
-
     my ( $self, $id ) = @_;
 
     File::Spec->catdir(
         $self->base_dir, unpack( "(A3)*", $id )
     );
-
 }
 
 sub _from_path {
-
     my ( $self, $path ) = @_;
 
     my @split_path = File::Spec->splitdir( $path );
     my $id = join( "", splice(@split_path, scalar(File::Spec->splitdir( $self->base_dir )) ) );
 
     $self->format_id( $id );
-
 }
 
 sub get {
-
     my ( $self, $id ) = @_;
 
     my $f_id = $self->format_id( $id );
     my $path = $self->_to_path( $f_id );
 
     is_string( $path ) && -d $path ? { _id => $f_id, _path => $path } : undef;
-
 }
 
 sub add {
-
     my ( $self, $id ) = @_;
 
     my $f_id = $self->format_id( $id );
@@ -91,11 +82,9 @@ sub add {
     path( $path )->mkpath( $path ) unless -d $path;
 
     +{ _id => $f_id, _path => $path };
-
 }
 
 sub delete {
-
     my ( $self, $id ) = @_;
 
     my $f_id = $self->format_id( $id );
@@ -108,33 +97,26 @@ sub delete {
     }
 
     1;
-
 }
 
 sub delete_all {
-
     path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
-
 }
 
 sub generator {
-
     my $self = $_[0];
 
     return sub {
-
         state $rule;
         state $iter;
         state $base_dir = $self->base_dir();
 
         unless ( $iter ) {
-
             $rule = Path::Iterator::Rule->new();
             $rule->min_depth( $self->keysize() / 3 );
             $rule->max_depth( $self->keysize() / 3 );
             $rule->directory();
             $iter = $rule->iter( $base_dir , { depthfirst => 1 } );
-
         }
 
         my $path = $iter->();
@@ -145,7 +127,6 @@ sub generator {
 
         +{ _id => $id, _path => $path };
     };
-
 }
 
 1;

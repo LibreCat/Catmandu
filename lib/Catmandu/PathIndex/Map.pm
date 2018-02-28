@@ -43,25 +43,20 @@ has bag => (
 );
 
 sub _build_bag {
-
     my $self = $_[0];
 
     Catmandu->store( $self->store_name )->bag( $self->bag_name );
-
 }
 
 sub _is_valid_mapping {
-
     my $map = $_[0];
 
     return unless is_hash_ref( $map );
 
     is_string( $map->{_id} ) && is_string( $map->{_path} );
-
 }
 
 sub _new_path {
-
     my ( $self, $id ) = @_;
 
     Catmandu::BadArg->throw( "need id" ) unless is_string( $id );
@@ -79,11 +74,9 @@ sub _new_path {
     $self->bag()->add( { _id => $id, _path => $path } );
 
     $path;
-
 }
 
 sub _to_path {
-
     my ( $self, $id ) = @_;
 
     Catmandu::BadArg->throw( "need id" ) unless is_string( $id );
@@ -93,21 +86,17 @@ sub _to_path {
     return unless _is_valid_mapping( $mapping );
 
     $mapping->{_path};
-
 }
 
 sub get {
-
     my ( $self, $id ) = @_;
 
     my $path = $self->_to_path( $id );
 
     is_string( $path ) && -d $path ? { _id => $id, _path => $path } : undef;
-
 }
 
 sub add {
-
     my ( $self, $id ) = @_;
 
     my $path = $self->_to_path( $id ) || $self->_new_path( $id );
@@ -115,40 +104,31 @@ sub add {
     path( $path )->mkpath( $path ) unless -d $path;
 
     { _id => $id, _path => $path };
-
 }
 
 sub delete {
-
     my ( $self, $id ) = @_;
 
     my $path = $self->_to_path( $id );
 
     if ( is_string( $path ) && -d $path ) {
-
         path( $path )->remove_tree;
-
     }
 
     $self->bag()->delete( $id );
-
 }
 
 sub delete_all {
-
     my $self = $_[0];
 
     path( $self->base_dir )->remove_tree({ keep_root => 1 });
     $self->bag->delete_all;
-
 }
 
 sub generator {
-
     my $self = $_[0];
 
     return sub {
-
         state $gen = $self->bag()->generator();
 
         my $mapping = $gen->();
@@ -159,9 +139,7 @@ sub generator {
             unless _is_valid_mapping( $mapping );
 
         +{ _id => $mapping->{_id}, _path => $mapping->{_path} };
-
     };
-
 }
 
 1;
