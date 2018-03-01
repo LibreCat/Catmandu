@@ -61,31 +61,22 @@ Catmandu::Validator::Simple - Simple Validator for Catmandu
 Catmandu::Validator::Simple can be used for doing simple data validation in
 Catmandu.
 
-=head1 METHODS
+=head1 CONFIGURATION
 
-=head2 new(handler => \&callback, %options)
+=over
 
-The I<callback> function should take $hashref to a data record as argument.
-Should return undef if the record passes validation otherwise return an error
-or an arrayref of errors.  Each error can be either a simple message string or
-a hashref to a more detailed error information.
+=item handler
 
-The constructor also accepts the common options for L<Catmandu::Validator>.
+A function that takes a hash reference item as argument. Should return undef if
+the record passes validation otherwise return an error or an arrayref of
+errors.  Each error can be either a simple message string or a hashref to a
+more detailed error information.
 
-=head2 is_valid(...)
-
-=head2 validate(...)
-
-=head2 last_errors(...)
-
-=head2 valid_count()
-
-=head2 invalid_count()
-
-These are methods are inherited from L<Catmandu::Validator>.
+=back
 
 =head1 SEE ALSO
 
-L<Catmandu::Validator>
+See L<Catmandu::Validator> for inherited methods, common configuration options,
+and usage.
 
 =cut
