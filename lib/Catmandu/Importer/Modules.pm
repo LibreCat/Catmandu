@@ -29,6 +29,8 @@ has pattern => (is => 'ro',);
 
 has primary => (is => 'ro',);
 
+has about => (is => 'ro', default => sub {1});
+
 sub generator {
     my ($self) = @_;
 
@@ -96,9 +98,13 @@ sub generator {
                     close($fh);
                 }
 
-                my $about = pod_section($file, 'NAME');
-                $about =~ s/^[^-]+(\s*-?\s*)?|\n.*$//sg;
-                $data->{about} = $about if $about ne '';
+                if ($self->about) {
+                    my $about = pod_section($file, 'NAME');
+                    $about =~ s/[^-]+(\s*-?\s*)?//;
+                    $about =~ s/\n/ /mg;
+                    $about =~ s/ *$//;
+                    $data->{about} = $about if $about ne '';
+                }
 
                 return $data;
             }
@@ -172,6 +178,11 @@ Filter modules by the given regex pattern
 =item primary
 
 Filter modules to the first module of each name
+
+=item about
+
+Include short description as given in the NAME section of each module's
+documentation.  Enabled by default.
 
 =back
 
