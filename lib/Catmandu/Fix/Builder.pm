@@ -23,7 +23,7 @@ sub fix {
 sub _as_path {
     my ($self, $path) = @_;
     if (is_value($path)) {
-        require_package('default', 'Catmandu::Path')->new({path => $path});
+        require_package('default', 'Catmandu::Path')->new(path => $path);
     }
     else {
         $path;

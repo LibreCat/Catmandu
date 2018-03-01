@@ -130,11 +130,8 @@ sub _build_fh {
         }
 
         my $content = $self->_http_request(
-            $self->http_method,
-            $file,
-            $self->http_headers,
-            $body,
-            $self->_http_timing_tries,
+            $self->http_method, $file, $self->http_headers,
+            $body,              $self->_http_timing_tries,
         );
 
         return io(\$content, mode => 'r', binmode => $_[0]->encoding);
@@ -188,9 +185,7 @@ sub _http_request {
 
     my $res = $client->request($req);
 
-    if (   $res->code =~ /^408|500|502|503|504$/
-        && $timing_tries)
-    {
+    if ($res->code =~ /^408|500|502|503|504$/ && $timing_tries) {
         my @tries = @$timing_tries;
         while (my $sleep = shift @tries) {
             sleep $sleep;
