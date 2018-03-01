@@ -27,6 +27,11 @@ store:
               value: Luna
             - _id: Earth
               value: Terra
+validator:
+    random:
+        package: Blind
+        options:
+            rate: 0.5
 fixer:
    default:
       - nothing()

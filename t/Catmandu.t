@@ -57,6 +57,9 @@ isa_ok(Catmandu->exporter('csv'), 'Catmandu::Exporter::CSV', 'exporter test');
 isa_ok(Catmandu->store,           'Catmandu::Store::Hash',   'store test');
 isa_ok(Catmandu->store('hash'),   'Catmandu::Store::Hash',   'store test');
 isa_ok(Catmandu->fixer,           'Catmandu::Fix',           'fixer test');
+isa_ok(Catmandu->validator, 'Catmandu::Validator::Blind', 'validator test');
+isa_ok(Catmandu->validator('random'),
+    'Catmandu::Validator::Blind', 'validator test');
 
 # store caching
 {
