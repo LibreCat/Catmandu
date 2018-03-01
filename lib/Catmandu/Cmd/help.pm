@@ -39,18 +39,11 @@ my %MODULES = (
             "catmandu copy   %n [options] ...",
         ]
     },
-    Fix => {
-        re => qr/^fix$/i,
-        usage => ["%n( [options] )"]
-    },
-    'Fix::Bind' => {
-        re => qr/^bind$/i,
-        usage => ["do %n( [options] ) ... end"]
-    },
-    'Fix::Condition' => {
-        re => qr/^condition$/i,
-        usage => ["if %n( [options] ) ... end"]
-    },
+    Fix => {re => qr/^fix$/i, usage => ["%n( [options] )"]},
+    'Fix::Bind' =>
+        {re => qr/^bind$/i, usage => ["do %n( [options] ) ... end"]},
+    'Fix::Condition' =>
+        {re => qr/^condition$/i, usage => ["if %n( [options] ) ... end"]},
 );
 
 sub execute {
@@ -70,7 +63,8 @@ sub execute {
                 }
             }
         }
-    } elsif (@$args == 1 && $args->[0] =~ qr/^fix(es)?$/) {
+    }
+    elsif (@$args == 1 && $args->[0] =~ qr/^fix(es)?$/) {
         $self->help_fixes;
         return;
     }
@@ -88,15 +82,19 @@ sub help_about {
             try {
                 require_package($name, "Catmandu::$type");
                 $class = "Catmandu::${type}::$name";
-            } catch { };
+            }
+            catch { };
             last if $class;
         }
         unless ($class) {
-            Catmandu::NoSuchFixPackage->throw({
-                message      => "No such fix package: $name",
-                package_name => "Catmandu::Fix::(Bind::|Condition::)?$name",
-                fix_name     => $name,
-            })
+            Catmandu::NoSuchFixPackage->throw(
+                {
+                    message => "No such fix package: $name",
+                    package_name =>
+                        "Catmandu::Fix::(Bind::|Condition::)?$name",
+                    fix_name => $name,
+                }
+                );
         }
     }
 
@@ -128,22 +126,26 @@ sub help_about {
 sub help_fixes {
     my ($self) = @_;
 
-    my $fixes = Catmandu
-        ->importer('Modules', namespace => 'Catmandu::Fix', primary => 1)
-        ->select( name => qr/::[a-z][^:]*$/ )
-        ->map(sub {
-           $_[0]->{name} =~ s/.*:://;
-           $_[0];
-        });
+    my $fixes = Catmandu->importer(
+        'Modules',
+        namespace => 'Catmandu::Fix',
+        primary   => 1
+        )->select(name => qr/::[a-z][^:]*$/)->map(
+        sub {
+            $_[0]->{name} =~ s/.*:://;
+            $_[0];
+        }
+        );
 
-    my $len = $fixes->max(sub { length $_[0]->{name} });
-    $fixes->sorted('name')->each(sub {
-        say sprintf "%-${len}s %s", $_[0]->{name}, $_[0]->{about}
-    });
+    my $len = $fixes->max(sub {length $_[0]->{name}});
+    $fixes->sorted('name')->each(
+        sub {
+            say sprintf "%-${len}s %s", $_[0]->{name}, $_[0]->{about};
+        }
+    );
 
     say "\nGet additional help with: catmandu help fix <NAME>";
 }
-
 
 1;
 

@@ -17,13 +17,8 @@ require_ok $pkg;
 use Catmandu::CLI;
 
 my @arguments = (
-    [qw(help)],
-    [qw(importer JSON)],
-    [qw(exporter JSON)],
-    [qw(store Hash)],
-    [qw(fix set_field)],
-    [qw(bind maybe)],
-    [qw(condition exists)],
+    [qw(help)], [qw(importer JSON)], [qw(exporter JSON)], [qw(store Hash)],
+    [qw(fix set_field)], [qw(bind maybe)], [qw(condition exists)],
 );
 
 foreach my $args (@arguments) {
@@ -31,4 +26,4 @@ foreach my $args (@arguments) {
     is $result->error, undef, join ' ', qw(catmandu help), @$args;
 }
 
-done_testing 2+@arguments;
+done_testing 2 + @arguments;

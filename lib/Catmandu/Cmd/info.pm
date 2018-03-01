@@ -24,7 +24,7 @@ sub command_opt_spec {
             'override included directories (defaults to @INC)',
             {default => [@INC]}
         ],
-        ["brief",       "omit short module description"],
+        ["brief",         "omit short module description"],
         ["verbose|v",     ""],
         ["fix=s@",        ""],
         ["var=s%",        ""],
