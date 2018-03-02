@@ -16,7 +16,7 @@ has store_args => (fix_opt => 'collect');
 has store      => (is      => 'lazy', init_arg => undef);
 has bag        => (is      => 'lazy', init_arg => undef);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
 sub _build_store {
     my ($self) = @_;
@@ -30,11 +30,14 @@ sub _build_bag {
         : $self->store->bag;
 }
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $bag_var = $fixer->capture($self->bag);
-
-    "if (is_hash_ref(${var})) {" . "${bag_var}->add(${var});" . "}";
+sub _build_fixer {
+    my ($self)   = @_;
+    my $bag = $self->bag;
+    my $getter   = $self->_as_path($self->path)->getter;
+    sub {
+        my $values = $getter->($_[0]);
+        $bag->add($_) for @$values;
+    };
 }
 
 1;
@@ -49,13 +52,13 @@ Catmandu::Fix::add_to_store - add matching values to a store as a side effect
 
 =head1 SYNOPSIS
 
-   # Add the current record to an SQLLite database. 
+   # Add the current record to an SQLite database.
    add_to_store(., DBI, data_source: "dbi:SQLite:path/data.sqlite")
 
-   # Add the journal field to a MongoDB database. 
+   # Add the journal field to a MongoDB database.
    add_to_store(journal, MongoDB, database_name: catalog)
    
-   # Add all author values to a MongoDB database. 
+   # Add all author values to a MongoDB database.
    add_to_store(authors.*, MongoDB, database_name: catalog, bag: authors)
 
 =head1 DESCRIPTION

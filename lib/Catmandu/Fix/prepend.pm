@@ -11,12 +11,13 @@ use Catmandu::Fix::Has;
 has path  => (fix_arg => 1);
 has value => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $value = $fixer->emit_string($self->value);
-    "${var} = join('', ${value}, ${var}) if is_value(${var});";
+sub _build_fixer {
+    my ($self) = @_;
+    my $val = $self->value;
+    $self->_as_path($self->path)
+        ->updater(if => [value => sub {join('', $val, $_[0])}],);
 }
 
 1;

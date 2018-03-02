@@ -16,8 +16,9 @@ requires '_build_fixer';
 has fixer => (is => 'lazy');
 
 sub fix {
-    $_[0]->fixer->($_[1]);
-    $_[1];
+    my ($self, $data) = @_;
+    $self->fixer->($data);
+    $data;
 }
 
 sub _as_path {
