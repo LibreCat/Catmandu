@@ -56,8 +56,6 @@ has default_exporter_package  => (is => 'ro', default => sub {'JSON'});
 has default_validator_package => (is => 'ro', default => sub {'Env'});
 
 has store_namespace     => (is => 'ro', default => sub {'Catmandu::Store'});
-has fixes_namespace     => (is => 'ro', default => sub {'Catmandu::Fix'})
-    ;    # TODO unused
 has importer_namespace  => (is => 'ro', default => sub {'Catmandu::Importer'});
 has exporter_namespace  => (is => 'ro', default => sub {'Catmandu::Exporter'});
 has validator_namespace => (is => 'ro', default => sub {'Catmandu::Validator'});
@@ -187,20 +185,20 @@ sub fixer {
 
 sub importer {
     my $self = shift;
-    $self->named_package('importer', @_);
+    $self->_named_package('importer', @_);
 }
 
 sub exporter {
     my $self = shift;
-    $self->named_package('exporter', @_);
+    $self->_named_package('exporter', @_);
 }
 
 sub validator {
     my $self = shift;
-    $self->named_package('validator', @_);
+    $self->_named_package('validator', @_);
 }
 
-sub named_package {
+sub _named_package {
     my $self = shift;
     my $type = shift;
     my $name = shift;
@@ -210,12 +208,16 @@ sub named_package {
     return $name
         if (is_invocant($name) && index($name, $ns) == 0);
 
+    my $default_package = "default_${type}_package";
+
     if (exists $self->config->{$type}) {
+        my $default_name = "default_$type";
+
         if (my $c
-            = $self->config->{$type}{$name || $self->{"default_$type"}})
+            = $self->config->{$type}{$name || $self->$default_name)
         {
             check_hash_ref($c);
-            my $package = $c->{package} || $self->{"default_{$type}_package"};
+            my $package = $c->{package} || $self->$default_package;
             my $opts    = $c->{options} || {};
             if (@_ > 1) {
                 $opts = {%$opts, @_};
@@ -226,7 +228,8 @@ sub named_package {
             return require_package($package, $ns)->new($opts);
         }
     }
-    require_package($name || $self->{"default_${type}_package"}, $ns)->new(@_);
+
+    require_package($name || $self->$default_package, $ns)->new(@_);
 }
 
 1;
