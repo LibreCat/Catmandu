@@ -40,6 +40,10 @@ my %MODULES = (
         ]
     },
     Fix => {re => qr/^fix$/i, usage => ["%n( [options] )"]},
+    'Fix::Bind' =>
+        {re => qr/^bind$/i, usage => ["do %n( [options] ) ... end"]},
+    'Fix::Condition' =>
+        {re => qr/^condition$/i, usage => ["if %n( [options] ) ... end"]},
 );
 
 sub execute {
@@ -60,6 +64,10 @@ sub execute {
             }
         }
     }
+    elsif (@$args == 1 && $args->[0] =~ qr/^fix(es)?$/) {
+        $self->help_fixes;
+        return;
+    }
 
     App::Cmd::Command::help::execute(@_);
 }
@@ -67,7 +75,30 @@ sub execute {
 sub help_about {
     my ($self, $type, $name) = @_;
 
-    my $class = "Catmandu::${type}::$name";
+    my $class;
+    if ($type eq 'Fix') {
+        foreach ('Fix', 'Fix::Bind', 'Fix::Condition') {
+            $type = $_;
+            try {
+                require_package($name, "Catmandu::$type");
+                $class = "Catmandu::${type}::$name";
+            }
+            catch { };
+            last if $class;
+        }
+        unless ($class) {
+            Catmandu::NoSuchFixPackage->throw(
+                {
+                    message => "No such fix package: $name",
+                    package_name =>
+                        "Catmandu::Fix::(Bind::|Condition::)?$name",
+                    fix_name => $name,
+                }
+                );
+        }
+    }
+
+    $class = "Catmandu::${type}::$name";
     require_package($class);
 
     my $about = pod_section($class, "name");
@@ -92,6 +123,30 @@ sub help_about {
     }
 }
 
+sub help_fixes {
+    my ($self) = @_;
+
+    my $fixes = Catmandu->importer(
+        'Modules',
+        namespace => 'Catmandu::Fix',
+        primary   => 1
+        )->select(name => qr/::[a-z][^:]*$/)->map(
+        sub {
+            $_[0]->{name} =~ s/.*:://;
+            $_[0];
+        }
+        );
+
+    my $len = $fixes->max(sub {length $_[0]->{name}});
+    $fixes->sorted('name')->each(
+        sub {
+            say sprintf "%-${len}s %s", $_[0]->{name}, $_[0]->{about};
+        }
+    );
+
+    say "\nGet additional help with: catmandu help fix <NAME>";
+}
+
 1;
 
 __END__
@@ -107,5 +162,6 @@ Catmandu::Cmd::help - show help
   catmandu help convert
   catmandu help import JSON
   catmandu help help
+  catmandu help fix set_field
 
 =cut
