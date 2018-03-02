@@ -24,7 +24,9 @@ isa_ok $env->fixer('other'), qq|Catmandu::Fix|, qq|fixer(other)|;
 isa_ok $env->importer, qq|Catmandu::Importer::YAML|, qq|importer()|;
 isa_ok $env->importer('mock'), qq|Catmandu::Importer::Mock|,
     qq|importer(mock)|;
-isa_ok $env->exporter, qq|Catmandu::Exporter::YAML|, qq|importer()|;
-isa_ok $env->exporter('csv'), qq|Catmandu::Exporter::CSV|, qq|importer(csv)|;
+isa_ok $env->exporter, qq|Catmandu::Exporter::YAML|, qq|exporter()|;
+isa_ok $env->exporter('csv'), qq|Catmandu::Exporter::CSV|, qq|exporter(csv)|;
+isa_ok $env->validator('test'), qq|Catmandu::Validator::Mock|,
+    qq|validator(mock)|;
 
-done_testing 12;
+done_testing;

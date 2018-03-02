@@ -94,7 +94,7 @@ sub help_about {
                         "Catmandu::Fix::(Bind::|Condition::)?$name",
                     fix_name => $name,
                 }
-                );
+            );
         }
     }
 
