@@ -16,28 +16,14 @@ require_ok $pkg;
 
 use Catmandu::CLI;
 
-{
-    my $result = test_app(qq|Catmandu::CLI| => [qw(help)]);
+my @arguments = (
+    [qw(help)], [qw(importer JSON)], [qw(exporter JSON)], [qw(store Hash)],
+    [qw(fix set_field)], [qw(bind maybe)], [qw(condition exists)],
+);
 
-    is $result->error, undef, 'threw no exceptions';
+foreach my $args (@arguments) {
+    my $result = test_app(qq|Catmandu::CLI| => $args);
+    is $result->error, undef, join ' ', qw(catmandu help), @$args;
 }
 
-{
-    my $result = test_app(qq|Catmandu::CLI| => [qw(help importer JSON)]);
-
-    is $result->error, undef, 'threw no exceptions';
-}
-
-{
-    my $result = test_app(qq|Catmandu::CLI| => [qw(help exporter JSON)]);
-
-    is $result->error, undef, 'threw no exceptions';
-}
-
-{
-    my $result = test_app(qq|Catmandu::CLI| => [qw(help store Hash)]);
-
-    is $result->error, undef, 'threw no exceptions';
-}
-
-done_testing 6;
+done_testing 2 + @arguments;

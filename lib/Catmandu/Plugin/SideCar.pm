@@ -37,7 +37,7 @@ sub BUILD {
     my $sidecar = $self->sidecar->bag($self->sidecar_bag);
 
     # Insert a Catmandu::FileStore 'files' method into Catmandu::Store-s
-    unless ($self->does('Catmandu::FileStore')) {
+    unless ($self->can('files')) {
         my $stash = Package::Stash->new(ref $self);
         $stash->add_symbol(
             '&files' => sub {

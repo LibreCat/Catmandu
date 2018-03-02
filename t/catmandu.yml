@@ -27,6 +27,12 @@ store:
               value: Luna
             - _id: Earth
               value: Terra
+validator:
+    test:
+        package: Mock
+        options:
+            message: invalid
+            reject: 1
 fixer:
    default:
       - nothing()

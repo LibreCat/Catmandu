@@ -30,7 +30,8 @@ lives_ok sub {
             inc       => ["lib"],
             namespace => "Catmandu::Importer,Catmandu::Exporter",
             max_depth => 1,
-            pattern   => qr/JSON/
+            pattern   => qr/JSON/,
+            about     => 0,
         )->to_array
     };
 };
@@ -38,5 +39,7 @@ lives_ok sub {
 is_deeply [map {$_->{name}} @modules],
     [qw(Catmandu::Importer::JSON Catmandu::Exporter::JSON)],
     "multiple namespaces";
+
+is $modules[0]->{about}, undef, 'disable about';
 
 done_testing;
