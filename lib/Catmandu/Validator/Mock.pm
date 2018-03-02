@@ -9,21 +9,15 @@ use namespace::clean;
 
 with 'Catmandu::Validator';
 
-has message => (
-    is      => 'rw',
-    default => sub {'item is invalid'}
-);
+has message => (is => 'rw', default => sub {'item is invalid'});
 
-has reject => (
-    is      => 'rw',
-    default => sub {0}
-);
+has reject => (is => 'rw', default => sub {0});
 
 sub validate_data {
     my ($self) = @_;
 
     if ($self->reject) {
-        return [ $self->message ];
+        return [$self->message];
     }
 }
 

@@ -29,9 +29,10 @@ store:
               value: Terra
 validator:
     test:
-        package: Env
+        package: Mock
         options:
             message: invalid
+            reject: 1
 fixer:
    default:
       - nothing()

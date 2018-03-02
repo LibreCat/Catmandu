@@ -42,23 +42,26 @@ has load_paths => (
 
 has config => (is => 'rwp', default => sub {+{}});
 
-has stores => (is => 'ro', default => sub {+{}});
-has fixers => (is => 'ro', default => sub {+{}});
+has stores     => (is => 'ro', default => sub {+{}});
+has validators => (is => 'ro', default => sub {+{}});
+has fixers     => (is => 'ro', default => sub {+{}});
 
-has default_store             => (is => 'ro', default => sub {'default'});
-has default_fixer             => (is => 'ro', default => sub {'default'});
-has default_importer          => (is => 'ro', default => sub {'default'});
-has default_exporter          => (is => 'ro', default => sub {'default'});
-has default_validator         => (is => 'ro', default => sub {'default'});
+has default_store     => (is => 'ro', default => sub {'default'});
+has default_importer  => (is => 'ro', default => sub {'default'});
+has default_exporter  => (is => 'ro', default => sub {'default'});
+has default_validator => (is => 'ro', default => sub {'default'});
+has default_fixer     => (is => 'ro', default => sub {'default'});
 
+has default_store_package     => (is => 'ro');
 has default_importer_package  => (is => 'ro', default => sub {'JSON'});
 has default_exporter_package  => (is => 'ro', default => sub {'JSON'});
-has default_validator_package => (is => 'ro', default => sub {'Env'});
+has default_validator_package => (is => 'ro');
 
-has store_namespace     => (is => 'ro', default => sub {'Catmandu::Store'});
-has importer_namespace  => (is => 'ro', default => sub {'Catmandu::Importer'});
-has exporter_namespace  => (is => 'ro', default => sub {'Catmandu::Exporter'});
-has validator_namespace => (is => 'ro', default => sub {'Catmandu::Validator'});
+has store_namespace    => (is => 'ro', default => sub {'Catmandu::Store'});
+has importer_namespace => (is => 'ro', default => sub {'Catmandu::Importer'});
+has exporter_namespace => (is => 'ro', default => sub {'Catmandu::Exporter'});
+has validator_namespace =>
+    (is => 'ro', default => sub {'Catmandu::Validator'});
 
 sub BUILD {
     my ($self) = @_;
@@ -112,46 +115,6 @@ sub root {
     goto &load_path;
 }
 
-sub store {
-    my $self = shift;
-    my $name = shift;
-    my $key  = $name // $self->default_store;
-
-    # return cached instance if no arguments are given
-    if (!@_ and my $cached_store = $self->stores->{$key}) {
-        return $cached_store;
-    }
-
-    my $ns = $self->store_namespace;
-
-    # store name is key in config
-    if (my $c = $self->config->{store}{$key}) {
-        check_hash_ref($c);
-        check_string(my $package = $c->{package});
-        my $opts = $c->{options} || {};
-        if (@_ > 1) {
-            $opts = {%$opts, @_};
-        }
-        elsif (@_ == 1) {
-            $opts = {%$opts, %{$_[0]}};
-        }
-        my $store = require_package($package, $ns)->new($opts);
-
-        # cache this instance if no arguments are given
-        if (!@_) {
-            $self->stores->{$key} = $store;
-        }
-        return $store;
-    }
-
-    # store name is package name
-    if ($name) {
-        return require_package($name, $ns)->new(@_);
-    }
-
-    Catmandu::BadArg->throw("unknown store $key");
-}
-
 sub fixer {
     my $self = shift;
 
@@ -183,53 +146,77 @@ sub fixer {
     };
 }
 
+sub store {
+    my $self = shift;
+    $self->_named_package('store', $self->store_namespace,
+        $self->default_store, $self->default_store_package,
+        $self->stores, @_);
+}
+
 sub importer {
     my $self = shift;
-    $self->_named_package('importer', @_);
+    $self->_named_package('importer', $self->importer_namespace,
+        $self->default_importer, $self->default_importer_package,
+        undef, @_);
 }
 
 sub exporter {
     my $self = shift;
-    $self->_named_package('exporter', @_);
+    $self->_named_package('exporter', $self->exporter_namespace,
+        $self->default_exporter, $self->default_exporter_package,
+        undef, @_);
 }
 
 sub validator {
     my $self = shift;
-    $self->_named_package('validator', @_);
+    $self->_named_package(
+        'validator', $self->validator_namespace,
+        $self->default_validator, $self->default_validator_package,
+        $self->validators, @_
+    );
 }
 
 sub _named_package {
-    my $self = shift;
-    my $type = shift;
-    my $name = shift;
+    my $self            = shift;
+    my $type            = shift;
+    my $ns              = shift;
+    my $default_name    = shift;
+    my $default_package = shift;
+    my $cache           = shift;
+    my $name            = shift;
+    my $key             = $name || $default_name;
 
-    my $ns   = $self->{$type.'_namespace'};
+    return $name if is_instance($name) && index(ref($name), $ns) == 0;
 
-    return $name
-        if (is_invocant($name) && index($name, $ns) == 0);
-
-    my $default_package = "default_${type}_package";
+    # return cached instance if no arguments are given
+    if ($cache && !@_ and my $instance = $cache->{$key}) {
+        return $instance;
+    }
 
     if (exists $self->config->{$type}) {
-        my $default_name = "default_$type";
-
-        if (my $c
-            = $self->config->{$type}{$name || $self->$default_name)
-        {
+        if (my $c = $self->config->{$type}{$key}) {
             check_hash_ref($c);
-            my $package = $c->{package} || $self->$default_package;
-            my $opts    = $c->{options} || {};
+            check_string(my $package = $c->{package} || $default_package);
+            my $opts = check_hash_ref($c->{options} || {});
             if (@_ > 1) {
                 $opts = {%$opts, @_};
             }
             elsif (@_ == 1) {
                 $opts = {%$opts, %{$_[0]}};
             }
-            return require_package($package, $ns)->new($opts);
+            my $instance = require_package($package, $ns)->new($opts);
+
+            # cache this instance if no arguments are given
+            if ($cache && !@_) {
+                $cache->{$key} = $instance;
+            }
+
+            return $instance;
         }
     }
 
-    require_package($name || $self->$default_package, $ns)->new(@_);
+    check_string(my $package = $name || $default_package);
+    require_package($package, $ns)->new(@_);
 }
 
 1;
