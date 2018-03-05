@@ -29,8 +29,10 @@ sub _build_fixer {
     my $exporter = $self->exporter;
     my $getter   = $self->_as_path($self->path)->getter;
     sub {
-        my $values = $getter->($_[0]);
-        $exporter->add($_) for @$values;
+        my $data = $_[0];
+        my $vals = $getter->($data);
+        $exporter->add($_) for @$vals;
+        $data;
     };
 }
 

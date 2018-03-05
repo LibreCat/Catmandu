@@ -5,13 +5,13 @@ use Catmandu::Sane;
 our $VERSION = '1.08';
 
 use Moo;
+use Clone qw(clone);
 use namespace::clean;
 
-with 'Catmandu::Fix::Base';
+with 'Catmandu::Fix::Builder';
 
-sub emit {
-    my ($self, $fixer) = @_;
-    $fixer->emit_clone($fixer->var);
+sub _build_fixer {
+    \&clone;
 }
 
 1;

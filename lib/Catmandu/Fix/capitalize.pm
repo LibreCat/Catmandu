@@ -16,7 +16,7 @@ has path => (fix_arg => 1);
 sub _build_fixer {
     my ($self) = @_;
     $self->_as_path($self->path)
-        ->updater(if => [string => sub {ucfirst(lc(as_utf8($_[0])))}],);
+        ->updater(if_string => sub { ucfirst lc as_utf8 $_[0] });
 }
 
 1;

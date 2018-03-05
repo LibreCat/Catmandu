@@ -35,8 +35,10 @@ sub _build_fixer {
     my $bag = $self->bag;
     my $getter   = $self->_as_path($self->path)->getter;
     sub {
-        my $values = $getter->($_[0]);
-        $bag->add($_) for @$values;
+        my $data = $_[0];
+        my $vals = $getter->($data);
+        $bag->add($_) for @$vals;
+        $data;
     };
 }
 

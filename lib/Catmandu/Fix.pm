@@ -261,7 +261,7 @@ sub emit_fix {
     my ($self, $fix) = @_;
     my $perl;
 
-    if ($fix->isa('Catmandu::Fix::Builder')) {
+    if (Role::Tiny::does_role($fix, 'Catmandu::Fix::Builder')) {
         my $var       = $self->var;
         my $fixer_var = $self->generate_var;
         $self->_captures->{$fixer_var} = $fix->fixer;

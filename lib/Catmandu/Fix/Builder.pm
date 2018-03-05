@@ -18,7 +18,6 @@ has fixer => (is => 'lazy');
 sub fix {
     my ($self, $data) = @_;
     $self->fixer->($data);
-    $data;
 }
 
 sub _as_path {

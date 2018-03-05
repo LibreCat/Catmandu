@@ -42,7 +42,7 @@ sub getter {
             # looping goes backwards to keep deletions safe
             "unshift(\@{${vals_var}}, ${var});";
         },
-    ) . "return $vals_var;";
+    ) . "return ${vals_var};";
 
     $self->_eval_sub($body, args => [$data_var]);
 }
@@ -77,7 +77,7 @@ sub setter {
             my $var = $_[0];
             $self->_emit_set_key($var, $key, $val);
         },
-    ) . "return;";
+    ) . "return ${data_var};";
 
     $self->_eval_sub($body, args => $args, captures => $captures);
 }
@@ -91,7 +91,14 @@ sub updater {
     my $args     = [$data_var];
     my $cb;
 
-    if (my $predicates = $opts{if}) {
+    my $predicates = $opts{if};
+    for my $key (keys %opts) {
+        my $val = $opts{$key};
+        next unless $key =~ s/^if_//;
+        push @{$predicates ||= []}, $key => $val;
+    }
+
+    if ($predicates) {
         $cb = sub {
             my ($var, %opts) = @_;
             my $perl = "";
@@ -126,7 +133,7 @@ sub updater {
         };
     }
 
-    my $body = $self->_emit_get($data_var, $path, $cb) . 'return;';
+    my $body = $self->_emit_get($data_var, $path, $cb) . "return ${data_var};";
 
     $self->_eval_sub($body, args => $args, captures => $captures);
 }
@@ -166,7 +173,7 @@ sub creator {
         };
     }
 
-    my $body = $self->_emit_create_path($data_var, $path, $cb) . "return;";
+    my $body = $self->_emit_create_path($data_var, $path, $cb) . "return ${data_var};";
 
     $self->_eval_sub($body, args => $args, captures => $captures);
 }
@@ -184,7 +191,7 @@ sub deleter {
             my $var = $_[0];
             $self->_emit_delete_key($var, $key);
         }
-    ) . "return;";
+    ) . "return ${data_var};";
 
     $self->_eval_sub($body, args => [$data_var]);
 }

@@ -25,7 +25,7 @@ sub _build_fixer {
         : sub {
         [grep {m/$regex/} @{$_[0]}];
         };
-    $self->_as_path($self->path)->updater(if => [array_ref => $cb,]);
+    $self->_as_path($self->path)->updater(if_array_ref => $cb);
 }
 
 1;
