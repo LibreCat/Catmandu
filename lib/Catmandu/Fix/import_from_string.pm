@@ -2,7 +2,7 @@ package Catmandu::Fix::import_from_string;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 use Moo;
 use Catmandu;

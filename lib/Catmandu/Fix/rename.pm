@@ -2,7 +2,7 @@ package Catmandu::Fix::rename;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 use Moo;
 use Catmandu::Util qw(is_hash_ref is_array_ref);

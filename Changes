@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.09  2018-03-06 11:24:35 CET
   - Add validator method to Catmandu
   - new Mock validator
   - new validate fix and valid fix condition
