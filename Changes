@@ -5,6 +5,7 @@ Revision history for Catmandu
   - new Mock validator
   - new validate fix and valid fix condition
   - JSON importer byte buffer size is now configurable to optimize performance
+  - command line help improvements
 
 1.08  2018-02-02 14:48:51 CET
   - fix language gets support for namespaces
