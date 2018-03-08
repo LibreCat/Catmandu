@@ -5,17 +5,18 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
-use URI::Escape ();
+use URI::Escape qw(uri_escape_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Builder';
+
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
-
-sub emit_value {
-    my ($self, $var) = @_;
-    "${var} = URI::Escape::uri_escape_utf8(${var});";
+sub _build_fixer {
+    my ($self) = @_;
+    $self->_as_path($self->path)
+        ->updater(if_string => sub { uri_escape_utf8($_[0]) });
 }
 
 1;
