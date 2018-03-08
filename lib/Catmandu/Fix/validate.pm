@@ -15,32 +15,30 @@ has error_field    => (fix_opt => 1, default => 'errors');
 has validator_opts => (fix_opt => 'collect');
 has validator      => (is      => 'lazy', init_arg => undef);
 
-with 'Catmandu::Fix::SimpleGetValue';
-
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $validator_var = $fixer->capture($self->validator);
-    my $errors_var    = $fixer->generate_var;
-    my $error_field
-        = $self->error_field ? $fixer->split_path($self->error_field) : undef;
-
-    "unless (${validator_var}->is_valid(${var})) {"
-        . $fixer->emit_declare_vars($errors_var)
-        . "${errors_var} = ${validator_var}->last_errors;"
-        . $fixer->emit_create_path(
-        $fixer->var,
-        $error_field,
-        sub {
-            my $var = shift;
-            "${var} = ${errors_var}";
-        }
-        ) . "}";
-}
+with 'Catmandu::Fix::Builder';
 
 sub _build_validator {
     my ($self) = @_;
     require_package($self->name, 'Catmandu::Validator')
         ->new($self->validator_opts);
+}
+
+sub _build_fixer {
+    my ($self) = @_;
+
+    my $validator = $self->validator;
+    my $get = $self->_as_path($self->path)->getter;
+    my $set_error = $self->_as_path($self->error_field)->creator;
+
+    sub {
+        my ($data) = @_;
+        my $values = $get->($data);
+        for my $val (@$values) {
+            next if $validator->is_valid($val);
+            $set_error->($data, $validator->last_errors);
+        }
+        $data;
+    }
 }
 
 1;
