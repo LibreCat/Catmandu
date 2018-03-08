@@ -17,7 +17,7 @@ sub _build_fixer {
     my ($self) = @_;
     my $val = $self->value;
     $self->_as_path($self->path)
-        ->updater(if => [value => sub {join('', $val, $_[0])}],);
+        ->updater(if_value => sub {join('', $val, $_[0])});
 }
 
 1;

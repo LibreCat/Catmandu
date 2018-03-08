@@ -17,24 +17,22 @@ sub _build_fixer {
     my ($self) = @_;
     my $regex = $self->_regex($self->pattern);
     $self->_as_path($self->path)->updater(
-        if => [
-            string => sub {
-                my $val = $_[0];
-                if ($val =~ m/$regex/) {
-                    if (@+ < 2) {    # no capturing groups
-                        return undef, 1, 0;
-                    }
-                    elsif (%+) {     # named capturing groups
-                        return +{%+};
-                    }
-                    else {           # numbered capturing groups
-                        no strict 'refs';
-                        return [map {${$_}} 1 .. (@+ - 1)];
-                    }
+        if_string => sub {
+            my $val = $_[0];
+            if ($val =~ m/$regex/) {
+                if (@+ < 2) {    # no capturing groups
+                    return undef, 1, 0;
                 }
-                return undef, 1, 0;
+                elsif (%+) {     # named capturing groups
+                    return +{%+};
+                }
+                else {           # numbered capturing groups
+                    no strict 'refs';
+                    return [map {${$_}} 1 .. (@+ - 1)];
+                }
             }
-        ]
+            return undef, 1, 0;
+        }
     );
 }
 

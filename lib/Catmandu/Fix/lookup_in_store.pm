@@ -5,16 +5,17 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Catmandu;
+use Catmandu::Util qw(is_value);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
+with 'Catmandu::Fix::Builder';
 
 has path       => (fix_arg => 1);
 has store_name => (fix_arg => 1);
 has bag_name   => (fix_opt => 1, init_arg => 'bag');
-has default    => (fix_opt => 1);
+has default    => (fix_opt => 1, predicate => 1);
 has delete     => (fix_opt => 1);
 has store_args => (fix_opt => 'collect');
 has store      => (is      => 'lazy', init_arg => undef);
@@ -32,50 +33,42 @@ sub _build_bag {
         : $self->store->bag;
 }
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path    = $fixer->split_path($self->path);
-    my $key     = pop @$path;
-    my $bag_var = $fixer->capture($self->bag);
-    my $delete  = $self->delete;
-    my $default = $self->default;
+sub _build_fixer {
+    my ($self) = @_;
 
-    $fixer->emit_walk_path(
-        $fixer->var,
-        $path,
-        sub {
-            my $var = shift;
-            $fixer->emit_get_key(
-                $var, $key,
-                sub {
-                    my $val_var     = shift;
-                    my $val_index   = shift;
-                    my $bag_val_var = $fixer->generate_var;
-                    my $perl
-                        = "if (is_value(${val_var}) && defined(my ${bag_val_var} = ${bag_var}->get(${val_var}))) {"
-                        . "${val_var} = ${bag_val_var};" . "}";
-                    if ($delete) {
-                        $perl .= "else {";
-                        if (defined $val_index)
-                        { # wildcard: only delete the value where the lookup failed
-                            $perl .= "splice(\@{${var}}, ${val_index}--, 1);";
-                        }
-                        else {
-                            $perl .= $fixer->emit_delete_key($var, $key);
-                        }
-                        $perl .= "}";
-                    }
-                    elsif (defined $default) {
-                        $perl
-                            .= "else {"
-                            . "${val_var} = "
-                            . $fixer->emit_value($default) . ";" . "}";
-                    }
-                    $perl;
-                }
-            );
-        }
-    );
+    my $bag = $self->bag;
+    my $cb;
+
+    if ($self->delete) {
+        $cb = sub {
+            my $val = $_[0];
+            if (is_value($val) && defined($val = $bag->get($val))) {
+                return $val;
+            }
+            return undef, 1, 1;
+        };
+    }
+    elsif ($self->has_default) {
+        my $default = $self->default;
+        $cb = sub {
+            my $val = $_[0];
+            if (is_value($val) && defined($val = $bag->get($val))) {
+                return $val;
+            }
+            $default;
+        };
+    }
+    else {
+        $cb = sub {
+            my $val = $_[0];
+            if (is_value($val) && defined($val = $bag->get($val))) {
+                return $val;
+            }
+            return undef, 1, 0;
+        };
+    }
+
+    $self->_as_path($self->path)->updater($cb);
 }
 
 1;

@@ -5,27 +5,34 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_string is_array_ref is_hash_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $match_var = $fixer->generate_var;
-    <<EOF;
-if (is_string(${var}) and my (${match_var}) = ${var} =~ /([+-]?[0-9]+)/) {
-    ${var} = ${match_var} + 0;
-} elsif (is_array_ref(${var})) {
-    ${var} = scalar(\@{${var}});
-} elsif (is_hash_ref(${var})) {
-    ${var} = scalar(keys \%{${var}});
-} else {
-    ${var} = 0;
-}
-EOF
+sub _build_fixer {
+    my ($self) = @_;
+
+    $self->_as_path($self->path)->updater(
+        sub {
+            my $val = $_[0];
+            if (is_string($val) and my ($num) = $val =~ /([+-]?[0-9]+)/) {
+                $num + 0;
+            }
+            elsif (is_array_ref($val)) {
+                scalar(@$val);
+            }
+            elsif (is_hash_ref($val)) {
+                scalar(keys %$val);
+            }
+            else {
+                0;
+            }
+        }
+    );
 }
 
 1;

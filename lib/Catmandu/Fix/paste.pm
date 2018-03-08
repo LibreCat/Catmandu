@@ -5,76 +5,50 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_value is_code_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
+with 'Catmandu::Fix::Builder';
 
-has path   => (fix_arg => 1);
-has values => (fix_arg => 'collect');
+has path => (fix_arg => 1);
+has args => (fix_arg => 'collect');
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $values = $self->values;
+sub _build_fixer {
+    my ($self)    = @_;
+    my $args      = $self->args;
+    my $join_char = ' ';
+    my $getters   = [];
+    my $creator   = $self->_as_path($self->path)->creator;
 
-    my @parsed_values = ();
-    my $join_char     = ' ';
-
-    while (@$values) {
-        my $val = shift @$values;
-        if ($val eq 'join_char') {
-            $join_char = shift @$values;
+    for (my $i = 0; $i < @$args; $i++) {
+        my $arg = $args->[$i];
+        if ($arg eq 'join_char') {
+            $join_char = $args->[$i + 1];
             last;
         }
+        elsif (my ($literal) = $arg =~ /^~(.*)/) {
+            push @$getters, $literal;
+        }
         else {
-            push @parsed_values, $val;
+            push @$getters, $self->_as_path($arg)->getter;
         }
     }
 
-    $join_char = $fixer->emit_string($join_char);
-
-    my $vals_var = $fixer->generate_var;
-    my $perl = $fixer->emit_declare_vars($vals_var, '[]');
-
-    for my $val (@parsed_values) {
-        my $vals_path = $fixer->split_path($val);
-        my $vals_key  = pop @$vals_path;
-
-        if ($val =~ /^~(.*)/) {
-            my $tmp = $fixer->emit_string($1);
-            $perl .= "push(\@{${vals_var}}, ${tmp});";
+    sub {
+        my $data = $_[0];
+        my $vals = [];
+        for my $getter (@$getters) {
+            if (is_code_ref($getter)) {
+                push @$vals, grep {is_value($_)} @{$getter->($data)};
+            }
+            else {
+                push @$vals, $getter;
+            }
         }
-        else {
-            $perl .= $fixer->emit_walk_path(
-                $fixer->var,
-                $vals_path,
-                sub {
-                    my $var = shift;
-                    $fixer->emit_get_key(
-                        $var,
-                        $vals_key,
-                        sub {
-                            my $var = shift;
-                            "push(\@{${vals_var}}, ${var}) if is_value(${var});";
-                        }
-                    );
-                }
-            );
-        }
-    }
-
-    my $path = $fixer->split_path($self->path);
-
-    $perl .= $fixer->emit_create_path(
-        $fixer->var,
-        $path,
-        sub {
-            my $var = shift;
-            "${var} = join(${join_char}, \@{${vals_var}});";
-        }
-    );
-
-    $perl;
+        $creator->($data, join($join_char, @$vals));
+        $data;
+    };
 }
 
 1;

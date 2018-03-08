@@ -18,11 +18,9 @@ sub _build_fixer {
     my ($self) = @_;
     my $join_char = $self->join_char;
     $self->_as_path($self->path)->updater(
-        if => [
-            array_ref => sub {
-                join $join_char, grep {is_value($_)} @{$_[0]};
-            }
-        ],
+        if_array_ref => sub {
+            join $join_char, grep {is_value($_)} @{$_[0]};
+        }
     );
 }
 

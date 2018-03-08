@@ -5,42 +5,42 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use List::MoreUtils qw(indexes first_index);
 use namespace::clean;
 use Catmandu::Fix::Has;
-use List::MoreUtils;
 
 has path     => (fix_arg => 1);
 has search   => (fix_arg => 1);
 has multiple => (fix_opt => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
+with 'Catmandu::Fix::Builder';
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
+sub _build_fixer {
+    my ($self) = @_;
 
-    my $search   = $fixer->emit_string($self->search);
-    my $multiple = $fixer->emit_string($self->multiple);
-
-    my $perl = <<EOF;
-if (${multiple}) {
-    if (is_string(${var})) {
-        ${var} = [ List::MoreUtils::indexes {\$_ eq ${search} } unpack('(A)*',${var}) ] ;
+    my $search = $self->search;
+    my %args;
+    if ($self->multiple) {
+        %args = (
+            if_string => sub {
+                [indexes {$_ eq $search} unpack('(A)*', $_[0])];
+            },
+            if_array_ref => sub {
+                [indexes {$_ eq $search} @{$_[0]}];
+            },
+        );
     }
-    elsif (is_array_ref(${var})) {
-        ${var} = [ List::MoreUtils::indexes {\$_ eq ${search} } \@{${var}} ];
+    else {
+        %args = (
+            if_string => sub {
+                index($_[0], $search);
+            },
+            if_array_ref => sub {
+                first_index {$_ eq $search} @{$_[0]};
+            },
+        );
     }
-}
-else {
-    if (is_string(${var})) {
-        ${var} = index(${var},${search})
-    }
-    elsif (is_array_ref(${var})) {
-        ${var} = List::MoreUtils::first_index {\$_ eq ${search} } \@{${var}}
-    }
-}
-EOF
-
-    $perl;
+    $self->_as_path($self->path)->updater(%args);
 }
 
 1;
