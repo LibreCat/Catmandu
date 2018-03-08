@@ -4,10 +4,12 @@ use Catmandu::Sane;
 
 our $VERSION = '1.09';
 
-use List::MoreUtils ();
+use List::MoreUtils qw(uniq);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
+
+with 'Catmandu::Fix::Builder';
 
 has path           => (fix_arg => 1);
 has uniq           => (fix_opt => 1);
@@ -15,57 +17,60 @@ has reverse        => (fix_opt => 1);
 has numeric        => (fix_opt => 1);
 has undef_position => (fix_opt => 1, default => sub {'last'});
 
-with 'Catmandu::Fix::SimpleGetValue';
+sub _build_fixer {
+    my ($self)         = @_;
+    my $uniq           = $self->uniq;
+    my $reverse        = $self->reverse;
+    my $numeric        = $self->numeric;
+    my $undef_position = $self->undef_position;
+    $self->_as_path($self->path)->updater(
+        if_array_ref => sub {
+            my $val = $_[0];
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $comparer = $self->numeric ? "<=>" : "cmp";
+            #filter out undef
+            my $undefs = [grep {!defined($_)} @$val];
+            $val = [grep {defined($_)} @$val];
 
-    my $perl = "if (is_array_ref(${var})) {";
+            #uniq
+            if ($uniq) {
+                $val = [uniq(@$val)];
+            }
 
-    #filter out undef
-    my $undef_values = $fixer->generate_var;
-    $perl .= "my ${undef_values} = [ grep { !defined(\$_) } \@{${var}} ];";
-    $perl .= "${var} = [ grep { defined(\$_) } \@{${var}} ];";
+            #sort
+            if ($reverse && $numeric) {
+                $val = [sort {$b <=> $a} @$val];
+            }
+            elsif ($numeric) {
+                $val = [sort {$a <=> $b} @$val];
+            }
+            elsif ($reverse) {
+                $val = [sort {$b cmp $a} @$val];
+            }
+            else {
+                $val = [sort {$a cmp $b} @$val];
+            }
 
-    #uniq
-    if ($self->uniq) {
-        $perl .= "${var} = [List::MoreUtils::uniq(\@{${var}})];";
-    }
+            #insert undef at the end
+            if ($undef_position eq 'first') {
+                if ($uniq) {
+                    unshift @$val, undef if @$undefs;
+                }
+                else {
+                    unshift @$val, @$undefs;
+                }
+            }
+            elsif ($undef_position eq 'last') {
+                if ($uniq) {
+                    push @$val, undef if @$undefs;
+                }
+                else {
+                    push @$val, @$undefs;
+                }
+            }
 
-    #sort
-    if ($self->reverse) {
-        $perl .= "${var} = [sort { \$b $comparer \$a } \@{${var}}];";
-    }
-    else {
-        $perl .= "${var} = [sort { \$a $comparer \$b } \@{${var}}];";
-    }
-
-    #insert undef at the end
-    if ($self->undef_position eq "last") {
-        if ($self->uniq) {
-            $perl .= "push \@{${var}},undef if scalar(\@{${undef_values}});";
+            $val;
         }
-        else {
-            $perl .= "push \@{${var}},\@{${undef_values}};";
-        }
-    }
-
-    #insert undef at the beginning
-    elsif ($self->undef_position eq "first") {
-        if ($self->uniq) {
-            $perl
-                .= "unshift \@{${var}},undef if scalar(\@{${undef_values}});";
-        }
-        else {
-            $perl .= "unshift \@{${var}},\@{${undef_values}};";
-        }
-    }
-
-    #leave undef out of the list
-
-    $perl .= "}";
-    $perl;
+    );
 }
 
 1;

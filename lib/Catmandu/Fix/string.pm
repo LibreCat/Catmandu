@@ -4,28 +4,37 @@ use Catmandu::Sane;
 
 our $VERSION = '1.09';
 
-use List::Util ();
+use List::Util qw(all);
+use Catmandu::Util qw(is_string is_value is_array_ref is_hash_ref);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Builder';
+
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
+sub _build_fixer {
+    my ($self) = @_;
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    <<EOF;
-if (is_string(${var})) {
-    ${var} = '' . ${var};
-} elsif (is_array_ref(${var}) && List::Util::all { is_value(\$_) } \@{${var}}) {
-    ${var} = join('', \@{${var}});
-} elsif (is_hash_ref(${var}) && List::Util::all { is_value(\$_) } values \%{${var}}) {
-    ${var} = join('', map { ${var}->{\$_} } sort keys \%{${var}});
-} else {
-    ${var} = '';
-}
-EOF
+    $self->_as_path($self->path)->updater(
+        sub {
+            my $val = $_[0];
+            if (is_string($val)) {
+                "${val}";
+            }
+            elsif (is_array_ref($val) && all {is_value($_)} @$val) {
+                join('', @$val);
+            }
+            elsif (is_hash_ref($val) && all {is_value($_)} values %$val) {
+                join('', map {$val->{$_}} sort keys %$val);
+            }
+            else {
+                '';
+            }
+        }
+    );
+
 }
 
 1;

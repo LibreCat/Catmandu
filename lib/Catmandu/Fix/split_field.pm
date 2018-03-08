@@ -17,7 +17,7 @@ sub _build_fixer {
     my ($self) = @_;
     my $split_char = $self->split_char;
     $self->_as_path($self->path)
-        ->updater(if => [value => sub {[split $split_char, $_[0]]}],);
+        ->updater(if_value => sub {[split $split_char, $_[0]]});
 }
 
 1;

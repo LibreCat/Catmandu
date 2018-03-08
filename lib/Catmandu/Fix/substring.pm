@@ -55,7 +55,7 @@ sub _build_fixer {
         };
     }
 
-    $self->_as_path($self->path)->updater(if => [value => $cb]);
+    $self->_as_path($self->path)->updater(if_value => $cb);
 }
 
 1;

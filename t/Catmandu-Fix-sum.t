@@ -26,6 +26,7 @@ is_deeply $pkg->new('numbers')->fix({numbers => [1, 1, 2, 3, 5, 8, 13, 21]}),
 is_deeply $pkg->new('numbers')->fix({numbers => [1.234, 4.653, 4.5]}),
     {numbers => 10.387}, "Float sum ok";
 
-dies_ok {$pkg->new('numbers')->fix({numbers => ['hello', 'world']})};
+is_deeply $pkg->new('numbers')->fix({numbers => [1, 'hello']}),
+    {numbers => [1, 'hello']}, "Members must all be numbers";
 
-done_testing 7;
+done_testing;
