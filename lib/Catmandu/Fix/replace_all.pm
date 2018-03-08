@@ -18,7 +18,7 @@ sub _build_fixer {
     my ($self) = @_;
     $self->_as_path($self->path)
         ->updater(
-        if => [value => $self->_substituter($self->search, $self->replace)]);
+        if_value => $self->_substituter($self->search, $self->replace));
 }
 
 1;

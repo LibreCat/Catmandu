@@ -5,7 +5,7 @@ use Catmandu;
 use Moo;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
+with 'Catmandu::Fix::Builder';
 
 #options/arguments
 has path       => (fix_arg => 1);
@@ -13,7 +13,7 @@ has store_name => (fix_opt => 1, init_arg => 'store');
 has bag_name   => (fix_opt => 1, init_arg => 'bag');
 has limit      => (fix_opt => 1, init_arg => undef, default => sub {20});
 has start      => (fix_opt => 1, init_arg => undef, default => sub {0});
-has sort => (fix_opt => 1, init_arg => undef);
+has sort       => (fix_opt => 1, init_arg => undef, default => sub {''});
 has store_args => (fix_opt => 'collect');
 
 #internal
@@ -32,40 +32,27 @@ sub _build_bag {
         : $self->store->bag;
 }
 
-sub emit {
-    my ($self, $fixer) = @_;
-
-    my $path    = $fixer->split_path($self->path);
-    my $key     = pop @$path;
-    my $bag_var = $fixer->capture($self->bag);
-    my $limit   = $self->limit;
-    my $start   = $self->start;
-    my $sort    = $self->sort || "";
-
-    $fixer->emit_walk_path(
-        $fixer->var,
-        $path,
+sub _build_fixer {
+    my ($self) = @_;
+    my $bag    = $self->bag;
+    my $limit  = $self->limit;
+    my $start  = $self->start;
+    my $sort   = $self->sort;
+    $self->_as_path($self->path)->updater(
         sub {
-
-            my $var = shift;
-
-            $fixer->emit_get_key(
-                $var, $key,
-                sub {
-
-                    my $val_var = shift;
-
-                    my $perl = <<EOF;
-
-${val_var}  = ${bag_var}->search( query => $val_var, start => ${start}, limit => ${limit}, sort => '${sort}' );
-${val_var}  = { start => ${start}, limit => ${limit}, total => ${val_var}->total(), hits => ${val_var}->to_array() };
-
-EOF
-
-                    $perl;
-
-                }
+            my $val  = $_[0];
+            my $hits = $bag->search(
+                query => $val,
+                start => $start,
+                limit => $limit,
+                sort  => $sort
             );
+            +{
+                start => $start,
+                limit => $limit,
+                total => $hits->total,
+                hits  => $hits->to_array
+            };
         }
     );
 }

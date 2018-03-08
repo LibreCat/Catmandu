@@ -16,12 +16,10 @@ is_deeply $pkg->new('random', '1')->fix({}), {random => 0},
     "add random field at root";
 
 is_deeply $pkg->new('deeply.nested.$append.random', '1')->fix({}),
-    {deeply => {nested => [{random => 0}]}},
-    "add field creates intermediate path";
+    {deeply => {nested => [{random => 0}]}};
 
 is_deeply $pkg->new('deeply.nested.1.random', '1')->fix({}),
-    {deeply => {nested => [undef, {random => 0}]}},
-    "add field creates intermediate path";
+    {deeply => {nested => [undef, {random => 0}]}};
 
 is_deeply $pkg->new('deeply.nested.$append.random', '1')
     ->fix({deeply => {nested => {}}}), {deeply => {nested => {}}},
@@ -30,4 +28,4 @@ is_deeply $pkg->new('deeply.nested.$append.random', '1')
 like $pkg->new('random', '10')->fix({})->{random}, qr/^[0-9]$/,
     "add a random number";
 
-done_testing 6;
+done_testing;

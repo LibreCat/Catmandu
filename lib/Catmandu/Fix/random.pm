@@ -8,24 +8,15 @@ use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Base';
+with 'Catmandu::Fix::Builder';
 
 has path => (fix_arg => 1);
 has max  => (fix_arg => 1);
 
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path = $fixer->split_path($self->path);
-    my $max  = $fixer->emit_value($self->max);
-
-    $fixer->emit_create_path(
-        $fixer->var,
-        $path,
-        sub {
-            my $var = shift;
-            "${var} = int(rand(${max}));";
-        }
-    );
+sub _build_fixer {
+    my ($self) = @_;
+    my $max = $self->max;
+    $self->_as_path($self->path)->creator(sub {int(rand($max))});
 }
 
 1;
