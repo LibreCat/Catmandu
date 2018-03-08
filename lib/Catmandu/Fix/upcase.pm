@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(as_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
 

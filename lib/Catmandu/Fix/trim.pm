@@ -5,32 +5,41 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(trim);
 use Unicode::Normalize;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Builder';
+
 has path => (fix_arg => 1);
 has mode => (fix_arg => 1, default => sub {'whitespace'});
 
-with 'Catmandu::Fix::SimpleGetValue';
-
-sub emit_value {
-    my ($self, $var) = @_;
-
-    my $perl = "if (is_string(${var})) {";
+sub _build_fixer {
+    my ($self) = @_;
+    my $cb;
     if ($self->mode eq 'whitespace') {
-        $perl .= "${var} = trim(${var});";
+        $cb = sub {
+            trim($_[0]);
+        };
     }
     elsif ($self->mode eq 'nonword') {
-        $perl .= $var . ' =~ s/^\W+//;';
-        $perl .= $var . ' =~ s/\W+$//;';
+        $cb = sub {
+            my $val = $_[0];
+            $val =~ s/^\W+//;
+            $val =~ s/\W+$//;
+            $val;
+        };
     }
     elsif ($self->mode eq 'diacritics') {
-        $perl .= "${var} = Unicode::Normalize::NFKD(${var});";
-        $perl .= "${var} =~ s/\\p{NonspacingMark}//g;";
+        $cb = sub {
+            my $val = $_[0];
+            $val = Unicode::Normalize::NFKD($val);
+            $val =~ s/\p{NonspacingMark}//g;
+            $val;
+        };
     }
-    $perl .= "}";
-    $perl;
+    $self->_as_path($self->path)->updater(if_string => $cb);
 }
 
 1;
