@@ -15,12 +15,14 @@ with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)->updater(if_array_ref => sub {
-        my $data = $_[0];
-        $data = [map { is_array_ref($_) ? @$_ : $_ } @$data]
-            while grep { is_array_ref($_) } @$data;
-        $data;
-    });
+    $self->_as_path($self->path)->updater(
+        if_array_ref => sub {
+            my $data = $_[0];
+            $data = [map {is_array_ref($_) ? @$_ : $_} @$data]
+                while grep {is_array_ref($_)} @$data;
+            $data;
+        }
+    );
 }
 
 1;

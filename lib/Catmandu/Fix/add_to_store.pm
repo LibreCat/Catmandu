@@ -31,9 +31,9 @@ sub _build_bag {
 }
 
 sub _build_fixer {
-    my ($self)   = @_;
-    my $bag = $self->bag;
-    my $getter   = $self->_as_path($self->path)->getter;
+    my ($self) = @_;
+    my $bag    = $self->bag;
+    my $getter = $self->_as_path($self->path)->getter;
     sub {
         my $data = $_[0];
         my $vals = $getter->($data);

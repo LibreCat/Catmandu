@@ -133,7 +133,8 @@ sub updater {
         };
     }
 
-    my $body = $self->_emit_get($data_var, $path, $cb) . "return ${data_var};";
+    my $body
+        = $self->_emit_get($data_var, $path, $cb) . "return ${data_var};";
 
     $self->_eval_sub($body, args => $args, captures => $captures);
 }
@@ -173,7 +174,8 @@ sub creator {
         };
     }
 
-    my $body = $self->_emit_create_path($data_var, $path, $cb) . "return ${data_var};";
+    my $body = $self->_emit_create_path($data_var, $path, $cb)
+        . "return ${data_var};";
 
     $self->_eval_sub($body, args => $args, captures => $captures);
 }

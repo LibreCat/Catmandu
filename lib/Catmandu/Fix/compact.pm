@@ -11,7 +11,7 @@ has path => (fix_arg => 1);
 sub _build_fixer {
     my ($self) = @_;
     $self->_as_path($self->path)
-        ->updater(if_array_ref => sub { [grep defined, @{$_[0]}] });
+        ->updater(if_array_ref => sub {[grep defined, @{$_[0]}]});
 }
 
 =head1 NAME

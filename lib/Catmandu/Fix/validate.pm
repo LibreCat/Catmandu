@@ -27,7 +27,7 @@ sub _build_fixer {
     my ($self) = @_;
 
     my $validator = $self->validator;
-    my $get = $self->_as_path($self->path)->getter;
+    my $get       = $self->_as_path($self->path)->getter;
     my $set_error = $self->_as_path($self->error_field)->creator;
 
     sub {
@@ -38,7 +38,7 @@ sub _build_fixer {
             $set_error->($data, $validator->last_errors);
         }
         $data;
-    }
+        }
 }
 
 1;
