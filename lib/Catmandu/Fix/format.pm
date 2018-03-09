@@ -8,21 +8,19 @@ use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Builder';
+
 has path => (fix_arg => 1);
 has spec => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
-
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-    my $spec = $fixer->emit_string($self->spec);
-
-    "if (is_array_ref(${var})) {"
-        . "${var} = sprintf(${spec},\@{${var}});"
-        . "} elsif (is_hash_ref(${var})) {"
-        . "${var} = sprintf(${spec},\%{${var}});"
-        . "} elsif (is_string(${var})) {"
-        . "${var} = sprintf(${spec},${var});" . "}";
+sub _build_fixer {
+    my ($self) = @_;
+    my $spec = $self->spec;
+    $self->_as_path($self->path)->updater(
+        if_string    => sub {sprintf($spec, $_[0])},
+        if_array_ref => sub {sprintf($spec, @{$_[0]})},
+        if_hash_ref  => sub {sprintf($spec, %{$_[0]})},
+    );
 }
 
 1;
