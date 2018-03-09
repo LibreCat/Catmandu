@@ -56,25 +56,25 @@ sub setter {
     my $val_var  = $self->_generate_var;
     my $captures = {};
     my $args     = [$data_var];
-    my $val;
-
-    if (is_code_ref($opts{value})) {
-        $captures->{$val_var} = $opts{value};
-        $val = "${val_var}->()";
-    }
-    elsif (exists $opts{value}) {
-        $val = $self->_emit_value($opts{value});
-    }
-    else {
-        push @$args, $val_var;
-        $val = "is_code_ref(${val_var}) ? ${val_var}->() : ${val_var}";
-    }
 
     my $body = $self->_emit_get(
         $data_var,
         $path,
         sub {
             my $var = $_[0];
+            my $val;
+            if (is_code_ref($opts{value})) {
+                $captures->{$val_var} = $opts{value};
+                $val = "${val_var}->(${var}, ${data_var})";
+            }
+            elsif (exists $opts{value}) {
+                $val = $self->_emit_value($opts{value});
+            }
+            else {
+                push @$args, $val_var;
+                $val = "is_code_ref(${val_var}) ? ${val_var}->(${var}, ${data_var}) : ${val_var}";
+            }
+
             $self->_emit_set_key($var, $key, $val);
         },
     ) . "return ${data_var};";
@@ -153,7 +153,7 @@ sub creator {
         $captures->{$val_var} = $opts{value};
         $cb = sub {
             my $var = $_[0];
-            "${var} = ${val_var}->(${var});";
+            "${var} = ${val_var}->(${var}, ${data_var});";
         };
     }
     elsif (exists $opts{value}) {
@@ -168,7 +168,7 @@ sub creator {
         $cb = sub {
             my $var = $_[0];
             "if (is_code_ref(${val_var})) {"
-                . "${var} = ${val_var}->(${var});"
+                . "${var} = ${val_var}->(${var}, ${data_var});"
                 . '} else {'
                 . "${var} = ${val_var};" . '}';
         };
@@ -391,47 +391,30 @@ sub _emit_create_path {
     $perl;
 }
 
-sub _emit_delete_key {    # TODO is $cb still needed?
-    my ($self, $var, $key, $cb) = @_;
+sub _emit_delete_key {
+    my ($self, $var, $key) = @_;
 
     my $str_key = $self->_emit_string($key);
     my $perl    = "";
-    my $vals;
-    if ($cb) {
-        $vals = $self->_generate_var;
-        $perl = $self->_emit_declare_vars($vals, '[]');
-    }
 
     if ($key =~ /^[0-9]+$/) {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
-        $perl .= "push(\@{${vals}}, " if $cb;
-        $perl .= "delete(${var}->{${str_key}})";
-        $perl .= ")" if $cb;
-        $perl .= ";";
+        $perl .= "delete(${var}->{${str_key}});";
         $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
-        $perl .= "push(\@{${vals}}, " if $cb;
         $perl .= "splice(\@{${var}}, ${key}, 1)";
-        $perl .= ")" if $cb;
     }
     elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
         $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
-        $perl .= "push(\@{${vals}}, " if $cb;
         $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
         $perl .= "splice(\@{${var}}, 0, \@{${var}})" if $key eq '*';
-        $perl .= ")" if $cb;
     }
     else {
-        $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
-        $perl .= "push(\@{${vals}}, " if $cb;
+        $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "delete(${var}->{${str_key}})";
-        $perl .= ")" if $cb;
     }
     $perl .= ";";
     $perl .= "}";
-    if ($cb) {
-        $perl .= $cb->($vals);
-    }
 
     $perl;
 }

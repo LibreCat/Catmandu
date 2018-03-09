@@ -8,13 +8,14 @@ use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
+with 'Catmandu::Fix::Builder';
+
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::SimpleGetValue';
-
-sub emit_value {
-    my ($self, $var) = @_;
-    "if (is_hash_ref(${var})) {" . "${var} = [\%{${var}}];" . "}";
+sub _build_fixer {
+    my ($self) = @_;
+    $self->_as_path($self->path)
+        ->updater(if_hash_ref => sub {[%{$_[0]}]});
 }
 
 1;

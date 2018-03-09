@@ -5,71 +5,29 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_hash_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
+
+with 'Catmandu::Fix::Builder';
 
 has path      => (fix_arg => 1);
 has keys_path => (fix_arg => 1);
 has vals_path => (fix_arg => 1);
 
-with 'Catmandu::Fix::Base';
-
-sub emit {
-    my ($self, $fixer) = @_;
-    my $path      = $fixer->split_path($self->path);
-    my $keys_path = $fixer->split_path($self->keys_path);
-    my $vals_path = $fixer->split_path($self->vals_path);
-    my $keys_key  = pop @$keys_path;
-    my $vals_key  = pop @$vals_path;
-
-    my $keys_var = $fixer->generate_var;
-    my $vals_var = $fixer->generate_var;
-    my $perl
-        = $fixer->emit_declare_vars([$keys_var, $vals_var], ['[]', '[]']);
-
-    $perl .= $fixer->emit_walk_path(
-        $fixer->var,
-        $keys_path,
-        sub {
-            my $var = shift;
-            $fixer->emit_get_key(
-                $var,
-                $keys_key,
-                sub {
-                    my $var = shift;
-                    "push(\@{${keys_var}}, ${var}) if is_value(${var});";
-                }
-            );
-        }
-    );
-    $perl .= "if (\@{${keys_var}}) {" . $fixer->emit_walk_path(
-        $fixer->var,
-        $vals_path,
-        sub {
-            my $var = shift;
-            $fixer->emit_get_key(
-                $var,
-                $vals_key,
-                sub {
-                    my $var = shift;
-                    "push(\@{${vals_var}}, ${var});";
-                }
-            );
-        }
-        )
-        . $fixer->emit_create_path(
-        $fixer->var,
-        $path,
-        sub {
-            my $var = shift;
-            "if (is_hash_ref(${var} //= {})) {"
-                . "while (\@{${keys_var}} && \@{${vals_var}}) {"
-                . "${var}\->{shift(\@{${keys_var}})} = shift(\@{${vals_var}});"
-                . "}" . "}";
-        }
-        ) . "}";
-
-    $perl;
+sub _build_fixer {
+    my ($self) = @_;
+    my $keys_getter = $self->_as_path($self->keys_path)->getter;
+    my $vals_getter = $self->_as_path($self->vals_path)->getter;
+    $self->_as_path($self->path)->creator(sub {
+            my ($val, $data) = @_;
+            if (is_hash_ref($val //= {})) {
+                my $keys = $keys_getter->($data);
+                my $vals = $vals_getter->($data);
+                $val->{shift @$keys} = shift @$vals while @$keys && @$vals;
+            }
+            $val;
+    });
 }
 
 1;

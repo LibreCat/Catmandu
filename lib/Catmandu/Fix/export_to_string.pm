@@ -9,28 +9,18 @@ use Catmandu;
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path        => (fix_arg => 1);
-has name        => (fix_arg => 1);
-has export_opts => (fix_opt => 'collect');
+with 'Catmandu::Fix::Builder';
 
-with 'Catmandu::Fix::SimpleGetValue';
+has path => (fix_arg => 1);
+has name => (fix_arg => 1);
+has opts => (fix_opt => 'collect');
 
-sub emit_value {
-    my ($self, $var, $fixer) = @_;
-
-    my $name        = $self->name();
-    my $export_opts = $fixer->capture($self->export_opts);
-    my $perl        = <<EOF;
-
-if( is_hash_ref( ${var} ) || is_array_ref( ${var} ) ) {
-
-    ${var} = Catmandu->export_to_string( ${var}, '$name', %${export_opts} );
-
-}
-
-EOF
-
-    $perl;
+sub _build_fixer {
+    my ($self) = @_;
+    my $name = $self->name;
+    my $opts = $self->opts;
+    $self->_as_path($self->path)
+        ->updater(if => [[qw(array_ref hash_ref)] => sub {Catmandu->export_to_string($_[0], $name, %$opts)}]);
 }
 
 1;

@@ -36,4 +36,4 @@ is_deeply $pkg->new('', 'pairs.*.key', 'pairs.*.val')->fix(
     },
     "add to root";
 
-done_testing 3;
+done_testing;
