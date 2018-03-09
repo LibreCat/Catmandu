@@ -10,7 +10,7 @@ use namespace::clean;
 
 with 'Catmandu::Fix::Builder';
 
-sub _build_fixer { \&clone }
+sub _build_fixer {\&clone}
 
 1;
 

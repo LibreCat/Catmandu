@@ -72,7 +72,8 @@ sub setter {
             }
             else {
                 push @$args, $val_var;
-                $val = "is_code_ref(${val_var}) ? ${val_var}->(${var}, ${data_var}) : ${val_var}";
+                $val
+                    = "is_code_ref(${val_var}) ? ${val_var}->(${var}, ${data_var}) : ${val_var}";
             }
 
             $self->_emit_set_key($var, $key, $val);

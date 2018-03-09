@@ -16,10 +16,11 @@ has keys_path => (fix_arg => 1);
 has vals_path => (fix_arg => 1);
 
 sub _build_fixer {
-    my ($self) = @_;
+    my ($self)      = @_;
     my $keys_getter = $self->_as_path($self->keys_path)->getter;
     my $vals_getter = $self->_as_path($self->vals_path)->getter;
-    $self->_as_path($self->path)->creator(sub {
+    $self->_as_path($self->path)->creator(
+        sub {
             my ($val, $data) = @_;
             if (is_hash_ref($val //= {})) {
                 my $keys = $keys_getter->($data);
@@ -27,7 +28,8 @@ sub _build_fixer {
                 $val->{shift @$keys} = shift @$vals while @$keys && @$vals;
             }
             $val;
-    });
+        }
+    );
 }
 
 1;
