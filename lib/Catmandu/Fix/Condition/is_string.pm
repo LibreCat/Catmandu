@@ -5,16 +5,18 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_number is_value);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::Condition::SimpleAllTest';
+with 'Catmandu::Fix::Condition::Builder::Simple';
 
-sub emit_test {
-    my ($self, $var) = @_;
-    "!is_number(${var}) && is_value(${var})";
+sub _build_value_tester {
+    sub {
+        !is_number($_[0]) && is_value($_[0]);
+    };
 }
 
 1;

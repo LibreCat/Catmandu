@@ -14,12 +14,14 @@ has name           => (fix_arg => 1);
 has validator_opts => (fix_opt => 'collect');
 has validator      => (is      => 'lazy', init_arg => undef);
 
-with 'Catmandu::Fix::Condition::SimpleAllTest';
+with 'Catmandu::Fix::Condition::Builder::Simple';
 
-sub emit_test {
-    my ($self, $var, $fixer) = @_;
-    my $validator_var = $fixer->capture($self->validator);
-    "${validator_var}->is_valid(${var})";
+sub _build_value_tester {
+    my ($self) = @_;
+    my $validator = $self->validator;
+    sub {
+        $validator->is_valid($_[0]);
+    }
 }
 
 sub _build_validator {

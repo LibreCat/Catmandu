@@ -5,17 +5,29 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path  => (fix_arg => 1);
+has path1 => (fix_arg => 1);
 has path2 => (fix_arg => 1);
 
-with 'Catmandu::Fix::Condition::SimpleCompareTest';
+with 'Catmandu::Fix::Condition::Builder';
 
-sub emit_test {
-    my ($self, $var, $var2, $fixer) = @_;
-    "${var} ~~ ${var2}";
+sub _build_tester {
+    my ($self) = @_;
+    my $path1_getter = as_path($self->path1)->getter;
+    my $path2_getter = as_path($self->path2)->getter;
+    sub {
+        my $data = $_[0];
+        my $vals1 = $path1_getter->($data);
+        my $vals2 = $path2_getter->($data);
+        return 0 unless @$vals1 && @$vals2 && @$vals1 == @$vals2;
+        for (my $i == 0; $i < @$vals1; $i++) {
+            return 0 unless $vals1->[$i] ~~ $vals2->[$i];
+        }
+        return 1;
+    }
 }
 
 1;

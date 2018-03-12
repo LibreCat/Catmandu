@@ -10,11 +10,12 @@ use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::Condition::SimpleAllTest';
+with 'Catmandu::Fix::Condition::Builder::Simple';
 
-sub emit_test {
-    my ($self, $var) = @_;
-    "(defined(${var}) ? 0 : 1)";
+sub _build_value_tester {
+    sub {
+        defined($_[0]) ? 0 : 1;
+    };
 }
 
 1;
