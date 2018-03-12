@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use List::MoreUtils qw(uniq);
+use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -23,7 +24,7 @@ sub _build_fixer {
     my $reverse        = $self->reverse;
     my $numeric        = $self->numeric;
     my $undef_position = $self->undef_position;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if_array_ref => sub {
             my $val = $_[0];
 

@@ -6,17 +6,10 @@ our $VERSION = '1.09';
 
 use Moo;
 use namespace::clean;
-use Catmandu::Fix::Has;
 
-has path    => (fix_arg => 1);
-has pattern => (fix_arg => 1);
+extends 'Catmandu::Fix::Condition::all_match';
 
-with 'Catmandu::Fix::Condition::SimpleAnyTest';
-
-sub emit_test {
-    my ($self, $var, $parser) = @_;
-    "is_value(${var}) && ${var} =~ " . $parser->emit_match($self->pattern);
-}
+sub _build_mode {'any'}
 
 1;
 

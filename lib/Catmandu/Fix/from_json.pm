@@ -6,6 +6,7 @@ our $VERSION = '1.09';
 
 use Cpanel::JSON::XS ();
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -16,8 +17,7 @@ has path => (fix_arg => 1);
 sub _build_fixer {
     my ($self) = @_;
     my $json = Cpanel::JSON::XS->new->utf8(0)->pretty(0)->allow_nonref(1);
-    $self->_as_path($self->path)
-        ->updater(if_string => sub {$json->decode($_[0])});
+    as_path($self->path)->updater(if_string => sub {$json->decode($_[0])});
 }
 
 1;

@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use Catmandu::Util qw(is_array_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -15,7 +16,7 @@ with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if_array_ref => sub {
             my $data = $_[0];
             $data = [map {is_array_ref($_) ? @$_ : $_} @$data]

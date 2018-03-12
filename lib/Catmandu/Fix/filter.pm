@@ -5,6 +5,8 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Catmandu::Util qw(is_array_ref);
+use Catmandu::Util::Regex qw(as_regex);
+use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -17,7 +19,7 @@ with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
     my ($self) = @_;
-    my $regex  = $self->_regex($self->search);
+    my $regex  = as_regex($self->search);
     my $cb     = $self->invert
         ? sub {
         [grep {!m/$regex/} @{$_[0]}];
@@ -25,7 +27,7 @@ sub _build_fixer {
         : sub {
         [grep {m/$regex/} @{$_[0]}];
         };
-    $self->_as_path($self->path)->updater(if_array_ref => $cb);
+    as_path($self->path)->updater(if_array_ref => $cb);
 }
 
 1;

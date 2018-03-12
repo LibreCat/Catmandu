@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -14,7 +15,7 @@ has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if => [
             array_ref => sub {scalar @{$_[0]}},
             hash_ref  => sub {scalar keys %{$_[0]}},

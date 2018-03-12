@@ -4,6 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.09';
 
+use Catmandu::Util::Path qw(as_path);
 use Moo;
 use Catmandu::Util qw(is_hash_ref is_array_ref);
 use namespace::clean;
@@ -41,7 +42,7 @@ sub _build_fixer {
         $data;
     };
 
-    $self->_as_path($self->path)->updater($renamer);
+    as_path($self->path)->updater($renamer);
 }
 
 1;

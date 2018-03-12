@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -27,7 +28,7 @@ sub _build_exporter {
 sub _build_fixer {
     my ($self)   = @_;
     my $exporter = $self->exporter;
-    my $getter   = $self->_as_path($self->path)->getter;
+    my $getter   = as_path($self->path)->getter;
     sub {
         my $data = $_[0];
         my $vals = $getter->($data);

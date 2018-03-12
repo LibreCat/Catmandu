@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -14,11 +15,9 @@ has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if_array_ref => sub {
-            [
-                reverse(@{$_[0]})
-            ];
+            [reverse(@{$_[0]})];
         },
         if_string => sub {
             scalar(reverse($_[0]));

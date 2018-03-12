@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use Catmandu;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -19,7 +20,7 @@ sub _build_fixer {
     my ($self) = @_;
     my $name   = $self->name;
     my $opts   = $self->opts;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if => [
             [qw(array_ref hash_ref)] =>
                 sub {Catmandu->export_to_string($_[0], $name, %$opts)}

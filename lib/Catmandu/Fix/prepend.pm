@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -16,8 +17,7 @@ with 'Catmandu::Fix::Builder';
 sub _build_fixer {
     my ($self) = @_;
     my $val = $self->value;
-    $self->_as_path($self->path)
-        ->updater(if_value => sub {join('', $val, $_[0])});
+    as_path($self->path)->updater(if_value => sub {join('', $val, $_[0])});
 }
 
 1;

@@ -6,18 +6,10 @@ our $VERSION = '1.09';
 
 use Moo;
 use namespace::clean;
-use Catmandu::Fix::Has;
 
-has path  => (fix_arg => 1);
-has value => (fix_arg => 1);
+extends 'Catmandu::Fix::Condition::all_equal';
 
-with 'Catmandu::Fix::Condition::SimpleAnyTest';
-
-sub emit_test {
-    my ($self, $var) = @_;
-    my $value = $self->value;
-    "is_value(${var}) && ${var} eq '$value'";
-}
+sub _build_mode {'any'}
 
 1;
 

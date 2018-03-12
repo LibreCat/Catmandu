@@ -5,6 +5,8 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
+use Catmandu::Util::Regex qw(substituter);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -16,9 +18,8 @@ with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)
-        ->updater(
-        if_value => $self->_substituter($self->search, $self->replace));
+    as_path($self->path)
+        ->updater(if_value => substituter($self->search, $self->replace));
 }
 
 1;

@@ -1,6 +1,7 @@
 package Catmandu::Fix::search_in_store;
 
 use Catmandu::Sane;
+use Catmandu::Util::Path qw(as_path);
 use Catmandu;
 use Moo;
 use Catmandu::Fix::Has;
@@ -38,7 +39,7 @@ sub _build_fixer {
     my $limit  = $self->limit;
     my $start  = $self->start;
     my $sort   = $self->sort;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         sub {
             my $val  = $_[0];
             my $hits = $bag->search(

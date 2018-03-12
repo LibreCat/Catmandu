@@ -5,17 +5,23 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_value);
+use Catmandu::Util::Regex qw(as_regex);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path    => (fix_arg => 1);
 has pattern => (fix_arg => 1);
 
-with 'Catmandu::Fix::Condition::SimpleAllTest';
+with 'Catmandu::Fix::Condition::Builder::Simple';
 
-sub emit_test {
-    my ($self, $var, $parser) = @_;
-    "is_value(${var}) && ${var} =~ " . $parser->emit_match($self->pattern);
+sub _build_value_tester {
+    my ($self) = @_;
+    my $re = as_regex($self->pattern);
+    sub {
+        my $v = $_[0];
+        is_value($v) && $v =~ $re;
+    };
 }
 
 1;

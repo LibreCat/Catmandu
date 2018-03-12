@@ -6,6 +6,7 @@ our $VERSION = '1.09';
 
 use Moo;
 use Catmandu::Util qw(is_string is_array_ref is_hash_ref);
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -16,7 +17,7 @@ with 'Catmandu::Fix::Builder';
 sub _build_fixer {
     my ($self) = @_;
 
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         sub {
             my $val = $_[0];
             if (is_string($val) and my ($num) = $val =~ /([+-]?[0-9]+)/) {

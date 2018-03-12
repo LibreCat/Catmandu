@@ -6,6 +6,7 @@ our $VERSION = '1.07';
 
 use Moo;
 use Catmandu::Util qw(require_package);
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -27,8 +28,8 @@ sub _build_fixer {
     my ($self) = @_;
 
     my $validator = $self->validator;
-    my $get       = $self->_as_path($self->path)->getter;
-    my $set_error = $self->_as_path($self->error_field)->creator;
+    my $get       = as_path($self->path)->getter;
+    my $set_error = as_path($self->error_field)->creator;
 
     sub {
         my ($data) = @_;

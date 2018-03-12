@@ -8,7 +8,6 @@ use Catmandu;
 use Catmandu::Util qw(:is :string);
 
 sub _eval_emit {
-    use warnings FATAL => 'all';
     eval $_[0];
 }
 
@@ -56,6 +55,16 @@ sub _emit_declare_vars {
     "my ${var};";
 }
 
+sub _emit_branch {
+    my ($self, $test, $pass, $fail) = @_;
+    "if (${test}) {${pass}} else {${fail}}";
+}
+
+sub _emit_call {
+    my ($self, $sub_var, @args) = @_;
+    "${sub_var}->(" . join(', ', @args) . ")";
+}
+
 sub _emit_iterate_array {
     my ($self, $var, $cb) = @_;
     my $perl = "";
@@ -97,13 +106,17 @@ sub _emit_assign_cb {
 
 sub _emit_assign {
     my ($self, $var, $val, %opts) = @_;
-    my $l_var  = $var;
-    my $up_var = $opts{up_var};
-    if (my $key = $opts{key}) {
-        $l_var = "${up_var}->{${key}}";
-    }
-    elsif (my $index = $opts{index}) {
-        $l_var = "${up_var}->[${index}]";
+    my $l_var = $var;
+    if (my $up_var = $opts{up_var}) {
+        if (defined(my $key = $opts{key})) {
+            $l_var = "${up_var}->{${key}}";
+        }
+        elsif (defined(my $index = $opts{index})) {
+            $l_var = "${up_var}->[${index}]";
+        }
+        else {
+            # TODO throw error
+        }
     }
     "${l_var} = ${val};";
 }

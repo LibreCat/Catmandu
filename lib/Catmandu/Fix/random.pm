@@ -4,6 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.09';
 
+use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -16,7 +17,7 @@ has max  => (fix_arg => 1);
 sub _build_fixer {
     my ($self) = @_;
     my $max = $self->max;
-    $self->_as_path($self->path)->creator(sub {int(rand($max))});
+    as_path($self->path)->creator(sub {int(rand($max))});
 }
 
 1;

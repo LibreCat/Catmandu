@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use Catmandu::Util qw(is_hash_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -17,9 +18,9 @@ has vals_path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self)      = @_;
-    my $keys_getter = $self->_as_path($self->keys_path)->getter;
-    my $vals_getter = $self->_as_path($self->vals_path)->getter;
-    $self->_as_path($self->path)->creator(
+    my $keys_getter = as_path($self->keys_path)->getter;
+    my $vals_getter = as_path($self->vals_path)->getter;
+    as_path($self->path)->creator(
         sub {
             my ($val, $data) = @_;
             if (is_hash_ref($val //= {})) {

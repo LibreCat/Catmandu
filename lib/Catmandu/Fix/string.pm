@@ -6,6 +6,7 @@ our $VERSION = '1.09';
 
 use List::Util qw(all);
 use Catmandu::Util qw(is_string is_value is_array_ref is_hash_ref);
+use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -17,7 +18,7 @@ has path => (fix_arg => 1);
 sub _build_fixer {
     my ($self) = @_;
 
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         sub {
             my $val = $_[0];
             if (is_string($val)) {

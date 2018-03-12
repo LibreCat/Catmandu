@@ -24,13 +24,7 @@ sub import {
             state $cache = {};
             if ($opts{cache}) {
                 my $key = join('--', @_);
-                $fixer = $cache->{$key} ||= do {
-                    my $f = $pkg->new(@_);
-
-                    # memoize instance of Fix.pm if it's an emitting fix
-                    $f = $f->fixer if $f->can('fixer');
-                    $f;
-                };
+                $fixer = $cache->{$key} ||= $pkg->new(@_);
             }
 
             $fixer ||= $pkg->new(@_);

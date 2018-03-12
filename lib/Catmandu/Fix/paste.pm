@@ -6,6 +6,7 @@ our $VERSION = '1.09';
 
 use Moo;
 use Catmandu::Util qw(is_value is_code_ref);
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -19,7 +20,7 @@ sub _build_fixer {
     my $args      = $self->args;
     my $join_char = ' ';
     my $getters   = [];
-    my $creator   = $self->_as_path($self->path)->creator;
+    my $creator   = as_path($self->path)->creator;
 
     for (my $i = 0; $i < @$args; $i++) {
         my $arg = $args->[$i];
@@ -31,7 +32,7 @@ sub _build_fixer {
             push @$getters, $literal;
         }
         else {
-            push @$getters, $self->_as_path($arg)->getter;
+            push @$getters, as_path($arg)->getter;
         }
     }
 

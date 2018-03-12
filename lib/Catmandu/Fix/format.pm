@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -16,7 +17,7 @@ has spec => (fix_arg => 1);
 sub _build_fixer {
     my ($self) = @_;
     my $spec = $self->spec;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if_string    => sub {sprintf($spec, $_[0])},
         if_array_ref => sub {sprintf($spec, @{$_[0]})},
         if_hash_ref  => sub {sprintf($spec, %{$_[0]})},

@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use URI::Escape qw(uri_escape_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -15,8 +16,7 @@ has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)
-        ->updater(if_string => sub {uri_escape_utf8($_[0])});
+    as_path($self->path)->updater(if_string => sub {uri_escape_utf8($_[0])});
 }
 
 1;

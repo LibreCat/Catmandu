@@ -1,7 +1,11 @@
 package Catmandu::Fix::compact;
 
 use Catmandu::Sane;
+
+our $VERSION = '1.09';
+
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Builder';
@@ -10,7 +14,7 @@ has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)
+    as_path($self->path)
         ->updater(if_array_ref => sub {[grep defined, @{$_[0]}]});
 }
 

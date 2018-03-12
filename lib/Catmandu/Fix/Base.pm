@@ -8,7 +8,9 @@ use Catmandu::Fix;
 use Moo::Role;
 use namespace::clean;
 
-with 'Catmandu::Fix::Inlineable', 'Catmandu::Logger';
+with 'Catmandu::Logger';
+with 'Catmandu::Fix::Inlineable';
+with 'Catmandu::Emit';
 
 requires 'emit';
 

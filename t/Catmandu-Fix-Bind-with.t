@@ -136,4 +136,4 @@ $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 is_deeply $fixer->fix({colors => [qw(yellow red blue)]}),
     {colors => [qw(yellow RED blue)]}, 'anon item test';
 
-done_testing 13;
+done_testing;

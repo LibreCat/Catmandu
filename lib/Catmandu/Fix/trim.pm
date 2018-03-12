@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use Catmandu::Util qw(trim);
 use Unicode::Normalize;
 use namespace::clean;
@@ -39,7 +40,7 @@ sub _build_fixer {
             $val;
         };
     }
-    $self->_as_path($self->path)->updater(if_string => $cb);
+    as_path($self->path)->updater(if_string => $cb);
 }
 
 1;

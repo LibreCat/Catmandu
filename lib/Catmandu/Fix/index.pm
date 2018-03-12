@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use List::MoreUtils qw(indexes first_index);
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -40,7 +41,7 @@ sub _build_fixer {
             },
         );
     }
-    $self->_as_path($self->path)->updater(%args);
+    as_path($self->path)->updater(%args);
 }
 
 1;

@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -15,7 +16,7 @@ has value => (fix_arg => 1, default => sub {undef});
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)->creator($self->value);
+    as_path($self->path)->creator($self->value);
 }
 
 1;

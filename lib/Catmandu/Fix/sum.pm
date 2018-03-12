@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Catmandu::Util qw(is_number);
+use Catmandu::Util::Path qw(as_path);
 use List::Util qw(all sum);
 use Moo;
 use namespace::clean;
@@ -16,7 +17,7 @@ has path => (fix_arg => 1);
 
 sub _build_fixer {
     my ($self) = @_;
-    $self->_as_path($self->path)->updater(
+    as_path($self->path)->updater(
         if_array_ref => sub {
             my $val = $_[0];
             return undef, 1 unless all {is_number($_)} @$val;

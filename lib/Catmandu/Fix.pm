@@ -261,13 +261,7 @@ sub emit_fix {
     my ($self, $fix) = @_;
     my $perl;
 
-    if (Role::Tiny::does_role($fix, 'Catmandu::Fix::Builder')) {
-        my $var       = $self->var;
-        my $fixer_var = $self->generate_var;
-        $self->_captures->{$fixer_var} = $fix->fixer;
-        $perl = "${var} = ${fixer_var}->(${var});";
-    }
-    elsif ($fix->can('emit')) {
+    if ($fix->can('emit')) {
         $perl = $self->emit_block(
             sub {
                 my ($label) = @_;
@@ -275,6 +269,13 @@ sub emit_fix {
             }
         );
     }
+
+    #elsif (Role::Tiny::does_role($fix, 'Catmandu::Fix::Builder')) {
+    #my $var       = $self->var;
+    #my $fixer_var = $self->generate_var;
+    #$self->_captures->{$fixer_var} = $fix->fixer;
+    #$perl = "${var} = ${fixer_var}->(${var});";
+    #}
     elsif ($fix->can('fix')) {
         my $var = $self->var;
         my $ref = $self->generate_var;

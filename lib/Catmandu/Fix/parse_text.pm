@@ -5,6 +5,8 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
+use Catmandu::Util::Regex qw(as_regex);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -15,8 +17,8 @@ with 'Catmandu::Fix::Builder';
 
 sub _build_fixer {
     my ($self) = @_;
-    my $regex = $self->_regex($self->pattern);
-    $self->_as_path($self->path)->updater(
+    my $regex = as_regex($self->pattern);
+    as_path($self->path)->updater(
         if_string => sub {
             my $val = $_[0];
             if ($val =~ m/$regex/) {

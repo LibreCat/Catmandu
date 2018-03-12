@@ -5,49 +5,20 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Condition';
-
 has path => (fix_arg => 1);
 
-sub emit {
-    my ($self, $fixer, $label) = @_;
-    my $path    = $fixer->split_path($self->path);
-    my $key     = pop @$path;
-    my $str_key = $fixer->emit_string($key);
+with 'Catmandu::Fix::Condition::Builder';
 
-    my $perl = $fixer->emit_walk_path(
-        $fixer->var,
-        $path,
-        sub {
-            my $var  = shift;
-            my $perl = "if (";
-            if ($key eq '$first' || $key eq '$last') {
-                $perl .= "is_array_ref(${var}) && \@{${var}}";
-            }
-            elsif ($key =~ /^[0-9]+$/) {
-                $perl
-                    .= "is_hash_ref(${var}) && exists(${var}->{${str_key}}) || is_array_ref(${var}) && \@{${var}} > ${key}";
-            }
-            else {
-                $perl
-                    .= "is_hash_ref(${var}) && exists(${var}->{${str_key}})";
-            }
-            $perl .= ") {";
-
-            $perl .= $fixer->emit_fixes($self->pass_fixes);
-
-            $perl .= "last $label;";
-            $perl .= "}";
-            $perl;
-        }
-    );
-
-    $perl .= $fixer->emit_fixes($self->fail_fixes);
-
-    $perl;
+sub _build_tester {
+    my ($self) = @_;
+    my $getter = as_path($self->path)->getter;
+    sub {
+        @{$getter->($_[0])} ? 1 : 0;
+    };
 }
 
 1;

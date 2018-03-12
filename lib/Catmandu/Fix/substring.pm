@@ -5,6 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Catmandu::Util qw(as_utf8);
+use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
@@ -55,7 +56,7 @@ sub _build_fixer {
         };
     }
 
-    $self->_as_path($self->path)->updater(if_value => $cb);
+    as_path($self->path)->updater(if_value => $cb);
 }
 
 1;
