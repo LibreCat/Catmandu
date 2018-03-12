@@ -5,20 +5,27 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_number is_string is_bool);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path   => (fix_arg => 1);
 has strict => (fix_opt => 1);
 
-with 'Catmandu::Fix::Condition::SimpleAllTest';
+with 'Catmandu::Fix::Condition::Builder::Simple';
 
-sub emit_test {
-    my ($self, $var) = @_;
+sub _build_value_tester {
+    my ($self) = @_;
     if ($self->strict) {
-        return "(is_bool(${var}) && !${var})";
+        sub {
+            is_bool($_[0]) && !$_[0];
+        };
+    } else {
+        sub {
+            my $val = $_[0];
+            (is_bool($val) && !$val) || (is_number($val) && $val == 0) || (is_string($val) && $val eq 'false')
+        };
     }
-    "((is_bool(${var}) && !${var}) || (is_number(${var}) && ${var} == 0) || (is_string(${var}) && ${var} eq 'false'))";
 }
 
 1;

@@ -5,16 +5,16 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_array_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 has path => (fix_arg => 1);
 
-with 'Catmandu::Fix::Condition::SimpleAllTest';
+with 'Catmandu::Fix::Condition::Builder::Simple';
 
-sub emit_test {
-    my ($self, $var) = @_;
-    "is_array_ref(${var})";
+sub _build_value_tester {
+    \&is_array_ref;
 }
 
 1;
