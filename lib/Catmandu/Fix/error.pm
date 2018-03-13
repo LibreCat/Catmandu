@@ -23,11 +23,13 @@ sub _build_fixer {
             my $data = $_[0];
             my $vals = $getter->($data);
             @$vals || return $data;
-            my $str = join "\n", grep { is_value($_) } @$vals;
-            Catmandu::Error->throw($str)
+            my $str = join "\n", grep {is_value($_)} @$vals;
+            Catmandu::Error->throw(
+                $str);
         };
-    } else {
-        sub { Catmandu::Error->throw($msg) };
+    }
+    else {
+        sub {Catmandu::Error->throw($msg)};
     }
 
 }

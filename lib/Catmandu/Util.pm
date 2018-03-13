@@ -195,7 +195,9 @@ sub read_json {
 # Split a path on . or /, but not on \/ or \.
 sub split_path {
     my ($path) = @_;
-    return [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, trim($path)];
+    $path = trim($path);
+    $path =~ s/^\$[\.\/]//;
+    return [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, $path];
 }
 
 sub join_path {

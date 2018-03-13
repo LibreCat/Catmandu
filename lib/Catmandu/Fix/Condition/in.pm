@@ -16,11 +16,11 @@ has path2 => (fix_arg => 1);
 with 'Catmandu::Fix::Condition::Builder';
 
 sub _build_tester {
-    my ($self) = @_;
+    my ($self)       = @_;
     my $path1_getter = as_path($self->path1)->getter;
     my $path2_getter = as_path($self->path2)->getter;
     sub {
-        my $data = $_[0];
+        my $data  = $_[0];
         my $vals1 = $path1_getter->($data);
         my $vals2 = $path2_getter->($data);
         return 0 unless @$vals1 && @$vals2 && @$vals1 == @$vals2;
@@ -28,7 +28,7 @@ sub _build_tester {
             return 0 unless $vals1->[$i] ~~ $vals2->[$i];
         }
         return 1;
-    }
+        }
 }
 
 1;

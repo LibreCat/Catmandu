@@ -1,31 +1,52 @@
 package Catmandu::Emit;
 
+# eval context ->
 use Catmandu::Sane;
 
 our $VERSION = '1.0606';
 
-use Catmandu;
-use Catmandu::Util qw(:is :string);
+use Catmandu::Util qw(:is :string require_package);
+use Clone qw(clone);
+require Catmandu;    # avoid circular dependencies
 
 sub _eval_emit {
     eval $_[0];
 }
 
+# <- eval context
+
 use B ();
 use Moo::Role;
 
-has _num_vars => (is => 'rw', lazy => 1, default => sub {0});
+# global state ->
+sub _reject {
+    state $reject = {};
+}
+
+sub _generate_label {
+    state $num_labels = 0;
+    my $label = "__CATMANDU__FIX__${num_labels}";
+    $num_labels++;
+    $label;
+}
+
+sub _reject_label {
+    state $reject_label = _generate_label;
+}
 
 sub _generate_var {
-    my ($self) = @_;
-    my $n = $self->_num_vars;
-    $self->_num_vars($n + 1);
-    "\$__$n";
+    state $num_vars = 0;
+    my $var = "\$__catmandu__${num_vars}";
+    $num_vars++;
+    $var;
 }
+
+# <- global state
 
 sub _eval_sub {
     my ($self, @args) = @_;
-    _eval_emit($self->_emit_sub(@args));
+    local $@;
+    _eval_emit($self->_emit_sub(@args)) or Catmandu::Error->throw($@);
 }
 
 sub _emit_sub {
@@ -47,8 +68,8 @@ sub _emit_sub {
 
 sub _emit_declare_vars {
     my ($self, $var, $val) = @_;
-    $var = "(" . join(", ", @$var) . ")" if ref $var;
-    $val = "(" . join(", ", @$val) . ")" if ref $val;
+    $var = "(" . join(", ", @$var) . ")" if is_array_ref($var);
+    $val = "(" . join(", ", @$val) . ")" if is_array_ref($val);
     if (defined $val) {
         return "my ${var} = ${val};";
     }
@@ -115,7 +136,8 @@ sub _emit_assign {
             $l_var = "${up_var}->[${index}]";
         }
         else {
-            Catmandu::BadArg->throw('up_var without key or index')
+            Catmandu::BadArg->throw(
+                'up_var without key or index');
         }
     }
     "${l_var} = ${val};";
@@ -125,15 +147,19 @@ sub _emit_delete {
     my ($self, %opts) = @_;
     my $up_var = $opts{up_var};
     if (!defined($up_var)) {
-        # TODO deleting the root should emit reject
-        'Catmandu::NotImplemented->throw("deleting root is not yet supported")';
-    } elsif (my $key = $opts{key}) {
+
+        # TODO deleting the root object is equivalent to reject
+        $self->_emit_reject;
+    }
+    elsif (my $key = $opts{key}) {
         "delete ${up_var}->{${key}}";
     }
     elsif (my $idx = $opts{index}) {
         "splice(\@{${up_var}}, ${idx}, 1)";
-    } else {
-        Catmandu::BadArg->throw('up_var without key or index')
+    }
+    else {
+        Catmandu::BadArg->throw(
+            'up_var without key or index');
     }
 }
 
@@ -150,6 +176,11 @@ sub _emit_value {
 sub _emit_string {
     my ($self, $str) = @_;
     B::perlstring($str);
+}
+
+sub _emit_reject {
+    my ($self) = @_;
+    'goto ' . $self->_reject_label . ';';
 }
 
 1;

@@ -19,16 +19,12 @@ throws_ok {$pkg->new('$.error')->fix({error => '!!!ERROR!!!'})}
 qr/!!!ERROR!!!/, 'dies with an error message';
 
 throws_ok {
-    $pkg->new('$.errors.*')
-        ->fix(
-        {errors => ['!!!ERROR!!!', '!!!PANIC!!!']})
+    $pkg->new('$.errors.*')->fix({errors => ['!!!ERROR!!!', '!!!PANIC!!!']})
 }
 qr/!!!ERROR!!!/, 'dies with an error message';
 
 lives_ok {
-    $pkg->new('$.errors.*')
-        ->fix(
-        {errors => []})
+    $pkg->new('$.errors.*')->fix({errors => []})
 }
 'lives if there are no error messages';
 
