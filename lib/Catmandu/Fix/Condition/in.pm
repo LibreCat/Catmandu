@@ -6,6 +6,7 @@ our $VERSION = '1.09';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
+use experimental 'smartmatch';
 use namespace::clean;
 use Catmandu::Fix::Has;
 
@@ -23,7 +24,7 @@ sub _build_tester {
         my $vals1 = $path1_getter->($data);
         my $vals2 = $path2_getter->($data);
         return 0 unless @$vals1 && @$vals2 && @$vals1 == @$vals2;
-        for (my $i == 0; $i < @$vals1; $i++) {
+        for (my $i = 0; $i < @$vals1; $i++) {
             return 0 unless $vals1->[$i] ~~ $vals2->[$i];
         }
         return 1;

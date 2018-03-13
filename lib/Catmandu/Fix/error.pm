@@ -5,16 +5,31 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use Moo;
+use Catmandu::Util qw(is_value);
+use Catmandu::Util::Path qw(:all);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Inlineable';
+with 'Catmandu::Fix::Builder';
 
 has message => (fix_arg => 1);
 
-sub fix {
+sub _build_fixer {
     my ($self) = @_;
-    die $self->message;
+    my $msg = $self->message;
+    if (looks_like_path($msg)) {
+        my $getter = as_path($msg)->getter;
+        sub {
+            my $data = $_[0];
+            my $vals = $getter->($data);
+            @$vals || return $data;
+            my $str = join "\n", grep { is_value($_) } @$vals;
+            Catmandu::Error->throw($str)
+        };
+    } else {
+        sub { Catmandu::Error->throw($msg) };
+    }
+
 }
 
 1;

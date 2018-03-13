@@ -17,13 +17,15 @@ sub split_path {
     my ($self) = @_;
     my $path = $self->path;
     if (is_value($path)) {
-        [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, trim($path)];
+        $path = trim($path);
+        $path =~ s/^\$[\.\/]//;
+        [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, $path];
     }
     elsif (is_array_ref($path)) {
         $path;
     }
     else {
-        # TODO
+        # TODO throw error
     }
 }
 
