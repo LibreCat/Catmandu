@@ -124,11 +124,16 @@ sub _emit_assign {
 sub _emit_delete {
     my ($self, %opts) = @_;
     my $up_var = $opts{up_var};
-    if (my $key = $opts{key}) {
-        return "delete ${up_var}->{${key}}";
+    if (!defined($up_var)) {
+        # TODO deleting the root should emit reject
+        'Catmandu::NotImplemented->throw("deleting root is not yet supported")';
+    } elsif (my $key = $opts{key}) {
+        "delete ${up_var}->{${key}}";
     }
-    elsif (my $index = $opts{index}) {
-        return "splice(\@{${up_var}}, ${index}, 1)";
+    elsif (my $idx = $opts{index}) {
+        "splice(\@{${up_var}}, ${idx}, 1)";
+    } else {
+        Catmandu::BadArg->throw('up_var without key or index')
     }
 }
 
