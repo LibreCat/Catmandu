@@ -115,7 +115,7 @@ sub _emit_assign {
             $l_var = "${up_var}->[${index}]";
         }
         else {
-            # TODO throw error
+            Catmandu::BadArg->throw('up_var without key or index')
         }
     }
     "${l_var} = ${val};";
