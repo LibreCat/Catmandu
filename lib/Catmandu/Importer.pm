@@ -4,7 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '1.09';
 
-use Catmandu::Util qw(io data_at is_value is_string is_array_ref is_hash_ref);
+use Catmandu::Util qw(io is_value is_string is_array_ref is_hash_ref);
+use Catmandu::Util::Path qw(as_path);
 use LWP::UserAgent;
 use HTTP::Request ();
 use URI           ();
@@ -26,13 +27,14 @@ around generator => sub {
     }
 
     if (defined(my $path = $self->data_path)) {
+        my $getter = as_path($path)->getter;
         return sub {
             state @buf;
             while (1) {
                 return shift @buf if @buf;
 
                 # TODO use something faster than data_at
-                @buf = data_at($path, $generator->() // return);
+                @buf = @{$getter->($generator->() // return)};
                 next;
             }
         };

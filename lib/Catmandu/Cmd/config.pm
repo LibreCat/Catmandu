@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.09';
 
 use parent 'Catmandu::Cmd';
-use Catmandu::Util qw(data_at);
+use Catmandu::Util::Path qw(as_path);
 use Catmandu;
 use namespace::clean;
 
@@ -22,7 +22,7 @@ sub command {
         = $self->_parse_options($args);
 
     if (@$from_args) {
-        $from = data_at($from_args->[0], Catmandu->config);
+        $from = as_path($from_args->[0])->getter->(Catmandu->config);
     }
     else {
         $from = Catmandu->config;
