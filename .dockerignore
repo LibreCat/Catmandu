@@ -1,0 +1,4 @@
+.git/*
+local/*
+blib/*
+cover_db/*
