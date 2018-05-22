@@ -18,6 +18,10 @@ sub command_opt_spec {
         ["start=i",       ""],
         ["total=i",       ""],
         ["id=s@",         ""],
+        [
+            "id-file=s",
+            "A line-delimited file containing the id's to include in the conversion. Other records will be ignored."
+        ],
     );
 }
 
@@ -30,8 +34,20 @@ sub command {
     my $from = Catmandu->importer($from_args->[0], $from_opts);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
-    if (my $ids = $opts->id) {
-        $from = $from->select(sub {array_includes($ids, $_[0]->{_id})});
+    if ($opts->id // $opts->id_file) {
+        my $id_map = {};
+        if (my $ids = $opts->id) {
+            $id_map->{$_} = 1 for @$ids;
+        }
+        else {
+            Catmandu->importer('Text', file => $opts->id_file)->each(
+                sub {
+                    $id_map->{$_[0]->{text}} = 1;
+                }
+            );
+        }
+        $from = $from->select(
+            sub {defined $_[0]->{_id} && exists $id_map->{$_[0]->{_id}}});
     }
     elsif ($opts->start // $opts->total) {
         $from = $from->slice($opts->start, $opts->total);

@@ -1,9 +1,10 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - the export and convert commands get a new --id-file option
 
 1.09  2018-03-06 11:24:35 CET
-  - Add validator method to Catmandu
+  - add validator method to Catmandu
   - new Mock validator
   - new validate fix and valid fix condition
   - JSON importer byte buffer size is now configurable to optimize performance
