@@ -1,5 +1,5 @@
-english,latin
-Sun,Sol
-Mercury,Mercurius
-Moon,Luna
-Earth,Terra
+english,latin,_id
+Sun,Sol,Sun
+Mercury,Mercurius,Mercury
+Moon,Luna,Moon
+Earth,Terra,Earth

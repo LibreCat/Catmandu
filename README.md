@@ -7,6 +7,7 @@ Catmandu::Introduction - An Introduction to Catmandu data processing toolkit
 [![Build Status](https://travis-ci.org/LibreCat/Catmandu.svg?branch=master)](https://travis-ci.org/LibreCat/Catmandu)
 [![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.svg?branch=master)](https://coveralls.io/r/LibreCat/Catmandu)
 [![CPANTS kwalitee](http://cpants.cpanauthors.org/dist/Catmandu.png)](http://cpants.cpanauthors.org/dist/Catmandu)
+[![Docker image](https://img.shields.io/docker/build/librecat/catmandu.svg)](https://hub.docker.com/r/librecat/catmandu/)
 
 # Introduction
 
