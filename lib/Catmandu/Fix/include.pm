@@ -7,57 +7,91 @@ our $VERSION = '1.09';
 use Moo;
 use Catmandu;
 use Catmandu::Fix;
-use File::Spec qw();
-use Cwd qw();
+use File::Spec;
+use Cwd qw(realpath);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Inlineable';
 
-has path => (fix_arg => 1);
-has _path => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => sub {
+has path   => (fix_arg => 1);
+has _files => (is => 'lazy');
+has _fixer => (is => 'lazy');
 
-        my $self = $_[0];
+sub _build__files {
+    my ($self) = @_;
+    my $path = $self->path;
 
-        my $path = $self->path();
-        my $real_path;
-        my $load_paths = Catmandu->_env->load_paths;
+    if ($path =~ /\*/) { # path is glob pattern
+        return $self->_find_glob($path);
+    }
 
-        if (File::Spec->file_name_is_absolute($path)) {
-            $real_path = $path;
-        }
-        else {
-            for my $p (@$load_paths) {
-                my $n = File::Spec->catfile($p, $path);
-                if (-r $n) {
-                    $real_path = Cwd::realpath($n);
-                    last;
-                }
+    [$self->_find_file($path)];
+}
+
+sub _find_file {
+    my ($self, $path) = @_;
+    my $roots = Catmandu->roots;
+    my $file;
+
+    if (File::Spec->file_name_is_absolute($path)) {
+        $file = $path;
+    }
+    else {
+        for my $root (@$roots) {
+            my $f = File::Spec->catfile($root, $path);
+            if (-r $f) {
+                $file = $f;
+                last;
             }
-
         }
 
-        die("unable to find $path in load_path of Catmandu (load_path:  "
-                . join(',', @$load_paths) . ")")
-            unless defined $real_path;
-        $real_path;
     }
-);
 
-has _fixer => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => sub {
-        Catmandu::Fix->new(fixes => [$_[0]->_path()]);
+    Catmandu::Error->throw("unable to find $path in ". join(',', @$roots) . ")")
+        unless defined $file;
+
+    realpath($file);
+}
+
+sub _find_glob {
+    my ($self, $path) = @_;
+    my $roots = Catmandu->roots;
+
+    if (File::Spec->file_name_is_absolute($path)) {
+        return [sort map { realpath($_) } grep { -r $_ } glob $path];
     }
-);
+
+    my %seen;
+    my $files = [];
+
+    for my $root (@$roots) {
+        my $glob = File::Spec->catfile($root, $path);
+        for my $file (glob $glob) {
+            my $rel_path = File::Spec->abs2rel($file, $root);
+            next if $seen{$rel_path};
+            if (-r $file) {
+                push @$files, realpath($file);
+                $seen{$rel_path} = 1;
+            }
+        }
+    }
+
+    [sort @$files];
+}
+
+sub _build__fixer {
+    my ($self) = @_;
+    my $files = $self->_files;
+    return unless @$files;
+    Catmandu::Fix->new(fixes => $files);
+}
 
 sub fix {
     my ($self, $data) = @_;
-    $self->_fixer()->fix($data);
+    my $fixer = $self->_fixer;
+    return $data unless $fixer;
+    $fixer->fix($data);
 }
 
 1;
@@ -73,6 +107,7 @@ Catmandu::Fix::include - include fixes from another file
 =head1 SYNOPSIS
 
     include('/path/to/myfixes.txt')
+    include('fixes/*.fix')
 
 =head1 NOTES
 

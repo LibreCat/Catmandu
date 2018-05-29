@@ -2,6 +2,7 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - bring Dockerfile back to this repository
+  - include fix now accepts glob patterns
   - the export and convert commands get a new --id-file option
 
 1.09  2018-03-06 11:24:35 CET
