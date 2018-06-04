@@ -2,7 +2,7 @@ package Catmandu::Cmd::info;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -24,21 +24,12 @@ sub command_opt_spec {
             'override included directories (defaults to @INC)',
             {default => [@INC]}
         ],
+        ["brief",         "omit short module description"],
         ["verbose|v",     ""],
         ["fix=s@",        ""],
         ["var=s%",        ""],
         ["preprocess|pp", ""],
     );
-}
-
-sub _add_about {
-    my $item = $_[0];
-    my $name = pod_section($item->{file}, 'NAME');
-    $name =~ s/[^-]+(\s*-?\s*)?//;
-    $name =~ s/\n/ /mg;
-    chomp $name;
-    $item->{about} = $name;
-    $item;
 }
 
 sub command {
@@ -76,12 +67,13 @@ sub command {
 
     my ($from_args, $from_opts, $into_args, $into_opts)
         = $self->_parse_options($args);
+    $from_opts->{about} = !$opts->{brief};
 
     for my $key (qw(inc namespace max_depth)) {
         $from_opts->{$key} = $opts->$key if defined $opts->$key;
     }
 
-    my $from = Catmandu->importer('Modules', $from_opts)->tap(\&_add_about);
+    my $from = Catmandu->importer('Modules', $from_opts);
 
     if (@$into_args || %$into_opts) {
         if ($opts->fix) {
@@ -93,7 +85,8 @@ sub command {
         $into->commit;
     }
     else {
-        my $cols = [qw(name version about)];
+        my $cols = [qw(name version)];
+        push @$cols, 'about' unless $opts->brief;
         push @$cols, 'file' if $opts->verbose;
         $from->format(cols => $cols);
     }

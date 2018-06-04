@@ -2,7 +2,7 @@ package Catmandu::Cmd::export;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;
@@ -23,6 +23,7 @@ sub command_opt_spec {
         ["sru-sortkeys=s", ""],
         ["sort=s",         ""],
         ["id=s@",          ""],
+        ["id-file=s", "A line-delimited file containing the id's to export."],
     );
 }
 
@@ -36,8 +37,14 @@ sub command {
     my $from = Catmandu->store($from_args->[0], $from_opts)->bag($from_bag);
     my $into = Catmandu->exporter($into_args->[0], $into_opts);
 
-    if (my $ids = $opts->id) {
-        $from = Catmandu::ArrayIterator->new([map {$from->get($_)} @$ids]);
+    if ($opts->id_file) {
+        my $bag = $from;
+        $from = Catmandu->importer('Text', file => $opts->id_file)
+            ->map(sub {$bag->get($_[0]->{text})});
+    }
+    elsif (my $ids = $opts->id) {
+        my $bag = $from;
+        $from = Catmandu::ArrayIterator->new([map {$bag->get($_)} @$ids]);
     }
     elsif ($opts->query // $opts->cql_query // $opts->sort
         // $opts->sru_sortkeys)

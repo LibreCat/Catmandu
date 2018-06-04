@@ -1,0 +1,36 @@
+# Catmandu dependencies as Debian packages
+
+# This list is used to build Docker images. See also
+# https://salsa.debian.org/perl-team/modules/packages/libcatmandu-perl
+
+libany-uri-escape-perl
+libasa-perl
+libcgi-expand-perl
+libclone-perl
+libconfig-onion-perl
+libcpanel-json-xs-perl
+libdata-compare-perl
+libdata-util-perl
+libdata-uuid-perl
+libhash-merge-simple-perl
+libio-handle-util-perl
+liblist-moreutils-perl
+liblog-any-perl
+libmime-types-perl
+libmodule-info-perl
+libmoo-perl
+libmoox-aliases-perl
+libnamespace-clean-perl
+libparser-mgc-perl
+libpath-iterator-rule-perl
+libpath-tiny-perl
+libsub-exporter-perl
+libtext-csv-perl
+libtext-hogan-perl
+libthrowable-perl
+libtry-tiny-byclass-perl
+liburi-perl
+liburi-template-perl
+libwww-perl
+libyaml-libyaml-perl
+build-essential
