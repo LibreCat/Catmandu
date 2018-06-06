@@ -12,12 +12,11 @@ use namespace::clean;
 with "Catmandu::Iterable";
 
 has base_dir => (
-    is => "ro",
-    isa => sub { check_string( $_[0] ); },
+    is       => "ro",
+    isa      => sub {check_string($_[0]);},
     required => 1,
-    coerce => sub {
-        is_string( $_[0] ) ?
-            Cwd::abs_path( $_[0] ) : $_[0];
+    coerce   => sub {
+        is_string($_[0]) ? Cwd::abs_path($_[0]) : $_[0];
     }
 );
 

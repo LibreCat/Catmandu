@@ -16,90 +16,91 @@ use namespace::clean;
 
 with "Catmandu::PathIndex";
 
-has keysize => (is => 'ro', default  => 9, trigger => 1);
+has keysize => (is => 'ro', default => 9, trigger => 1);
 
 sub _trigger_keysize {
-    Catmandu::BadArg->throw( "keysize needs to be a multiple of 3" )
+    Catmandu::BadArg->throw("keysize needs to be a multiple of 3")
         unless $_[0]->keysize % 3 == 0;
 }
 
 sub format_id {
-    my ( $self, $id ) = @_;
+    my ($self, $id) = @_;
 
-    Catmandu::BadArg->throw( "need natural number" )
-        unless is_natural( $id );
+    Catmandu::BadArg->throw("need natural number") unless is_natural($id);
 
-    my $n_id = int( $id );
+    my $n_id = int($id);
 
-    Catmandu::BadArg->throw( "id must be bigger or equal to zero" )
+    Catmandu::BadArg->throw("id must be bigger or equal to zero")
         if $n_id < 0;
 
     my $keysize = $self->keysize();
 
-    Catmandu::BadArg->throw( "id '$id' does not fit into configured keysize $keysize" )
-        if length( "$id" ) > $keysize;
+    Catmandu::BadArg->throw(
+        "id '$id' does not fit into configured keysize $keysize")
+        if length("$id") > $keysize;
 
     sprintf "%-${keysize}.${keysize}d", $n_id;
 }
 
 sub _to_path {
-    my ( $self, $id ) = @_;
+    my ($self, $id) = @_;
 
-    File::Spec->catdir(
-        $self->base_dir, unpack( "(A3)*", $id )
-    );
+    File::Spec->catdir($self->base_dir, unpack("(A3)*", $id));
 }
 
 sub _from_path {
-    my ( $self, $path ) = @_;
+    my ($self, $path) = @_;
 
-    my @split_path = File::Spec->splitdir( $path );
-    my $id = join( "", splice(@split_path, scalar(File::Spec->splitdir( $self->base_dir )) ) );
+    my @split_path = File::Spec->splitdir($path);
+    my $id         = join("",
+        splice(@split_path, scalar(File::Spec->splitdir($self->base_dir))));
 
-    $self->format_id( $id );
+    $self->format_id($id);
 }
 
 sub get {
-    my ( $self, $id ) = @_;
+    my ($self, $id) = @_;
 
-    my $f_id = $self->format_id( $id );
-    my $path = $self->_to_path( $f_id );
+    my $f_id = $self->format_id($id);
+    my $path = $self->_to_path($f_id);
 
-    is_string( $path ) && -d $path ? { _id => $f_id, _path => $path } : undef;
+    is_string($path) && -d $path ? {_id => $f_id, _path => $path} : undef;
 }
 
 sub add {
-    my ( $self, $id ) = @_;
+    my ($self, $id) = @_;
 
-    my $f_id = $self->format_id( $id );
-    my $path = $self->_to_path( $f_id );
+    my $f_id = $self->format_id($id);
+    my $path = $self->_to_path($f_id);
 
-    unless ( -d $path ) {
+    unless (-d $path) {
 
         my $err;
-        path( $path )->mkpath({ error => \$err });
+        path($path)->mkpath({error => \$err});
 
-        Catmandu::Error->throw( "unable to create directory $path: ".Dumper( $err ) )
-            if defined( $err ) && scalar( @$err );
+        Catmandu::Error->throw(
+            "unable to create directory $path: " . Dumper($err))
+            if defined($err) && scalar(@$err);
 
     }
 
-    +{ _id => $f_id, _path => $path };
+    +{_id => $f_id, _path => $path};
 }
 
 sub delete {
-    my ( $self, $id ) = @_;
+    my ($self, $id) = @_;
 
-    my $f_id = $self->format_id( $id );
-    my $path = $self->_to_path( $f_id );
+    my $f_id = $self->format_id($id);
+    my $path = $self->_to_path($f_id);
 
-    if ( is_string( $path ) && -d $path ) {
+    if (is_string($path) && -d $path) {
 
         my $err;
-        path( $path )->remove_tree({ error => \$err });
+        path($path)->remove_tree({error => \$err});
 
-        Catmandu::Error->throw( "unable to remove directory $path: ".Dumper( $err ) )
-            if defined( $err ) && scalar( @$err );
+        Catmandu::Error->throw(
+            "unable to remove directory $path: " . Dumper($err))
+            if defined($err) && scalar(@$err);
 
     }
 
@@ -110,13 +111,15 @@ sub delete_all {
 
     my $self = $_[0];
 
-    if ( -d $self->base_dir ) {
+    if (-d $self->base_dir) {
 
         my $err;
-        path( $_[0]->base_dir )->remove_tree({ keep_root => 1, error => \$err });
+        path($_[0]->base_dir)->remove_tree({keep_root => 1, error => \$err});
 
-        Catmandu::Error->throw( "unable to remove entries from base directory ".$self->base_dir.": ".Dumper( $err ) )
-            if defined( $err ) && scalar( @$err );
+        Catmandu::Error->throw("unable to remove entries from base directory "
+                . $self->base_dir . ": "
+                . Dumper($err))
+            if defined($err) && scalar(@$err);
 
     }
 
@@ -131,21 +134,21 @@ sub generator {
         state $iter;
         state $base_dir = $self->base_dir();
 
-        unless ( $iter ) {
+        unless ($iter) {
             $rule = Path::Iterator::Rule->new();
-            $rule->min_depth( $self->keysize() / 3 );
-            $rule->max_depth( $self->keysize() / 3 );
+            $rule->min_depth($self->keysize() / 3);
+            $rule->max_depth($self->keysize() / 3);
             $rule->directory();
-            $iter = $rule->iter( $base_dir , { depthfirst => 1 } );
+            $iter = $rule->iter($base_dir, {depthfirst => 1});
         }
 
         my $path = $iter->();
 
         return unless defined $path;
 
-        my $id = $self->_from_path( $path );
+        my $id = $self->_from_path($path);
 
-        +{ _id => $id, _path => $path };
+        +{_id => $id, _path => $path};
     };
 }
 
