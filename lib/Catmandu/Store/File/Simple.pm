@@ -17,60 +17,45 @@ use namespace::clean;
 with 'Catmandu::FileStore';
 with 'Catmandu::Droppable';
 
-has root    => (is => 'ro', required => '1');
+has root => (is => 'ro', required => '1');
+
 #DEPRECATED
-has uuid    => (is => 'ro');
+has uuid => (is => 'ro');
+
 #DEPRECATED
 has keysize => (
-    is => 'ro',
+    is  => 'ro',
     isa => sub {
         Catmandu::Util::check_natural($_[0]);
-        croak "keysize needs to be a multiple of 3"
-            unless $_[0] % 3 == 0;
+        croak "keysize needs to be a multiple of 3" unless $_[0] % 3 == 0;
     },
-    default  => 9
+    default => 9
 );
-has path_index_package => (
-    is => "ro"
-);
-has path_index_options => (
-    is => "ro",
-    lazy => 1,
-    default => sub { +{}; }
-);
-has path_index => (
-    is => "lazy"
-);
+has path_index_package => (is => "ro");
+has path_index_options => (is => "ro", lazy => 1, default => sub {+{};});
+has path_index         => (is => "lazy");
 
 sub _build_path_index {
 
     my $self = $_[0];
 
+    if ($self->path_index_package()) {
 
-    if ( $self->path_index_package() ) {
-
-        Catmandu::Util::require_package(
-            $self->path_index_package(), "Catmandu::PathIndex"
-        )->new(
-            %{
-                $self->path_index_options(),
-            },
-            base_dir => $self->root()
-        );
+        Catmandu::Util::require_package($self->path_index_package(),
+            "Catmandu::PathIndex")
+            ->new(%{$self->path_index_options(),}, base_dir => $self->root());
 
     }
-    elsif ( $self->uuid() ) {
+    elsif ($self->uuid()) {
 
-        Catmandu::PathIndex::UUID->new(
-            base_dir => $self->root()
-        );
+        Catmandu::PathIndex::UUID->new(base_dir => $self->root());
 
     }
     else {
 
         Catmandu::PathIndex::Number->new(
             base_dir => $self->root(),
-            keysize => $self->keysize()
+            keysize  => $self->keysize()
         );
 
     }

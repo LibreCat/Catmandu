@@ -23,7 +23,7 @@ sub generator {
 
         return unless defined $mapping;
 
-        $self->get( $mapping->{_id} );
+        $self->get($mapping->{_id});
 
     };
 }
@@ -35,7 +35,7 @@ sub exists {
 
     $self->log->debug("Checking exists $id");
 
-    defined( $self->store->path_index->get( $id ) );
+    defined($self->store->path_index->get($id));
 }
 
 sub add {
@@ -59,7 +59,7 @@ sub get {
 
     my $mapping = $self->store->path_index->get($id);
 
-    defined( $mapping ) ? { _id => $id } : undef;
+    defined($mapping) ? {_id => $id} : undef;
 }
 
 sub delete {
@@ -67,7 +67,7 @@ sub delete {
 
     croak "Need a key" unless defined $id;
 
-    $self->store->path_index->delete( $id );
+    $self->store->path_index->delete($id);
 }
 
 sub delete_all {
