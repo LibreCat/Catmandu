@@ -6,15 +6,14 @@ our $VERSION = '1.09';
 
 use Catmandu::Util
     qw(check_value check_string is_array_ref is_instance is_able require_package);
-use String::CamelCase qw(camelize);
 use Module::Info;
 use Moo;
 use namespace::clean;
 
 extends 'Parser::MGC';
 
-has default_namespace => (is => 'lazy');
-has env_stack         => (is => 'lazy');
+has env => (is => 'lazy');
+has default_ns => (is => 'lazy');
 
 sub FOREIGNBUILDARGS {
     my ($class, $opts) = @_;
@@ -22,66 +21,74 @@ sub FOREIGNBUILDARGS {
     %$opts;
 }
 
-sub _build_default_namespace {
-    'Catmandu::Fix';
-}
-
-sub _build_env_stack {
-    [{_ns => []}];
-}
-
-sub clear_env {
+sub _build_default_ns {
     my ($self) = @_;
-    my $envs = $self->env_stack;
-    splice(@$envs);
+    $self->_build_ns('perl:catmandu.fix');
+}
+
+sub _build_env {
+    my ($self) = @_;
+    $self->init_env([]);
+}
+
+sub init_env {
+    my ($self, $envs) = @_;
+    splice(@$envs,0, @$envs, {ns => {'' => $self->default_ns}});
     $envs;
 }
 
-sub env_get {
-    my ($self, $key, $default) = @_;
-    my $envs = $self->env_stack;
+#sub env_get {
+    #my ($self, $key, $default) = @_;
+    #my $envs = $self->env_stack;
+    #for my $env (@$envs) {
+        #return $env->{$key} if exists $env->{$key};
+    #}
+    #$default;
+#}
+
+#sub env_add {
+    #my ($self, $key, $val) = @_;
+    #my $env = $self->env_stack->[-1];
+    #Catmandu::FixParseError->throw("Already defined: $key")
+        #if exists $env->{$key};
+    #$env->{$key} = $val;
+#}
+
+sub get_ns {
+    my ($self, $name) = @_;
+    my $envs = $self->env;
     for my $env (@$envs) {
-        return $env->{$key} if exists $env->{$key};
+        return $env->{ns}{$name} if exists $env->{ns} && exists $env->{ns}{$name};
     }
-    $default;
+    return;
 }
 
-sub env_add {
-    my ($self, $key, $val) = @_;
-    my $env = $self->env_stack->[-1];
-    Catmandu::FixParseError->throw("Already defined: $key")
-        if exists $env->{$key};
-    $env->{$key} = $val;
+sub add_ns {
+    my ($self, $name, $ns) = @_;
+    my $env = $self->env->[-1];
+    ($env->{ns} //= {})->{$name} = $ns;
 }
 
-sub add_namespace {
-    my ($self, $ns) = @_;
-    my $env = $self->env_stack->[-1];
-    my $nss = $env->{_ns} //= [];
-    push @$nss, $ns;
-}
-
-sub namespace_for {
-    my ($self, $name, $sub_ns) = @_;
-    my $envs = $self->env_stack;
-    for my $env (@$envs) {
-        my $nss = $env->{_ns} // next;
-        for my $ns (@$nss) {
-            $ns .= "::$sub_ns" if defined $sub_ns;
-            return $ns if Module::Info->new_from_module("${ns}::${name}");
-        }
-    }
-    my $ns = $self->default_namespace;
-    $ns .= "::$sub_ns" if defined $sub_ns;
-    $ns;
-}
+#sub namespace_for {
+    #my ($self, $name, $sub_ns) = @_;
+    #my $envs = $self->env_stack;
+    #for my $env (@$envs) {
+        #my $nss = $env->{_ns} // next;
+        #for my $ns (@$nss) {
+            #$ns .= "::$sub_ns" if defined $sub_ns;
+            #return $ns if Module::Info->new_from_module("${ns}::${name}");
+        #}
+    #}
+    #my $ns = $self->default_namespace;
+    #$ns .= "::$sub_ns" if defined $sub_ns;
+    #$ns;
+#}
 
 sub scope {
     my ($self, $block) = @_;
-    my $envs = $self->env_stack;
+    my $envs = $self->env;
     push @$envs, +{};
     my $res = $block->();
-
     # TODO ensure env gets popped after exception
     pop @$envs;
     $res;
@@ -104,7 +111,7 @@ sub parse {
         Catmandu::FixParseError->throw(message => $err, source => $source,);
     }
     finally {
-        $self->clear_env;
+        $self->init_env;
     };
 }
 
@@ -143,15 +150,10 @@ sub parse_use {
     my ($self) = @_;
     $self->token_kw('use');
     my $args = $self->parse_arguments;
-    my $as   = check_string(shift(@$args));
-    my $ns   = join('::', map {camelize($_)} split(/\./, $as));
+    my $name = check_string(shift(@$args));
+    my $ns = $self->_build_ns($name);
     my %opts = @$args;
-    if ($opts{import}) {
-        $self->add_namespace($ns);
-    }
-    else {
-        $self->env_add($opts{as} // $as, $ns);
-    }
+    $self->add_ns($opts{as} // $name, $ns);
     return;
 }
 
@@ -344,7 +346,7 @@ sub parse_double_quoted_string {
 sub _build_condition {
     my ($self, $name, $args, $pass, $fixes) = @_;
     $fixes = [$fixes] unless is_array_ref($fixes);
-    my $cond = $self->_build_fix_ns($name, $args, 'Condition');
+    my $cond = $self->_build_fix($name, $args, 'Condition');
     if ($pass) {
         $cond->pass_fixes($fixes);
     }
@@ -357,56 +359,29 @@ sub _build_condition {
 sub _build_bind {
     my ($self, $name, $args, $return, $fixes) = @_;
     $fixes = [$fixes] unless is_array_ref($fixes);
-    my $bind = $self->_build_fix_ns($name, $args, 'Bind');
+    my $bind = $self->_build_fix($name, $args, 'Bind');
     $bind->__return__($return);
     $bind->__fixes__($fixes);
     $bind;
 }
 
 sub _build_fix {
-    my ($self, $name, $args) = @_;
-    $self->_build_fix_ns($name, $args);
+    my ($self, $name, $args, $type) = @_;
+    my @name_parts = split(/\./, $name);
+    my $fix_name = pop @name_parts;
+    my $ns_name = join('.', @name_parts);
+    my $ns = $self->get_ns($ns_name)
+        // Catmandu::FixParseError->throw("Unknown namespace: $ns_name");
+    $ns->load($fix_name, $args, $type);
 }
 
-sub _build_fix_ns {
-    my ($self, $name, $args, $sub_ns) = @_;
-    my @name_parts = split(/\./, $name);
+sub _build_ns {
+    my ($self, $name) = @_;
+    my @name_parts = split(/:/, $name);
     $name = pop @name_parts;
-    my $ns;
-    if (@name_parts) {
-        my $as = join('.', @name_parts);
-        $ns = $self->env_get($as)
-            // Catmandu::FixParseError->throw("Unknown namespace: $as");
-        $ns = join('::', $ns, $sub_ns) if defined $sub_ns;
-    }
-    else {
-        $ns = $self->namespace_for($name, $sub_ns);
-    }
-
-    my $pkg;
-    try {
-        $pkg = require_package($name, $ns);
-    }
-    catch_case [
-        'Catmandu::NoSuchPackage' => sub {
-            Catmandu::NoSuchFixPackage->throw(
-                message      => "No such fix package: $name",
-                package_name => $_->package_name,
-                fix_name     => $name,
-            );
-        },
-    ];
-    try {
-        $pkg->new(@$args);
-    }
-    catch {
-        $_->throw if is_instance($_, 'Catmandu::Error');
-        Catmandu::BadFixArg->throw(
-            message      => $_,
-            package_name => $pkg,
-            fix_name     => $name,
-        );
-    };
+    my $pkg_name = $name_parts[0] // 'perl';
+    my $pkg = require_package($pkg_name, 'Catmandu::Fix::Namespace');
+    $pkg->new(name => $name);
 }
 
 1;

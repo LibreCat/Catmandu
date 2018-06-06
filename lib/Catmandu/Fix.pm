@@ -857,10 +857,6 @@ You can load fixes from another namespace with the C<use> statement:
     if fb.is_baz()
     end
 
-    # the import option makes them available without prefix
-    use(foo.bar, import: 1)
-    baz()
-
 =head1 PATHS
 
 Most of the Fix commandsuse paths to point to values
