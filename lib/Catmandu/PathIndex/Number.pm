@@ -10,16 +10,11 @@ use Path::Tiny qw(path);
 use Path::Iterator::Rule;
 use File::Spec;
 use Catmandu::BadArg;
+use Catmandu::Error;
+use Data::Dumper;
 use namespace::clean;
 
 with "Catmandu::PathIndex";
-
-has base_dir => (
-    is => "ro",
-    isa => sub { check_string( $_[0] ); },
-    required => 1,
-    coerce => sub { Cwd::abs_path( $_[0] ); }
-);
 
 has keysize => (is => 'ro', default  => 9, trigger => 1);
 
@@ -79,7 +74,15 @@ sub add {
     my $f_id = $self->format_id( $id );
     my $path = $self->_to_path( $f_id );
 
-    path( $path )->mkpath( $path ) unless -d $path;
+    unless ( -d $path ) {
+
+        my $err;
+        path( $path )->mkpath({ error => \$err });
+
+        Catmandu::Error->throw( "unable to create directory $path: ".Dumper( $err ) )
+            if defined( $err ) && scalar( @$err );
+
+    }
 
     +{ _id => $f_id, _path => $path };
 }
@@ -92,7 +95,11 @@ sub delete {
 
     if ( is_string( $path ) && -d $path ) {
 
-        path( $path )->remove_tree();
+        my $err;
+        path( $path )->remove_tree({ error => \$err });
+
+        Catmandu::Error->throw( "unable to remove directory $path: ".Dumper( $err ) )
+            if defined( $err ) && scalar( @$err );
 
     }
 
@@ -100,7 +107,20 @@ sub delete {
 }
 
 sub delete_all {
-    path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
+
+    my $self = $_[0];
+
+    if ( -d $self->base_dir ) {
+
+        my $err;
+        path( $_[0]->base_dir )->remove_tree({ keep_root => 1, error => \$err });
+
+        Catmandu::Error->throw( "unable to remove entries from base directory ".$self->base_dir.": ".Dumper( $err ) )
+            if defined( $err ) && scalar( @$err );
+
+    }
+
+    1;
 }
 
 sub generator {
@@ -170,7 +190,7 @@ parameters:
 
 =item base_dir
 
-The base directory where the files are stored. Required
+See L<Catmandu::PathIndex>
 
 =item keysize
 

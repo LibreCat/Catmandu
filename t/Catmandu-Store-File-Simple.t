@@ -53,6 +53,6 @@ dies_ok sub {
 
 lives_ok sub {
     $pkg->new(root => $dir, keysize => 12);
-}, 'dies on connecting to a store with the wrong keysize';
+}, 'keysize ok';
 
 done_testing;

@@ -11,16 +11,11 @@ use Path::Iterator::Rule;
 use File::Spec;
 use Data::UUID;
 use Catmandu::BadArg;
+use Catmandu::Error;
+use Data::Dumper;
 use namespace::clean;
 
 with "Catmandu::PathIndex";
-
-has base_dir => (
-    is => "ro",
-    isa => sub { check_string( $_[0] ); },
-    required => 1,
-    coerce => sub { Cwd::abs_path( $_[0] ); }
-);
 
 sub is_uuid {
     my $id = $_[0];
@@ -66,7 +61,15 @@ sub add {
     my $f_id = uc( $id );
     my $path = $self->_to_path( $f_id );
 
-    path( $path )->mkpath( $path ) unless -d $path;
+    unless ( -d $path ) {
+
+        my $err;
+        path( $path )->mkpath({ error => \$err });
+
+        Catmandu::Error->throw( "unable to create directory $path: ".Dumper( $err ) )
+            if defined( $err ) && scalar( @$err );
+
+    }
 
     { _id => $f_id, _path => $path };
 
@@ -80,7 +83,11 @@ sub delete {
 
     if ( is_string( $path ) && -d $path ) {
 
-        path( $path )->remove_tree();
+        my $err;
+        path( $path )->remove_tree({ error => \$err });
+
+        Catmandu::Error->throw( "unable to remove directory $path: ".Dumper( $err ) )
+            if defined( $err ) && scalar( @$err );
 
     }
 
@@ -88,7 +95,19 @@ sub delete {
 }
 
 sub delete_all {
-    path( $_[0]->base_dir )->remove_tree({ keep_root => 1 });
+    my $self = $_[0];
+
+    if ( -d $self->base_dir ) {
+
+        my $err;
+        path( $self->base_dir )->remove_tree({ keep_root => 1, error => \$err });
+
+        Catmandu::Error->throw( "unable to remove entries from base directory ".$self->base_dir.": ".Dumper( $err ) )
+            if defined( $err ) && scalar( @$err );
+
+    }
+
+    1;
 }
 
 sub generator {
@@ -114,6 +133,7 @@ sub generator {
 
         return unless defined $path;
 
+        #TODO: does not throw an error when directory is less than 12 levels (because no directories are validated)
         my $id = $self->_from_path( $path );
 
         +{ _id => $id, _path => $path };
@@ -160,7 +180,7 @@ parameters:
 
 =item base_dir
 
-The base directory where the files are stored. Required
+See L<Catmandu::PathIndex>
 
 =back
 

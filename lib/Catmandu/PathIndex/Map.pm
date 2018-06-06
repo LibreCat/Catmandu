@@ -8,28 +8,24 @@ use Catmandu;
 use Cwd;
 use File::Spec;
 use Catmandu::BadArg;
+use Catmandu::Error;
 use Digest::MD5 qw();
 use POSIX qw();
 use Data::Dumper;
 use Moo;
 use Path::Tiny qw(path);
-use Catmandu::Error;
 use namespace::clean;
 
 with "Catmandu::PathIndex";
 
-has base_dir => (
-    is => "ro",
-    isa => sub { check_string( $_[0] ); },
-    required => 1,
-    coerce => sub { Cwd::abs_path( $_[0] ); }
-);
 has store_name => (
     is => "ro"
 );
+
 has bag_name => (
     is => "ro"
 );
+
 has bag => (
     is => "ro",
     isa => sub {
@@ -43,11 +39,10 @@ has bag => (
 );
 
 sub _build_bag {
-    my $self = $_[0];
-
-    Catmandu->store( $self->store_name )->bag( $self->bag_name );
+    Catmandu->store( $_[0]->store_name )->bag( $_[0]->bag_name );
 }
 
+#checks whether mapping record is syntactically correct
 sub _is_valid_mapping {
     my $map = $_[0];
 
@@ -56,6 +51,7 @@ sub _is_valid_mapping {
     is_string( $map->{_id} ) && is_string( $map->{_path} );
 }
 
+#creates new directory: returns path if all is ok, throws an error on failure
 sub _new_path {
     my ( $self, $id ) = @_;
 
@@ -71,11 +67,18 @@ sub _new_path {
         $md5
     );
 
+    my $err;
+    path( $path )->mkpath({ error => \$err });
+
+    Catmandu::Error->throw( "unable to create directory $path: ".Dumper($err) )
+        if defined( $err ) && scalar( @$err );
+
     $self->bag()->add( { _id => $id, _path => $path } );
 
     $path;
 }
 
+#translates id to path: return either valid path or undef.
 sub _to_path {
     my ( $self, $id ) = @_;
 
@@ -83,7 +86,12 @@ sub _to_path {
 
     my $mapping = $self->bag()->get( $id );
 
+    #no mapping, no path
     return unless _is_valid_mapping( $mapping );
+
+    #inconsistent behaviour: mapping exists, but directory is gone
+    Catmandu::Error->throw( "mapping $id contains non existant directory" )
+        unless -d $mapping->{_path};
 
     $mapping->{_path};
 }
@@ -93,15 +101,13 @@ sub get {
 
     my $path = $self->_to_path( $id );
 
-    is_string( $path ) && -d $path ? { _id => $id, _path => $path } : undef;
+    is_string( $path ) ? { _id => $id, _path => $path } : undef;
 }
 
 sub add {
     my ( $self, $id ) = @_;
 
     my $path = $self->_to_path( $id ) || $self->_new_path( $id );
-
-    path( $path )->mkpath( $path ) unless -d $path;
 
     { _id => $id, _path => $path };
 }
@@ -111,8 +117,14 @@ sub delete {
 
     my $path = $self->_to_path( $id );
 
-    if ( is_string( $path ) && -d $path ) {
-        path( $path )->remove_tree;
+    if ( is_string( $path ) ) {
+
+        my $err;
+        path( $path )->remove_tree({ error => \$err });
+
+        Catmandu::Error->throw( "unable to remove directory $path: ".Dumper($err) )
+            if defined( $err ) && scalar( @$err );
+
     }
 
     $self->bag()->delete( $id );
@@ -121,7 +133,16 @@ sub delete {
 sub delete_all {
     my $self = $_[0];
 
-    path( $self->base_dir )->remove_tree({ keep_root => 1 });
+    if ( -d $self->base_dir ) {
+
+        my $err;
+        path( $self->base_dir )->remove_tree({ keep_root => 1, error => \$err });
+
+        Catmandu::Error->throw( "unable to remove entries from base directory ".$self->base_dir." : ".Dumper($err) )
+            if defined( $err ) && scalar( @$err );
+
+    }
+
     $self->bag->delete_all;
 }
 
@@ -135,8 +156,11 @@ sub generator {
 
         return unless defined $mapping;
 
-        Catmandu::BadArg->throw( "invalid mapping detected" . Dumper($mapping) )
+        Catmandu::Error->throw( "invalid mapping detected: " . Dumper($mapping) )
             unless _is_valid_mapping( $mapping );
+
+        Catmandu::Error->throw( "mapping $mapping->{_id} contains non existant directory" )
+            unless -d $mapping->{_path};
 
         +{ _id => $mapping->{_id}, _path => $mapping->{_path} };
     };
@@ -211,7 +235,7 @@ parameters:
 
 =item base_dir
 
-The base directory where the files are stored. Required
+See L<Catmandu::PathIndex>
 
 =item store_name
 

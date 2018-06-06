@@ -5,9 +5,21 @@ use Catmandu::Sane;
 our $VERSION = '1.08';
 
 use Moo::Role;
+use Cwd;
+use Catmandu::Util qw(check_string is_string);
 use namespace::clean;
 
 with "Catmandu::Iterable";
+
+has base_dir => (
+    is => "ro",
+    isa => sub { check_string( $_[0] ); },
+    required => 1,
+    coerce => sub {
+        is_string( $_[0] ) ?
+            Cwd::abs_path( $_[0] ) : $_[0];
+    }
+);
 
 requires "get";
 requires "add";
@@ -105,6 +117,26 @@ Catmandu::PathIndex - A base role to store relations between id-s and path-s
         say $id . " => " . $mapping->{path};
     });
 
+=head1 CLASS METHODS AVAILABLE
+
+=head2 new( base_dir => $path )
+
+=over
+
+=item base_dir
+
+The base directory where the files are stored. Required
+
+=back
+
+=head1 METHODS AVAILABLE
+
+=over
+
+=item base_dir
+
+=back
+
 =head1 METHODS TO IMPLEMENT
 
 Implementors must implement these methods
@@ -157,6 +189,14 @@ Difference with method "add":
 
 * Do other internal cleanup actions if any required
 
+=item generator()
+
+Inherited requirement from L<Catmandu::Iterable>:
+
+* return function reference
+
+* every call to this function must return the next entry in the index
+
 =back
 
 =head1 INHERITED METHODS
@@ -166,6 +206,8 @@ This Catmandu::PathIndex inherits:
 =over 3
 
 =item L<Catmandu::Iterable>
+
+So all functions from L<Catmandu::Iterable> are available to these objects.
 
 =back
 
