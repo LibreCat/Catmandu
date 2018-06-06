@@ -12,7 +12,7 @@ use namespace::clean;
 
 extends 'Parser::MGC';
 
-has env => (is => 'lazy');
+has env        => (is => 'lazy');
 has default_ns => (is => 'lazy');
 
 sub FOREIGNBUILDARGS {
@@ -33,32 +33,33 @@ sub _build_env {
 
 sub init_env {
     my ($self, $envs) = @_;
-    splice(@$envs,0, @$envs, {ns => {'' => $self->default_ns}});
+    splice(@$envs, 0, @$envs, {ns => {'' => $self->default_ns}});
     $envs;
 }
 
 #sub env_get {
-    #my ($self, $key, $default) = @_;
-    #my $envs = $self->env_stack;
-    #for my $env (@$envs) {
-        #return $env->{$key} if exists $env->{$key};
-    #}
-    #$default;
+#my ($self, $key, $default) = @_;
+#my $envs = $self->env_stack;
+#for my $env (@$envs) {
+#return $env->{$key} if exists $env->{$key};
+#}
+#$default;
 #}
 
 #sub env_add {
-    #my ($self, $key, $val) = @_;
-    #my $env = $self->env_stack->[-1];
-    #Catmandu::FixParseError->throw("Already defined: $key")
-        #if exists $env->{$key};
-    #$env->{$key} = $val;
+#my ($self, $key, $val) = @_;
+#my $env = $self->env_stack->[-1];
+#Catmandu::FixParseError->throw("Already defined: $key")
+#if exists $env->{$key};
+#$env->{$key} = $val;
 #}
 
 sub get_ns {
     my ($self, $name) = @_;
     my $envs = $self->env;
     for my $env (@$envs) {
-        return $env->{ns}{$name} if exists $env->{ns} && exists $env->{ns}{$name};
+        return $env->{ns}{$name}
+            if exists $env->{ns} && exists $env->{ns}{$name};
     }
     return;
 }
@@ -70,18 +71,18 @@ sub add_ns {
 }
 
 #sub namespace_for {
-    #my ($self, $name, $sub_ns) = @_;
-    #my $envs = $self->env_stack;
-    #for my $env (@$envs) {
-        #my $nss = $env->{_ns} // next;
-        #for my $ns (@$nss) {
-            #$ns .= "::$sub_ns" if defined $sub_ns;
-            #return $ns if Module::Info->new_from_module("${ns}::${name}");
-        #}
-    #}
-    #my $ns = $self->default_namespace;
-    #$ns .= "::$sub_ns" if defined $sub_ns;
-    #$ns;
+#my ($self, $name, $sub_ns) = @_;
+#my $envs = $self->env_stack;
+#for my $env (@$envs) {
+#my $nss = $env->{_ns} // next;
+#for my $ns (@$nss) {
+#$ns .= "::$sub_ns" if defined $sub_ns;
+#return $ns if Module::Info->new_from_module("${ns}::${name}");
+#}
+#}
+#my $ns = $self->default_namespace;
+#$ns .= "::$sub_ns" if defined $sub_ns;
+#$ns;
 #}
 
 sub scope {
@@ -89,6 +90,7 @@ sub scope {
     my $envs = $self->env;
     push @$envs, +{};
     my $res = $block->();
+
     # TODO ensure env gets popped after exception
     pop @$envs;
     $res;
@@ -151,7 +153,7 @@ sub parse_use {
     $self->token_kw('use');
     my $args = $self->parse_arguments;
     my $name = check_string(shift(@$args));
-    my $ns = $self->_build_ns($name);
+    my $ns   = $self->_build_ns($name);
     my %opts = @$args;
     $self->add_ns($opts{as} // $name, $ns);
     return;
@@ -368,9 +370,9 @@ sub _build_bind {
 sub _build_fix {
     my ($self, $name, $args, $type) = @_;
     my @name_parts = split(/\./, $name);
-    my $fix_name = pop @name_parts;
-    my $ns_name = join('.', @name_parts);
-    my $ns = $self->get_ns($ns_name)
+    my $fix_name   = pop @name_parts;
+    my $ns_name    = join('.', @name_parts);
+    my $ns         = $self->get_ns($ns_name)
         // Catmandu::FixParseError->throw("Unknown namespace: $ns_name");
     $ns->load($fix_name, $args, $type);
 }
