@@ -22,7 +22,7 @@ has _path => (is => 'lazy');
 
 sub _build__path {
     my $self = shift;
-    $self->store->_path_index->add($self->name)->{_path};
+    $self->store->path_index->add($self->name)->{_path};
 }
 
 sub generator {

@@ -35,13 +35,13 @@ my $expected_path = File::Spec->catdir(
     $dir, "000", "001", "234"
 );
 
-is_deeply $store->_path_index->add('1234'), { _id => "000001234", _path => $expected_path }, '_path_index->add(1234)';
-is_deeply $store->_path_index->add('0001234'), { _id => "000001234", _path => $expected_path }, '_path_index->add(0001234)';
-lives_ok sub { $store->_path_index->delete('000001234') }, '_path_index->delete(000001234)';
+is_deeply $store->path_index->add('1234'), { _id => "000001234", _path => $expected_path }, 'path_index->add(1234)';
+is_deeply $store->path_index->add('0001234'), { _id => "000001234", _path => $expected_path }, 'path_index->add(0001234)';
+lives_ok sub { $store->path_index->delete('000001234') }, 'path_index->delete(000001234)';
 
 dies_ok sub {
-    $store->_path_index->add('00000001234');
-}, '_path_index->add(00000001234) must die';
+    $store->path_index->add('00000001234');
+}, 'path_index->add(00000001234) must die';
 
 ok !$store->bag('1235'), 'bag(1235) doesnt exist';
 

@@ -30,7 +30,7 @@ has keysize => (
     },
     default  => 9
 );
-has path_index => (
+has path_index_package => (
     is => "ro"
 );
 has path_index_options => (
@@ -38,21 +38,19 @@ has path_index_options => (
     lazy => 1,
     default => sub { +{}; }
 );
-has _path_index => (
-    is => "ro",
-    lazy => 1,
-    builder => "_build__path_index"
+has path_index => (
+    is => "lazy"
 );
 
-sub _build__path_index {
+sub _build_path_index {
 
     my $self = $_[0];
 
 
-    if ( $self->path_index() ) {
+    if ( $self->path_index_package() ) {
 
         Catmandu::Util::require_package(
-            $self->path_index(), "Catmandu::PathIndex"
+            $self->path_index_package(), "Catmandu::PathIndex"
         )->new(
             %{
                 $self->path_index_options(),
@@ -179,7 +177,7 @@ The root directory where to store all the files. Required.
 
 =item keysize
 
-DEPRECATED: use path_index and path_index_options
+DEPRECATED: use path_index_package and path_index_options
 
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
@@ -187,19 +185,27 @@ All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =item uuid
 
-DEPRECATED: use path_index and path_index_options
+DEPRECATED: use path_index_package and path_index_options
 
 If the to a true value, then the Simple store will require UUID-s as keys
 
-=item path_index
+=item path_index_package
 
-package that translates between id and path.
+package name that translates between id and path.
 
 Default: L<Catmandu::PathIndex::Number>
 
 =item path_index_options
 
-Options for the path_index (see above)
+Constructor arguments for the path_index_package (see above)
+
+=item path_index
+
+instance of L<Catmandu::PathIndex>.
+
+When supplied, path_index_package and path_index_options are ignored.
+
+When not, this object is constructed from path_index_package and path_index_options.
 
 =back
 
