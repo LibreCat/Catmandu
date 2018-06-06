@@ -24,8 +24,7 @@ sub _build_fixer {
             my $vals = $getter->($data);
             @$vals || return $data;
             my $str = join "\n", grep {is_value($_)} @$vals;
-            Catmandu::Error->throw(
-                $str);
+            Catmandu::Error->throw($str);
         };
     }
     else {

@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0606';
 
-use Catmandu::Util qw(is_code_ref is_string);
+use Catmandu::Util qw(is_code_ref);
 use List::Util qw(any);
 use Moo;
 use namespace::clean;
@@ -63,11 +63,10 @@ sub creator {    # same as setter in this simple case
 }
 
 sub updater {
-    my $self = shift;
-    my %opts = @_ == 1 ? (value => $_[0]) : @_;
-    my $key  = $self->path;
+    my ($self, %opts) = @_;
+    my $key = $self->path;
 
-    if (my $predicates = $opts{if}) {
+    if (my $tests = $opts{if}) {
         return sub {
             my $data = $_[0];
 
@@ -75,12 +74,10 @@ sub updater {
 
             my $value = $data->{$key};
 
-            for (my $i = 0; $i < @$predicates; $i += 2) {
-                my $tests = $predicates->[$i];
-                my $cb    = $predicates->[$i + 1];
-                $tests = [$tests] if is_string($tests);
-                $tests = [map {Catmandu::Util->can("is_$_")} @$tests];
-                next unless any {$_->($value)} @$tests;
+            for (my $i = 0; $i < @$tests; $i += 2) {
+                my $test = $tests->[$i];
+                my $cb   = $tests->[$i + 1];
+                next unless any {$_->($value)} @$test;
                 $data->{$key} = $cb->($value);
                 last;
             }

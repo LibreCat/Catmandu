@@ -4,8 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.0606';
 
-use Catmandu::Util
-    qw(is_hash_ref is_array_ref is_value is_string is_code_ref trim);
+use Catmandu::Util qw(is_hash_ref is_array_ref is_value is_code_ref trim);
 use Moo;
 use namespace::clean;
 
@@ -86,37 +85,29 @@ sub setter {
 }
 
 sub updater {
-    my $self     = shift;
-    my %opts     = @_ == 1 ? (value => $_[0]) : @_;
+    my ($self, %opts) = @_;
     my $path     = $self->split_path;
     my $data_var = $self->_generate_var;
     my $captures = {};
     my $args     = [$data_var];
     my $cb;
 
-    my $predicates = $opts{if};
-    for my $key (keys %opts) {
-        my $val = $opts{$key};
-        next unless $key =~ s/^if_//;
-        push @{$predicates ||= []}, $key => $val;
-    }
-
-    if ($predicates) {
+    if (my $tests = $opts{if}) {
         $cb = sub {
             my ($var, %opts) = @_;
             my $perl = "";
-            for (my $i = 0; $i < @$predicates; $i += 2) {
-                my $pred    = $predicates->[$i];
-                my $val     = $predicates->[$i + 1];
-                my $val_var = $self->_generate_var;
-                $captures->{$val_var} = $val;
-                $pred = [$pred] if is_string($pred);
+            for (my $i = 0; $i < @$tests; $i += 2) {
+                my $test     = $tests->[$i];
+                my $val      = $tests->[$i + 1];
+                my $test_var = $self->_generate_var;
+                my $val_var  = $self->_generate_var;
+                $captures->{$test_var} = $test;
+                $captures->{$val_var}  = $val;
                 if ($i) {
                     $perl .= 'els';
                 }
                 $perl
-                    .= 'if ('
-                    . join(' || ', map {"is_${_}(${var})"} @$pred) . ') {'
+                    .= "if (List::Util::any {\$_->(${var})} \@{${test_var}}) {"
                     . $self->_emit_assign_cb($var, $val_var, %opts) . '}';
             }
             $perl;

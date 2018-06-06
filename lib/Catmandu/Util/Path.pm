@@ -15,7 +15,7 @@ our @EXPORT_OK = qw(
 
 our %EXPORT_TAGS = (all => \@EXPORT_OK,);
 
-sub looks_like_path { # TODO only recognizes Catmandu::Path::default
+sub looks_like_path {    # TODO only recognizes Catmandu::Path::default
     my ($path) = @_;
     is_string($path) && $path =~ /^\$[\.\/]/ ? 1 : 0;
 }
@@ -25,7 +25,8 @@ sub as_path {
     if (is_value($path)) {
         $path_type //= 'default';
         state $class_cache = {};
-        my $class = $class_cache->{$path_type} ||= require_package($path_type, 'Catmandu::Path');
+        my $class = $class_cache->{$path_type}
+            ||= require_package($path_type, 'Catmandu::Path');
         $class->new(path => $path);
     }
     else {

@@ -136,8 +136,7 @@ sub _emit_assign {
             $l_var = "${up_var}->[${index}]";
         }
         else {
-            Catmandu::BadArg->throw(
-                'up_var without key or index');
+            Catmandu::BadArg->throw('up_var without key or index');
         }
     }
     "${l_var} = ${val};";
@@ -158,8 +157,7 @@ sub _emit_delete {
         "splice(\@{${up_var}}, ${idx}, 1)";
     }
     else {
-        Catmandu::BadArg->throw(
-            'up_var without key or index');
+        Catmandu::BadArg->throw('up_var without key or index');
     }
 }
 

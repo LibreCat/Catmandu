@@ -24,9 +24,9 @@ sub _build_value_tester {
     else {
         sub {
             my $val = $_[0];
-            (is_bool($val) && $val) || (is_number($val) && $val == 1) || (
-                is_string($val) && $val eq 'true'
-                );
+            (is_bool($val) && $val)
+                || (is_number($val) && $val == 1)
+                || (is_string($val) && $val eq 'true');
         };
     }
 }
