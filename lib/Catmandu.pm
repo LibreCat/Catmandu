@@ -747,6 +747,14 @@ See L<Config::Onion> for more information on how this works.
 
 L<http://librecat.org/Catmandu/>
 
+=item blog
+
+L<https://librecatproject.wordpress.com/>
+
+=item step-by-step introduction from basics
+
+L<https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/>
+
 =item command line client
 
 L<catmandu>
