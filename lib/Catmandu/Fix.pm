@@ -855,11 +855,14 @@ You can load fixes from another namespace with the C<use> statement:
 
     # this will look for Foo::Bar::Condition::is_baz
     if fb.is_baz()
+       ...
+       fix()
+       ...
     end
 
 =head1 PATHS
 
-Most of the Fix commandsuse paths to point to values
+Most of the Fix commands use paths to point to values
 in a data record. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the
 key 'foo'.
 
