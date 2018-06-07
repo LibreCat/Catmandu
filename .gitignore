@@ -15,3 +15,4 @@ blib
 cover_db
 cpanfile.snapshot
 local
+*.pyc

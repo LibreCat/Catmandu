@@ -155,7 +155,7 @@ sub parse_use {
     my $name = check_string(shift(@$args));
     my $ns   = $self->_build_ns($name);
     my %opts = @$args;
-    $self->add_ns($opts{as} // $name, $ns);
+    $self->add_ns($opts{as} // $ns->name, $ns);
     return;
 }
 
@@ -379,7 +379,7 @@ sub _build_fix {
 
 sub _build_ns {
     my ($self, $name) = @_;
-    my @name_parts = split(/:/, $name);
+    my @name_parts = split(/@/, $name);
     $name = pop @name_parts;
     my $pkg_name = $name_parts[0] // 'perl';
     my $pkg = require_package($pkg_name, 'Catmandu::Fix::Namespace');
