@@ -9,7 +9,7 @@ use Cwd;
 my $pkg;
 
 BEGIN {
-    $pkg = 'Catmandu::PathIndex';
+    $pkg = 'Catmandu::DirectoryIndex';
     use_ok $pkg;
 }
 
@@ -17,7 +17,7 @@ require_ok $pkg;
 
 {
 
-    package T::PathIndexNoGet;
+    package T::DirectoryIndexNoGet;
     use Moo;
     sub add        { }
     sub delete     { }
@@ -27,7 +27,7 @@ require_ok $pkg;
         sub { }
     }
 
-    package T::PathIndexNoAdd;
+    package T::DirectoryIndexNoAdd;
     use Moo;
     sub get        { }
     sub delete     { }
@@ -37,7 +37,7 @@ require_ok $pkg;
         sub { }
     }
 
-    package T::PathIndexNoDelete;
+    package T::DirectoryIndexNoDelete;
     use Moo;
     sub add        { }
     sub get        { }
@@ -47,7 +47,7 @@ require_ok $pkg;
         sub { }
     }
 
-    package T::PathIndexNoDeleteAll;
+    package T::DirectoryIndexNoDeleteAll;
     use Moo;
     sub add    { }
     sub get    { }
@@ -57,14 +57,14 @@ require_ok $pkg;
         sub { }
     }
 
-    package T::PathIndexNoGenerator;
+    package T::DirectoryIndexNoGenerator;
     use Moo;
     sub add        { }
     sub get        { }
     sub delete     { }
     sub delete_all { }
 
-    package T::PathIndex;
+    package T::DirectoryIndex;
     use Moo;
     with $pkg;
     sub add        { }
@@ -78,30 +78,30 @@ require_ok $pkg;
 
 }
 
-throws_ok {Role::Tiny->apply_role_to_package("T::PathIndexNoGet", $pkg)}
+throws_ok {Role::Tiny->apply_role_to_package("T::DirectoryIndexNoGet", $pkg)}
 qr/missing get/, "method get missing";
 
-throws_ok {Role::Tiny->apply_role_to_package("T::PathIndexNoAdd", $pkg)}
+throws_ok {Role::Tiny->apply_role_to_package("T::DirectoryIndexNoAdd", $pkg)}
 qr/missing add/, "method add missing";
 
-throws_ok {Role::Tiny->apply_role_to_package("T::PathIndexNoDelete", $pkg)}
+throws_ok {Role::Tiny->apply_role_to_package("T::DirectoryIndexNoDelete", $pkg)}
 qr/missing delete/, "method delete missing";
 
 throws_ok {
-    Role::Tiny->apply_role_to_package("T::PathIndexNoDeleteAll", $pkg)
+    Role::Tiny->apply_role_to_package("T::DirectoryIndexNoDeleteAll", $pkg)
 }
 qr/missing delete_all/, "method delete_all missing";
 
 throws_ok {
-    Role::Tiny->apply_role_to_package("T::PathIndexNoGenerator", $pkg)
+    Role::Tiny->apply_role_to_package("T::DirectoryIndexNoGenerator", $pkg)
 }
 qr/missing generator/, "method generator missing";
 
-dies_ok(sub {T::PathIndex->new();}, "new without base_dir should fail");
+dies_ok(sub {T::DirectoryIndex->new();}, "new without base_dir should fail");
 
-lives_ok(sub {T::PathIndex->new(base_dir => Cwd::cwd());},
+lives_ok(sub {T::DirectoryIndex->new(base_dir => Cwd::cwd());},
     "new with base_dir should succeed");
 
-can_ok(T::PathIndex->new(base_dir => Cwd::cwd()), "base_dir");
+can_ok(T::DirectoryIndex->new(base_dir => Cwd::cwd()), "base_dir");
 
 done_testing;

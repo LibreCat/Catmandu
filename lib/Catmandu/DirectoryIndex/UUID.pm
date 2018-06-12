@@ -1,4 +1,4 @@
-package Catmandu::PathIndex::UUID;
+package Catmandu::DirectoryIndex::UUID;
 
 our $VERSION = '1.08';
 
@@ -15,7 +15,7 @@ use Catmandu::Error;
 use Data::Dumper;
 use namespace::clean;
 
-with "Catmandu::PathIndex";
+with "Catmandu::DirectoryIndex";
 
 sub is_uuid {
     my $id = $_[0];
@@ -153,13 +153,13 @@ __END__
 
 =head1 NAME
 
-Catmandu::PathIndex::UUID - A uuid based path translator
+Catmandu::DirectoryIndex::UUID - A uuid based path translator
 
 =head1 SYNOPSIS
 
-    use Catmandu::PathIndex::UUID;
+    use Catmandu::DirectoryIndex::UUID;
 
-    my $p = Catmandu::PathIndex::UUID->new(
+    my $p = Catmandu::DirectoryIndex::UUID->new(
         base_dir => "/data"
     );
 
@@ -170,37 +170,37 @@ Catmandu::PathIndex::UUID - A uuid based path translator
     # Create path and return mapping
     my $mapping = $p->add("9A581C80-1189-11E8-AB6D-46BC153F89DB");
 
-    # Catmandu::PathIndex::Number is a Catmandu::Iterable
+    # Catmandu::DirectoryIndex::Number is a Catmandu::Iterable
     # Returns list of records: [{ _id => 1234, _path => "/data/000/001/234" }]
     my $mappings = $p->to_array();
 
 =head1 METHODS
 
-=head2 new( base_dir => $path )
+=head2 new( base_dir => $base_dir )
 
-Create a new Catmandu::PathIndex::UUID with the following configuration
+Create a new Catmandu::DirectoryIndex::UUID with the following configuration
 parameters:
 
 =over
 
 =item base_dir
 
-See L<Catmandu::PathIndex>
+See L<Catmandu::DirectoryIndex>
 
 =back
 
 =head1 INHERITED METHODS
 
-This Catmandu::PathIndex::Number implements:
+This Catmandu::DirectoryIndex::Number implements:
 
 =over 3
 
-=item L<Catmandu::PathIndex>
+=item L<Catmandu::DirectoryIndex>
 
 =back
 
 =head1 SEE ALSO
 
-L<Catmandu::PathIndex>
+L<Catmandu::DirectoryIndex>
 
 =cut

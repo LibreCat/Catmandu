@@ -1,4 +1,4 @@
-package Catmandu::PathIndex::Map;
+package Catmandu::DirectoryIndex::Map;
 
 our $VERSION = '1.08';
 
@@ -16,7 +16,7 @@ use Moo;
 use Path::Tiny qw(path);
 use namespace::clean;
 
-with "Catmandu::PathIndex";
+with "Catmandu::DirectoryIndex";
 
 has store_name => (is => "ro");
 
@@ -173,11 +173,11 @@ __END__
 
 =head1 NAME
 
-Catmandu::PathIndex::Map - translates between id and path using a bag as lookup
+Catmandu::DirectoryIndex::Map - translates between id and path using a bag as lookup
 
 =head1 SYNOPSIS
 
-    use Catmandu::PathIndex::Map;
+    use Catmandu::DirectoryIndex::Map;
     use Catmandu::Store::DBI;
 
     # Bag to store/retrieve all path -> directory mapping
@@ -185,7 +185,7 @@ Catmandu::PathIndex::Map - translates between id and path using a bag as lookup
         data_source => "dbi:sqlite:dbname=/data/index.db"
     )->bag("paths");
 
-    my $p = Catmandu::PathIndex::Map->new(
+    my $p = Catmandu::DirectoryIndex::Map->new(
         base_dir => "/data",
         bag => $bag
     );
@@ -197,7 +197,7 @@ Catmandu::PathIndex::Map - translates between id and path using a bag as lookup
     # Returns a mapping like { _id => "a", _path => "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661" }
     my $mapping = $p->add("a");
 
-    # Catmandu::PathIndex::Map is a Catmandu::Iterable
+    # Catmandu::DirectoryIndex::Map is a Catmandu::Iterable
     # Returns list of records: [{ _id => "a", _path => "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661" }]
     my $mappings = $p->to_array();
 
@@ -227,14 +227,14 @@ Catmandu::PathIndex::Map - translates between id and path using a bag as lookup
 
 =head2 new( OPTIONS )
 
-Create a new Catmandu::PathIndex::Map with the following configuration
+Create a new Catmandu::DirectoryIndex::Map with the following configuration
 parameters:
 
 =over
 
 =item base_dir
 
-See L<Catmandu::PathIndex>
+See L<Catmandu::DirectoryIndex>
 
 =item store_name
 
@@ -256,16 +256,16 @@ Instance of L<Catmandu::Bag> where all mappings between _id and _path are stored
 
 =head1 INHERITED METHODS
 
-This Catmandu::PathIndex::Map implements:
+This Catmandu::DirectoryIndex::Map implements:
 
 =over 3
 
-=item L<Catmandu::PathIndex>
+=item L<Catmandu::DirectoryIndex>
 
 =back
 
 =head1 SEE ALSO
 
-L<Catmandu::PathIndex>
+L<Catmandu::DirectoryIndex>
 
 =cut

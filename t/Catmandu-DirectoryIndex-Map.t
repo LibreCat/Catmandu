@@ -11,7 +11,7 @@ use Path::Tiny;
 my $pkg;
 
 BEGIN {
-    $pkg = "Catmandu::PathIndex::Map";
+    $pkg = "Catmandu::DirectoryIndex::Map";
     use_ok $pkg;
 }
 

@@ -1,4 +1,4 @@
-package Catmandu::PathIndex;
+package Catmandu::DirectoryIndex;
 
 use Catmandu::Sane;
 
@@ -33,18 +33,18 @@ __END__
 
 =head1 NAME
 
-Catmandu::PathIndex - A base role to store relations between id-s and path-s
+Catmandu::DirectoryIndex - A base role to store relations between id's and directories
 
 =head1 SYNOPSIS
 
-    package MyPath;
+    package MyDirectory;
 
     use Moo;
     use File::Spec;
     use File:Basename;
     use Path::Tiny qw(path);
 
-    with "Catmandu::PathIndex";
+    with "Catmandu::DirectoryIndex";
 
     # translate id to directory
     sub _to_path {
@@ -108,7 +108,7 @@ Catmandu::PathIndex - A base role to store relations between id-s and path-s
 
     package main;
 
-    my $p = MyPath->new( base_dir => "/tmp" );
+    my $p = MyDirectory->new( base_dir => "/tmp" );
 
     Catmandu->store->bag->each(sub {
         my $r = $_[0];
@@ -118,7 +118,7 @@ Catmandu::PathIndex - A base role to store relations between id-s and path-s
 
 =head1 CLASS METHODS AVAILABLE
 
-=head2 new( base_dir => $path )
+=head2 new( base_dir => $base_dir )
 
 =over
 
@@ -200,7 +200,7 @@ Inherited requirement from L<Catmandu::Iterable>:
 
 =head1 INHERITED METHODS
 
-This Catmandu::PathIndex inherits:
+This Catmandu::DirectoryIndex inherits:
 
 =over 3
 
@@ -213,8 +213,8 @@ So all functions from L<Catmandu::Iterable> are available to these objects.
 =head1 SEE ALSO
 
 L<Catmandu::Store::File::Simple> ,
-L<Catmandu::PathIndex::UUID> ,
-L<Catmandu::PathIndex::Number> ,
-L<Catmandu::PathIndex::Map>
+L<Catmandu::DirectoryIndex::UUID> ,
+L<Catmandu::DirectoryIndex::Number> ,
+L<Catmandu::DirectoryIndex::Map>
 
 =cut

@@ -1,4 +1,4 @@
-package Catmandu::PathIndex::Number;
+package Catmandu::DirectoryIndex::Number;
 
 our $VERSION = '1.08';
 
@@ -14,7 +14,7 @@ use Catmandu::Error;
 use Data::Dumper;
 use namespace::clean;
 
-with "Catmandu::PathIndex";
+with "Catmandu::DirectoryIndex";
 
 has keysize => (is => 'ro', default => 9, trigger => 1);
 
@@ -160,13 +160,13 @@ __END__
 
 =head1 NAME
 
-Catmandu::PathIndex::Number - A number based path translator
+Catmandu::DirectoryIndex::Number - A number based directory translator
 
 =head1 SYNOPSIS
 
-    use Catmandu::PathIndex::Number;
+    use Catmandu::DirectoryIndex::Number;
 
-    my $p = Catmandu::PathIndex::Number->new(
+    my $p = Catmandu::DirectoryIndex::Number->new(
         base_dir => "/data",
         keysize => 9
     );
@@ -178,22 +178,22 @@ Catmandu::PathIndex::Number - A number based path translator
     # create mapping for id. Path created if necessary
     my $mapping = $p->add(1234);
 
-    # Catmandu::PathIndex::Number is a Catmandu::Iterable
+    # Catmandu::DirectoryIndex::Number is a Catmandu::Iterable
     # Returns list of records: [{ _id => "000001234", _path => "/data/000/001/234" }]
     my $mappings = $p->to_array();
 
 =head1 METHODS
 
-=head2 new( base_dir => $path , keysize => NUM )
+=head2 new( base_dir => $base_dir , keysize => NUM )
 
-Create a new Catmandu::PathIndex::Number with the following configuration
+Create a new Catmandu::DirectoryIndex::Number with the following configuration
 parameters:
 
 =over
 
 =item base_dir
 
-See L<Catmandu::PathIndex>
+See L<Catmandu::DirectoryIndex>
 
 =item keysize
 
@@ -205,16 +205,16 @@ All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =head1 INHERITED METHODS
 
-This Catmandu::PathIndex::Number implements:
+This Catmandu::DirectoryIndex::Number implements:
 
 =over 3
 
-=item L<Catmandu::PathIndex>
+=item L<Catmandu::DirectoryIndex>
 
 =back
 
 =head1 SEE ALSO
 
-L<Catmandu::PathIndex>
+L<Catmandu::DirectoryIndex>
 
 =cut

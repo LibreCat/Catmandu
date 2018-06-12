@@ -10,8 +10,8 @@ use Catmandu::Util;
 use Catmandu::Store::File::Simple::Index;
 use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
-use Catmandu::PathIndex::UUID;
-use Catmandu::PathIndex::Number;
+use Catmandu::DirectoryIndex::UUID;
+use Catmandu::DirectoryIndex::Number;
 use namespace::clean;
 
 with 'Catmandu::FileStore';
@@ -31,29 +31,29 @@ has keysize => (
     },
     default => 9
 );
-has path_index_package => (is => "ro");
-has path_index_options => (is => "ro", lazy => 1, default => sub {+{};});
-has path_index         => (is => "lazy");
+has directory_index_package => (is => "ro");
+has directory_index_options => (is => "ro", lazy => 1, default => sub {+{};});
+has directory_index         => (is => "lazy");
 
-sub _build_path_index {
+sub _build_directory_index {
 
     my $self = $_[0];
 
-    if ($self->path_index_package()) {
+    if ($self->directory_index_package()) {
 
-        Catmandu::Util::require_package($self->path_index_package(),
-            "Catmandu::PathIndex")
-            ->new(%{$self->path_index_options(),}, base_dir => $self->root());
+        Catmandu::Util::require_package($self->directory_index_package(),
+            "Catmandu::DirectoryIndex")
+            ->new(%{$self->directory_index_options(),}, base_dir => $self->root());
 
     }
     elsif ($self->uuid()) {
 
-        Catmandu::PathIndex::UUID->new(base_dir => $self->root());
+        Catmandu::DirectoryIndex::UUID->new(base_dir => $self->root());
 
     }
     else {
 
-        Catmandu::PathIndex::Number->new(
+        Catmandu::DirectoryIndex::Number->new(
             base_dir => $self->root(),
             keysize  => $self->keysize()
         );
@@ -162,7 +162,7 @@ The root directory where to store all the files. Required.
 
 =item keysize
 
-DEPRECATED: use path_index_package and path_index_options
+DEPRECATED: use directory_index_package and directory_index_options
 
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
@@ -170,27 +170,29 @@ All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =item uuid
 
-DEPRECATED: use path_index_package and path_index_options
+DEPRECATED: use directory_index_package and directory_index_options
 
 If the to a true value, then the Simple store will require UUID-s as keys
 
-=item path_index_package
+=item directory_index_package
 
-package name that translates between id and path.
+package name that translates between id and a directory.
 
-Default: L<Catmandu::PathIndex::Number>
+prefix "Catmandu::DirectoryIndex::" can be omitted.
 
-=item path_index_options
+Default: L<Catmandu::DirectoryIndex::Number>
 
-Constructor arguments for the path_index_package (see above)
+=item directory_index_options
 
-=item path_index
+Constructor arguments for the directory_index_package (see above)
 
-instance of L<Catmandu::PathIndex>.
+=item directory_index
 
-When supplied, path_index_package and path_index_options are ignored.
+instance of L<Catmandu::DirectoryIndex>.
 
-When not, this object is constructed from path_index_package and path_index_options.
+When supplied, directory_index_package and directory_index_options are ignored.
+
+When not, this object is constructed from directory_index_package and directory_index_options.
 
 =back
 

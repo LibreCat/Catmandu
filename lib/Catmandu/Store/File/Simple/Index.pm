@@ -17,7 +17,7 @@ sub generator {
 
     return sub {
 
-        state $iter = $self->store->path_index()->generator();
+        state $iter = $self->store->directory_index()->generator();
 
         my $mapping = $iter->();
 
@@ -35,7 +35,7 @@ sub exists {
 
     $self->log->debug("Checking exists $id");
 
-    defined($self->store->path_index->get($id));
+    defined($self->store->directory_index->get($id));
 }
 
 sub add {
@@ -49,7 +49,7 @@ sub add {
         croak "Can't add a file to the index";
     }
 
-    $self->store->path_index->add($id);
+    $self->store->directory_index->add($id);
 }
 
 sub get {
@@ -57,7 +57,7 @@ sub get {
 
     croak "Need an id" unless defined $id;
 
-    my $mapping = $self->store->path_index->get($id);
+    my $mapping = $self->store->directory_index->get($id);
 
     defined($mapping) ? {_id => $id} : undef;
 }
@@ -67,13 +67,13 @@ sub delete {
 
     croak "Need a key" unless defined $id;
 
-    $self->store->path_index->delete($id);
+    $self->store->directory_index->delete($id);
 }
 
 sub delete_all {
     my ($self) = @_;
 
-    $self->store->path_index->delete_all;
+    $self->store->directory_index->delete_all;
 }
 
 sub drop {
