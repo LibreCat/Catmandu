@@ -5,6 +5,7 @@ use Test::More;
 use Test::Exception;
 use Cwd;
 use File::Spec;
+use File::Temp;
 
 my $pkg;
 
@@ -17,10 +18,9 @@ require_ok $pkg;
 
 dies_ok {$pkg->new} 'dies ok on not enough parameters';
 
-my $dir = File::Spec->catdir(
-    Cwd::getcwd,
-    "t","data2"
-);
+my $t = File::Temp->newdir(EXLOCK => 0, UNLINK => 1);
+my $dir = Cwd::abs_path($t->dirname);
+
 my $store = $pkg->new(root => $dir, keysize => 9);
 
 ok $store , 'got a store';
@@ -54,5 +54,29 @@ dies_ok sub {
 lives_ok sub {
     $pkg->new(root => $dir, keysize => 12);
 }, 'keysize ok';
+
+#delete all
+
+lives_ok(sub {
+
+    $store->index->delete_all();
+
+}, "delete_all" );
+
+is $store->index->count, 0;
+
+#UUID
+$store = $pkg->new( root => $dir, uuid => 1 );
+$expected_path = File::Spec->catdir(
+    $dir, "018","970","A2-","B1E","8-1","1DF","-A2","E0-","A70","579","F64","438"
+);
+
+is_deeply $store->directory_index->add("018970A2-B1E8-11DF-A2E0-A70579F64438"), { _id => "018970A2-B1E8-11DF-A2E0-A70579F64438", _path => $expected_path }, "index->add(018970A2-B1E8-11DF-A2E0-A70579F64438)";
+
+my $uuid_records = $store->index->to_array();
+
+#same directory_index as above
+$store = $pkg->new( root => $dir, directory_index_package => "UUID", directory_index_options => +{} );
+is_deeply $store->index->to_array, $uuid_records;
 
 done_testing;
