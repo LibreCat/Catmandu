@@ -15,14 +15,14 @@ use Catmandu::Fix::Has;
 with 'Catmandu::Fix::Inlineable';
 
 has path   => (fix_arg => 1);
-has _files => (is => 'lazy');
-has _fixer => (is => 'lazy');
+has _files => (is      => 'lazy');
+has _fixer => (is      => 'lazy');
 
 sub _build__files {
     my ($self) = @_;
     my $path = $self->path;
 
-    if ($path =~ /\*/) { # path is glob pattern
+    if ($path =~ /\*/) {    # path is glob pattern
         return $self->_find_glob($path);
     }
 
@@ -48,7 +48,8 @@ sub _find_file {
 
     }
 
-    Catmandu::Error->throw("unable to find $path in ". join(',', @$roots) . ")")
+    Catmandu::Error->throw(
+        "unable to find $path in " . join(',', @$roots) . ")")
         unless defined $file;
 
     realpath($file);
@@ -59,7 +60,7 @@ sub _find_glob {
     my $roots = Catmandu->roots;
 
     if (File::Spec->file_name_is_absolute($path)) {
-        return [sort map { realpath($_) } grep { -r $_ } glob $path];
+        return [sort map {realpath($_)} grep {-r $_} glob $path];
     }
 
     my %seen;

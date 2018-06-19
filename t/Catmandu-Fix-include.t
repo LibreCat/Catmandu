@@ -25,11 +25,7 @@ BEGIN {
 }
 
 {
-    my $result = {
-        'fix-1' => 'ok',
-        'fix-2' => 'ok',
-        'fix-3' => 'ok',
-    };
+    my $result = {'fix-1' => 'ok', 'fix-2' => 'ok', 'fix-3' => 'ok',};
 
     is_deeply($pkg->new("fix-include-glob/*.fix")->fix({}),
         $result, "include fixes with glob pattern");
