@@ -70,4 +70,21 @@ ok(        ref($b) eq "HASH"
         && index($b->{_path}, "92eb5ffee6ae2fec3ad71c777531578f")
         == (length($b->{_path}) - 32));
 
+is_deeply $p->get("a"), $a;
+is_deeply $p->get("b"), $b;
+
+is_deeply $p->to_array, [ $a, $b ];
+
+lives_ok( sub {
+    $p->delete("a");
+});
+
+is_deeply $p->to_array, [ $b ];
+
+lives_ok( sub {
+    $p->delete_all;
+} );
+
+is_deeply $p->to_array, [];
+
 done_testing;
