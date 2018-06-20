@@ -57,8 +57,8 @@ sub _new_path {
 
     my $md5 = Digest::MD5::md5_hex($id);
 
-    my $path = File::Spec->catdir($self->base_dir(),
-        POSIX::strftime("%Y/%m/%d/%H/%M/%S", gmtime(time)), $md5);
+    my $t = POSIX::strftime("%Y/%m/%d/%H/%M/%S", gmtime(time));
+    my $path = File::Spec->catdir($self->base_dir(), split("/", $t), $md5);
 
     my $err;
     path($path)->mkpath({error => \$err});
