@@ -160,7 +160,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::DirectoryIndex::Number - A number based directory translator
+Catmandu::DirectoryIndex::Number - A natural number based directory translator
 
 =head1 SYNOPSIS
 
@@ -199,9 +199,12 @@ See L<Catmandu::DirectoryIndex>
 
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
-All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =back
+
+=head1 LIMITATIONS
+
+The keys in this directory can only be natural numbers 0,1,2 ...
 
 =head1 INHERITED METHODS
 

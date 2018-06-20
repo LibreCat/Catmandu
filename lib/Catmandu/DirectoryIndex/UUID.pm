@@ -189,6 +189,10 @@ See L<Catmandu::DirectoryIndex>
 
 =back
 
+=head1 LIMITATIONS
+
+The keys in this directory can only be UUID identifiers.
+
 =head1 INHERITED METHODS
 
 This Catmandu::DirectoryIndex::Number implements:

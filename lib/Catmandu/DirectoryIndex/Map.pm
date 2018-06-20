@@ -173,7 +173,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::DirectoryIndex::Map - translates between id and path using a bag as lookup
+Catmandu::DirectoryIndex::Map - translates between id and path using a Catmandu::Bag as lookup
 
 =head1 SYNOPSIS
 
@@ -209,16 +209,17 @@ Catmandu::DirectoryIndex::Map - translates between id and path using a bag as lo
 
         { _id => "a", _path => "/data/2018/01/01/16/00/00/0cc175b9c0f1b6a831c399e269772661" }
 
-    If the mapping for the id does not exist yet, this package calculates it by appending these variables:
+    If the mapping for the id does not exist yet, this package calculates it by concatenating
+    into a path:
 
     * $base_dir which is configurable
-    * $Y: current year
-    * $M: current month
-    * $D: current day of month
-    * $h: current hour
-    * $m: current minute
-    * $s: current second
-    * $md5_id: the md5 of the _id
+    * YYYY: current year
+    * MM: current month
+    * DD: current day of month
+    * HH: current hour
+    * MM: current minute
+    * SS: current second
+    * TEXT: the md5 of the _id
 
     Every call to C<add> will generate a directory entry in the backend database,
     if it didn't already exist.

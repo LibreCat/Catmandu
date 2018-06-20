@@ -144,27 +144,27 @@ Implementors must implement these methods
 
 =item add( $id ) : $mapping
 
-* Accepts id as string
+* Accepts $id as string
 
-* Translates id to directory
+* Translates $id to directory path
 
 * Creates directory if necessary
 
-* Returns record containing _id and _path
+* Returns HASH with keys C<_id> and C<_path>
 
-This method should throw an error when it detects an invalid id.
+This method should throw an L<Catmandu::Error> when it detects an invalid id.
 
 It should either return the mapping or throw an error.
 
 =item get( $id ) : $mapping
 
-* Accepts id as string
+* Accepts $id as string
 
-* Translates id to directory
+* Translates $id to directory path
 
-* Returns record containing _id and _path, but only if an existing path was found
+* Returns HASH with keys C<_id> and C<_path>, if a path exists for $id
 
-This method should throw an error when it detects an invalid id.
+This method should throw an L<Catmandu::Error> when it detects an invalid id.
 
 Difference with method "add":
 
@@ -182,11 +182,15 @@ Difference with method "add":
 
 * Do other internal cleanup actions if any required
 
+This method should throw an L<Catmandu::Error> when at failure.
+
 =item delete_all()
 
 * Deletes files/directories in base_dir. Please keep the base_dir.
 
 * Do other internal cleanup actions if any required
+
+This method should throw an L<Catmandu::Error> when at failure.
 
 =item generator()
 
@@ -194,7 +198,8 @@ Inherited requirement from L<Catmandu::Iterable>:
 
 * return function reference
 
-* every call to this function must return the next entry in the index
+* every call to this function must return the next directory entry in the index
+as a HASH with keys C<_id> and C<path>
 
 =back
 
