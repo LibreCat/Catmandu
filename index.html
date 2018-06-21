@@ -1429,13 +1429,19 @@ $ catmandu stream File::Simple --root t/data --bag 1234 --id myfile.txt to /tmp/
   <span class="kw">set_field</span>(data,<span class="st">&quot;I&#39;m empty!&quot;</span>)
 <span class="kw">end</span>
 
-<span class="co"># Evaluates true when a marc (sub)field matches a regular expression</span>
-<span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;My funny title&#39;</span>)
+<span class="co"># Evaluates true when one or all marc (sub)fields match a regular expression</span>
+<span class="kw">if</span> <span class="kw">marc_all_match</span>(<span class="st">&#39;245&#39;</span>,<span class="st">&#39;My funny title&#39;</span>)
   <span class="kw">add_field</span>(<span class="st">&#39;funny.title&#39;</span>,<span class="st">&#39;yes&#39;</span>)
 <span class="kw">end</span>
-<span class="kw">if</span> <span class="kw">marc_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
+<span class="kw">if</span> <span class="kw">marc_all_match</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;c&#39;</span>)
   <span class="kw">marc_set</span>(<span class="st">&#39;LDR/6&#39;</span>,<span class="st">&#39;p&#39;</span>)
 <span class="kw">end</span>
+
+<span class="co"># Evaluates to true when at least one of the marc (sub)fields match a regular expression</span>
+<span class="kw">if</span> <span class="kw">marc_any_match</span>(<span class="st">&#39;650&#39;</span>,<span class="st">&#39;catmandu&#39;</span>)
+  <span class="kw">add_field</span>(<span class="st">&#39;important.books&#39;</span>,<span class="st">&#39;yes&#39;</span>)
+<span class="kw">end</span>
+
 
 <span class="co"># Evaluates true when the JSON fragment is valid against a JSON Schema</span>
 <span class="kw">if</span> <span class="kw">valid</span>(data,JSONSchema,schema:myschema.json)
