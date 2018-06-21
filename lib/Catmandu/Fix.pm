@@ -860,7 +860,42 @@ You can load fixes from another namespace with the C<use> statement:
        ...
     end
 
-=head1 PATHS
+=head1 FIX COMMANDS, ARGUMENTS AND OPTIONS
+
+Fix commands manipulate data or in some cases execute side effects. Fix
+commands have zero or more arguments and zero or more options. Fix command
+arguments are separated by commas ",". Fix options are name/value pairs
+separated by a colon ":".
+
+    # A command with zero arguments
+    my_command()
+
+    # A command with multiple arguments
+    my_other_command(foo,bar,test)
+
+    # A command with optional arguments
+    my_special_command(foo,bar,color:blue,size:12)
+
+All command arguments are treated as strings. These strings can be FIX PATHs
+pointing to values or string literals. When command line arguments don't contain
+special characters comma "," , equal "=" , great than ">" or colon ":", then
+they can be written as-is. Otherwise, the arguments need to be quoted with single
+or double quotes:
+
+    # Both commands below have the same effect
+    my_other_command(foo,bar,test)
+    my_other_command("foo","bar","test")
+
+    # Illegal syntax
+    my_special_command(foo,http://test.org,color:blue,size:12) # <- syntax error
+
+    # Correct syntax
+    my_special_command(foo,"http://test.org",color:blue,size:12)
+    
+    # Or, alternative
+    my_special_command("foo","http://test.org",color:"blue",size:12)
+
+=head1 FIX PATHS
 
 Most of the Fix commands use paths to point to values
 in a data record. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the
@@ -890,6 +925,12 @@ E.g.
 
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
  add_field('mods.titleInfo.$last.title', 'bar');
+
+Some Fix commands can implement an alternatice path syntax to point to values.
+See for example L<Catmandu::MARC>, L<Catmandu:PICA>:
+
+ # Copy the MARC 245a field to the my.title field
+ marc_map(245a,my.title)
 
 =head1 OPTIONS
 
