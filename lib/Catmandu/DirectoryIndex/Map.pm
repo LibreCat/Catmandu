@@ -9,11 +9,11 @@ use Cwd;
 use File::Spec;
 use Catmandu::BadArg;
 use Catmandu::Error;
-use Digest::MD5 qw();
 use POSIX qw();
 use Data::Dumper;
 use Moo;
 use Path::Tiny qw(path);
+use URI::Escape qw();
 use namespace::clean;
 
 with "Catmandu::DirectoryIndex";
@@ -55,10 +55,10 @@ sub _new_path {
 
     Catmandu::BadArg->throw("need id") unless is_string($id);
 
-    my $md5 = Digest::MD5::md5_hex($id);
+    my $escaped_id = URI::Escape::uri_escape_utf8($id);
 
     my $t = POSIX::strftime("%Y/%m/%d/%H/%M/%S", gmtime(time));
-    my $path = File::Spec->catdir($self->base_dir(), split("/", $t), $md5);
+    my $path = File::Spec->catdir($self->base_dir(), split("/", $t), $escaped_id);
 
     my $err;
     path($path)->mkpath({error => \$err});

@@ -54,24 +54,26 @@ lives_ok(
 
 lives_ok(
     sub {
-        $b = $p->add("b");
+        $b = $p->add("/a and b/");
     }
 );
+
+my @a_parts = File::Spec->splitdir( $a->{_path} );
 
 ok(        ref($a) eq "HASH"
         && $a->{_id} eq "a"
         && index($a->{_path}, $dir) == 0
-        && index($a->{_path}, "0cc175b9c0f1b6a831c399e269772661")
-        == (length($a->{_path}) - 32));
+        && $a_parts[-1] eq "a");
+
+my @b_parts = File::Spec->splitdir( $b->{_path} );
 
 ok(        ref($b) eq "HASH"
-        && $b->{_id} eq "b"
+        && $b->{_id} eq "/a and b/"
         && index($b->{_path}, $dir) == 0
-        && index($b->{_path}, "92eb5ffee6ae2fec3ad71c777531578f")
-        == (length($b->{_path}) - 32));
+        && $b_parts[-1] eq "%2Fa%20and%20b%2F");
 
 is_deeply $p->get("a"), $a;
-is_deeply $p->get("b"), $b;
+is_deeply $p->get("/a and b/"), $b;
 
 is_deeply $p->to_array, [ $a, $b ];
 
