@@ -90,9 +90,6 @@ Catmandu::Plugin::Readonly - Make stores or bags read-only
 The Catmandu::Plugin::Readonly will transform a Catmandu::Store or a Catmandu::Bag
 in read-only mode: all writes, deletes and drops will be ignored.
 
-This command will work on L<Catmandu::Store> and L<Catmandu::FileStore>
-implementations.
-
 =head1 SEE ALSO
 
 L<Catmandu::Store>, L<Catmandu::Bag>
