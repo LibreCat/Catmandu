@@ -34,7 +34,7 @@ note("list");
 
     # Order is not important in a list
     is_deeply [sort({$a->{_id} cmp $b->{_id}} @$array)],
-        [{_id => 1}, {_id => 2}, {_id => 3},], 'got correct response';
+        [{_id => "000000001"}, {_id => "000000002"}, {_id => "000000003"},], 'got correct response';
 }
 
 note("exists");

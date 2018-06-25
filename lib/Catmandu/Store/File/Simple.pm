@@ -10,54 +10,56 @@ use Catmandu::Util;
 use Catmandu::Store::File::Simple::Index;
 use Catmandu::Store::File::Simple::Bag;
 use Data::UUID;
+use Catmandu::DirectoryIndex::UUID;
+use Catmandu::DirectoryIndex::Number;
 use namespace::clean;
 
 with 'Catmandu::FileStore';
 with 'Catmandu::Droppable';
 
-has root    => (is => 'ro', required => '1');
-has uuid    => (is => 'ro', trigger  => 1);
-has keysize => (is => 'ro', default  => 9, trigger => 1);
+has root => (is => 'ro', required => '1');
 
-sub _trigger_keysize {
-    my $self = shift;
+#DEPRECATED
+has uuid => (is => 'ro');
 
-    croak "keysize needs to be a multiple of 3"
-        unless $self->keysize % 3 == 0;
-}
+#DEPRECATED
+has keysize => (
+    is  => 'ro',
+    isa => sub {
+        Catmandu::Util::check_natural($_[0]);
+        croak "keysize needs to be a multiple of 3" unless $_[0] % 3 == 0;
+    },
+    default => 9
+);
+has directory_index_package => (is => "ro");
+has directory_index_options => (is => "ro", lazy => 1, default => sub {+{};});
+has directory_index         => (is => "lazy");
 
-sub _trigger_uuid {
-    my $self = shift;
+sub _build_directory_index {
 
-    $self->{keysize} = 36;
-}
+    my $self = $_[0];
 
-sub path_string {
-    my ($self, $key) = @_;
+    if ($self->directory_index_package()) {
 
-    my $keysize = $self->keysize;
+        Catmandu::Util::require_package($self->directory_index_package(),
+            "Catmandu::DirectoryIndex")
+            ->new(%{$self->directory_index_options(),}, base_dir => $self->root());
 
-    # Allow all hexidecimal numbers
-    $key =~ s{[^A-F0-9-]}{}g;
+    }
+    elsif ($self->uuid()) {
 
-    # If the key is a UUID then the matches need to be exact
-    if ($self->uuid) {
-        try {
-            Data::UUID->new->from_string($key);
-        }
-        catch {
-            return undef;
-        };
+        Catmandu::DirectoryIndex::UUID->new(base_dir => $self->root());
+
     }
     else {
-        return undef unless length($key) && length($key) <= $keysize;
-        $key =~ s/^0+//;
-        $key = sprintf "%-${keysize}.${keysize}d", $key;
+
+        Catmandu::DirectoryIndex::Number->new(
+            base_dir => $self->root(),
+            keysize  => $self->keysize()
+        );
+
     }
 
-    my $path = $self->root . "/" . join("/", unpack('(A3)*', $key));
-
-    $path;
 }
 
 sub drop {
@@ -160,13 +162,37 @@ The root directory where to store all the files. Required.
 
 =item keysize
 
+DEPRECATED: use directory_index_package and directory_index_options
+
 By default the directory structure is 3 levels deep. With the keysize option
 a deeper nesting can be created. The keysize needs to be a multiple of 3.
 All the container keys of a L<Catmandu::Store::File::Simple> must be integers.
 
 =item uuid
 
+DEPRECATED: use directory_index_package and directory_index_options
+
 If the to a true value, then the Simple store will require UUID-s as keys
+
+=item directory_index_package
+
+package name that translates between id and a directory.
+
+prefix "Catmandu::DirectoryIndex::" can be omitted.
+
+Default: L<Catmandu::DirectoryIndex::Number>
+
+=item directory_index_options
+
+Constructor arguments for the directory_index_package (see above)
+
+=item directory_index
+
+instance of L<Catmandu::DirectoryIndex>.
+
+When supplied, directory_index_package and directory_index_options are ignored.
+
+When not, this object is constructed from directory_index_package and directory_index_options.
 
 =back
 

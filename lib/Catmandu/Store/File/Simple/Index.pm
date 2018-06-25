@@ -6,12 +6,7 @@ use Catmandu::Sane;
 use Moo;
 use Path::Tiny;
 use Carp;
-use POSIX qw(ceil);
-use Path::Iterator::Rule;
-use File::Spec;
 use namespace::clean;
-
-use Data::Dumper;
 
 with 'Catmandu::Bag';
 with 'Catmandu::FileBag::Index';
@@ -20,40 +15,16 @@ with 'Catmandu::Droppable';
 sub generator {
     my ($self) = @_;
 
-    my $root       = $self->store->root;
-    my $keysize    = $self->store->keysize;
-    my @root_split = File::Spec->splitdir($root);
-
-    my $mindepth = ceil($keysize / 3);
-
-    unless (-d $root) {
-        $self->log->error("no root $root found");
-        return sub {undef};
-    }
-
-    $self->log->debug("creating generator for root: $root");
-
-    my $rule = Path::Iterator::Rule->new;
-    $rule->min_depth($mindepth);
-    $rule->max_depth($mindepth);
-    $rule->directory;
-
     return sub {
-        state $iter = $rule->iter($root, {depthfirst => 1});
 
-        my $path = $iter->();
+        state $iter = $self->store->directory_index()->generator();
 
-        return undef unless defined($path);
+        my $mapping = $iter->();
 
-        # Strip of the root part and translate the path to an identifier
-        my @split_path = File::Spec->splitdir($path);
-        my $id = join("", splice(@split_path, int(@root_split)));
+        return unless defined $mapping;
 
-        unless ($self->store->uuid) {
-            $id =~ s/^0+//;
-        }
+        $self->get($mapping->{_id});
 
-        $self->get($id);
     };
 }
 
@@ -64,9 +35,7 @@ sub exists {
 
     $self->log->debug("Checking exists $id");
 
-    my $path = $self->store->path_string($id);
-
-    defined($path) && -d $path;
+    defined($self->store->directory_index->get($id));
 }
 
 sub add {
@@ -80,27 +49,7 @@ sub add {
         croak "Can't add a file to the index";
     }
 
-    my $path = $self->store->path_string($id);
-
-    unless (defined $path) {
-        my $err
-            = "Failed to create path from $id need a number of max "
-            . $self->store->keysize
-            . " digits";
-        $self->log->error($err);
-        Catmandu::BadArg->throw($err);
-    }
-
-    $self->log->debug("Generating path $path for key $id");
-
-    # Throws an exception when the path can't be created
-    path($path)->mkpath;
-
-    my $new_data = $self->get($id);
-
-    $data->{$_} = $new_data->{$_} for keys %$new_data;
-
-    1;
+    $self->store->directory_index->add($id);
 }
 
 sub get {
@@ -108,23 +57,9 @@ sub get {
 
     croak "Need an id" unless defined $id;
 
-    my $path = $self->store->path_string($id);
+    my $mapping = $self->store->directory_index->get($id);
 
-    unless ($path) {
-        $self->log->error(
-                  "Failed to create path from $id need a number of max "
-                . $self->store->keysize
-                . " digits");
-        return undef;
-    }
-
-    $self->log->debug("Loading path $path for id $id");
-
-    return undef unless -d $path;
-
-    my @stat = stat $path;
-
-    return +{_id => $id,};
+    defined($mapping) ? {_id => $id} : undef;
 }
 
 sub delete {
@@ -132,32 +67,13 @@ sub delete {
 
     croak "Need a key" unless defined $id;
 
-    my $path = $self->store->path_string($id);
-
-    unless ($path) {
-        $self->log->error("Failed to create path from $id");
-        return undef;
-    }
-
-    $self->log->debug("Destoying path $path for key $id");
-
-    return undef unless -d $path;
-
-    # Throws an exception when the path can't be created
-    path($path)->remove_tree;
-
-    1;
+    $self->store->directory_index->delete($id);
 }
 
 sub delete_all {
     my ($self) = @_;
 
-    $self->each(
-        sub {
-            my $key = shift->{_id};
-            $self->delete($key);
-        }
-    );
+    $self->store->directory_index->delete_all;
 }
 
 sub drop {
