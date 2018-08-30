@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - split off Catmandu::FileStore
   - bring Dockerfile back to this repository
   - include fix now accepts glob patterns
   - the export and convert commands get a new --id-file option
