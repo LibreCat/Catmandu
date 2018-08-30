@@ -140,9 +140,4 @@ Each Catmandu::Bag in this Catmandu::Store implements:
 
 =back
 
-=head1 SEE ALSO
-
-L<Catmandu::Store::File::Multi> ,
-L<Catmandu::Plugin::SideCar>
-
 =cut

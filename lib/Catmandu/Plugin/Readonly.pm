@@ -73,24 +73,16 @@ Catmandu::Plugin::Readonly - Make stores or bags read-only
  ---
  store:
   test:
-    package: File::Simple
+    package: MongoDB
     options:
       default_plugins: [ 'Readonly']
-      root: t/data
-
- # This will  fail, no files can be added to the 'test' store
- $ catmandu stream myfile.txt to test --bag 1 -id myfile.txt
-
- # This command will succeed only if the 'test' database contains
- # the 'sample.txt' file
- # catmandu stream test --bag 3 --id sample.txt
 
 =head1 DESCRIPTION
 
 The Catmandu::Plugin::Readonly will transform a Catmandu::Store or a Catmandu::Bag
 in read-only mode: all writes, deletes and drops will be ignored.
 
-This command will work on L<Catmandu::Store> and L<Catmandu::FileStore>
+This command will work on L<Catmandu::Store>
 implementations.
 
 =head1 SEE ALSO
