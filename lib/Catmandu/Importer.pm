@@ -19,6 +19,11 @@ with 'Catmandu::Serializer';
 
 around generator => sub {
     my ($orig, $self) = @_;
+
+    return sub {} if $self->{_gen_created};
+
+    $self->{_gen_created} = 1;
+
     my $generator = $orig->($self);
 
     if (my $fixer = $self->_fixer) {
