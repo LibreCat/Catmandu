@@ -20,9 +20,13 @@ with 'Catmandu::Serializer';
 around generator => sub {
     my ($orig, $self) = @_;
 
-    return sub {} if $self->{_gen_created};
+    # importers can run only once
+    # TODO turn this into a role
+    state $exhausted = sub {};
 
-    $self->{_gen_created} = 1;
+    return $exhausted if $self->{__exhausted};
+
+    $self->{__exhausted} = 1;
 
     my $generator = $orig->($self);
 
