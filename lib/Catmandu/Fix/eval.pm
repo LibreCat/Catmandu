@@ -35,15 +35,17 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::eval - evaluate stored in a variable
+Catmandu::Fix::eval - eval and execute fixes defined in a field
 
 =head1 SYNOPSIS
 
-   # fixes => 'add_field(foo,bar)'
-   eval(fixes) # foo => bar
+    # {fixes => 'add_field(foo,bar)'}
+    eval(fixes)
+    # {fixes => 'add_field(foo,bar)', foo => 'bar'}
 
-   # fixer => ['add_field(foo,bar)','upcase(foo)']
-   eval(fixes) # foo => BAR
+    # {fixes => ['add_field(foo,bar)','upcase(foo)'], foo => 'bar'}
+    eval(fixes)
+    # {fixes => ['add_field(foo,bar)','upcase(foo)'], foo => 'BAR'}
 
 =head1 SEE ALSO
 
