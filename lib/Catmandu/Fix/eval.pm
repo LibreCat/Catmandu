@@ -10,7 +10,7 @@ use Moo;
 
 with 'Catmandu::Fix::Inlineable';
 
-has path => (is => 'ro' , required => 1);
+has path => (is => 'ro', required => 1);
 
 around BUILDARGS => sub {
     my ($orig, $class, $path) = @_;
@@ -21,7 +21,7 @@ sub fix {
     my ($self, $data) = @_;
     my $code = data_at($self->path, $data);
     return $data unless $code && (is_string($code) || is_array_ref($code));
-    $code = [ $code ] unless is_array_ref($code);
+    $code = [$code] unless is_array_ref($code);
     my $fixer = Catmandu::Fix->new(fixes => $code);
     return $data unless $fixer;
     $fixer->fix($data);
