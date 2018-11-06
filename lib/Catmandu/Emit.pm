@@ -182,3 +182,13 @@ sub _emit_reject {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Emit - Role with helper methods for code emitting
+
+=cut

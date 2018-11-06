@@ -936,11 +936,12 @@ Return the current logger. See L<Catmandu> for activating the logger in your mai
 
 =head1 CODING
 
-One can extend the Fix language by creating own custom-made fixes. Two methods are
-available to create an own Fix function:
+One can extend the Fix language by creating own custom-made fixes. Three methods are
+available to create an new fix function:
 
-  * Quick and easy: create a class that implements a C<fix> method.
-  * Advanced: create a class that emits Perl code that will be evaled by the Fix module.
+  * Simplest: create a class that implements a C<fix> method.
+  * For most use cases: create a class that consumes the C<Catmandu::Fix::Builder> role and use C<Catmandu::Path> to build your fixer.
+  * Hardest: create a class that emits Perl code that will be evaled by the Fix module.
 
 Both methods will be explained shortly.
 
