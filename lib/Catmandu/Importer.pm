@@ -23,7 +23,7 @@ around generator => sub {
 
     # importers can run only once
     # TODO turn this into a role
-    state $exhausted = sub {};
+    state $exhausted = sub { };
 
     return $exhausted if $self->{__exhausted};
 
