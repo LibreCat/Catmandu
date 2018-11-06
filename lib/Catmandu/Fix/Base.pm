@@ -27,7 +27,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::Base - Base class for all code emitting Catmandu fixes
+Catmandu::Fix::Base - Base role for all code emitting Catmandu fixes
 
 =head1 SYNOPSIS
 
@@ -49,4 +49,5 @@ For more information how to create fixes read the following two blog posts:
 
 http://librecat.org/catmandu/2014/03/14/create-a-fixer.html
 http://librecat.org/catmandu/2014/03/26/creating-a-fixer-2.html
+
 =cut

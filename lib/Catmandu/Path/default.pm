@@ -18,14 +18,12 @@ sub split_path {
     if (is_value($path)) {
         $path = trim($path);
         $path =~ s/^\$[\.\/]//;
-        [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, $path];
+        return [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, $path];
     }
-    elsif (is_array_ref($path)) {
-        $path;
+    if (is_array_ref($path)) {
+        return $path;
     }
-    else {
-        # TODO throw error
-    }
+    Catmandu::Error->throw("path should be a string or arrayref of strings");
 }
 
 sub getter {
