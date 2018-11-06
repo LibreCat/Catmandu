@@ -1,6 +1,10 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new eval fix
+
+1.10  2018-08-30 10:38:16 CEST
+  - split off Catmandu::FileStore
   - bring Dockerfile back to this repository
   - include fix now accepts glob patterns
   - the export and convert commands get a new --id-file option

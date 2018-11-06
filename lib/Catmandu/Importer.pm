@@ -2,7 +2,7 @@ package Catmandu::Importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 use Catmandu::Util qw(io is_value is_string is_array_ref is_hash_ref);
 use Catmandu::Util::Path qw(as_path);
@@ -20,6 +20,15 @@ with 'Catmandu::Serializer';
 
 around generator => sub {
     my ($orig, $self) = @_;
+
+    # importers can run only once
+    # TODO turn this into a role
+    state $exhausted = sub {};
+
+    return $exhausted if $self->{__exhausted};
+
+    $self->{__exhausted} = 1;
+
     my $generator = $orig->($self);
 
     if (my $fixer = $self->_fixer) {

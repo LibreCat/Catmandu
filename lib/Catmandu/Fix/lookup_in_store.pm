@@ -2,7 +2,7 @@ package Catmandu::Fix::lookup_in_store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 use Catmandu;
 use Catmandu::Util::Path qw(as_path);
