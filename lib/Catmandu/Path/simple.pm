@@ -437,6 +437,35 @@ Catmandu::Path::simple - The default Catmandu path syntax
     # safer version with a type check
     my $updater = $path->updater(if_string => sub { my $str = $_[0]; uc $str });
 
+=head1 CONFIGURATION
+
+=over 4
+
+=item path
+
+The string version of the path. Required.
+
+=back
+
+=head1 METHODS
+
+=head2 getter
+
+=head2 setter
+
+=head2 updater
+
+=head2 creator
+
+=head2 deleter
+
+Returns a coderef that can delete the path in the data argument.
+
+    my $path = Catmandu::Path::Simple->new(path => '$.foo');
+    my $data = {foo => 'foo', bar => 'bar'};
+    $path->deleter->($data);
+    # => {bar => 'bar'}
+
 =head1 SEE ALSO
 
 L<Catmandu::Path>.
