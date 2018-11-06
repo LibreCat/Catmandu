@@ -1,4 +1,4 @@
-package Catmandu::Path::default;
+package Catmandu::Path::simple;
 
 use Catmandu::Sane;
 
@@ -412,3 +412,33 @@ sub _emit_delete_key {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Path::simple - The default Catmandu path syntax
+
+=head1 SYNOPSIS
+
+    my $data = {foo => {bar => ['first_bar', 'second_bar']}};
+
+    my $path = Catmandu::Path::simple->new("foo.bar.0");
+
+    my $getter = $path->getter;
+    my $first_bar = $getter->($data);
+
+    my $updater = $path->updater(sub { my $str = $_[0]; uc $str });
+    $updater->($data);
+    # => {foo => {bar => ['FIRST_BAR', 'second_bar']}}
+
+    # safer version with a type check
+    my $updater = $path->updater(if_string => sub { my $str = $_[0]; uc $str });
+
+=head1 SEE ALSO
+
+L<Catmandu::Path>.
+
+=cut

@@ -40,3 +40,17 @@ around updater => sub {
 };
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Path - Base role for Catmandu path implementations
+
+=head1 SEE ALSO
+
+L<Catmandu::Path::default>.
+
+=cut

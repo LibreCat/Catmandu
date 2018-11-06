@@ -34,10 +34,10 @@ Catmandu::Fix::Builder - Base role for Catmandu fixes
 =head1 DESCRIPTION
 
 This role expects a C<_build_fixer> method that produces a coderef that
-transforms the data.  Used in combination with L<Catmandu::Path>, data
-manipulations can be described in a relatively high-level way. Most fixes
-shipped with Catmandu work this way and can be used as a starting point to
-write your own fixes.
+transforms the data.  Used in combination with L<Catmandu::Path>
+implementations, data manipulations can be described in a relatively high-level
+way. Most fixes shipped with Catmandu work this way and can be used as a
+starting point to write your own fixes.
 
 =head1 SYNOPSIS
 
