@@ -132,8 +132,7 @@ sub updater {
 }
 
 sub creator {
-    my $self     = shift;
-    my %opts     = @_ == 1 ? (value => $_[0]) : @_;
+    my ($self, %opts) = @_;
     my $path     = $self->split_path;
     my $data_var = $self->_generate_var;
     my $val_var  = $self->_generate_var;
@@ -451,19 +450,91 @@ The string version of the path. Required.
 
 =head2 getter
 
-=head2 setter
-
-=head2 updater
-
-=head2 creator
-
-=head2 deleter
-
-Returns a coderef that can delete the path in the data argument.
+Returns a coderef that can get the values for the path.
+The coderef takes the data as argument and returns the matching values as an
+arrayref.
 
     my $path = Catmandu::Path::Simple->new(path => '$.foo');
     my $data = {foo => 'foo', bar => 'bar'};
-    $path->deleter->($data);
+    $path->getter->($data);
+    # => ['foo']
+
+=head2 setter
+
+Returns a coderef that can create the final part of the  path and set it's
+value. In contrast to C<creator> this will only set the value if the
+intermediate path exists.  The coderef takes the data as argument and also
+returns the data.
+
+    my $path = Catmandu::Path::Simple->new(path => '$.foo.$append');
+    $path->creator(value => 'foo')->({});
+    # => {foo => ['foo']}
+    $path->creator(value => sub { my ($val, $data) = @_; $val // 'foo' })->({});
+    # => {foo => ['foo']}
+
+    # calling creator with no value creates a sub that takes the value as an
+    # extra argument
+    $path->creator->({}, 'foo');
+    $path->creator->({}, sub { my ($val, $data) = @_; $val // 'foo' });
+    # => {foo => ['foo']}
+
+=head2 setter(\&callback|$value)
+
+This is a shortcut for C<setter(value => \&callback|$value)>.
+
+=head2 updater(value => \&callback)
+
+Returns a coderef that can update the value of an existing path.
+
+=head2 updater(if_* => [\&callback])
+
+TODO
+
+=head2 updater(if => [\&callback])
+
+TODO
+
+=head2 updater(if_* => \&callback)
+
+TODO
+
+=head2 updater(if => \&callback)
+
+TODO
+
+=head2 updater(\&callback)
+
+This is a shortcut for C<updater(value => \&callback|$value)>.
+
+=head2 creator(value => \&callback|$value)
+
+Returns a coderef that can create the path and set it's value. In contrast to
+C<setter> this also creates the intermediate path if necessary.
+The coderef takes the data as argument and also returns the data.
+
+    my $path = Catmandu::Path::Simple->new(path => '$.foo.$append');
+    $path->creator(value => 'foo')->({});
+    # => {foo => ['foo']}
+    $path->creator(value => sub { my ($val, $data) = @_; $val // 'foo' })->({});
+    # => {foo => ['foo']}
+
+    # calling creator with no value creates a sub that takes the value as an
+    # extra argument
+    $path->creator->({}, 'foo');
+    $path->creator->({}, sub { my ($val, $data) = @_; $val // 'foo' });
+    # => {foo => ['foo']}
+
+=head2 creator(\&callback|$value)
+
+This is a shortcut for C<creator(value => \&callback|$value)>.
+
+=head2 deleter
+
+Returns a coderef that can delete the path.
+The coderef takes the data as argument and also returns the data.
+
+    my $path = Catmandu::Path::Simple->new(path => '$.foo');
+    $path->deleter->({foo => 'foo', bar => 'bar'});
     # => {bar => 'bar'}
 
 =head1 SEE ALSO

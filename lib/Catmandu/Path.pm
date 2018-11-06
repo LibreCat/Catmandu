@@ -15,6 +15,14 @@ requires 'creator';
 requires 'updater';
 requires 'deleter';
 
+around creator => sub {
+    my $orig = shift;
+    my $self = shift;
+    my %opts = @_ == 1 ? (value => $_[0]) : @_;
+
+    $orig->($self, %opts);
+};
+
 around updater => sub {
     my $orig = shift;
     my $self = shift;
@@ -51,6 +59,6 @@ Catmandu::Path - Base role for Catmandu path implementations
 
 =head1 SEE ALSO
 
-L<Catmandu::Path::default>.
+L<Catmandu::Path::simple>.
 
 =cut
