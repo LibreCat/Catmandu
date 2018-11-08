@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.10_01  2018-11-08 15:38:48 CET
   - Fix::Builder and Path make writing fixes much easier
   - new eval fix
 

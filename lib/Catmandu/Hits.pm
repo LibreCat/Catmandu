@@ -2,7 +2,7 @@ package Catmandu::Hits;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10';
+our $VERSION = '1.10_01';
 
 use Moo;
 use namespace::clean;
