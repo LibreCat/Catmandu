@@ -42,3 +42,13 @@ sub import {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Fix::Condition::Builder - Helper role to easily write fix conditions
+
+=cut

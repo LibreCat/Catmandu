@@ -4,27 +4,31 @@ use Catmandu::Sane;
 
 our $VERSION = '1.10';
 
-use Catmandu::Fix;
-use Catmandu::Util qw(:is data_at);
 use Moo;
+use List::Util qw(all);
+use Catmandu::Fix;
+use Catmandu::Util qw(is_string is_array_ref);
+use Catmandu::Util::Path qw(as_path);
+use namespace::clean;
+use Catmandu::Fix::Has;
 
-with 'Catmandu::Fix::Inlineable';
+has path => (fix_arg => 1);
 
-has path => (is => 'ro', required => 1);
+with 'Catmandu::Fix::Builder';
 
-around BUILDARGS => sub {
-    my ($orig, $class, $path) = @_;
-    $orig->($class, path => $path);
-};
-
-sub fix {
-    my ($self, $data) = @_;
-    my $code = data_at($self->path, $data);
-    return $data unless $code && (is_string($code) || is_array_ref($code));
-    $code = [$code] unless is_array_ref($code);
-    my $fixer = Catmandu::Fix->new(fixes => $code);
-    return $data unless $fixer;
-    $fixer->fix($data);
+sub _build_fixer {
+    my ($self) = @_;
+    my $getter = as_path($self->path)->getter;
+    sub {
+        my $data = $_[0];
+        for my $fixes (@{$getter->($data)}) {
+            $fixes = [$fixes] unless is_array_ref($fixes);
+            next unless @$fixes && all {is_string($_)} @$fixes;
+            my $fixer = Catmandu::Fix->new(fixes => $fixes);
+            $data = $fixer->fix($data);
+        }
+        $data;
+    };
 }
 
 1;

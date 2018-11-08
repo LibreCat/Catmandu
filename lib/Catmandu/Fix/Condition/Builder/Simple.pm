@@ -36,3 +36,13 @@ sub _build_tester {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+Catmandu::Fix::Condition::Builder::Simple - Helper role to easily write fix conditions that test a value
+
+=cut
