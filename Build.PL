@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.10_01",
+  "dist_version" => "1.10_02",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -39,8 +39,7 @@ my %module_build_args = (
     "Hash::Merge::Simple" => 0,
     "IO::Handle::Util" => "0.01",
     "LWP::UserAgent" => 0,
-    "List::MoreUtils" => "0.33",
-    "List::MoreUtils::XS" => 0,
+    "List::MoreUtils" => "0.401",
     "Log::Any" => 0,
     "Log::Any::Adapter" => 0,
     "MIME::Types" => 0,
