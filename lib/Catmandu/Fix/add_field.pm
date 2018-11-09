@@ -2,7 +2,7 @@ package Catmandu::Fix::add_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_01';
+our $VERSION = '1.10_02';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

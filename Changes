@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.10_02  2018-11-09 09:09:02 CET
   - bump required version of List::MoreUtils
 
 1.10_01  2018-11-08 15:38:48 CET
