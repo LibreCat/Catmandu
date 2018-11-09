@@ -18,7 +18,6 @@ on 'develop', sub {
   requires 'Text::Diff', 0; # undeclared Test::Code::TidyAll plugin dependency
   };
 
-requires 'List::MoreUtils::XS', 0;
 requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '0.33';
 requires 'asa', 0; # undeclared dependency?
@@ -34,7 +33,7 @@ requires 'Path::Iterator::Rule','0';
 requires 'Path::Tiny', '0';
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
-requires 'List::MoreUtils', '0.33';
+requires 'List::MoreUtils', '0.401';
 requires 'Log::Any', 0;
 requires 'Log::Any::Adapter', 0;
 requires 'LWP::UserAgent', 0;
