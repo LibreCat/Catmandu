@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new cp,mv and rm shortcuts for copy_field, move_field and remove_field
 
 1.10_02  2018-11-09 09:09:02 CET
   - bump required version of List::MoreUtils
