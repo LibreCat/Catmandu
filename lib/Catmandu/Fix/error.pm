@@ -49,6 +49,9 @@ Catmandu::Fix::error - die with an error message
     error('id missing!')
   end
 
+  # get the value from a path
+  error($.error)
+
 =head1 SEE ALSO
 
 L<Catmandu::Fix>
