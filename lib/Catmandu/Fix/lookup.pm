@@ -73,6 +73,7 @@ Catmandu::Fix::lookup - change the value of a HASH key or ARRAY index by
 looking up its value in a dictionary
 
 =head1 SYNOPSIS
+
     # dictionary.csv
     # id,planet
     # 1,sun
