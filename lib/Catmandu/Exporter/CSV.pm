@@ -11,10 +11,18 @@ use namespace::clean;
 with 'Catmandu::TabularExporter';
 
 has csv          => (is => 'lazy');
-has sep_char     => (is => 'ro', default => sub {','});
 has quote_char   => (is => 'ro', default => sub {'"'});
 has escape_char  => (is => 'ro', default => sub {'"'});
 has always_quote => (is => 'ro');
+has sep_char => (
+    is      => 'ro',
+    default => sub {','},
+    coerce  => sub {
+        my $sep_char = $_[0];
+        $sep_char =~ s/(\\[abefnrt])/"qq{$1}"/gee;
+        return $sep_char;
+    }
+);
 
 sub _build_csv {
     my ($self) = @_;
