@@ -8,8 +8,7 @@ use Catmandu::Exporter::CSV;
 use Moo;
 use namespace::clean;
 
-
-has sep_char => (is      => 'ro', default => sub {"\t"},);
+has sep_char => (is => 'ro', default => sub {"\t"},);
 has csv => (is => 'lazy', handles => [qw(add)]);
 
 with 'Catmandu::TabularExporter';

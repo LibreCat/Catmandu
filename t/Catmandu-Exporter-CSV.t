@@ -85,10 +85,14 @@ $exporter = $pkg->new(file => \$out);
 $exporter->commit;
 is $out, "";
 $out = "";
-$exporter = $pkg->new(file => \$out, fields => 'a,b');
+
+$exporter = $pkg->new(file => \$out, fields => 'a,b', sep_char => "\t");
+$exporter->add({a => 'Hello', b => 'World'});
 $exporter->commit;
 $csv = <<EOF;
-a,b
+a\tb
+Hello\tWorld
 EOF
+is $out, $csv, "Escaped whitespace literal as sep_char";
 
 done_testing;
