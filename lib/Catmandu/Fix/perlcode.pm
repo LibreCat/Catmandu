@@ -53,14 +53,16 @@ The script (here C<myscript.pl>) must return a code reference:
 
     sub {
         my $data = shift;
-        ...
-        return $data;
+
+        $data->{testing} = 1 ; # modify the item
+
+        return $data;          # and return the data
     }
 
-When not using the fix language this 
+When not using the fix language this
 
     my $fixer = Catmandu::Fix->new( fixes => [ do 'myscript.pl' ] );
-    $fixer->fix( $item ); 
+    $fixer->fix( $item );
 
 is roughly equivalent to:
 
@@ -75,10 +77,14 @@ possible with see L<Catmandu::Fix::reject>:
 
     sub {
         my ($data, $reject) = @_;
-        return rejection_criteria($data) ? $reject : $data;
-    }
 
-To indicate the end processing, return C<undef>.
+        if ($data->{my_field} eq 'OK') {
+            return $data;    # return the data and continue processing
+        }
+        else {
+            return $reject;  # return the reject flag to ignore this record
+        }
+    }
 
 =head1 SEE ALSO
 
