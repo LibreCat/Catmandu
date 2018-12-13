@@ -97,6 +97,22 @@ by looking up its value in a store
    # Lookup in a MongoDB database, using the default bag and delete the foo.bar field when nothing found
    lookup_in_store(foo.bar, MongoDB, database_name: lookups, delete: 1)
 
+   # Or, a much faster option: use a named store in a catmandu.yml file
+   #
+   # store:
+   #  mydbi:
+   #    package: DBI
+   #    options:
+   #      data_source: "dbi:SQLite:path/data.sqlite"
+   #  mymongo:
+   #    package: MongoDB
+   #    options:
+   #      database_name: lookups
+   lookup_in_store(foo.bar, mydbi)
+   lookup_in_store(foo.bar, mymongo, bag: mydata)
+   lookup_in_store(foo.bar, mymongo, default: 'default value')
+   lookup_in_store(foo.bar, mymongo, delete: 1)
+
 =head1 DESCRIPTION
 
 =head2 lookup_in_store(PATH,STORE[,store_param: store_val, ...][,bag: bag_name][,delete:1][,default:value])
@@ -151,9 +167,25 @@ The resulting data will contain:
       en: water
       nl: water
 
+=head1 DATABASE CONNECTIONS
+
+For every call to a C<lookup_in_store> a new database connection is created. It
+is much more effient to used named stores in a C<catmandu.yml> file. This file
+needs to contain all the connection parameters to the database. E.g.
+
+    store:
+       mystore:
+         package: MongoDB
+         options:
+            database_name: mydata
+
+The  C<catmandu.yml> file should be available in the same directory as where the
+C<catmandu> command is executed. Or, this directory can be set with the C<-L> option:
+
+    $ catmandu -L /tmp/path convert ...
+
 =head1 SEE ALSO
 
 L<Catmandu::Fix>, L<Catmandu::Store> , L<Catmandu::Fix::add_to_store>
 
 =cut
-
