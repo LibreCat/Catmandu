@@ -74,8 +74,8 @@ sub command {
 
     if ($opts->transaction) {
         $self->usage_error("Bag isn't transactional")
-            if !$into->does('Catmandu::Transactional');
-        $into->transaction($tx);
+            if !$into->store->does('Catmandu::Transactional');
+        $into->store->transaction($tx);
     }
     else {
         $tx->();
