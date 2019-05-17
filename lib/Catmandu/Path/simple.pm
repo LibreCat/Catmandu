@@ -2,7 +2,7 @@ package Catmandu::Path::simple;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_02';
+our $VERSION = '1.10_03';
 
 use Catmandu::Util qw(is_hash_ref is_array_ref is_value is_code_ref trim);
 use Moo;

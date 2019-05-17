@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::Builder::Simple;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_02';
+our $VERSION = '1.10_03';
 
 use List::MoreUtils qw(all_u any);
 use Catmandu::Util::Path qw(as_path);

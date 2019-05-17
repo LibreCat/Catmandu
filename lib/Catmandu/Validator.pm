@@ -2,7 +2,7 @@ package Catmandu::Validator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_02';
+our $VERSION = '1.10_03';
 
 use Catmandu::Util qw(:is);
 use Moo::Role;
