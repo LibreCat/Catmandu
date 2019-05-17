@@ -1,10 +1,11 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - fix --transaction option in copy and import commands
   - new cp,mv and rm shortcuts for copy_field, move_field and remove_field
   - CSV exporter accepts escaped whitespace literals as sep_char just like the
     TSV exporter
+  - fix --transaction option in copy and import commands
+  - fix bug in Emit
 
 1.10_02  2018-11-09 09:09:02 CET
   - bump required version of List::MoreUtils
