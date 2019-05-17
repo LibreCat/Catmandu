@@ -151,6 +151,12 @@ $fixer = Catmandu::Fix->new(fixes => ['copy_field(data,test.1)']);
 is_deeply $fixer->fix({data => 1, test => {}}),
     {data => 1, test => {1 => 1}}, 'set hash test';
 
+# non matching paths are ignored
+
+$fixer = Catmandu::Fix->new(fixes => ['upcase(data.0)']);
+is_deeply $fixer->fix({}),
+    {}, 'non matching paths are ignored';
+
 # delete
 
 $fixer = Catmandu::Fix->new(fixes => ['remove_field(data.$first)']);

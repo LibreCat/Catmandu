@@ -146,14 +146,13 @@ sub _emit_delete {
     my ($self, %opts) = @_;
     my $up_var = $opts{up_var};
     if (!defined($up_var)) {
-
         # TODO deleting the root object is equivalent to reject
         $self->_emit_reject;
     }
-    elsif (my $key = $opts{key}) {
+    elsif (defined(my $key = $opts{key})) {
         "delete ${up_var}->{${key}}";
     }
-    elsif (my $idx = $opts{index}) {
+    elsif (defined(my $idx = $opts{index})) {
         "splice(\@{${up_var}}, ${idx}, 1)";
     }
     else {
