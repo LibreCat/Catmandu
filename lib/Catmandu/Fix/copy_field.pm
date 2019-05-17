@@ -23,7 +23,7 @@ sub _build_fixer {
     my $creator  = $new_path->creator;
 
     sub {
-        my $data = $_[0];
+        my $data   = $_[0];
         my $values = [map {clone($_)} @{$getter->($data)}];
         while (@$values) {
             $creator->($data, shift @$values);

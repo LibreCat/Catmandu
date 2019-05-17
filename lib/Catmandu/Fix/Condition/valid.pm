@@ -21,7 +21,7 @@ sub _build_value_tester {
     my $validator = $self->validator;
     sub {
         $validator->is_valid($_[0]);
-        }
+    }
 }
 
 sub _build_validator {

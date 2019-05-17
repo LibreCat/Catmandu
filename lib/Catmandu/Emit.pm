@@ -52,7 +52,7 @@ sub _eval_sub {
 sub _emit_sub {
     my ($self, $body, %opts) = @_;
     my $captures = $opts{captures} ||= {};
-    my $perl = "sub {";
+    my $perl     = "sub {";
     if (my $args = $opts{args}) {
         $perl .= 'my (' . join(', ', @$args) . ') = @_;';
     }
@@ -146,6 +146,7 @@ sub _emit_delete {
     my ($self, %opts) = @_;
     my $up_var = $opts{up_var};
     if (!defined($up_var)) {
+
         # TODO deleting the root object is equivalent to reject
         $self->_emit_reject;
     }

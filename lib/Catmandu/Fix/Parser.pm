@@ -382,7 +382,7 @@ sub _build_ns {
     my @name_parts = split(/:/, $name);
     $name = pop @name_parts;
     my $pkg_name = $name_parts[0] // 'perl';
-    my $pkg = require_package($pkg_name, 'Catmandu::Fix::Namespace');
+    my $pkg      = require_package($pkg_name, 'Catmandu::Fix::Namespace');
     $pkg->new(name => $name);
 }
 

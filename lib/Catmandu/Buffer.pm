@@ -7,8 +7,8 @@ our $VERSION = '1.10_02';
 use Moo::Role;
 use namespace::clean;
 
-has buffer_size => (is => 'ro', lazy => 1, builder => 'default_buffer_size');
-has buffer => (is => 'rwp', lazy => 1, default => sub {[]});
+has buffer_size => (is => 'ro',  lazy => 1, builder => 'default_buffer_size');
+has buffer      => (is => 'rwp', lazy => 1, default => sub {[]});
 
 sub default_buffer_size {100}
 

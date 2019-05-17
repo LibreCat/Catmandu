@@ -28,7 +28,7 @@ sub _build_tester {
             return 0 unless $vals1->[$i] ~~ $vals2->[$i];
         }
         return 1;
-        }
+    }
 }
 
 1;

@@ -74,7 +74,7 @@ sub slice {
                     return $data;
                 }
                 return;
-                }
+            }
         }
     );
 }
@@ -115,7 +115,7 @@ sub tap {
                     return $data;
                 }
                 return;
-                }
+            }
         }
     );
 }
@@ -160,7 +160,7 @@ sub map {
                 state @buff;
                 @buff = $sub->($next->() // return) unless @buff;
                 shift @buff;
-                }
+            }
         }
     );
 }
@@ -258,7 +258,7 @@ sub take {
                         $sub->($data) && return $data;
                     }
                     return;
-                    }
+                }
             }
         );
     }
@@ -277,7 +277,7 @@ sub take {
                         $sub->($data) || return $data;
                     }
                     return;
-                    }
+                }
             }
         );
     }
@@ -346,7 +346,7 @@ sub group {
                 }
 
                 Catmandu::ArrayIterator->new($group);
-                }
+            }
         }
     );
 }
@@ -372,7 +372,7 @@ sub interleave {
                     }
                 }
                 return;
-                }
+            }
         }
     );
 }
@@ -427,7 +427,7 @@ sub format {
     my ($self, %opts) = @_;
     $opts{header}  //= 1;
     $opts{col_sep} //= " | ";
-    my @cols = $opts{cols} ? @{$opts{cols}} : ();
+    my @cols        = $opts{cols} ? @{$opts{cols}} : ();
     my @col_lengths = map length, @cols;
 
     my $rows = $self->map(
@@ -468,7 +468,7 @@ sub stop_if {
                 my $data = $next->() // return;
                 $sub->($data) && return;
                 $data;
-                }
+            }
         }
     );
 }

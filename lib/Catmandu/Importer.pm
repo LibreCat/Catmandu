@@ -66,9 +66,9 @@ has http_agent           => (is => 'ro', predicate => 1);
 has http_max_redirect    => (is => 'ro', predicate => 1);
 has http_timeout         => (is => 'ro', default => sub {180});  # LWP default
 has http_verify_hostname => (is => 'ro', default => sub {1});
-has http_retry  => (is => 'ro', predicate => 1);
-has http_timing => (is => 'ro', predicate => 1);
-has http_body   => (is => 'ro', predicate => 1);
+has http_retry           => (is => 'ro', predicate => 1);
+has http_timing          => (is => 'ro', predicate => 1);
+has http_body            => (is => 'ro', predicate => 1);
 has _http_client => (
     is       => 'ro',
     lazy     => 1,

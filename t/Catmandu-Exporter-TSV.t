@@ -35,7 +35,7 @@ is $out, $tsv, "TSV strings ok";
 is $exporter->count, 3, "Count ok";
 
 $data = [{b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
-$out = "";
+$out  = "";
 $exporter = $pkg->new(file => \$out);
 $exporter->add_many($data);
 $exporter->commit;
@@ -47,7 +47,7 @@ b
 EOF
 is $out, $tsv, "first record determines fields without collect";
 
-$out = "";
+$out      = "";
 $exporter = $pkg->new(file => \$out, collect_fields => 1);
 $exporter->add_many($data);
 $exporter->commit;
@@ -67,7 +67,7 @@ $tsv = "Longname\tX\nHello\t\n";
 is $out, $tsv, "custom column names";
 
 $out = "";
-my $fixer = Catmandu->fixer('if exists(foo) reject() end');
+my $fixer    = Catmandu->fixer('if exists(foo) reject() end');
 my $importer = Catmandu->importer('JSON', file => 't/csv_test.json');
 
 $exporter = $pkg->new(file => \$out);

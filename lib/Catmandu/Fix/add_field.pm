@@ -11,7 +11,7 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Builder';
 
-has path => (fix_arg => 1);
+has path  => (fix_arg => 1);
 has value => (fix_arg => 1, default => sub {undef});
 
 sub _build_fixer {

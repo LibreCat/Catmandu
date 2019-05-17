@@ -154,8 +154,7 @@ is_deeply $fixer->fix({data => 1, test => {}}),
 # non matching paths are ignored
 
 $fixer = Catmandu::Fix->new(fixes => ['upcase(data.0)']);
-is_deeply $fixer->fix({}),
-    {}, 'non matching paths are ignored';
+is_deeply $fixer->fix({}), {}, 'non matching paths are ignored';
 
 # delete
 

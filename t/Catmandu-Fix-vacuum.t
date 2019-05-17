@@ -30,7 +30,7 @@ my $res = $pkg->new->fix(
         nested_arrays  => {arrays => []},
         nested_hashes  => {hashes => {}},
         keep_me        => {arrays => [], hashes => {foo => []}, me => 1},
-        keep_me_2 => [[], [T::MyBlessed->new]],
+        keep_me_2      => [[], [T::MyBlessed->new]],
     }
 );
 

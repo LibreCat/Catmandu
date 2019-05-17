@@ -34,7 +34,7 @@ is_deeply $pkg->new(
     'record', 'CSV',
     'sep_char' => ';',
     fields     => ["first_name", "name"]
-    )->fix(
+)->fix(
     {
         record => [
             {"first_name" => "Nicolas", name => "Franck"},

@@ -42,10 +42,10 @@ sub get {
     my $result = {};
 
     for my $store (@{$self->store->stores}) {
-        my $bag = $store->bag($self->name);
+        my $bag  = $store->bag($self->name);
         my $item = $bag ? $bag->get($id) : undef;
         if ($item) {
-            $found = 1;
+            $found  = 1;
             $result = merge $result , $item;
         }
     }

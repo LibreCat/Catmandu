@@ -12,7 +12,7 @@ BEGIN {
     use_ok $pkg;
 }
 
-my $data = {foo => 'bar'};
+my $data   = {foo => 'bar'};
 my $cloned = $pkg->new->fix($data);
 
 is_deeply $data, $cloned, "cloned data is equal";

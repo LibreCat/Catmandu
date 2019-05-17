@@ -114,7 +114,7 @@ sub TIESCALAR { }
 sub io {
     my ($arg, %opts) = @_;
     my $binmode = $opts{binmode} || $opts{encoding} || ':encoding(UTF-8)';
-    my $mode = $opts{mode} || 'r';
+    my $mode    = $opts{mode}    || 'r';
     my $io;
 
     if (is_scalar_ref($arg)) {
@@ -217,7 +217,7 @@ sub normalize_path {    # taken from Dancer::FileUtils
 sub segmented_path {
     my ($id, %opts) = @_;
     my $segment_size = $opts{segment_size} || 3;
-    my $base_path = $opts{base_path};
+    my $base_path    = $opts{base_path};
     $id =~ s/[^0-9a-zA-Z]+//g;
     my @path = unpack "(A$segment_size)*", $id;
     defined $base_path
@@ -319,7 +319,7 @@ sub data_at {
         $path = split_path($path);
     }
     my $create = $opts{create};
-    my $_key = $opts{_key} // $opts{key};
+    my $_key   = $opts{_key} // $opts{key};
     if (defined $opts{key} && $create && @$path) {
         push @$path, $_key;
     }
@@ -643,7 +643,7 @@ sub use_lib {
 }
 
 sub pod_section {
-    my $class = is_ref($_[0]) ? ref(shift) : shift;
+    my $class   = is_ref($_[0]) ? ref(shift) : shift;
     my $section = uc(shift);
 
     unless (-r $class) {

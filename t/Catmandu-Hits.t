@@ -14,7 +14,7 @@ BEGIN {
 require_ok $pkg;
 
 my $data = [(1 .. 100)];
-my $h = Catmandu::Hits->new(start => 0, limit => 10, total => 100,
+my $h    = Catmandu::Hits->new(start => 0, limit => 10, total => 100,
     hits => $data);
 can_ok $h, 'start';
 can_ok $h, 'limit';

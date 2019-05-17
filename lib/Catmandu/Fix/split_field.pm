@@ -9,7 +9,7 @@ use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
-has path => (fix_arg => 1);
+has path       => (fix_arg => 1);
 has split_char => (fix_arg => 1, default => sub {qr'\s+'});
 
 with 'Catmandu::Fix::Builder';

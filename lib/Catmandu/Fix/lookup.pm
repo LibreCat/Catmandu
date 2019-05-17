@@ -27,14 +27,14 @@ sub _build_dictionary {
         file   => $self->file,
         header => 0,
         fields => ['key', 'val'],
-        )->reduce(
+    )->reduce(
         {},
         sub {
             my ($dict, $pair) = @_;
             $dict->{$pair->{key}} = $pair->{val};
             $dict;
         }
-        );
+    );
 }
 
 sub _build_fixer {

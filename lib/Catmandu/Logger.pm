@@ -8,7 +8,7 @@ use Moo::Role;
 use Log::Any ();
 use namespace::clean;
 
-has log => (is => 'lazy', init_arg => undef);
+has log          => (is => 'lazy', init_arg => undef);
 has log_category => (is => 'lazy');
 
 {

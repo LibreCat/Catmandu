@@ -11,7 +11,7 @@ use namespace::clean;
 with 'Catmandu::Fix::Bind';
 
 has output => (is => 'ro', required => 1);
-has stats => (is => 'lazy');
+has stats  => (is => 'lazy');
 
 sub _build_stats {
     +{};

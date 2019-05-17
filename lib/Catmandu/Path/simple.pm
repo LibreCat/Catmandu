@@ -201,7 +201,7 @@ sub _emit_get {
     my $perl    = "";
 
     %opts = (up_var => my $up_var = $var);
-    $var = $self->_generate_var;
+    $var  = $self->_generate_var;
 
     if ($key =~ /^[0-9]+$/) {
         $perl

@@ -15,7 +15,7 @@ use namespace::clean;
 with 'Catmandu::Logger';
 
 sub _search_up {
-    my $dir = $_[0];
+    my $dir  = $_[0];
     my @dirs = grep length, File::Spec->splitdir(Catmandu->default_load_path);
     for (; @dirs; pop @dirs) {
         my $path = File::Spec->catdir(File::Spec->rootdir, @dirs);

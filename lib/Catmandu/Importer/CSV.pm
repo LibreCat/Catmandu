@@ -11,7 +11,7 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has csv => (is => 'ro', lazy => 1, builder => '_build_csv');
+has csv      => (is => 'ro', lazy => 1, builder => '_build_csv');
 has sep_char => (
     is      => 'ro',
     default => sub {','},

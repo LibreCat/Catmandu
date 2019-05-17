@@ -68,7 +68,7 @@ require_ok $pkg;
 
         for my $id (sort keys %$hash) {
 
-            my $r = {%{$hash->{$id}}, _id => $id};
+            my $r     = {%{$hash->{$id}}, _id => $id};
             my $match = 0;
 
             if ($query eq "") {

@@ -10,7 +10,7 @@ use Catmandu::Util qw(require_package pod_section);
 use namespace::clean;
 
 sub usage_desc {
-    '%c help [ <command> | ( export | import | store | fix ) <name> ]'
+    '%c help [ <command> | ( export | import | store | fix ) <name> ]';
 }
 
 sub command_names {qw/help --help -h -?/}
@@ -130,12 +130,12 @@ sub help_fixes {
         'Modules',
         namespace => 'Catmandu::Fix',
         primary   => 1
-        )->select(name => qr/::[a-z][^:]*$/)->map(
+    )->select(name => qr/::[a-z][^:]*$/)->map(
         sub {
             $_[0]->{name} =~ s/.*:://;
             $_[0];
         }
-        );
+    );
 
     my $len = $fixes->max(sub {length $_[0]->{name}});
     $fixes->sorted('name')->each(

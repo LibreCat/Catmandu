@@ -13,7 +13,7 @@ BEGIN {
 }
 
 my $arr = [{n => 1}, {n => 2}, {n => 3}];
-my $it = $pkg->new($arr);
+my $it  = $pkg->new($arr);
 
 ok $it->does('Catmandu::Iterable');
 

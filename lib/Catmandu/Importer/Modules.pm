@@ -42,7 +42,7 @@ sub generator {
         # array of [ $directory => $namespace ]
         state $search = [
             map {
-                my $ns = $_;
+                my $ns    = $_;
                 my $parts = [map {grep length, split(/::/, $_)} $ns];
                 map {[File::Spec->catdir($_, @$parts) => $ns]} @{$self->inc};
             } @{$self->namespace}

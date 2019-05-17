@@ -26,7 +26,7 @@ with 'Catmandu::Logger';
 with 'Catmandu::Emit';
 
 has parser => (is => 'lazy');
-has fixer => (is => 'lazy', init_arg => undef);
+has fixer  => (is => 'lazy', init_arg => undef);
 has _captures =>
     (is => 'ro', lazy => 1, init_arg => undef, default => sub {+{}});
 has var =>
@@ -67,7 +67,7 @@ sub _build_fixes {
             push @$fixes, @{$self->parser->parse($txt)};
         }
         elsif (is_glob_ref($fix)) {
-            my $fh = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
+            my $fh  = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
             my $txt = Catmandu::Util::read_io($fh);
             $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};

@@ -6,7 +6,7 @@ use Catmandu::Fix::perlcode;
 
 foreach my $i (1 .. 2) {    # also tests caching
     my $fixer = Catmandu::Fix->new(fixes => ['perlcode(./t/script.pl)']);
-    my $data = {};
+    my $data  = {};
     $fixer->fix($data);
     is_deeply $data, {answer => 42}, 'perlcode fix';
 }

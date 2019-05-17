@@ -27,7 +27,7 @@ sub command {
     my ($from_args, $from_opts, $into_args, $into_opts)
         = $self->_parse_options($args);
 
-    my $from = Catmandu->importer($from_args->[0], $from_opts);
+    my $from     = Catmandu->importer($from_args->[0], $from_opts);
     my $into_bag = delete $into_opts->{bag};
     my $into = Catmandu->store($into_args->[0], $into_opts)->bag($into_bag);
 

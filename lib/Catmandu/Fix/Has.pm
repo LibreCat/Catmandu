@@ -21,7 +21,7 @@ sub import {
             return $orig->($attr, %opts)
                 unless exists $opts{fix_arg} || exists $opts{fix_opt};
 
-            $opts{is} //= 'ro';
+            $opts{is}       //= 'ro';
             $opts{init_arg} //= $attr;
 
             my $arg = {key => $opts{init_arg}};

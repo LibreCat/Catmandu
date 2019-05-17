@@ -39,7 +39,7 @@ sub _build_fixer {
             $set_error->($data, $validator->last_errors);
         }
         $data;
-        }
+    }
 }
 
 1;
