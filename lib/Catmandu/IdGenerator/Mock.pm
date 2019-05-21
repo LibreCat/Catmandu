@@ -2,7 +2,7 @@ package Catmandu::IdGenerator::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_03';
+our $VERSION = '1.20';
 
 use Moo;
 use Catmandu::Util qw(check_natural);

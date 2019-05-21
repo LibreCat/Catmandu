@@ -2,7 +2,7 @@ package Catmandu::Fix::code;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_03';
+our $VERSION = '1.20';
 
 use Catmandu::Util qw(check_code_ref);
 use Moo;

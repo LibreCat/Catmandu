@@ -2,7 +2,7 @@ package Catmandu::Fix::Builder;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.10_03';
+our $VERSION = '1.20';
 
 use Catmandu::Fix;
 use Catmandu::Util qw(is_value require_package);

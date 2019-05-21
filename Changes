@@ -2,6 +2,15 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+1.20  2019-05-21 10:02:02 CEST
+  - Fix::Builder and Path make writing fixes much easier
+  - new eval fix
+  - new cp,mv and rm shortcuts for copy_field, move_field and remove_field
+  - CSV exporter accepts escaped whitespace literals as sep_char just like the
+    TSV exporter
+  - fix --transaction option in copy and import commands
+  - bump required version of List::MoreUtils
+
 1.10_03  2019-05-17 10:44:49 CEST
   - new cp,mv and rm shortcuts for copy_field, move_field and remove_field
   - CSV exporter accepts escaped whitespace literals as sep_char just like the
