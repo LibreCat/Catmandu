@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::Builder;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.20';
+our $VERSION = '1.2001';
 
 use Clone qw(clone);
 use Moo::Role;

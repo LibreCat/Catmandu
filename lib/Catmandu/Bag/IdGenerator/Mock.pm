@@ -2,7 +2,7 @@ package Catmandu::Bag::IdGenerator::Mock;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.20';
+our $VERSION = '1.2001';
 
 use Data::UUID;
 use Moo;

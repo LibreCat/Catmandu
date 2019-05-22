@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2001  2019-05-22 15:32:43 CEST
   - new IterableOnce role for iterators that can only run once like importers
   - fix replacing the root object itself in the new builder versions of
     copy_field and move_field
