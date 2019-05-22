@@ -27,4 +27,10 @@ is_deeply $pkg->new('old', 'new.$append')
     ->fix({old => 'hello', new => ['world']}), {new => ['world', 'hello']},
     "move field creates intermediate path";
 
-done_testing 5;
+is_deeply $pkg->new('nested', '.')->fix({nested => {bar => 'baz'}, foo => 'bar'}), {bar => 'baz'},
+    "replace root";
+
+is_deeply $pkg->new('nested', '.')->fix({nested => [1,2,3], foo => 'bar'}), [1,2,3],
+    "replace root";
+
+done_testing;

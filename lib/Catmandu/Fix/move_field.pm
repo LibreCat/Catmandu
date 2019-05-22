@@ -27,7 +27,9 @@ sub _build_fixer {
         my $data   = $_[0];
         my $values = [map {clone($_)} @{$getter->($data)}];
         $deleter->($data);
-        $creator->($data, shift @$values) while @$values;
+        while (@$values) {
+            $data = $creator->($data, shift @$values);
+        }
         $data;
     };
 }

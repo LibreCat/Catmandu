@@ -37,23 +37,6 @@ sub init_env {
     $envs;
 }
 
-#sub env_get {
-#my ($self, $key, $default) = @_;
-#my $envs = $self->env_stack;
-#for my $env (@$envs) {
-#return $env->{$key} if exists $env->{$key};
-#}
-#$default;
-#}
-
-#sub env_add {
-#my ($self, $key, $val) = @_;
-#my $env = $self->env_stack->[-1];
-#Catmandu::FixParseError->throw("Already defined: $key")
-#if exists $env->{$key};
-#$env->{$key} = $val;
-#}
-
 sub get_ns {
     my ($self, $name) = @_;
     my $envs = $self->env;
@@ -69,21 +52,6 @@ sub add_ns {
     my $env = $self->env->[-1];
     ($env->{ns} //= {})->{$name} = $ns;
 }
-
-#sub namespace_for {
-#my ($self, $name, $sub_ns) = @_;
-#my $envs = $self->env_stack;
-#for my $env (@$envs) {
-#my $nss = $env->{_ns} // next;
-#for my $ns (@$nss) {
-#$ns .= "::$sub_ns" if defined $sub_ns;
-#return $ns if Module::Info->new_from_module("${ns}::${name}");
-#}
-#}
-#my $ns = $self->default_namespace;
-#$ns .= "::$sub_ns" if defined $sub_ns;
-#$ns;
-#}
 
 sub scope {
     my ($self, $block) = @_;

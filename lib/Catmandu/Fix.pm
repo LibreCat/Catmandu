@@ -67,7 +67,7 @@ sub _build_fixes {
             push @$fixes, @{$self->parser->parse($txt)};
         }
         elsif (is_glob_ref($fix)) {
-            my $fh  = Catmandu::Util::io $fix , binmode => ':encoding(UTF-8)';
+            my $fh  = Catmandu::Util::io($fix, binmode => ':encoding(UTF-8)');
             my $txt = Catmandu::Util::read_io($fh);
             $txt = $self->_preprocess($txt);
             push @$fixes, @{$self->parser->parse($txt)};

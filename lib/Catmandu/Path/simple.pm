@@ -18,7 +18,8 @@ sub split_path {
     if (is_value($path)) {
         $path = trim($path);
         $path =~ s/^\$[\.\/]//;
-        return [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, $path];
+        $path = [map {s/\\(?=[\.\/])//g; $_} split /(?<!\\)[\.\/]/, $path];
+        return $path;
     }
     if (is_array_ref($path)) {
         return $path;
@@ -165,8 +166,9 @@ sub creator {
         };
     }
 
-    my $body = $self->_emit_create_path($data_var, $path, $cb)
-        . "return ${data_var};";
+    my $body = $self->_emit_create_path($data_var, $path, $cb);
+
+    $body .= "return ${data_var};";
 
     $self->_eval_sub($body, args => $args, captures => $captures);
 }

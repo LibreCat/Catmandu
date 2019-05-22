@@ -63,6 +63,7 @@ sub _emit_sub {
             '$_[1]->{' . $self->_emit_string($_) . '}');
     } keys %$captures;
     $perl = join('', @captured_vars, $perl);
+
     return $perl, $captures;
 }
 
