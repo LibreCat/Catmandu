@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new IterableOnce role for iterators that can only run once like importers
 
 1.20  2019-05-21 10:02:02 CEST
   - Fix::Builder and Path make writing fixes much easier
