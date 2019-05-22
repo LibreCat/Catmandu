@@ -15,19 +15,12 @@ use namespace::clean;
 
 with 'Catmandu::Logger';
 with 'Catmandu::Iterable';
+with 'Catmandu::IterableOnce';
 with 'Catmandu::Fixable';
 with 'Catmandu::Serializer';
 
 around generator => sub {
     my ($orig, $self) = @_;
-
-    # importers can run only once
-    # TODO turn this into a role
-    state $exhausted = sub { };
-
-    return $exhausted if $self->{__exhausted};
-
-    $self->{__exhausted} = 1;
 
     my $generator = $orig->($self);
 
@@ -41,8 +34,6 @@ around generator => sub {
             state @buf;
             while (1) {
                 return shift @buf if @buf;
-
-                # TODO use something faster than data_at
                 @buf = @{$getter->($generator->() // return)};
                 next;
             }

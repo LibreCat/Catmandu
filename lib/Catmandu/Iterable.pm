@@ -491,7 +491,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Iterable - Base class for all iterable Catmandu classes
+Catmandu::Iterable - Base role for all iterable Catmandu classes
 
 =head1 SYNOPSIS
 
