@@ -27,10 +27,11 @@ is_deeply $pkg->new('old.*', 'deeply.nested.$append.new')
     },
     "copy field creates intermediate path (with wildcard)";
 
-is_deeply $pkg->new('nested', '.')->fix({nested => {bar => 'baz'}, foo => 'bar'}), {bar => 'baz'},
+is_deeply $pkg->new('nested', '.')
+    ->fix({nested => {bar => 'baz'}, foo => 'bar'}), {bar => 'baz'},
     "replace root";
 
-is_deeply $pkg->new('nested', '.')->fix({nested => [1,2,3], foo => 'bar'}), [1,2,3],
-    "replace root";
+is_deeply $pkg->new('nested', '.')->fix({nested => [1, 2, 3], foo => 'bar'}),
+    [1, 2, 3], "replace root";
 
 done_testing;
