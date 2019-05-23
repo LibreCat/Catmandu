@@ -101,6 +101,6 @@ looking up its value in a dictionary
 
 =head1 SEE ALSO
 
-L<Catmandu::Fix>
+L<Catmandu::Fix>, L<Catmandu::Fix::map>
 
 =cut
