@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - a Catmandu::Error can now build it's own message
 
 1.2001  2019-05-22 15:32:43 CEST
   - new IterableOnce role for iterators that can only run once like importers

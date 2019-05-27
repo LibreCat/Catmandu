@@ -12,8 +12,7 @@ extends 'Throwable::Error';
 with 'Catmandu::Logger';
 
 has message => (
-    is      => 'ro',
-    default => sub {""},
+    is      => 'lazy',
     coerce  => sub {
         my $msg = $_[0] // "";
         $msg =~ s/\s+$//;
@@ -32,6 +31,10 @@ sub BUILD {
 
 sub log_message {
     $_[0]->message;
+}
+
+sub _build_message {
+    ""
 }
 
 package Catmandu::Error::Source;
