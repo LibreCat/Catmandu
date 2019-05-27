@@ -2,7 +2,7 @@ package Catmandu::ArrayIterator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2001';
+our $VERSION = '1.2002';
 
 use Catmandu::Util qw(check_array_ref);
 use Role::Tiny::With;

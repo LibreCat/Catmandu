@@ -2,7 +2,7 @@ package Catmandu::Serializer::json;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2001';
+our $VERSION = '1.2002';
 
 use Cpanel::JSON::XS ();
 use Moo;

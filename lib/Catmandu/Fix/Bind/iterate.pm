@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::iterate;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2001';
+our $VERSION = '1.2002';
 
 use Moo;
 use Catmandu::Util;
