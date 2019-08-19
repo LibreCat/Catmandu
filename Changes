@@ -2,6 +2,10 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - a Catmandu::Error can now build it's own message
+  - switch to Data::UUID::MT to avoid file related problems (see
+    https://github.com/rjbs/Data-UUID/issues/5 and
+    https://github.com/rjbs/Data-UUID/issues/33). We now use the UUID v4 method
+    instead of v3.
 
 1.2001  2019-05-22 15:32:43 CEST
   - new IterableOnce role for iterators that can only run once like importers
