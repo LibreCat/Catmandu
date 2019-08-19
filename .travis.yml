@@ -25,8 +25,8 @@ install:
   - cpanm --quiet --installdeps --notest --force --skip-satisfied .
   - if [ "$DEVEL_COVER" = "1" ]; then cpanm --quiet --notest Devel::Cover; fi
 script:
-  - if [ "$DEVEL_COVER" = "0" ]; perl Build.PL && ./Build test; fi
-  - if [ "$DEVEL_COVER" = "1" ]; perl Build.PL && ./Build build && cover -test; fi
+  - if [ "$DEVEL_COVER" = "0" ]; then perl Build.PL && ./Build test; fi
+  - if [ "$DEVEL_COVER" = "1" ]; then perl Build.PL && ./Build build && cover -test; fi
 after_success:
   - if [ "$DEVEL_COVER" = "1" ]; then cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Coveralls; fi
   - if [ "$DEVEL_COVER" = "1" ]; then cover -report coveralls; fi
