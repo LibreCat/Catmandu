@@ -2,7 +2,7 @@ package Catmandu::Fix::Namespace;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2002';
+our $VERSION = '1.2003';
 
 use Moo::Role;
 use namespace::clean;

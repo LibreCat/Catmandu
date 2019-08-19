@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2003  2019-08-19 13:47:43 CEST
   - switch to Data::UUID::MT to avoid file related problems (see
     https://github.com/rjbs/Data-UUID/issues/5 and
     https://github.com/rjbs/Data-UUID/issues/33). We now use the UUID v4 method

@@ -2,7 +2,7 @@ package Catmandu::CLI;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2002';
+our $VERSION = '1.2003';
 
 use Catmandu::Util qw(is_instance);
 use Catmandu;

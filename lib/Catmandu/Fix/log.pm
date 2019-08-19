@@ -2,7 +2,7 @@ package Catmandu::Fix::log;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2002';
+our $VERSION = '1.2003';
 
 use Moo;
 use Catmandu;
