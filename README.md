@@ -89,7 +89,7 @@ For more information read our [documentation pages](http://librecat.org/Catmandu
 
 In the winter of 2014 an Advent calendar tutorial was created to provide a day by day introduction into the UNIX command line and Catmandu:
 
-[https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/](https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/)
+[https://librecatproject.wordpress.com/2014/12/08/day-6-introduction-into-catmandu/](https://librecatproject.wordpress.com/2014/12/08/day-6-introduction-into-catmandu/)
 
 If you need extra training, our developers regulary host workshops at library conferences and events: [http://librecat.org/events.html](http://librecat.org/events.html)
 

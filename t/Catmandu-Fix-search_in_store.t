@@ -21,13 +21,13 @@ require_ok $pkg;
     use Catmandu::Sane;
     use Catmandu::Hits;
     use Catmandu::Util qw(:is);
-    use Data::UUID;
+    use Catmandu::IdGenerator::UUID;
 
     has '_hash' => (is => 'rw', lazy => 1, default => sub {+{};});
 
     sub add {
         my ($self, $record) = @_;
-        $record->{_id} ||= Data::UUID->new->create_str;
+        $record->{_id} ||= Catmandu::IdGenerator::UUID->new->generate;
         $_[0]->_hash()->{$record->{_id}} = $record;
     }
 

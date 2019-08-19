@@ -4,7 +4,6 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2002';
 
-use Data::UUID;
 use Moo;
 use namespace::clean;
 

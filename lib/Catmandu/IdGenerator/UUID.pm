@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2002';
 
-use Data::UUID;
+use Data::UUID::MT;
 use Moo;
 use namespace::clean;
 
@@ -12,10 +12,10 @@ with 'Catmandu::IdGenerator';
 
 has _uuid => (is => 'lazy', builder => '_build_uuid');
 
-sub _build_uuid {Data::UUID->new}
+sub _build_uuid {Data::UUID::MT->new(version => 4)}
 
 sub generate {
-    $_[0]->_uuid->create_str;
+    $_[0]->_uuid->create_string;
 }
 
 1;
@@ -41,7 +41,8 @@ Catmandu::IdGenerator::UUID - Generator of UUID identifiers
 =head1 DESCRIPTION
 
 This L<Catmandu::IdGenerator> generates identifiers based on the Universally
-Unique Identifier (UUID) standard. A UUID is a 128 bit number represented by
-lowercase hexadecimal digits such as C<de305d54-75b4-431b-adb2-eb6b9e546014>.
+Unique Identifier (UUID) v4 standard. A UUID string is a 128 bit number
+represented by lowercase hexadecimal digits such as
+C<de305d54-75b4-431b-adb2-eb6b9e546014>.
 
 =cut
