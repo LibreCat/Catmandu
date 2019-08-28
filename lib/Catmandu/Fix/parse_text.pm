@@ -2,7 +2,7 @@ package Catmandu::Fix::parse_text;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2003';
+our $VERSION = '1.2004';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

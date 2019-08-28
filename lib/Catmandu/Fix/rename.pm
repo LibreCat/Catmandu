@@ -2,7 +2,7 @@ package Catmandu::Fix::rename;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2003';
+our $VERSION = '1.2004';
 
 use Catmandu::Util::Path qw(as_path);
 use Moo;

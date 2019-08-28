@@ -2,7 +2,7 @@ package Catmandu::Cmd::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2003';
+our $VERSION = '1.2004';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

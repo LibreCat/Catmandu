@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2004  2019-08-28 14:00:59 CEST
   - new Flushable role for bags
 
 1.2003  2019-08-19 13:47:43 CEST
