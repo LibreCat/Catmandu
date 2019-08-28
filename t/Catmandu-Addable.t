@@ -67,5 +67,4 @@ $data = [];
 is $a->add_many([1, 2, 3]), 3, 'add_many returns count of data added';
 is_deeply $data, [1, 2, 3], 'add_many passes all data to add';
 
-done_testing 13;
-
+done_testing;
