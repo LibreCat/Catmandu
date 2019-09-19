@@ -28,7 +28,6 @@ requires 'Config::Onion', '1.004';
 requires 'Cpanel::JSON::XS', '3.0213';
 requires 'Data::Compare', '1.22';
 requires 'Data::Util', '0.66';
-requires 'Data::UUID::MT', '>=1.001';
 requires 'Path::Iterator::Rule','0';
 requires 'Path::Tiny', '0';
 requires 'Hash::Merge::Simple', 0;
@@ -54,6 +53,7 @@ requires 'Try::Tiny::ByClass', '0.01';
 requires 'Unicode::Normalize', '0';
 requires 'URI', 0;
 requires 'URI::Template', 0.22;
+requires 'UUID::Tiny', '>=1.04';
 requires 'YAML::XS', '0.41';
 
 recommends 'Log::Log4perl', '1.44';
