@@ -18,48 +18,48 @@ on 'develop', sub {
   requires 'Text::Diff', 0; # undeclared Test::Code::TidyAll plugin dependency
   };
 
-requires 'Class::Method::Modifiers', 0;
-requires 'HTTP::Request', 0;
-requires 'Package::Stash', 0;
-requires 'Role::Tiny', 0;
-requires 'Role::Tiny::With', 0;
 requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '0.33';
-requires 'asa', 0; # undeclared dependency?
 requires 'CGI::Expand', '2.02';
-requires 'String::CamelCase', 0;
+requires 'Class::Method::Modifiers', 0;
 requires 'Clone', '0.31';
 requires 'Config::Onion', '1.004';
 requires 'Cpanel::JSON::XS', '3.0213';
 requires 'Data::Compare', '1.22';
 requires 'Data::Util', '0.66';
-requires 'Path::Iterator::Rule','0';
-requires 'Path::Tiny', '0';
+requires 'HTTP::Request', 0;
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
+requires 'LWP::UserAgent', 0;
 requires 'List::MoreUtils', '0.401';
 requires 'Log::Any', 0;
 requires 'Log::Any::Adapter', 0;
-requires 'LWP::UserAgent', 0;
 requires 'MIME::Types',0;
 requires 'Module::Build', '>=0.4229'; # travis ci
 requires 'Module::Info', 0;
 requires 'Moo', '>=1.004006';
 requires 'MooX::Aliases', '>=0.001006';
-requires 'namespace::clean', '>=0.24';
+requires 'Package::Stash', 0;
 requires 'Parser::MGC', '0.15';
+requires 'Path::Iterator::Rule','0';
+requires 'Path::Tiny', '0';
+requires 'Role::Tiny', 0;
+requires 'Role::Tiny::With', 0;
+requires 'String::CamelCase', 0;
 requires 'Sub::Exporter', '0.982';
 requires 'Sub::Quote', 0;
-requires 'Text::Hogan::Compiler', '1.02';
 requires 'Text::CSV', '1.21';
-requires 'Time::HiRes', 0; # not always installed?
+requires 'Text::Hogan::Compiler', '1.02';
 requires 'Throwable', '0.200004';
+requires 'Time::HiRes', 0; # not always installed?
 requires 'Try::Tiny::ByClass', '0.01';
-requires 'Unicode::Normalize', '0';
 requires 'URI', 0;
 requires 'URI::Template', 0.22;
 requires 'UUID::Tiny', '>=1.04';
+requires 'Unicode::Normalize', '0';
 requires 'YAML::XS', '0.41';
+requires 'asa', 0; # undeclared dependency?
+requires 'namespace::clean', '>=0.24';
 
 recommends 'Log::Log4perl', '1.44';
 recommends 'Log::Any::Adapter::Log4perl', '0.06';

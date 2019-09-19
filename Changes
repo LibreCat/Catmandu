@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - add missing dependencies
 
 1.2005  2019-09-19 11:04:58 CEST
   - switch to UUID::Tiny
