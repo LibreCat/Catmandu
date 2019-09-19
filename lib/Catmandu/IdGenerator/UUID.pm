@@ -2,7 +2,7 @@ package Catmandu::IdGenerator::UUID;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2004';
+our $VERSION = '1.2005';
 
 use UUID::Tiny qw(:std);
 use Moo;

@@ -2,7 +2,7 @@ package Catmandu::Importer::DKVP;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2004';
+our $VERSION = '1.2005';
 
 use Moo;
 use namespace::clean;

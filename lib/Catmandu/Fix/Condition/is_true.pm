@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::is_true;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2004';
+our $VERSION = '1.2005';
 
 use Moo;
 use Catmandu::Util qw(is_number is_string is_bool);

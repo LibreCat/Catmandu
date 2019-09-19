@@ -2,7 +2,7 @@ package Catmandu::Fix::count;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2004';
+our $VERSION = '1.2005';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

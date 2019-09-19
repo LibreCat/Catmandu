@@ -2,7 +2,7 @@ package Catmandu::Fix;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2004';
+our $VERSION = '1.2005';
 
 use Moo;
 use Catmandu::Fix::Parser;
