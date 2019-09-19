@@ -2,7 +2,7 @@ package Catmandu::Serializer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2005';
+our $VERSION = '1.2006';
 
 use Catmandu::Util qw(require_package);
 use Moo::Role;

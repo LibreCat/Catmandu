@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::is_array;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2005';
+our $VERSION = '1.2006';
 
 use Moo;
 use Catmandu::Util qw(is_array_ref);

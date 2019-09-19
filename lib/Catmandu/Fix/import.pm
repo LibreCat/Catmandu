@@ -2,7 +2,7 @@ package Catmandu::Fix::import;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2005';
+our $VERSION = '1.2006';
 
 use Catmandu;
 use Catmandu::Util::Path qw(as_path);

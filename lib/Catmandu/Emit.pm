@@ -3,7 +3,7 @@ package Catmandu::Emit;
 # eval context ->
 use Catmandu::Sane;
 
-our $VERSION = '1.2005';
+our $VERSION = '1.2006';
 
 use Catmandu::Util qw(:is :string require_package);
 use Clone qw(clone);
