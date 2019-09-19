@@ -31,7 +31,7 @@ Catmandu::IdGenerator::UUID - Generator of UUID identifiers
     my $x = Catmandu::IdGenerator::UUID->new;
 
     for (1..100) {
-       printf "id: %s\n" m $x->generate;
+       printf "id: %s\n" , $x->generate;
     }
 
 =head1 DESCRIPTION
