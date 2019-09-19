@@ -18,6 +18,11 @@ on 'develop', sub {
   requires 'Text::Diff', 0; # undeclared Test::Code::TidyAll plugin dependency
   };
 
+requires 'Class::Method::Modifiers', 0;
+requires 'HTTP::Request', 0;
+requires 'Package::Stash', 0;
+requires 'Role::Tiny', 0;
+requires 'Role::Tiny::With', 0;
 requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '0.33';
 requires 'asa', 0; # undeclared dependency?
