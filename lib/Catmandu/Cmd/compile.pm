@@ -13,7 +13,7 @@ sub command_opt_spec {
     (
         ["var=s%",        ""],
         ["preprocess|pp", ""],
-        ["fix|fix=s@", "", {hidden => 1}],
+        ["fix|fix=s@",    "", {hidden => 1}],
     );
 }
 

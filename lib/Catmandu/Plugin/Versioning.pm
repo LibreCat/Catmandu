@@ -18,7 +18,7 @@ has version_compare_ignore => (
     is     => 'lazy',
     coerce => sub {
         my $keys = $_[0];
-        $keys = [@$keys] if is_array_ref $keys;
+        $keys = [@$keys]           if is_array_ref $keys;
         $keys = [split /,/, $keys] if is_value $keys;
         $keys;
     },
@@ -28,7 +28,7 @@ has version_transfer => (
     is     => 'lazy',
     coerce => sub {
         my $keys = $_[0];
-        $keys = [@$keys] if is_array_ref $keys;
+        $keys = [@$keys]           if is_array_ref $keys;
         $keys = [split /,/, $keys] if is_value $keys;
         $keys;
     },

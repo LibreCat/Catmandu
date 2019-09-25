@@ -300,7 +300,7 @@ is_deeply [Catmandu::Util::parse_data_path("foo.bar.x")],
 
 is Catmandu::Util::get_data({foo => 'bar'}, 'foo'), 'bar', 'get_data(foo)';
 ok !Catmandu::Util::get_data({foo => 'bar'}, 'foo2'), 'get_data(foo2)';
-ok !Catmandu::Util::get_data([qw(0 1 2)], 3), 'get_data(3)';
+ok !Catmandu::Util::get_data([qw(0 1 2)],    3),      'get_data(3)';
 is Catmandu::Util::get_data([qw(0 1 2)], 1),        '1', 'get_data(1)';
 is Catmandu::Util::get_data([qw(0 1 2)], '$first'), '0', 'get_data($first)';
 is Catmandu::Util::get_data([qw(0 1 2)], '$last'),  '2', 'get_data($last)';

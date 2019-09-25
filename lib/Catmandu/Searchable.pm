@@ -16,6 +16,7 @@ requires 'delete_by_query';
 
 has default_limit => (is => 'ro', builder => 'default_default_limit');
 has maximum_limit => (is => 'ro', builder => 'default_maximum_limit');
+has maximum_offset => (is => 'ro');
 
 sub default_default_limit {10}
 sub default_maximum_limit {1000}
@@ -43,6 +44,21 @@ my $AROUND_SEARCH = sub {
     defined $args{$_} || delete $args{$_} for keys %args;
 
     $self->log->debugf("called with params %s", [%args]);
+
+    # TODO apply maximum offset more cleanly
+    if (my $max_offset = $self->maximum_offset) {
+        my $start = $args{start};
+        my $limit = $args{limit};
+        if ($start + $limit > $max_offset) {
+            $limit = ($max_offset - $start) + 1;
+            $limit = 0 if $limit < 0;
+        }
+        my $hits = $orig->($self, %args, limit => $limit);
+        $hits->{limit}          = $args{limit};
+        $hits->{maximum_offset} = $max_offset;
+        return $hits;
+    }
+
     $orig->($self, %args);
 };
 
@@ -86,6 +102,26 @@ Catmandu::Searchable - Optional role for searchable stores
     $it->each(sub { ...});
 
     $store->bag->delete_by_query(query => 'dna');
+
+=head1 CONFIGURATION
+
+=over
+
+=item default_limit
+
+The default value for C<limit>. By default this is C<10>.
+
+=item maximum_limit
+
+The maximum allowed value for C<limit>. By default this is C<1000>.
+
+=item maximum_offset
+
+The maximum allowed offset. When set no hits will be returned after hit offset
+is greater than C<maximum_offset>, this to avoid deep paging problems.
+Pagination values will be also be adjusted accordingly.
+
+=back
 
 =head1 METHODS
 

@@ -11,6 +11,7 @@ has start => (is => 'ro', required => 1);
 has limit => (is => 'ro', required => 1);
 has total => (is => 'ro', required => 1);
 has hits  => (is => 'ro', required => 1);
+has maximum_offset => (is => 'ro');
 
 with 'Catmandu::Iterable';
 with 'Catmandu::Paged';
@@ -20,8 +21,12 @@ sub size {
 }
 
 sub more {
-    my $self = $_[0];
-    $self->start + $self->limit < $self->total;
+    my $self       = $_[0];
+    my $start      = $self->start;
+    my $limit      = $self->limit;
+    my $max_offset = $self->maximum_offset;
+    return 0 if $max_offset && $start + $limit > $max_offset;
+    $start + $limit < $self->total;
 }
 
 sub generator {

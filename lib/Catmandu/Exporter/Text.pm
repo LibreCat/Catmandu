@@ -18,7 +18,7 @@ _define_backslash_escapes(
     (map {$_ => $_} ('\\', '"', '$', '@')),
     ('r' => "\r", 'n' => "\n", 't' => "\t"),
     (map {'x' . unpack('H2', chr($_)) => chr($_)} (0 .. 255)),
-    (map {sprintf('%03o', $_) => chr($_)} (0 .. 255)),
+    (map {sprintf('%03o', $_)         => chr($_)} (0 .. 255)),
 );
 
 sub _define_backslash_escapes {

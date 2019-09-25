@@ -23,8 +23,8 @@ my $data = [
 note("Hash stores");
 {
     my $stores = [Catmandu::Store::Hash->new, Catmandu::Store::Hash->new,];
-    my $store = $pkg->new(stores => $stores);
-    my $bag   = $store->bag;
+    my $store  = $pkg->new(stores => $stores);
+    my $bag    = $store->bag;
 
     $bag->add_many($data);
     is_deeply $bag->to_array, $data;

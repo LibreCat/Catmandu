@@ -19,7 +19,7 @@ sub _visit {
 sub _empty {
     my ($self, $v) = @_;
     !defined($v)
-        || (is_value($v) && $v !~ /\S/)
+        || (is_value($v)     && $v !~ /\S/)
         || (is_hash_ref($v)  && !%$v)
         || (is_array_ref($v) && !@$v);
 }
@@ -66,7 +66,7 @@ sub fix {
                 my @vals;
                 for my $v (@$d) {
                     next if $self->_empty($v);
-                    push @vals, $v;
+                    push @vals,  $v;
                     push @stack, $v if $self->_visit($v);
                 }
                 splice @$d, 0, @$d, @vals;

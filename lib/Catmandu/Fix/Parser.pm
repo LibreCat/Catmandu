@@ -129,9 +129,9 @@ sub parse_use {
 
 sub parse_filter {
     my ($self) = @_;
-    my $type = $self->token_kw('select', 'reject');
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
+    my $type   = $self->token_kw('select', 'reject');
+    my $name   = $self->parse_name;
+    my $args   = $self->parse_arguments;
 
     # support deprecated separator
     $self->maybe_expect(';');
@@ -209,9 +209,9 @@ sub parse_unless {
 
 sub parse_bind {
     my ($self) = @_;
-    my $type = $self->token_kw('bind', 'do', 'doset');
-    my $name = $self->parse_name;
-    my $args = $self->parse_arguments;
+    my $type   = $self->token_kw('bind', 'do', 'doset');
+    my $name   = $self->parse_name;
+    my $args   = $self->parse_arguments;
 
     # support deprecated separator
     $self->maybe_expect(';');

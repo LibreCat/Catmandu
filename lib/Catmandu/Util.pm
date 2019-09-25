@@ -333,8 +333,8 @@ sub data_at {
                     @$data;
             }
             else {
-                if    ($key eq '$first') {$key = 0}
-                elsif ($key eq '$last')  {$key = -1}
+                if    ($key eq '$first')   {$key                        = 0}
+                elsif ($key eq '$last')    {$key                        = -1}
                 elsif ($key eq '$prepend') {unshift @$data, undef; $key = 0}
                 elsif ($key eq '$append') {push @$data, undef; $key = @$data}
                 is_integer($key) || return;
@@ -415,8 +415,8 @@ sub array_rest {
 
 sub array_uniq {
     my ($arr) = @_;
-    my %seen = ();
-    my @vals = grep {not $seen{$_}++} @$arr;
+    my %seen  = ();
+    my @vals  = grep {not $seen{$_}++} @$arr;
     \@vals;
 }
 
@@ -653,7 +653,7 @@ sub pod_section {
     }
 
     my $text = "";
-    open my $input, "<", $class or return '';
+    open my $input,  "<", $class or return '';
     open my $output, ">", \$text;
 
     require Pod::Usage;    # lazy load only if needed

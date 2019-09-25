@@ -10,7 +10,7 @@ use Moo::Role;
 sub _coerce_array {
     my $fields = $_[0];
     if (ref $fields eq 'ARRAY') {return $fields}
-    if (ref $fields eq 'HASH') {return [sort keys %$fields]}
+    if (ref $fields eq 'HASH')  {return [sort keys %$fields]}
     [split ',', $fields];
 }
 

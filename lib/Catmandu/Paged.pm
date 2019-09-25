@@ -10,6 +10,7 @@ use namespace::clean;
 requires 'start';
 requires 'limit';
 requires 'total';
+requires 'maximum_offset';
 
 has max_pages_in_spread => (is => 'rw', lazy => 1, default => sub {5});
 
@@ -31,19 +32,28 @@ sub _round {
     return int($x + 0.5);
 }
 
+sub _capped_total {
+    my $self  = $_[0];
+    my $total = $self->total;
+    if (my $max_offset = $self->maximum_offset) {
+        $total = $max_offset + 1 if $total > $max_offset;
+    }
+    $total;
+}
+
 sub _do_pagination {
-    my $self             = shift;
-    my $total_entries    = $self->total;
-    my $entries_per_page = $self->limit;
-    my $current_page     = $self->page;
-    my $max_pages        = $self->max_pages_in_spread;
+    my $self         = shift;
+    my $total        = $self->_capped_total;
+    my $per_page     = $self->limit;
+    my $current_page = $self->page;
+    my $max_pages    = $self->max_pages_in_spread;
 
     # qNsizes
     my @q_size = ();
     my ($add_pages, $adj);
 
     # step 2
-    my $total_pages = _ceil($total_entries / $entries_per_page);
+    my $total_pages = _ceil($total / $per_page);
     my $visible_pages
         = $max_pages < ($total_pages - 1) ? $max_pages : $total_pages - 1;
     if ($total_pages - 1 <= $max_pages) {
@@ -117,7 +127,7 @@ sub first_page {
 sub last_page {
     my $self = shift;
 
-    my $last = $self->total / $self->limit;
+    my $last = $self->_capped_total / $self->limit;
     return _ceil($last);
 }
 
@@ -156,7 +166,7 @@ sub last_on_page {
     my $self = shift;
 
     ($self->page == $self->last_page)
-        ? (return $self->total)
+        ? (return $self->_capped_total)
         : (return ($self->page * $self->limit));
 }
 

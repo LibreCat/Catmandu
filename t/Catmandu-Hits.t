@@ -19,6 +19,7 @@ my $h    = Catmandu::Hits->new(start => 0, limit => 10, total => 100,
 can_ok $h, 'start';
 can_ok $h, 'limit';
 can_ok $h, 'total';
+can_ok $h, 'maximum_offset';
 can_ok $h, 'hits';
 can_ok $h, 'size';
 throws_ok {Catmandu::Hits->new(limit => 10, total => 100, hits => $data)}
@@ -48,4 +49,4 @@ is_deeply $h->to_array, [(1 .. 100)], 'test to_array';
 
 is $h->generator->(), 1, 'test generator';
 
-done_testing 22;
+done_testing;
