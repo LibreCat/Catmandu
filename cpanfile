@@ -9,6 +9,7 @@ on 'test', sub {
   requires 'Test::LWP::UserAgent' , 0;
   requires 'Test::More', '0.99';
   requires 'Test::Pod', 0;
+  requires 'Capture::Tiny', 0;
 };
 
 on 'develop', sub {
