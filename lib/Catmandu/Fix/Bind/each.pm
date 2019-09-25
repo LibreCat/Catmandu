@@ -1,6 +1,6 @@
 package Catmandu::Fix::Bind::each;
 
-our $VERSION = '1.2006';
+our $VERSION = '1.2007';
 
 use strict;
 use warnings;

@@ -2,7 +2,7 @@ package Catmandu::Cmd::copy;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2006';
+our $VERSION = '1.2007';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

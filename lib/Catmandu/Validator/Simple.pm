@@ -2,7 +2,7 @@ package Catmandu::Validator::Simple;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2006';
+our $VERSION = '1.2007';
 
 use Moo;
 use namespace::clean;

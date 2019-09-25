@@ -2,7 +2,7 @@ package Catmandu::Fix::int;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2006';
+our $VERSION = '1.2007';
 
 use Moo;
 use Catmandu::Util qw(is_string is_array_ref is_hash_ref);

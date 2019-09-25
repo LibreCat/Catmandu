@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2007  2019-09-25 15:48:32 CEST
   - Searchable stores get a new maximum_offset option to avoid deep paging if
     needed
 
