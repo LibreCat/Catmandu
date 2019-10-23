@@ -20,20 +20,20 @@ sub _build_fixer {
     my $val_name = $self->value_name;
     my $getter   = as_path($self->old_path)->getter;
     my $creator  = as_path($self->new_path)->creator;
-    as_path($self->new_path)->creator(sub {
-        my ($arr, $data) = @_;
-        if (is_array_ref($arr //= [])) {
-            for my $hash (@{$getter->($data)}) {
-                for my $key (sort keys %$hash) {
-                    push @$arr, {
-                        $key_name => $key,
-                        $val_name => $hash->{$key},
-                    };
+    as_path($self->new_path)->creator(
+        sub {
+            my ($arr, $data) = @_;
+            if (is_array_ref($arr //= [])) {
+                for my $hash (@{$getter->($data)}) {
+                    for my $key (sort keys %$hash) {
+                        push @$arr,
+                            {$key_name => $key, $val_name => $hash->{$key},};
+                    }
                 }
             }
+            $arr;
         }
-        $arr;
-    });
+    );
 }
 
 1;
