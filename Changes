@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - new disassoc fix
   - add missing dependency
 
 1.2007  2019-09-25 15:48:32 CEST
