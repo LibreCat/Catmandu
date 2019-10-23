@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.2007",
+  "dist_version" => "1.2008",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -75,6 +75,7 @@ my %module_build_args = (
     "bin/catmandu"
   ],
   "test_requires" => {
+    "Capture::Tiny" => 0,
     "Log::Any::Adapter::Log4perl" => 0,
     "Log::Any::Test" => "1.03",
     "Log::Log4perl" => 0,
@@ -88,6 +89,7 @@ my %module_build_args = (
 
 
 my %fallback_build_requires = (
+  "Capture::Tiny" => 0,
   "Log::Any::Adapter::Log4perl" => 0,
   "Log::Any::Test" => "1.03",
   "Log::Log4perl" => 0,

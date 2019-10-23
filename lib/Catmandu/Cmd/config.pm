@@ -2,7 +2,7 @@ package Catmandu::Cmd::config;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2007';
+our $VERSION = '1.2008';
 
 use parent 'Catmandu::Cmd';
 use Catmandu::Util::Path qw(as_path);
