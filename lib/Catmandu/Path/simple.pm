@@ -4,7 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2008';
 
-use Catmandu::Util qw(is_hash_ref is_array_ref is_value is_code_ref trim);
+use Catmandu::Util
+    qw(is_hash_ref is_array_ref is_value is_natural is_code_ref trim);
 use Moo;
 use namespace::clean;
 
@@ -205,7 +206,7 @@ sub _emit_get {
     %opts = (up_var => my $up_var = $var);
     $var  = $self->_generate_var;
 
-    if ($key =~ /^[0-9]+$/) {
+    if (is_natural($key)) {
         $perl
             .= "if (is_hash_ref(${up_var}) && exists(${up_var}->{${str_key}})) {";
         $perl .= "my ${var} = ${up_var}->{${str_key}};";
@@ -261,7 +262,7 @@ sub _emit_set_key {
     my $perl    = "";
     my $str_key = $self->_emit_string($key);
 
-    if ($key =~ /^[0-9]+$/) {
+    if (is_natural($key)) {
         $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "${var}->{${str_key}} = $val;";
         $perl .= "} elsif (is_array_ref(${var})) {";
@@ -313,7 +314,7 @@ sub _emit_create_path {
     my $str_key = $self->_emit_string($key);
     my $perl    = "";
 
-    if ($key =~ /^[0-9]+$/) {
+    if (is_natural($key)) {
         my $v1 = $self->_generate_var;
         my $v2 = $self->_generate_var;
         $perl .= "if (is_hash_ref(${var})) {";
@@ -390,7 +391,7 @@ sub _emit_delete_key {
     my $str_key = $self->_emit_string($key);
     my $perl    = "";
 
-    if ($key =~ /^[0-9]+$/) {
+    if (is_natural($key)) {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
         $perl .= "delete(${var}->{${str_key}});";
         $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";

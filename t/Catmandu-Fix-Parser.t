@@ -211,9 +211,17 @@ throws_ok {
 # bare strings
 
 {
-    my $fixes = $parser->parse(q|add_field(022, 022)|);
+    my $fixes = $parser->parse(q|set(009, 009)|);
     my $path  = $fixes->[0]->path;
-    is "$path", '022';
+    is "$path", '009';
+    is_deeply($fixes->[0]->fix({}), {'009' => '009'});
+
+    $fixes = $parser->parse(q|set(foo, '1234.0')|);
+    is_deeply($fixes->[0]->fix({}), {'foo' => '1234.0'});
+    $fixes = $parser->parse(q|set(foo, '1234.1')|);
+    is_deeply($fixes->[0]->fix({}), {'foo' => 1234.1});
+    $fixes = $parser->parse(q|set(foo, '1234.')|);
+    is_deeply($fixes->[0]->fix({}), {'foo' => '1234.'});
 }
 
 # string and regex escapes
@@ -221,16 +229,16 @@ throws_ok {
 {
     my $fixes;
     lives_ok {
-        $parser->parse(q|set_field(test, "\"")|);
+        $parser->parse(q|set(test, "\"")|);
     };
     dies_ok {
-        $parser->parse(q|set_field(test, "\\\\"")|);
+        $parser->parse(q|set(test, "\\\\"")|);
     };
     lives_ok {
-        $parser->parse(q|set_field(test, '\'')|);
+        $parser->parse(q|set(test, '\'')|);
     };
     dies_ok {
-        $parser->parse(q|set_field(test, '\\\\'')|);
+        $parser->parse(q|set(test, '\\\\'')|);
     };
     lives_ok {
         $parser->parse(q|replace_all(test, '\+(\d{2}):(\d{2})', '+$1$2')|);

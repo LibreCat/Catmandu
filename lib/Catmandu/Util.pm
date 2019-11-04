@@ -469,12 +469,22 @@ sub is_bool {
         || $_[0]->isa('JSON::PP::Boolean'));
 }
 
+sub is_integer {
+    Data::Util::is_integer($_[0]) && $_[0] !~ /^0[0-9]/;
+}
+
 sub is_natural {
     is_integer($_[0]) && $_[0] >= 0;
 }
 
 sub is_positive {
     is_integer($_[0]) && $_[0] >= 1;
+}
+
+sub is_float {
+    is_value($_[0])
+        && $_[0] =~ /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/
+        && $_[0] !~ /^0[0-9]/;
 }
 
 sub is_ref {
@@ -535,13 +545,12 @@ Data::Util::install_subroutine(__PACKAGE__,
     is_value      => \&Data::Util::is_value,
     is_string     => \&Data::Util::is_string,
     is_number     => \&Data::Util::is_number,
-    is_integer    => \&Data::Util::is_integer,
 );
 
 for my $sym (
     qw(able instance invocant ref
     scalar_ref array_ref hash_ref code_ref regex_ref glob_ref
-    bool value string number integer natural positive)
+    bool value string number integer natural positive float)
     )
 {
     my $err_name = $sym;
@@ -1091,6 +1100,12 @@ Equivalent to C<< is_integer($val) && $val >= 0 >>.
 Tests if C<$val> is a positive integer.
 Equivalent to C<< is_integer($val) && $val >= 1 >>.
 
+=item is_float($val)
+
+=item is_maybe_float($val)
+
+Tests if C<$val> is a floating point number.
+
 =item is_same($val, $other_val)
 
 Tests if C<$val> is deeply equal to C<$other_val>.
@@ -1178,6 +1193,10 @@ returning true or false they return their argument or die.
 =item check_positive($val)
 
 =item check_maybe_positive($val)
+
+=item check_float($val)
+
+=item check_maybe_float($val)
 
 =item check_same($val, $other_val)
 
