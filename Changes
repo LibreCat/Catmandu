@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2009  2019-11-04 16:03:36 CET
   - new is_float utility function
   - fix some bugs in emitting of strings that look like numbers
 

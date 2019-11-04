@@ -2,7 +2,7 @@ package Catmandu::Fix::move_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2008';
+our $VERSION = '1.2009';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

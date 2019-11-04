@@ -1,6 +1,6 @@
 package Catmandu::Plugin::Readonly;
 
-our $VERSION = '1.2008';
+our $VERSION = '1.2009';
 
 use Moo::Role;
 use MooX::Aliases;
