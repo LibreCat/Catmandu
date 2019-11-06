@@ -674,17 +674,20 @@ Catmandu::Fix - a Catmandu class used for data transformations
 
     # From the command line
 
-    $ catmandu convert JSON --fix 'add_field(foo,bar)' < data.json
-    $ catmandu convert YAML --fix 'upcase(job); remove_field(test)' < data.yml
-    $ catmandu convert CSV  --fix 'sort_field(tags)' < data.csv
+    $ catmandu convert JSON --fix 'add(foo,bar)' < data.json
+    $ catmandu convert YAML --fix 'upcase(job) remove(test)' < data.yml
+    $ catmandu convert CSV  --fix 'sort(tags)' < data.csv
     $ catmandu run /tmp/myfixes.txt
     $ catmandu convert OAI --url http://biblio.ugent.be/oai --fix /tmp/myfixes.txt
+
+    # With preprocessing
+    $ catmandu convert JSON --var field=foo --fix 'add({{field}},bar)' < data.json
 
     # From Perl
 
     use Catmandu;
 
-    my $fixer = Catmandu->fixer('upcase(job)','remove_field(test)');
+    my $fixer = Catmandu->fixer('upcase(job)','removed(test)');
     my $fixer = Catmandu->fixer('/tmp/myfixes.txt');
 
     # Convert data
@@ -693,9 +696,15 @@ Catmandu::Fix - a Catmandu class used for data transformations
     my $importer = Catmandu->importer('YAML', file => 'data.yml');
     my $fixed_importer = $fixer->fix($importer);
 
+    # With preprocessing
+    my $fixer = Catmandu::Fix->new(
+        variables => {x => 'foo', y => 'bar'},
+        fixes => ['add({{x}},{{y}})'],
+    );
+
     # Inline fixes
-    use Catmandu::Fix::upcase       as => 'my_upcase';
-    use Catmandu::Fix::remove_field as => 'my_remove';
+    use Catmandu::Fix::upcase as => 'my_upcase';
+    use Catmandu::Fix::remove as => 'my_remove';
 
     my $hash = { 'job' => 'librarian' , deep => { nested => '1'} };
 
@@ -717,7 +726,7 @@ L<Catmandu::Store> then the transformations are executed on every item in the st
 A Fix script is a collection of one or more Fix commands. The fixes are executed
 on every record in the dataset. If this command is executed on the command line:
 
-    $ catmandu convert JSON --fix 'upcase(title); add_field(deep.nested.field,1)' < data.json
+    $ catmandu convert JSON --fix 'upcase(title); add(deep.nested.field,1)' < data.json
 
 then all the title fields will be upcased and a new deeply nested field will be added:
 
@@ -737,29 +746,29 @@ also be written into a Fix script where semicolons are not required:
 where C<script.fix> contains:
 
     upcase(title)
-    add_field(deep.nested.field,1)
+    add(deep.nested.field,1)
 
 Conditionals can be used to provide the logic when to execute fixes:
 
     if exists(error)
-        set_field(valid, 0)
+        set(valid, 0)
     end
 
     if exists(error)
-        set_field(is_valid, 0)
+        set(is_valid, 0)
     elsif exists(warning)
-        set_field(is_valid, 1)
+        set(is_valid, 1)
         log(...)
     else
-        set_field(is_valid, 1)
+        set(is_valid, 1)
     end
 
     unless all_match(title, "PERL")
-        add_field(is_perl, "noooo")
+        add(is_perl, "noooo")
     end
 
-    exists(error) and set_field(is_valid, 0)
-    exists(error) && set_field(is_valid, 0)
+    exists(error) and set(is_valid, 0)
+    exists(error) && set(is_valid, 0)
 
     exists(title) or log('title missing')
     exists(title) || log('title missing')
@@ -795,7 +804,7 @@ The opposite of C<reject> is C<select>:
 Comments in Fix scripts are all lines (or parts of a line) that start with a hash (#):
 
     # This is ignored
-    add_field(test,123)  # This is also a comment
+    add(test,123)      # This is also a comment
 
 You can load fixes from another namespace with the C<use> statement:
 
@@ -866,16 +875,16 @@ For array values there are special wildcards available:
 E.g.
 
  # Create { mods => { titleInfo => [ { 'title' => 'a title' }] } };
- add_field('mods.titleInfo.$append.title', 'a title');
+ add('mods.titleInfo.$append.title', 'a title');
 
  # Create { mods => { titleInfo => [ { 'title' => 'a title' } , { 'title' => 'another title' }] } };
- add_field('mods.titleInfo.$append.title', 'another title');
+ add('mods.titleInfo.$append.title', 'another title');
 
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'another title' }] } };
- add_field('mods.titleInfo.$first.title', 'foo');
+ add('mods.titleInfo.$first.title', 'foo');
 
  # Create { mods => { titleInfo => [ { 'title' => 'foo' } , { 'title' => 'bar' }] } };
- add_field('mods.titleInfo.$last.title', 'bar');
+ add('mods.titleInfo.$last.title', 'bar');
 
 Some Fix commands can implement an alternatice path syntax to point to values.
 See for example L<Catmandu::MARC>, L<Catmandu:PICA>:
@@ -905,7 +914,7 @@ C<preprocess> to 1.
 
     my $fixer = Catmandu::Fix->new(
         variables => {x => 'foo', y => 'bar'},
-        fixes => ['add_field({{x}},{{y}})'],
+        fixes => ['add({{x}},{{y}})'],
     );
     my $data = {};
     $fixer->fix($data);
@@ -975,10 +984,10 @@ into the given Perl hash.
 Fix arguments are passed as arguments to the C<new> function of the Perl class. As in
 
     # In the fix file...
-    meow('test123', -count => 4)
+    meow('test123', count: 4)
 
     # ...will be translated into this pseudo code
-    my $fix = Catmandu::Fix::meow->new('test123', '-count', 4);
+    my $fix = Catmandu::Fix::meow->new('test123', count: 4);
 
 Using L<Moo> these arguments can be catched with L<Catmandu::Fix::Has> package:
 
@@ -1002,127 +1011,7 @@ Using L<Moo> these arguments can be catched with L<Catmandu::Fix::Has> package:
 Using this code the fix statement can be used like:
 
     # Will add 'meow' = 'purrpurrpurrpurr'
-    meow('purr', -count => 4)
-
-=head2 Advanced
-
-The advanced method is required when one needs to read or write values from/to deeply nested JSON paths.
-One could parse JSON paths using the quick and easy Perl class above, but this would require a
-lot of inefficient for-while loops. The advanced method emits Perl code that gets compiled.
-This compiled code is evaled against all Perl hashes in the unput.The best
-way to learn this method is by inspecting some example Fix commands.
-
-To ease the implementation of Fixed that emit Perl code some helper methods are created. Many Fix functions
-require a transformation of one or more values on a JSON Path. The L<Catmandu::Fix::SimpleGetValue>
-provides an easy way to create such as script. In the example below we'll set the value at a JSON Path
-to 'purrrrr':
-
-    package Catmandu::Fix::purrrrr;
-
-    use Catmandu::Sane;
-    use Moo;
-    use Catmandu::Fix::Has;
-
-    has path => (fix_arg => 1);
-
-    with 'Catmandu::Fix::SimpleGetValue';
-
-    sub emit_value {
-        my ($self, $var, $fixer) = @_;
-        "${var} = 'purrrrr';";
-    }
-
-    1;
-
-Run this command as:
-
-    # Set the value(s) of an existing path to 'purrr'
-    purrrrr(my.deep.nested.path)
-    purrrrr(all.my.values.*)
-
-Notice how the C<emit_value> of the Catmandu::Fix::purrrrr package returns Perl code and doesn't
-operate directy on the Perl data. The parameter C<$var> contains only the name of a temporary variable
-that will hold the value of the JSON path after compiling the code into Perl.
-
-Use L<Catmandu::Fix::Has> to add more arguments to this fix:
-
-    package Catmandu::Fix::purrrrr;
-
-    use Catmandu::Sane;
-    use Moo;
-    use Catmandu::Fix::Has;
-
-    has path => (fix_arg => 1);
-    has msg  => (fix_opt => 1 , default => sub { 'purrrrr' });
-
-    with 'Catmandu::Fix::SimpleGetValue';
-
-    sub emit_value {
-        my ($self, $var, $fixer) = @_;
-        my $msg = $fixer->emit_string($self->msg);
-        "${var} = ${msg};";
-    }
-
-    1;
-
-Run this command as:
-
-    # Set the value(s) of an existing path to 'okido'
-    purrrrr(my.deep.nested.path, -msg => 'okido')
-    purrrrr(all.my.values.*, -msg => 'okido')
-
-Notice how the C<emit_value> needs to quote the C<msg> option using the emit_string function.
-
-=head1 INTERNAL METHODS
-
-This module provides several methods for writing fix packages. Usage can best
-be understood by reading the code of existing fix packages.
-
-=over
-
-=item capture
-
-=item emit_block
-
-=item emit_clone
-
-=item emit_clear_hash_ref
-
-=item emit_create_path
-
-=item emit_declare_vars
-
-=item emit_delete_key
-
-=item emit_fix
-
-=item emit_fixes
-
-=item emit_foreach
-
-=item emit_foreach_key
-
-=item emit_get_key
-
-=item emit_reject
-
-=item emit_retain_key
-
-this method is DEPRECATED.
-
-=item emit_set_key
-
-=item emit_string
-
-=item emit_value
-
-=item emit_walk_path
-
-=item generate_var
-
-=item split_path
-
-=back
+    meow('purr', count: 4)
 
 =head1 SEE ALSO
 
