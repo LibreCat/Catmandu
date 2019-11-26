@@ -1,7 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
-  - updated Fix pod
+  - new Iterable every method
+  - updated Iterable, Fix pod
 
 1.2009  2019-11-04 16:03:36 CET
   - new is_float utility function

@@ -183,9 +183,23 @@ is $iter->run, 0;
 $iter->data([1, 2]);
 is $iter->run, 1;
 
-my $has_run = 0;
-$iter->tap(sub {$has_run = 1})->run;
-is $has_run, 1;
+{
+    my $has_run = 0;
+    $iter->tap(sub {$has_run = 1})->run;
+    is $has_run, 1;
+}
+
+{
+    $iter->data([0 .. 9]);
+    my $num_called;
+    $num_called = 0;
+    $iter->every(2, sub {$num_called++})->run;
+    is $num_called, 5;
+    $num_called = 0;
+    $iter->every(3, sub {$num_called++})->run;
+    is $num_called, 3;
+    throws_ok { $iter->every(0, sub {})->run } qr/should be positive/;
+}
 
 # external iteration
 {

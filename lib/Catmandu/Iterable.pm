@@ -4,7 +4,16 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2009';
 
-use Catmandu::Util qw(:is :check);
+use Catmandu::Util qw(
+    is_number
+    is_value
+    is_string
+    is_array_ref
+    is_hash_ref
+    is_regex_ref
+    is_same
+    check_positive
+);
 use Time::HiRes qw(gettimeofday tv_interval);
 use Hash::Util::FieldHash qw(fieldhash);
 use Role::Tiny;
@@ -112,6 +121,28 @@ sub tap {
                 state $data;
                 if (defined($data = $next->())) {
                     $sub->($data);
+                    return $data;
+                }
+                return;
+            }
+        }
+    );
+}
+
+sub every {
+    my ($self, $n, $sub) = @_;
+    check_positive($n);
+    Catmandu::Iterator->new(
+        sub {
+            sub {
+                state $next = $self->generator;
+                state $data;
+                state $i = 0;
+                if (defined($data = $next->())) {
+                    if (++$i == $n) {
+                        $sub->($data);
+                        $i = 0;
+                    }
                     return $data;
                 }
                 return;
@@ -576,42 +607,42 @@ a second invocation.
 
 =head2 to_array
 
-Return all the items in the Iterator as an ARRAY ref.
+Return all the items in the iterator as an array ref.
 
 =head2 count
 
-Return the count of all the items in the Iterator.
+Return the count of all the items in the iterator.
 
 =head3 LOOPING
 
 =head2 each(\&callback)
 
-For each item in the Iterator execute the callback function with the item as first argument. Returns
-the number of items in the Iterator.
+For each item in the iterator execute the callback function with the item as
+first argument. Returns the number of items in the iterator.
 
 =head2 first
 
-Return the first item from the Iterator.
+Return the first item from the iterator.
 
 =head2 rest
 
-Returns an Iterator containing everything except the first item.
+Returns an iterator containing everything except the first item.
 
-=head2 slice(INDEX,LENGTH)
+=head2 slice($index,$length)
 
-Returns an Iterator starting at the item at INDEX returning at most LENGTH results.
+Returns an new iterator starting at the item at C<$index> returning at most <$length> items.
 
-=head2 take(NUM)
+=head2 take($num)
 
-Returns an Iterator with the first NUM results.
+Returns an iterator with the first C<$num> items.
 
-=head2 group(NUM)
+=head2 group($num)
 
-Splitting the Iterator into NUM parts and returning an Iterator for each part.
+Splits the iterator into C<$num> parts and returns an iterator for each part.
 
 =head2 interleave(@iterators)
 
-Returns an Iterator which returns the first item of each iterator then the
+Returns an iterator which returns the first item of each iterator then the
 second of each and so on.
 
 =head2 contains($data)
@@ -624,8 +655,8 @@ return true if any item in the collection is deeply equal to C<$data>.
 
 =head2 tap(\&callback)
 
-Returns a copy of the Iterator and executing callback on each item. This method works
-like the Unix L<tee> command. Use this command to peek into an iterable while it is
+Returns a copy of the iterator and executing callback on each item. This method works
+like the Unix C<tee> command. Use this command to peek into an iterable while it is
 processing results. E.g. you are writing code to process an iterable and wrote
 something like:
 
@@ -654,6 +685,11 @@ execution time.
 
 Note that the C<benchmark> method already implements this common case.
 
+=head2 every($num, \&callback)
+
+Similar to C<tap>, but only calls the callback every C<$num> times. Useful for
+benchmarking and sampling.
+
 =head2 detect(\&callback)
 
 Returns the first item for which callback returns a true value.
@@ -666,7 +702,7 @@ regex.
 =head2 detect($key => $val)
 
 If the iterator contains HASH values, then return the first item where the value of
-C<$key> is equal to val.
+C<$key> is equal to C<$val>.
 
 =head2 detect($key => qr/..../)
 
@@ -676,15 +712,15 @@ C<$key> matches the regex.
 =head2 detect($key => [$val, ...])
 
 If the iterator contains HASH values, then return the first item where the value of
-C<$key> is equal to any of the vals given.
+C<$key> is equal to any of the values given.
 
 =head2 pluck($key)
 
-Return an Iterator that only contains the values of the given C<$key>.
+Return an iterator that only contains the values of the given C<$key>.
 
 =head2 select(\&callback)
 
-Returns an Iterator for each item for which callback returns a true value.
+Returns an iterator containing only items item for which the callback returns a true value.
 
 =head2 select(qr/..../)
 
@@ -693,7 +729,7 @@ If the iterator contains STRING values, then return each item which matches the 
 =head2 select($key => $val)
 
 If the iterator contains HASH values, then return each item where the value of
-C<$key> is equal to val.
+C<$key> is equal to C<$val>.
 
 =head2 select($key => qr/..../)
 
@@ -711,7 +747,7 @@ Alias for C<select( ... )>.
 
 =head2 reject(\&callback)
 
-Returns an Iterator for each item for which callback returns a false value.
+Returns an iterator containing each item for which callback returns a false value.
 
 =head2 reject(qr/..../)
 
@@ -720,36 +756,36 @@ matching the regex.
 
 =head2 reject($key => qr/..../)
 
-If the iterator contains HASH values, then reject every item for where the value of $key
+If the iterator contains HASH values, then reject every item for where the value of C<$key>
 DOESN'T match the regex.
 
 =head2 reject($key => $val)
 
 If the iterator contains HASH values, then return each item where the value of
-$key is NOT equal to val.
+C<$key> is NOT equal to C<$val>.
 
 =head2 reject($key => [$val, ...])
 
 If the iterator contains HASH values, then return each item where the value of
-$key is NOT equal to any of the vals given.
+C<$key> is NOT equal to any of the values given.
 
 =head2 sorted
 
-Returns an Iterator with items sorted lexically. Note that sorting requires
+Returns an iterator with items sorted lexically. Note that sorting requires
 memory because all items are buffered in a L<Catmandu::ArrayIterator>.
 
 =head2 sorted(\&callback)
 
-Returns an Iterator with items sorted by a callback. The callback is expected to
+Returns an iterator with items sorted by a callback. The callback is expected to
 returns an integer less than, equal to, or greater than C<0>. The following code
-snippets result in the equal arrays:
+snippets result in equal arrays:
 
     $iterator->sorted(\&callback)->to_array
     [ sort \&callback @{ $iterator->to_array } ] 
 
 =head2 sorted($key) 
 
-Returns an Iterator with items lexically sorted by a key. This is equivalent to
+Returns an iterator with items lexically sorted by a key. This is equivalent to
 sorting with the following callback:
 
     $iterator->sorted(sub { $_[0]->{$key} cmp $_[1]->{$key} })
@@ -805,24 +841,20 @@ Returns true if all the items generate a true value when executing callback.
 
 =head2 map(\&callback)
 
-Returns a new Iterator containing for each item the result of the callback. If
+Returns a new iterator containing for each item the result of the callback. If
 the callback returns multiple or no items, the resulting iterator will grow or
 shrink.
 
-=head2 reduce([START],\&callback)
+=head2 reduce([$start],\&callback)
 
-Alias for C<reduce>.
-
-=head2 reduce([START],\&callback)
-
-For each item in the Iterator execute &callback($prev,$item) where $prev is the
-option START value or the result of the previous call to callback. Returns the
+For each item in the iterator execute C<&callback($prev,$item)> where C<$prev> is the
+optional C<$start> value or the result of the previous call to callback. Returns the
 final result of the callback function.
 
-=head2 invoke(NAME)
+=head2 invoke($name)
 
-Returns an interator were the method NAME is called on every object in the iterable.
-This is a shortcut for $it->map(sub { $_[0]->NAME }).
+Returns an interator were the method C<$name> is called on every object in the iterable.
+This is a shortcut for C<$it->map(sub { $_[0]->$name })>.
 
 =head2 max()
 

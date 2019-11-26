@@ -17,7 +17,7 @@ has log_category => (is => 'lazy');
     sub _build_log {
         my ($self) = @_;
         my $category = $self->log_category;
-        $loggers->{$category} ||= Log::Any->get_logger(category => $category);
+        $loggers->{$category} //= Log::Any->get_logger(category => $category);
     }
 }
 
