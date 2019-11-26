@@ -198,7 +198,10 @@ is $iter->run, 1;
     $num_called = 0;
     $iter->every(3, sub {$num_called++})->run;
     is $num_called, 3;
-    throws_ok { $iter->every(0, sub {})->run } qr/should be positive/;
+    throws_ok {
+        $iter->every(0, sub { })->run
+    }
+    qr/should be positive/;
 }
 
 # external iteration
