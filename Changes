@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2010  2019-11-26 12:20:03 CET
   - new Iterable every method
   - updated Iterable, Fix pod
 

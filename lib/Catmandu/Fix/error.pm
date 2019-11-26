@@ -2,7 +2,7 @@ package Catmandu::Fix::error;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2009';
+our $VERSION = '1.2010';
 
 use Moo;
 use Catmandu::Util qw(is_value);

@@ -2,7 +2,7 @@ package Catmandu::Counter;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2009';
+our $VERSION = '1.2010';
 
 use Moo::Role;
 use namespace::clean;
