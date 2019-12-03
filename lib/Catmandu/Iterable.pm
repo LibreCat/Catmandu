@@ -638,7 +638,19 @@ Returns an iterator with the first C<$num> items.
 
 =head2 group($num)
 
-Splits the iterator into C<$num> parts and returns an iterator for each part.
+Splits the iterator into new iterators each containing C<$num> items.
+
+    $it->group(500)->each(sub {
+        my $group_it = $_[0];
+        $group_it->each(sub {
+            my $item = $_[0];
+            # ...
+        });
+    });
+
+Note that the group iterators load their items in memory. The last group
+iterator will contain less than C<$num> item unless the item count is divisible
+by C<$num>.
 
 =head2 interleave(@iterators)
 
