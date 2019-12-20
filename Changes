@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2011  2019-12-20 14:08:54 CET
   - give commands access to the logger
 
 1.2010  2019-11-26 12:20:03 CET

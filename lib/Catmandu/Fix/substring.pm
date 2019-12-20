@@ -2,7 +2,7 @@ package Catmandu::Fix::substring;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2010';
+our $VERSION = '1.2011';
 
 use Catmandu::Util qw(as_utf8);
 use Catmandu::Util::Path qw(as_path);

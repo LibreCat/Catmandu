@@ -2,7 +2,7 @@ package Catmandu::Fixable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2010';
+our $VERSION = '1.2011';
 
 use Catmandu::Util qw(is_instance);
 use Catmandu;
