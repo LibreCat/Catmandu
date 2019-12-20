@@ -8,7 +8,12 @@ use parent qw(App::Cmd::Command);
 use Catmandu::Util qw(is_array_ref pod_section);
 use Catmandu::Fix;
 use Encode qw(decode);
+use Log::Any ();
 use namespace::clean;
+
+sub log {
+    Log::Any->get_logger(category => ref($_[0]));
+}
 
 # Internal required by App::Cmd;
 sub prepare {
@@ -186,6 +191,10 @@ Every command needs to implement 4 things:
   * head1 NAME - a short description of the command
 
 =head1 METHODS
+
+=head2 log()
+
+Access to the logger
 
 =head2 command_opt_spec()
 
