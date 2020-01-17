@@ -7,16 +7,11 @@ env: RELEASE_TESTING=1 AUTOMATED_TESTING=1 DEVEL_COVER=0
 matrix:
   include:
     - perl: "5.30"
-      dist: bionic
       env: DEVEL_COVER=1
     - perl: "5.28"
-      dist: bionic
     - perl: "5.26"
-      dist: bionic
     - perl: "5.24"
-      dist: xenial
     - perl: "5.22"
-      dist: xenial
     - perl: "5.20"
       dist: trusty
     - perl: "5.18"
