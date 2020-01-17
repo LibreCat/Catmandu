@@ -14,9 +14,9 @@ matrix:
     - perl: "5.26"
       dist: bionic
     - perl: "5.24"
-      dist: bionic
+      dist: xenial
     - perl: "5.22"
-      dist: bionic
+      dist: xenial
     - perl: "5.20"
       dist: trusty
     - perl: "5.18"
@@ -26,6 +26,8 @@ matrix:
     - perl: "5.14"
       dist: trusty
     - perl: "5.12"
+      dist: trusty
+    - perl: "5.10"
       dist: trusty
 
 before_install:
