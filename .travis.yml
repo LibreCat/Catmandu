@@ -1,21 +1,32 @@
+dist: bionic
+
 language: perl
-perl:
-  - "5.28"
-  - "5.26"
-  - "5.24"
-  - "5.20"
-  - "5.18"
-  - "5.16"
-  - "5.14"
-  - "5.12"
-  - "5.10"
-  
+
 env: RELEASE_TESTING=1 AUTOMATED_TESTING=1 DEVEL_COVER=0
 
 matrix:
   include:
     - perl: "5.30"
+      dist: bionic
       env: DEVEL_COVER=1
+    - perl: "5.28"
+      dist: bionic
+    - perl: "5.26"
+      dist: bionic
+    - perl: "5.24"
+      dist: bionic
+    - perl: "5.22"
+      dist: bionic
+    - perl: "5.20"
+      dist: trusty
+    - perl: "5.18"
+      dist: trusty
+    - perl: "5.16"
+      dist: trusty
+    - perl: "5.14"
+      dist: trusty
+    - perl: "5.12"
+      dist: trusty
 
 before_install:
   - cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
@@ -31,3 +42,4 @@ after_success:
   - if [ "$DEVEL_COVER" = "1" ]; then cpanm --quiet --notest --skip-satisfied Devel::Cover::Report::Coveralls; fi
   - if [ "$DEVEL_COVER" = "1" ]; then cover -report coveralls; fi
 sudo: false
+
