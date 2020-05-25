@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - support quote_space option in CSV exporter
 
 1.2011  2019-12-20 14:08:54 CET
   - give commands access to the logger

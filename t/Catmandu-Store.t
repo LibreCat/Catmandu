@@ -81,7 +81,7 @@ is $s->bag('foo')->prop, 'baz';
 
 # custom key_prefix
 
-is(T::Store->new->key_prefix, '_');
+is(T::Store->new->key_prefix,                            '_');
 is(T::Store->new(key_prefix => 'catmandu_')->key_prefix, 'catmandu_');
 
 # there are more key_prefix tests in Catmandu-Bag.t and

@@ -241,7 +241,7 @@ sub take {
             }
             if (is_array_ref($arg2)) {
                 return sub {
-                    is_hash_ref($_[0]) || return 0;
+                    is_hash_ref($_[0])                 || return 0;
                     is_value(my $val = $_[0]->{$arg1}) || return 0;
                     for my $v (@$arg2) {
                         return 1 if $val eq $v;

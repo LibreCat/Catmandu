@@ -32,7 +32,7 @@ has load_paths => (
     default => sub {[]},
     coerce  => sub {
         [
-            map {File::Spec->canonpath($_)}
+            map     {File::Spec->canonpath($_)}
                 map {$_ eq ':up' ? _search_up($_) : $_} split /,/,
             join ',',
             ref $_[0] ? @{$_[0]} : $_[0]
@@ -150,29 +150,29 @@ sub store {
     my $self = shift;
     $self->_named_package('store', $self->store_namespace,
         $self->default_store, $self->default_store_package,
-        $self->stores, @_);
+        $self->stores,        @_);
 }
 
 sub importer {
     my $self = shift;
     $self->_named_package('importer', $self->importer_namespace,
         $self->default_importer, $self->default_importer_package,
-        undef, @_);
+        undef,                   @_);
 }
 
 sub exporter {
     my $self = shift;
     $self->_named_package('exporter', $self->exporter_namespace,
         $self->default_exporter, $self->default_exporter_package,
-        undef, @_);
+        undef,                   @_);
 }
 
 sub validator {
     my $self = shift;
     $self->_named_package(
-        'validator', $self->validator_namespace,
+        'validator',              $self->validator_namespace,
         $self->default_validator, $self->default_validator_package,
-        $self->validators, @_
+        $self->validators,        @_
     );
 }
 

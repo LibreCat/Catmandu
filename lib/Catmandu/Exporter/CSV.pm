@@ -14,6 +14,7 @@ has csv          => (is => 'lazy');
 has quote_char   => (is => 'ro', default => sub {'"'});
 has escape_char  => (is => 'ro', default => sub {'"'});
 has always_quote => (is => 'ro');
+has quote_space  => (is => 'ro');
 has sep_char => (
     is      => 'ro',
     default => sub {','},
@@ -32,6 +33,7 @@ sub _build_csv {
             eol          => "\n",
             sep_char     => $self->sep_char,
             always_quote => $self->always_quote,
+            quote_space  => $self->quote_space,
             quote_char   => $self->quote_char ? $self->quote_char : undef,
             escape_char  => $self->escape_char ? $self->escape_char : undef,
         }

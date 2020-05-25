@@ -16,7 +16,7 @@ require_ok $pkg;
 my $env = Catmandu::Env->new(load_paths => [qw(t/)]);
 
 ok $env , qq|new|;
-like $env->root, qr/t$/, 'got root';
+like $env->root,    qr/t$/,                    'got root';
 isa_ok $env->store, qq|Catmandu::Store::Hash|, qq|store()|;
 isa_ok $env->store('hash'), qq|Catmandu::Store::Hash|, qq|store(hash)|;
 isa_ok $env->fixer, qq|Catmandu::Fix|, qq|fixer|;
