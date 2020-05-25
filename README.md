@@ -12,21 +12,21 @@ Catmandu is a data processing toolkit developed as part of the [LibreCat](http:/
 
     $ catmandu convert JSON to CSV < data.json
 
-Or, to store a YAML file into an ElasticSearch database type (requires [Catmandu::ElasticSearch](https://metacpan.org/pod/Catmandu::ElasticSearch)):
+Or, to store a YAML file into an ElasticSearch database type (requires [Catmandu::ElasticSearch](https://metacpan.org/pod/Catmandu%3A%3AElasticSearch)):
 
     $ catmandu import YAML to ElasticSearch --index_name demo < test.yml
 
-To export all the data from an Solr search engine into JSON type (requires [Catmandu::Solr](https://metacpan.org/pod/Catmandu::Solr)):
+To export all the data from an Solr search engine into JSON type (requires [Catmandu::Solr](https://metacpan.org/pod/Catmandu%3A%3ASolr)):
 
     $ catmandu export Solr --url http://localhost:8983/solr to JSON
 
-With Catmandu one can import OAI-PMH records in your application (requires [Catmandu::OAI](https://metacpan.org/pod/Catmandu::OAI)):
+With Catmandu one can import OAI-PMH records in your application (requires [Catmandu::OAI](https://metacpan.org/pod/Catmandu%3A%3AOAI)):
 
     $ catmandu convert OAI --url http://biblio.ugent.be/oai --set allFtxt
 
 and export records into formats such as JSON, YAML, CSV, XLS, RDF and many more.
 
-Catmandu also provides the small scripting language "Fix" to manipulate data, extract parts of your dataset and transform records. For instance, rename fields  with the [move\_field](https://metacpan.org/pod/Catmandu::Fix::move_field) Fix command:
+Catmandu also provides the small scripting language "Fix" to manipulate data, extract parts of your dataset and transform records. For instance, rename fields  with the [move\_field](https://metacpan.org/pod/Catmandu%3A%3AFix%3A%3Amove_field) Fix command:
 
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
 
@@ -38,7 +38,7 @@ One can also work on deeply nested data. E.g. create a deeply nested data struct
 
 In this example we moved the field `title` into the field `my`, which contains a (sub)field `deeply`, which contains a (sub)field `nested`.
 
-Catmandu was originally created by librarians for librarians. We process a lot of metadata especially library metadata in formats such as MARC, MAB2 and MODS. With the following command we can extract data from a marc record and to store it into the title field (requires [Catmandu::MARC](https://metacpan.org/pod/Catmandu::MARC)):
+Catmandu was originally created by librarians for librarians. We process a lot of metadata especially library metadata in formats such as MARC, MAB2 and MODS. With the following command we can extract data from a marc record and to store it into the title field (requires [Catmandu::MARC](https://metacpan.org/pod/Catmandu%3A%3AMARC)):
 
     $ catmandu convert MARC --fix 'marc_map(245,title)' < data.mrc
 

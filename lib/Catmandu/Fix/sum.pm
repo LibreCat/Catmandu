@@ -2,7 +2,7 @@ package Catmandu::Fix::sum;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2011';
+our $VERSION = '1.2012';
 
 use Catmandu::Util qw(is_number);
 use Catmandu::Util::Path qw(as_path);

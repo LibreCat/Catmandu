@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2012  2020-05-25 14:14:08 CEST
   - support quote_space option in CSV exporter
 
 1.2011  2019-12-20 14:08:54 CET
