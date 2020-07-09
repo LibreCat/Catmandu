@@ -1,6 +1,7 @@
 package Catmandu::Exporter::Count;
 
 use Catmandu::Sane;
+use Catmandu::Util qw(is_hash_ref is_array_ref is_able);
 
 our $VERSION = '1.2012';
 
@@ -9,17 +10,37 @@ use namespace::clean;
 
 with 'Catmandu::Exporter';
 
-has _num => (is => 'rw', default => sub {0});
-
-sub add {
-    my $self = $_[0];
-    $self->_num($self->_num + 1);
-}
+# add is a noop since an Exporter is already a Counter
+sub add { }
 
 sub commit {
     my $self = $_[0];
-    $self->fh->print($self->_num . "\n");
+    $self->fh->print($self->count . "\n");
 }
+
+# optimize counting
+around add_many => sub {
+    my ($orig, $self, $many) = @_;
+
+    if (is_hash_ref($many)) {
+        $self->inc_count;
+        return 1;
+    }
+
+    if (is_array_ref($many)) {
+        my $n = scalar @$many;
+        $self->inc_count($n);
+        return $n;
+    }
+
+    if (is_able($many, 'count')) {
+        my $n = $many->count;
+        $self->inc_count($n);
+        return $n;
+    }
+
+    $orig->($self, $many);
+};
 
 1;
 

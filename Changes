@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - rewritten Exporter::Count uses optimized count when available
 
 1.2012  2020-05-25 14:14:08 CEST
   - support quote_space option in CSV exporter
