@@ -2,7 +2,7 @@ package Catmandu::Fix::random;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2012';
+our $VERSION = '1.2013';
 
 use Catmandu::Util::Path qw(as_path);
 use Moo;

@@ -2,7 +2,7 @@ package Catmandu::Util::Regex;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2012';
+our $VERSION = '1.2013';
 
 use Exporter qw(import);
 

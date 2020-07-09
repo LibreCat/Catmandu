@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::all_equal;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2012';
+our $VERSION = '1.2013';
 
 use Moo;
 use Catmandu::Util qw(is_value);
