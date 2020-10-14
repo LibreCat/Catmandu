@@ -91,7 +91,7 @@ sub setup_debugging {
     catch {
         print STDERR <<EOF;
 
-Oops! Debugging tools not available on this platform
+Debugging tools not available on this platform
 
 Try to install Log::Log4perl and Log::Any::Adapter::Log4perl
 
@@ -151,7 +151,7 @@ sub run {
     };
 
     if (defined $err) {
-        say STDERR "Oops! $err";
+        say STDERR $err;
         return;
     }
 
