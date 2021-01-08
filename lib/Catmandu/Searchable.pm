@@ -149,6 +149,11 @@ search engine.
 
 Delete items from the database that match $query
 
+=head1 CQL support
+
+Stores that are support the L<CQL query language|https://www.loc.gov/standards/sru/cql/> also accept the C<cql_query>
+and C<sru_sortkeys> arguments. See L<Catmandu::CQLSearchable> for more information.
+
 =head1 SEE ALSO
 
 L<Catmandu::CQLSearchable>, L<Catmandu::Hits>, L<Catmandu::Paged>
