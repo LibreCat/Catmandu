@@ -151,6 +151,6 @@ Delete items from the database that match $query
 
 =head1 SEE ALSO
 
-L<Catmandu::Hits>, L<Catmandu::Paged>
+L<Catmandu::CQLSearchable>, L<Catmandu::Hits>, L<Catmandu::Paged>
 
 =cut

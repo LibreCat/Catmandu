@@ -53,7 +53,7 @@ Catmandu::CQLSearchable - Optional role for CQL searchable stores
 
     my $hits  = $store->bag->search(
            cql_query => 'keyword any dna',
-           sru_sortkeys  => 'title',
+           sru_sortkeys  => 'title,,0',
            limit => 100,
     );
 
