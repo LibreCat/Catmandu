@@ -121,11 +121,17 @@ sub _do_pagination {
 }
 
 sub first_page {
+    my $self = shift;
+
+    return if $self->limit < 1;
+
     return 1;
 }
 
 sub last_page {
     my $self = shift;
+
+    return if $self->limit < 1;
 
     my $last = $self->_capped_total / $self->limit;
     return _ceil($last);
@@ -133,6 +139,8 @@ sub last_page {
 
 sub page {
     my $self = shift;
+
+    return if $self->limit < 1;
 
     ($self->start == 0) && (return 1);
 
@@ -143,11 +151,15 @@ sub page {
 sub previous_page {
     my $self = shift;
 
+    return if $self->limit < 1;
+
     ($self->page > 1) ? (return $self->page - 1) : (return undef);
 }
 
 sub next_page {
     my $self = shift;
+
+    return if $self->limit < 1;
 
     ($self->page < $self->last_page)
         ? (return $self->page + 1)
@@ -157,13 +169,15 @@ sub next_page {
 sub first_on_page {
     my $self = shift;
 
-    ($self->total == 0)
-        ? (return 0)
-        : (return (($self->page - 1) * $self->limit) + 1);
+    return 0 if $self->limit < 1 || $self->total == 0;
+
+    return (($self->page - 1) * $self->limit) + 1;
 }
 
 sub last_on_page {
     my $self = shift;
+
+    return 0 if $self->limit < 1;
 
     ($self->page == $self->last_page)
         ? (return $self->_capped_total)
@@ -171,12 +185,14 @@ sub last_on_page {
 }
 
 sub page_size {
-    my $self = shift,;
+    my $self = shift;
     return $self->limit;
 }
 
 sub page_ranges {
     my $self = shift;
+
+    return if $self->limit < 1;
 
     $self->_do_pagination;
     return @{$self->{PAGE_RANGES}};
@@ -184,6 +200,8 @@ sub page_ranges {
 
 sub pages_in_spread {
     my $self = shift;
+
+    return [] if $self->limit < 1;
 
     $self->_do_pagination;
     my $ranges = $self->{PAGE_RANGES};
