@@ -69,7 +69,8 @@ sub setter {
                 $val = "${val_var}->(${var}, ${data_var})";
             }
             elsif (exists $opts{value}) {
-                $val = $self->_emit_value($opts{value});
+                $captures->{$val_var} = $opts{value};
+                $val = $val_var;
             }
             else {
                 push @$args, $val_var;
@@ -150,10 +151,10 @@ sub creator {
         };
     }
     elsif (exists $opts{value}) {
-        my $val = $self->_emit_value($opts{value});
+        $captures->{$val_var} = $opts{value};
         $cb = sub {
             my $var = $_[0];
-            "${var} = ${val};";
+            "${var} = ${val_var};";
         };
     }
     else {
