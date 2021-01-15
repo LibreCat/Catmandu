@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2014  2021-01-15 15:29:19 CET
   - Path::Simple value argument is never stringified
 
 1.2013  2020-07-09 09:47:03 CEST

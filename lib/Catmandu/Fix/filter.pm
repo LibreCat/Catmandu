@@ -2,7 +2,7 @@ package Catmandu::Fix::filter;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2013';
+our $VERSION = '1.2014';
 
 use Catmandu::Util qw(is_array_ref);
 use Catmandu::Util::Regex qw(as_regex);

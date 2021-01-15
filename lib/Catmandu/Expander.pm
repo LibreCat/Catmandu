@@ -2,7 +2,7 @@ package Catmandu::Expander;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2013';
+our $VERSION = '1.2014';
 
 use parent 'CGI::Expand';
 

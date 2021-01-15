@@ -2,7 +2,7 @@ package Catmandu::Exporter;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2013';
+our $VERSION = '1.2014';
 
 use Catmandu::Util qw(io);
 use Moo::Role;

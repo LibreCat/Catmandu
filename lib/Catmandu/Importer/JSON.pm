@@ -2,7 +2,7 @@ package Catmandu::Importer::JSON;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2013';
+our $VERSION = '1.2014';
 
 use Cpanel::JSON::XS ();
 use Moo;

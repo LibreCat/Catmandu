@@ -2,7 +2,7 @@ package Catmandu::Fix::sort;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2013';
+our $VERSION = '1.2014';
 
 use Moo;
 use namespace::clean;
