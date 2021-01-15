@@ -153,15 +153,15 @@ my $arr4 = [1, 2, 3];
 is_deeply $p4->pages_in_spread, $arr4, "spread ok";
 
 my $p5 = T5::Paged->new;
-lives_ok { $p5->page } "limit 0 gives no errors";
-is $p5->first_page,    undef,     "limit 0 first page ok";
-is $p5->page,          undef,     "limit 0 page ok";
+lives_ok {$p5->page} "limit 0 gives no errors";
+is $p5->first_page,    undef, "limit 0 first page ok";
+is $p5->page,          undef, "limit 0 page ok";
 is $p5->previous_page, undef, "limit 0 previous ok";
-is $p5->next_page,     undef,     "limit 0 next ok";
-is $p5->page_size,     0,    "limit 0 page size ok";
+is $p5->next_page,     undef, "limit 0 next ok";
+is $p5->page_size,     0,     "limit 0 page size ok";
 is $p5->first_on_page, 0,     "limit 0 first on page ok";
-is $p5->last_on_page,  0,    "limit 0 last on page ok";
-is $p5->last_page,     undef,     "limit 0 last page ok";
-is_deeply $p5->pages_in_spread,     [],     "limit 0 has an empty page spread";
+is $p5->last_on_page,  0,     "limit 0 last on page ok";
+is $p5->last_page,     undef, "limit 0 last page ok";
+is_deeply $p5->pages_in_spread, [], "limit 0 has an empty page spread";
 
 done_testing;
