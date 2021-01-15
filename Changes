@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Path::Simple value argument is never stringified
 
 1.2013  2020-07-09 09:47:03 CEST
   - rewritten Exporter::Count uses optimized count when available

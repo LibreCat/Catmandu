@@ -14,6 +14,7 @@ BEGIN {
 require_ok $pkg;
 
 my $p = $pkg->new(path => 'mydata');
-is_deeply $p->creator(value => {my => data => {}})->({}), {mydata => {my => data => {}}}, "value isn't stringified";
+$p->creator(value => {my => {data => {}}})->(my $rec = {});
+is_deeply $rec, {mydata => {my => {data => {}}}}, "value isn't stringified";
 
 done_testing;
