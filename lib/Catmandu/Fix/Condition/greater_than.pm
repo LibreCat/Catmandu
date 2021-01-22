@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::greater_than;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2014';
+our $VERSION = '1.2015';
 
 use Moo;
 use Catmandu::Util qw(is_value);

@@ -2,7 +2,7 @@ package Catmandu::Fix::Base;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2014';
+our $VERSION = '1.2015';
 
 use Catmandu::Fix;
 use Moo::Role;

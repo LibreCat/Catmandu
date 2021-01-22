@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2015  2021-01-22 16:23:42 CET
   - fix applying Readonly to bags that are not Droppable
 
 1.2014  2021-01-15 15:29:19 CET

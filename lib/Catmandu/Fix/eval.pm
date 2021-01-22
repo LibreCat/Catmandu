@@ -2,7 +2,7 @@ package Catmandu::Fix::eval;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2014';
+our $VERSION = '1.2015';
 
 use Moo;
 use List::Util qw(all);

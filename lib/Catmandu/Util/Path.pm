@@ -2,7 +2,7 @@ package Catmandu::Util::Path;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2014';
+our $VERSION = '1.2015';
 
 use Catmandu::Util qw(is_value is_string require_package);
 use namespace::clean;

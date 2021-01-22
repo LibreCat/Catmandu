@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::any_equal;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2014';
+our $VERSION = '1.2015';
 
 use Moo;
 use namespace::clean;
