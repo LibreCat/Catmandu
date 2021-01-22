@@ -1,7 +1,7 @@
 package Catmandu::Plugin::Readonly::Searchable;
 
 use Catmandu::Sane;
-use Moo:Role;
+use Moo::Role;
 
 around delete_by_query => sub {
     my ($orig, $self) = @_;

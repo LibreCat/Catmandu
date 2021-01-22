@@ -1,7 +1,7 @@
 package Catmandu::Plugin::Readonly::Droppable;
 
 use Catmandu::Sane;
-use Moo:Role;
+use Moo::Role;
 
 around drop => sub {
     my ($orig, $self) = @_;

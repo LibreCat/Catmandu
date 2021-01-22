@@ -11,13 +11,16 @@ sub BUILD {
     my ($self) = @_;
 
     if ($self->store->does('Catmandu::Droppable')) {
-        Role::Tiny->apply_roles_to_object($self->store, qw(Catmandu::Plugin::Readonly::Droppable));
+        Role::Tiny->apply_roles_to_object($self->store,
+            qw(Catmandu::Plugin::Readonly::Droppable));
     }
     if ($self->does('Catmandu::Droppable')) {
-        Role::Tiny->apply_roles_to_object($self, qw(Catmandu::Plugin::Readonly::Droppable));
+        Role::Tiny->apply_roles_to_object($self,
+            qw(Catmandu::Plugin::Readonly::Droppable));
     }
     if ($self->does('Catmandu::Searchable')) {
-        Role::Tiny->apply_roles_to_object($self, qw(Catmandu::Plugin::Readonly::Searchable));
+        Role::Tiny->apply_roles_to_object($self,
+            qw(Catmandu::Plugin::Readonly::Searchable));
     }
 }
 
