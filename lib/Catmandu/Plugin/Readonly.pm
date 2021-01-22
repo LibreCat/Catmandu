@@ -9,51 +9,39 @@ use namespace::clean;
 
 sub BUILD {
     my ($self) = @_;
-    my $name = ref($self->store);
 
     if ($self->store->does('Catmandu::Droppable')) {
-
-        # Overwrite the drop method of the Catmandu::Store implementation
-        my $stash = Package::Stash->new($name);
-        $stash->add_symbol(
-            '&drop' => sub {
-                $self->log->warn("trying to drop a readonly store");
-                my $err = Catmandu::NotImplemented->new("$name is readonly");
-                return undef, $err;
-            }
-        );
+        Role::Tiny->apply_roles_to_object($self->store, qw(Catmandu::Plugin::Readonly::Droppable));
+    }
+    if ($self->does('Catmandu::Droppable')) {
+        Role::Tiny->apply_roles_to_object($self, qw(Catmandu::Plugin::Readonly::Droppable));
+    }
+    if ($self->does('Catmandu::Searchable')) {
+        Role::Tiny->apply_roles_to_object($self, qw(Catmandu::Plugin::Readonly::Searchable));
     }
 }
 
 around add => sub {
     my ($orig, $self, $data) = @_;
-    my $name = ref($self);
+    my $pkg = ref($self);
     $self->log->warn("trying to add to readonly store");
-    my $err = Catmandu::NotImplemented->new("$name is readonly");
+    my $err = Catmandu::NotImplemented->new("$pkg is readonly");
     return undef, $err;
 };
 
 around delete => sub {
     my ($orig, $self) = @_;
-    my $name = ref($self);
+    my $pkg = ref($self);
     $self->log->warn("trying to delete from readonly store");
-    my $err = Catmandu::NotImplemented->new("$name is readonly");
+    my $err = Catmandu::NotImplemented->new("$pkg is readonly");
     return undef, $err;
 };
 
 around delete_all => sub {
     my ($orig, $self) = @_;
-    my $name = ref($self);
+    my $pkg = ref($self);
     $self->log->warn("trying to delete_all on readonly store");
-    my $err = Catmandu::NotImplemented->new("$name is readonly");
-    return undef, $err;
-};
-
-around drop => sub {
-    my ($orig, $self) = @_;
-    my $name = ref($self);
-    $self->log->warn("trying to drop a readonly store");
-    my $err = Catmandu::NotImplemented->new("$name is readonly");
+    my $err = Catmandu::NotImplemented->new("$pkg is readonly");
     return undef, $err;
 };
 

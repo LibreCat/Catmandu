@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - fix applying Readonly to bags that are not Droppable
 
 1.2014  2021-01-15 15:29:19 CET
   - Path::Simple value argument is never stringified
