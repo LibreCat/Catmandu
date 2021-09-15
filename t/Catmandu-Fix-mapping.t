@@ -9,7 +9,7 @@ use Data::Dumper;
 my $pkg;
 my $pkg2;
 BEGIN {
-    $pkg = 'Catmandu::Fix::map';
+    $pkg = 'Catmandu::Fix::mapping';
     use_ok $pkg;
 }
 

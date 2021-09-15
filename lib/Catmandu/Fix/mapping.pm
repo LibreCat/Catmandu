@@ -1,4 +1,4 @@
-package Catmandu::Fix::map;
+package Catmandu::Fix::mapping;
 
 use Catmandu::Sane;
 
@@ -67,7 +67,7 @@ __END__
 
 =head1 NAME
 
-Catmandu::Fix::map - move several fields by a lookup table
+Catmandu::Fix::mapping - move several fields by a lookup table
 
 =head1 SYNOPSIS
 
@@ -79,16 +79,16 @@ Catmandu::Fix::map - move several fields by a lookup table
 
     # fields found in the field_mapping.csv will be replaced
     # {AU => "Einstein"}
-    map(field_mapping.csv)
+    mapping(field_mapping.csv)
     # {author => "Einstein"}
 
     # values not found will be kept
     # {foo => {bar => 232}}
-    map(field_mapping.csv)
+    mapping(field_mapping.csv)
     # {foo => {bar => 232}}
 
     # in case you have a different seperator
-    map(field_mapping.csv, sep_char: |)
+    mapping(field_mapping.csv, sep_char: |)
 
 =head1 SEE ALSO
 
