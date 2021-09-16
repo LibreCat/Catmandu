@@ -9,11 +9,11 @@ use Clone qw(clone);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;
-use Data::Dumper;
 
 with 'Catmandu::Fix::Builder';
 
 has file => (fix_arg => 1);
+has keep => (fix_opt => 1);
 has csv_args => (fix_opt => 'collect');
 has dictionary => (is => 'lazy', init_arg => undef);
 
@@ -38,6 +38,7 @@ sub _build_fixer {
     my ($self) = @_;
 
     my $dict = $self->dictionary;
+    my $keep = $self->keep;
 
     sub {
         my $data = $_[0];
@@ -51,7 +52,7 @@ sub _build_fixer {
             my $creator  = $new_path->creator;
 
             my $values = [map {clone($_)} @{$getter->($data)}];
-            $deleter->($data);
+            $deleter->($data) unless $keep;
             $creator->($data, shift @$values) while @$values;
         }
 
@@ -81,6 +82,11 @@ Catmandu::Fix::mapping - move several fields by a lookup table
     # {AU => "Einstein"}
     mapping(field_mapping.csv)
     # {author => "Einstein"}
+
+    # fields found in the field_mapping.csv with keep option will be copied
+    # {AU => "Einstein"}
+    mapping(field_mapping.csv, keep: 1)
+    # {AU => => "Einstein", author => "Einstein"}
 
     # values not found will be kept
     # {foo => {bar => 232}}

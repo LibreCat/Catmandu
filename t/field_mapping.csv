@@ -1,5 +1,5 @@
-title,Title
-author,Author
-id,Identifier
-publisher,Publisher.0.nested
-deeply.nested.0,test
+title;Title
+author;Author
+id;Identifier
+publisher;Publisher.0.nested
+deeply.nested.0;test

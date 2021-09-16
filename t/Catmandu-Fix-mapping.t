@@ -13,11 +13,11 @@ BEGIN {
     use_ok $pkg;
 }
 
-is_deeply $pkg->new('t/field_mapping.csv')
+is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';')
     ->fix({title => "Computational Biology"}),
     {Title => "Computational Biology"}, "map simple field";
 
-is_deeply $pkg->new('t/field_mapping.csv')->fix(
+is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';')->fix(
     {
         title  => "Computational Biology",
         author => "C. Ungewitter",
@@ -31,13 +31,13 @@ is_deeply $pkg->new('t/field_mapping.csv')->fix(
     },
     "map several fields";
 
-is_deeply $pkg->new('t/field_mapping.csv')->fix({publisher => "Springer"}),
+is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';')->fix({publisher => "Springer"}),
     {Publisher => [{nested => "Springer"}]}, "map nested field";
 
-is_deeply $pkg->new('t/field_mapping.csv')->fix({publisher => "Springer"}),
-    {Publisher => [{nested => "Springer"}]}, "map nested field";
+is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';', 'keep', 1)->fix({publisher => "Springer"}),
+    {Publisher => [{nested => "Springer"}], , publisher => "Springer"}, "map nested field  with keep option";
 
-is_deeply $pkg->new('t/field_mapping.csv')->fix({deeply => {nested => ["XX"]}}),
-    {test => "XX", deeply => {nested => []}}, "map nested field";
+is_deeply $pkg->new('t/field_mapping.csv', 'keep', 1, sep_char => ';')->fix({publisher => "Springer"}),
+    {Publisher => [{nested => "Springer"}], , publisher => "Springer"}, "map nested field  with keep option";
 
 done_testing;
