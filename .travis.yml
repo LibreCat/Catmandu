@@ -22,13 +22,16 @@ matrix:
       dist: trusty
     - perl: "5.12"
       dist: trusty
+      env: OLD_MODULES=1
     - perl: "5.10"
+      env: OLD_MODULES=1
       dist: trusty
 
 before_install:
   - cpanm --local-lib=~/perl5 local::lib && eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
   - cpanm --notest Perl::Tidy
   - cpanm --notest Test::Code::TidyAll
+  - if [ "$OLD_MODULES" = "1" ]; then cpanm --quiet --notest Parser::MGC@0.16; fi
 install:
   - cpanm --quiet --installdeps --notest --force --skip-satisfied .
   - if [ "$DEVEL_COVER" = "1" ]; then cpanm --quiet --notest Devel::Cover; fi
