@@ -324,10 +324,10 @@ files (see the CONFIG section below). When adding the --load option (optionally 
 C<use> command, these configuration files will be loaded at the start of your script.
 
     use Catmandu -load;
-    use Catmandu --load => ['/my/config/directory'];
+    use Catmandu -load => ['/my/config/directory'];
 
     # or use all the options
-    use Catmandu -all -load => [qw(/config/path' '/another/config/path)];
+    use Catmandu -all, -load => [qw(/config/path' '/another/config/path)];
 
 =head1 CLASS METHODS
 
