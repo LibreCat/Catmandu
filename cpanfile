@@ -36,7 +36,7 @@ requires 'List::MoreUtils', '0.401';
 requires 'Log::Any', 0;
 requires 'Log::Any::Adapter', 0;
 requires 'MIME::Types',0;
-requires 'Module::Build', '>=0.4229'; # travis ci
+requires 'Module::Build', '== 0.4229'; # travis ci
 requires 'Module::Info', 0;
 requires 'Moo', '>=1.004006';
 requires 'MooX::Aliases', '>=0.001006';
