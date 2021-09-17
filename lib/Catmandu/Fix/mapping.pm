@@ -12,10 +12,10 @@ use Catmandu::Fix::Has;
 
 with 'Catmandu::Fix::Builder';
 
-has file => (fix_arg => 1);
-has keep => (fix_opt => 1);
-has csv_args => (fix_opt => 'collect');
-has dictionary => (is => 'lazy', init_arg => undef);
+has file       => (fix_arg => 1);
+has keep       => (fix_opt => 1);
+has csv_args   => (fix_opt => 'collect');
+has dictionary => (is      => 'lazy', init_arg => undef);
 
 sub _build_dictionary {
     my ($self) = @_;
@@ -46,10 +46,10 @@ sub _build_fixer {
         foreach my $k (keys %$dict) {
             my $old_path = as_path($k);
             my $new_path = as_path($dict->{$k});
-            
-            my $getter   = $old_path->getter;
-            my $deleter  = $old_path->deleter;
-            my $creator  = $new_path->creator;
+
+            my $getter  = $old_path->getter;
+            my $deleter = $old_path->deleter;
+            my $creator = $new_path->creator;
 
             my $values = [map {clone($_)} @{$getter->($data)}];
             $deleter->($data) unless $keep;

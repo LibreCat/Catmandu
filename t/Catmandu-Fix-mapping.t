@@ -8,6 +8,7 @@ use Data::Dumper;
 
 my $pkg;
 my $pkg2;
+
 BEGIN {
     $pkg = 'Catmandu::Fix::mapping';
     use_ok $pkg;
@@ -31,13 +32,18 @@ is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';')->fix(
     },
     "map several fields";
 
-is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';')->fix({publisher => "Springer"}),
+is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';')
+    ->fix({publisher => "Springer"}),
     {Publisher => [{nested => "Springer"}]}, "map nested field";
 
-is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';', 'keep', 1)->fix({publisher => "Springer"}),
-    {Publisher => [{nested => "Springer"}], , publisher => "Springer"}, "map nested field  with keep option";
+is_deeply $pkg->new('t/field_mapping.csv', sep_char => ';', 'keep', 1)
+    ->fix({publisher => "Springer"}),
+    {Publisher => [{nested => "Springer"}], publisher => "Springer"},
+    "map nested field  with keep option";
 
-is_deeply $pkg->new('t/field_mapping.csv', 'keep', 1, sep_char => ';')->fix({publisher => "Springer"}),
-    {Publisher => [{nested => "Springer"}], , publisher => "Springer"}, "map nested field  with keep option";
+is_deeply $pkg->new('t/field_mapping.csv', 'keep', 1, sep_char => ';')
+    ->fix({publisher => "Springer"}),
+    {Publisher => [{nested => "Springer"}], publisher => "Springer"},
+    "map nested field  with keep option";
 
 done_testing;
