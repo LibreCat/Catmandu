@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2015';
+our $VERSION = '1.2016';
 
 use Moo;
 use Catmandu::Util qw(:is);

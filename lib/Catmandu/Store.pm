@@ -2,7 +2,7 @@ package Catmandu::Store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2015';
+our $VERSION = '1.2016';
 
 use Hash::Util::FieldHash qw(fieldhash);
 use Catmandu::Util qw(require_package);
