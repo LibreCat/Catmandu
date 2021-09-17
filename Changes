@@ -2,6 +2,11 @@ Revision history for Catmandu
 
 {{$NEXT}}
 
+1.2016  2021-09-17 09:07:55 CEST
+  - new mapping fix
+  - bump minimum required version of perl to 5.14, some dependencies already
+    require this
+
 1.2015  2021-01-22 16:23:42 CET
   - fix applying Readonly to bags that are not Droppable
 
