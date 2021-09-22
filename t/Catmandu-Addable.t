@@ -67,4 +67,10 @@ $data = [];
 is $a->add_many([1, 2, 3]), 3, 'add_many returns count of data added';
 is_deeply $data, [1, 2, 3], 'add_many passes all data to add';
 
+require Catmandu::ArrayIterator;
+$data = [];
+$a = T::Addable->new;
+Catmandu::ArrayIterator->new([0, 1])->add_to($a);
+is_deeply $data, [0, 1], 'add_to on Iterable';
+
 done_testing;

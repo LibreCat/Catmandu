@@ -61,6 +61,11 @@ sub count {
     $n;
 }
 
+sub add_to {
+   my ($self, $exporter) = @_;
+   $exporter->add_many($self);
+}
+
 sub slice {
     my ($self, $start, $total) = @_;
     $start //= 0;
@@ -612,6 +617,11 @@ Return all the items in the iterator as an array ref.
 =head2 count
 
 Return the count of all the items in the iterator.
+
+=head2 add_to
+
+Add all items in the iterator to a L<Catmandu::Exporter>. Returns a true value
+when the exportwas successful or undef on error.
 
 =head3 LOOPING
 
