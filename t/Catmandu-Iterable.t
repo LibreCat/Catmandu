@@ -115,6 +115,8 @@ is_deeply $iter->reject(num => qr'[12]')->to_array, [{num => 3}];
 is_deeply $iter->pluck('num')->to_array,
     $iter->map(sub {$_[0]->{num}})->to_array;
 
+is_deeply $iter->fix('mv(num,x)')->to_array, [{x=>1},{x=>2},{x=>3}];
+
 $iter->data([T::CountArgs->new]);
 is_deeply $iter->invoke('count_args')->to_array, [0];
 is_deeply $iter->invoke('count_args', 'arg1', 'arg2')->to_array, [2];
