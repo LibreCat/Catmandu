@@ -35,6 +35,11 @@ jobs:
     - uses: actions/checkout@v2
     - run: env | sort
     - run: perl -V
+    - name: Install older dependency versions for older Perls
+      run: |
+        if perl -Mversion -E 'exit not version->parse("v$ARGV[0]") < version->parse('v5.20')' ${{ matrix.perl-version }}; then
+          cpanm -n 'Getopt::Long::Descriptive~<0.105' 'App::Cmd~<0.332'
+        fi
     - run: cpanm -n --installdeps .
     - name: Run release tests
       if: ${{ matrix.release-test }}
