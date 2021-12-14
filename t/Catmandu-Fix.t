@@ -78,20 +78,26 @@ throws_ok {
 
 $fixer = Catmandu::Fix->new(fixes => ['t/myfixes.fix']);
 ok $fixer;
-is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'},
-    'fixing utf8';
+is_deeply $fixer->fix({}),
+    {utf8_name =>
+        'ვეპხის ტყაოსანი შოთა რუსთაველი'
+    }, 'fixing utf8';
 
 open(FH, '<:encoding(UTF-8)', 't/myfixes.fix');
 $fixer = Catmandu::Fix->new(fixes => [\*FH]);
 ok $fixer;
-is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'},
-    'fixing utf8';
+is_deeply $fixer->fix({}),
+    {utf8_name =>
+        'ვეპხის ტყაოსანი შოთა რუსთაველი'
+    }, 'fixing utf8';
 close(FH);
 
 $fixer = Catmandu::Fix->new(fixes => [IO::File->new('< t/myfixes.fix')]);
 ok $fixer;
-is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'},
-    'fixing utf8';
+is_deeply $fixer->fix({}),
+    {utf8_name =>
+        'ვეპხის ტყაოსანი შოთა რუსთაველი'
+    }, 'fixing utf8';
 
 # get
 

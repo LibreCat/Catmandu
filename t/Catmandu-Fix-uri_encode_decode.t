@@ -24,6 +24,7 @@ is_deeply $fixer2->fix($fixer1->fix($obj)), {name => "café"},
     "escape and unescape French";
 
 is_deeply $fixer2->fix($fixer1->fix($obj2)),
-    {name => "ὁ τῶν Πέρσων βασιλεύς"}, "escape and unescape Greek";
+    {name => "ὁ τῶν Πέρσων βασιλεύς"},
+    "escape and unescape Greek";
 
 done_testing;

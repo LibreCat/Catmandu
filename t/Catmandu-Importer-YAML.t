@@ -15,9 +15,9 @@ BEGIN {
 require_ok $pkg;
 
 my $data = [
-    {name => 'Patrick', age => '39'},
-    {name => 'Nicolas', age => '34'},
-    {name => '村上 春樹',   age => '65'},
+    {name => 'Patrick',         age => '39'},
+    {name => 'Nicolas',         age => '34'},
+    {name => '村上 春樹', age => '65'},
 ];
 
 my $yaml = <<EOF;

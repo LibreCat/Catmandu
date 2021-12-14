@@ -269,12 +269,16 @@ EOF
 
 {
     is_deeply Catmandu::Util::read_yaml("t/small.yaml"),
-        {"hello" => "ვეპხის ტყაოსანი შოთა რუსთაველი"}, 'read_yaml';
+        {"hello" =>
+            "ვეპხის ტყაოსანი შოთა რუსთაველი"
+        }, 'read_yaml';
 }
 
 {
     is_deeply Catmandu::Util::read_json("t/small.json"),
-        {"hello" => "ვეპხის ტყაოსანი შოთა რუსთაველი"}, 'read_json';
+        {"hello" =>
+            "ვეპხის ტყაოსანი შოთა რუსთაველი"
+        }, 'read_json';
 }
 
 is Catmandu::Util::join_path(
