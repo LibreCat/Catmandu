@@ -52,7 +52,7 @@ is(Catmandu->default_exporter, 'default', 'default exporter');
 isa_ok(Catmandu->importer, 'Catmandu::Importer::YAML', 'importer test');
 isa_ok(Catmandu->importer('mock'),
     'Catmandu::Importer::Mock', 'importer test');
-isa_ok(Catmandu->exporter, 'Catmandu::Exporter::YAML', 'exporter test');
+isa_ok(Catmandu->exporter, 'Catmandu::Exporter::YAML',       'exporter test');
 isa_ok(Catmandu->exporter('csv'), 'Catmandu::Exporter::CSV', 'exporter test');
 isa_ok(Catmandu->store,           'Catmandu::Store::Hash',   'store test');
 isa_ok(Catmandu->store('hash'),   'Catmandu::Store::Hash',   'store test');

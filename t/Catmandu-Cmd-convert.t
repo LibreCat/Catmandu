@@ -25,7 +25,7 @@ use Catmandu::CLI;
 
     ok $perl, 'got JSON';
     is $perl->[0]->{importer}{default}{package}, 'YAML', 'got data';
-    is $result->error, undef, 'threw no exceptions';
+    is $result->error,                           undef, 'threw no exceptions';
 }
 
 {

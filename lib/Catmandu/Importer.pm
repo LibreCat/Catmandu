@@ -46,17 +46,17 @@ around generator => sub {
 has file => (is => 'lazy', init_arg => undef);
 has _file_template =>
     (is => 'ro', predicate => 'has_file', init_arg => 'file');
-has variables => (is => 'ro', predicate => 1);
-has fh        => (is => 'ro', lazy      => 1, builder => 1);
-has encoding  => (is => 'ro', builder   => 1);
-has data_path            => (is => 'ro');
-has user_agent           => (is => 'ro');
-has http_method          => (is => 'lazy');
-has http_headers         => (is => 'lazy');
-has http_agent           => (is => 'ro', predicate => 1);
-has http_max_redirect    => (is => 'ro', predicate => 1);
-has http_timeout         => (is => 'ro', default => sub {180});  # LWP default
-has http_verify_hostname => (is => 'ro', default => sub {1});
+has variables         => (is => 'ro', predicate => 1);
+has fh                => (is => 'ro', lazy      => 1, builder => 1);
+has encoding          => (is => 'ro', builder   => 1);
+has data_path         => (is => 'ro');
+has user_agent        => (is => 'ro');
+has http_method       => (is => 'lazy');
+has http_headers      => (is => 'lazy');
+has http_agent        => (is => 'ro', predicate => 1);
+has http_max_redirect => (is => 'ro', predicate => 1);
+has http_timeout      => (is => 'ro', default   => sub {180});   # LWP default
+has http_verify_hostname => (is => 'ro', default   => sub {1});
 has http_retry           => (is => 'ro', predicate => 1);
 has http_timing          => (is => 'ro', predicate => 1);
 has http_body            => (is => 'ro', predicate => 1);
@@ -133,7 +133,7 @@ sub _build_fh {
 
         my $content = $self->_http_request(
             $self->http_method, $file, $self->http_headers,
-            $body,              $self->_http_timing_tries,
+            $body, $self->_http_timing_tries,
         );
 
         return io(\$content, mode => 'r', binmode => $_[0]->encoding);

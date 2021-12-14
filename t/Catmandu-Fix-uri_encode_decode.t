@@ -15,8 +15,8 @@ BEGIN {
     use_ok $pkg2;
 }
 
-my $obj  = {name => 'café'};
-my $obj2 = {name => 'ὁ τῶν Πέρσων βασιλεύς'};
+my $obj    = {name => 'café'};
+my $obj2   = {name => 'ὁ τῶν Πέρσων βασιλεύς'};
 my $fixer1 = $pkg1->new('name');
 my $fixer2 = $pkg2->new('name');
 

@@ -27,21 +27,21 @@ note("Hash stores");
     my $bag    = $store->bag;
 
     $bag->add_many($data);
-    is_deeply $bag->to_array, $data;
+    is_deeply $bag->to_array,              $data;
     is_deeply $stores->[0]->bag->to_array, $data;
     is_deeply $stores->[1]->bag->to_array, $data;
 
-    is_deeply $bag->get('123'), $data->[0];
+    is_deeply $bag->get('123'),              $data->[0];
     is_deeply $stores->[0]->bag->get('123'), $data->[0];
     is_deeply $stores->[1]->bag->get('123'), $data->[0];
 
     $bag->delete('123');
-    is_deeply $bag->first, $data->[1];
+    is_deeply $bag->first,              $data->[1];
     is_deeply $stores->[0]->bag->first, $data->[1];
     is_deeply $stores->[1]->bag->first, $data->[1];
 
     $bag->delete_all;
-    is $bag->count, 0;
+    is $bag->count,              0;
     is $stores->[0]->bag->count, 0;
     is $stores->[1]->bag->count, 0;
 

@@ -24,7 +24,7 @@ isa_ok $exporter, $pkg;
 $exporter->add($_) for @$data;
 $exporter->commit;
 
-is $out, '', "Null is empty ok";
-is $exporter->count, 3, "Count ok";
+is $out,             '', "Null is empty ok";
+is $exporter->count, 3,  "Count ok";
 
 done_testing;
