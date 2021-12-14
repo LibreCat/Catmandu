@@ -9,7 +9,7 @@ use Moo::Role;
 use MooX::Aliases;
 use namespace::clean;
 
-has datestamp_format      => (is => 'lazy');
+has datestamp_format => (is => 'lazy');
 has datestamp_created_key => (
     is    => 'lazy',
     isa   => \&check_string,

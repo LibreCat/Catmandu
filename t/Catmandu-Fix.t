@@ -54,11 +54,11 @@ ok is_code_ref($ref);
 is $ref->()->{n}, 2;
 is $ref->()->{n}, 1;
 is $ref->()->{n}, 0;
-is $ref->(), undef;
+is $ref->(),      undef;
 
 # test logging
 can_ok $fixer , 'log';
-isa_ok $fixer->log, 'Log::Any::Proxy';
+isa_ok $fixer->log,          'Log::Any::Proxy';
 isa_ok $fixer->log->adapter, 'Log::Any::Adapter::Null';
 
 # test error handling
@@ -78,26 +78,20 @@ throws_ok {
 
 $fixer = Catmandu::Fix->new(fixes => ['t/myfixes.fix']);
 ok $fixer;
-is_deeply $fixer->fix({}),
-    {utf8_name =>
-        'ვეპხის ტყაოსანი შოთა რუსთაველი'
-    }, 'fixing utf8';
+is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'},
+    'fixing utf8';
 
 open(FH, '<:encoding(UTF-8)', 't/myfixes.fix');
 $fixer = Catmandu::Fix->new(fixes => [\*FH]);
 ok $fixer;
-is_deeply $fixer->fix({}),
-    {utf8_name =>
-        'ვეპხის ტყაოსანი შოთა რუსთაველი'
-    }, 'fixing utf8';
+is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'},
+    'fixing utf8';
 close(FH);
 
 $fixer = Catmandu::Fix->new(fixes => [IO::File->new('< t/myfixes.fix')]);
 ok $fixer;
-is_deeply $fixer->fix({}),
-    {utf8_name =>
-        'ვეპხის ტყაოსანი შოთა რუსთაველი'
-    }, 'fixing utf8';
+is_deeply $fixer->fix({}), {utf8_name => 'ვეპხის ტყაოსანი შოთა რუსთაველი'},
+    'fixing utf8';
 
 # get
 

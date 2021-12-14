@@ -48,7 +48,7 @@ my $href0 = {field => 0};
 my $href1 = {field => 1};
 
 is $e->validate($href1), $href1, 'validate() - success';
-is $e->validate($href0), undef, 'validate() - fails';
+is $e->validate($href0), undef,  'validate() - fails';
 
 is_deeply($e->last_errors, ['Value is not 1'], 'last_errors returns errors');
 
@@ -58,8 +58,8 @@ is $e->is_valid($href0), 0, 'is_valid returns 0';
 my $after_callback_called = 0;
 $e = T::Validator->new(
     after_callback => sub {$after_callback_called = 1, $_[0]});
-is $e->validate($href1), $href1, 'validate, after_callback - success';
-is $after_callback_called, 1, 'validate, after_callback - called';
+is $e->validate($href1),   $href1, 'validate, after_callback - success';
+is $after_callback_called, 1,      'validate, after_callback - called';
 
 my $arr
     = $e->validate([{field => 2}, {field => 1}, {field => 0}, {field => 3}]);

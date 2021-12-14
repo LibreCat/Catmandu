@@ -155,7 +155,7 @@ my $data = {a => {shrimp => 'shrieks'}};
 $b->add($data);
 ok Catmandu::Util::is_value($data->{_id});
 is_deeply $b->get($data->{_id}), $data;
-is $b->exists($data->{_id}),     1;
+is $b->exists($data->{_id}), 1;
 
 $b->delete($data->{_id});
 is $b->get($data->{_id}),    undef;

@@ -62,8 +62,8 @@ sub count {
 }
 
 sub add_to {
-   my ($self, $exporter) = @_;
-   $exporter->add_many($self);
+    my ($self, $exporter) = @_;
+    $exporter->add_many($self);
 }
 
 sub slice {

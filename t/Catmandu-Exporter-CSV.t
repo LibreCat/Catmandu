@@ -31,8 +31,8 @@ pony,2
 shrimp,3
 EOF
 
-is $out, $csv, "CSV strings ok";
-is $exporter->count, 3, "Count ok";
+is $out,             $csv, "CSV strings ok";
+is $exporter->count, 3,    "Count ok";
 
 $data = [{b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
 $out  = "";

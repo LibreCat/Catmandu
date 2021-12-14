@@ -23,7 +23,7 @@ sub _build_fixer {
         my $data = $_[0];
         for my $fixes (@{$getter->($data)}) {
             $fixes = [$fixes] unless is_array_ref($fixes);
-            next unless @$fixes && all {is_string($_)} @$fixes;
+            next              unless @$fixes && all {is_string($_)} @$fixes;
             my $fixer = Catmandu::Fix->new(fixes => $fixes);
             $data = $fixer->fix($data);
         }

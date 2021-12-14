@@ -19,7 +19,7 @@ around add => sub {
     my ($orig, $self, $data) = @_;
     return unless defined $data;
     $data = $self->_fixer->fix($data) if $self->_fixer;
-    $orig->($self, $data) if defined $data;
+    $orig->($self, $data)             if defined $data;
     $data;
 };
 

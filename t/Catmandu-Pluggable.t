@@ -35,7 +35,7 @@ dies_ok {$t->frangle} "original instance doesn't have plugin";
 
 my $t_plugged = $t->with_plugins('Frangle');
 
-ok $t_plugged,     'instance with plugin';
+ok $t_plugged, 'instance with plugin';
 can_ok $t_plugged, 'frangle';
 
 done_testing 7;

@@ -400,9 +400,9 @@ sub _emit_delete_key {
     }
     elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
         $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
-        $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
+        $perl .= "splice(\@{${var}}, 0, 1)"              if $key eq '$first';
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
-        $perl .= "splice(\@{${var}}, 0, \@{${var}})" if $key eq '*';
+        $perl .= "splice(\@{${var}}, 0, \@{${var}})"     if $key eq '*';
     }
     else {
         $perl .= "if (is_hash_ref(${var})) {";

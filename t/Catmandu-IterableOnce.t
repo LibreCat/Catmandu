@@ -35,6 +35,6 @@ require_ok $pkg;
 my $iter = T::IterableOnce->new;
 
 is_deeply $iter->to_array, [1, 2, 3], 'first iteration gives results';
-is_deeply $iter->to_array, [], 'repeated iterations give no results';
+is_deeply $iter->to_array, [],        'repeated iterations give no results';
 
 done_testing;

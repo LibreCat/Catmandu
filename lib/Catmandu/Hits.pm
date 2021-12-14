@@ -7,10 +7,10 @@ our $VERSION = '1.2016';
 use Moo;
 use namespace::clean;
 
-has start => (is => 'ro', required => 1);
-has limit => (is => 'ro', required => 1);
-has total => (is => 'ro', required => 1);
-has hits  => (is => 'ro', required => 1);
+has start          => (is => 'ro', required => 1);
+has limit          => (is => 'ro', required => 1);
+has total          => (is => 'ro', required => 1);
+has hits           => (is => 'ro', required => 1);
 has maximum_offset => (is => 'ro');
 
 with 'Catmandu::Iterable';

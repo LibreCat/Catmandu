@@ -21,7 +21,7 @@ sub deleted_commands {
             Catmandu::Cmd::module_info
             Catmandu::Cmd::move
             Catmandu::Cmd::store_info
-            )
+        )
     ];
 }
 

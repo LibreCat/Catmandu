@@ -32,7 +32,7 @@ if ($^O ne 'MSWin32') {    # /dev/null required
         'Catmandu::CLI' => [
             qw(
                 -I t/lib convert Values --values 1;2;8 to JSON --file /dev/null
-                )
+            )
         ]
     );
     ok !$res->error;
@@ -42,7 +42,7 @@ if ($^O ne 'MSWin32') {    # /dev/null required
         'Catmandu::CLI' => [
             qw(
                 -I t/lib convert Values --values 1;2;8 to NotFound --file /dev/null
-                )
+            )
         ]
     );
     ok !$res->error;

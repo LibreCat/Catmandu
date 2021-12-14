@@ -39,7 +39,7 @@ my %MODULES = (
             "catmandu copy   %n [options] ...",
         ]
     },
-    Fix => {re => qr/^fix$/i, usage => ["%n( [options] )"]},
+    Fix         => {re => qr/^fix$/i, usage => ["%n( [options] )"]},
     'Fix::Bind' =>
         {re => qr/^bind$/i, usage => ["do %n( [options] ) ... end"]},
     'Fix::Condition' =>
@@ -89,7 +89,7 @@ sub help_about {
         unless ($class) {
             Catmandu::NoSuchFixPackage->throw(
                 {
-                    message => "No such fix package: $name",
+                    message      => "No such fix package: $name",
                     package_name =>
                         "Catmandu::Fix::(Bind::|Condition::)?$name",
                     fix_name => $name,
