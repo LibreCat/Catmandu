@@ -58,7 +58,7 @@ requires 'URI', 0;
 requires 'URI::Template', 0.22;
 requires 'UUID::Tiny', '>=1.04';
 requires 'Unicode::Normalize', '0';
-requires 'YAML::XS', '0.41';
+requires 'YAML::XS', '>=0.83';
 requires 'asa', 0; # undeclared dependency?
 requires 'namespace::clean', '>=0.24';
 
