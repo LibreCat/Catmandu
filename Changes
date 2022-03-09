@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - remove weird io test
 
 1.2016  2021-09-17 09:07:55 CEST
   - new mapping fix

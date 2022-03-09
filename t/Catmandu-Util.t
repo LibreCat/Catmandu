@@ -203,12 +203,6 @@ for my $sym (qw(xml_declaration xml_escape)) {
 }
 
 {
-    use Math::BigRat;
-    throws_ok {Catmandu::Util::io(Math::BigRat->new('3/7'))}
-    'Catmandu::BadArg', 'got Catmandu::BadArg';
-}
-
-{
     my $test = <<EOF;
 На берегу пустынных волн
 Стоял он, дум великих полн,
