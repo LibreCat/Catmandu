@@ -11,7 +11,7 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has csv => (is => 'ro', lazy => 1, builder => '_build_csv');
+has csv      => (is => 'ro', lazy => 1, builder => '_build_csv');
 has sep_char => (
     is      => 'ro',
     default => sub {','},
@@ -26,7 +26,7 @@ has escape_char         => (is => 'ro', default => sub {'"'});
 has allow_loose_quotes  => (is => 'ro', default => sub {0});
 has allow_loose_escapes => (is => 'ro', default => sub {0});
 has header              => (is => 'ro', default => sub {1});
-has fields => (
+has fields              => (
     is     => 'rwp',
     coerce => sub {
         my $fields = $_[0];
@@ -42,7 +42,7 @@ sub _build_csv {
         {
             binary      => 1,
             sep_char    => $self->sep_char,
-            quote_char  => $self->quote_char  ? $self->quote_char  : undef,
+            quote_char  => $self->quote_char ? $self->quote_char : undef,
             escape_char => $self->escape_char ? $self->escape_char : undef,
             allow_loose_quotes  => $self->allow_loose_quotes,
             allow_loose_escapes => $self->allow_loose_escapes,
