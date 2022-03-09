@@ -2,7 +2,7 @@ package Catmandu::Fix::SimpleGetValue;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2016';
+our $VERSION = '1.2017';
 
 use Moo::Role;
 use namespace::clean;

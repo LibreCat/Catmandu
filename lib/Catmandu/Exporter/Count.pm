@@ -3,7 +3,7 @@ package Catmandu::Exporter::Count;
 use Catmandu::Sane;
 use Catmandu::Util qw(is_hash_ref is_array_ref is_able);
 
-our $VERSION = '1.2016';
+our $VERSION = '1.2017';
 
 use Moo;
 use namespace::clean;

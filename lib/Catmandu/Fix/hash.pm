@@ -2,7 +2,7 @@ package Catmandu::Fix::hash;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2016';
+our $VERSION = '1.2017';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

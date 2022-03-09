@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.2016",
+  "dist_version" => "1.2017",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -69,7 +69,7 @@ my %module_build_args = (
     "YAML::XS" => "0.41",
     "asa" => 0,
     "namespace::clean" => "0.24",
-    "perl" => "v5.10.1"
+    "perl" => "v5.14.0"
   },
   "script_files" => [
     "bin/catmandu"
