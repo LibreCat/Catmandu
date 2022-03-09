@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - bump required version of Parser::MGC
 
 1.2017  2022-03-09 15:59:27 CET
   - remove weird io test

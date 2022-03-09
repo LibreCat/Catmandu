@@ -41,7 +41,7 @@ requires 'Module::Info', 0;
 requires 'Moo', '>=1.004006';
 requires 'MooX::Aliases', '>=0.001006';
 requires 'Package::Stash', 0;
-requires 'Parser::MGC', '0.15';
+requires 'Parser::MGC', '>=0.21';
 requires 'Path::Iterator::Rule','0';
 requires 'Path::Tiny', '0';
 requires 'Role::Tiny', 0;
