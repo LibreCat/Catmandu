@@ -17,9 +17,9 @@ has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
 has default_bag     => (is => 'lazy');
 has default_plugins => (is => 'ro', default => sub {[]},);
 has default_options => (is => 'ro', default => sub {+{}},);
-has bag_options => (is => 'ro', init_arg => 'bags', default => sub {+{}},);
-has key_prefix  => (is => 'lazy', default => sub {'_'},);
-has id_key      => (is => 'lazy', alias => 'id_field');
+has bag_options => (is => 'ro',   init_arg => 'bags', default => sub {+{}},);
+has key_prefix  => (is => 'lazy', default  => sub {'_'},);
+has id_key      => (is => 'lazy', alias    => 'id_field');
 
 sub key_for {
     $_[0]->key_prefix . $_[1];

@@ -259,8 +259,8 @@ sub get_data {
     if (is_array_ref($data)) {
         if    ($key eq '$first') {return unless @$data; $key = 0}
         elsif ($key eq '$last')  {return unless @$data; $key = @$data - 1}
-        elsif ($key eq '*') {return @$data}
-        if (array_exists($data, $key)) {
+        elsif ($key eq '*')      {return @$data}
+        if    (array_exists($data, $key)) {
             return $data->[$key];
         }
         return;
@@ -297,8 +297,8 @@ sub delete_data {
     if (is_array_ref($data)) {
         if    ($key eq '$first') {return unless @$data; $key = 0}
         elsif ($key eq '$last')  {return unless @$data; $key = @$data - 1}
-        elsif ($key eq '*') {return splice @$data, 0, @$data}
-        if (array_exists($data, $key)) {
+        elsif ($key eq '*')      {return splice @$data, 0, @$data}
+        if    (array_exists($data, $key)) {
             return splice @$data, $key, 1;
         }
         return;
@@ -333,10 +333,10 @@ sub data_at {
                     @$data;
             }
             else {
-                if    ($key eq '$first')   {$key                        = 0}
-                elsif ($key eq '$last')    {$key                        = -1}
+                if    ($key eq '$first')   {$key = 0}
+                elsif ($key eq '$last')    {$key = -1}
                 elsif ($key eq '$prepend') {unshift @$data, undef; $key = 0}
-                elsif ($key eq '$append') {push @$data, undef; $key = @$data}
+                elsif ($key eq '$append')  {push @$data, undef; $key = @$data}
                 is_integer($key) || return;
                 if ($create && @$path) {
                     $data = $data->[$key] ||= is_integer($path->[0])
@@ -532,7 +532,8 @@ sub check_maybe_instance {
         'should be undef or instance of ' . array_to_sentence(\@_));
 }
 
-Data::Util::install_subroutine(__PACKAGE__,
+Data::Util::install_subroutine(
+    __PACKAGE__,
     hash_merge    => \&Hash::Merge::Simple::merge,
     is_same       => \&Data::Compare::Compare,
     is_invocant   => \&Data::Util::is_invocant,

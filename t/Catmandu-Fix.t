@@ -54,11 +54,11 @@ ok is_code_ref($ref);
 is $ref->()->{n}, 2;
 is $ref->()->{n}, 1;
 is $ref->()->{n}, 0;
-is $ref->(), undef;
+is $ref->(),      undef;
 
 # test logging
 can_ok $fixer , 'log';
-isa_ok $fixer->log, 'Log::Any::Proxy';
+isa_ok $fixer->log,          'Log::Any::Proxy';
 isa_ok $fixer->log->adapter, 'Log::Any::Adapter::Null';
 
 # test error handling

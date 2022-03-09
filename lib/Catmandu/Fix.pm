@@ -40,8 +40,12 @@ has _reject_var => (
     init_arg => undef,
     builder  => '_build_reject_var'
 );
-has _fixes_var =>
-    (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_fixes_var');
+has _fixes_var => (
+    is       => 'ro',
+    lazy     => 1,
+    init_arg => undef,
+    builder  => '_build_fixes_var'
+);
 has preprocess => (is => 'ro');
 has _hogan =>
     (is => 'ro', lazy => 1, init_arg => undef, builder => '_build_hogan');
@@ -151,7 +155,7 @@ sub _build_hogan {
 sub _preprocess {
     my ($self, $text) = @_;
     return $text unless $self->preprocess || $self->_hogan_vars;
-    my $vars = $self->_hogan_vars || {};
+    my $vars = $self->_hogan_vars         || {};
     $self->_hogan->compile($text, {numeric_string_as_string => 1})
         ->render($vars);
 }
@@ -575,11 +579,11 @@ sub emit_delete_key {
     }
     elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
         $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
-        $perl .= "push(\@{${vals}}, " if $cb;
-        $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
+        $perl .= "push(\@{${vals}}, "                    if $cb;
+        $perl .= "splice(\@{${var}}, 0, 1)"              if $key eq '$first';
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
-        $perl .= "splice(\@{${var}}, 0, \@{${var}})" if $key eq '*';
-        $perl .= ")" if $cb;
+        $perl .= "splice(\@{${var}}, 0, \@{${var}})"     if $key eq '*';
+        $perl .= ")"                                     if $cb;
     }
     else {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";

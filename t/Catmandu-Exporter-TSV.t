@@ -31,8 +31,8 @@ pony\t2
 shrimp\t3
 EOF
 
-is $out, $tsv, "TSV strings ok";
-is $exporter->count, 3, "Count ok";
+is $out,             $tsv, "TSV strings ok";
+is $exporter->count, 3,    "Count ok";
 
 $data = [{b => '1'}, {'a' => 'pony', b => '2'}, {'a' => 'shrimp', b => '3'}];
 $out  = "";

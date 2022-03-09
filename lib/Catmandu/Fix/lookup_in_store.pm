@@ -15,7 +15,7 @@ with 'Catmandu::Fix::Builder';
 
 has path       => (fix_arg => 1);
 has store_name => (fix_arg => 1);
-has bag_name   => (fix_opt => 1, init_arg => 'bag');
+has bag_name   => (fix_opt => 1, init_arg  => 'bag');
 has default    => (fix_opt => 1, predicate => 1);
 has delete     => (fix_opt => 1);
 has store_args => (fix_opt => 'collect');

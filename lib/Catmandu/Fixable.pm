@@ -9,8 +9,11 @@ use Catmandu;
 use Moo::Role;
 use namespace::clean;
 
-has _fixer =>
-    (is => 'ro', init_arg => 'fix', coerce => sub {Catmandu->fixer($_[0])},);
+has _fixer => (
+    is       => 'ro',
+    init_arg => 'fix',
+    coerce   => sub {Catmandu->fixer($_[0])},
+);
 
 1;
 

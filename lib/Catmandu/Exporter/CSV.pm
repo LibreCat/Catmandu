@@ -34,7 +34,7 @@ sub _build_csv {
             sep_char     => $self->sep_char,
             always_quote => $self->always_quote,
             quote_space  => $self->quote_space,
-            quote_char   => $self->quote_char ? $self->quote_char : undef,
+            quote_char   => $self->quote_char  ? $self->quote_char  : undef,
             escape_char  => $self->escape_char ? $self->escape_char : undef,
         }
     );

@@ -4,7 +4,7 @@ Catmandu::Introduction - An Introduction to Catmandu data processing toolkit
 
 # STATUS
 
-[![Build Status](https://app.travis-ci.com/LibreCat/Catmandu.svg?branch=dev)](https://app.travis-ci.com/github/LibreCat/Catmandu) [![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.svg?branch=master)](https://coveralls.io/r/LibreCat/Catmandu) [![CPANTS kwalitee](http://cpants.cpanauthors.org/dist/Catmandu.png)](http://cpants.cpanauthors.org/dist/Catmandu)
+[![Linux build status](https://github.com/LibreCat/Catmandu/actions/workflows/linux.yml/badge.svg)](https://github.com/LibreCat/Catmandu/actions/workflows/linux.yml) [![Coverage](https://coveralls.io/repos/LibreCat/Catmandu/badge.svg?branch=master)](https://coveralls.io/r/LibreCat/Catmandu) [![CPANTS kwalitee](http://cpants.cpanauthors.org/dist/Catmandu.png)](http://cpants.cpanauthors.org/dist/Catmandu)
 
 # Introduction
 

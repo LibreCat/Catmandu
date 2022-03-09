@@ -34,10 +34,16 @@ sub unbackslash ($) {
 
 # End from String::Escape
 
-has line_sep =>
-    (is => 'ro', default => sub {"\n"}, coerce => sub {unbackslash($_[0]);});
-has field_sep =>
-    (is => 'ro', default => sub {undef}, coerce => sub {unbackslash($_[0])});
+has line_sep => (
+    is      => 'ro',
+    default => sub {"\n"},
+    coerce  => sub {unbackslash($_[0]);}
+);
+has field_sep => (
+    is      => 'ro',
+    default => sub {undef},
+    coerce  => sub {unbackslash($_[0])}
+);
 
 sub add {
     my ($self, $data) = @_;

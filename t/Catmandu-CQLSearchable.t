@@ -36,8 +36,8 @@ qr/missing search, searcher, delete_by_query, translate_sru_sortkeys, translate_
 
 my $s = T::Searchable->new;
 
-is $s->default_default_limit, 10;
-is $s->default_maximum_limit, 1000;
+is $s->default_default_limit,      10;
+is $s->default_maximum_limit,      1000;
 is $s->normalize_query("foo bar"), "foo bar";
 
 done_testing;

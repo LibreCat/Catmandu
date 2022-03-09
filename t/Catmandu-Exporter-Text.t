@@ -47,8 +47,8 @@ EOF
 
     # don't call commit to test streaming output
 
-    is $exporter->count, 3, 'Count ok';
-    is $file, "moose\tpony\tshrimp,lobster\t", 'Text doc array';
+    is $exporter->count, 3,                               'Count ok';
+    is $file,            "moose\tpony\tshrimp,lobster\t", 'Text doc array';
 }
 
 done_testing;
