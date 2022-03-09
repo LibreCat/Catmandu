@@ -2,7 +2,7 @@ package Catmandu::Fix::Namespace::perl;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2017';
+our $VERSION = '1.2018';
 
 use Catmandu::Util qw(is_instance require_package);
 use String::CamelCase qw(camelize);

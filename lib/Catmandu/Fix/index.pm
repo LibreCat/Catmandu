@@ -2,7 +2,7 @@ package Catmandu::Fix::index;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2017';
+our $VERSION = '1.2018';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

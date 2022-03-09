@@ -2,7 +2,7 @@ package Catmandu::Interactive;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2017';
+our $VERSION = '1.2018';
 
 use Catmandu;
 use Moo;

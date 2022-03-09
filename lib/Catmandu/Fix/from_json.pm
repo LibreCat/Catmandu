@@ -2,7 +2,7 @@ package Catmandu::Fix::from_json;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2017';
+our $VERSION = '1.2018';
 
 use Cpanel::JSON::XS ();
 use Moo;

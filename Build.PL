@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.2017",
+  "dist_version" => "1.2018",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -49,7 +49,7 @@ my %module_build_args = (
     "Moo" => "1.004006",
     "MooX::Aliases" => "0.001006",
     "Package::Stash" => 0,
-    "Parser::MGC" => "0.15",
+    "Parser::MGC" => "0.21",
     "Path::Iterator::Rule" => 0,
     "Path::Tiny" => 0,
     "Role::Tiny" => 0,
