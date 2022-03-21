@@ -464,11 +464,11 @@ sub is_bool {
     my $obj = $_[0];
     Scalar::Util::blessed($obj) || return 0;
     eval {
-        $obj->isa('boolean')
-        || $obj->isa('Types::Serialiser::Boolean')
-        || $obj->isa('JSON::XS::Boolean')
-        || $obj->isa('Cpanel::JSON::XS::Boolean')
-        || $obj->isa('JSON::PP::Boolean');
+               $obj->isa('boolean')
+            || $obj->isa('Types::Serialiser::Boolean')
+            || $obj->isa('JSON::XS::Boolean')
+            || $obj->isa('Cpanel::JSON::XS::Boolean')
+            || $obj->isa('JSON::PP::Boolean');
     } // 0;
 }
 
@@ -518,7 +518,7 @@ sub is_instance {
     my $obj = shift;
     Scalar::Util::blessed($obj) || return 0;
     for my $pkg (@_) {
-        eval { $obj->isa($pkg) } || return 0;
+        eval {$obj->isa($pkg)} || return 0;
     }
     1;
 }
