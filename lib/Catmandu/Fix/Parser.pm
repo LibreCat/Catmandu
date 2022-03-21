@@ -8,6 +8,7 @@ use Catmandu::Util
     qw(check_value check_string is_array_ref is_instance is_able require_package);
 use Module::Info;
 use Moo;
+use Parser::MGC;
 use namespace::clean;
 
 extends 'Parser::MGC';
