@@ -2,7 +2,7 @@ package Catmandu::Store::Multi::Bag;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2018';
+our $VERSION = '1.2019';
 
 use Moo;
 use Hash::Merge::Simple qw(merge);

@@ -2,7 +2,7 @@ package Catmandu::Fix::uniq;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2018';
+our $VERSION = '1.2019';
 
 use List::MoreUtils qw(uniq);
 use Catmandu::Util::Path qw(as_path);

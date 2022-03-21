@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2019  2022-03-21 16:21:54 CET
   - wrap ->isa in eval
   - remove release tests from github actions matrix
 

@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::importer;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2018';
+our $VERSION = '1.2019';
 
 use Moo;
 use Catmandu::Util qw(:is);

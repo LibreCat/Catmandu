@@ -2,7 +2,7 @@ package Catmandu::Fix::copy_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2018';
+our $VERSION = '1.2019';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
