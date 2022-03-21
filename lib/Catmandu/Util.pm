@@ -461,12 +461,15 @@ sub check_different {
 }
 
 sub is_bool {
-    Scalar::Util::blessed($_[0])
-        && ($_[0]->isa('boolean')
-        || $_[0]->isa('Types::Serialiser::Boolean')
-        || $_[0]->isa('JSON::XS::Boolean')
-        || $_[0]->isa('Cpanel::JSON::XS::Boolean')
-        || $_[0]->isa('JSON::PP::Boolean'));
+    my $obj = $_[0];
+    Scalar::Util::blessed($obj) || return 0;
+    eval {
+        $obj->isa('boolean')
+        || $obj->isa('Types::Serialiser::Boolean')
+        || $obj->isa('JSON::XS::Boolean')
+        || $obj->isa('Cpanel::JSON::XS::Boolean')
+        || $obj->isa('JSON::PP::Boolean');
+    } // 0;
 }
 
 sub is_integer {
@@ -514,7 +517,9 @@ sub check_maybe_able {
 sub is_instance {
     my $obj = shift;
     Scalar::Util::blessed($obj) || return 0;
-    $obj->isa($_)               || return 0 for @_;
+    for my $pkg (@_) {
+        eval { $obj->isa($pkg) } || return 0;
+    }
     1;
 }
 

@@ -8,7 +8,6 @@ use Catmandu::Util
     qw(check_value check_string is_array_ref is_instance is_able require_package);
 use Module::Info;
 use Moo;
-use Parser::MGC;
 use namespace::clean;
 
 extends 'Parser::MGC';
@@ -75,7 +74,7 @@ sub parse {
     }
     catch {
         my $err = $_;
-        if (is_instance($err, 'Catmandu::Error')) {
+        if (ref($err) && ref($err) =~ /^Catmandu/) {
             $err->set_source($source) if is_able($err, 'set_source');
             $err->throw;
         }
