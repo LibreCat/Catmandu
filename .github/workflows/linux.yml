@@ -27,7 +27,6 @@ jobs:
         include:
           - perl-version: '5.32'
             os: ubuntu-latest
-            release-test: true
             coverage: true
     container:
       image: perl:${{ matrix.perl-version }}
@@ -41,12 +40,6 @@ jobs:
           cpanm -n 'Getopt::Long::Descriptive~<0.105' 'App::Cmd~<0.332'
         fi
     - run: cpanm -n --installdeps .
-    - name: Run release tests
-      if: ${{ matrix.release-test }}
-      run: |
-        cpanm -n Perl::Tidy Test::Code::TidyAll Test::Perl::Critic
-        cpanm -n --installdeps --with-develop .
-        prove -lr xt
     - name: Run tests (no coverage)
       if: ${{ !matrix.coverage }}
       run: prove -lr t
