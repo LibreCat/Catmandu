@@ -54,7 +54,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -67,7 +67,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -1199,17 +1199,17 @@ remove_field(&#39;record&#39;);</code></pre>
 <p>You don’t need to write fixes into a file to use them. E.g. if we
 want to have some statistic on the publication year in the camel.usmarc
 file we can do something like:</p>
-<pre><code>$ catmandu convert MARC --fix &quot;marc_map(&#39;008/7-10&#39;,&#39;year&#39;); retain_field(&#39;year&#39;)&quot; to CSV &lt; camel.usmarc
+<pre><code>$ catmandu convert MARC --fix &quot;marc_map(&#39;008/7-10&#39;,&#39;year&#39;); retain(&#39;year&#39;)&quot; to CSV &lt; camel.usmarc
 year
 2000
 2000
 1999
 .
 .</code></pre>
-<p>With marc_map we extracted the year form the 008 field. With
-retain_field we deleted everything in the output except for the field
-‘year’. We used the CSV <a href="#-exporters">Exporter</a> to present
-the results in an easy format.</p>
+<p>With marc_map we extracted the year form the 008 field. With retain
+we deleted everything in the output except for the field ‘year’. We used
+the CSV <a href="#-exporters">Exporter</a> to present the results in an
+easy format.</p>
 </section>
 </section>
 <section id="fix-language" class="level1" data-number="5">
@@ -1734,7 +1734,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb144-1"><a href
 <span id="cb144-12"><a href="#cb144-12" aria-hidden="true" tabindex="-1"></a><span class="ex">marc_map</span><span class="er">(</span><span class="st">&quot;245&quot;</span><span class="ex">,</span><span class="st">&quot;title&quot;</span><span class="kw">)</span></span>
 <span id="cb144-13"><a href="#cb144-13" aria-hidden="true" tabindex="-1"></a><span class="ex">remove_field</span><span class="er">(</span><span class="st">&quot;record&quot;</span><span class="kw">)</span></span>
 <span id="cb144-14"><a href="#cb144-14" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu convert OAI <span class="at">--url</span> http://biblio.ugent.be/oai <span class="at">--set</span> allFtxt to JSON</span>
-<span id="cb144-15"><a href="#cb144-15" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu convert OAI <span class="at">--url</span> http://biblio.ugent.be/oai <span class="at">--set</span> allFtxt to JSON <span class="at">--fix</span> <span class="st">&#39;retain_field(&quot;title&quot;)&#39;</span></span>
+<span id="cb144-15"><a href="#cb144-15" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu convert OAI <span class="at">--url</span> http://biblio.ugent.be/oai <span class="at">--set</span> allFtxt to JSON <span class="at">--fix</span> <span class="st">&#39;retain(&quot;title&quot;)&#39;</span></span>
 <span id="cb144-16"><a href="#cb144-16" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu convert SRU <span class="at">--base</span> http://www.unicat.be/sru <span class="at">--query</span> dna  </span>
 <span id="cb144-17"><a href="#cb144-17" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu convert ArXiv <span class="at">--query</span> <span class="st">&#39;all:electron&#39;</span></span>
 <span id="cb144-18"><a href="#cb144-18" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu convert PubMed <span class="at">--term</span> <span class="st">&#39;hochstenbach&#39;</span></span>
@@ -1755,7 +1755,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb145-1"><a href
 <span id="cb145-4"><a href="#cb145-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu import MARC to ElasticSearch <span class="at">--index_name</span> mydb <span class="at">--bag</span> data <span class="at">--fix</span> <span class="st">&#39;marc_map(&quot;245a&quot;,&quot;title&quot;)&#39;</span> <span class="op">&lt;</span> records.mrc</span>
 <span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb145-6"><a href="#cb145-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu export MongoDB <span class="at">--database_name</span> mydb <span class="at">--bag</span> data to JSON</span>
-<span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu export MongoDB <span class="at">--database_name</span> mydb <span class="at">--bag</span> data to JSON <span class="at">--fix</span> <span class="st">&#39;retain_field(&quot;_id&quot;)&#39;</span></span>
+<span id="cb145-7"><a href="#cb145-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu export MongoDB <span class="at">--database_name</span> mydb <span class="at">--bag</span> data to JSON <span class="at">--fix</span> <span class="st">&#39;retain(&quot;_id&quot;)&#39;</span></span>
 <span id="cb145-8"><a href="#cb145-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu export Solr <span class="at">--url</span> http://localhost:8983/solr to JSON</span>
 <span id="cb145-9"><a href="#cb145-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> catmandu export ElasticSearch <span class="at">--index_name</span> mydb to JSON</span></code></pre></div>
 </section>
@@ -2653,9 +2653,9 @@ id="extract-all-identifiers-from-an-oai-repository-from-the-command-line"
 class="level4 unnumbered">
 <h4 class="unnumbered">Extract all identifiers from an OAI repository
 from the command line</h4>
-<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai --fix &#39;retain_field(&quot;_id&quot;)&#39;</code></pre>
+<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai --fix &#39;retain(&quot;_id&quot;)&#39;</code></pre>
 <p>or if you like an CSV file</p>
-<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain_field(&quot;_id&quot;)&#39;</code></pre>
+<pre><code>$ catmandu convert OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain(&quot;_id&quot;)&#39;</code></pre>
 </section>
 <section
 id="extract-all-identifiers-from-an-oai-repository-into-csv-in-your-perl-code"
@@ -2665,7 +2665,7 @@ into CSV in your Perl code</h4>
 <pre><code>use Catmandu;
 
 my $importer = Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
-my $fixer    = Catmandu-&gt;fixer(&#39;retain_field(&quot;_id&quot;)&#39;);
+my $fixer    = Catmandu-&gt;fixer(&#39;retain(&quot;_id&quot;)&#39;);
 my $exporter = Catmandu-&gt;exporter(&#39;CSV&#39;);
 
 $exporter-&gt;add_many(
@@ -2679,7 +2679,7 @@ class="level4 unnumbered">
 <h4 class="unnumbered">Show the speed of importing records from the
 command line</h4>
 <p>Hint: use the <code>-v</code> option</p>
-<pre><code>$ catmandu convert -v OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain_field(&quot;_id&quot;)&#39; &gt; /dev/null</code></pre>
+<pre><code>$ catmandu convert -v OAI --url https://biblio.ugent.be/oai to CSV --fix &#39;retain(&quot;_id&quot;)&#39; &gt; /dev/null</code></pre>
 <p>Here we send the output to the /dev/null to show the verbose
 messages.</p>
 </section>
@@ -2690,7 +2690,7 @@ Perl program</h4>
 <pre><code>use Catmandu;
 
 my $importer = Catmandu-&gt;importer(&#39;OAI&#39;,url =&gt; &#39;https://biblio.ugent.be/oai&#39;);
-my $fixer    = Catmandu-&gt;fixer(&#39;retain_field(&quot;_id&quot;)&#39;);
+my $fixer    = Catmandu-&gt;fixer(&#39;retain(&quot;_id&quot;)&#39;);
 my $exporter = Catmandu-&gt;exporter(&#39;CSV&#39;);
 
 $exporter-&gt;add_many(
