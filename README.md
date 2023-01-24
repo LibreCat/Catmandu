@@ -99,7 +99,7 @@ There are several ways to get a working version of Catmandu on your computer.
 
 For a quick and demo installation visit our [blog](https://librecatproject.wordpress.com/get-catmandu/) where a VirtualBox image is available containing all the Catmandu modules, including ElasticSearch and MongoDB. A similarly easy method is using [Docker](https://www.docker.com/): At [librecat/catmandu](https://hub.docker.com/r/librecat/catmandu/) a Docker image is provided with version tags for each release, `latest` for the latest release and `dev` for the latest development version. The image can be tried online in a Jupyter notebook [via binder](https://mybinder.org/v2/gh/LibreCat/catmandu-notebook/master).
 
-On our [website](http://librecat.org/Catmandu/#installation) we provide installation instructions for:
+In our [wikie](https://github.com/LibreCat/Catmandu/wiki/Installation) we provide installation instructions for:
 
 - Debian
 - Ubuntu Server
