@@ -213,30 +213,9 @@ Catmandu - a data toolkit
     # Fix data, add, delete, change fields
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
     $ catmandu convert JSON --fix all_my_fixes.txt < data.json
+
     # Use a moustache preprocessor on the fix script
     $ catmandu convert JSON --fix all_my_fixes.txt --var opt1=foo --var opt2=bar < data.json
-
-    # Import data into a database
-    # Requires: Catmandu::MongoDB and Catmandu::ElasticSearch
-    $ catmandu import YAML to MongoDB --database_name bibliography < data.yml
-    $ catmandu import CSV to ElasticSearch --index_name mystuff < data.csv
-
-    # Export data from a database
-    # Requires: Catmandu::MongoDB and Catmandu::ElasticSearch
-    $ catmandu export MongoDB --database_name bibliography to YAML > data.yml
-    $ catmandu export ElasticSearch --index_name mystuff to CSV > data.csv
-
-    # Copy data from one store to another
-    $ catmandu copy MongoDB --database_name mydb to ElasticSearch --index_name mydb
-
-    # Show the contents of catmandu.yml
-    $ catmandu config
-
-    # Count items in a store
-    $ catmandu count test1
-
-    # Delete items from store
-    $ catmandu delete test1 --query 'title:"My Rabbit"'
 
     # run a fix script
     $ catmandu run myfixes.fix
@@ -250,502 +229,86 @@ Catmandu - a data toolkit
     $ chmod 755 myfixes.fix
     $ ./myfixes.fix
 
-    # From Perl
-    use Catmandu;
-
-    # If you have Catmandu::OAI and Catmandu::MongoDB installed
-    my $importer = Catmandu->importer('OAI',url => 'https://biblio.ugent.be/oai')
-    my $store    = Catmandu->store('MongoDB',database_name => 'test');
-
-    # Import all the OAI records into MongoDB
-    $store->add_many($importer);
-
-    # Export all the MongoDB records to YAML and apply some fixes
-    # myfixes.txt:
-    #   upcase(title.*)
-    #   remove_field(_metadata)
-    #   join_field(creator,'; ')
-    #   join_field(subject,'-- ')
-    my $fixer    = Catmandu->fixer('myfixes.txt');
-    my $exporter = Catmandu->exporter('YAML');
-
-    $exporter->add_many( $fixer->fix($store) );
-    $exporter->commit;
-
 =head1 DESCRIPTION
 
-Catmandu provides a command line client and a Perl API to ease the export (E)
-transformation (T) and loading (L) of data into databases or data file, ETL in short.
+Catmandu provides a command line tools for the conversion of various data 
+formats including: JSON, YAML, RDF, CSV, TSV, XML and even Excel. Using 
+extension modules, specialized conversions for metadata formats using 
+in libraries, archives and museums is also supports. We provide support 
+for MARC, MAB, MODS, OAI-PMH, PICA, PNX, RIS, LIDO, SRU and Z39.50. 
 
-Most of the daily work processing structured data can be done on the command line
-executing the C<catmandu> command. With our catmandu command ETL processing is available
-in a Perl context. Catmandu is different from other
-ETL tools by its focus on command line processing with much support for dataformats
-available in (academic) libraries: MARC, MODS, OAI and SRU. But, also generic formats such
-as JSON, YAML, CVS, Excel, XML, RDF, Atom are supported.
+Specialized conversions require a mapping language. This is implemented in 
+Catmandu using the `Fix` language. For a short introduction read
+L<Catmandu::Introduction>.  Online tutorials can be found at the end of this document.
 
-Read :
+=head1 INSTALL 
 
-=over
+=head2 From Source
 
-=item  * L<Catmandu::Introduction> for a primer on the command line capabilities of Catmandu.
+    # Clone the directory
+    git clone https://github.com/LibreCat/Catmandu
 
-=item  * L<Catmandu::Importer> for the basics of importing
+    # Build
+    cd Catmandu
+    cpanm -n -q --installdeps --skip-satisfied .
+    perl Build.PL && ./Build && ./Build install
 
-=item  * L<Catmandu::Fix> for the basics of transformations
+=head2 Using Docker
 
-=item  * L<Catmandu::Exporter> for the basics of exporting
+    docker build -t librecat/catmandu .
+    
+    # Run catmandu with access to you local files at <YourDrive>
+    docker run -v <YourDrive>:/home/catmandu/Home  -it librecat/catmandu
 
-=item  * L<Catmandu::Store> for the basics of storing information
+    # E.g.
+    docker run -v C:\Users\alice:/home/catmandu/Home -it librecat/catmandu
 
-=item  * Or, visit our website at L<http://librecat.org/> and our blog L<https://librecatproject.wordpress.com/>
-    for many tutorials
+=head1 INSTALL EXTENSIONS
 
-=back
+    cpanm install <PackageName>
 
-The documentation below describes the methods available when including Catmandu as
-part of a Perl script. For an overview of the command line tool itself read the
-documentation on L<catmandu>.
+    # E.g.
+    cpanm install Catmandu::MARC
 
-=head1 USE
+=head1 POPULAR EXTENSIONS
 
-To include Catmandu in a Perl script it should be loaded with a C<use> command:
+L<Catmandu::Breaker>
 
-    use Catmandu;
+L<Catmandu::Identifier>
 
-By default no methods are imported into the Perl context. To import all or some Catmandu methods,
-provide them as a list to the C<use> command:
+L<Catmandu::MARC>
 
-    use Catmandu -all;
-    use Catmandu qw(config store exporter);
+L<Catmandu::OAI>
 
-Catmandu can load configuration options for exports, importers, fixers via configuration
-files (see the CONFIG section below). When adding the --load option (optionally with a path) to the
-C<use> command, these configuration files will be loaded at the start of your script.
+L<Catmandu::PICA>
 
-    use Catmandu -load;
-    use Catmandu -load => ['/my/config/directory'];
+L<Catmandu::RDF>
 
-    # or use all the options
-    use Catmandu -all, -load => [qw(/config/path' '/another/config/path)];
+L<Catmandu::SRU>
 
-=head1 CLASS METHODS
+L<Catmandu::Stat>
 
-=head2 log
+L<Catmandu::Template>
 
-Return the current L<Log::Any> logger.
+L<Catmandu::Validator>
 
-    use Catmandu;
-    use Log::Any::Adapter;
-    use Log::Log4perl;
+L<Catmandu::XLS>
 
-    Log::Any::Adapter->set('Log4perl'); # requires Log::Any::Adapter::Log4perl
-    Log::Log4perl::init('./log4perl.conf');
+L<Catmandu::XSD>
 
-    my $logger = Catmandu->log;
-    $logger->info("Starting main program");
-
-with log4perl.conf like:
-
-    # Send a copy of all logging messages to STDERR
-    log4perl.rootLogger=DEBUG,STDERR
-
-    # Logging specific for your main program
-    log4perl.category.myprog=INFO,STDERR
-
-    # Logging specific for on part of Catmandu
-    log4perl.category.Catmandu::Fix=DEBUG,STDERR
-
-    # Where to send the STDERR output
-    log4perl.appender.STDERR=Log::Log4perl::Appender::Screen
-    log4perl.appender.STDERR.stderr=1
-    log4perl.appender.STDERR.utf8=1
-
-    log4perl.appender.STDERR.layout=PatternLayout
-    log4perl.appender.STDERR.layout.ConversionPattern=%d [%P] - %p %l time=%r : %m%n
-
-=head2 default_load_path(['/default/path'])
-
-Returns the default location where L<Catmandu> looks for configuration and lib
-when called with no argument. Sets the default location if a path is given.
-The default load path is the script directory or it's parent if the script
-directory is C<bin>.
-
-=head2 load
-
-Load all the configuration options in the catmandu.yml configuration file.
-See CONFIG below for extended examples of configuration options.
-
-=head2 load('/path', '/another/path')
-
-Load all the configuration options stored at alternative paths.
-
-A load path C<':up'> will search upwards from your program for configuration.
-
-See CONFIG below for extended examples of configuration options.
-
-=head2 roots
-
-Returns an ARRAYREF of paths where configuration was found. Note that this list
-is empty before C<load>.
-
-=head2 root
-
-Returns the first path where configuration was found. Note that this is
-C<undef> before C<load>.
-
-=head2 config
-
-Returns the current configuration as a HASHREF.
-
-=head2 config($config)
-
-Set a new configuration and reload the environment.
-
-=head2 default_store
-
-Return the name of the default store.
-
-=head2 store([NAME])
-
-Return an instance of L<Catmandu::Store>. The NAME is a name of a L<Catmandu::Store> or the
-name of a store configured in a catmandu.yml configuration file. When no NAME is given, the
-'default' store in the configuration file will be used.
-
-E.g. if the configuration file 'catmandu.yml' contains:
-
- store:
-  default:
-   package: ElasticSearch
-   options:
-     index_name: blog
-  test:
-   package: Mock
-
-then in your program:
-
-    # This will use ElasticSearch
-    my $store = Catmandu->store('ElasticSearch', index_name => 'blog');
-
-    # or because we have a 'default' set in the configuration file
-
-    my $store = Catmandu->store('default');
-
-    # or because 'default' will be used when no name was provided
-
-    my $store = Catmandu->store;
-
-    # This will use Mock
-    my $store = Catmandu->store('test');
-
-Configuration settings can be overwritten by the store command:
-
-  my $store2 = Catmandu->store('default', index_name => 'test2');
-
-=head2 default_fixer
-
-Return the name of the default fixer.
-
-=head2 fixer(NAME)
-
-=head2 fixer(FIX,FIX)
-
-=head2 fixer([FIX])
-
-Return an instance of L<Catmandu::Fix>. NAME can be the name of a fixer section
-in a catmandu.yml file. Or, one or more L<Catmandu::Fix>-es can be provided inline.
-
-E.g. if the configuration file 'catmandu.yml' contains:
-
- fixer:
-  default:
-    - do_this()
-    - do_that()
-
-then in your program al these lines below will create the same fixer:
-
-    my $fixer = Catmandu->fixer('do_this()', 'do_that()');
-    my $fixer = Catmandu->fixer(['do_this()', 'do_that()']);
-    my $fixer = Catmandu->fixer('default');
-    my $fixer = Catmandu->fixer(); # The default name is 'default'
-
-FIX-es can be also written to a Fix script. E.g. if myfixes.txt contains:
-
- do_this()
- do_that()
-
-then the above code will even be equivalent to:
-
-   my $fixer = Catmandu->fixer('myfixes.txt');
-
-=head2 default_importer
-
-Return the name of the default importer.
-
-=head2 default_importer_package
-
-Return the name of the default importer package if no
-package name is given in the config or as a param.
-
-=head2 importer(NAME)
-
-Return an instance of L<Catmandu::Importer>. The NAME is a name of a L<Catmandu::Importer> or the
-name of a importer configured in a catmandu.yml configuration file. When no NAME is given, the
-'default' importer in the configuration file will be used.
-
-E.g. if the configuration file 'catmandu.yml' contains:
-
-  importer:
-    default:
-      package: OAI
-      options:
-        url: http://www.instute.org/oai/
-
-then in your program all these lines will be equivalent:
-
-  my $importer = Catmandu->importer('OAI', url => 'http://www.instute.org/oai/');
-  my $importer = Catmandu->importer('default');
-  my $importer = Catmandu->importer(); # The default name is 'default'
-
-Configuration settings can be overwritten by the importer command:
-
-  my $importer2 = Catmandu->importer('default', url => 'http://other.institute.org');
-
-=head2 default_exporter
-
-Return the name of the default exporter.
-
-=head2 default_exporter_package
-
-Return the name of the default exporter package if no
-package name is given in the config or as a param.
-
-=head2 exporter([NAME])
-
-Return an instance of L<Catmandu::Exporter> with name NAME (or the default when
-no name is given).  The NAME can be in a configuration file (see 'importer').
-
-=head2 validator([NAME])
-
-Return an instance of L<Catmandu::Validator> with name NAME (or the default when
-no name is given).  The NAME can be in a configuration file (see 'importer').
-
-=head2 export($data,[NAME])
-
-Export data using a default or named exporter or exporter instance.
-
-    Catmandu->export({ foo=>'bar'});
-
-    my $importer = Catmandu::Importer::Mock->new;
-    Catmandu->export($importer, 'YAML', file => '/my/file');
-    Catmandu->export($importer, 'my_exporter');
-    Catmandu->export($importer, 'my_exporter', exporter_option => '...' , ...);
-    Catmantu->export($importer, Catmandu::Exporter::YAML->new);
-
-=head2 export_to_string
-
-Export data using a default or named exporter to a string.
-
-    my $importer = Catmandu::Importer::Mock->new;
-    my $yaml = Catmandu->export_to_string($importer, 'YAML');
-    # is the same as
-    my $yaml = "";
-    Catmandu->export($importer, 'YAML', file => \$yaml);
-
-=head2 import_from_string
-
-Import data from a string using a default or named importer.
-Return value should be an array of hashes.
-
-    my $json = qq([{"name":"Nicolas"}]);
-    {
-        my $record = Catmandu->import_from_string( $json, "JSON" );
-    }
-    # is the same as
-    {
-        my $record = Catmandu->importer('JSON', file => \$json)->to_array()
-    }
-
-=head2 define_importer
-
-Configure a new named importer.
-
-    Catmandu->define_importer(books => CSV => (fields => 'title,author,publisher'));
-    Catmandu->importer(books => (file => 'mybooks.csv'))->each(sub {
-        my $book = shift;
-        say $book->{title};
-    });
-
-    # this is equivalent to
-
-    Catmandu->config->{importer}{books} = {
-        package => 'CSV',
-        options => {
-            fields => 'title,author,publisher',
-        },
-    }
-
-=head2 define_exporter
-
-Configure a new named exporter.
-
-    Catmandu->define_exporter('books', 'CSV', fix => 'capitalize(title)');
-    my $csv = Catmandu->export_to_string({title => 'nexus'}, 'books');
-
-    # this is equivalent to
-
-    Catmandu->config->{exporter}{books} = {
-        package => 'CSV',
-        options => {
-            fix => 'capitalize(title)',
-        },
-    }
-
-=head2 define_store
-
-Configure a new named store.
-
-    Catmandu->define_store(mydb => MongoDB => (database_name => 'mydb'));
-    Catmandu->store->bag('books')->get(1234);
-
-    # this is equivalent to
-
-    Catmandu->config->{store}{mydb} = {
-        package => 'MongoDB',
-        options => {
-            database_name => 'mydb',
-        },
-    }
-
-=head2 define_fixer
-
-Configure a new named fixer.
-
-    Catmandu->define_fixer('cleanup', [
-        'trim(title)',
-        'capitalize(title)',
-        'remove_field(junk)',
-        # ...
-    ]);
-    Catmandu->fixer('cleanup')->fix($record);
-
-=head1 EXPORTS
-
-=over
-
-=item config
-
-Same as C<< Catmandu->config >>.
-
-=item store
-
-Same as C<< Catmandu->store >>.
-
-=item importer
-
-Same as C<< Catmandu->importer >>.
-
-=item exporter
-
-Same as C<< Catmandu->exporter >>.
-
-=item validator
-
-Same as C<< Catmandu->validator >>.
-
-=item export
-
-Same as C<< Catmandu->export >>.
-
-=item export_to_string
-
-Same as C<< Catmandu->export_to_string >>.
-
-=item import_from_string
-
-Same as C<< Catmandu->import_from_string >>.
-
-=item fixer
-
-Same as C<< Catmandu->fixer >>.
-
-=item log
-
-Same as C<< Catmandu->log >>.
-
-=item -all/:all
-
-Import everything.
-
-=item -load/:load
-
-    use Catmandu -load;
-    use Catmandu -load => [];
-    # is the same as
-    Catmandu->load;
-
-    use Catmandu -load => ['/config/path'];
-    # is the same as
-    Catmandu->load('/config/path');
-
-=back
-
-=head1 CONFIG
-
-Catmandu configuration options can be stored in files in the root directory of
-your programming project. The file can be YAML, JSON or Perl and is called
-C<catmandu.yml>, C<catmandu.json> or C<catmandu.pl>. In this file you can set
-the default Catmandu stores and exporters to be used. Here is an example of a
-C<catmandu.yml> file:
-
-    store:
-      default:
-        package: ElasticSearch
-        options:
-          index_name: myrepository
-
-    exporter:
-      default:
-        package: YAML
-
-=head2 Split config
-
-For large configs it's more convenient to split the config into several files.
-You can do so by having multiple config files starting with catmandu*.
-
-    catmandu.general.yml
-    catmandu.db.yml
-    ...
-
-Split config files are processed and merged by L<Config::Onion>.
-
-=head2 Deeply nested config structures
-
-Config files can indicate a path under which their keys will be nested. This
-makes your configuration more readable by keeping indentation to a minimum.
-
-A config file containing
-
-    _prefix:
-        foo:
-            bar:
-    baz: 1
-
-will be loaded as
-
-    foo:
-      bar:
-        baz: 1
-
-See L<Config::Onion> for more information on how this works.
+L<Catmandu::Z3950>
 
 =head1 SEE ALSO
 
 =over 4
 
+=item introduction
+
+L<Catmandu::Introduction>
+
 =item documentation
 
-L<http://librecat.org/Catmandu/>
+L<http://librecat.org/>
 
 =item blog
 
@@ -759,18 +322,6 @@ L<https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/>
 
 L<catmandu>
 
-=item core modules
-
-L<Catmandu::Importer>
-L<Catmandu::Exporter>,
-L<Catmandu::Store>,
-L<Catmandu::Fix>,
-L<Catmandu::Iterable>
-
-=item extended features
-
-L<Catmandu::Validator>
-
 =back
 
 =head1 AUTHOR
@@ -779,23 +330,23 @@ Nicolas Steenlant, C<< <nicolas.steenlant at ugent.be> >>
 
 =head1 CONTRIBUTORS
 
-Magnus Enger, C<< magnus at enger.priv.no >>
+Patrick Hochstenbach, C<< patrick.hochstenbach at ugent.be >>
 
 Nicolas Franck, C<< nicolas.franck at ugent.be >>
 
-Patrick Hochstenbach, C<< patrick.hochstenbach at ugent.be >>
+Johann Rolschewski, C<< jorol at cpan.org >>
 
 Vitali Peil, C<< vitali.peil at uni-bielefeld.de >>
+
+Jakob Voss, C<< nichtich at cpan.org >>
+
+Magnus Enger, C<< magnus at enger.priv.no >>
 
 Christian Pietsch, C<< christian.pietsch at uni-bielefeld.de >>
 
 Dave Sherohman, C<< dave.sherohman at ub.lu.se >>
 
-Jakob Voss, C<< nichtich at cpan.org >>
-
 Snorri Briem, C<< snorri.briem at ub.lu.se >>
-
-Johann Rolschewski, C<< jorol at cpan.org >>
 
 Pieter De Praetere, C<< pieter.de.praetere at helptux.be >>
 

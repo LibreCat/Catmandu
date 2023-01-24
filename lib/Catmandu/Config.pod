@@ -1,0 +1,54 @@
+=encoding utf8
+
+=head1 NAME 
+
+Catmandu::Config - Configuration settings of Catmandu
+
+=head1 CONFIG
+
+Catmandu configuration options can be stored in files in the root directory of
+your programming project. The file can be YAML, JSON or Perl and is called
+C<catmandu.yml>, C<catmandu.json> or C<catmandu.pl>. In this file you can set
+the default Catmandu stores and exporters to be used. Here is an example of a
+C<catmandu.yml> file:
+
+    store:
+      default:
+        package: ElasticSearch
+        options:
+          index_name: myrepository
+
+    exporter:
+      default:
+        package: YAML
+
+=head2 Split config
+
+For large configs it's more convenient to split the config into several files.
+You can do so by having multiple config files starting with catmandu*.
+
+    catmandu.general.yml
+    catmandu.db.yml
+    ...
+
+Split config files are processed and merged by L<Config::Onion>.
+
+=head2 Deeply nested config structures
+
+Config files can indicate a path under which their keys will be nested. This
+makes your configuration more readable by keeping indentation to a minimum.
+
+A config file containing
+
+    _prefix:
+        foo:
+            bar:
+    baz: 1
+
+will be loaded as
+
+    foo:
+      bar:
+        baz: 1
+
+See L<Config::Onion> for more information on how this works.
