@@ -85,7 +85,7 @@ Catmandu contains many powerful fixes. Visit [http://librecat.org/assets/catmand
 
 # Documentation
 
-For more information read our [documentation pages](http://librecat.org/Catmandu/) and [blog](https://librecatproject.wordpress.com/) for a complete introduction and update into all Catmandu features.
+For more information read our [documentation pages](https://github.com/LibreCat/Catmandu/wiki) and [blog](https://librecatproject.wordpress.com/) for a complete introduction and update into all Catmandu features.
 
 In the winter of 2014 an Advent calendar tutorial was created to provide a day by day introduction into the UNIX command line and Catmandu:
 
