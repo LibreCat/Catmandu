@@ -12,21 +12,13 @@ Catmandu is a data processing toolkit developed as part of the [LibreCat](http:/
 
     $ catmandu convert JSON to CSV < data.json
 
-Or, to store a YAML file into an ElasticSearch database type (requires [Catmandu::ElasticSearch](https://metacpan.org/pod/Catmandu%3A%3AElasticSearch)):
-
-    $ catmandu import YAML to ElasticSearch --index_name demo < test.yml
-
-To export all the data from an Solr search engine into JSON type (requires [Catmandu::Solr](https://metacpan.org/pod/Catmandu%3A%3ASolr)):
-
-    $ catmandu export Solr --url http://localhost:8983/solr to JSON
-
 With Catmandu one can import OAI-PMH records in your application (requires [Catmandu::OAI](https://metacpan.org/pod/Catmandu%3A%3AOAI)):
 
     $ catmandu convert OAI --url http://biblio.ugent.be/oai --set allFtxt
 
 and export records into formats such as JSON, YAML, CSV, XLS, RDF and many more.
 
-Catmandu also provides the small scripting language "Fix" to manipulate data, extract parts of your dataset and transform records. For instance, rename fields  with the [move\_field](https://metacpan.org/pod/Catmandu%3A%3AFix%3A%3Amove_field) Fix command:
+Catmandu also provides a data conversion language "Fix" to manipulate data, extract parts of your dataset and transform records. For instance, rename fields  with the [move\_field](https://metacpan.org/pod/Catmandu%3A%3AFix%3A%3Amove_field) Fix command:
 
     $ catmandu convert JSON --fix 'move_field(title,my_title)' < data.json
 
@@ -70,28 +62,18 @@ Run this (on Linux) by setting the executable bit:
      $ chmod 755 myfix.fix
      $ ./myfix.fix
 
-To experiment with the Fix language you can also run the catmandu Fix interpreter in an interactive mode:
-
-     $ catmandu run
-     Catmandu 0.95 interactive mode
-     Type: \h for the command history
-     fix > add_field(hello,world)
-     ---
-     hello: world
-     ...
-     fix >
-
 Catmandu contains many powerful fixes. Visit [http://librecat.org/assets/catmandu\_cheat\_sheet.pdf](http://librecat.org/assets/catmandu_cheat_sheet.pdf) to get an overview what is possible.
 
 # Documentation
 
 For more information read our [documentation pages](https://github.com/LibreCat/Catmandu/wiki) and [blog](https://librecatproject.wordpress.com/) for a complete introduction and update into all Catmandu features.
 
-In the winter of 2014 an Advent calendar tutorial was created to provide a day by day introduction into the UNIX command line and Catmandu:
+A tutorial providing a day by day introduction into the UNIX command line and Catmandu is
+available at:
 
-[https://librecatproject.wordpress.com/2014/12/08/day-6-introduction-into-catmandu/](https://librecatproject.wordpress.com/2014/12/08/day-6-introduction-into-catmandu/)
+[https://librecatproject.wordpress.com/tutorial/](https://librecatproject.wordpress.com/tutorial/)
 
-If you need extra training, our developers regulary host workshops at library conferences and events: [http://librecat.org/events.html](http://librecat.org/events.html)
+If you need extra training, our developers regulary host workshops at library conferences such as [SWIB](http://swib.org/) and [ELAG](https://elag.org)
 
 # Installation
 
@@ -99,7 +81,7 @@ There are several ways to get a working version of Catmandu on your computer.
 
 For a quick and demo installation visit our [blog](https://librecatproject.wordpress.com/get-catmandu/) where a VirtualBox image is available containing all the Catmandu modules, including ElasticSearch and MongoDB. A similarly easy method is using [Docker](https://www.docker.com/): At [librecat/catmandu](https://hub.docker.com/r/librecat/catmandu/) a Docker image is provided with version tags for each release, `latest` for the latest release and `dev` for the latest development version. The image can be tried online in a Jupyter notebook [via binder](https://mybinder.org/v2/gh/LibreCat/catmandu-notebook/master).
 
-On our [website](http://librecat.org/Catmandu/#installation) we provide installation instructions for:
+In our [wiki](https://github.com/LibreCat/Catmandu/wiki/Installation) we provide installation instructions for:
 
 - Debian
 - Ubuntu Server
@@ -114,7 +96,7 @@ Catmandu software published at https://github.com/LibreCat/Catmandu is free soft
 
 # Developers & Support
 
-Catmandu has a very active international developer community. We welcome all feedback, bug reports and feature enhancement.
+We welcome all feedback, bug reports and feature enhancement.
 
 Join our mailing list to receive more information:  `librecat-dev@librecat.org`
 

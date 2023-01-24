@@ -1,0 +1,125 @@
+=encoding utf8
+
+=head1 NAME 
+
+Catmandu::Introduction - A 5 minute introduction to Catmandu
+
+=head1 HELLO WORLD
+
+    $ catmandu convert Null --fix 'add_field(hello,world)'
+    [{"hello":"world"}]    
+
+The example above generates the JSON output C<[{"hello":"world"}]>
+on the standard output. We asked the Catmandu processor to convert
+an empty input (C<Null>) and add one property C<hello> with value
+C<world>.
+
+We can ask Catmandu not to generate the default JSON output but
+convert to a YAML output:
+
+    $ catmandu convert Null --fix 'add_field(hello,world)' to YAML
+    ---
+    hello: world
+    ...  
+
+=head1 FORMAT to FORMAT
+
+Catmandu can be used to convert an input format to an output format.
+Use the keyword C<to> on the command line:
+
+    $ cat file.yaml
+    ---
+    hello: world
+    ... 
+    $ catmandu convert YAML to JSON < file.yaml
+    [{"hello":"world"}]  
+
+The left part of the C<to> keyword is called the C<Importer>, the 
+right part of the C<to> keyword is called the C<Exporter>. Catmandu
+provides Importers and Exports for many formats.
+
+=head1 OPTIONS
+
+Each Importer and Exporter can have options that change the behavior
+of conversion. The options can be read using the C<perldoc> command 
+on each Importer and Exports:
+
+    perldoc Catmandu::Importer::YAML
+    perldoc Catmandu::Exporter::JSON
+
+Note, many formats are available as Importer and Exporter.
+
+As an example, we can use a JSON Exporter option C<pretty> to provide
+a pretty printed version of the JSON:
+
+    $ catmandu convert YAML to JSON --pretty 1 < file.yaml
+    [{ 
+        "hello" : "world"
+    }]
+
+=head1 FIX LANGUAGE
+
+Many data conversions need a mapping from one field to another field plus
+optional conversions of the data inside these fields. Catmandu provides
+the C<Fix> language to assist in these mappings. A full list Fix 
+functon is available at L<https://librecat.org/assets/catmandu_cheat_sheet.pdf>.
+
+Fixes can be provided inline as text argument of the command line C<--fix> 
+argument, or as a pointer to a C<Fix Script>. A Fix Scripts groups one or
+more fixes in a file.
+
+    $ cat example.fix
+    add_field('address.street','Walker Street')
+    add_field('address.number','15')
+    copy_field('colors.2','best_color')
+
+    $ cat data.yaml
+    ---
+    colors:
+    - Red
+    - Green
+    - Blue
+    ...
+
+    $ catmandu convert YAML --fix example.fix to YAML < data.yaml
+    ---
+    address:
+        number: '15'
+        street: Walker Street
+    best_color: Blue
+    colors:
+        - Red
+        - Green
+        - Blue
+    ...
+
+In the example we created the Fix Script C<example.fix> that contains
+a combination of mappings and data conversion on (nested) data. We 
+run a YAML to YAML conversion using the C<example.fix> Fix Script.
+
+=head1 SPECIALIZATIONS
+
+Catmandu was mainly created for data conversions of specialized metadata
+languages in the field of libraries, archives and museums. One of the
+specialized Importers (and Export) is the L<Catmandu::MARC> package. This
+package can read, write and convert MARC files.
+
+For instance, to extract all the titles from an ISO MARC file one could 
+write:
+
+    $ cat titles.fix
+    marc_map('245',title)
+    retain(title)
+
+    $ catmandu convert MARC --type ISO --fix titles.fix to CSV < data.mrc
+
+The C<marc_map> is a specialized Fix function for MARC data. In the example
+above the C<245> field of each MARC record is mapped to the C<title> field.
+The C<retain> Fix function keeps only the C<title> field in the output.
+
+=head1 TUTORIAL
+
+A 18 day tutorial on Catmandu and the Fix language is available at
+L<https://librecatproject.wordpress.com/tutorial/>. 
+
+More information is also available in our wiki L<https://github.com/LibreCat/Catmandu/wiki>
