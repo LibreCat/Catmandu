@@ -22,6 +22,7 @@ use namespace::clean;
 # delay loading these because of circular dependency
 require Catmandu::Iterator;
 require Catmandu::ArrayIterator;
+require Catmandu;
 
 requires 'generator';
 
@@ -199,6 +200,12 @@ sub map {
             }
         }
     );
+}
+
+sub fix {
+    my $self  = shift;
+    my $fixer = Catmandu->fixer(@_);
+    $self->map(sub {$fixer->fix(shift)});
 }
 
 sub reduce {
@@ -866,6 +873,11 @@ Returns true if all the items generate a true value when executing callback.
 Returns a new iterator containing for each item the result of the callback. If
 the callback returns multiple or no items, the resulting iterator will grow or
 shrink.
+
+=head2 fix(...)
+
+Apply a L<Catmandu::Fix> to each item and return the result as new iterator. See
+L<Catmandu/fixer([FIX])|Catmandu-E<gt>fixer> for possible arguments.
 
 =head2 reduce([$start],\&callback)
 
