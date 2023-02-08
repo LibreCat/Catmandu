@@ -1,4 +1,4 @@
-requires 'perl', 'v5.14';
+requires 'perl', 'v5.16';
 
 on 'test', sub {
   requires 'Log::Any::Adapter::Log4perl', 0;
