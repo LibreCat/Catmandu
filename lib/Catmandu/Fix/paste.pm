@@ -75,12 +75,17 @@ Catmandu::Fix::paste - concatenate path values
    paste(my.string,a,b,c,d,join_char:", ")  # my.string: eeny, meeny, miny, moe
 
    # Paste literal strings with a tilde sign
-   paste(my.string,~Hi,a,~how are you?)    # my.string: Hi eeny how are you?
+   paste(my.string,~Hi,a,~how are you?)     # my.string: Hi eeny how are you?
+
+   # Paste works even when not all values are instantiated
+   paste(my.string,x,a,z)                   # my.string: eeny
 
 =head1 DESCRIPTION
 
 Paste places a concatenation of all paths starting from the second path into the first path.
-Literal values can be pasted by prefixing them with a tilde (~) sign.
+Literal values can be pasted by prefixing them with a tilde (~) sign. 
+
+When a path doesn't exist it is regarded as having an empty '' value.
 
 =head1 SEE ALSO
 
