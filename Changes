@@ -1,6 +1,10 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - Reordering documentation focussing on command line functionality
+  - Adding Catmandu::PerAPI documentation
+  - Updating Catmandu::Introduction
+  - Supporting fix on an Catmandy::Iterable (obs nichtich)
 
 1.2019  2022-03-21 16:21:54 CET
   - wrap ->isa in eval
