@@ -876,8 +876,7 @@ shrink.
 
 =head2 fix(...)
 
-Apply a L<Catmandu::Fix> to each item and return the result as new iterator. See
-L<Catmandu/fixer([FIX])|Catmandu-E<gt>fixer> for possible arguments.
+Apply a L<Catmandu::Fix> to each item and return the result as new iterator.
 
 =head2 reduce([$start],\&callback)
 
