@@ -69,7 +69,7 @@ my %module_build_args = (
     "YAML::XS" => "0.83",
     "asa" => 0,
     "namespace::clean" => "0.24",
-    "perl" => "v5.14.0"
+    "perl" => "v5.16.0"
   },
   "script_files" => [
     "bin/catmandu"
