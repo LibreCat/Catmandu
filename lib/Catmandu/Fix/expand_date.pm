@@ -2,7 +2,7 @@ package Catmandu::Fix::expand_date;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2019';
+our $VERSION = '1.2020';
 
 use Moo;
 use namespace::clean;

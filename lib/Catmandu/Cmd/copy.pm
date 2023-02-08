@@ -2,7 +2,7 @@ package Catmandu::Cmd::copy;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2019';
+our $VERSION = '1.2020';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::in;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2019';
+our $VERSION = '1.2020';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

@@ -2,7 +2,7 @@ package Catmandu::Fix::to_json;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2019';
+our $VERSION = '1.2020';
 
 use Cpanel::JSON::XS ();
 use Catmandu::Util::Path qw(as_path);

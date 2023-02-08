@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::is_object;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2019';
+our $VERSION = '1.2020';
 
 use Moo;
 use Catmandu::Util qw(is_hash_ref);
