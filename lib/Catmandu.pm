@@ -322,6 +322,10 @@ L<https://librecatproject.wordpress.com/2014/12/01/day-1-getting-catmandu/>
 
 L<catmandu>
 
+=item Perl API
+
+L<Catmandu::PerlAPI>
+
 =back
 
 =head1 AUTHOR
