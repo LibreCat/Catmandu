@@ -1013,6 +1013,10 @@ Using this code the fix statement can be used like:
     # Will add 'meow' = 'purrpurrpurrpurr'
     meow('purr', count: 4)
 
+To allow using the fix as inline function in Perl code use L<Catmandu::Fix::Inlineable>:
+
+    with 'Catmandu::Fix::Inlineable';
+    
 =head1 SEE ALSO
 
 L<Catmandu::Fixable>,
