@@ -184,7 +184,7 @@ sub _emit_value {
 
 sub _emit_string {
     my ($self, $str) = @_;
-    B::perlstring($str);
+    $str ? B::perlstring($str) : "''";
 }
 
 sub _emit_reject {

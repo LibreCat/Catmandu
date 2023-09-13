@@ -24,4 +24,8 @@ is_deeply $pkg->new('many.*.remove')->fix(
     {many => [{keep => 'me'}, {keep => 'me'}]},
     "remove nested field with wildcard";
 
-done_testing 3;
+is_deeply $pkg->new("")
+    ->fix({a => 'A', '' => 'Empty', c => 'C'}),
+    {a => 'A', c => 'C'}, 'remove empty';
+
+done_testing 4;

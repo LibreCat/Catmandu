@@ -392,13 +392,13 @@ sub _emit_delete_key {
     my $str_key = $self->_emit_string($key);
     my $perl    = "";
 
-    if (is_natural($key)) {
+    if (defined($key) && is_natural($key)) {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
         $perl .= "delete(${var}->{${str_key}});";
         $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
         $perl .= "splice(\@{${var}}, ${key}, 1)";
     }
-    elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
+    elsif (defined($key) && ($key eq '$first' || $key eq '$last' || $key eq '*')) {
         $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
         $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
