@@ -242,6 +242,12 @@ sub _emit_get {
             $perl .= $self->_emit_declare_vars($i, "\@{${up_var}} - 1");
             $perl .= "my ${var} = ${up_var}->[${i}];";
         }
+        elsif ($key eq "''") {
+            $opts{key} = $str_key;
+            $perl
+                .= "if (is_hash_ref(${up_var}) && exists(${up_var}->{''})) {";
+            $perl .= "my ${var} = ${up_var}->{''};"; 
+        }
         else {
             $opts{key} = $str_key;
             $perl
@@ -296,6 +302,11 @@ sub _emit_set_key {
         $perl .= "for (my ${i} = 0; ${i} < \@{${var}}; ${i}++) {";
         $perl .= "${var}->[${i}] = $val;";
         $perl .= "}}";
+    }
+    elsif ($key eq "''") {
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= "${var}->{''} = $val;";
+        $perl .= "}"; 
     }
     else {
         $perl .= "if (is_hash_ref(${var})) {";
@@ -374,6 +385,13 @@ sub _emit_create_path {
             }
             $perl .= "}";
         }
+        elsif ($key eq "''") {
+            $perl .= "if (is_maybe_hash_ref(${var})) {";
+            $perl .= "my ${v} = ${var} //= {};";
+            $perl
+                .= $self->_emit_create_path("${v}->{''}", $path, $cb);
+            $perl .= "}"; 
+        }
         else {
             $perl .= "if (is_maybe_hash_ref(${var})) {";
             $perl .= "my ${v} = ${var} //= {};";
@@ -403,6 +421,10 @@ sub _emit_delete_key {
         $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
         $perl .= "splice(\@{${var}}, 0, \@{${var}})" if $key eq '*';
+    }
+    elsif (defined($key) && $key eq "''") {
+        $perl .= "if (is_hash_ref(${var})) {";
+        $perl .= "delete(${var}->{''})"; 
     }
     else {
         $perl .= "if (is_hash_ref(${var})) {";

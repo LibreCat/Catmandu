@@ -32,4 +32,7 @@ is_deeply $pkg->new('test', '0123')->fix({}), {test => '0123'},
 
 is_deeply $pkg->new('test')->fix({}), {test => undef}, "set key to undef";
 
+is_deeply $pkg->new("''", 'empty')->fix({}), {'' => 'empty'},
+    "add an empty field";
+
 done_testing;
