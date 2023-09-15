@@ -201,7 +201,7 @@ sub _emit_get {
     $path = [@$path];
 
     my $key     = shift @$path;
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
     my $perl    = "";
 
     %opts = (up_var => my $up_var = $var);
@@ -242,12 +242,6 @@ sub _emit_get {
             $perl .= $self->_emit_declare_vars($i, "\@{${up_var}} - 1");
             $perl .= "my ${var} = ${up_var}->[${i}];";
         }
-        elsif ($key eq "''") {
-            $opts{key} = $str_key;
-            $perl
-                .= "if (is_hash_ref(${up_var}) && exists(${up_var}->{''})) {";
-            $perl .= "my ${var} = ${up_var}->{''};"; 
-        }
         else {
             $opts{key} = $str_key;
             $perl
@@ -267,7 +261,7 @@ sub _emit_set_key {
     return "${var} = $val;" unless defined $key;
 
     my $perl    = "";
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
 
     if (is_natural($key)) {
         $perl .= "if (is_hash_ref(${var})) {";
@@ -303,11 +297,6 @@ sub _emit_set_key {
         $perl .= "${var}->[${i}] = $val;";
         $perl .= "}}";
     }
-    elsif ($key eq "''") {
-        $perl .= "if (is_hash_ref(${var})) {";
-        $perl .= "${var}->{''} = $val;";
-        $perl .= "}"; 
-    }
     else {
         $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "${var}->{${str_key}} = $val;";
@@ -323,7 +312,7 @@ sub _emit_create_path {
     @$path || return $cb->($var);
 
     my $key     = shift @$path;
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
     my $perl    = "";
 
     if (is_natural($key)) {
@@ -385,13 +374,6 @@ sub _emit_create_path {
             }
             $perl .= "}";
         }
-        elsif ($key eq "''") {
-            $perl .= "if (is_maybe_hash_ref(${var})) {";
-            $perl .= "my ${v} = ${var} //= {};";
-            $perl
-                .= $self->_emit_create_path("${v}->{''}", $path, $cb);
-            $perl .= "}"; 
-        }
         else {
             $perl .= "if (is_maybe_hash_ref(${var})) {";
             $perl .= "my ${v} = ${var} //= {};";
@@ -407,7 +389,7 @@ sub _emit_create_path {
 sub _emit_delete_key {
     my ($self, $var, $key) = @_;
 
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
     my $perl    = "";
 
     if (defined($key) && is_natural($key)) {
@@ -422,10 +404,6 @@ sub _emit_delete_key {
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
         $perl .= "splice(\@{${var}}, 0, \@{${var}})" if $key eq '*';
     }
-    elsif (defined($key) && $key eq "''") {
-        $perl .= "if (is_hash_ref(${var})) {";
-        $perl .= "delete(${var}->{''})"; 
-    }
     else {
         $perl .= "if (is_hash_ref(${var})) {";
         $perl .= "delete(${var}->{${str_key}})";
@@ -434,6 +412,22 @@ sub _emit_delete_key {
     $perl .= "}";
 
     $perl;
+}
+
+sub unquote {
+    my ($self, $str) = @_;
+    if (! defined $str) {
+        return $str;
+    }
+    elsif ($str =~ /^['](.*)[']$/) {
+        return $1;
+    }
+    elsif ($str =~ /^["](.*)["]$/) {
+        return $1;
+    }
+    else {
+        return $str;
+    }
 }
 
 1;
