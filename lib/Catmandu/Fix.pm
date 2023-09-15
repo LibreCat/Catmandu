@@ -859,7 +859,8 @@ or double quotes:
 
 Most of the Fix commands use paths to point to values
 in a data record. E.g. 'foo.2.bar' is a key 'bar' which is the 3-rd value of the
-key 'foo'.
+key 'foo'. E.g. "foo.''" is a an empty string key which is the value of the key
+'foo'.
 
 A special case is when you want to point to all items in an array. In this case
 the wildcard '*' can be used. E.g. 'foo.*' points to all the items in the 'foo'

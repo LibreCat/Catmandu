@@ -201,7 +201,7 @@ sub _emit_get {
     $path = [@$path];
 
     my $key     = shift @$path;
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
     my $perl    = "";
 
     %opts = (up_var => my $up_var = $var);
@@ -261,7 +261,7 @@ sub _emit_set_key {
     return "${var} = $val;" unless defined $key;
 
     my $perl    = "";
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
 
     if (is_natural($key)) {
         $perl .= "if (is_hash_ref(${var})) {";
@@ -312,7 +312,7 @@ sub _emit_create_path {
     @$path || return $cb->($var);
 
     my $key     = shift @$path;
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
     my $perl    = "";
 
     if (is_natural($key)) {
@@ -389,16 +389,16 @@ sub _emit_create_path {
 sub _emit_delete_key {
     my ($self, $var, $key) = @_;
 
-    my $str_key = $self->_emit_string($key);
+    my $str_key = $self->_emit_string($self->unquote($key));
     my $perl    = "";
 
-    if (is_natural($key)) {
+    if (defined($key) && is_natural($key)) {
         $perl .= "if (is_hash_ref(${var}) && exists(${var}->{${str_key}})) {";
         $perl .= "delete(${var}->{${str_key}});";
         $perl .= "} elsif (is_array_ref(${var}) && \@{${var}} > ${key}) {";
         $perl .= "splice(\@{${var}}, ${key}, 1)";
     }
-    elsif ($key eq '$first' || $key eq '$last' || $key eq '*') {
+    elsif (defined($key) && ($key eq '$first' || $key eq '$last' || $key eq '*')) {
         $perl .= "if (is_array_ref(${var}) && \@{${var}}) {";
         $perl .= "splice(\@{${var}}, 0, 1)" if $key eq '$first';
         $perl .= "splice(\@{${var}}, \@{${var}} - 1, 1)" if $key eq '$last';
@@ -412,6 +412,22 @@ sub _emit_delete_key {
     $perl .= "}";
 
     $perl;
+}
+
+sub unquote {
+    my ($self, $str) = @_;
+    if (! defined $str) {
+        return $str;
+    }
+    elsif ($str =~ /^['](.*)[']$/) {
+        return $1;
+    }
+    elsif ($str =~ /^["](.*)["]$/) {
+        return $1;
+    }
+    else {
+        return $str;
+    }
 }
 
 1;

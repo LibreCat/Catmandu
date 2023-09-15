@@ -32,4 +32,13 @@ is_deeply $pkg->new('test', '0123')->fix({test => 'ok'}), {test => '0123'},
 
 is_deeply $pkg->new('test')->fix({}), {test => undef}, "set key to undef";
 
+is_deeply $pkg->new("'a'", 'test')->fix({}), {a => 'test'},
+    "add a single quoted field";
+
+is_deeply $pkg->new("\"a\"", 'test')->fix({}), {a => 'test'},
+    "add a double quoted field";
+
+is_deeply $pkg->new("\"a b c\"", 'test')->fix({}), {"a b c" => 'test'},
+    "add a double quoted field with spaces";
+
 done_testing;
