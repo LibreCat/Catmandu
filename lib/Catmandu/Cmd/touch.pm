@@ -2,7 +2,7 @@ package Catmandu::Cmd::touch;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2020';
+our $VERSION = '1.2021';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

@@ -1,6 +1,6 @@
 package Catmandu::Plugin::Readonly;
 
-our $VERSION = '1.2020';
+our $VERSION = '1.2021';
 
 use Moo::Role;
 use MooX::Aliases;

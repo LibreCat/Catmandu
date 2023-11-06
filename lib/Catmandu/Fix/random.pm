@@ -2,7 +2,7 @@ package Catmandu::Fix::random;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2020';
+our $VERSION = '1.2021';
 
 use Catmandu::Util::Path qw(as_path);
 use Moo;

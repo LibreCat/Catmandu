@@ -2,7 +2,7 @@ package Catmandu::Fix::nothing;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2020';
+our $VERSION = '1.2021';
 
 use Moo;
 use namespace::clean;

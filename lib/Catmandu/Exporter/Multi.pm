@@ -2,7 +2,7 @@ package Catmandu::Exporter::Multi;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2020';
+our $VERSION = '1.2021';
 
 use Catmandu::Util qw(is_string);
 use Catmandu;
