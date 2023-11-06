@@ -90,6 +90,11 @@ Catmandu::Exporter::CSV - a CSV exporter
 
     $ catmandu convert JSON to CSV --fix myfixes.txt --sep_char ';' < data.json
 
+    # Provide a hint to the exporter which fields to export from the JSON
+    # input. By default the CSV exporter will export the fields that are
+    # found in the first JSON record.
+    $ catmandu convert JSON to CSV --fields "id,title,year" < data.json
+
     # In a Perl script
 
     use Catmandu;
@@ -120,6 +125,10 @@ This C<Catmandu::Exporter> exports items as rows with comma-separated values
 will be included if option C<header> is set. See L<Catmandu::TabularExporter>
 on how to configure the field mapping and column names. Newlines and tabulator
 values in field values are escaped as C<\n>, C<\r>, and C<\t>.
+
+Hint: by default, the exporter will output all the fields that are found in the 
+first record of the data input. This can be changed by setting the C<fields>
+option of the exporter.
 
 =head1 CONFIGURATION
 

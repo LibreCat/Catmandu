@@ -2,6 +2,7 @@ Revision history for Catmandu
 
 {{$NEXT}}
   - #397: Support empty paths
+  - Updating documentation about CSV, TSV exports
 
 1.2020  2023-02-08 16:29:37 CET
   - Reordering documentation focussing on command line functionality
