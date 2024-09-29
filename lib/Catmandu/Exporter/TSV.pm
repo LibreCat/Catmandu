@@ -2,7 +2,7 @@ package Catmandu::Exporter::TSV;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2021';
+our $VERSION = '1.2022';
 
 use Catmandu::Exporter::CSV;
 use Moo;

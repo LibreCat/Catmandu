@@ -2,7 +2,7 @@ package Catmandu::Fix::sort_field;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2021';
+our $VERSION = '1.2022';
 
 use List::MoreUtils qw(uniq);
 use Catmandu::Util::Path qw(as_path);

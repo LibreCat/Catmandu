@@ -2,7 +2,7 @@ package Catmandu::Fix::uri_encode;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2021';
+our $VERSION = '1.2022';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
