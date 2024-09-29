@@ -8,6 +8,7 @@ use Moo;
 use Catmandu::Util::Path qw(as_path);
 use namespace::clean;
 use Catmandu::Fix::Has;
+use Data::Compare;
 
 has path1 => (fix_arg => 1);
 has path2 => (fix_arg => 1);
@@ -24,11 +25,51 @@ sub _build_tester {
         my $vals2 = $path2_getter->($data);
         return 0 unless @$vals1 && @$vals2 && @$vals1 == @$vals2;
         for (my $i = 0; $i < @$vals1; $i++) {
-            no if $] >= 5.018, warnings => 'experimental::smartmatch';
-            return 0 unless $vals1->[$i] ~~ $vals2->[$i];
+            return 0 unless in($vals1->[$i],$vals2->[$i]);
         }
         return 1;
     }
+}
+
+sub in {
+   my ($a,$b) = @_;
+
+   return 1 if ( ! ( defined($a) && defined($b)));
+   return 0 if ( ! defined($a) || ! defined($b));
+   
+   # scalar vs scalar
+   if (ref($a) eq "" && ref($b) eq "") {
+      return $a eq $b;
+   }
+   # scalar vs list
+   elsif (ref($a) eq "" && ref($b) eq "ARRAY") {
+      return scalar grep( { $_ eq $a } @$b);
+   }
+   # scalar vs hash
+   elsif (ref($a) eq "" && ref($b) eq "HASH") {
+      return exists $b->{$a};
+   }
+   # array vs array 
+   elsif (ref($a) eq "ARRAY" && ref($b) eq "ARRAY") {
+      return Compare($a,$b);
+   }
+   # hash vs hash
+   elsif (ref($a) eq "HASH" && ref($b) eq "HASH") {
+      return Compare($a,$b);
+   }
+   # hash vs array
+   elsif (ref($a) eq "HASH" && ref($b) eq "ARRAY") {
+      my @h = %$a;
+      return Compare(\@h,$b);
+   }
+   # array vs hash
+   elsif (ref($a) eq "ARRAY" && ref($b) eq "HASH") {
+      my @h = %$b;
+      return Compare($a,@h);
+   }
+   else {
+      return 0;
+   }
 }
 
 1;

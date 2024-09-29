@@ -44,14 +44,14 @@ use Catmandu::Sane;
 our $VERSION = '1.2021';
 
 use Moo::Role;
-use Catmandu::Util qw(is_string);
+use Catmandu::Util;
 use namespace::clean;
 
 has source => (is => 'rw', writer => 'set_source');
 
 sub _source_log_message {
     my $msg = "";
-    if (is_string(my $source = $_[0]->source)) {
+    if (Catmandu::Util::is_string(my $source = $_[0]->source)) {
         $msg .= "\nSource:";
         for (split(/\n/, $source)) {
             $msg .= "\n\t$_";
