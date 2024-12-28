@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2022';
 
-use List::MoreUtils qw(uniq);
+use List::SomeUtils qw(uniq);
 use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;
@@ -19,7 +19,7 @@ sub _build_fixer {
     as_path($self->path)->updater(
         if_array_ref => sub {
             no warnings 'uninitialized';
-            [List::MoreUtils::uniq(@{$_[0]})];
+            [List::SomeUtils::uniq(@{$_[0]})];
         }
     );
 }
