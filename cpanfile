@@ -33,7 +33,7 @@ requires 'HTTP::Request', 0;
 requires 'Hash::Merge::Simple', 0;
 requires 'IO::Handle::Util', '0.01';
 requires 'LWP::UserAgent', 0;
-requires 'List::SomeUtils', 0;
+requires 'List::SomeUtils', '0.59';
 requires 'Log::Any', 0;
 requires 'Log::Any::Adapter', 0;
 requires 'MIME::Types',0;
