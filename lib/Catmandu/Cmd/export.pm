@@ -2,7 +2,7 @@ package Catmandu::Cmd::export;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2022';
+our $VERSION = '1.2023';
 
 use parent 'Catmandu::Cmd';
 use Catmandu;

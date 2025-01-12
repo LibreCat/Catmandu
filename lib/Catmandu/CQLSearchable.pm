@@ -2,7 +2,7 @@ package Catmandu::CQLSearchable;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2022';
+our $VERSION = '1.2023';
 
 use Moo::Role;
 use namespace::clean;

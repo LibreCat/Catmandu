@@ -2,7 +2,7 @@ package Catmandu::Fix::paste;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2022';
+our $VERSION = '1.2023';
 
 use Moo;
 use Catmandu::Util qw(is_value is_code_ref);

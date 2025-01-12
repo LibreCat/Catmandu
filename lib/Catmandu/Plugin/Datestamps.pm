@@ -2,7 +2,7 @@ package Catmandu::Plugin::Datestamps;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2022';
+our $VERSION = '1.2023';
 
 use Catmandu::Util qw(check_string now);
 use Moo::Role;

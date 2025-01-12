@@ -18,7 +18,7 @@ my %module_build_args = (
     "Nicolas Steenlant <nicolas.steenlant\@ugent.be>"
   ],
   "dist_name" => "Catmandu",
-  "dist_version" => "1.2022",
+  "dist_version" => "1.2023",
   "license" => "perl",
   "module_name" => "Catmandu",
   "recommends" => {
@@ -36,11 +36,12 @@ my %module_build_args = (
     "Cpanel::JSON::XS" => "3.0213",
     "Data::Compare" => "1.22",
     "Data::Util" => "0.66",
+    "Getopt::Long::Descriptive" => "<= 0.115",
     "HTTP::Request" => 0,
     "Hash::Merge::Simple" => 0,
     "IO::Handle::Util" => "0.01",
     "LWP::UserAgent" => 0,
-    "List::SomeUtils" => "0",
+    "List::SomeUtils" => "0.59",
     "Log::Any" => 0,
     "Log::Any::Adapter" => 0,
     "MIME::Types" => 0,
