@@ -21,6 +21,7 @@ on 'develop', sub {
 
 requires 'Any::URI::Escape', 0;
 requires 'App::Cmd', '<=0.336';
+requires 'Getopt::Long::Descriptive', '<=0.115';
 requires 'CGI::Expand', '2.02';
 requires 'Class::Method::Modifiers', 0;
 requires 'Clone', '0.31';
