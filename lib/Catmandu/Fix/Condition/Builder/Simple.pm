@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2022';
 
-use List::MoreUtils qw(all_u any);
+use List::SomeUtils qw(all_u any);
 use Catmandu::Util::Path qw(as_path);
 use Moo::Role;
 use namespace::clean;

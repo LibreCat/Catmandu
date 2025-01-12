@@ -6,7 +6,7 @@ our $VERSION = '1.2022';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
-use List::MoreUtils qw(indexes first_index);
+use List::SomeUtils qw(indexes first_index);
 use namespace::clean;
 use Catmandu::Fix::Has;
 
