@@ -1,9 +1,9 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - #402: Fix cli with Getopt::Long::Descriptive >= 0.116 
 
 1.2023  2025-01-12 18:37:51 CET
-  - #402: maintenance release for App::Cmd 0.337 errors
   - Moving from List::MoreUtils to List::SomeUtils (obs. plicease)
 
 1.2022  2024-09-29 21:03:06 CEST
