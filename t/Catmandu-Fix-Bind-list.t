@@ -23,7 +23,7 @@ EOF
 
 my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-ok $fixer , 'create fixer';
+ok $fixer, 'create fixer';
 
 is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing add_field';
 

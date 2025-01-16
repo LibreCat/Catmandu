@@ -46,7 +46,7 @@ sub get {
         my $item = $bag ? $bag->get($id) : undef;
         if ($item) {
             $found  = 1;
-            $result = merge $result , $item;
+            $result = merge $result, $item;
         }
     }
 

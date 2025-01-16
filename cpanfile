@@ -17,11 +17,11 @@ on 'develop', sub {
   requires 'Perl::Tidy', 0;
   requires 'Test::Code::TidyAll', '0.20';
   requires 'Text::Diff', 0; # undeclared Test::Code::TidyAll plugin dependency
-  };
+};
 
 requires 'Any::URI::Escape', 0;
-requires 'App::Cmd', '<=0.336';
-requires 'Getopt::Long::Descriptive', '<=0.115';
+requires 'App::Cmd', '0.33';
+requires 'Getopt::Long', 0;
 requires 'CGI::Expand', '2.02';
 requires 'Class::Method::Modifiers', 0;
 requires 'Clone', '0.31';

@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2023';
 
-use Catmandu::Util qw(is_instance require_package);
+use Catmandu::Util    qw(is_instance require_package);
 use String::CamelCase qw(camelize);
 use Moo;
 use namespace::clean;

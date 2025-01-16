@@ -4,8 +4,8 @@ use Catmandu::Sane;
 
 use Catmandu::Importer::CSV;
 use Catmandu::Util::Path qw(as_path);
-use Catmandu::Util qw(is_value);
-use Clone qw(clone);
+use Catmandu::Util       qw(is_value);
+use Clone                qw(clone);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;

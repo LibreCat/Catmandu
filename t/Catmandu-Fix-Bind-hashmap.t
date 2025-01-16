@@ -7,7 +7,7 @@ use Test::Exception;
 use Catmandu::Fix;
 use Catmandu::Importer::Mock;
 use Cpanel::JSON::XS qw(decode_json);
-use Catmandu::Util qw(:is);
+use Catmandu::Util   qw(:is);
 use Capture::Tiny ':all';
 
 my $pkg;
@@ -26,7 +26,7 @@ EOF
 
 my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-ok $fixer , 'create fixer';
+ok $fixer, 'create fixer';
 
 is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing add_field';
 
@@ -131,7 +131,7 @@ _id,value
 1234567890,"1,2"
 EOF
 
-    is $stdout , $exp, 'grouping isbn join';
+    is $stdout, $exp, 'grouping isbn join';
 }
 
 {
@@ -184,7 +184,7 @@ _id,value
 0987654321,1
 EOF
 
-    is $stdout , $exp, 'grouping isbn count';
+    is $stdout, $exp, 'grouping isbn count';
 }
 
 done_testing;

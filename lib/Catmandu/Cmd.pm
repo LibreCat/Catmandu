@@ -4,10 +4,10 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2023';
 
-use parent qw(App::Cmd::Command);
+use parent         qw(App::Cmd::Command);
 use Catmandu::Util qw(is_array_ref pod_section);
 use Catmandu::Fix;
-use Encode qw(decode);
+use Encode   qw(decode);
 use Log::Any ();
 use namespace::clean;
 
@@ -80,8 +80,8 @@ sub _parse_options {
 
     $opts{separator} //= 'to';
 
-    my $a = my $lft_args = [];
-    my $o = my $lft_opts = {};
+    my $a        = my $lft_args = [];
+    my $o        = my $lft_opts = {};
     my $rgt_args = [];
     my $rgt_opts = {};
 

@@ -23,7 +23,7 @@ my $perl = decode_json($result->stdout);
 
 ok $perl, 'got JSON';
 is $perl->{hello}, 'world', 'got data';
-is $result->error, undef, 'threw no exceptions';
+is $result->error, undef,   'threw no exceptions';
 
 # Next test can fail on buggy Perl installations
 ##is $result->stderr, '', 'nothing sent to sderr' ;

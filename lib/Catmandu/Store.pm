@@ -5,7 +5,7 @@ use Catmandu::Sane;
 our $VERSION = '1.2023';
 
 use Hash::Util::FieldHash qw(fieldhash);
-use Catmandu::Util qw(require_package);
+use Catmandu::Util        qw(require_package);
 use Moo::Role;
 use MooX::Aliases;
 use namespace::clean;
@@ -17,9 +17,9 @@ has bag_class => (is => 'ro', default => sub {ref($_[0]) . '::Bag'},);
 has default_bag     => (is => 'lazy');
 has default_plugins => (is => 'ro', default => sub {[]},);
 has default_options => (is => 'ro', default => sub {+{}},);
-has bag_options => (is => 'ro', init_arg => 'bags', default => sub {+{}},);
-has key_prefix  => (is => 'lazy', default => sub {'_'},);
-has id_key      => (is => 'lazy', alias => 'id_field');
+has bag_options => (is => 'ro',   init_arg => 'bags', default => sub {+{}},);
+has key_prefix  => (is => 'lazy', default  => sub {'_'},);
+has id_key      => (is => 'lazy', alias    => 'id_field');
 
 sub key_for {
     $_[0]->key_prefix . $_[1];

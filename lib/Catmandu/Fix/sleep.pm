@@ -20,7 +20,7 @@ sub fix {
     my $sleep = $self->seconds;
     my $units = $self->units;
 
-    if ($units =~ /^microsecond(s)?$/i) { }
+    if    ($units =~ /^microsecond(s)?$/i) { }
     elsif ($units =~ /^millisecond(s)$/i) {
         $sleep *= 1000;
     }

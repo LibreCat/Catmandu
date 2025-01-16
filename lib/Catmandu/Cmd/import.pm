@@ -21,6 +21,11 @@ sub command_opt_spec {
     );
 }
 
+sub validate_args {
+    my ($self, $opt, $args) = @_;
+    return;
+}
+
 sub command {
     my ($self, $opts, $args) = @_;
 

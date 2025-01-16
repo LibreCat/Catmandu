@@ -6,7 +6,7 @@ our $VERSION = '1.2023';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
-use Catmandu::Util qw(is_array_ref);
+use Catmandu::Util       qw(is_array_ref);
 use namespace::clean;
 use Catmandu::Fix::Has;
 

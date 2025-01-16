@@ -10,7 +10,7 @@ use namespace::clean;
 
 with 'Catmandu::Importer';
 
-has header   => (is => 'ro', default => sub {1});
+has header => (is => 'ro', default => sub {1});
 has sep_char => (
     is      => 'ro',
     default => sub {"\t"},

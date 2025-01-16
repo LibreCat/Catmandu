@@ -14,7 +14,7 @@ use Catmandu::Util qw(
     is_same
     check_positive
 );
-use Time::HiRes qw(gettimeofday tv_interval);
+use Time::HiRes           qw(gettimeofday tv_interval);
 use Hash::Util::FieldHash qw(fieldhash);
 use Role::Tiny;
 use namespace::clean;

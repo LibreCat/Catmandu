@@ -14,8 +14,8 @@ requires 'search';
 requires 'searcher';
 requires 'delete_by_query';
 
-has default_limit => (is => 'ro', builder => 'default_default_limit');
-has maximum_limit => (is => 'ro', builder => 'default_maximum_limit');
+has default_limit  => (is => 'ro', builder => 'default_default_limit');
+has maximum_limit  => (is => 'ro', builder => 'default_maximum_limit');
 has maximum_offset => (is => 'ro');
 
 sub default_default_limit {10}

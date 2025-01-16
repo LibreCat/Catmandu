@@ -62,8 +62,8 @@ require_ok $pkg;
 }
 
 for my $sym (qw(same different)) {
-    can_ok $pkg, "is_$sym";
-    can_ok $pkg, "check_$sym";
+    can_ok $pkg,           "is_$sym";
+    can_ok $pkg,           "check_$sym";
     can_ok 'T::ImportAll', "is_$sym";
     can_ok 'T::ImportAll', "check_$sym";
     ok !T::ImportNothing->can("is_$sym");
@@ -79,10 +79,10 @@ for my $sym (
     value string number integer natural positive)
     )
 {
-    can_ok $pkg, "is_$sym";
-    can_ok $pkg, "is_maybe_$sym";
-    can_ok $pkg, "check_$sym";
-    can_ok $pkg, "check_maybe_$sym";
+    can_ok $pkg,           "is_$sym";
+    can_ok $pkg,           "is_maybe_$sym";
+    can_ok $pkg,           "check_$sym";
+    can_ok $pkg,           "check_maybe_$sym";
     can_ok 'T::ImportAll', "is_$sym";
     can_ok 'T::ImportAll', "is_maybe_$sym";
     can_ok 'T::ImportAll', "check_$sym";
@@ -180,7 +180,7 @@ for my $sym (qw(xml_declaration xml_escape)) {
 
     my $io = Catmandu::Util::io($coderef, mode => 'r');
 
-    ok $io , 'io from code_ref read';
+    ok $io, 'io from code_ref read';
     is $io->getline(), "Count: 1\n", 'getline';
 }
 
@@ -192,14 +192,14 @@ for my $sym (qw(xml_declaration xml_escape)) {
 
     my $io = Catmandu::Util::io($coderef, mode => 'w');
 
-    ok $io , 'io from code_ref write';
+    ok $io,                'io from code_ref write';
     ok $io->print("Test"), 'print';
 }
 
 {
     my $io = Catmandu::Util::io(IO::File->new("< Changes"));
 
-    ok $io , 'io IO::Handle instance';
+    ok $io, 'io IO::Handle instance';
 }
 
 {
@@ -294,143 +294,143 @@ is_deeply [Catmandu::Util::parse_data_path("foo.bar.x")],
 
 is Catmandu::Util::get_data({foo => 'bar'}, 'foo'), 'bar', 'get_data(foo)';
 ok !Catmandu::Util::get_data({foo => 'bar'}, 'foo2'), 'get_data(foo2)';
-ok !Catmandu::Util::get_data([qw(0 1 2)],    3),      'get_data(3)';
-is Catmandu::Util::get_data([qw(0 1 2)], 1),        '1', 'get_data(1)';
-is Catmandu::Util::get_data([qw(0 1 2)], '$first'), '0', 'get_data($first)';
-is Catmandu::Util::get_data([qw(0 1 2)], '$last'),  '2', 'get_data($last)';
+ok !Catmandu::Util::get_data([qw(0 1 2)], 3), 'get_data(3)';
+is Catmandu::Util::get_data([qw(0 1 2)],  1),        '1', 'get_data(1)';
+is Catmandu::Util::get_data([qw(0 1 2)],  '$first'), '0', 'get_data($first)';
+is Catmandu::Util::get_data([qw(0 1 2)],  '$last'),  '2', 'get_data($last)';
 is_deeply [Catmandu::Util::get_data([qw(0 1 2)], '*')], [qw(0 1 2)],
     'get_data(*)';
 
 {
     my $data = {foo => 'bar'};
     Catmandu::Util::set_data($data, 'foo', 'bar2');
-    is_deeply $data , {foo => 'bar2'}, 'set_data 1';
+    is_deeply $data, {foo => 'bar2'}, 'set_data 1';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, 0, 'bar');
-    is_deeply $data , [qw(bar 1 2)], 'set_data 2';
+    is_deeply $data, [qw(bar 1 2)], 'set_data 2';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$first', 'bar');
-    is_deeply $data , [qw(bar 1 2)], 'set_data 3';
+    is_deeply $data, [qw(bar 1 2)], 'set_data 3';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$last', 'bar');
-    is_deeply $data , [qw(0 1 bar)], 'set_data 4';
+    is_deeply $data, [qw(0 1 bar)], 'set_data 4';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$prepend', 'bar');
-    is_deeply $data , [qw(bar 0 1 2)], 'set_data 5';
+    is_deeply $data, [qw(bar 0 1 2)], 'set_data 5';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$append', 'bar');
-    is_deeply $data , [qw(0 1 2 bar)], 'set_data 6';
+    is_deeply $data, [qw(0 1 2 bar)], 'set_data 6';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '*', 'bar', 'bar', 'bar');
-    is_deeply $data , [qw(bar bar bar)], 'set_data 7';
+    is_deeply $data, [qw(bar bar bar)], 'set_data 7';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, 'foo', 'bar');
-    is_deeply $data , [qw(0 1 2)], 'set_data 8';
+    is_deeply $data, [qw(0 1 2)], 'set_data 8';
 }
 
 {
     my $data = undef;
     Catmandu::Util::set_data($data, 'foo2', 'bar2');
-    is_deeply $data , undef, 'set_data 9';
+    is_deeply $data, undef, 'set_data 9';
 }
 
 {
     my $data = {foo => 'bar'};
     Catmandu::Util::set_data($data, 'foo', 'bar2');
-    is_deeply $data , {foo => 'bar2'}, 'set_data 1';
+    is_deeply $data, {foo => 'bar2'}, 'set_data 1';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, 0, 'bar');
-    is_deeply $data , [qw(bar 1 2)], 'set_data 2';
+    is_deeply $data, [qw(bar 1 2)], 'set_data 2';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$first', 'bar');
-    is_deeply $data , [qw(bar 1 2)], 'set_data 3';
+    is_deeply $data, [qw(bar 1 2)], 'set_data 3';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$last', 'bar');
-    is_deeply $data , [qw(0 1 bar)], 'set_data 4';
+    is_deeply $data, [qw(0 1 bar)], 'set_data 4';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$prepend', 'bar');
-    is_deeply $data , [qw(bar 0 1 2)], 'set_data 5';
+    is_deeply $data, [qw(bar 0 1 2)], 'set_data 5';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::set_data($data, '$append', 'bar');
-    is_deeply $data , [qw(0 1 2 bar)], 'set_data 6';
+    is_deeply $data, [qw(0 1 2 bar)], 'set_data 6';
 }
 
 {
     my $data = {foo => 'bar'};
     Catmandu::Util::delete_data($data, 'foo');
-    is_deeply $data , {}, 'delete_data 1';
+    is_deeply $data, {}, 'delete_data 1';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::delete_data($data, 0);
-    is_deeply $data , [qw(1 2)], 'delete_data 2';
+    is_deeply $data, [qw(1 2)], 'delete_data 2';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::delete_data($data, '$first');
-    is_deeply $data , [qw(1 2)], 'delete_data 3';
+    is_deeply $data, [qw(1 2)], 'delete_data 3';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::delete_data($data, '$last');
-    is_deeply $data , [qw(0 1)], 'delete_data 4';
+    is_deeply $data, [qw(0 1)], 'delete_data 4';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::delete_data($data, '*');
-    is_deeply $data , [], 'delete_data 5';
+    is_deeply $data, [], 'delete_data 5';
 }
 
 {
     my $data = [qw(0 1 2)];
     Catmandu::Util::delete_data($data, '100');
-    is_deeply $data , [qw(0 1 2)], 'delete_data 6';
+    is_deeply $data, [qw(0 1 2)], 'delete_data 6';
 }
 
 {
     my $data = undef;
     Catmandu::Util::delete_data($data, '100');
-    is_deeply $data , undef, 'delete_data 7';
+    is_deeply $data, undef, 'delete_data 7';
 }
 
 is Catmandu::Util::data_at('foo', {foo => 'bar'}), 'bar', 'data_at 1';
@@ -445,17 +445,17 @@ is Catmandu::Util::data_at('foo.$last', {foo => [qw(bar bar2 bar3)]}),
     my $data = {foo => [qw(0 1 2)]};
     is_deeply Catmandu::Util::data_at('foo.$prepend', $data), undef,
         'data_at 5';
-    is_deeply $data , {foo => [undef, qw(0 1 2)]}, 'data_at 5';
+    is_deeply $data, {foo => [undef, qw(0 1 2)]}, 'data_at 5';
 }
 
 {
     my $data = {foo => [qw(0 1 2)]};
     is_deeply Catmandu::Util::data_at('foo.$append', $data), undef,
         'data_at 6';
-    is_deeply $data , {foo => [qw(0 1 2), undef]}, 'data_at 6';
+    is_deeply $data, {foo => [qw(0 1 2), undef]}, 'data_at 6';
 }
 
-ok Catmandu::Util::array_exists([qw(0 1 2)], 0),  'array_exists 1';
+ok Catmandu::Util::array_exists([qw(0 1 2)],  0), 'array_exists 1';
 ok !Catmandu::Util::array_exists([qw(0 1 2)], 3), '!array_exists';
 
 is_deeply Catmandu::Util::array_group_by(
@@ -553,7 +553,7 @@ throws_ok {
 }
 'Catmandu::BadVal', '! check_different';
 
-ok Catmandu::Util::is_able(T::Foo->new, 'bar'), 'is_able';
+ok Catmandu::Util::is_able(T::Foo->new,  'bar'),  'is_able';
 ok !Catmandu::Util::is_able(T::Foo->new, 'bar2'), '! is_able';
 ok !Catmandu::Util::is_able('123',       'bar2'), '! is_able';
 
@@ -565,7 +565,7 @@ ok !Catmandu::Util::check_maybe_able(undef, 'bar2'), 'check_maybe_able';
 throws_ok {Catmandu::Util::check_maybe_able('123', 'bar2')}
 'Catmandu::BadVal', '! check_maybe_able';
 
-ok Catmandu::Util::is_instance(T::Foo->new, 'T::Foo'), 'is_instance';
+ok Catmandu::Util::is_instance(T::Foo->new,  'T::Foo'),  'is_instance';
 ok !Catmandu::Util::is_instance(T::Foo->new, 'T::Foo2'), '! is_instance';
 ok !Catmandu::Util::is_instance(undef,       'T::Foo'),  '! is_instance';
 

@@ -16,7 +16,7 @@ BEGIN {
 require_ok $pkg;
 
 my $monad = Catmandu::Fix::Bind::benchmark->new(output => '/dev/null');
-my $f     = sub {$_[0]->{demo} = 1; $_[0]};
+my $f     = sub {$_[0]->{demo} = 1;  $_[0]};
 my $g     = sub {$_[0]->{demo} += 1; $_[0]};
 
 is_deeply $monad->bind($monad->unit({}), $f), $f->({}),
@@ -35,7 +35,7 @@ EOF
 
 my $fixer = Catmandu::Fix->new(fixes => [$fixes]);
 
-ok $fixer , 'create fixer';
+ok $fixer, 'create fixer';
 
 is_deeply $fixer->fix({}), {foo => 'bar'}, 'testing add_field';
 

@@ -35,15 +35,15 @@ ok $h->does('Catmandu::Paged'),    'is a Paged';
 
 is_deeply $h->hits, $data, 'test content';
 
-ok $h->more,  'test mode';
-is $h->limit, 10, 'test limit';
+ok $h->more, 'test mode';
+is $h->limit, 10,  'test limit';
 is $h->size,  100, 'test size';
-is $h->start, 0, 'test start';
-is $h->first, 1, 'test first';
+is $h->start, 0,   'test start';
+is $h->first, 1,   'test first';
 
 my $sum = 0;
 $h->each(sub {$sum += shift});
-is $sum , 5050, 'test each';
+is $sum, 5050, 'test each';
 
 is_deeply $h->to_array, [(1 .. 100)], 'test to_array';
 

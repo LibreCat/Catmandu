@@ -204,7 +204,7 @@ sub user_agent {
     $ua->map_response(
         qr{^http://demo\.org/red,green,blue$},
         HTTP::Response->new(
-            '200', 'OK',
+            '200',                            'OK',
             ['Content-Type' => 'text/plain'], 'RED-GREEN-BLUE'
         )
     );

@@ -226,7 +226,7 @@ sub log_message {
     my $data   = $self->data;
     my $msg    = "One of your fixes threw an error...";
     $msg .= "\nError: $err";
-    $msg .= "\nSource: $fix" if $fix;
+    $msg .= "\nSource: $fix"             if $fix;
     $msg .= "\nInput:\n" . Dumper($data) if defined $data;
     $msg;
 }

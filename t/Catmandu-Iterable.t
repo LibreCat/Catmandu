@@ -56,7 +56,7 @@ is $iter->count, 3;
     my $d = [];
     my $n = $iter->each(sub {push @$d, $_[0]});
     is_deeply $d, $iter->to_array;
-    is $n,        3;
+    is $n, 3;
 }
 
 is_deeply $iter->tap(sub {$_[0]})->to_array, $iter->to_array;
@@ -102,23 +102,23 @@ is_deeply $iter->reject(sub {$_[0] > 0})->to_array, [];
 
 is $iter->detect(qr'[12]'), 1;
 is_deeply $iter->select(qr'[12]')->to_array, [1, 2];
-is_deeply $iter->grep (qr'[12]')->to_array, [1, 2];
+is_deeply $iter->grep (qr'[12]')->to_array,  [1, 2];
 is_deeply $iter->reject(qr'[12]')->to_array, [3];
 
 $iter->data([{num => 1}, {num => 2}, {num => 3}]);
 
 is_deeply $iter->detect(num => qr'[12]'), {num => 1};
 is_deeply $iter->select(num => qr'[12]')->to_array, [{num => 1}, {num => 2}];
-is_deeply $iter->grep (num => qr'[12]')->to_array, [{num => 1}, {num => 2}];
+is_deeply $iter->grep (num => qr'[12]')->to_array,  [{num => 1}, {num => 2}];
 is_deeply $iter->reject(num => qr'[12]')->to_array, [{num => 3}];
 
 is_deeply $iter->pluck('num')->to_array,
     $iter->map(sub {$_[0]->{num}})->to_array;
 
-is_deeply $iter->fix('mv(num,x)')->to_array, [{x=>1},{x=>2},{x=>3}];
+is_deeply $iter->fix('mv(num,x)')->to_array, [{x => 1}, {x => 2}, {x => 3}];
 
 $iter->data([T::CountArgs->new]);
-is_deeply $iter->invoke('count_args')->to_array, [0];
+is_deeply $iter->invoke('count_args')->to_array,                 [0];
 is_deeply $iter->invoke('count_args', 'arg1', 'arg2')->to_array, [2];
 
 $iter->data([{a => {b => 'c'}}, 'd', {c => {b => 'a'}}]);
@@ -176,8 +176,8 @@ is_deeply $iter->sorted('n')->to_array, [{n => 1}, {n => 10}, {n => 9}];
 
 $iter->data([3, 21, 1]);
 
-is_deeply $iter->sorted->to_array, [1, 21, 3];
-is_deeply $iter->sorted(sub {$_[1] <=> $_[0]})->to_array, [21, 3, 1];
+is_deeply $iter->sorted->to_array,                        [1,  21, 3];
+is_deeply $iter->sorted(sub {$_[1] <=> $_[0]})->to_array, [21, 3,  1];
 
 $iter->data([]);
 is $iter->run, 0;
@@ -214,7 +214,7 @@ is $iter->run, 1;
         push @$iter_data, $data;
     }
     is_deeply $iter->data, $iter_data;
-    is $iter->next,        undef;
+    is $iter->next, undef;
     $iter->rewind;
     is_deeply $iter->next, {n => 1};
 }

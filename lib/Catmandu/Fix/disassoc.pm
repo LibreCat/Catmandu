@@ -2,7 +2,7 @@ package Catmandu::Fix::disassoc;
 
 use Catmandu::Sane;
 use Catmandu::Util::Path qw(as_path);
-use Catmandu::Util qw(is_array_ref);
+use Catmandu::Util       qw(is_array_ref);
 use Moo;
 use namespace::clean;
 use Catmandu::Fix::Has;

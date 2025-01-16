@@ -32,7 +32,7 @@ has load_paths => (
     default => sub {[]},
     coerce  => sub {
         [
-            map     {File::Spec->canonpath($_)}
+            map {File::Spec->canonpath($_)}
                 map {$_ eq ':up' ? _search_up($_) : $_} split /,/,
             join ',',
             ref $_[0] ? @{$_[0]} : $_[0]

@@ -18,7 +18,7 @@ require_ok $pkg;
 
 my $fixer = Catmandu::Fix->new(fixes => []);
 
-ok $fixer , 'create a new fixer';
+ok $fixer, 'create a new fixer';
 
 is_deeply $fixer->fix({}), {}, 'fixing hashes';
 is_deeply $fixer->fix({name => 'value'}), {name => 'value'};
@@ -39,7 +39,7 @@ is_deeply $fixer->fix([{name => [{name => 'value'}]}]),
 
 ok $fixer->fix(Catmandu::Importer::Mock->new(size => 13)), 'fixing iterators';
 my $it = $fixer->fix(Catmandu::Importer::Mock->new(size => 13));
-can_ok $it , 'count';
+can_ok $it, 'count';
 is $it->count, 13;
 
 my $gen_n = 3;
@@ -54,11 +54,11 @@ ok is_code_ref($ref);
 is $ref->()->{n}, 2;
 is $ref->()->{n}, 1;
 is $ref->()->{n}, 0;
-is $ref->(), undef;
+is $ref->(),      undef;
 
 # test logging
-can_ok $fixer , 'log';
-isa_ok $fixer->log, 'Log::Any::Proxy';
+can_ok $fixer, 'log';
+isa_ok $fixer->log,          'Log::Any::Proxy';
 isa_ok $fixer->log->adapter, 'Log::Any::Adapter::Null';
 
 # test error handling

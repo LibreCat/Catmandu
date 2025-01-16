@@ -6,7 +6,7 @@ our $VERSION = '1.2023';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
-use URI::Escape qw(uri_escape_utf8);
+use URI::Escape          qw(uri_escape_utf8);
 use namespace::clean;
 use Catmandu::Fix::Has;
 

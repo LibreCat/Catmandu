@@ -34,16 +34,13 @@ is_deeply $pkg->new('nested', '.')
 is_deeply $pkg->new('nested', '.')->fix({nested => [1, 2, 3], foo => 'bar'}),
     [1, 2, 3], "replace root";
 
-is_deeply $pkg->new("''", 'test')
-    ->fix({ '' => 'foo'}), { test => 'foo' },
+is_deeply $pkg->new("''", 'test')->fix({'' => 'foo'}), {test => 'foo'},
     "move empty field";
 
-is_deeply $pkg->new("test", "''")
-    ->fix({ test => 'foo'}), { '' => 'foo' },
+is_deeply $pkg->new("test", "''")->fix({test => 'foo'}), {'' => 'foo'},
     "move to empty field";
 
-is_deeply $pkg->new("test", "x.''")
-    ->fix({ test => 'foo'}), { x => {'' => 'foo'} },
-    "move to nested empty field";
+is_deeply $pkg->new("test", "x.''")->fix({test => 'foo'}),
+    {x => {'' => 'foo'}}, "move to nested empty field";
 
 done_testing;

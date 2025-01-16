@@ -4,7 +4,7 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2023';
 
-use Cpanel::JSON::XS ();
+use Cpanel::JSON::XS     ();
 use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;

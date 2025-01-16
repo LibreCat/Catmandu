@@ -6,7 +6,7 @@ our $VERSION = '1.2023';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);
-use Clone qw(clone);
+use Clone                qw(clone);
 use namespace::clean;
 use Catmandu::Fix::Has;
 

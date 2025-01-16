@@ -4,8 +4,8 @@ use Catmandu::Sane;
 
 our $VERSION = '1.2023';
 
-use List::Util qw(all);
-use Catmandu::Util qw(is_string is_value is_array_ref is_hash_ref);
+use List::Util           qw(all);
+use Catmandu::Util       qw(is_string is_value is_array_ref is_hash_ref);
 use Catmandu::Util::Path qw(as_path);
 use Moo;
 use namespace::clean;

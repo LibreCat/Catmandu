@@ -24,7 +24,7 @@ require_ok $pkg;
 
     $app->run();
 
-    is $res , "", 'can execute \q';
+    is $res, "", 'can execute \q';
 
     $in->close();
     $out->close();
@@ -46,7 +46,7 @@ require_ok $pkg;
 
     $app->run();
 
-    is $res , "{\"hello\":\"world\"}\n", 'can execute hello world';
+    is $res, "{\"hello\":\"world\"}\n", 'can execute hello world';
 
     $in->close();
     $out->close();
@@ -69,7 +69,7 @@ require_ok $pkg;
 
     $app->run();
 
-    is $res , "{\"hello\":\"world\"}\n{\"hello\":\"WORLD\"}\n",
+    is $res, "{\"hello\":\"world\"}\n{\"hello\":\"WORLD\"}\n",
         'can execute hello world with continuation';
 
     $in->close();
@@ -92,7 +92,7 @@ require_ok $pkg;
 
     $app->run();
 
-    is $res , "{\"hello\":\"world\"}\nadd_field(hello,world)\n",
+    is $res, "{\"hello\":\"world\"}\nadd_field(hello,world)\n",
         'can execute \h';
 
     $in->close();
@@ -115,7 +115,7 @@ require_ok $pkg;
 
     $app->run();
 
-    is $res , "{\"hello\":[\"world\"]}\n{\"hello\":[\"world\",\"world\"]}\n",
+    is $res, "{\"hello\":[\"world\"]}\n{\"hello\":[\"world\",\"world\"]}\n",
         'can execute \r';
 
     $in->close();
