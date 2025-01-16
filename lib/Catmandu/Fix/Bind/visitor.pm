@@ -2,7 +2,7 @@ package Catmandu::Fix::Bind::visitor;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2023';
+our $VERSION = '1.2024';
 
 use Moo;
 use Catmandu::Util;

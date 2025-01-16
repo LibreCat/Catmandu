@@ -2,7 +2,7 @@ package Catmandu::Fix::upcase;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2023';
+our $VERSION = '1.2024';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

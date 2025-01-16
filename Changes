@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2024  2025-01-16 16:23:49 CET
   - #402: Fix cli with Getopt::Long::Descriptive >= 0.116 
 
 1.2023  2025-01-12 18:37:51 CET
