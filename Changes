@@ -1,6 +1,7 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+  - #403: Add support for BOM in CSV header ()
 
 1.2024  2025-01-16 16:23:49 CET
   - #402: Fix cli with Getopt::Long::Descriptive >= 0.116 

@@ -362,6 +362,8 @@ Stefan Weil
 
 Tom Hukins
 
+Michal Josef Špaček C<<michal.josef.spacek at gmail.com>>
+
 =head1 QUESTIONS, ISSUES & BUG REPORTS
 
 For any questions on the use of our modules please join our mailing list at:
