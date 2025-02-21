@@ -58,11 +58,12 @@ sub generator {
         state $csv  = do {
             if ($self->header) {
                 if ($self->fields) {
-                    $self->csv->getline($fh);
+                    $self->csv->header($fh, { 'sep_set' => [$self->sep_char] });
                     $line++;
                 }
                 else {
-                    $self->_set_fields($self->csv->getline($fh));
+                    my @hdr = $self->csv->header($fh, { 'munge_column_names' => 'none', 'sep_set' => [$self->sep_char] });
+                    $self->_set_fields(\@hdr);
                     $line++;
                 }
             }
