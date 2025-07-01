@@ -364,11 +364,8 @@ Tom Hukins
 
 =head1 QUESTIONS, ISSUES & BUG REPORTS
 
-For any questions on the use of our modules please join our mailing list at:
-
-    librecat-dev@lists.uni-bielefeld.de
-
-or send in your bug reports or feature requests to our issue tracker at:
+For any questions on the use of our modules, or bug reports, or feature requests,
+please use our issue tracker at:
 
     https://github.com/LibreCat/Catmandu/issues
 

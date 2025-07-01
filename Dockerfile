@@ -1,7 +1,7 @@
 # Minimal Dockerfile of a base image with Catmandu core on Debian stretch
 FROM debian:stretch-slim
 
-LABEL LibreCat community <librecat-dev@lists.uni-bielefeld.de>
+LABEL LibreCat community 
 
 ADD docker/apt.txt .
 # Perl packages used by Catmandu (if available as Debian package) and cpanm
