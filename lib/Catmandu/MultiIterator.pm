@@ -2,7 +2,7 @@ package Catmandu::MultiIterator;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2024';
+our $VERSION = '1.2025';
 
 use Role::Tiny::With;
 use namespace::clean;

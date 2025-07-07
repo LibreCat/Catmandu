@@ -1,6 +1,8 @@
 Revision history for Catmandu
 
 {{$NEXT}}
+
+1.2025  2025-07-07 11:23:47 CEST
   - #403: Add support for BOM in CSV header ()
   - Update project info and contact details
 

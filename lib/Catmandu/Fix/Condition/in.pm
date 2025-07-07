@@ -2,7 +2,7 @@ package Catmandu::Fix::Condition::in;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2024';
+our $VERSION = '1.2025';
 
 use Moo;
 use Catmandu::Util::Path qw(as_path);

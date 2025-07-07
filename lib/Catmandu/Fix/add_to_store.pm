@@ -2,7 +2,7 @@ package Catmandu::Fix::add_to_store;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2024';
+our $VERSION = '1.2025';
 
 use Catmandu;
 use Catmandu::Util::Path qw(as_path);

@@ -2,7 +2,7 @@ package Catmandu::Fix::vacuum;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2024';
+our $VERSION = '1.2025';
 
 use Catmandu::Util qw(is_value is_hash_ref is_array_ref);
 use Scalar::Util   qw(refaddr);

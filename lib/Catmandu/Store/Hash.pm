@@ -2,7 +2,7 @@ package Catmandu::Store::Hash;
 
 use Catmandu::Sane;
 
-our $VERSION = '1.2024';
+our $VERSION = '1.2025';
 
 use Moo;
 use Catmandu::Util qw(:is);
